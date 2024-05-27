@@ -1,0 +1,3675 @@
+[
+  {
+    "model": "datametric.datapoint",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.905Z",
+      "updated_at": "2024-05-21T10:13:17.924Z",
+      "name": "Category",
+      "slug": "gri-environment-emissions-301-a",
+      "label": "Category",
+      "description": "Selects the Category",
+      "response_type": "String"
+    }
+  },
+  {
+    "model": "datametric.datapoint",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.905Z",
+      "updated_at": "2024-05-21T10:13:17.924Z",
+      "name": "Sub Category",
+      "slug": "gri-environment-emissions-301-a",
+      "label": "Sub Category",
+      "description": "Selects the Sub Category",
+      "response_type": "String"
+    }
+  },
+  {
+    "model": "datametric.datapoint",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.905Z",
+      "updated_at": "2024-05-21T10:13:17.924Z",
+      "name": "Activity",
+      "slug": "gri-environment-emissions-301-a",
+      "label": "Activity",
+      "description": "Select the Activity",
+      "response_type": "String"
+    }
+  },
+  {
+    "model": "datametric.datapoint",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.905Z",
+      "updated_at": "2024-05-21T10:13:17.924Z",
+      "name": "Quantity",
+      "slug": "gri-environment-emissions-301-a",
+      "label": "Quantity",
+      "description": "Enter the Quantity",
+      "response_type": "Float"
+    }
+  },
+  {
+    "model": "datametric.datapoint",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.905Z",
+      "updated_at": "2024-05-21T10:13:17.924Z",
+      "name": "Unit",
+      "slug": "gri-environment-emissions-301-a",
+      "label": "Unit",
+      "description": "Select the Unit",
+      "response_type": "String"
+    }
+  },
+  {
+    "model": "datametric.datapoint",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.905Z",
+      "updated_at": "2024-05-21T10:13:17.924Z",
+      "name": "Assign To",
+      "slug": "gri-environment-emissions-301-a-scope-1",
+      "label": "Assign To",
+      "description": "Select a person to assign it",
+      "response_type": "String"
+    }
+  },
+  {
+    "model": "datametric.datapoint",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.905Z",
+      "updated_at": "2024-05-21T10:13:17.924Z",
+      "name": "Emission",
+      "slug": "gri-environment-emissions-301-a-scope-1",
+      "label": "Emission",
+      "description": "This contains Category, Sub Category, Activity, Quantity & Units",
+      "response_type": "String"
+    }
+  },
+  {
+    "model": "datametric.datapoint",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.905Z",
+      "updated_at": "2024-05-21T10:13:17.924Z",
+      "name": "File Upload",
+      "slug": "gri-environment-emissions-301-a-scope-1",
+      "label": "File Upload",
+      "description": "Upload a file",
+      "response_type": "String"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Emissions-Scope-1",
+      "slug": "gri-environment-emissions-301-a-scope-1"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Emissions-Scope-2",
+      "slug": "gri-environment-emissions-301-a-scope-2"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Emissions-Scope-3",
+      "slug": "gri-environment-emissions-301-a-scope-3"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Direct purchased heating cooling electricity and steam",
+      "slug": "gri-environment-energy-302-1a-1b-direct_purchased"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Consumed fuel and energy including self generated",
+      "slug": "gri-environment-energy-302-1c-1e-consumed_fuel"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Self generated not consumed or sold",
+      "slug": "gri-environment-energy-302-1-self_generated"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Energy sold",
+      "slug": "gri-environment-energy-302-1d-energy_sold"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Standards methodologies assumptions and calculation tools used",
+      "slug": "gri-environment-energy-302-1f-smac"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Source of conversion factor",
+      "slug": "gri-environment-energy-302-1g-conversion_factor"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed outside the organization-Energy consumption outside organization",
+      "slug": "gri-environment-energy-302-2a-energy_consumption_outside_organization"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 11,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed outside the organization-Standards methodologies assumptions and calculation tools used",
+      "slug": "gri-environment-energy-302-2b-smac"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 12,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed outside the organization-Source of conversion factor",
+      "slug": "gri-environment-energy-302-2c-conversion_factor"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 13,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy intensity",
+      "slug": "gri-environment-energy-302-3a-3b-3c-3d-energy_intensity"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 14,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction of energy consumption-Reduction of energy consumption",
+      "slug": "gri-environment-energy-302-4a-4b-reduction_of_energy_consumption"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 15,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction of energy consumption-Base year or baseline",
+      "slug": "gri-environment-energy-302-4c-base_year_or_baseline"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 16,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction of energy consumption-Standards methodologies assumptions and calculation tools used",
+      "slug": "gri-environment-energy-302-4d-smac"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 17,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction in energy requirements of products and services-Reduction of energy consumption",
+      "slug": "gri-environment-energy-302-5a-5b-reduction_in_energy_in_products_and_servies"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 18,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction in energy requirements of products and services-Base year or baseline",
+      "slug": "gri-environment-energy-302-5b-base_year_or_baseline"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 19,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction in energy requirements of products and services-Standards methodologies assumption and calculation tools used",
+      "slug": "gri-environment-energy-302-5c-smac"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 20,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Significant waste",
+      "slug": "gri-environment-waste-306-1-significant_waste"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 21,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Management of significant waste",
+      "slug": "gri-environment-waste-306-2-management_of_significant_waste"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 22,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste generated-Waste generated",
+      "slug": "gri-environment-waste-306-3a-3b-waste_generated"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 23,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste generated-Contextual info",
+      "slug": "gri-environment-waste-306-3b-contextual_info"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 24,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste directed from disposal-Waste diverted",
+      "slug": "gri-environment-waste-306-4b-4c-4d-waste_diverted_from_disposal"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 25,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste directed from disposal-Contextual info",
+      "slug": "gri-environment-waste-306-4e-contextual_info"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 26,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste directed to disposal-Waste diverted to disposal",
+      "slug": "gri-environment-waste-306-5a-5b-5c-5d-5e-waste_diverted_to_disposal"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 27,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste directed to disposal-Contextual info",
+      "slug": "gri-environment-waste-306-5e-contextual_info"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 28,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Materials used by weight or volume-Non renewable materials",
+      "slug": "gri-environment-materials-301-1a-non_renewable_materials"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 29,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Materials used by weight or volume-Renewable materials",
+      "slug": "gri-environment-materials-301-1a-renewable_materials"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 30,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Recycled input materials used",
+      "slug": "gri-environment-materials-301-2a-recycled_input_materials"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 31,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Reclaimed products and their packaging-Reclaimed products",
+      "slug": "gri-environment-materials-301-3a-3b-reclaimed_products"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 32,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Reclaimed products and their packaging-Data collection",
+      "slug": "gri-environment-materials-303-1b-data_collection"
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Emission Scope 1",
+      "path": 1,
+      "meta_data": { "key": "value for test" },
+      "ui_schema": {
+        "items": {
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Emission": {
+            "ui:widget": "EmissonCombinedWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": ["Emission", "FileUpload", "AssignTo", "Remove"],
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "label": false,
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Remove": { "type": "string" },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "Emission": { "type": "string", "title": "Emission" },
+            "FileUpload": { "type": "string", "format": "data-url" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Emission Scope 2",
+      "path": 2,
+      "meta_data": { "key": "value" },
+      "ui_schema": {
+        "items": {
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false }
+          },
+          "Emission": {
+            "ui:widget": "EmissonCombinedWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": ["Emission", "FileUpload", "AssignTo", "Remove"],
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "label": false,
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "ui:horizontal": true
+        },
+        "ui_ordering": ["Emission", "FileUpload", "AssignTo"]
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "AssignTo": {
+              "type": "string",
+              "title": "Assign To",
+              "datapoint": 6
+            },
+            "Emission": {
+              "type": "string",
+              "title": "Emission",
+              "datapoint": 7
+            },
+            "FileUpload": {
+              "type": "string",
+              "format": "data-url",
+              "datapoint": 8
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Emission Scope 3",
+      "path": 3,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false }
+          },
+          "Emission": {
+            "ui:widget": "EmissonCombinedWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": ["Emission", "FileUpload", "AssignTo", "Remove"],
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "label": false,
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "ui:horizontal": true
+        },
+        "ui_ordering": ["Emission", "FileUpload", "AssignTo"]
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "AssignTo": {
+              "type": "string",
+              "title": "Assign To",
+              "datapoint": 6
+            },
+            "Emission": {
+              "type": "string",
+              "title": "Emission",
+              "datapoint": 7
+            },
+            "FileUpload": {
+              "type": "string",
+              "format": "data-url",
+              "datapoint": 8
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy consumed inside org - Direct purchased",
+      "path": 4,
+      "meta_data": { "key": "value for test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "Source": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Purpose": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Quantity": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "ui:order": [
+            "EnergyType",
+            "Source",
+            "Purpose",
+            "Renewable",
+            "Quantity",
+            "Unit",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "Renewable": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "EnergyType": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "flex flex-col md:flex-row w-full md:w-auto",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        },
+        "className": "flex flex-wrap"
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": ["Joules", "KJ", "Wh", "KWh", "GJ", "MMBtu"],
+              "type": "string",
+              "title": "Unit",
+              "tooltiptext": "Select the correct unit corresponding to the quantity purchased."
+            },
+            "Remove": { "type": "string" },
+            "Source": {
+              "enum": [
+                "Coal",
+                "Solar",
+                "LPG",
+                "Diesel",
+                "Wind",
+                "Hydro",
+                "Natural",
+                "Electricity",
+                "Cooling",
+                "Steam",
+                "Heating",
+                "Wood Biomas",
+                "Biogas",
+                "Other"
+              ],
+              "type": "string",
+              "title": "Source",
+              "tooltiptext": "Indicate where the energy comes from"
+            },
+            "Purpose": {
+              "type": "string",
+              "title": "Purpose",
+              "tooltiptext": "Indicate where the energy comes fromIndicate the purpose it's being used for.E.g. Manufacturing, packaging, combustion"
+            },
+            "AssignTo": { "type": "string" },
+            "Quantity": {
+              "type": "string",
+              "title": "Quantity",
+              "tooltiptext": "Indicate the purchased quantity"
+            },
+            "Renewable": {
+              "enum": ["Renewable", "Non-renewable"],
+              "type": "string",
+              "title": "Renewable/ Non-renewable",
+              "tooltiptext": "Select from the dropdown to indicate whether it's Renewable or Non-Renewable Energy"
+            },
+            "EnergyType": {
+              "enum": ["Electricity", "Heating", "Cooling", "Steam"],
+              "type": "string",
+              "title": "Energy Type",
+              "tooltiptext": "Indicate the type of energy purchased from the drop down"
+            },
+            "FileUpload": { "type": "string", "format": "data-url" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy consumed inside org - Consumed",
+      "path": 5,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "Source": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Purpose": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false }
+          },
+          "Quantity": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "ui:order": [
+            "EnergyType",
+            "Source",
+            "Purpose",
+            "Renewable",
+            "Quantity",
+            "Unit",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "Renewable": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "EnergyType": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": ["Joules", "KJ", "Wh", "KWh", "GJ", "MMBtu"],
+              "type": "string",
+              "title": "Unit",
+              "tooltiptext": "Indicate the purchased consumed"
+            },
+            "Remove": { "type": "string" },
+            "Source": {
+              "enum": [
+                "Coal",
+                "Solar",
+                "LPG",
+                "Diesel",
+                "Wind",
+                "Hydro",
+                "Natural",
+                "Electricity",
+                "Cooling",
+                "Steam",
+                "Heating",
+                "Wood Biomas",
+                "Biogas",
+                "Other"
+              ],
+              "type": "string",
+              "title": "Source",
+              "tooltiptext": "Indicate where the energy comes from"
+            },
+            "Purpose": {
+              "type": "string",
+              "title": "Purpose",
+              "tooltiptext": "Indicate the purpose it's being used for.ex: Furnace Heat Generation, Steam Generation"
+            },
+            "AssignTo": { "type": "string" },
+            "Quantity": {
+              "type": "string",
+              "title": "Quantity",
+              "tooltiptext": "Indicate the purchased quantity"
+            },
+            "Renewable": {
+              "enum": ["Renewable", "Non-renewable"],
+              "type": "string",
+              "title": "Renewable/ Non-renewable",
+              "tooltiptext": "Select from the dropdown to indicate whether it's Renewable or Non-Renewable Energy"
+            },
+            "EnergyType": {
+              "enum": ["Electricity", "Heating", "Cooling", "Steam"],
+              "type": "string",
+              "title": "Energy Type",
+              "tooltiptext": "Indicate the type of energy purchased from the drop down"
+            },
+            "FileUpload": { "type": "string", "format": "data-url" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy consumed inside org - Self generated",
+      "path": 6,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "Source": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false }
+          },
+          "Quantity": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "ui:order": [
+            "EnergyType",
+            "Source",
+            "Renewable",
+            "Quantity",
+            "Unit",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "Renewable": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "EnergyType": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": ["Joules", "KJ", "Wh", "KWh", "GJ", "MMBtu"],
+              "type": "string",
+              "title": "Unit",
+              "tooltiptext": "Select the correct unit corresponding to the quantity of self-generated but not consumed."
+            },
+            "Remove": { "type": "string" },
+            "Source": {
+              "enum": [
+                "Coal",
+                "Solar",
+                "LPG",
+                "Diesel",
+                "Wind",
+                "Hydro",
+                "Natural",
+                "Electricity",
+                "Cooling",
+                "Steam",
+                "Heating",
+                "Wood Biomas",
+                "Biogas",
+                "Other"
+              ],
+              "type": "string",
+              "title": "Source",
+              "tooltiptext": "Indicate where the energy comes from"
+            },
+            "AssignTo": { "type": "string" },
+            "Quantity": {
+              "type": "string",
+              "title": "Quantity",
+              "tooltiptext": "Indicate the quantity that is self-generated but not consumed"
+            },
+            "Renewable": {
+              "enum": ["Renewable", "Non-renewable"],
+              "type": "string",
+              "title": "Renewable/ Non-renewable",
+              "tooltiptext": "Select from the dropdown to indicate whether it's Renewable or Non-Renewable Energy"
+            },
+            "EnergyType": {
+              "enum": ["Electricity", "Heating", "Cooling", "Steam"],
+              "type": "string",
+              "title": "Energy Type",
+              "tooltiptext": "Indicate the type of energy generated from the drop down"
+            },
+            "FileUpload": { "type": "string", "format": "data-url" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy consumed inside org - Energy Sold",
+      "path": 7,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "Source": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false }
+          },
+          "Quantity": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "ui:order": [
+            "EnergyType",
+            "Source",
+            "Typeofentity",
+            "Nameofentity",
+            "Renewable",
+            "Quantity",
+            "Unit",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "Renewable": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "EnergyType": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "Nameofentity": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "Typeofentity": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": ["Joules", "KJ", "Wh", "KWh", "GJ", "MMBtu"],
+              "type": "string",
+              "title": "Unit",
+              "tooltiptext": "Select the correct unit corresponding to the quantity sold."
+            },
+            "Remove": { "type": "string" },
+            "Source": {
+              "enum": ["Coal", "Solar", "LPG", "Diesel", "Wind", "Hydro"],
+              "type": "string",
+              "title": "Source",
+              "tooltiptext": "Indicate where the energy comes from"
+            },
+            "AssignTo": { "type": "string" },
+            "Quantity": {
+              "type": "string",
+              "title": "Quantity",
+              "tooltiptext": "Indicate the quantity that is sold"
+            },
+            "Renewable": {
+              "enum": ["Renewable", "Non-renewable"],
+              "type": "string",
+              "title": "Renewable/ Non-renewable",
+              "tooltiptext": "Select from the dropdown to indicate whether it's Renewable or Non-Renewable Energy"
+            },
+            "EnergyType": {
+              "enum": ["Electricity", "Heating", "Cooling", "Steam"],
+              "type": "string",
+              "title": "Energy Type",
+              "tooltiptext": "Indicate the type of energy that is sold from the drop down including both purchased and self-generated."
+            },
+            "FileUpload": { "type": "string", "format": "data-url" },
+            "Nameofentity": {
+              "type": "string",
+              "title": "Name of entity",
+              "tooltiptext": "Indicate the name of the Entity  to which Energy is being sold to."
+            },
+            "Typeofentity": {
+              "enum": ["Generator", "Aggregator", "Distributor", "TSO"],
+              "type": "string",
+              "title": "Type of entity",
+              "tooltiptext": "Indicate the type of Entity the energy is being sold to to. E.g. TSO, Generator, Aggregator"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy consumed inside org - SMAC",
+      "path": 8,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "textareaQ1": {
+            "ui:Gri": "GRI 302-1f",
+            "ui:title": "Please mention the standards used while compiling the information for 302-1 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ2": {
+            "ui:Gri": "GRI 302-1f",
+            "ui:title": "Please mention the methodologies used while compiling the information for 302-1 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ3": {
+            "ui:Gri": "GRI 302-1f",
+            "ui:title": "Please mention the assumptions used while compiling the information for 302-1 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ4": {
+            "ui:Gri": "GRI 302-1f",
+            "ui:title": "Please mention the calculation tools used while compiling the information for 302-1 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "textareaQ1": {
+              "type": "string",
+              "title": "Please mention the standards used while compiling the information for 302-1 ?",
+              "format": "textarea"
+            },
+            "textareaQ2": {
+              "type": "string",
+              "title": "Please mention the methodologies used while compiling the information for 302-1 ?",
+              "format": "textarea"
+            },
+            "textareaQ3": {
+              "type": "string",
+              "title": "Please mention the assumptions used while compiling the information for 302-1 ?",
+              "format": "textarea"
+            },
+            "textareaQ4": {
+              "type": "string",
+              "title": "Please mention the calculation tools used while compiling the information for 302-1 ?",
+              "format": "textarea"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy consumed inside org - Source of CF",
+      "path": 9,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Q1": {
+            "ui:Gri": "GRI 302-1g",
+            "ui:title": "Please mention the source of conversion factors used while compiling the information for 302-1?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Q1": {
+              "type": "string",
+              "title": "Please mention the source of conversion factors used while compiling the information for 302-1?",
+              "format": "textarea"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy consumed outside org - Energy consumed outside org",
+      "path": 10,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "Source": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Purpose": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Quantity": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "ui:order": [
+            "EnergyType",
+            "Source",
+            "Purpose",
+            "Renewable",
+            "Quantity",
+            "Unit",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "Renewable": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "EnergyType": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "flex flex-col md:flex-row w-full md:w-auto",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        },
+        "className": "flex flex-wrap"
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": ["Joules", "KJ", "Wh", "KWh", "GJ", "MMBtu"],
+              "type": "string",
+              "title": "Unit",
+              "tooltiptext": "Select the correct unit corresponding to the quantity purchased."
+            },
+            "Remove": { "type": "string" },
+            "Purpose": {
+              "type": "string",
+              "title": "Purpose",
+              "tooltiptext": "Indicate the purpose it is being used for E.g. Upstream Transport, Purchased Goods ,Business Travel etc"
+            },
+            "AssignTo": { "type": "string" },
+            "Quantity": {
+              "type": "string",
+              "title": "Quantity",
+              "tooltiptext": "Indicate the quantity of energy consumed"
+            },
+            "EnergyType": {
+              "enum": [
+                "Coal",
+                "Solar",
+                "LPG",
+                "Diesel",
+                "Wind",
+                "Hydro",
+                "Natural",
+                "Electricity",
+                "Cooling",
+                "Steam",
+                "Heating",
+                "Wood Biomas",
+                "Biogas",
+                "Other"
+              ],
+              "type": "string",
+              "title": "Energy Type",
+              "tooltiptext": "Indicate the type of energy or fuel consumed for activities outside the organization"
+            },
+            "FileUpload": { "type": "string", "format": "data-url" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 11,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy consumed outside org - SMAC",
+      "path": 11,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "textareaQ1": {
+            "ui:Gri": "GRI 302-2b",
+            "ui:title": "Please report the standards used while compiling the information for Energy Consumption outside the organization.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ2": {
+            "ui:Gri": "GRI 302-2b",
+            "ui:title": "Please report the methodologies used while compiling the information for Energy Consumption outside the organization.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ3": {
+            "ui:Gri": "GRI 302-2b",
+            "ui:title": "Please report the assumptions used while compiling the information for Energy Consumption outside the organization.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ4": {
+            "ui:Gri": "GRI 302-2b",
+            "ui:title": "Please report the calculation tools used while compiling the information for Energy Consumption outside the organization.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "textareaQ1": {
+              "type": "string",
+              "title": "Please report the standards used while compiling the information for Energy Consumption outside the organization.",
+              "format": "textarea"
+            },
+            "textareaQ2": {
+              "type": "string",
+              "title": "Please report the methodologies used while compiling the information for Energy Consumption outside the organization.",
+              "format": "textarea"
+            },
+            "textareaQ3": {
+              "type": "string",
+              "title": "Please report the assumptions used while compiling the information for Energy Consumption outside the organization.",
+              "format": "textarea"
+            },
+            "textareaQ4": {
+              "type": "string",
+              "title": "Please report the calculation tools used while compiling the information for Energy Consumption outside the organization.",
+              "format": "textarea"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 12,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy consumed outside - Source of CF",
+      "path": 12,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "textareaQ1": {
+            "ui:Gri": "GRI 302-2c",
+            "ui:title": "Please mention the source of conversion factors used while compiling the information for Energy Consumption outside the organization.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "textareaQ1": {
+              "type": "string",
+              "title": "Please mention the source of conversion factors used while compiling the information for Energy Consumption outside the organization.",
+              "format": "textarea"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 13,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Energy Intensity - Energy Intensity",
+      "path": 13,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": [
+            "EnergyType",
+            "EnergyQuantity",
+            "Unit",
+            "Organizationmetric",
+            "Metricquantity",
+            "Metricunit",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "EnergyType": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Metricunit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "flex flex-col md:flex-row w-full md:w-auto",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "EnergyQuantity": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "Metricquantity": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "Organizationmetric": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          }
+        },
+        "className": "flex flex-wrap"
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": ["Joules", "KJ", "Wh", "KWh", "GJ", "MMBtu"],
+              "type": "string",
+              "title": "Unit",
+              "tooltiptext": "Select the correct unit corresponding to the quantity"
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "EnergyType": {
+              "enum": [
+                "heating",
+                "cooling",
+                "steam",
+                "electricity",
+                "Fuel",
+                "Energy inside the organization (302-1)",
+                "Energy outside the organization (302-2)",
+                "Total Energy (302-1+302-2)",
+                "others"
+              ],
+              "type": "string",
+              "title": "Energy Type",
+              "tooltiptext": "Indicate the type of energy for which energy intensity should be calculated"
+            },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "Metricunit": {
+              "enum": [
+                "Tonne",
+                "meter square",
+                "sales unit",
+                "liters",
+                "MWh",
+                "Revenue",
+                "FTE",
+                "Others"
+              ],
+              "type": "string",
+              "title": "Metric Unit",
+              "tooltiptext": "Select the correct unit corresponding to the metric quantity."
+            },
+            "EnergyQuantity": {
+              "type": "string",
+              "title": "Energy Quantity",
+              "tooltiptext": "Indicate the quantity of Energy Type"
+            },
+            "Metricquantity": {
+              "type": "string",
+              "title": "Metric Quantity",
+              "tooltiptext": "Indicate the quantity for Organization metric"
+            },
+            "Organizationmetric": {
+              "enum": [
+                "Production volume",
+                "size",
+                "number of full time employees",
+                "monetary units such as revenue or sales)",
+                "Production units",
+                "MMBtu"
+              ],
+              "type": "string",
+              "title": "Organization Metric",
+              "tooltiptext": "Select the organization metric for the corresponding Energy Intensity metric "
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 14,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Reduction of energy consumption - Reduction of energy  consumption",
+      "path": 14,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Baseyear": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "ui:order": [
+            "Typeofintervention",
+            "Quantitysavedduetointervention",
+            "Unit",
+            "Energytypereduced",
+            "Baseyear",
+            "Energyreductionis",
+            "Methodologyused",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "flex flex-col md:flex-row w-full md:w-auto",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "Methodologyused": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "Energyreductionis": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Energytypereduced": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Typeofintervention": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Quantitysavedduetointervention": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          }
+        },
+        "className": "flex flex-wrap"
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": ["Joules", "KJ", "Wh", "KWh", "GJ", "MMBtu"],
+              "type": "string",
+              "title": "Unit",
+              "tooltiptext": "Select the correct unit corresponding to the quantity"
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "Baseyear": {
+              "type": "string",
+              "title": "Base year",
+              "tooltiptext": "Indicate the base year used for comparing energy saved before the intervention"
+            },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "Methodologyused": {
+              "type": "string",
+              "title": "Methodology used",
+              "tooltiptext": "Indicate the methodology used for calculating energy reduction."
+            },
+            "Energyreductionis": {
+              "enum": [
+                "estimated",
+                "modeled",
+                "sourced from direct measurement",
+                "others"
+              ],
+              "type": "string",
+              "title": "Energy reduction is",
+              "tooltiptext": "Indicate whether the Energy reduction measurement is Estimated, Modeled or directly measured"
+            },
+            "Energytypereduced": {
+              "enum": [
+                "Fuel",
+                "heating",
+                "electricity",
+                "cooling",
+                "steam",
+                "Others"
+              ],
+              "type": "string",
+              "title": "Energy type reduced",
+              "tooltiptext": "Select the correct unit corresponding to the quantity"
+            },
+            "Typeofintervention": {
+              "enum": [
+                "Switching to LEDs",
+                "Changing fuels",
+                "Process changes",
+                "Energy Efficiency measure",
+                "Renewable Energy Adoption",
+                "others"
+              ],
+              "type": "string",
+              "title": "Type of intervention",
+              "tooltiptext": "From the dropdown, please Indicate the type of intervention  that resulted in a reduction in Energy Consumption."
+            },
+            "Quantitysavedduetointervention": {
+              "type": "string",
+              "title": "Quantity saved due to intervention",
+              "tooltiptext": "Indicate the quantity of energy savings due to the intervention"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 15,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Reduction of energy consumption - Base year",
+      "path": 15,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "textareaQ1": {
+            "ui:Gri": "GRI 302-4c",
+            "ui:title": "What is the basis for calculating reductions in energy consumptions such as base year",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "textareaQ1": {
+              "type": "string",
+              "title": "What is the basis for calculating reductions in energy consumptions such as base year ",
+              "format": "textarea"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 16,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Reduction of energy consumption - SMAC",
+      "path": 16,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "textareaQ1": {
+            "ui:Gri": "GRI 302-4d",
+            "ui:title": "Please mention the standards used while compiling the information for 302-4 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ2": {
+            "ui:Gri": "GRI 302-4d",
+            "ui:title": "Please mention the methodologies used while compiling the information for 302-4 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ3": {
+            "ui:Gri": "GRI 302-4d",
+            "ui:title": "Please mention the assumptions used while compiling the information for 302-4 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ4": {
+            "ui:Gri": "GRI 302-4d",
+            "ui:title": "Please mention the calculation tools used while compiling the information for 302-4 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "textareaQ1": {
+              "type": "string",
+              "title": "Please mention the standards used while compiling the information for 302-4 ?",
+              "format": "textarea"
+            },
+            "textareaQ2": {
+              "type": "string",
+              "title": "Please mention the methodologies used while compiling the information for 302-4 ?",
+              "format": "textarea"
+            },
+            "textareaQ3": {
+              "type": "string",
+              "title": "Please mention the assumptions used while compiling the information for 302-4 ?",
+              "format": "textarea"
+            },
+            "textareaQ4": {
+              "type": "string",
+              "title": "Please mention the calculation tools used while compiling the information for 302-4 ?",
+              "format": "textarea"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 17,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Reduction in energy requirements of products and service - Reduction in energy in products and services",
+      "path": 17,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Baseyear": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "Quantity": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "ui:order": [
+            "ProductServices",
+            "Quantity",
+            "Unit",
+            "Baseyear",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "flex flex-col md:flex-row w-full md:w-auto",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "ProductServices": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          }
+        },
+        "className": "flex flex-wrap"
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": ["Joules", "KJ", "Wh", "KWh", "GJ", "MMBtu"],
+              "type": "string",
+              "title": "Unit",
+              "tooltiptext": "Select the correct unit corresponding to the quantity"
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "Baseyear": {
+              "type": "string",
+              "title": "Base year",
+              "tooltiptext": "Indicate the base year used for comparing energy saved before the intervention"
+            },
+            "Quantity": {
+              "type": "string",
+              "title": "Quantity",
+              "tooltiptext": "Indicate the quantity of reduced energy requirement"
+            },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "ProductServices": {
+              "type": "string",
+              "title": "Product / Services",
+              "tooltiptext": "Indicate the product or service for which Energy Requirements have been reduced."
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 18,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Reduction in energy requirements of products and service - Base year",
+      "path": 18,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "textareaQ1": {
+            "ui:Gri": "GRI 302-5b",
+            "ui:title": "What is the basis for calculating reductions in energy consumptions such as base year",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "textareaQ1": {
+              "type": "string",
+              "title": "What is the basis for calculating reductions in energy consumptions such as base year",
+              "format": "textarea"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 19,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Energy - Reduction in energy requirements of products and service - SMAC",
+      "path": 19,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "textareaQ1": {
+            "ui:Gri": "GRI 302-5c",
+            "ui:title": "Please mention the standards used while compiling the information for 302-5 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ2": {
+            "ui:Gri": "GRI 302-5c",
+            "ui:title": "Please mention the methodologies used while compiling the information for 302-5 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ3": {
+            "ui:Gri": "GRI 302-5c",
+            "ui:title": "Please mention the assumptions used while compiling the information for 302-5 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "textareaQ4": {
+            "ui:Gri": "GRI 302-5c",
+            "ui:title": "Please mention the calculation tools used while compiling the information for 302-5 ?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:options": { "label": false }
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "textareaQ1": {
+              "type": "string",
+              "title": "Please mention the standards used while compiling the information for 302-5 ?",
+              "format": "textarea"
+            },
+            "textareaQ2": {
+              "type": "string",
+              "title": "Please mention the methodologies used while compiling the information for 302-5 ?",
+              "format": "textarea"
+            },
+            "textareaQ3": {
+              "type": "string",
+              "title": "Please mention the assumptions used while compiling the information for 302-5 ?",
+              "format": "textarea"
+            },
+            "textareaQ4": {
+              "type": "string",
+              "title": "Please mention the calculation tools used while compiling the information for 302-5 ?",
+              "format": "textarea"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 20,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Waste - Significant waste - Significant waste",
+      "path": 20,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Q1": {
+            "ui:Gri": "GRI 306-1a",
+            "ui:title": "Describe the inputs, activities, and outputs that lead or could lead to these impacts",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:hadding": "Impact Analysis: Inputs, Activities, Outputs",
+            "ui:options": { "label": false },
+            "ui:titlediplay": "block",
+            "ui:haddingdisplay": "block",
+            "ui:tooltipshadding": "Please specify the inputs, activities, and outputs that lead or could lead to actual and potential waste related impacts.Include: The types of inputs and outputs can include raw materials, process and manufacturing materials, leaks and losses, waste, by-products, products, or packaging.",
+            "ui:titletooltipdisplay": "none",
+            "ui:haddingtooltipdisplay": "block"
+          },
+          "Q2": {
+            "ui:Gri": "GRI 306-1b",
+            "ui:title": "Describe whether these impacts relate to waste generated in the organization�s own activities or to waste generated upstream or downstream in its value chain.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:hadding": "Activities resulting into waste",
+            "ui:options": { "label": false },
+            "ui:titlediplay": "block",
+            "ui:haddingdisplay": "block",
+            "ui:tooltipshadding": "Please provide the description of the impacts relate to waste generated in the organization�s own activities or to waste generated upstream or downstream in its value chain. Impacts: effect the organization has or could have on the economy,environment, and people, including on their human rights, which in turn can indicate its contribution (negative or positive) to sustainable development.",
+            "ui:titletooltipdisplay": "none",
+            "ui:haddingtooltipdisplay": "block"
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Q1": { "type": "string", "format": "textarea" },
+            "Q2": { "type": "string", "format": "textarea" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 21,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Waste - Management of significant waste - Management of significant waste",
+      "path": 21,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Q1": {
+            "ui:Gri": "GRI 306-1a",
+            "ui:title": "Describe actions taken to prevent waste generated from organization's own activities, upstream activities and downstream activities in its value chain",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:hadding": "Actions taken to prevent waste generation and to manage significant impacts from waste generated",
+            "ui:options": { "label": false },
+            "ui:titlediplay": "block",
+            "ui:tooltipstitle": "Include: Actions mentioned should include actions including circularity measures. ",
+            "ui:haddingdisplay": "block",
+            "ui:tooltipshadding": "Include: Actions mentioned should include actions including circularity measures.",
+            "ui:titletooltipdisplay": "none",
+            "ui:haddingtooltipdisplay": "block"
+          },
+          "Q2": {
+            "ui:Gri": "GRI 306-1b",
+            "ui:title": "If the waste generated by the organization in its own activities is managed by a third party, describe of the processes used to determine whether the third party manages the waste in line with contractual or legislative obligations.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:hadding": "Waste Management by Third-party",
+            "ui:options": { "label": false },
+            "ui:titlediplay": "block",
+            "ui:tooltipstitle": "Third-party: Third party includes a public or private waste management organization, or any other entity or group of individuals formally or informally involved in handling the reporting organization�s waste.Include: Agreements in a contract for the third party to follow when managing its waste, or rely on existing legislative obligations, such as local environmental laws and regulations",
+            "ui:haddingdisplay": "block",
+            "ui:tooltipshadding": "This section documents the data corresponding to the waste generated by the organization in its own activities is managed by a third party. ",
+            "ui:titletooltipdisplay": "block",
+            "ui:haddingtooltipdisplay": "block"
+          },
+          "Q3": {
+            "ui:Gri": "GRI 306-1b",
+            "ui:title": "Describe the processes used to collect and monitor waste-related data",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:hadding": "Waste Management by Third-party",
+            "ui:options": { "label": false },
+            "ui:titlediplay": "block",
+            "ui:tooltipstitle": "Please specify the processes used to collect and monitor waste-related data. Include: Processes can include online data entry, maintaining a centralized database, real-time weighbridge measurement, and annual external data validation.",
+            "ui:haddingdisplay": "block",
+            "ui:tooltipshadding": "This section documents the data corresponding to the processes used to collect and monitor waste-related data.",
+            "ui:titletooltipdisplay": "block",
+            "ui:haddingtooltipdisplay": "block"
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Q1": { "type": "string", "format": "textarea" },
+            "Q2": { "type": "string", "format": "textarea" },
+            "Q3": { "type": "string", "format": "textarea" }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 22,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Waste - Waste generated - Waste generated",
+      "path": 22,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": [
+            "Wastecategory",
+            "WasteType",
+            "Unit",
+            "Wastegenerated",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "WasteType": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "Wastecategory": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Wastegenerated": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": [
+                "g",
+                "Kgs",
+                "t (metric tons)",
+                "ton (US short ton)",
+                "lbs"
+              ],
+              "type": "string",
+              "title": "Unit",
+              "display": "block",
+              "tooltiptext": "Use 1000 kilograms as the measure for a metric ton."
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "WasteType": {
+              "type": "string",
+              "title": "Waste Type",
+              "display": "block",
+              "tooltiptext": "Please specify the type of waste. e.g. Paper waste, E-waste, chemical waste etc. "
+            },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "Wastecategory": {
+              "enum": ["Hazardous", "Non Hazardous"],
+              "type": "string",
+              "title": "Waste category",
+              "display": "block",
+              "tooltiptext": "Select the waste category from the given dropdown."
+            },
+            "Wastegenerated": {
+              "type": "string",
+              "title": "Waste generated",
+              "display": "none"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 23,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Waste - Waste generated - Contextual Info",
+      "path": 23,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Q1": {
+            "ui:Gri": "GRI 306-3b",
+            "ui:title": "Provide contextual information necessary to understand the data and how the data has been compiled.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:hadding": "Impact Analysis: Inputs, Activities, Outputs",
+            "ui:options": { "label": false },
+            "ui:gridisplay": "none",
+            "ui:titlediplay": "block",
+            "ui:tooltipstitle": "Please provide contextual information necessary to understand the data and how the data has been compiled. e.g. any standards, methodologies etc. used for data compilation.",
+            "ui:haddingdisplay": "none",
+            "ui:tooltipshadding": "Please provide contextual information necessary to understand the data and how the data has been compiled. e.g. any standards, methodologies etc. used for data compilation. ",
+            "ui:titletooltipdisplay": "block",
+            "ui:haddingtooltipdisplay": "none"
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": { "Q1": { "type": "string", "format": "textarea" } }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 24,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Waste - Waste directed from disposal - Wasted diverted from disposal",
+      "path": 24,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Site": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": [
+            "Wastecategory",
+            "WasteType",
+            "Unit",
+            "Wastediverted",
+            "RecoveryOperations",
+            "Site",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "WasteType": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "Wastecategory": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Wastediverted": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "RecoveryOperations": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Site": {
+              "enum": ["Onsite", "Offsite"],
+              "type": "string",
+              "title": "Site",
+              "display": "block",
+              "tooltiptext": "On-site: �Onsite� means within the physical boundary  or administrative control of the reporting organization Off-site: �Offsite� means outside the physical boundary \\ or administrative control of the reporting organization"
+            },
+            "Unit": {
+              "enum": [
+                "g",
+                "Kgs",
+                "t (metric tons)",
+                "ton (US short ton)",
+                "lbs"
+              ],
+              "type": "string",
+              "title": "Unit",
+              "display": "block",
+              "tooltiptext": "Use 1000 kilograms as the measure for a metric ton."
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "WasteType": {
+              "type": "string",
+              "title": "Waste Type",
+              "display": "block",
+              "tooltiptext": "Please specify the type of waste. e.g. Paper waste, E-waste, chemical waste etc. "
+            },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "Wastecategory": {
+              "enum": ["Hazardous", "Non Hazardous"],
+              "type": "string",
+              "title": "Waste category",
+              "display": "block",
+              "tooltiptext": "Select the waste category from the given dropdown."
+            },
+            "Wastediverted": {
+              "type": "string",
+              "title": "Waste diverted",
+              "display": "none"
+            },
+            "RecoveryOperations": {
+              "enum": ["Preparation for reuse", "Recycing", "other"],
+              "type": "string",
+              "title": "Recovery Operations",
+              "display": "block",
+              "tooltiptext": "Recovery: Operation wherein products, components of products,or materials that have become waste are prepared to fulfill a purpose in place of new products, components, or materials that would otherwise have been used for that purpose.Recovery Methods: Preparation for reuse: Checking, cleaning, or repairing operations, by which products or components of products that have become waste are prepared to be put to use for the same purpose for which they were conceived.Recycling: Reprocessing of products or components of products that have become waste, to make new materials"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 25,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Waste - Waste directed from disposal - Contextual info",
+      "path": 25,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Q1": {
+            "ui:Gri": "GRI 306-3b",
+            "ui:title": "Provide contextual information necessary to understand the data and how the data has been compiled.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:hadding": "Impact Analysis: Inputs, Activities, Outputs",
+            "ui:options": { "label": false },
+            "ui:gridisplay": "none",
+            "ui:titlediplay": "block",
+            "ui:tooltipstitle": "Please provide contextual information necessary to understand the data and how the data has been compiled. e.g. any standards, methodologies etc. used for data compilation. ",
+            "ui:haddingdisplay": "none",
+            "ui:tooltipshadding": "Provide contextual information necessary to understand the data and how the data has been compiled.",
+            "ui:titletooltipdisplay": "block",
+            "ui:haddingtooltipdisplay": "none"
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": { "Q1": { "type": "string", "format": "textarea" } }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 26,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Waste - Waste directed to disposal - Waste directed to disposal",
+      "path": 26,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Site": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": [
+            "Wastecategory",
+            "WasteType",
+            "Unit",
+            "Wastedisposed",
+            "Methodofdisposal",
+            "Site",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "WasteType": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "Wastecategory": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Wastedisposed": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Methodofdisposal": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Site": {
+              "enum": ["Onsite", "Offsite"],
+              "type": "string",
+              "title": "Site",
+              "display": "block",
+              "tooltiptext": "On-site: �Onsite� means within the physical boundary  or administrative control of the reporting organization Off-site: �Offsite� means outside the physical boundary \\ or administrative control of the reporting organization"
+            },
+            "Unit": {
+              "enum": [
+                "g",
+                "Kgs",
+                "t (metric tons)",
+                "ton (US short ton)",
+                "lbs"
+              ],
+              "type": "string",
+              "title": "Unit",
+              "display": "block",
+              "tooltiptext": "Use 1000 kilograms as the measure for a metric ton."
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "WasteType": {
+              "type": "string",
+              "title": "Waste Type",
+              "display": "block",
+              "tooltiptext": "Please specify the type of waste. e.g. Paper waste, E-waste, chemical waste etc. "
+            },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "Wastecategory": {
+              "enum": ["Hazardous", "Non Hazardous"],
+              "type": "string",
+              "title": "Waste category",
+              "display": "block",
+              "tooltiptext": "Select the waste category from the given dropdown."
+            },
+            "Wastedisposed": {
+              "type": "string",
+              "title": "Waste disposed (No.)",
+              "display": "none"
+            },
+            "Methodofdisposal": {
+              "enum": [
+                "Inceneration (with energy recovery) for reuse",
+                "Inceneration (without energy recovery)",
+                "Landfilling",
+                "Other (please specify)",
+                "External Vendor"
+              ],
+              "type": "string",
+              "title": "Method of disposal",
+              "display": "block",
+              "tooltiptext": "Disposal: Any operation which is not recovery, even where the operation has as a secondary consequence the recovery of energy Landfilling: Final depositing of solid waste at, below, or above ground level at engineered disposal sites Incineration: Controlled burning of waste at high temperatures"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 27,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Waste - Waste directed to disposal - Contextual info",
+      "path": 27,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Q1": {
+            "ui:Gri": "GRI 306-3b",
+            "ui:title": "Provide contextual information necessary to understand the data and how the data has been compiled.",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:hadding": "Impact Analysis: Inputs, Activities, Outputs",
+            "ui:options": { "label": false },
+            "ui:gridisplay": "none",
+            "ui:titlediplay": "block",
+            "ui:tooltipstitle": "Please provide contextual information necessary to understand the data and how the data has been compiled. e.g. any standards, methodologies etc. used for data compilation. ",
+            "ui:haddingdisplay": "none",
+            "ui:tooltipshadding": "Provide contextual information necessary to understand the data and how the data has been compiled.",
+            "ui:titletooltipdisplay": "block",
+            "ui:haddingtooltipdisplay": "none"
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": { "Q1": { "type": "string", "format": "textarea" } }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 28,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Materials - Materials used by weight or volume - Non renewable",
+      "path": 28,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "Source": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": [
+            "Typeofmaterial",
+            "Materialsused",
+            "Source",
+            "Totalweight",
+            "Unit",
+            "Datasource",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "Datasource": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "Totalweight": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Materialsused": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false }
+          },
+          "Typeofmaterial": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": [
+                "Cubic centimeter cm3",
+                "Cubic decimeter dm3",
+                "Cubic meter m3",
+                "Gram",
+                "Kilogram Kg",
+                "Liter",
+                "Milligram",
+                "Milliliter",
+                "Fluid Ounce fl Oz",
+                "Gallon Gal",
+                "Pint Pt",
+                "Pound Lb",
+                "Quart Qt",
+                "Cubic foot ft3",
+                "Metric ton",
+                "US short ton (tn)"
+              ],
+              "type": "string",
+              "title": "Unit",
+              "display": "none",
+              "tooltiptext": "Use 1000 kilograms as the measure for a metric ton."
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "Source": {
+              "enum": ["Externally sourced", "Internally sourced"],
+              "type": "string",
+              "title": "Source",
+              "display": "block",
+              "tooltiptext": "Where does the company get its materials from? Internally sourced materials: Materials that the company makes itself.Externally sourced materials: Materials that the company buys from other companies."
+            },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "Datasource": {
+              "enum": ["Estimated", "Direct measurement"],
+              "type": "string",
+              "title": "Data source",
+              "display": "block",
+              "tooltiptext": "What is the source of the data for the total weight or volume of materials used? Estimation: process of making an approximate calculation of something.Direct measurement: process of measuring something directly. For example, a company might directly measure the total weight or volume of materials used by weighing or measuring each batch of materials used."
+            },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "Totalweight": {
+              "type": "string",
+              "title": "Total weight/volume",
+              "display": "block",
+              "tooltiptext": "How much material is used for the production of goods or services?(Please specify the total weight or volume.)"
+            },
+            "Materialsused": {
+              "enum": [
+                "Aluminium batteries",
+                "Cobalt",
+                "Copper",
+                "Gold",
+                "iron",
+                "Lithium",
+                "Lubricants",
+                "Oil",
+                "Plastic",
+                "Solvents",
+                "Steel",
+                "Tantalum",
+                "Tin",
+                "Tungsten",
+                "Tires",
+                "Uranium",
+                "Zinc",
+                "Others"
+              ],
+              "type": "string",
+              "title": "Materials used",
+              "display": "block",
+              "tooltiptext": "What materials does the compa use to produce its goods or services?"
+            },
+            "Typeofmaterial": {
+              "enum": [
+                "Raw materials",
+                "Associated process materials",
+                "Semi-manufactured goods or parts",
+                "Materials for packaging purposes"
+              ],
+              "type": "string",
+              "title": "Type of material",
+              "display": "none",
+              "tooltiptext": "Select the waste category from the given dropdown."
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 29,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Materials - Materials used by weight or volume - Renewable",
+      "path": 29,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "Source": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": [
+            "Typeofmaterial",
+            "Materialsused",
+            "Source",
+            "Totalweight",
+            "Unit",
+            "Datasource",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "Datasource": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "Totalweight": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Materialsused": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false }
+          },
+          "Typeofmaterial": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": [
+                "Cubic centimeter cm3",
+                "Cubic decimeter dm3",
+                "Cubic meter m3",
+                "Gram",
+                "Kilogram Kg",
+                "Liter",
+                "Milligram",
+                "Milliliter",
+                "Fluid Ounce fl Oz",
+                "Gallon Gal",
+                "Pint Pt",
+                "Pound Lb",
+                "Quart Qt",
+                "Cubic foot ft3",
+                "Metric ton",
+                "US short ton (tn)"
+              ],
+              "type": "string",
+              "title": "Unit",
+              "display": "none",
+              "tooltiptext": "Use 1000 kilograms as the measure for a metric ton."
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "Source": {
+              "enum": ["Externally sourced", "Internally sourced"],
+              "type": "string",
+              "title": "Source",
+              "display": "block",
+              "tooltiptext": "Where does the company get its materials from? Internally sourced materials: Materials that the company makes itself.Externally sourced materials: Materials that the company buys from other companies."
+            },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "Datasource": {
+              "enum": ["Estimated", "Direct measurement"],
+              "type": "string",
+              "title": "Data source",
+              "display": "block",
+              "tooltiptext": "What is the source of the data for the total weight or volume of materials used? Estimation: process of making an approximate calculation of something.Direct measurement: process of measuring something directly. For example, a company might directly measure the total weight or volume of materials used by weighing or measuring each batch of materials used."
+            },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "Totalweight": {
+              "type": "string",
+              "title": "Total weight/volume",
+              "display": "block",
+              "tooltiptext": "How much material is used for the production of goods or services?(Please specify the total weight or volume.)"
+            },
+            "Materialsused": {
+              "enum": [
+                "Cardboard",
+                "Glass",
+                "Hemp",
+                "Kenaf",
+                "Natural Rubber",
+                "Paper",
+                "Timber",
+                "Wool",
+                "Others"
+              ],
+              "type": "string",
+              "title": "Materials used",
+              "display": "block",
+              "tooltiptext": "What materials does the compa use to produce its goods or services?"
+            },
+            "Typeofmaterial": {
+              "enum": [
+                "Raw materials",
+                "Associated process materials",
+                "Semi-manufactured goods or parts",
+                "Materials for packaging purposes"
+              ],
+              "type": "string",
+              "title": "Type of material",
+              "display": "none",
+              "tooltiptext": "Select the waste category from the given dropdown."
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 30,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Materials - Recycled input materials used - Recycled input materials used",
+      "path": 30,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Unit2": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": [
+            "Totalweight",
+            "Recycledmaterialsused",
+            "Typeofrecycledmaterialused",
+            "Amountofmaterialrecycled",
+            "Unit",
+            "Amountofrecycledinputmaterialused",
+            "Unit2",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "Totalweight": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Recycledmaterialsused": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Amountofmaterialrecycled": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Typeofrecycledmaterialused": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false }
+          },
+          "Amountofrecycledinputmaterialused": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": [
+                "Cubic centimeter cm3",
+                "Cubic decimeter dm3",
+                "Cubic meter m3",
+                "Gram",
+                "Kilogram Kg",
+                "Liter",
+                "Milligram",
+                "Milliliter",
+                "Fluid Ounce fl Oz",
+                "Gallon Gal",
+                "Pint Pt",
+                "Pound Lb",
+                "Quart Qt",
+                "Cubic foot ft3",
+                "Metric ton",
+                "US short ton (tn)"
+              ],
+              "type": "string",
+              "title": "Unit",
+              "display": "none",
+              "tooltiptext": "Use 1000 kilograms as the measure for a metric ton."
+            },
+            "Unit2": {
+              "enum": [
+                "Cubic centimeter cm3",
+                "Cubic decimeter dm3",
+                "Cubic meter m3",
+                "Gram",
+                "Kilogram Kg",
+                "Liter",
+                "Milligram",
+                "Milliliter",
+                "Fluid Ounce fl Oz",
+                "Gallon Gal",
+                "Pint Pt",
+                "Pound Lb",
+                "Quart Qt",
+                "Cubic foot ft3",
+                "Metric ton",
+                "US short ton (tn)"
+              ],
+              "type": "string",
+              "title": "Unit",
+              "display": "none",
+              "tooltiptext": "Use 1000 kilograms as the measure for a metric ton."
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "Totalweight": {
+              "type": "string",
+              "title": "Total weight/volume",
+              "display": "block",
+              "tooltiptext": "Use the total weight or volume of materials used as specified in Disclosure 301-1"
+            },
+            "Recycledmaterialsused": {
+              "enum": ["Yes", "No"],
+              "type": "string",
+              "title": "Recycled materials used",
+              "display": "block",
+              "tooltiptext": "Does the company use recycled materials in its production process?"
+            },
+            "Amountofmaterialrecycled": {
+              "type": "string",
+              "title": "Amount of material recycled ",
+              "display": "block",
+              "tooltiptext": "Please specify the amount of material the company recycled during the reporting period."
+            },
+            "Typeofrecycledmaterialused": {
+              "enum": [
+                "Recycled plastic",
+                "Recycled metal",
+                "Recycled paper products",
+                "Recycled Glass",
+                "Natural materials",
+                "Others"
+              ],
+              "type": "string",
+              "title": "Type of recycled material used",
+              "display": "block",
+              "tooltiptext": "What types of recycled materials does the company use?"
+            },
+            "Amountofrecycledinputmaterialused": {
+              "type": "string",
+              "title": "Amount of recycled input material used ",
+              "display": "block",
+              "tooltiptext": "How much recycled material is used for the production of goods or services? Recycled Input Materials: Materials that have been used and then processed into new materials. "
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 31,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Materials - Reclaimed products and their packaging materials - Reclaimed products and their packaging materials",
+      "path": 31,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Unit": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Unit2": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Remove": {
+            "ui:widget": "RemoveWidget",
+            "ui:options": { "label": false }
+          },
+          "AssignTo": {
+            "ui:widget": "AssignTobutton",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "ui:order": [
+            "Typesofproducts",
+            "Productclassification",
+            "Productcode",
+            "Productname",
+            "Amountofproducts",
+            "Unit",
+            "Recycledmaterialsused",
+            "Typesofrecycledmaterials",
+            "Amountsproduct",
+            "Amountofrecycledinputmaterialused",
+            "Unit2",
+            "Datacollectionmethod",
+            "AssignTo",
+            "FileUpload",
+            "Remove"
+          ],
+          "FileUpload": {
+            "ui:widget": "FileUploadWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "classNames": "fieldset",
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          },
+          "Productcode": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false }
+          },
+          "Productname": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Amountsproduct": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Typesofproducts": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Amountofproducts": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Datacollectionmethod": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Productclassification": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Recycledmaterialsused": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Typesofrecycledmaterials": {
+            "ui:widget": "selectWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          },
+          "Amountofrecycledinputmaterialused": {
+            "ui:widget": "inputWidget",
+            "ui:options": { "label": false },
+            "ui:horizontal": true
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Unit": {
+              "enum": [
+                "Cubic centimeter cm3",
+                "Cubic decimeter dm3",
+                "Cubic meter m3",
+                "Gram",
+                "Kilogram Kg",
+                "Liter",
+                "Milligram",
+                "Milliliter",
+                "Fluid Ounce fl Oz",
+                "Gallon Gal",
+                "Pint Pt",
+                "Pound Lb",
+                "Quart Qt",
+                "Cubic foot ft3",
+                "Metric ton",
+                "US short ton (tn)"
+              ],
+              "type": "string",
+              "title": "Unit",
+              "display": "none",
+              "tooltiptext": "Use 1000 kilograms as the measure for a metric ton."
+            },
+            "Unit2": {
+              "enum": [
+                "Cubic centimeter cm3",
+                "Cubic decimeter dm3",
+                "Cubic meter m3",
+                "Gram",
+                "Kilogram Kg",
+                "Liter",
+                "Milligram",
+                "Milliliter",
+                "Fluid Ounce fl Oz",
+                "Gallon Gal",
+                "Pint Pt",
+                "Pound Lb",
+                "Quart Qt",
+                "Cubic foot ft3",
+                "Metric ton",
+                "US short ton (tn)"
+              ],
+              "type": "string",
+              "title": "Unit",
+              "display": "block",
+              "tooltiptext": "Please specify the total weight or volume of recycled packaging material that the company used in the reporting period."
+            },
+            "Remove": { "type": "string", "title": "Remove" },
+            "AssignTo": { "type": "string", "title": "Assign To" },
+            "FileUpload": {
+              "type": "string",
+              "title": "File Upload",
+              "format": "data-url"
+            },
+            "Productcode": {
+              "type": "string",
+              "title": "Product code",
+              "display": "block",
+              "tooltiptext": "Does the product have a globally recognized product classification code? If yes, please mention the product code. For example: ISSN number, GPC code, Global trade item number (GTIN), etc."
+            },
+            "Productname": {
+              "type": "string",
+              "title": "Product name",
+              "display": "block",
+              "tooltiptext": "Please mention the actual name of the product."
+            },
+            "Amountsproduct": {
+              "type": "string",
+              "title": "Amounts of product and packaging materials recycled",
+              "display": "block",
+              "tooltiptext": "Please specify the amount of material the company recycled during the reporting period."
+            },
+            "Typesofproducts": {
+              "type": "string",
+              "title": "Types of products sold ",
+              "display": "block",
+              "tooltiptext": "What types of products did the company sell in the reporting period?"
+            },
+            "Amountofproducts": {
+              "type": "string",
+              "title": "Amount of products sold",
+              "display": "block",
+              "tooltiptext": "Please specify the total amount of products sold by the company during the reporting period."
+            },
+            "Datacollectionmethod": {
+              "type": "string",
+              "title": "Data collection method",
+              "display": "block",
+              "tooltiptext": "Please specify how the data for the recycled materials was collected."
+            },
+            "Productclassification": {
+              "enum": [
+                "ASIN",
+                "DOI",
+                "EAN",
+                "GPC",
+                "ISBN",
+                "ISMN",
+                "ISRC",
+                "MPN",
+                "UPC",
+                "UNSPSC",
+                "Others"
+              ],
+              "type": "string",
+              "title": "Product classification",
+              "display": "block",
+              "tooltiptext": "Which type of global product classification code applies to this product?For example: ISSN, UNSPSC, GPC, etc."
+            },
+            "Recycledmaterialsused": {
+              "enum": ["Yes", "No"],
+              "type": "string",
+              "title": "Recycled materials used ",
+              "display": "block",
+              "tooltiptext": "Does the company use recycled materials in its packaging?"
+            },
+            "Typesofrecycledmaterials": {
+              "enum": [
+                "Cardboard",
+                "Folding carton",
+                "Glass Bottles",
+                "Glass Jars",
+                "Metal cans",
+                "Paper",
+                "Plastic",
+                "Wooden crates",
+                "Wood",
+                "Bamboo",
+                "Cellulose",
+                "Corn starch",
+                "Mushroom packaging",
+                "Organic Fabric",
+                "Others"
+              ],
+              "type": "string",
+              "title": "Recycled materials used ",
+              "display": "block",
+              "tooltiptext": "Does the company use recycled materials in its packaging?"
+            },
+            "Amountofrecycledinputmaterialused": {
+              "type": "string",
+              "title": "Amount of recycled input material used ",
+              "display": "block",
+              "tooltiptext": "How much recycled material is used for the production of goods or services? Recycled Input Materials: Materials that have been used and then processed into new materials. "
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.fieldgroup",
+    "pk": 32,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.927Z",
+      "updated_at": "2024-05-21T10:13:17.931Z",
+      "name": "Materials - Reclaimed products and their packaging materials - Data collection method",
+      "path": 32,
+      "meta_data": { "key": "value to test" },
+      "ui_schema": {
+        "items": {
+          "Q1": {
+            "ui:Gri": "GRI 303-1b",
+            "ui:title": "How the data for disclosure 301-3 have been collected?",
+            "ui:widget": "TextareaWidgetnew",
+            "ui:hadding": "Impact Analysis: Inputs, Activities, Outputs",
+            "ui:options": { "label": false },
+            "ui:gridisplay": "block",
+            "ui:titlediplay": "block",
+            "ui:tooltipstitle": "Please specify how the data have been collected for disclosure 301-3.",
+            "ui:haddingdisplay": "none",
+            "ui:tooltipshadding": "Provide contextual information necessary to understand the data and how the data has been compiled.",
+            "ui:titletooltipdisplay": "block",
+            "ui:haddingtooltipdisplay": "none"
+          },
+          "ui:options": {
+            "layout": "horizontal",
+            "addable": false,
+            "orderable": false,
+            "removable": false
+          }
+        }
+      },
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": { "Q1": { "type": "string", "format": "textarea" } }
+        }
+      }
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.954Z",
+      "updated_at": "2024-05-21T10:13:17.967Z",
+      "data": [
+        {
+          "Emission": {
+            "Unit": "Joules",
+            "Activity": "",
+            "Category": "Cooling",
+            "Quantity": "44",
+            "Subcategory": "Electric"
+          }
+        },
+        {
+          "Emission": {
+            "Unit": "Joules",
+            "Activity": "Renewable",
+            "Category": "Heating",
+            "Quantity": "39",
+            "Subcategory": "Coal"
+          }
+        },
+        {
+          "Emission": {
+            "Unit": "Joules",
+            "Activity": "",
+            "Category": "Cooling",
+            "Quantity": "55",
+            "Subcategory": "Electric"
+          }
+        }
+      ],
+      "path": 1,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.954Z",
+      "updated_at": "2024-05-21T10:13:17.967Z",
+      "data": [
+        {
+          "Emission": {
+            "Unit": "Joules",
+            "Activity": "Renewable",
+            "Category": "Heating",
+            "Quantity": "33",
+            "Subcategory": "Coal"
+          }
+        }
+      ],
+      "path": 2,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.954Z",
+      "updated_at": "2024-05-21T10:13:17.967Z",
+      "data": [
+        {
+          "Emission": {
+            "Unit": "KJ",
+            "Activity": "",
+            "Category": "Heating",
+            "Quantity": "99",
+            "Subcategory": "Solar"
+          }
+        },
+        {
+          "Emission": {
+            "Unit": "",
+            "Activity": "",
+            "Category": "Cooling",
+            "Quantity": "39",
+            "Subcategory": "Electric"
+          }
+        }
+      ],
+      "path": 3,
+      "user": 1,
+      "client": 1
+    }
+  }
+]
