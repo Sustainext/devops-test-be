@@ -41,4 +41,4 @@ class UpdateResponseSerializer(serializers.Serializer):
 class RawResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = RawResponse
-        fields = ["id", "data", "modified_at"]
+        fields = ["id", "data", "updated_at"]
