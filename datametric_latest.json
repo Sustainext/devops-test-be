@@ -1581,7 +1581,7 @@
     "pk": 13,
     "fields": {
       "created_at": "2024-05-21T10:13:17.927Z",
-      "updated_at": "2024-05-21T10:13:17.931Z",
+      "updated_at": "2024-05-28T10:55:06.289Z",
       "name": "Energy - Energy Intensity - Energy Intensity",
       "path": 13,
       "meta_data": { "key": "value to test" },
@@ -1627,7 +1627,7 @@
             "ui:options": { "label": false },
             "ui:horizontal": true
           },
-          "classNames": "flex flex-col md:flex-row w-full md:w-auto",
+          "classNames": "fieldset",
           "ui:options": {
             "layout": "horizontal",
             "addable": false,
@@ -1647,8 +1647,7 @@
             "ui:options": { "label": false },
             "ui:horizontal": true
           }
-        },
-        "className": "flex flex-wrap"
+        }
       },
       "schema": {
         "type": "array",
@@ -1732,7 +1731,7 @@
     "pk": 14,
     "fields": {
       "created_at": "2024-05-21T10:13:17.927Z",
-      "updated_at": "2024-05-21T10:13:17.931Z",
+      "updated_at": "2024-05-28T11:03:07.686Z",
       "name": "Energy - Reduction of energy consumption - Reduction of energy  consumption",
       "path": 14,
       "meta_data": { "key": "value to test" },
@@ -1773,7 +1772,7 @@
             "ui:options": { "label": false },
             "ui:horizontal": true
           },
-          "classNames": "flex flex-col md:flex-row w-full md:w-auto",
+          "classNames": "fieldset",
           "ui:options": {
             "layout": "horizontal",
             "addable": false,
@@ -1803,8 +1802,7 @@
             "ui:widget": "inputWidget",
             "ui:options": { "label": false }
           }
-        },
-        "className": "flex flex-wrap"
+        }
       },
       "schema": {
         "type": "array",
@@ -1999,7 +1997,7 @@
     "pk": 17,
     "fields": {
       "created_at": "2024-05-21T10:13:17.927Z",
-      "updated_at": "2024-05-21T10:13:17.931Z",
+      "updated_at": "2024-05-28T11:05:07.690Z",
       "name": "Energy - Reduction in energy requirements of products and service - Reduction in energy in products and services",
       "path": 17,
       "meta_data": { "key": "value to test" },
@@ -2041,7 +2039,7 @@
             "ui:options": { "label": false },
             "ui:horizontal": true
           },
-          "classNames": "flex flex-col md:flex-row w-full md:w-auto",
+          "classNames": "fieldset",
           "ui:options": {
             "layout": "horizontal",
             "addable": false,
@@ -2052,8 +2050,7 @@
             "ui:widget": "inputWidget",
             "ui:options": { "label": false }
           }
-        },
-        "className": "flex flex-wrap"
+        }
       },
       "schema": {
         "type": "array",
@@ -4825,7 +4822,7 @@
     "pk": 3,
     "fields": {
       "created_at": "2024-05-21T10:13:17.954Z",
-      "updated_at": "2024-05-23T05:14:21.726Z",
+      "updated_at": "2024-05-24T10:22:09.918Z",
       "data": [
         {
           "Emission": {
@@ -4838,11 +4835,11 @@
         },
         {
           "Emission": {
-            "Unit": "",
-            "Activity": "",
-            "Category": "Cooling",
-            "Quantity": "44",
-            "Subcategory": "Electric"
+            "Unit": "Joules",
+            "Activity": "Photovoltaic",
+            "Category": "Heating",
+            "Quantity": "55",
+            "Subcategory": "Solar"
           }
         }
       ],
@@ -4896,24 +4893,24 @@
     "pk": 5,
     "fields": {
       "created_at": "2024-05-22T07:48:16.376Z",
-      "updated_at": "2024-05-22T07:48:37.468Z",
+      "updated_at": "2024-05-24T10:21:42.462Z",
       "data": [
         {
           "Emission": {
             "Unit": "Joules",
             "Activity": "Renewable",
             "Category": "Heating",
-            "Quantity": "44",
+            "Quantity": "39",
             "Subcategory": "Coal"
           }
         },
         {
           "Emission": {
-            "Unit": "",
-            "Activity": "",
-            "Category": "Cooling",
-            "Quantity": "39",
-            "Subcategory": "Natural Gas"
+            "Unit": "Joules",
+            "Activity": "Renewable",
+            "Category": "Heating",
+            "Quantity": "33",
+            "Subcategory": "Coal"
           }
         }
       ],
@@ -4927,18 +4924,509 @@
     "pk": 6,
     "fields": {
       "created_at": "2024-05-23T07:14:26.394Z",
-      "updated_at": "2024-05-23T07:14:26.394Z",
+      "updated_at": "2024-05-28T10:10:10.132Z",
       "data": [
         {
           "Unit": "Joules",
-          "Source": "Wind",
-          "Purpose": "Purpose 1",
-          "Quantity": "39",
-          "Renewable": "Renewable",
+          "Source": "Solar",
+          "Purpose": "Pupose 4",
+          "Quantity": "55",
+          "Renewable": "Non-renewable",
           "EnergyType": "Heating"
+        },
+        {
+          "Unit": "Joules",
+          "Source": "Electricity",
+          "Purpose": "Purpose 5",
+          "Quantity": "44",
+          "Renewable": "Renewable",
+          "EnergyType": "Electricity"
+        },
+        {
+          "Unit": "KWh",
+          "Source": "Wood Biomas",
+          "Purpose": "Pupose 6",
+          "Quantity": "47",
+          "Renewable": "Non-renewable",
+          "EnergyType": "Electricity"
         }
       ],
       "path": 4,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-05-24T04:32:54.815Z",
+      "updated_at": "2024-05-24T10:44:26.203Z",
+      "data": [
+        {
+          "Unit": "Joules",
+          "Source": "Cooling",
+          "Purpose": "Purpose 3",
+          "Quantity": "333",
+          "Renewable": "Renewable",
+          "EnergyType": "Heating"
+        },
+        {
+          "Unit": "Joules",
+          "Source": "Hydro",
+          "Purpose": "Purpose 4",
+          "Quantity": "444",
+          "Renewable": "Non-renewable",
+          "EnergyType": "Heating"
+        }
+      ],
+      "path": 5,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-05-24T10:52:44.009Z",
+      "updated_at": "2024-05-24T10:53:20.406Z",
+      "data": [
+        {
+          "Unit": "Joules",
+          "Source": "Electricity",
+          "Quantity": "39",
+          "Renewable": "Renewable",
+          "EnergyType": "Heating"
+        },
+        {
+          "Unit": "MMBtu",
+          "Source": "Cooling",
+          "Quantity": "888",
+          "Renewable": "Renewable",
+          "EnergyType": "Electricity"
+        }
+      ],
+      "path": 6,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-05-27T10:12:33.931Z",
+      "updated_at": "2024-05-27T10:12:33.931Z",
+      "data": [
+        {
+          "Unit": "Joules",
+          "Source": "Solar",
+          "Quantity": "39",
+          "Renewable": "Renewable",
+          "EnergyType": "Heating",
+          "Nameofentity": "Name of entity",
+          "Typeofentity": "Generator"
+        }
+      ],
+      "path": 7,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-05-27T11:31:03.265Z",
+      "updated_at": "2024-05-27T11:31:34.192Z",
+      "data": [
+        {
+          "textareaQ1": "Standards",
+          "textareaQ2": "Methodologies",
+          "textareaQ3": "Assumption",
+          "textareaQ4": "Calculations"
+        }
+      ],
+      "path": 8,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 11,
+    "fields": {
+      "created_at": "2024-05-27T11:34:39.748Z",
+      "updated_at": "2024-05-27T11:34:51.840Z",
+      "data": [{ "Q1": "Conversion Factors" }],
+      "path": 9,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 12,
+    "fields": {
+      "created_at": "2024-05-27T11:49:21.163Z",
+      "updated_at": "2024-05-27T11:50:53.407Z",
+      "data": [
+        {
+          "Unit": "KJ",
+          "Purpose": "Purpose 2",
+          "Quantity": "39",
+          "EnergyType": "Biogas"
+        },
+        {
+          "Unit": "Joules",
+          "Purpose": "Purpose 3",
+          "Quantity": "49",
+          "EnergyType": "Heating"
+        }
+      ],
+      "path": 10,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 13,
+    "fields": {
+      "created_at": "2024-05-27T11:57:12.709Z",
+      "updated_at": "2024-05-27T11:57:31.074Z",
+      "data": [
+        {
+          "textareaQ1": "Outside - Standards",
+          "textareaQ2": "Outside - Methodologies",
+          "textareaQ3": "Outside - Assumptions",
+          "textareaQ4": "Outside - Calculations"
+        }
+      ],
+      "path": 11,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 14,
+    "fields": {
+      "created_at": "2024-05-27T12:04:43.929Z",
+      "updated_at": "2024-05-27T12:05:00.207Z",
+      "data": [{ "textareaQ1": "This is a descriptions" }],
+      "path": 12,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 15,
+    "fields": {
+      "created_at": "2024-05-28T05:19:04.473Z",
+      "updated_at": "2024-05-28T05:20:30.999Z",
+      "data": [
+        {
+          "Unit": "KJ",
+          "EnergyType": "cooling",
+          "Metricunit": "sales unit",
+          "EnergyQuantity": "44",
+          "Metricquantity": "445",
+          "Organizationmetric": "size"
+        },
+        {
+          "Unit": "Wh",
+          "EnergyType": "steam",
+          "Metricunit": "sales unit",
+          "EnergyQuantity": "56",
+          "Metricquantity": "446",
+          "Organizationmetric": "size"
+        }
+      ],
+      "path": 13,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 16,
+    "fields": {
+      "created_at": "2024-05-28T05:27:13.748Z",
+      "updated_at": "2024-05-28T05:29:27.745Z",
+      "data": [
+        {
+          "Unit": "Joules",
+          "Baseyear": "2001",
+          "Methodologyused": "Method 1",
+          "Energyreductionis": "estimated",
+          "Energytypereduced": "Fuel",
+          "Typeofintervention": "Switching to LEDs",
+          "Quantitysavedduetointervention": "333"
+        },
+        {
+          "Unit": "Joules",
+          "Baseyear": "2003",
+          "Methodologyused": "Method 3",
+          "Energyreductionis": "estimated",
+          "Energytypereduced": "Fuel",
+          "Typeofintervention": "Process changes",
+          "Quantitysavedduetointervention": "555"
+        }
+      ],
+      "path": 14,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 17,
+    "fields": {
+      "created_at": "2024-05-28T05:38:52.872Z",
+      "updated_at": "2024-05-28T05:39:08.454Z",
+      "data": [
+        { "textareaQ1": "This is description for reduction of energy " }
+      ],
+      "path": 15,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 18,
+    "fields": {
+      "created_at": "2024-05-28T05:42:53.833Z",
+      "updated_at": "2024-05-28T05:59:56.064Z",
+      "data": [
+        {
+          "textareaQ1": "Standard 1",
+          "textareaQ2": "Method 1\n",
+          "textareaQ3": "Assumptions ",
+          "textareaQ4": "Calculation "
+        }
+      ],
+      "path": 16,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 19,
+    "fields": {
+      "created_at": "2024-05-28T06:13:14.006Z",
+      "updated_at": "2024-05-28T06:13:36.945Z",
+      "data": [
+        {
+          "Unit": "KJ",
+          "Baseyear": "2001",
+          "Quantity": "3232",
+          "ProductServices": "Service 1"
+        },
+        {
+          "Unit": "Joules",
+          "Baseyear": "2004",
+          "Quantity": "555",
+          "ProductServices": "Service 3"
+        }
+      ],
+      "path": 17,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 20,
+    "fields": {
+      "created_at": "2024-05-28T06:19:09.418Z",
+      "updated_at": "2024-05-28T06:19:26.480Z",
+      "data": [
+        {
+          "textareaQ1": "This is a description for the last screen\nWriting it one more time"
+        }
+      ],
+      "path": 18,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 21,
+    "fields": {
+      "created_at": "2024-05-28T06:22:59.827Z",
+      "updated_at": "2024-05-28T06:23:32.046Z",
+      "data": [
+        {
+          "textareaQ1": "Standard for last screen 2",
+          "textareaQ2": "Methodology for last screen 2",
+          "textareaQ3": "Assumptions for last screen 2",
+          "textareaQ4": "Calculation for last screen 2"
+        }
+      ],
+      "path": 19,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 22,
+    "fields": {
+      "created_at": "2024-05-28T09:35:13.904Z",
+      "updated_at": "2024-05-28T09:35:33.973Z",
+      "data": [{ "Q1": "Description 1", "Q2": "Description 22" }],
+      "path": 20,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 23,
+    "fields": {
+      "created_at": "2024-05-28T09:41:05.668Z",
+      "updated_at": "2024-05-28T09:41:21.338Z",
+      "data": [
+        {
+          "Q1": "Description 11",
+          "Q2": "Description 22",
+          "Q3": "Description 34"
+        }
+      ],
+      "path": 21,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 24,
+    "fields": {
+      "created_at": "2024-05-28T09:58:14.646Z",
+      "updated_at": "2024-05-28T11:12:17.840Z",
+      "data": [
+        {
+          "Unit": "g",
+          "WasteType": "Type a",
+          "Wastecategory": "Hazardous",
+          "Wastegenerated": "Plastic"
+        },
+        {
+          "Unit": "Kgs",
+          "WasteType": "Type c",
+          "Wastecategory": "Non Hazardous",
+          "Wastegenerated": "Rust"
+        }
+      ],
+      "path": 22,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 25,
+    "fields": {
+      "created_at": "2024-05-28T11:29:34.616Z",
+      "updated_at": "2024-05-28T11:31:12.683Z",
+      "data": [{ "Q1": "Description 33" }],
+      "path": 23,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 26,
+    "fields": {
+      "created_at": "2024-05-28T11:39:03.684Z",
+      "updated_at": "2024-05-28T11:39:32.893Z",
+      "data": [
+        {
+          "Site": "Onsite",
+          "Unit": "t (metric tons)",
+          "WasteType": "Type 2",
+          "Wastecategory": "Hazardous",
+          "Wastediverted": "Diverted 2",
+          "RecoveryOperations": "Recycing"
+        },
+        {
+          "Site": "Onsite",
+          "Unit": "t (metric tons)",
+          "WasteType": "Type 4",
+          "Wastecategory": "Non Hazardous",
+          "Wastediverted": "Diverted 4",
+          "RecoveryOperations": "other"
+        }
+      ],
+      "path": 24,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 27,
+    "fields": {
+      "created_at": "2024-05-28T11:45:36.189Z",
+      "updated_at": "2024-05-28T11:46:02.984Z",
+      "data": [{ "Q1": "It's a description 3" }],
+      "path": 25,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 28,
+    "fields": {
+      "created_at": "2024-05-28T11:56:04.877Z",
+      "updated_at": "2024-05-28T11:56:04.877Z",
+      "data": [
+        {
+          "Site": "Onsite",
+          "Unit": "g",
+          "WasteType": "Type 2",
+          "Wastecategory": "Non Hazardous",
+          "Wastedisposed": "Disposed 3",
+          "Methodofdisposal": "Inceneration (with energy recovery) for reuse"
+        },
+        {
+          "Site": "Offsite",
+          "Unit": "t (metric tons)",
+          "WasteType": "Type 3",
+          "Wastecategory": "Hazardous",
+          "Wastedisposed": "Disposed 4",
+          "Methodofdisposal": "Landfilling"
+        },
+        {
+          "Site": "Offsite",
+          "Unit": "t (metric tons)",
+          "WasteType": "Type 4",
+          "Wastecategory": "Hazardous",
+          "Wastedisposed": "Disposed 8",
+          "Methodofdisposal": "Landfilling"
+        }
+      ],
+      "path": 26,
+      "user": 1,
+      "client": 1
+    }
+  },
+  {
+    "model": "datametric.rawresponse",
+    "pk": 29,
+    "fields": {
+      "created_at": "2024-05-28T11:58:38.204Z",
+      "updated_at": "2024-05-28T11:59:00.115Z",
+      "data": [{ "Q1": "Just description" }],
+      "path": 27,
       "user": 1,
       "client": 1
     }
