@@ -28,6 +28,7 @@ class UpdateResponseSerializer(serializers.Serializer):
     form_data = serializers.ListField(child=serializers.JSONField(), allow_empty=True)
     client_id = serializers.IntegerField(required=True)
     user_id = serializers.IntegerField(required=True)
+    schema = serializers.JSONField(required=False)
     # Add more fields as needed
 
     def validate(self, data):

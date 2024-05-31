@@ -63,11 +63,11 @@ class CreateOrUpdateFieldGroup(APIView):
         serializer = UpdateResponseSerializer(data=request.data)
         if serializer.is_valid():
             validated_data = serializer.validated_data
-
             client_id = validated_data["client_id"]
             user_id = validated_data["user_id"]
             form_data = validated_data["form_data"]
             path = validated_data["path"]
+            schema = validated_data["schema"]
 
             # Retrieve instances of related models
             try:
@@ -89,6 +89,12 @@ class CreateOrUpdateFieldGroup(APIView):
                     # If the RawResponse already exists, update its data
                     raw_response.data = form_data
                     raw_response.save()
+                
+                print('status check')
+                print(raw_response)
+                for item in raw_response:
+                    print(item)
+                    print('*******')
 
                 return Response(
                     {"message": "Form data saved successfully."},
