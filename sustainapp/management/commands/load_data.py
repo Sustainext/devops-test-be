@@ -214,8 +214,8 @@ class Command(BaseCommand):
 
     def update_or_create_targets(self):
         targets = [
-            {"id": 1, "name": "SBTi", "Image": "images/Target/SBTi.png"},
-            {"id": 2, "name": "SBTi Net Zero", "Image": "images/Target/SBTi.png"},
+            {"id": 1, "name": "SBTi", "Image": "images/targets/SBTi.png"},
+            {"id": 2, "name": "SBTi Net Zero", "Image": "images/targets/SBTi.png"},
         ]
         for target in targets:
             Target.objects.update_or_create(id=target["id"], defaults=target)
