@@ -10,32 +10,32 @@ admin.site.register(MyModel, MyModelAdmin)
 
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ("name", "created_at")
+    list_display = ("id","name", "created_at")
 
 
 class DataPointAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "label", "description", "response_type")
+    list_display = ("id","name", "slug", "label", "description", "response_type")
 
 
 admin.site.register(DataPoint, DataPointAdmin)
 
 
 class PathAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug")
+    list_display = ("id","name", "slug")
 
 
 admin.site.register(Path, PathAdmin)
 
 
 class FieldGroupAdmin(admin.ModelAdmin):
-    list_display = ("name", "path", "meta_data", "ui_schema", "schema")
+    list_display = ("id","name", "path", "meta_data", "ui_schema", "schema")
 
 
 admin.site.register(FieldGroup, FieldGroupAdmin)
 
 
 class RawResponseAdmin(admin.ModelAdmin):
-    list_display = ("path", "created_at", "user", "client")
+    list_display = ("id","path", "created_at", "user", "client")
 
 
 admin.site.register(RawResponse, RawResponseAdmin)
@@ -43,6 +43,7 @@ admin.site.register(RawResponse, RawResponseAdmin)
 
 class ResponsePointAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "path",
         "raw_response",
         "response_type",
