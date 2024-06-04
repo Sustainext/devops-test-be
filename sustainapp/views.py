@@ -188,8 +188,6 @@ class ClientViewset(viewsets.ModelViewSet):
 
     def create(self, request):
         logging.info(f"Request data: {request.data}")
-        print(dir(request))
-        print("data : ", request.data)
 
         _serializer = self.serializer_class(data=self.request.data)
         if _serializer.is_valid():
@@ -201,7 +199,6 @@ class ClientViewset(viewsets.ModelViewSet):
         log_call_start()
         instance = self.get_object()
         logging.info(f"Deleting organization instance - {instance}")
-        print(instance)
         self.perform_destroy(instance)
         return Response({"message": "Successfully deleted"}, status=status.HTTP_200_OK)
 
