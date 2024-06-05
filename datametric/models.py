@@ -55,7 +55,7 @@ class RawResponse(AbstractModel):
     year = models.IntegerField(null=True,default=2024)
     month = models.CharField(null=True,default='Jan')
 
-class DataPoint(AbstractModel):
+class DataMetric(AbstractModel):
     name = models.CharField(max_length=200)
     label = models.CharField(max_length=400)
     description = models.CharField(max_length=1000)
@@ -67,13 +67,14 @@ class DataPoint(AbstractModel):
     def __str__(self):
         return self.name
 
-class ResponsePoint(AbstractModel):
+class DataPoint(AbstractModel):
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     raw_response = models.ForeignKey(
         RawResponse,
         on_delete=models.PROTECT,
         default=None,
         related_name="response_points",
+        null=True
     )
     response_type = models.CharField(
         max_length=20, choices=DATA_TYPE_CHOICES, default="String"
@@ -81,8 +82,11 @@ class ResponsePoint(AbstractModel):
     number_holder = models.FloatField(default=None, null=True)
     string_holder = models.CharField(default=None, null=True)
     json_holder = models.JSONField(default=None, null=True)
-    data_point = models.ForeignKey(
-        DataPoint, on_delete=models.PROTECT, default=None, related_name="data_points"
+    data_metric = models.ForeignKey(
+        DataMetric, on_delete=models.PROTECT, default=None, related_name="data_metric_points"
     )
+    boolean_holder = models.BooleanField(default=True,null=True)
+    index = models.IntegerField(default=0,null=False)
     value = models.JSONField(default=None, null=True)
+    metric_name = models.CharField(default='Not Set', null=False)
 

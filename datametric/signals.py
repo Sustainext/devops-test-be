@@ -1,48 +1,77 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import RawResponse, ResponsePoint, DataPoint
+from .models import RawResponse, DataPoint, DataMetric
+from django.db.models import Q
 
-
-def createOrUpdateResponsePoints(data_point, value, path, index, location, year, month, client, user):
+def createOrUpdateDataPoints(data_metric, value, index, raw_response):
     print('Creating or updating Data points')
+    print(data_metric, value, index, raw_response.path, raw_response.user)
+    
+    path = raw_response.path
+    user = raw_response.user
+    client = raw_response.client
+    location = 'new_location'
+    year = '2024'
+    month = 'Jan'
+    
+    number_value = None
+    json_value = None
+    string_value = None
+    boolean_value = None
+    metric_name = data_metric.name
 
-# class ResponsePoint(AbstractModel):
-#     path = models.ForeignKey(Path, on_delete=models.PROTECT)
-#     raw_response = models.ForeignKey(
-#         RawResponse,
-#         on_delete=models.PROTECT,
-#         default=None,
-#         related_name="response_points",
-#     )
-#     response_type = models.CharField(
-#         max_length=20, choices=DATA_TYPE_CHOICES, default="String"
-#     )
-#     number_holder = models.FloatField(default=None, null=True)
-#     string_holder = models.CharField(default=None, null=True)
-#     json_holder = models.JSONField(default=None, null=True)
-#     data_point = models.ForeignKey(
-#         DataPoint, on_delete=models.PROTECT, default=None, related_name="data_points"
-#     )
-#     value = models.JSONField(default=None, null=True)
+    if data_metric.response_type == 'String':
+        string_value = value
+    elif data_metric.response_type in ['Integer', 'Float']:
+        number_value = value
+    elif data_metric.response_type in ['Array Of Objects', 'Object']:
+        json_value = value
+    elif data_metric.response_type == 'Boolean':
+        boolean_value = value
 
-def process_json(json_obj, path):
+    try:
+        data_point, created = DataPoint.objects.update_or_create(
+            data_metric=data_metric,
+            index=index,
+            raw_response=raw_response,
+            defaults={
+                'path': path,
+                'response_type': data_metric.response_type,
+                'number_holder': number_value,
+                'string_holder': string_value,
+                'json_holder': json_value,
+                'value': value,
+                'metric_name': metric_name
+            }
+        )
+
+        if created:
+            print("DataPoint created")
+        else:
+            print("DataPoint updated")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def process_json(json_obj, path, raw_response):
     print('process_json - hit')
     print('path is ', path.slug)
-    data_points = DataPoint.objects.filter(path=path)
-    for point in data_points:
-         print(point.name, ' - is a datapoint found')
-    for item in json_obj:
+    data_metrics = DataMetric.objects.filter(path=path)
+    for metric in data_metrics:
+         print(metric.name, ' - is a datametric found')
+    for index, item in enumerate(json_obj):
             if isinstance(item, dict):
                 first_key, first_value = next(iter(item.items()))
                 # Print the first key and value
                 print(f"Field Group Row: {first_key}")
                 print(f"First Value: {first_value}")
                 try:
-                    for key, value in first_value.items():
-                        data_point = data_points.filter(name=key).first()
-                        print(data_point,data_point.response_type, ' match found ... ')
-                        print(f"for Key: {key}, Value: {value}")
+                    for (key, value) in first_value.items():
+                        data_metric = data_metrics.filter(name=key).first()
+                        print(data_metric, data_metric.response_type, 'match found ...')
+                        print(f"For Index: {index}, Key: {key}, Value: {value}")
+                        # For each of the key pass this to function index, key, value, raw_response create a data point
                         # data_point, value, path, index, location, year, month, client, user
+                        createOrUpdateDataPoints(data_metric, value, index, raw_response)
                 except KeyError as e:
                     print(f"KeyError: {e}")
                 except IndexError as e:
@@ -56,9 +85,9 @@ def create_response_points(sender, instance, created, **kwargs):
         # Example logic to create response points
         # print('this is from the signals - creation')
         # print(instance.path, instance.data, instance.user, instance.client)
-        process_json(instance.data, instance.path)
+        process_json(instance.data, instance.path,instance)
     else:
         # print('this is from the signals - updation')
         # print(instance.path, instance.data, instance.user, instance.client)
-        process_json(instance.data, instance.path)
+        process_json(instance.data, instance.path,instance)
 

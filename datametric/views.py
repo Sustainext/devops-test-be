@@ -67,10 +67,10 @@ class CreateOrUpdateFieldGroup(APIView):
             user_id = validated_data["user_id"]
             form_data = validated_data["form_data"]
             path = validated_data["path"]
-            schema = validated_data["schema"]
+            # schema = validated_data["schema"]
 
-            # Retrieve instances of related models
             try:
+                # Retrieve instances of related models
                 path_instance = Path.objects.get(slug=path)
                 user_instance = CustomUser.objects.get(pk=user_id)
                 client_instance = Client.objects.get(pk=client_id)
@@ -80,9 +80,7 @@ class CreateOrUpdateFieldGroup(APIView):
                     path=path_instance,
                     user=user_instance,
                     client=client_instance,
-                    defaults={
-                        "data": form_data
-                    },  # Set the default data if creating a new instance
+                    defaults={"data": form_data},
                 )
 
                 if not created:
@@ -91,21 +89,27 @@ class CreateOrUpdateFieldGroup(APIView):
                     raw_response.save()
                 
                 print('status check')
-                print(raw_response)
-                for item in raw_response:
-                    print(item)
-                    print('*******')
+                print(f"RawResponse: {raw_response}")
+                print(f"Created: {created}")
 
                 return Response(
                     {"message": "Form data saved successfully."},
                     status=status.HTTP_200_OK,
                 )
 
-            except (Path.DoesNotExist, CustomUser.DoesNotExist, Client.DoesNotExist):
+            except (Path.DoesNotExist, CustomUser.DoesNotExist, Client.DoesNotExist) as e:
+                print(f"Lookup error: {e}")
                 return Response(
                     {"message": "Path, User, or Client does not exist."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                return Response(
+                    {"message": "An unexpected error occurred."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
         else:
             # If serializer is not valid, return the serializer errors
+            print(f"Serializer errors: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
