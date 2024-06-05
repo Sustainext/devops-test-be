@@ -51,6 +51,9 @@ class RawResponse(AbstractModel):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
+    location = models.CharField(max_length=200, null=True)
+    year = models.IntegerField(null=True,default=2024)
+    month = models.CharField(null=True,default='Jan')
 
 class DataPoint(AbstractModel):
     name = models.CharField(max_length=200)

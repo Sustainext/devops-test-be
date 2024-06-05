@@ -28,21 +28,21 @@ def createOrUpdateResponsePoints(data_point, value, path, index, location, year,
 def process_json(json_obj, path):
     print('process_json - hit')
     print('path is ', path.slug)
-    data_points = DataPoint.objects.filter(slug=path.slug)
+    data_points = DataPoint.objects.filter(path=path)
     for point in data_points:
          print(point.name, ' - is a datapoint found')
     for item in json_obj:
             if isinstance(item, dict):
                 first_key, first_value = next(iter(item.items()))
                 # Print the first key and value
-                print(f"First Key: {first_key}")
+                print(f"Field Group Row: {first_key}")
                 print(f"First Value: {first_value}")
                 try:
                     for key, value in first_value.items():
                         data_point = data_points.filter(name=key).first()
                         print(data_point,data_point.response_type, ' match found ... ')
                         print(f"for Key: {key}, Value: {value}")
-
+                        # data_point, value, path, index, location, year, month, client, user
                 except KeyError as e:
                     print(f"KeyError: {e}")
                 except IndexError as e:
@@ -54,11 +54,11 @@ def process_json(json_obj, path):
 def create_response_points(sender, instance, created, **kwargs):
     if created:
         # Example logic to create response points
-        print('this is from the signals - creation')
-        print(instance.path, instance.data, instance.user, instance.client)
+        # print('this is from the signals - creation')
+        # print(instance.path, instance.data, instance.user, instance.client)
         process_json(instance.data, instance.path)
     else:
-        print('this is from the signals - updation')
-        print(instance.path, instance.data, instance.user, instance.client)
+        # print('this is from the signals - updation')
+        # print(instance.path, instance.data, instance.user, instance.client)
         process_json(instance.data, instance.path)
 
