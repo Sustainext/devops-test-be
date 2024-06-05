@@ -14,7 +14,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 
 class DataPointAdmin(admin.ModelAdmin):
-    list_display = ("id","name", "slug", "label", "description", "response_type")
+    list_display = ("id","name","path", "label", "description", "response_type")
 
 
 admin.site.register(DataPoint, DataPointAdmin)

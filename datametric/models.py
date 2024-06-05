@@ -18,17 +18,7 @@ class MyModel(AbstractModel):
         return self.name
 
 
-class DataPoint(AbstractModel):
-    name = models.CharField(max_length=200)
-    slug = models.CharField(max_length=500)
-    label = models.CharField(max_length=400)
-    description = models.CharField(max_length=1000)
-    response_type = models.CharField(
-        max_length=20, choices=DATA_TYPE_CHOICES, default="String"
-    )
 
-    def __str__(self):
-        return self.name
 
 
 class Path(AbstractModel):
@@ -62,6 +52,17 @@ class RawResponse(AbstractModel):
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
 
+class DataPoint(AbstractModel):
+    name = models.CharField(max_length=200)
+    label = models.CharField(max_length=400)
+    description = models.CharField(max_length=1000)
+    path = models.ForeignKey(Path, on_delete=models.PROTECT)
+    response_type = models.CharField(
+        max_length=20, choices=DATA_TYPE_CHOICES, default="String"
+    )
+
+    def __str__(self):
+        return self.name
 
 class ResponsePoint(AbstractModel):
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
@@ -81,3 +82,4 @@ class ResponsePoint(AbstractModel):
         DataPoint, on_delete=models.PROTECT, default=None, related_name="data_points"
     )
     value = models.JSONField(default=None, null=True)
+
