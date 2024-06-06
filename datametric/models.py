@@ -18,9 +18,6 @@ class MyModel(AbstractModel):
         return self.name
 
 
-
-
-
 class Path(AbstractModel):
     name = models.CharField(max_length=300)
     slug = models.CharField(max_length=500)
@@ -52,8 +49,9 @@ class RawResponse(AbstractModel):
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
     location = models.CharField(max_length=200, null=True)
-    year = models.IntegerField(null=True,default=2024)
-    month = models.CharField(null=True,default='Jan')
+    year = models.IntegerField(null=True, default=2024)
+    month = models.IntegerField(null=True, default=1)
+
 
 class DataMetric(AbstractModel):
     name = models.CharField(max_length=200)
@@ -67,6 +65,7 @@ class DataMetric(AbstractModel):
     def __str__(self):
         return self.name
 
+
 class DataPoint(AbstractModel):
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     raw_response = models.ForeignKey(
@@ -74,7 +73,7 @@ class DataPoint(AbstractModel):
         on_delete=models.PROTECT,
         default=None,
         related_name="response_points",
-        null=True
+        null=True,
     )
     response_type = models.CharField(
         max_length=20, choices=DATA_TYPE_CHOICES, default="String"
@@ -83,11 +82,12 @@ class DataPoint(AbstractModel):
     string_holder = models.CharField(default=None, null=True)
     json_holder = models.JSONField(default=None, null=True)
     data_metric = models.ForeignKey(
-        DataMetric, on_delete=models.PROTECT, default=None, related_name="data_metric_points"
+        DataMetric,
+        on_delete=models.PROTECT,
+        default=None,
+        related_name="data_metric_points",
     )
-    boolean_holder = models.BooleanField(default=True,null=True)
-    index = models.IntegerField(default=0,null=False)
+    boolean_holder = models.BooleanField(default=True, null=True)
+    index = models.IntegerField(default=0, null=False)
     value = models.JSONField(default=None, null=True)
-    metric_name = models.CharField(default='Not Set', null=False)
-    is_calculated = models.BooleanField(default=False, null=False)
-
+    metric_name = models.CharField(default="Not Set", null=False)
