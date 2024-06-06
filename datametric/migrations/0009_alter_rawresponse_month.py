@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 def fix_data(apps, schema_editor):
     # Example cleanup code
-    raw_response_model = apps.get_model("datametric", "raw_response_model")
+    raw_response_model = apps.get_model("DataMetric", "RawResponse")
     for instance in raw_response_model.objects.all():
         if instance.month == "Jan":
             instance.month = 1  # or another appropriate integer value
