@@ -7,6 +7,7 @@ from django.contrib.auth.models import (
 )
 from authentication.models import CustomUser, Client
 from common.models.AbstractModel import AbstractModel
+from django.core.validators import MaxValueValidator, MinValueValidator
 from .data_types import DATA_TYPE_CHOICES
 
 
@@ -48,9 +49,9 @@ class RawResponse(AbstractModel):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
-    location = models.CharField(max_length=200, null=True)
-    year = models.IntegerField(null=True, default=2024)
-    month = models.IntegerField(null=True, default=1)
+    location = models.CharField(max_length=200, null=False)
+    year = models.IntegerField(null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)])
+    month = models.IntegerField(null=False, default=1)
 
 
 class DataMetric(AbstractModel):
@@ -67,6 +68,9 @@ class DataMetric(AbstractModel):
 
 
 class DataPoint(AbstractModel):
+    """
+    This is an OLAP table that is used for storing data points for data analysis
+    """
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     raw_response = models.ForeignKey(
         RawResponse,
@@ -91,3 +95,7 @@ class DataPoint(AbstractModel):
     index = models.IntegerField(default=0, null=False)
     value = models.JSONField(default=None, null=True)
     metric_name = models.CharField(default="Not Set", null=False)
+    is_calculated = models.BooleanField(default=False, null=False)
+    location = models.CharField(max_length=200, null=False)
+    year = models.IntegerField(null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)])
+    month = models.IntegerField(null=False, default=1)

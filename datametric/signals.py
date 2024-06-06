@@ -3,16 +3,11 @@ from django.dispatch import receiver
 from .models import RawResponse, DataPoint, DataMetric
 from django.db.models import Q
 
-def createOrUpdateDataPoints(data_metric, value, index, raw_response):
+def createOrUpdateDataPoints(data_metric:DataMetric, value, index, raw_response:RawResponse):
     print('Creating or updating Data points')
     print(data_metric, value, index, raw_response.path, raw_response.user)
     
     path = raw_response.path
-    user = raw_response.user
-    client = raw_response.client
-    location = 'new_location'
-    year = '2024'
-    month = 'Jan'
     
     number_value = None
     json_value = None
@@ -41,7 +36,10 @@ def createOrUpdateDataPoints(data_metric, value, index, raw_response):
                 'string_holder': string_value,
                 'json_holder': json_value,
                 'value': value,
-                'metric_name': metric_name
+                'metric_name': metric_name,
+                "location": raw_response.location,
+                "year": raw_response.year,
+                "month": raw_response.month,
             }
         )
 
