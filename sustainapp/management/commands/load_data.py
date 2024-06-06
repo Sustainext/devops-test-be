@@ -1,29 +1,29 @@
 from django.core.management.base import BaseCommand
 from sustainapp.models import Framework, Sdg, Certification, Regulation, Rating, Target
- 
- 
+
+
 class Command(BaseCommand):
     # help = 'Loads initial data into the database'
- 
+
     def handle(self, *args, **kwargs):
- 
+
         models_to_check = [Certification, Framework, Rating, Regulation, Sdg, Target]
- 
+
         for model in models_to_check:
             if model.objects.exists():
                 self.stdout.write(
                     self.style.SUCCESS(f"Data already exists for model {model}")
                 )
- 
+
         self.update_or_create_certifications()
         self.update_or_create_frameworks()
         self.update_or_create_ratings()
         self.update_or_create_regulations()
         self.update_or_create_sdgs()
         self.update_or_create_targets()
- 
+
         self.stdout.write(self.style.SUCCESS("Data Updated successfully"))
- 
+
     def update_or_create_certifications(self):
         certifications = [
             {"id": 1, "name": "BCORP", "Image": "images/certifications/BCorp.png"},
@@ -36,7 +36,7 @@ class Command(BaseCommand):
         ]
         for cert in certifications:
             Certification.objects.update_or_create(id=cert["id"], defaults=cert)
- 
+
     def update_or_create_frameworks(self):
         frameworks = [
             {
@@ -57,7 +57,7 @@ class Command(BaseCommand):
         ]
         for framework in frameworks:
             Framework.objects.update_or_create(id=framework["id"], defaults=framework)
- 
+
     def update_or_create_ratings(self):
         ratings = [
             {"id": 1, "name": "DJSI", "Image": "images/rating/DJSI.png"},
@@ -70,7 +70,7 @@ class Command(BaseCommand):
         ]
         for rating in ratings:
             Rating.objects.update_or_create(id=rating["id"], defaults=rating)
- 
+
     def update_or_create_regulations(self):
         regulations = [
             {"id": 1, "name": "SB-253", "Image": "images/regulation/SB-253.png"},
@@ -86,7 +86,7 @@ class Command(BaseCommand):
             Regulation.objects.update_or_create(
                 id=regulation["id"], defaults=regulation
             )
- 
+
     def update_or_create_sdgs(self):
         sdgs = [
             {
@@ -211,11 +211,11 @@ class Command(BaseCommand):
         ]
         for sdg in sdgs:
             Sdg.objects.update_or_create(id=sdg["id"], defaults=sdg)
- 
+
     def update_or_create_targets(self):
         targets = [
-            {"id": 1, "name": "SBTi", "Image": "images/Target/SBTi.png"},
-            {"id": 2, "name": "SBTi Net Zero", "Image": "images/Target/SBTi.png"},
+            {"id": 1, "name": "SBTi", "Image": "images/targets/SBTi.png"},
+            {"id": 2, "name": "SBTi Net Zero", "Image": "images/targets/SBTi.png"},
         ]
         for target in targets:
             Target.objects.update_or_create(id=target["id"], defaults=target)

@@ -43,21 +43,17 @@ class JWTMiddleware:
 
     def __call__(self, request):
         auth_header = request.headers.get("Authorization")
-        # print("auth_header",auth_header)
         if not any(request.path.startswith(path) for path in self.exempt_paths):
             if auth_header:
                 try:
                     # print("middlesware")
                     token = auth_header.split(" ")[1]
-                    print("token", token)
                     payload = jwt.decode(
                         token,
                         settings.SECRET_KEY,
                         algorithms=["HS256"],
                     )
-                    # print("payload",payload)
                     client = payload.get("client_id")
-                    print("client", client)
                     if not client:
                         raise PermissionDenied("Cient Not Found")
                     client = Client.objects.get(id=client)
