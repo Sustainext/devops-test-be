@@ -89,4 +89,5 @@ class DataPoint(AbstractModel):
     index = models.IntegerField(default=0,null=False)
     value = models.JSONField(default=None, null=True)
     metric_name = models.CharField(default='Not Set', null=False)
+    is_calculated = models.BooleanField(default=False, null=False)
 
