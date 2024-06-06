@@ -4,17 +4,6 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
-def populate_raw_response(apps, schema_editor):
-    DataPoint = apps.get_model("datametric", "DataPoint")
-    RawResponse = apps.get_model("datametric", "RawResponse")
-
-    default_raw_response = RawResponse.objects.first()
-
-    for datapoint in DataPoint.objects.all():
-        if not datapoint.raw_response:
-            datapoint.raw_response = default_raw_response
-        datapoint.save()
-
 
 class Migration(migrations.Migration):
 
@@ -82,6 +71,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='datapoint',
             name='data_metric',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='data_metric_points', to='datametric.datametric'),
+            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.PROTECT, related_name='data_metric_points', to='datametric.datametric'),
         ),
     ]
