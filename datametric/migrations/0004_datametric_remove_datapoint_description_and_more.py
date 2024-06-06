@@ -82,6 +82,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='datapoint',
             name='data_metric',
-            field=models.ForeignKey(default=None,null=True, on_delete=django.db.models.deletion.PROTECT, related_name='data_metric_points', to='datametric.datametric'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='data_metric_points', to='datametric.datametric'),
         ),
     ]
