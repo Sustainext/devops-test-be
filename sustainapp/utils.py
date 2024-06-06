@@ -71,7 +71,6 @@ def check_same_client(client, instance):
     request_client_id = getattr(client, "id", None)
     instance_client_id = instance.client_id if instance and instance.client else None
     if request_client_id != instance_client_id:
-        print("client id do not match ")
         logging.error(
             f"Client ID mismatch: request client ID {request_client_id},instance client ID {instance_client_id}"
         )
@@ -90,7 +89,6 @@ def custom_exception_handler(exc, context):
 
 
 def validation_get_emission(data):
-    print("validation_getemission")
     required_fields = ["location", "year", "month", "client_id"]
 
     missing_fields = [field for field in required_fields if field not in data]
@@ -100,7 +98,6 @@ def validation_get_emission(data):
 
 
 def validation_org_input(data):
-    print("validation_org_input")
     required_fields = [
         "name",
         "owner",
@@ -135,7 +132,6 @@ def validation_org_input(data):
 
 
 def validation_location_input(data):
-    print("validation_org_input")
     required_fields = [
         "corporateentity_id",
         "corporateentity",
@@ -177,7 +173,6 @@ def validation_location_input(data):
 
 
 def validation_corporate_input(data):
-    print("validation_corporate_input")
     required_fields = [
         "name",
         "corporatetype",
@@ -341,7 +336,7 @@ def generate_report_data(pk, request):
     try:
         data_dict = json.loads(data_entry.data.replace('\\"', '"'))
     except json.JSONDecodeError as e:
-        print(f"JSON Decode Error: {e}")
+        logging.error(f"JSON Decode Error: {e}")
 
     # data_dict = model_to_dict(data_entry)
     organized_data_list = []

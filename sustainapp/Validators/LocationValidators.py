@@ -2,16 +2,11 @@ from rest_framework.exceptions import ValidationError
 
 
 def validate_latitude(value):
-    print(type(value), value)
     if value > 90.000000 or value < -90.0:
         raise ValidationError(f"{value} exceeds 90 degree range")
-    else:
-        print("not raising error in validate_latitude")
     whole, decimal = str(value).split(".")
     length_whole = len(whole)
     length_decimal = len(decimal)
-
-    print("whole,decimal", whole, decimal)
 
     if length_whole > 5 and length_decimal > 6:
         raise ValidationError(f"{value} exceeds 9 digits.")
@@ -22,16 +17,11 @@ def validate_latitude(value):
 
 
 def validate_longitude(value):
-    print(type(value), value)
     if value > 180.0 or value < -180.0:
         raise ValidationError(f"{value} exceeds 180 degree range")
-    else:
-        print("not raising error in validate_longitude")
     whole, decimal = str(value).split(".")
     length_whole = len(whole)
     length_decimal = len(decimal)
-
-    print("whole,decimal", whole, decimal)
 
     if length_whole > 5 and length_decimal > 6:
         raise ValidationError(f"{value} exceeds 9 digits.")

@@ -90,7 +90,7 @@ def generate_and_cache_donut_chart(data):
         html_content = (
             f'<img src="data:image/png;base64,{image_base64}" alt="Donut Chart">'
         )
-        print(f"Donut chart generated in {time.time() - start_time} seconds")
+        logging.info(f"Donut chart generated in {time.time() - start_time} seconds")
         return html_content
     except Exception as e:
         # Handle the exception gracefully
@@ -251,7 +251,9 @@ def generate_and_cache_donut_chart_source(data):
         html_content = (
             f'<img src="data:image/png;base64,{image_base64}" alt="Source Donut Chart">'
         )
-        print(f"Source chart generated in {time.time() - start_time} seconds")
+        logging.info(
+            f"Generated Source Donut Chart in {time.time() - start_time} seconds"
+        )
         return html_content
 
     except Exception as e:
@@ -352,7 +354,6 @@ def extract_location_data(organized_data_list):
                     "total_co2e": float(location.get("total_co2e", 0.0)),
                 }
                 location_data.append(location_entry)
-                # print(location_data)
         return location_data
     except Exception as e:
         # Handle the exception gracefully
@@ -426,7 +427,7 @@ def generate_and_cache_donut_chart_location(data):
         html_content = (
             f'<img src="data:image/png;base64,{image_base64}" alt="Donut Chart">'
         )
-        print(f"Location chart generated in {time.time() - start_time} seconds")
+        logging.info(f"Location chart generated in {time.time() - start_time} seconds")
         return html_content
     except Exception as e:
         # Handle the exception gracefully
@@ -522,14 +523,13 @@ def generate_pdf_data(pk):
     image_path = finders.find("images/ghg-methodology-flowchart.png")
 
     data_entry = get_object_or_404(AnalysisData2, report_id=pk)
-    # print(data_entry.data)
 
     # Deserialize the JSON string into a Python dictionary
     # data_dict = json.loads(data_entry.data.replace('\\"', '"'))
     try:
         data_dict = json.loads(data_entry.data.replace('\\"', '"'))
     except json.JSONDecodeError as e:
-        print(f"JSON Decode Error: {e}")
+        logging.error("JSON Decode Error: {0}".format(e))
 
     organized_data_list = []
     total_co2e_combined = 0
@@ -587,7 +587,6 @@ def generate_pdf_data(pk):
                 if total_co2e_combined != 0
                 else 0
             )
-            # print("Combined scope start here",combined_scopes)
             # Convert the combined scopes back to a list if necessary
             combined_scopes_list = list(combined_scopes.values())
 
@@ -622,7 +621,6 @@ def generate_pdf_data(pk):
     else:
         highest_source_name = None
 
-    # print(highest_source_name)
     # Extract total_co2e and scope_name from combined_scopes# extracted_data = [{'scope_name': scope['scope_name'], 'total_co2e': scope['total_co2e']} for scope in combined_scopes.values()]
     donut_chart_data = extract_donut_chart_data(combined_scopes)
 
@@ -641,11 +639,6 @@ def generate_pdf_data(pk):
     # Use the extracted Location_data to generate the dynamic chart
     location_donut_chart_html = generate_and_cache_donut_chart_location(location_data)
 
-    # print(organized_data_list)
-    # print(total_co2e_combined)
-    # print(image_url)
-    # print(image_path)
-    # print(combined_scopes)
     context = {
         "object_list": report,
         "org_logo": report.org_logo,

@@ -252,9 +252,12 @@ class IdentifyingInformationAdmin(admin.ModelAdmin):
     list_filter = ("client", "user")
 
 
-class UserExtendedAdmin(admin.ModelAdmin):
+class UserExtendedAdmin(UserAdmin):
     list_display = ["username", "client"]
     list_filter = ("client",)
+    search_fields = ("username", "email", "client")
+    ordering = ("username",)
+    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("client",)}),)
 
 
 class ReportAdmin(admin.ModelAdmin):
