@@ -1,0 +1,206 @@
+from datametric.models import DataPoint, RawResponse, Path, DataMetric
+from authentication.models import CustomUser, Client
+import requests
+import logging
+import os
+import json
+from datametric.data_types import ARRAY_OF_OBJECTS
+from django.template.defaultfilters import slugify
+
+logger = logging.getLogger(__name__)
+
+
+class Climatiq:
+    """
+    Climatiq is a class that calculates the batch data of emissions.
+    Data is stored in the DataPoint model.
+    Data is fetched from RawResponse model.
+    """
+
+    def __init__(self, raw_response: RawResponse) -> None:
+        self.user = raw_response.user
+        self.raw_response: RawResponse = raw_response
+        self.client = raw_response.user.client
+        self.location = raw_response.location
+        self.month = raw_response.month
+        self.year = raw_response.year
+
+    def payload_preparation_for_climatiq_api(self):
+        """
+        Prepares the payload for the climatiq api.
+        """
+        payload = []
+        for emission_data in self.raw_response.data:
+            """
+            Example of emission data:
+            {'Emission': {'Unit': '',
+            'Activity': 'Butane - ( EPA ) - Energy',
+            'Category': 'Stationary Combustion',
+            'Quantity': '16',
+            'Subcategory': 'Fuel'}}
+            """
+            payload.append(
+                self.construct_emission_req(
+                    activity_id=emission_data["Emission"]["activity_id"],
+                    unit_type=emission_data["Emission"]["unit_type"],
+                    value1=emission_data["Emission"]["Quantity"],
+                    unit1=emission_data["Emission"]["Unit"],
+                )
+            )
+        return payload
+
+    def construct_emission_req(
+        self, activity_id, unit_type, value1, unit1, value2=None, unit2=None
+    ):
+        emission_req = {
+            "emission_factor": {"id": activity_id, "data_version": "^8"},
+            "parameters": {},
+        }
+
+        unit_type = unit_type.lower()
+
+        param_structures = {
+            "area": {"area": value1, "area_unit": unit1},
+            "areaovertime": {
+                "area": value1,
+                "area_unit": unit1,
+                "time": value2,
+                "time_unit": unit2,
+            },
+            "containeroverdistance": {
+                "twenty_foot_equivalent": value2,
+                "distance": value1,
+                "distance_unit": unit2,
+            },
+            "data": {"data": value1, "data_unit": unit1},
+            "dataovertime": {
+                "data": value1,
+                "data_unit": unit1,
+                "time": value2,
+                "time_unit": unit2,
+            },
+            "distance": {"distance": value1, "distance_unit": unit1},
+            "distanceovertime": {
+                "distance": value1,
+                "distance_unit": unit1,
+                "time": value2,
+                "time_unit": unit2,
+            },
+            "energy": {"energy": value1, "energy_unit": unit1},
+            "money": {"money": value1, "money_unit": unit1},
+            "number": {"number": value1},
+            "numberovertime": {"number": value1, "time": value2, "time_unit": unit2},
+            "passengeroverdistance": {
+                "passengers": value1,
+                "distance": value2,
+                "distance_unit": unit2,
+            },
+            "time": {"time": value1, "time_unit": unit1},
+            "volume": {"volume": value1, "volume_unit": unit1},
+            "weight": {"weight": value1, "weight_unit": unit1},
+            "weightoverdistance": {
+                "weight": value1,
+                "weight_unit": unit1,
+                "distance": value2,
+                "distance_unit": unit2,
+            },
+            "weightovertime": {
+                "weight": value1,
+                "weight_unit": unit1,
+                "time": value2,
+                "time_unit": unit2,
+            },
+        }
+
+        if unit_type in param_structures:
+            emission_req["parameters"] = param_structures[unit_type]
+
+        return emission_req
+
+    def get_climatiq_api_response(self):
+        """
+        Returns the response from the climatiq api.
+        """
+        CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
+        payload = self.payload_preparation_for_climatiq_api()
+        headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
+        response = requests.request(
+            "POST",
+            url="https://api.climatiq.io/batch",
+            data=json.dumps(payload),
+            headers=headers,
+        )
+        response_data = response.json()
+        if response.status_code == 400:
+            self.log_error_climatiq_api(response_data=response_data)
+        self.log_in_part_emission_error(response_data=response_data)
+        response_data = self.clean_response_data(response_data=response_data)
+        return response_data
+
+    def clean_response_data(self, response_data):
+        """
+        Cleans the response data from the climatiq api.
+        """
+        cleaned_response_data = []
+        for emission_data in response_data["results"]:
+            if "error" not in emission_data.keys():
+                cleaned_response_data.append(emission_data)
+        return cleaned_response_data
+
+    def log_error_climatiq_api(self, response_data):
+        """
+        Logs the error response from the climatiq api.
+        """
+        error_message = f"Error with emission: {response_data} \n"
+        logger.error(error_message)
+
+    def log_in_part_emission_error(self, response_data):
+        """
+        Logs the error response from the climatiq api.
+        """
+        for emission_data in response_data["results"]:
+            if "error" in emission_data:
+                error_message = f"Error with emission: {emission_data} \n"
+                logger.error(error_message)
+
+    def create_calculated_data_point(self):
+        """
+        Returns the response from the climatiq api.
+        """
+        if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
+            return None
+        response_data = self.get_climatiq_api_response()
+        if response_data == None:
+            return None
+        path, created = Path.objects.get_or_create(
+            name="GRI-Collect-Emissions-Scope-Combined",
+            slug=slugify("GRI-Collect-Emissions-Scope-Combined"),
+        )
+        if created:
+            path.save()
+        datametric, created = DataMetric.objects.get_or_create(
+            name="CalculatedCollectedEmissions",
+            label="Calculated Collected Emissions",
+            description="Stores the calculated emissions from the GRI-Collect-Emissions-Scope-Combined",
+            path=path,
+            response_type=ARRAY_OF_OBJECTS,
+        )
+        if created:
+            datametric.save()
+        datapoint, created = DataPoint.objects.update_or_create(
+            path=self.raw_response.path,
+            raw_response=self.raw_response,
+            response_type=ARRAY_OF_OBJECTS,
+            data_metric=datametric,
+            is_calculated=True,
+            location=self.location,
+            year=self.year,
+            month=self.month,
+            user_id=self.user.id,
+            client_id=self.user.client.id,
+            metric_name=datametric.name,
+            defaults={
+                "json_holder": response_data,
+            },
+        )
+        datapoint.save()

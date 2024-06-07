@@ -99,3 +99,6 @@ class DataPoint(AbstractModel):
     location = models.CharField(max_length=200, null=False)
     year = models.IntegerField(null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)])
     month = models.IntegerField(null=False, default=1)
+    user_id = models.PositiveIntegerField(default=1, null=False)
+    client_id = models.PositiveIntegerField(default=1, null=False)
+
