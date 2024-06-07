@@ -5,9 +5,10 @@ import logging
 import os
 import json
 from datametric.data_types import ARRAY_OF_OBJECTS
+import decimal
 from django.template.defaultfilters import slugify
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("django")
 
 
 class Climatiq:
@@ -43,7 +44,7 @@ class Climatiq:
                 self.construct_emission_req(
                     activity_id=emission_data["Emission"]["activity_id"],
                     unit_type=emission_data["Emission"]["unit_type"],
-                    value1=emission_data["Emission"]["Quantity"],
+                    value1=float(emission_data["Emission"]["Quantity"]),
                     unit1=emission_data["Emission"]["Unit"],
                 )
             )
@@ -53,7 +54,7 @@ class Climatiq:
         self, activity_id, unit_type, value1, unit1, value2=None, unit2=None
     ):
         emission_req = {
-            "emission_factor": {"id": activity_id, "data_version": "^8"},
+            "emission_factor": {"activity_id": activity_id, "data_version": "^8"},
             "parameters": {},
         }
 
