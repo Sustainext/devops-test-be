@@ -5,7 +5,7 @@ from .models import FieldGroup, RawResponse
 class FieldGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = FieldGroup
-        fields = ["id", "name", "meta_data", "ui_schema", "schema", "path"]
+        fields = "__all__"
 
 
 class UpdateResponseSerializer(serializers.Serializer):
@@ -26,10 +26,9 @@ class UpdateResponseSerializer(serializers.Serializer):
 class UpdateResponseSerializer(serializers.Serializer):
     path = serializers.CharField(required=True)
     form_data = serializers.ListField(child=serializers.JSONField(), allow_empty=True)
-    client_id = serializers.IntegerField(required=True)
-    user_id = serializers.IntegerField(required=True)
-    # Add more fields as needed
-
+    location = serializers.CharField(required=True)
+    year = serializers.IntegerField(required=True)
+    month = serializers.IntegerField(min_value=1, max_value=12, required=True)
     def validate(self, data):
         """
         Perform custom validation for the fields.
@@ -42,3 +41,11 @@ class RawResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = RawResponse
         fields = ["id", "data", "updated_at"]
+
+class FieldGroupGetSerializer(serializers.Serializer):
+    path_slug = serializers.CharField(required=True)
+    location = serializers.CharField(required=True)
+    year = serializers.IntegerField(required=True)
+    month = serializers.IntegerField(min_value=1, max_value=12, required=True)
+    class Meta:
+        fields = ["path_slug", "location", "year", "month"]

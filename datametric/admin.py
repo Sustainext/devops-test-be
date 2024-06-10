@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MyModel, DataPoint, Path, FieldGroup, RawResponse, ResponsePoint
+from .models import MyModel, DataPoint, Path, FieldGroup, RawResponse, DataMetric
 
 
 class MyModelAdmin(admin.ModelAdmin):
@@ -13,11 +13,11 @@ class ClientAdmin(admin.ModelAdmin):
     list_display = ("id","name", "created_at")
 
 
-class DataPointAdmin(admin.ModelAdmin):
-    list_display = ("id","name", "slug", "label", "description", "response_type")
+class DataMetricAdmin(admin.ModelAdmin):
+    list_display = ("id","name","path", "label", "description", "response_type")
 
 
-admin.site.register(DataPoint, DataPointAdmin)
+admin.site.register(DataMetric, DataMetricAdmin)
 
 
 class PathAdmin(admin.ModelAdmin):
@@ -41,7 +41,7 @@ class RawResponseAdmin(admin.ModelAdmin):
 admin.site.register(RawResponse, RawResponseAdmin)
 
 
-class ResponsePointAdmin(admin.ModelAdmin):
+class DataPointAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "path",
@@ -54,4 +54,4 @@ class ResponsePointAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(ResponsePoint, ResponsePointAdmin)
+admin.site.register(DataPoint, DataPointAdmin)

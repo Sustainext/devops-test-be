@@ -7,25 +7,13 @@ from django.contrib.auth.models import (
 )
 from authentication.models import CustomUser, Client
 from common.models.AbstractModel import AbstractModel
+from django.core.validators import MaxValueValidator, MinValueValidator
 from .data_types import DATA_TYPE_CHOICES
 
 
 class MyModel(AbstractModel):
     name = models.CharField(max_length=100)
     description = models.TextField()
-
-    def __str__(self):
-        return self.name
-
-
-class DataPoint(AbstractModel):
-    name = models.CharField(max_length=200)
-    slug = models.CharField(max_length=500)
-    label = models.CharField(max_length=400)
-    description = models.CharField(max_length=1000)
-    response_type = models.CharField(
-        max_length=20, choices=DATA_TYPE_CHOICES, default="String"
-    )
 
     def __str__(self):
         return self.name
@@ -61,15 +49,35 @@ class RawResponse(AbstractModel):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
+    location = models.CharField(max_length=200, null=False)
+    year = models.IntegerField(null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)])
+    month = models.IntegerField(null=False, default=1)
 
 
-class ResponsePoint(AbstractModel):
+class DataMetric(AbstractModel):
+    name = models.CharField(max_length=200)
+    label = models.CharField(max_length=400)
+    description = models.CharField(max_length=1000)
+    path = models.ForeignKey(Path, on_delete=models.PROTECT)
+    response_type = models.CharField(
+        max_length=20, choices=DATA_TYPE_CHOICES, default="String"
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class DataPoint(AbstractModel):
+    """
+    This is an OLAP table that is used for storing data points for data analysis
+    """
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     raw_response = models.ForeignKey(
         RawResponse,
         on_delete=models.PROTECT,
         default=None,
         related_name="response_points",
+        null=True,
     )
     response_type = models.CharField(
         max_length=20, choices=DATA_TYPE_CHOICES, default="String"
@@ -77,7 +85,20 @@ class ResponsePoint(AbstractModel):
     number_holder = models.FloatField(default=None, null=True)
     string_holder = models.CharField(default=None, null=True)
     json_holder = models.JSONField(default=None, null=True)
-    data_point = models.ForeignKey(
-        DataPoint, on_delete=models.PROTECT, default=None, related_name="data_points"
+    data_metric = models.ForeignKey(
+        DataMetric,
+        on_delete=models.PROTECT,
+        default=None,
+        related_name="data_metric_points",
     )
+    boolean_holder = models.BooleanField(default=True, null=True)
+    index = models.IntegerField(default=0, null=False)
     value = models.JSONField(default=None, null=True)
+    metric_name = models.CharField(default="Not Set", null=False)
+    is_calculated = models.BooleanField(default=False, null=False)
+    location = models.CharField(max_length=200, null=False)
+    year = models.IntegerField(null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)])
+    month = models.IntegerField(null=False, default=1)
+    user_id = models.PositiveIntegerField(default=1, null=False)
+    client_id = models.PositiveIntegerField(default=1, null=False)
+
