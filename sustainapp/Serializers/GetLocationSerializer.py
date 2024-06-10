@@ -5,4 +5,4 @@ from rest_framework.serializers import ModelSerializer
 class LocationSerializer(ModelSerializer):
     class Meta:
         model = Location
-        fields = ["id", "name"]
+        fields = ["id", "name", "country"]
