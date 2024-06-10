@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from sustainapp.models import Organization, Corporateentity
+
 
 class CheckAnalysisViewSerializer(serializers.Serializer):
     """
@@ -7,12 +9,12 @@ class CheckAnalysisViewSerializer(serializers.Serializer):
     """
 
     year = serializers.IntegerField(required=True)
-    corporate = serializers.CharField(required=True)
-    organisation = serializers.CharField(required=True)
+    corporate = serializers.PrimaryKeyRelatedField(
+        queryset=Corporateentity.objects.all(), required=True
+    )
+    organisation = serializers.PrimaryKeyRelatedField(
+        queryset=Organization.objects.all(), required=True
+    )
 
     class Meta:
         fields = ("year", "corporate", "organisation")
-
-    
-
-
