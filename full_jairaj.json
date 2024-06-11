@@ -8912,6 +8912,11 @@
           }
         }
       }
+    },
+    {
+      "model": "authtoken.token",
+      "pk": "efd47f9e0eb465c9f86e76c2efd3fc0510c86221",
+      "fields": { "user": 1, "created": "2024-05-24T09:12:02.062Z" }
     }
   ]
   

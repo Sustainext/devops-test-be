@@ -49,3 +49,10 @@ class FieldGroupGetSerializer(serializers.Serializer):
     month = serializers.IntegerField(min_value=1, max_value=12, required=True)
     class Meta:
         fields = ["path_slug", "location", "year", "month"]
+
+class GetClimatiqComputedSerializer(serializers.Serializer):
+    location = serializers.CharField(required=True)
+    year = serializers.IntegerField(required=True)
+    month = serializers.IntegerField(min_value=1, max_value=12, required=True)
+    class Meta:
+        fields = ["location", "year", "month"]

@@ -8,6 +8,7 @@ from sustainapp.Views.OrganisationTaskList import UserTaskDashboardView
 from sustainapp.Views.ChangePassword import ChangePasswordAPIView
 from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
+from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from rest_framework import routers
 from sustainapp.Views.GHGReport import ReportCreateView
 
@@ -28,5 +29,10 @@ urlpatterns = [
     path("change_password/", ChangePasswordAPIView.as_view(), name="change_password"),
     path("get_location/", LocationListAPIView.as_view(), name="get_location"),
     path("ghgreport/", ReportCreateView.as_view(), name="ghgreport"),
+    path(
+        "get_emission_analysis/",
+        GetEmissionAnalysis.as_view(),
+        name="get_emission_analysis",
+    ),
     path("", include(router.urls)),
 ]

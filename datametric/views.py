@@ -5,12 +5,13 @@ from rest_framework import generics
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import FieldGroup, Path, RawResponse
+from .models import FieldGroup, Path, RawResponse, DataPoint
 from .serializers import (
     FieldGroupSerializer,
     UpdateResponseSerializer,
     RawResponseSerializer,
     FieldGroupGetSerializer,
+    GetClimatiqComputedSerializer
 )
 from authentication.models import CustomUser, Client
 from rest_framework.permissions import IsAuthenticated
@@ -19,7 +20,6 @@ from rest_framework.permissions import IsAuthenticated
 class TestView(APIView):
 
     def get(self, request, *args, **kwargs):
-
         return Response("User created successfully", status=status.HTTP_200_OK)
 
 
@@ -123,3 +123,33 @@ class CreateOrUpdateFieldGroup(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         
+class GetComputedClimatiqValue(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        validation_serializer = GetClimatiqComputedSerializer(data=request.query_params)
+        validation_serializer.is_valid(raise_exception=True)
+        location = validation_serializer.validated_data.get("location")
+        year = validation_serializer.validated_data.get("year")
+        month = validation_serializer.validated_data.get("month")
+        user_instance: CustomUser = self.request.user
+        client_instance = user_instance.client
+        path = Path.objects.filter(slug='gri-collect-emissions-scope-combined').first()
+        try:
+            datapoint = DataPoint.objects.filter(
+                user_id=user_instance.id,
+                client_id=client_instance.id,
+                month=month,
+                year=year,
+                location=location,
+                path=path
+            ).first()
+            resp_data = {}
+            resp_data["result"] = datapoint.json_holder
+            return Response(resp_data,status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            return Response(
+                {"message": "An unexpected error occurred for GetComputedClimatiqValue "},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )

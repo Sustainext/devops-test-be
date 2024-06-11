@@ -40,6 +40,8 @@ class Climatiq:
             'Quantity': '16',
             'Subcategory': 'Fuel'}}
             """
+            print(emission_data, ' is the emission data')
+
             payload.append(
                 self.construct_emission_req(
                     activity_id=emission_data["Emission"]["activity_id"],
@@ -132,6 +134,7 @@ class Climatiq:
             headers=headers,
         )
         response_data = response.json()
+        print(response_data, ' is the CLIMATIQ $$$$$$$$')
         if response.status_code == 400:
             self.log_error_climatiq_api(response_data=response_data)
         self.log_in_part_emission_error(response_data=response_data)
@@ -164,44 +167,129 @@ class Climatiq:
                 error_message = f"Error with emission: {emission_data} \n"
                 logger.error(error_message)
 
+    # def create_calculated_data_point(self):
+    #     """
+    #     Returns the response from the climatiq api.
+    #     """
+    #     if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
+    #         return None
+    #     response_data = self.get_climatiq_api_response()
+    #     if response_data == None:
+    #         return None
+    #     path, created = Path.objects.get_or_create(
+    #         name="GRI-Collect-Emissions-Scope-Combined",
+    #         slug=slugify("GRI-Collect-Emissions-Scope-Combined"),
+    #     )
+    #     if created:
+    #         path.save()
+    #     datametric, created = DataMetric.objects.get_or_create(
+    #         name="CalculatedCollectedEmissions",
+    #         label="Calculated Collected Emissions",
+    #         description="Stores the calculated emissions from the GRI-Collect-Emissions-Scope-Combined",
+    #         path=path,
+    #         response_type=ARRAY_OF_OBJECTS,
+    #     )
+    #     if created:
+    #         datametric.save()
+    #     datapoint, created = DataPoint.objects.update_or_create(
+    #         path=self.raw_response.path,
+    #         raw_response=self.raw_response,
+    #         response_type=ARRAY_OF_OBJECTS,
+    #         data_metric=datametric,
+    #         is_calculated=True,
+    #         location=self.location,
+    #         year=self.year,
+    #         month=self.month,
+    #         user_id=self.user.id,
+    #         client_id=self.user.client.id,
+    #         metric_name=datametric.name,
+    #         defaults={
+    #             "json_holder": response_data,
+    #         },
+    #     )
+    #     datapoint.save()
+
     def create_calculated_data_point(self):
         """
         Returns the response from the climatiq api.
         """
+        print(self.raw_response.path.slug, ' is the raw_response slug')
+        # Check if the path slug matches the required pattern
         if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
             return None
+        else:
+            print('line 221')
+        # Get the response data from the climatiq API
         response_data = self.get_climatiq_api_response()
-        if response_data == None:
+        if response_data is None:
             return None
-        path, created = Path.objects.get_or_create(
-            name="GRI-Collect-Emissions-Scope-Combined",
-            slug=slugify("GRI-Collect-Emissions-Scope-Combined"),
-        )
-        if created:
-            path.save()
-        datametric, created = DataMetric.objects.get_or_create(
-            name="CalculatedCollectedEmissions",
-            label="Calculated Collected Emissions",
-            description="Stores the calculated emissions from the GRI-Collect-Emissions-Scope-Combined",
-            path=path,
-            response_type=ARRAY_OF_OBJECTS,
-        )
-        if created:
-            datametric.save()
-        datapoint, created = DataPoint.objects.update_or_create(
-            path=self.raw_response.path,
-            raw_response=self.raw_response,
-            response_type=ARRAY_OF_OBJECTS,
-            data_metric=datametric,
-            is_calculated=True,
-            location=self.location,
-            year=self.year,
-            month=self.month,
-            user_id=self.user.id,
-            client_id=self.user.client.id,
-            metric_name=datametric.name,
-            defaults={
-                "json_holder": response_data,
-            },
-        )
-        datapoint.save()
+        print('line 226')
+        
+        # Get or create the path
+        try:
+            path_new, created = Path.objects.get_or_create(
+                name="GRI-Collect-Emissions-Scope-Combined",
+                slug=slugify("GRI-Collect-Emissions-Scope-Combined"),
+            )
+            if created:
+                path_new.save()
+        except Exception as e:
+            print(f"An error occurred while getting or creating the path: {e}")
+            return None
+        print('line 239')
+
+    # Get or create the data metric
+        try:
+            datametric, created = DataMetric.objects.get_or_create(
+                name="CalculatedCollectedEmissions",
+                label="Calculated Collected Emissions",
+                description="Stores the calculated emissions from the GRI-Collect-Emissions-Scope-Combined",
+                path=path_new,
+                response_type="Array of Objects",
+            )
+            if created:
+                datametric.save()
+        except Exception as e:
+            print(f"An error occurred while getting or creating the data metric: {e}")
+            return None
+        # Ensure datametric is not None
+        if datametric is None:
+            print("Error: datametric is None")
+            return None
+
+        # Ensure raw_response has the required attributes
+        if not hasattr(self.raw_response, 'path'):
+            print("Error: raw_response has no path attribute")
+            return None
+
+        # Ensure location, year, month, user, and client attributes are present
+        if self.location is None or self.year is None or self.month is None or self.user is None or self.user.client is None:
+            print("Error: Missing required attributes (location, year, month, user, or user.client)")
+            return None
+        print(datametric.name, datametric.path.slug, ' -is the newly created datametric')
+        # Update or create the data point
+        try:
+            datapoint, created = DataPoint.objects.update_or_create(
+                path=path_new,
+                raw_response=self.raw_response,
+                response_type=ARRAY_OF_OBJECTS,
+                data_metric=datametric,
+                is_calculated=True,
+                location=self.location,
+                year=self.year,
+                month=self.month,
+                user_id=self.user.id,
+                client_id=self.user.client.id,
+                metric_name=datametric.name,
+                defaults={
+                    "json_holder": response_data,
+                },
+            )
+            if created:
+                datapoint.save()
+            else:
+                print(datapoint.id, datapoint.metric_name, ' is the saved datapoint')
+                print('datapoint updated')
+        except Exception as e:
+            print(f"An error occurred while creating or updating the data point: {e}")
+            return None
