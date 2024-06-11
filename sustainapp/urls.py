@@ -9,6 +9,7 @@ from sustainapp.Views.ChangePassword import ChangePasswordAPIView
 from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from rest_framework import routers
+from sustainapp.Views.GHGReport import ReportCreateView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -26,5 +27,6 @@ urlpatterns = [
     path("user_all_task/", UserTaskDashboardView.as_view(), name="user_all_task"),
     path("change_password/", ChangePasswordAPIView.as_view(), name="change_password"),
     path("get_location/", LocationListAPIView.as_view(), name="get_location"),
+    path("ghgreport/", ReportCreateView.as_view(), name="ghgreport"),
     path("", include(router.urls)),
 ]
