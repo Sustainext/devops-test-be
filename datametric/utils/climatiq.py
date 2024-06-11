@@ -146,8 +146,9 @@ class Climatiq:
         Cleans the response data from the climatiq api.
         """
         cleaned_response_data = []
-        for emission_data in response_data["results"]:
+        for index,emission_data in enumerate(response_data["results"]):
             if "error" not in emission_data.keys():
+                emission_data["Category"] = self.raw_response.data[index]["Emission"]["Category"]
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
 
