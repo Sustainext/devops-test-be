@@ -29,6 +29,7 @@ class GetEmissionAnalysis(APIView):
                 "total": scope_value,
                 "contribution": contribution,
             }
+
             serial_number += 1
 
         return scope_contributions
@@ -38,22 +39,27 @@ class GetEmissionAnalysis(APIView):
         raw_responses = RawResponse.objects.filter(
             path__slug__icontains="gri-environment-emissions-301-a-scope-",
             year=self.year,
+            user=self.request.user,
         )
         data_points = DataPoint.objects.filter(
             raw_response__in=raw_responses, json_holder__isnull=False
-        ).select_related("path")
+        ).select_related("raw_response")
         # * Get contribution of each path in raw_responses and sum the json_holder
         top_emission_by_scope = defaultdict(lambda: 0)
+        self.top_emission_by_location = defaultdict(lambda: 0)
         for data_point in data_points:
-            top_emission_by_scope[data_point.path.slug] += sum(
+            top_emission_by_scope[data_point.raw_response.path.slug] += sum(
+                [i.get("co2e", 0) for i in data_point.json_holder]
+            )
+            self.top_emission_by_location[data_point.location] += sum(
                 [i.get("co2e", 0) for i in data_point.json_holder]
             )
 
         return self.calculate_scope_contribution(top_emission_by_scope)
 
     def get_top_emission_by_source(self):
+        # * Get source of all the location
         pass
-
 
     def get(self, request, format=None):
         """
@@ -71,7 +77,11 @@ class GetEmissionAnalysis(APIView):
         self.organisation = serializer.validated_data["organisation"]
         # * 1. Get Locations based on Corporate and Organisations.
         self.locations = self.corporate.location.all().values_list("name", flat=True)
-        response_data = self.get_top_emission_by_scope()
+        # * Get top emissions by Scope
+        response_data = dict()
+        response_data["top_emission_by_scope"] = self.get_top_emission_by_scope()
+        response_data["top_emission_by_source"] = dict()
+        response_data["top_emission_by_location"] = self.calculate_scope_contribution(
+            self.top_emission_by_location
+        )
         return Response({"message": response_data}, status=status.HTTP_200_OK)
-
-        # * 1. Top Emission by Scope
