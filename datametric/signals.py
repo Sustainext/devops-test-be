@@ -89,7 +89,7 @@ def process_json(json_obj, path, raw_response):
 
 
 @receiver(post_save, sender=RawResponse)
-def create_response_points(sender, instance, created, **kwargs):
+def create_response_points(sender, instance:RawResponse, created, **kwargs):
     prefetch_related_objects([instance], "path", "user","client")
     # No matter, whether it is getting created or updated, this should be run.
     #! Don't save the instance again, goes to non stop recursion.
