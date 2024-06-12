@@ -11,7 +11,7 @@ from sustainapp.models import (
     Organization,
 )
 from rest_framework import viewsets, generics
-from sustainapp.serializers import ReportSerializer
+from sustainapp.serializers import ReportSerializer, AnalysisDataResponseSerializer
 from rest_framework.permissions import AllowAny
 from datametric.models import RawResponse, DataPoint
 from sustainapp.Serializers.GHGReportSerializer import (
@@ -168,245 +168,101 @@ def get_corporate_name(location_name):
         return "Unknown Corporate"
 
 
-class ReportCreateView(generics.ListAPIView):
-    serializer_class = GHGReportRawResponseSerializer
+class GHGReportView(generics.CreateAPIView):
+    serializer_class = ReportSerializer
     permission_classes = [AllowAny]
 
-    def get_emission_data(self, scope_name, corporate_id):
-        try:
-            loc_name = Location.objects.get(corporateentity=corporate_id).name
-        except Location.DoesNotExist:
-            loc_name = "Unknown Location"
-        print(loc_name)
-        raw_responses = RawResponse.objects.filter(
-            path__name=scope_name,
-            location=loc_name,
-            year=2023,
-            month=1,
-        )
-
-        corporate_data_dict = defaultdict(
-            lambda: {
-                "corporate_name": "",
-                "scopes": defaultdict(
-                    lambda: {
-                        "scope_name": "",
-                        "total_co2e": 0,
-                        "contribution_scope": 0,
-                        "co2e_unit": "kg",
-                        "unit_type": "weight",
-                        "unit1": "",
-                        "unit2": "",
-                        "activity_data": {"activity_unit": "", "activity_value": 0},
-                        "emission_data": [],
-                    }
-                ),
-                "locations": defaultdict(
-                    lambda: {
-                        "location_name": "",
-                        "location_address": "",
-                        "location_type": "",
-                        "total_co2e": 0,
-                        "contribution_scope": 0,
-                    }
-                ),
-                "sources": defaultdict(list),
-            }
-        )
-
-        for response in raw_responses:
-            location_name = response.location
-            corporate_name = get_corporate_name(location_name)
-            scope_key = "-".join(scope_name.split("-")[-2:])
-
-            corporate_data_dict[corporate_name]["corporate_name"] = corporate_name
-
-            scope_data = corporate_data_dict[corporate_name]["scopes"][scope_key]
-            scope_data["scope_name"] = scope_key
-
-            location_data = self.process_location_data(
-                corporate_data_dict, corporate_name, location_name
-            )
-            self.process_source_data(
-                scope_data, location_data, response, corporate_data_dict, corporate_name
-            )
-
-        return corporate_data_dict
-
-    def process_location_data(self, corporate_data_dict, corporate_name, location_name):
-        location_data = corporate_data_dict[corporate_name]["locations"][location_name]
-        location_data["location_name"] = location_name
-
-        loc = Location.objects.get(name=location_name)
-        street_address = loc.streetaddress
-        city = loc.city
-        state = loc.state
-        zipcode = loc.zipcode
-        location_data["location_address"] = (
-            f"{street_address}, {city}, {state} {zipcode}"
-        )
-        location_data["location_type"] = loc.location_type
-
-        return location_data
-
-    def process_source_data(
-        self, scope_data, location_data, response, corporate_data_dict, corporate_name
-    ):
-        for emission in response.data:
-            unit = emission.get("Emission", {}).get("Unit", "")
-            quantity = float(emission.get("Emission", {}).get("Quantity", 0) or 0)
-            scope_data["unit1"] = unit
-            scope_data["total_co2e"] += quantity
-            scope_data["activity_data"]["activity_unit"] = unit
-            scope_data["activity_data"]["activity_value"] += quantity
-            location_data["total_co2e"] += quantity
-
-            source_key = emission.get("Source", {}).get("Name", "")
-            category_name = emission.get("Source", {}).get("Category", "")
-            source_data = {
-                "scope_name": scope_data["scope_name"],
-                "source_name": source_key,
-                "category_name": category_name,
-                "activity_name": emission.get("Source", {}).get("Activity", ""),
-                "total_co2e": quantity,
-                "contribution_source": 0,  # Will be calculated later
-                "co2e_unit": unit,
-                "unit_type": emission.get("Emission", {}).get("Type", ""),
-                "unit1": unit,
-                "unit2": "",
-                "source": emission.get("Source", {}).get("Source", ""),
-                "activity_data": {
-                    "activity_unit": unit,
-                    "activity_value": quantity,
-                },
-            }
-            corporate_data_dict[corporate_name]["sources"][
-                scope_data["scope_name"]
-            ].append(source_data)
-
-    def calculate_total_all_scopes(self, corporate_data_dict):
-        total = sum(
-            scope["total_co2e"]
-            for data in corporate_data_dict.values()
-            for scope in data["scopes"].values()
-        )
-        return total
-
-    def get_scope1_data(self):
-        return self.get_emission_data("GRI-Collect-Emissions-Scope-1", corporate_id=1)
-
-    def get_scope2_data(self):
-        return self.get_emission_data("GRI-Collect-Emissions-Scope-2", corporate_id=1)
-
-    def get_scope3_data(self):
-        return self.get_emission_data("GRI-Collect-Emissions-Scope-3", corporate_id=1)
-
     def get_queryset(self):
-        scope1_data = self.get_scope1_data()
-        scope2_data = self.get_scope2_data()
-        scope3_data = self.get_scope3_data()
+        organization_id = self.request.data.get("organization")
+        corporate_id = self.request.data.get("corporate")
 
-        combined_data = defaultdict(
-            lambda: {
-                "corporate_name": "",
-                "scopes": {},
-                "locations": {},
-                "sources": defaultdict(list),
-            }
-        )
+        if organization_id:
+            try:
+                organization = Organization.objects.get(pk=organization_id)
 
-        for data_dict in [scope1_data, scope2_data, scope3_data]:
-            for corporate_name, data in data_dict.items():
-                if corporate_name not in combined_data:
-                    combined_data[corporate_name] = data
+                reports = (
+                    organization.report_organization.all()
+                )  # Use the correct related name here
+
+                if corporate_id:
+                    return reports.filter(corporate__id=corporate_id)
                 else:
-                    for scope_key, scope_value in data["scopes"].items():
-                        if scope_key in combined_data[corporate_name]["scopes"]:
-                            combined_data[corporate_name]["scopes"][scope_key][
-                                "total_co2e"
-                            ] += scope_value["total_co2e"]
-                            combined_data[corporate_name]["scopes"][scope_key][
-                                "activity_data"
-                            ]["activity_value"] += scope_value["activity_data"][
-                                "activity_value"
-                            ]
-                        else:
-                            combined_data[corporate_name]["scopes"][
-                                scope_key
-                            ] = scope_value
+                    return reports
 
-                    for location_key, location_value in data["locations"].items():
-                        if location_key in combined_data[corporate_name]["locations"]:
-                            combined_data[corporate_name]["locations"][location_key][
-                                "total_co2e"
-                            ] += location_value["total_co2e"]
-                        else:
-                            combined_data[corporate_name]["locations"][
-                                location_key
-                            ] = location_value
+            except Organization.DoesNotExist:
+                return Report.objects.none()
+        else:
+            return Report.objects.all()
 
-                    for scope_key, sources_list in data["sources"].items():
-                        combined_data[corporate_name]["sources"][scope_key].extend(
-                            sources_list
-                        )
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        total_all_scopes = sum(
-            scope["total_co2e"]
-            for corporate_data in combined_data.values()
-            for scope in corporate_data["scopes"].values()
-        )
+        new_report = serializer.save()
+        report_id = new_report.id
+        start_date = serializer.validated_data.get("start_date")
+        end_date = serializer.validated_data.get("end_date")
+        corporate_id = serializer.validated_data.get("corporate")
+        organization = serializer.validated_data.get("organization")
+        print("Corporate ID:", corporate_id)
 
-        corporate_data_list = []
-        for corporate_name, data in combined_data.items():
-            for scope in data["scopes"].values():
-                if total_all_scopes > 0:
-                    scope["contribution_scope"] = (
-                        scope["total_co2e"] / total_all_scopes
-                    ) * 100
-                else:
-                    scope["contribution_scope"] = 0
-
-            for location in data["locations"].values():
-                if total_all_scopes > 0:
-                    location["contribution_scope"] = (
-                        location["total_co2e"] / total_all_scopes
-                    ) * 100
-                else:
-                    location["contribution_scope"] = 0
-
-            for sources_list in data["sources"].values():
-                for source in sources_list:
-                    if total_all_scopes > 0:
-                        source["contribution_source"] = (
-                            source["total_co2e"] / total_all_scopes
-                        ) * 100
-                    else:
-                        source["contribution_source"] = 0
-
-            scopes = list(data["scopes"].values())
-            locations = list(data["locations"].values())
-            sources = [
-                source
-                for sources_list in data["sources"].values()
-                for source in sources_list
-            ]
-
-            corporate_data_list.append(
-                {
-                    "corporate_name": corporate_name,
-                    "scopes": scopes,
-                    "locations": locations,
-                    "sources": sources,
-                }
+        organization_id = organization.id
+        print("Organization ID:", organization_id)
+        start_month = start_date.month
+        end_month = end_date.month
+        start_year = start_date.year
+        end_year = end_date.year
+        print(start_month, end_month, start_year, end_year)
+        if organization_id:
+            corporate_ids = Corporateentity.objects.filter(
+                organization_id=organization_id
+            ).values_list("id", flat=True)
+            corporate_ids_list = list(corporate_ids)
+            print("Corporate IDs:", corporate_ids_list)
+            # If a single corporate ID is provided, pass it to the function
+            analysis_data = get_analysis_data(
+                self,
+                corporate_ids_list,
+                start_year,
+                end_year,
+                start_month,
+                end_month,
+                report_id,
+            )
+        elif corporate_id:
+            # If multiple corporate names are provided, pass the list of names
+            analysis_data = get_analysis_data(
+                self,
+                corporate_id,
+                start_year,
+                end_year,
+                start_month,
+                end_month,
+                report_id,
             )
 
-        print(corporate_data_list)
-        print(f"Total CO2e for all corporates: {total_all_scopes}")
-        # analysis_data_instance = AnalysisData2.objects.create(
-        #     report_id=1, data=corporate_data_list, client_id=1
-        # )
-
-        return corporate_data_list
+        # if isinstance(analysis_data, Response):
+        #     print("Analysis data is an instance of Response")
+        #     status_check = analysis_data.status_code
+        #     if status_check == 400:
+        #         new_report.delete()
+        #         print(analysis_data.status_code)
+        #     return Response(
+        #         {
+        #             "id": serializer.data.get("id"),
+        #             "start_date": serializer.data.get("start_date"),
+        #             "end_date": serializer.data.get("end_date"),
+        #             "country_name": serializer.data.get("organization_country"),
+        #             "organization_name": serializer.data.get("organization_name"),
+        #             "message": analysis_data.data["message"],
+        #         },
+        #         status=analysis_data.status_code,
+        #     )
+        print("Report created successfully")
+        return Response(
+            {"message": f"Report created successfully ID:{report_id}"},
+            status=status.HTTP_200_OK,
+        )
 
 
 def calculate_contributions(self, emission_by_scope, total_emissions):
@@ -439,7 +295,143 @@ def calculate_contributions(self, emission_by_scope, total_emissions):
     return structured_emission_data
 
 
-def get_analysis_data(self, corporate_id, start_year, end_year, start_month, end_month):
+def get_analysis_data_by_location(self, data_points, locations):
+
+    emission_by_location = defaultdict(
+        lambda: {
+            "corporate_name": "",
+            "location_name": "",
+            "location_address": "",
+            "location_type": "",
+            "total_co2e": 0,
+            "contribution_scope": 0,
+        }
+    )
+    total_co2e_all_locations = 0
+    for loc in locations:
+        corporate_name = loc.corporateentity.name
+        location_name = loc.name
+        location_type = loc.location_type
+        location_address = f"{loc.streetaddress}, {loc.city}, {loc.state} {loc.zipcode}"
+        emission_by_location[location_name]["location_name"] = location_name
+        emission_by_location[location_name]["location_type"] = location_type
+        emission_by_location[location_name]["location_address"] = location_address
+        emission_by_location[location_name]["corporate_name"] = corporate_name
+
+    for data in data_points:
+        total_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
+        location_name = data.location
+        emission_by_location[location_name]["total_co2e"] += total_co2e
+
+        total_co2e_all_locations += total_co2e
+
+    for location, emission_data in emission_by_location.items():
+        if total_co2e_all_locations == 0:
+            emission_by_location[location]["contribution_scope"] = 0
+        else:
+            emission_by_location[location]["contribution_scope"] = (
+                emission_data["total_co2e"] / total_co2e_all_locations
+            ) * 100
+
+    # Transform the dictionary to a list and format the values
+    result = [
+        {
+            "corporate_name": emission_data["corporate_name"],
+            "location_name": emission_data["location_name"],
+            "location_address": emission_data["location_address"],
+            "location_type": emission_data["location_type"],
+            "total_co2e": f"{emission_data['total_co2e']:.2f}",
+            "contribution_scope": f"{emission_data['contribution_scope']:.2f}",
+        }
+        for emission_data in emission_by_location.values()
+    ]
+
+    return result
+
+
+def get_analysis_data_by_source(self, data_points):
+    # This will hold the final structured data
+    grouped_data = defaultdict(
+        lambda: defaultdict(
+            lambda: defaultdict(
+                lambda: {
+                    "scope_name": "",
+                    "source_name": "",
+                    "category_name": "",
+                    "activity_name": "",
+                    "total_co2e": 0.0,
+                    "contribution_source": 0.0,
+                    "co2e_unit": "",
+                    "unit_type": "",
+                    "unit1": "",
+                    "unit2": "",
+                    "source": "",
+                    "activity_data": [],
+                }
+            )
+        )
+    )
+    total_co2e_all_sources = 0.0
+
+    for data in data_points:
+        path_name = data.raw_response.path.name
+        scope_name = "-".join(path_name.split("-")[-2:])
+
+        for emission_request, climatiq_response in zip(
+            data.raw_response.data, data.json_holder
+        ):
+            category = emission_request["Emission"]["Category"]
+            sub_category = emission_request["Emission"]["Subcategory"]
+            activity = emission_request["Emission"]["Activity"]
+            unit_type = emission_request["Emission"]["unit_type"]
+            unit1 = emission_request["Emission"]["Unit"]
+            # unit2 = emission_request["Emission"]["Unit2"] Need to find this too
+            total_co2e = climatiq_response.get("co2e", 0)
+            co2e_unit = climatiq_response.get("co2e_unit", "")
+            activity_data = climatiq_response.get("activity_data", "")
+            source = climatiq_response["emission_factor"]["source"]
+
+            # Aggregate data by scope_name, category, and activity_name
+            entry = grouped_data[scope_name][category][activity]
+            entry["scope_name"] = scope_name
+            entry["source_name"] = category
+            entry["category_name"] = sub_category
+            entry["activity_name"] = activity
+            entry["unit1"] = unit1
+            # entry["unit2"] = unit2
+            entry["unit_type"] = unit_type
+            entry["source"] = source
+            entry["activity_data"] = activity_data
+            entry["co2e_unit"] = co2e_unit
+            entry["total_co2e"] += total_co2e
+
+            total_co2e_all_sources += total_co2e
+
+    for scope_dict in grouped_data.values():
+        for category_dict in scope_dict.values():
+            for entry in category_dict.values():
+                if total_co2e_all_sources > 0:
+                    entry["contribution_source"] = (
+                        entry["total_co2e"] / total_co2e_all_sources
+                    ) * 100
+
+    # Flatten the nested dictionary into a list of dictionaries
+    structured_data = [
+        entry
+        for scope_dict in grouped_data.values()
+        for category_dict in scope_dict.values()
+        for entry in category_dict.values()
+    ]
+
+    # for entry in structured_data:
+    #     print(entry)
+
+    return structured_data
+
+
+def get_analysis_data(
+    self, corporate_id, start_year, end_year, start_month, end_month, report_id
+):
     """
     Retrieves analysis data for a given set of corporate IDs, start and end years, and start and end months.
 
@@ -461,79 +453,117 @@ def get_analysis_data(self, corporate_id, start_year, end_year, start_month, end
         * Still need to work on Scource data and location data
         * Refactor and optimization
     """
+    analysis_data_by_corporate = defaultdict(dict)
+    print(corporate_id)
+    for id in corporate_id:
+        locations = Location.objects.filter(corporateentity=id)
+        location_names = locations.values_list("name", flat=True)
+        corporate_name = Corporateentity.objects.get(pk=id).name
+        print(location_names)
+        # * Get all Raw Respones based on location and year.
+        raw_responses = RawResponse.objects.filter(
+            path__slug__icontains="gri-environment-emissions-301-a-scope-",
+            year__range=(start_year, end_year),
+            month__range=(start_month, end_month),
+            location__in=location_names,
+        )
 
-    location = Location.objects.filter(id__in=corporate_id)
-    print(location)
-    # * Get all Raw Respones based on location and year.
-    raw_responses = RawResponse.objects.filter(
-        path__slug__icontains="gri-environment-emissions-301-a-scope-",
-        year__range=(start_year, end_year),
-        month__range=(start_month, end_month),
-    ).all()
+        data_points = DataPoint.objects.filter(
+            raw_response__in=raw_responses, json_holder__isnull=False
+        ).select_related("raw_response")
 
-    data_points = DataPoint.objects.filter(
-        raw_response__in=raw_responses, json_holder__isnull=False
-    ).select_related("raw_response")
+        emission_by_source = get_analysis_data_by_source(self, data_points)
 
-    emission_by_source = defaultdict(lambda: 0)
-    emission_by_location = defaultdict(lambda: 0)
+        emission_by_location = get_analysis_data_by_location(
+            self, data_points, locations
+        )
 
-    emission_by_scope = defaultdict(
-        lambda: {
-            "scope_name": "",
-            "total_co2e": 0,
-            "co2e_unit": "",
-            "unit_type": "",  # Need to Find this
-            "unit1": "",
-            "unit2": "",
-            "activity_data": {"activity_unit": "", "activity_value": 0},
-            "entries": [],
+        emission_by_scope = defaultdict(
+            lambda: {
+                "scope_name": "",
+                "total_co2e": 0,
+                "co2e_unit": "",
+                "unit_type": "",  # Need to Find this
+                "unit1": "",
+                "unit2": "",
+                "activity_data": {"activity_unit": "", "activity_value": 0},
+                "entries": [],
+            }
+        )
+
+        # Assuming data_points is a list of objects containing the necessary data
+        for data in data_points:
+            path_name = data.raw_response.path.name
+            scope_name = "-".join(path_name.split("-")[-2:])
+            for r in data.raw_response.data:
+                unit1 = r["Emission"]["Unit"]
+                unit_type = r["Emission"]["unit_type"]
+
+            # Summing up the CO2e values
+            total_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
+            co2e_unit = ""
+            activity_unit = ""
+            activity_value = 0
+            activity_data = {}
+
+            # Assuming all entries have the same unit and activity data
+            if data.json_holder:
+                first_entry = data.json_holder[0]
+                co2e_unit = first_entry.get("co2e_unit", "")
+                activity_data = first_entry.get("activity_data", {})
+                activity_unit = activity_data.get("activity_unit", "")
+                activity_value = sum(
+                    [
+                        i.get("activity_data", {}).get("activity_value", 0)
+                        for i in data.json_holder
+                    ]
+                )
+
+            # Update the defaultdict with the new values
+            emission_by_scope[scope_name]["scope_name"] = scope_name
+            emission_by_scope[scope_name]["total_co2e"] += total_co2e
+            emission_by_scope[scope_name]["co2e_unit"] = co2e_unit
+            emission_by_scope[scope_name]["unit1"] = unit1
+            emission_by_scope[scope_name]["unit_type"] = unit_type
+            emission_by_scope[scope_name]["activity_data"][
+                "activity_unit"
+            ] = activity_unit
+            emission_by_scope[scope_name]["activity_data"][
+                "activity_value"
+            ] += activity_value
+            emission_by_scope[scope_name]["entries"].extend(data.json_holder)
+
+        # Example total emissions for calculating contributions
+        total_emissions = sum([v["total_co2e"] for v in emission_by_scope.values()])
+
+        data = calculate_contributions(self, emission_by_scope, total_emissions)
+
+        analysis_data_by_corporate[corporate_name] = {
+            "scopes": calculate_contributions(self, emission_by_scope, total_emissions),
+            "locations": emission_by_location,
+            "sources": emission_by_source,
         }
+        restructured_data = {}
+
+        for corporate_name, corporate_data in analysis_data_by_corporate.items():
+            corporate_entry = {
+                "corporate_name": corporate_name,
+                "scope": corporate_data["scopes"],
+                "location": corporate_data["locations"],
+                "source": corporate_data["sources"],
+            }
+
+            restructured_data[corporate_name] = corporate_entry
+
+    serialized_data = json.dumps(restructured_data, cls=DjangoJSONEncoder)
+    # Save the report_analysis_data dictionary in the AnalysisData JSONField
+    analysis_data_instance = AnalysisData2.objects.create(
+        report_id=report_id,
+        data=serialized_data,
+        client_id=1,
     )
-
-    # Assuming data_points is a list of objects containing the necessary data
-    for data in data_points:
-        path_name = data.raw_response.path.name
-        scope_name = "-".join(path_name.split("-")[-2:])
-
-        # Summing up the CO2e values
-        total_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
-        co2e_unit = ""
-        activity_unit = ""
-        activity_value = 0
-        activity_data = {}
-
-        # Assuming all entries have the same unit and activity data
-        if data.json_holder:
-            first_entry = data.json_holder[0]
-            co2e_unit = first_entry.get("co2e_unit", "")
-            activity_data = first_entry.get("activity_data", {})
-            activity_unit = activity_data.get("activity_unit", "")
-            activity_value = sum(
-                [
-                    i.get("activity_data", {}).get("activity_value", 0)
-                    for i in data.json_holder
-                ]
-            )
-
-        # Update the defaultdict with the new values
-        emission_by_scope[scope_name]["scope_name"] = scope_name
-        emission_by_scope[scope_name]["total_co2e"] += total_co2e
-        emission_by_scope[scope_name]["co2e_unit"] = co2e_unit
-        emission_by_scope[scope_name]["activity_data"]["activity_unit"] = activity_unit
-        emission_by_scope[scope_name]["activity_data"][
-            "activity_value"
-        ] += activity_value
-        emission_by_scope[scope_name]["entries"].extend(data.json_holder)
-
-    # Example total emissions for calculating contributions
-    total_emissions = sum([v["total_co2e"] for v in emission_by_scope.values()])
-
-    data = calculate_contributions(self, emission_by_scope, total_emissions)
-
     # Print the structured list of dictionaries
-    print({"scopes": data})
-    return data
+    return restructured_data
 
 
 class ReportDetails(APIView):
@@ -556,6 +586,7 @@ class ReportDetails(APIView):
         start_month = request.GET.get("start_month")
         end_month = request.GET.get("end_month")
         organization_id = request.GET.get("organization_id")
+        report_id = request.GET.get("report_id")
         print(organization_id)
 
         if organization_id:
@@ -565,10 +596,72 @@ class ReportDetails(APIView):
             corporate_ids_list = list(corporate_ids)
             print("Corporate IDs:", corporate_ids_list)
             data = get_analysis_data(
-                self, corporate_ids_list, start_year, end_year, start_month, end_month
+                self,
+                corporate_ids_list,
+                start_year,
+                end_year,
+                start_month,
+                end_month,
+                report_id,
+            )
+        else:
+            data = get_analysis_data(
+                self,
+                corporate_id,
+                start_year,
+                end_year,
+                start_month,
+                end_month,
+                report_id,
             )
 
         return Response(
             (data),
             status=status.HTTP_200_OK,
         )
+
+
+class AnalysisData2APIView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, report_id):
+        try:
+            instance = AnalysisData2.objects.get(report_id=report_id)
+            data_dict = json.loads(instance.data)
+
+            organized_data_list = []
+
+            # Iterate over each corporate in data_dict
+            for corporate_name, corporate_data in data_dict.items():
+                corporate_name = corporate_data.get("corporate_name", [])
+                scopes = corporate_data.get("scope", [])
+                locations = corporate_data.get("location", [])
+                sources = corporate_data.get("source", [])
+
+                # Organize the data into the desired structure
+                organized_data = {
+                    "corporate_name": corporate_name,
+                    "scopes": scopes,
+                    "locations": locations,
+                    "sources": sources,
+                }
+
+                organized_data_list.append(organized_data)
+                print(organized_data)
+
+            # Use the serializer to validate and deserialize the data
+            serializer = AnalysisDataResponseSerializer(
+                data={"data": organized_data_list}
+            )
+            serializer.is_valid(
+                raise_exception=True
+            )  # Ensure to raise an exception for invalid data
+            deserialized_data = serializer.validated_data
+            print(deserialized_data)
+            return Response(deserialized_data, status=status.HTTP_200_OK)
+
+        except AnalysisData2.DoesNotExist:
+            return Response(
+                {"error": f"Data not found for ID {report_id}"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
