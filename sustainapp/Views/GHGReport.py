@@ -455,7 +455,6 @@ def get_analysis_data(self, corporate_id, start_year, end_year, start_month, end
         dict: A dictionary containing the analysis data, including the contribution of each scope to the total emissions.
 
     Task left to do:
-        Filter to add:
         * Add logic to determine unit1, take it from rawresponse>data>emission>unit.
         * Need to Find unit2.
         * Add logic to determine unit_type, take it from rawresponse>data>emission>unit_type .
