@@ -89,4 +89,4 @@ class GetEmissionAnalysis(APIView):
         response_data["top_emission_by_location"] = self.calculate_scope_contribution(
             self.top_emission_by_location
         )
-        return Response({"message": response_data}, status=status.HTTP_200_OK)
+        return Response({"data": response_data}, status=status.HTTP_200_OK)
