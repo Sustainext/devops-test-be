@@ -524,7 +524,6 @@ def get_analysis_data(self, corporate_id, start_year, end_year, start_month, end
         emission_by_scope[scope_name]["activity_data"][
             "activity_value"
         ] += activity_value
-        emission_by_scope[scope_name]["unit1"] = data.value[0]
         emission_by_scope[scope_name]["entries"].extend(data.json_holder)
 
     # Example total emissions for calculating contributions
