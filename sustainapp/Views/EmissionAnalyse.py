@@ -42,7 +42,9 @@ class GetEmissionAnalysis(APIView):
             user=self.request.user,
         )
         self.data_points = DataPoint.objects.filter(
-            raw_response__in=self.raw_responses, json_holder__isnull=False
+            raw_response__in=self.raw_responses,
+            json_holder__isnull=False,
+            location__in=self.locations,
         ).select_related("raw_response")
         # * Get contribution of each path in raw_responses and sum the json_holder
         top_emission_by_scope = defaultdict(lambda: 0)
@@ -75,9 +77,9 @@ class GetEmissionAnalysis(APIView):
         # * Get all the RawResponses
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        self.year = serializer.validated_data["year"]
-        self.corporate = serializer.validated_data["corporate"]
-        self.organisation = serializer.validated_data["organisation"]
+        self.year: int = serializer.validated_data["year"]
+        self.corporate: Corporateentity = serializer.validated_data["corporate"]
+        self.organisation: Organization = serializer.validated_data["organisation"]
         # * 1. Get Locations based on Corporate and Organisations.
         self.locations = self.corporate.location.all().values_list("name", flat=True)
         # * Get top emissions by Scope
