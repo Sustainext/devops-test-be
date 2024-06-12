@@ -3,11 +3,17 @@ from django.db.models import Sum
 from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework.response import Response
 from rest_framework import status
-from sustainapp.models import Corporateentity, AnalysisData2, Report, Location
+from sustainapp.models import (
+    Corporateentity,
+    AnalysisData2,
+    Report,
+    Location,
+    Organization,
+)
 from rest_framework import viewsets, generics
 from sustainapp.serializers import ReportSerializer
 from rest_framework.permissions import AllowAny
-from datametric.models import RawResponse
+from datametric.models import RawResponse, DataPoint
 from sustainapp.Serializers.GHGReportSerializer import (
     CheckReportDataSerializer,
     GHGReportRawResponseSerializer,
@@ -401,3 +407,170 @@ class ReportCreateView(generics.ListAPIView):
         # )
 
         return corporate_data_list
+
+
+def calculate_contributions(self, emission_by_scope, total_emissions):
+    """
+    Calculates the contribution of each scope to the total emissions.
+
+    Args:
+        emission_by_scope (dict): A dictionary where the keys are scope names and the values are dictionaries containing the scope details.
+        total_emissions (float): The total emissions across all scopes.
+
+    """
+    # Convert defaultdict to a list of dictionaries with the required structure
+    structured_emission_data = []
+    for scope, values in emission_by_scope.items():
+        contribution_scope = (
+            (values["total_co2e"] / total_emissions) * 100 if total_emissions else 0
+        )
+        structured_emission_data.append(
+            {
+                "scope_name": values["scope_name"],
+                "total_co2e": values["total_co2e"],
+                "contribution_scope": contribution_scope,
+                "co2e_unit": values["co2e_unit"],
+                "unit_type": values["unit_type"],
+                "unit1": values["unit1"],
+                "unit2": "",  # Add logic to determine unit2 if needed
+                "activity_data": values["activity_data"],
+            }
+        )
+    return structured_emission_data
+
+
+def get_analysis_data(self, corporate_id, start_year, end_year, start_month, end_month):
+    """
+    Retrieves analysis data for a given set of corporate IDs, start and end years, and start and end months.
+
+    Args:
+        self (ReportDetails): The ReportDetails instance.
+        corporate_id (list): A list of corporate IDs.
+        start_year (str): The start year for the analysis.
+        end_year (str): The end year for the analysis.
+        start_month (str): The start month for the analysis.
+        end_month (str): The end month for the analysis.
+
+    Returns:
+        dict: A dictionary containing the analysis data, including the contribution of each scope to the total emissions.
+
+    Task left to do:
+        Filter to add:
+        * Add logic to determine unit1, take it from rawresponse>data>emission>unit.
+        * Need to Find unit2.
+        * Add logic to determine unit_type, take it from rawresponse>data>emission>unit_type .
+        * Still need to work on Scource data and location data
+        * Refactor and optimization
+    """
+
+    location = Location.objects.filter(id__in=corporate_id)
+    print(location)
+    # * Get all Raw Respones based on location and year.
+    raw_responses = RawResponse.objects.filter(
+        path__slug__icontains="gri-environment-emissions-301-a-scope-",
+        year__range=(start_year, end_year),
+        month__range=(start_month, end_month),
+    ).all()
+
+    data_points = DataPoint.objects.filter(
+        raw_response__in=raw_responses, json_holder__isnull=False
+    ).select_related("raw_response")
+
+    emission_by_source = defaultdict(lambda: 0)
+    emission_by_location = defaultdict(lambda: 0)
+
+    emission_by_scope = defaultdict(
+        lambda: {
+            "scope_name": "",
+            "total_co2e": 0,
+            "co2e_unit": "",
+            "unit_type": "",  # Need to Find this
+            "unit1": "",
+            "unit2": "",
+            "activity_data": {"activity_unit": "", "activity_value": 0},
+            "entries": [],
+        }
+    )
+
+    # Assuming data_points is a list of objects containing the necessary data
+    for data in data_points:
+        path_name = data.raw_response.path.name
+        scope_name = "-".join(path_name.split("-")[-2:])
+
+        # Summing up the CO2e values
+        total_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
+        co2e_unit = ""
+        activity_unit = ""
+        activity_value = 0
+        activity_data = {}
+
+        # Assuming all entries have the same unit and activity data
+        if data.json_holder:
+            first_entry = data.json_holder[0]
+            co2e_unit = first_entry.get("co2e_unit", "")
+            activity_data = first_entry.get("activity_data", {})
+            activity_unit = activity_data.get("activity_unit", "")
+            activity_value = sum(
+                [
+                    i.get("activity_data", {}).get("activity_value", 0)
+                    for i in data.json_holder
+                ]
+            )
+
+        # Update the defaultdict with the new values
+        emission_by_scope[scope_name]["scope_name"] = scope_name
+        emission_by_scope[scope_name]["total_co2e"] += total_co2e
+        emission_by_scope[scope_name]["co2e_unit"] = co2e_unit
+        emission_by_scope[scope_name]["activity_data"]["activity_unit"] = activity_unit
+        emission_by_scope[scope_name]["activity_data"][
+            "activity_value"
+        ] += activity_value
+        emission_by_scope[scope_name]["unit1"] = data.value[0]
+        emission_by_scope[scope_name]["entries"].extend(data.json_holder)
+
+    # Example total emissions for calculating contributions
+    total_emissions = sum([v["total_co2e"] for v in emission_by_scope.values()])
+
+    data = calculate_contributions(self, emission_by_scope, total_emissions)
+
+    # Print the structured list of dictionaries
+    print({"scopes": data})
+    return data
+
+
+class ReportDetails(APIView):
+    """
+    Class to retrieve the analysis data for a given set of corporate IDs, start and end years, and start and end months.
+
+    Task Left to do:
+        * Add proper way to retrive data( not params, get from POST)
+        * Add handling when corporate_id is send
+        * Need to change view from APIView to ModelViewSet
+        * Remove AllowAny permission class
+    """
+
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        corporate_id = request.GET.get("corporate_id")
+        start_year = request.GET.get("start_year")
+        end_year = request.GET.get("end_year")
+        start_month = request.GET.get("start_month")
+        end_month = request.GET.get("end_month")
+        organization_id = request.GET.get("organization_id")
+        print(organization_id)
+
+        if organization_id:
+            corporate_ids = Corporateentity.objects.filter(
+                organization_id=organization_id
+            ).values_list("id", flat=True)
+            corporate_ids_list = list(corporate_ids)
+            print("Corporate IDs:", corporate_ids_list)
+            data = get_analysis_data(
+                self, corporate_ids_list, start_year, end_year, start_month, end_month
+            )
+
+        return Response(
+            (data),
+            status=status.HTTP_200_OK,
+        )

@@ -10,7 +10,7 @@ from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from rest_framework import routers
-from sustainapp.Views.GHGReport import ReportCreateView
+from sustainapp.Views.GHGReport import ReportCreateView, ReportDetails
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -33,6 +33,11 @@ urlpatterns = [
         "get_emission_analysis/",
         GetEmissionAnalysis.as_view(),
         name="get_emission_analysis",
+    ),
+    path(
+        "report_data/",
+        ReportDetails.as_view(),
+        name="report_data",
     ),
     path("", include(router.urls)),
 ]
