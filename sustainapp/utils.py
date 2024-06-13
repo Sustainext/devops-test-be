@@ -47,6 +47,7 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import PermissionDenied
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -507,15 +508,11 @@ def generate_report_data(pk, request):
 
 
 def word_docx_report(pk: int):
-    AZURE_ACCOUNT_NAME = os.getenv("AZURE_ACCOUNT_NAME")
-    AZURE_ACCOUNT_KEY = os.getenv("AZURE_ACCOUNT_KEY")
-
-    connection_string = f"DefaultEndpointsProtocol=https;AccountName={AZURE_ACCOUNT_NAME};AccountKey={AZURE_ACCOUNT_KEY};EndpointSuffix=core.windows.net"
-    container_name = "media"
-    blob_name = "report_demo_v1.docx"
-    blob_service_client = BlobServiceClient.from_connection_string(connection_string)
-    blob_client = blob_service_client.get_blob_client(container_name, blob_name)
-    blob_stream = io.BytesIO(blob_client.download_blob().readall())
+    blob_name = os.path.join(
+        settings.MEDIA_ROOT, "report", "files", "report_demo_v2.docx"
+    )
+    blob_object = default_storage.open(blob_name, "rb")
+    blob_stream = io.BytesIO(blob_object.read())
     tpl = DocxTemplate(blob_stream)
     context = generate_report_data(pk, None)
     about_the_organization_stream = io.BytesIO()
