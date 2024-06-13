@@ -406,6 +406,9 @@ class ReportSerializer(serializers.ModelSerializer):
     organization_country = serializers.ReadOnlyField(
         source="organization.countryoperation"
     )
+    status = serializers.CharField(required=False)
+    client = serializers.CharField(required=False)
+    user = serializers.CharField(required=False)
 
     class Meta:
         model = Report

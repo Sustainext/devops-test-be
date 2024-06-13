@@ -1,5 +1,4 @@
 import json
-from django.db.models import Sum
 from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,258 +10,29 @@ from sustainapp.models import (
     Organization,
 )
 from rest_framework import viewsets, generics
-from sustainapp.serializers import ReportSerializer, AnalysisDataResponseSerializer
+from django.views.generic import View
+from sustainapp.serializers import (
+    ReportSerializer,
+    AnalysisDataResponseSerializer,
+    ReportUpdateSerializer,
+    ReportRetrieveSerializer,
+)
 from rest_framework.permissions import AllowAny
 from datametric.models import RawResponse, DataPoint
-from sustainapp.Serializers.GHGReportSerializer import (
-    CheckReportDataSerializer,
-    GHGReportRawResponseSerializer,
-    ScopeDataSerializer,
-)
 from rest_framework.views import APIView
-from datametric.serializers import RawResponseSerializer
 from collections import defaultdict
+from django.conf import settings
+import os
+from django.core.files.base import ContentFile
+import logging
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
+import time
+from sustainapp.report import generate_pdf_data
 
-
-def handle_none(value):
-    return value if value is not None else 0
-
-
-def calculate_total(queryset):
-    return queryset.aggregate(total=Sum("co2e"))
-
-
-# def get_data_for_ghg_report(year, month, corporate_id, report_id, client_id):
-#     print("Function Triggered")
-#     print("Year:", year)
-#     print("Month:", month)
-#     try:
-#         # Retrieve the Corporateentity instance
-#         corporate = Corporateentity.objects.get(id=corporate_id)
-
-#         # Access all related Location objects using the related_name 'locations'
-#         locations = corporate.location.all()
-
-#         if not locations.exists():
-#             return Response(
-#                 {"message": "No locations found for this corporate entity."},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         total_emission_value = 0
-#         scope_arr = []
-#         category_arr = []
-#         location_arr = []
-
-#         # Process each location
-#         for location in locations:
-#             # Filter RawResponse data for the specified year, month, and location
-#             raw_responses = RawResponse.objects.filter(
-#                 year=year, month=month, location=location.name
-#             )
-
-#             if not raw_responses.exists():
-#                 continue  # Skip if no data is found for this location
-
-#             for raw_response in raw_responses:
-#                 data = raw_response.data
-#                 for item in data:
-#                     emission = item.get("Emission", {})
-#                     quantity = int(emission.get("Quantity", 0))
-#                     total_emission_value += quantity
-
-#                     scope_arr.append(
-#                         {
-#                             "scope_name": raw_response.path.split("-")[-1],
-#                             "total_co2e": round(quantity / 1000, 2),
-#                             "contribution_scope": 0,  # Placeholder, will be calculated below
-#                             "co2e_unit": emission.get("Unit"),
-#                             "unit_type": emission.get("unit_type"),
-#                             "unit1": "",
-#                             "unit2": "",
-#                             "activity_data": item,
-#                         }
-#                     )
-
-#                     category_arr.append(
-#                         {
-#                             "scope_name": raw_response.path.split("-")[-1],
-#                             "source_name": emission.get("Category"),
-#                             "category_name": emission.get("Subcategory"),
-#                             "activity_name": emission.get("Activity"),
-#                             "total_co2e": round(quantity / 1000, 2),
-#                             "contribution_source": 0,  # Placeholder, will be calculated below
-#                             "co2e_unit": emission.get("Unit"),
-#                             "unit_type": emission.get("unit_type"),
-#                             "unit1": "",
-#                             "unit2": "",
-#                             "source": "",
-#                             "activity_data": item,
-#                         }
-#                     )
-
-#             if total_emission_value > 0:
-#                 for scope in scope_arr:
-#                     scope["contribution_scope"] = round(
-#                         (scope["total_co2e"] * 1000 / total_emission_value) * 100, 2
-#                     )
-
-#                 for category in category_arr:
-#                     category["contribution_source"] = round(
-#                         (category["total_co2e"] * 1000 / total_emission_value) * 100, 2
-#                     )
-
-#             location_arr.append(
-#                 {
-#                     "corporate_name": corporate.name,
-#                     "location_name": location.name,
-#                     "location_address": f"{location.streetaddress}, {location.city}, {location.state} {location.zipcode}",
-#                     "location_type": location.location_type,
-#                     "total_co2e": round(total_emission_value / 1000, 2),
-#                     "contribution_location": 100,  # Since it's the total for this location
-#                 }
-#             )
-
-#         report_analysis_data = {
-#             corporate.name: {
-#                 "scope": scope_arr,
-#                 "source": category_arr,
-#                 "location": location_arr,
-#                 "corporate": {
-#                     "corporate_name": corporate.name,
-#                     "scope": scope_arr,
-#                     "source": category_arr,
-#                     "location": location_arr,
-#                 },
-#             }
-#         }
-
-#         serialized_data = json.dumps(report_analysis_data, cls=DjangoJSONEncoder)
-
-#         # Save the report_analysis_data dictionary in the AnalysisData JSONField
-#         analysis_data_instance = AnalysisData2.objects.create(
-#             report_id=report_id,
-#             data=serialized_data,
-#             client_id=client_id,
-#         )
-
-#         print(analysis_data_instance)
-#         print(report_analysis_data)
-#         return Response(
-#             {
-#                 "message": f"Calculation success, Report created successfully ID:{report_id}"
-#             },
-#             status=status.HTTP_200_OK,
-#         )
-
-#     except Exception as e:
-#         print("Error:", e)
-#         return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def get_corporate_name(location_name):
-    try:
-        location = Location.objects.get(name=location_name)
-        return location.corporateentity.name
-    except Location.DoesNotExist:
-        return "Unknown Corporate"
-
-
-class GHGReportView(generics.CreateAPIView):
-    serializer_class = ReportSerializer
-    permission_classes = [AllowAny]
-
-    def get_queryset(self):
-        organization_id = self.request.data.get("organization")
-        corporate_id = self.request.data.get("corporate")
-
-        if organization_id:
-            try:
-                organization = Organization.objects.get(pk=organization_id)
-
-                reports = (
-                    organization.report_organization.all()
-                )  # Use the correct related name here
-
-                if corporate_id:
-                    return reports.filter(corporate__id=corporate_id)
-                else:
-                    return reports
-
-            except Organization.DoesNotExist:
-                return Report.objects.none()
-        else:
-            return Report.objects.all()
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        new_report = serializer.save()
-        report_id = new_report.id
-        start_date = serializer.validated_data.get("start_date")
-        end_date = serializer.validated_data.get("end_date")
-        corporate_id = serializer.validated_data.get("corporate")
-        organization = serializer.validated_data.get("organization")
-        print("Corporate ID:", corporate_id)
-
-        organization_id = organization.id
-        print("Organization ID:", organization_id)
-        start_month = start_date.month
-        end_month = end_date.month
-        start_year = start_date.year
-        end_year = end_date.year
-        print(start_month, end_month, start_year, end_year)
-        if organization_id:
-            corporate_ids = Corporateentity.objects.filter(
-                organization_id=organization_id
-            ).values_list("id", flat=True)
-            corporate_ids_list = list(corporate_ids)
-            print("Corporate IDs:", corporate_ids_list)
-            # If a single corporate ID is provided, pass it to the function
-            analysis_data = get_analysis_data(
-                self,
-                corporate_ids_list,
-                start_year,
-                end_year,
-                start_month,
-                end_month,
-                report_id,
-            )
-        elif corporate_id:
-            # If multiple corporate names are provided, pass the list of names
-            analysis_data = get_analysis_data(
-                self,
-                corporate_id,
-                start_year,
-                end_year,
-                start_month,
-                end_month,
-                report_id,
-            )
-
-        # if isinstance(analysis_data, Response):
-        #     print("Analysis data is an instance of Response")
-        #     status_check = analysis_data.status_code
-        #     if status_check == 400:
-        #         new_report.delete()
-        #         print(analysis_data.status_code)
-        #     return Response(
-        #         {
-        #             "id": serializer.data.get("id"),
-        #             "start_date": serializer.data.get("start_date"),
-        #             "end_date": serializer.data.get("end_date"),
-        #             "country_name": serializer.data.get("organization_country"),
-        #             "organization_name": serializer.data.get("organization_name"),
-        #             "message": analysis_data.data["message"],
-        #         },
-        #         status=analysis_data.status_code,
-        #     )
-        print("Report created successfully")
-        return Response(
-            {"message": f"Report created successfully ID:{report_id}"},
-            status=status.HTTP_200_OK,
-        )
+logger = logging.getLogger()
 
 
 def calculate_contributions(self, emission_by_scope, total_emissions):
@@ -563,31 +333,60 @@ def get_analysis_data(
         client_id=1,
     )
     # Print the structured list of dictionaries
-    return restructured_data
+    return Response(
+        {"message": f"Calculation success, Report created successfully ID:{report_id}"},
+        status=status.HTTP_200_OK,
+    )
 
 
-class ReportDetails(APIView):
-    """
-    Class to retrieve the analysis data for a given set of corporate IDs, start and end years, and start and end months.
+class GHGReportView(generics.CreateAPIView):
+    serializer_class = ReportSerializer
 
-    Task Left to do:
-        * Add proper way to retrive data( not params, get from POST)
-        * Add handling when corporate_id is send
-        * Need to change view from APIView to ModelViewSet
-        * Remove AllowAny permission class
-    """
+    def get_queryset(self):
+        organization_id = self.request.data.get("organization")
+        corporate_id = self.request.data.get("corporate")
 
-    permission_classes = [AllowAny]
+        if organization_id:
+            try:
+                organization = Organization.objects.get(pk=organization_id)
 
-    def get(self, request):
-        corporate_id = request.GET.get("corporate_id")
-        start_year = request.GET.get("start_year")
-        end_year = request.GET.get("end_year")
-        start_month = request.GET.get("start_month")
-        end_month = request.GET.get("end_month")
-        organization_id = request.GET.get("organization_id")
-        report_id = request.GET.get("report_id")
-        print(organization_id)
+                reports = (
+                    organization.report_organization.all()
+                )  # Use the correct related name here
+
+                if corporate_id:
+                    return reports.filter(corporate__id=corporate_id)
+                else:
+                    return reports
+
+            except Organization.DoesNotExist:
+                return Report.objects.none()
+        else:
+            return Report.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        status = 1
+        client_id = request.user.client.id
+        user_id = request.user.id
+
+        new_report = serializer.save(
+            status=status, client_id=client_id, user_id=user_id
+        )
+
+        report_id = new_report.id
+        start_date = serializer.validated_data.get("start_date")
+        end_date = serializer.validated_data.get("end_date")
+        corporate_id = serializer.validated_data.get("corporate")
+        organization = serializer.validated_data.get("organization")
+
+        organization_id = organization.id
+        start_month = start_date.month
+        end_month = end_date.month
+        start_year = start_date.year
+        end_year = end_date.year
 
         if organization_id:
             corporate_ids = Corporateentity.objects.filter(
@@ -595,7 +394,8 @@ class ReportDetails(APIView):
             ).values_list("id", flat=True)
             corporate_ids_list = list(corporate_ids)
             print("Corporate IDs:", corporate_ids_list)
-            data = get_analysis_data(
+            # If a single corporate ID is provided, pass it to the function
+            analysis_data = get_analysis_data(
                 self,
                 corporate_ids_list,
                 start_year,
@@ -604,8 +404,9 @@ class ReportDetails(APIView):
                 end_month,
                 report_id,
             )
-        else:
-            data = get_analysis_data(
+        elif corporate_id:
+            # If multiple corporate names are provided, pass the list of names
+            analysis_data = get_analysis_data(
                 self,
                 corporate_id,
                 start_year,
@@ -615,8 +416,26 @@ class ReportDetails(APIView):
                 report_id,
             )
 
+        if isinstance(analysis_data, Response):
+            print("Analysis data is an instance of Response")
+            status_check = analysis_data.status_code
+            if status_check == 400:
+                new_report.delete()
+                print(analysis_data.status_code)
+            return Response(
+                {
+                    "id": serializer.data.get("id"),
+                    "start_date": serializer.data.get("start_date"),
+                    "end_date": serializer.data.get("end_date"),
+                    "country_name": serializer.data.get("organization_country"),
+                    "organization_name": serializer.data.get("organization_name"),
+                    "message": analysis_data.data["message"],
+                },
+                status=analysis_data.status_code,
+            )
+        print("Report created successfully")
         return Response(
-            (data),
+            {"message": f"Report created successfully ID:{report_id}"},
             status=status.HTTP_200_OK,
         )
 
@@ -665,3 +484,131 @@ class AnalysisData2APIView(APIView):
                 {"error": f"Data not found for ID {report_id}"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+
+class ReportListView(generics.ListAPIView):
+    serializer_class = ReportRetrieveSerializer
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+
+        if not user_id:
+            # Returning an empty queryset if user_id is not provided
+            return Report.objects.none()
+
+        try:
+            user_id = int(user_id)
+        except ValueError:
+            return Report.objects.none()
+
+        queryset = Report.objects.filter(user=user_id, status=1)
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset.exists():
+            return Response(
+                {"message": "No reports found for the given user."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ReportViewSet(viewsets.ModelViewSet):
+    queryset = Report.objects.all()
+    serializer_class = ReportSerializer
+
+    def update(self, request, *args, **kwargs):
+        try:
+            partial = kwargs.pop("partial", False)
+            instance = self.get_object()
+
+            # Your custom logic here
+            reset_logo = (
+                "org_logo" in request.data and request.data.get("org_logo") == "null"
+            )
+            org_logo = request.FILES.get("org_logo", None)
+
+            if reset_logo:
+                default_image_path = settings.DEFAULT_ORG_LOGO_PATH
+                with open(default_image_path, "rb") as image_file:
+                    instance.org_logo.save(
+                        os.path.basename(default_image_path),
+                        ContentFile(image_file.read()),
+                        save=True,
+                    )
+            elif org_logo is not None:
+                instance.org_logo = org_logo
+
+            data_field = request.data.get("data")
+            if data_field:
+                try:
+                    data = json.loads(data_field)
+                except json.JSONDecodeError:
+                    return Response(
+                        {"error": "Invalid JSON format."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            else:
+                data = request.data
+
+            serializer = self.get_serializer(instance, data=data, partial=partial)
+            if serializer.is_valid():
+                self.perform_update(serializer)
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            # Catch any unexpected exceptions during report update
+            return Response(
+                {"error": {"message": str(e)}},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+class ReportPDFView(View):
+    def get(self, request, *args, **kwargs):
+        start_time = time.time()
+
+        pk = self.kwargs.get("pk")
+        try:
+            report = get_object_or_404(Report, pk=pk)
+        except:
+            return HttpResponse("No report with ID={0}".format(pk), status=404)
+
+        context = generate_pdf_data(pk)  # Function is defined in reports.py
+        if context is None:
+            return JsonResponse({"error": "Failed to generate PDF data"}, status=500)
+
+        template_path = "sustainapp/pdf.html"
+        template = get_template(template_path)
+        html = template.render(context, request)
+        response = HttpResponse(content_type="application/pdf")
+
+        try:
+            disposition = "attachment" if "download" in request.GET else "inline"
+            pdf_filename = f"{context['object_list'].name}.pdf"
+            response["Content-Disposition"] = (
+                f'{disposition}; filename="{pdf_filename}"'
+            )
+
+            pisa_status = pisa.CreatePDF(html, dest=response)
+            if pisa_status.err:
+                return HttpResponse("Error generating PDF", status=500)
+
+            print(
+                f"Total time taken to generate PDF is {time.time() - start_time} seconds."
+            )
+            return response
+
+        except Exception as e:
+            # Log the exception and prepare an error response
+            print(e)
+            logger.exception("Unexpected error generating PDF")
+            return HttpResponse("Unexpected error occurred", status=500)

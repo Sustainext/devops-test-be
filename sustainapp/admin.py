@@ -35,6 +35,7 @@ from sustainapp.models import (
     Certification,
     ZohoInfo,
     LoginCounter,
+    AnalysisData2,
 )
 
 from django.db import migrations
@@ -264,6 +265,10 @@ class ReportAdmin(admin.ModelAdmin):
     pass
 
 
+class AnalysisReportDataAdmin(admin.ModelAdmin):
+    pass
+
+
 class ZohoInfoAdmin(admin.ModelAdmin):
     list_display = ["id", "client_name", "iframe_url", "table_no", "table_name"]
     list_filter = ("client__name",)
@@ -280,6 +285,7 @@ UserExtendedModel = apps.get_model(settings.AUTH_USER_MODEL)
 
 admin.site.register(Regulation, RegulationAdmin),
 admin.site.register(Report, ReportAdmin),
+admin.site.register(AnalysisData2, AnalysisReportDataAdmin),
 admin.site.register(UserExtendedModel, UserExtendedAdmin),
 admin.site.register(Batch, BatchAdmin),
 admin.site.register(Client, ClientAdmin),

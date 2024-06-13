@@ -12,13 +12,15 @@ from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
     GHGReportView,
-    ReportDetails,
     AnalysisData2APIView,
+    ReportViewSet,
+    ReportListView,
+    ReportPDFView,
 )
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
-# router.register("ghgreport", GHGReportView, basename="ghgreport")
+router.register(r"ghgreport", ReportViewSet, basename="ReportUpdate")
 urlpatterns = [
     path("subcategories/", SubCategoriesAPIView.as_view(), name="subcategories"),
     path(
@@ -33,22 +35,18 @@ urlpatterns = [
     path("user_all_task/", UserTaskDashboardView.as_view(), name="user_all_task"),
     path("change_password/", ChangePasswordAPIView.as_view(), name="change_password"),
     path("get_location/", LocationListAPIView.as_view(), name="get_location"),
-    # path("ghgreport/", ReportCreateView.as_view(), name="ghgreport"),
     path(
         "get_emission_analysis/",
         GetEmissionAnalysis.as_view(),
         name="get_emission_analysis",
     ),
     path(
-        "report_data/",
-        ReportDetails.as_view(),
+        "report_data/<str:report_id>/",
+        AnalysisData2APIView.as_view(),
         name="report_data",
     ),
-    path(
-        "report_data2/<str:report_id>/",
-        AnalysisData2APIView.as_view(),
-        name="report_data2",
-    ),
     path("report_create/", GHGReportView.as_view(), name="report_create"),
+    path("report_details/", ReportListView.as_view(), name="report_details"),
+    path("report_pdf/<int:pk>/", ReportPDFView.as_view(), name="report_pdf"),
     path("", include(router.urls)),
 ]
