@@ -24,6 +24,7 @@ from sustainapp.serializers import (
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
+from rest_framework.validators import ValidationError
 
 
 class FrameworkReadOnlyModelViewset(viewsets.ReadOnlyModelViewSet):

@@ -10,9 +10,17 @@ from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from rest_framework import routers
+from sustainapp.Views.GHGReport import (
+    GHGReportView,
+    AnalysisData2APIView,
+    ReportViewSet,
+    ReportListView,
+    ReportPDFView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
+router.register(r"ghgreport", ReportViewSet, basename="ReportUpdate")
 urlpatterns = [
     path("subcategories/", SubCategoriesAPIView.as_view(), name="subcategories"),
     path(
@@ -32,5 +40,13 @@ urlpatterns = [
         GetEmissionAnalysis.as_view(),
         name="get_emission_analysis",
     ),
+    path(
+        "report_data/<str:report_id>/",
+        AnalysisData2APIView.as_view(),
+        name="report_data",
+    ),
+    path("report_create/", GHGReportView.as_view(), name="report_create"),
+    path("report_details/", ReportListView.as_view(), name="report_details"),
+    path("report_pdf/<int:pk>/", ReportPDFView.as_view(), name="report_pdf"),
     path("", include(router.urls)),
 ]

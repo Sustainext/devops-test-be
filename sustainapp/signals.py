@@ -25,7 +25,7 @@ from sustainapp.models import LoginCounter
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def send_activation_email(sender, instance, created, **kwargs):
 
-    if created:
+    if created and not instance.is_superuser:
         # Generate a random password
         password = "".join(random.choices(string.ascii_letters + string.digits, k=12))
 

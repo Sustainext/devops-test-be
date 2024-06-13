@@ -35,6 +35,7 @@ from sustainapp.models import (
     Certification,
     ZohoInfo,
     LoginCounter,
+    AnalysisData2,
 )
 
 from django.db import migrations
@@ -252,12 +253,19 @@ class IdentifyingInformationAdmin(admin.ModelAdmin):
     list_filter = ("client", "user")
 
 
-class UserExtendedAdmin(admin.ModelAdmin):
+class UserExtendedAdmin(UserAdmin):
     list_display = ["username", "client"]
     list_filter = ("client",)
+    search_fields = ("username", "email", "client")
+    ordering = ("username",)
+    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("client",)}),)
 
 
 class ReportAdmin(admin.ModelAdmin):
+    pass
+
+
+class AnalysisReportDataAdmin(admin.ModelAdmin):
     pass
 
 
@@ -277,6 +285,7 @@ UserExtendedModel = apps.get_model(settings.AUTH_USER_MODEL)
 
 admin.site.register(Regulation, RegulationAdmin),
 admin.site.register(Report, ReportAdmin),
+admin.site.register(AnalysisData2, AnalysisReportDataAdmin),
 admin.site.register(UserExtendedModel, UserExtendedAdmin),
 admin.site.register(Batch, BatchAdmin),
 admin.site.register(Client, ClientAdmin),

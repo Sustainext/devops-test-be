@@ -256,8 +256,6 @@ class Userorg(models.Model):
     objects = ClientFiltering()
 
     def clean(self):
-        print("clean method")
-        print("self.user.client.id", self.user.client.id)
         if self.client.id and self.user.id and self.client.id != self.user.client.id:
             raise ValidationError("Use and client mismatch")
         if (
@@ -506,17 +504,11 @@ class BatchManager(models.Manager):
             When(month="NOV", then=Value(2)),
             When(month="DEC", then=Value(1)),
         )
-        print(
-            latest_year_records.alias(month_priority=month_priority)
-            .order_by("-year", "month_priority")
-            .values("year", "month", "location")
-        )
         latest_month = (
             latest_year_records.alias(month_priority=month_priority)
             .order_by("-year", "month_priority")
             .values("month")[0]["month"]
         )
-        print("latest_month", latest_month)
         latest_record = latest_year_records.filter(month=latest_month)
         record = {
             "latest_year": latest_year,
@@ -683,7 +675,6 @@ class Mygoal(models.Model):
     objects = ClientFiltering()
 
     def clean(self):
-        print("self.assigned_to", self.assigned_to)
         if (
             self.client.id
             and self.assigned_to.id

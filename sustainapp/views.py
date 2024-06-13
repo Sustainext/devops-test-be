@@ -171,6 +171,9 @@ def log_call_start():
     logger.info("-----------------Call started from here----------------")
 
 
+user_log = logging.getLogger("user_logger")  # For general logs
+
+
 class ClientViewset(viewsets.ModelViewSet):
     """Creating API's for client"""
 
@@ -222,7 +225,6 @@ class ClientViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def client_details_by_username(self, request, username=None):
         # Find the user by username
-        print("client_details_by_username")
         try:
             username = request.query_params.get("username")
             user = User.objects.get(username=username)
@@ -260,7 +262,6 @@ class ClientViewset(viewsets.ModelViewSet):
             user_clients = self.queryset.filter(client=client)
 
         except Exception as e:
-            print("except block")
             return Response(
                 {"error": "Client have no users"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -288,7 +289,6 @@ class ClientViewset(viewsets.ModelViewSet):
         log_call_start()
         instance = self.get_object()
         logging.info(f"Deleting organization instance - {instance}")
-        print(instance)
         self.perform_destroy(instance)
         return Response({"message": "Successfully deleted"}, status=status.HTTP_200_OK)
 
@@ -305,29 +305,21 @@ def UserOrgView(request):
         logging.info(
             f"Fetching details for user with username '{username}' - {list(User.objects.filter(username=username).values_list('id', 'username'))}"
         )
-        print(
-            "list(User.objects.filter(username=username).",
-            list(User.objects.filter(username=username).values_list("id", "username")),
-        )
         u = list(User.objects.filter(username=username).values_list("id"))
         userorg = list(
             Userorg.objects.filter(user_id=u[0][0]).values_list("organization_id")
         )
         logging.info(f"User details - {u}, Organization details - {userorg}")
-        print(u, userorg)
         list_user = list(
             Userorg.objects.filter(organization_id=userorg[0][0]).values_list("user_id")
         )
         logging.info(f"List of users - {list_user}")
-        print(list_user)
         user_list = User.objects.filter(id__in=[i[0] for i in list_user])
         logging.info(f"User list - {user_list}")
-        print(user_list)
         user_data = UserSerializer(user_list, many=True).data
         return Response(user_data, status=status.HTTP_200_OK)
     except Exception as e:
         logging.error(f"UserOrgView: An error occurred - {e.args}")
-        print(e.args)
         response = JsonResponse({"message": e.args})
         return response
 
@@ -479,9 +471,9 @@ class OrganizationViewset(viewsets.ModelViewSet):
         instance = self.get_object()
         check_same_client(request.client, instance)
         logging.info(f"Deleting organization instance - {instance}")
-        print(instance)
-        logger = logging.getLogger("custom_logger")
-        logger.info(f"Organisation deleted by user {request.user.username}")
+        user_log.info(
+            f"Organisation: ({instance.name}), ID: ({instance.id}) deleted by user {request.user.username}"
+        )
         self.perform_destroy(instance)
         return Response({"message": "Successfully deleted"}, status=status.HTTP_200_OK)
 
@@ -491,7 +483,6 @@ class OrganizationViewset(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         log_call_start()
         instance = self.get_object()
-        print("instance", instance)
         check_same_client(request.client, instance)
         request_data = request.data.copy()
 
@@ -518,10 +509,8 @@ def organizationonly(request):
         log_call_start()
         logging.info(f"request.data- {request.data}")
 
-        print(request.data)
         request_data = client_request_data(request.data, request.client)
 
-        print(request_data)
         # Input Validation
         validation_org_input(request_data)
 
@@ -549,7 +538,6 @@ def organizationonly(request):
     regulation = input_data.pop("regulation", None)
     try:
         organization_data = Organization.objects.create(**input_data)
-        print("organization_data", organization_data)
         organization_data.framework.set(frameworks)
         organization_data.sdg.set(Sdg.objects.filter(name=sdg)) if sdg else None
         (
@@ -576,9 +564,7 @@ def organizationonly(request):
         )
         organization_data.save()
         logging.info(f"organization_data- {organization_data}")
-        print("organization_data", organization_data)
         org_data = OrganizationOnlySerializer(organization_data).data
-        print("org_data", org_data)
         return Response(org_data, status=status.HTTP_201_CREATED)
     except Exception as e:
         return JsonResponse({"message": e.args})
@@ -596,7 +582,9 @@ class CorporateViewset(viewsets.ModelViewSet):
         instance = self.get_object()
         check_same_client(request.client, instance)
         logging.info(f"Deleting corporate instance - {instance}")
-        print(instance)
+        user_log.info(
+            f"Corporate ({instance.name}),ID: {instance.id} deleted by user {request.user.username}"
+        )
         self.perform_destroy(instance)
         return Response({"message": "Successfully deleted"}, status=status.HTTP_200_OK)
 
@@ -716,7 +704,9 @@ class LocationViewset(viewsets.ModelViewSet):
         check_same_client(request.client, instance)
         logging.info(f"deleting location instance:, {instance}")
 
-        print(instance)
+        user_log.info(
+            f"User {request.user} deleted location {instance.name} from {instance.client.name}"
+        )
         self.perform_destroy(instance)
         return Response({"message": "Successfully deleted"}, status=status.HTTP_200_OK)
 
@@ -729,7 +719,6 @@ class LocationViewset(viewsets.ModelViewSet):
 def locationonlyview(request):
     log_call_start()
     logging.info(f"Received request data - {request.data}")
-    print(request.data)
     request_data = client_request_data(request.data.copy(), request.client)
     try:
         corporate_name = request_data.pop("corporateentity")
@@ -746,7 +735,8 @@ def locationonlyview(request):
 
     except Corporateentity.DoesNotExist:
         return Response(
-            {"error": "Corporateentity not found for the given client"}, status=status.HTTP_400_BAD_REQUEST
+            {"error": "Corporateentity not found for the given client"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
     except Client.DoesNotExist:
         return Response(
@@ -761,12 +751,9 @@ def locationonlyview(request):
 @permission_classes([IsAuthenticated])
 def locationview(request):
     try:
-        print("locationview")
         log_call_start()
         queryset = Location.objects.filter(client_id=request.client)
-        print("queryset", queryset)
         location_data = LocationSerializer(queryset, many=True).data
-        print("queryset", location_data)
         return Response(location_data, status=status.HTTP_200_OK)
     except Exception as e:
         return JsonResponse({"message": e.args})
@@ -788,7 +775,6 @@ def corporategetonly(request):
 @permission_classes([IsAuthenticated])
 def orggetonly(request):
     try:
-        print("all orgs")
         org = Organization.objects.filter(client_id=request.client)
         org_data = OrganizationOnlySerializer(org, many=True).data
         return Response(org_data)
@@ -809,7 +795,6 @@ def create_task(username, rows_created_now, scope_data):
                 for individual_row_data, entire_row in zip(rows_created_now, scope_data)
             ]
         )
-        print("task", task)
         return task
     except Exception as e:
         return "Task creation failed"
@@ -832,20 +817,13 @@ def get_org(request):
     try:
         log_call_start()
         data_filter = dict(request.query_params)
-        print("data_filter", data_filter["username"][0])
         user_id = list(
             User.objects.filter(username=data_filter["username"][0]).values("id")
         )[0]["id"]
-        print(
-            list(User.objects.filter(username=data_filter["username"][0]).values("id"))[
-                0
-            ]["id"]
-        )
         user_org = list(Userorg.objects.filter(user=user_id).values("organization"))[0][
             "organization"
         ]
         logging.info(f"get_org: User Organization - {user_org}")
-        print("user_org", user_org)
         return Response(user_org, status=status.HTTP_200_OK)
     except Exception as e:
         return JsonResponse({"message": e.args})
@@ -853,7 +831,6 @@ def get_org(request):
 
 def calculate_total(i):
     total_co2e = i.aggregate(total=Sum("co2e"))
-    print("total_co2e", type(total_co2e), type(total_co2e["total"]), total_co2e)
     return total_co2e
 
 
@@ -862,7 +839,6 @@ def calculate_total(i):
 def AnalyseView(request):
     try:
         log_call_start()
-        print("request.client", request.client)
         data_filter = dict(request.query_params)
         year = request.query_params.get("year")
         if year is None:
@@ -881,14 +857,12 @@ def AnalyseView(request):
         logging.info(
             f"AnalyseView: Query parameters - {data_filter}, username - {username}"
         )
-        print("query_params", data_filter, data_filter.get("username")[0])
 
         # Filerting corporates by client
         corporate_list = list(
             Corporateentity.objects.filter(client_id=request.client.id).values("name")
         )
         logging.info(f"AnalyseView: Corporate List - {corporate_list}")
-        print("corporate_list", corporate_list)
         if corporate_list == []:
             return Response(
                 {"message": "Corporate Data is not available"},
@@ -900,7 +874,6 @@ def AnalyseView(request):
         for corporate in corporate_list:
             resp.update({corporate["name"]: {}})
             logging.info(f"AnalyseView: Processing Corporate - {corporate['name']}")
-            print("resp", resp)
 
             # Filtering out emissions for the corporate in loop
             emission_org = RowDataBatch.objects.filter(
@@ -909,41 +882,29 @@ def AnalyseView(request):
             logging.info(
                 f"AnalyseView: Emission Data before year filtering - {emission_org}"
             )
-            print("before year filtering", emission_org)
 
             emission_org = emission_org.filter(batch__year=data_filter["year"][0])
             logging.info(
                 f"AnalyseView: Emission Data after year filtering - {emission_org}"
             )
-            print("emision_org after year filtering", emission_org)
 
             # total emissions value
             total_emission_value = emission_org.aggregate(total=Sum("co2e"))
             total_emission_value["total"] = handle_none(total_emission_value["total"])
             logging.info(f"AnalyseView: Total Emission Value - {total_emission_value}")
-            print("total_emission_value", total_emission_value)
 
             # SCOPE DATA STARTS HERE
-            print("       SCOPE DATA STARTS HERE        ")
             logging.info("----------SCOPE DATA STARTS HERE-------")
             scope_list = [1, 2, 3]
-            print(
-                "scope_list", scope_list, list(Scope.objects.all().values("id", "name"))
-            )
             emission_data_scope = [emission_org.filter(scope=i) for i in scope_list]
-            print("emission_data_scope", emission_data_scope)
             logging.info(f"emission_data_scope- {emission_data_scope}")
             scope_arr = []
             for i_scope, j_scope in zip(emission_data_scope, scope_list):
-                print("i", i_scope)
-                print("j", j_scope)
                 if not i_scope:
-                    print("this iteration doesnt have data")
+                    logging.info(f"this iteration doesnt have data")
                 else:
-                    print(i_scope)
                     total_co2e_scope = calculate_total(i_scope)
                     total_co2e_scope["total"] = handle_none(total_co2e_scope["total"])
-                    print(total_co2e_scope, type(total_emission_value["total"]))
                     logging.info(f"{total_co2e_scope}")
                     logging.info(f"{type(total_emission_value['total'])}")
                     # Check if total_emission_value["total"] is very small or zero
@@ -967,34 +928,26 @@ def AnalyseView(request):
                             "contribution_scope": round(contribution_scope, 2),
                         }
                     )
-                    print("scope_arr", scope_arr)
                     logging.info("scope_arr {scope_arr}")
             resp[corporate["name"]]["scope"] = scope_arr
-            print("resp")
             logging.info(f"response {resp}")
 
             # Category data starts here
-            print("   category DATA STARTS HERE   ")
             logging.info("------CATEGORY STARTS HERE-----")
             category_list = list(RowDataBatch.objects.values("sector"))
             category_set = list(
                 set([each_elem["sector"] for each_elem in category_list])
             )
-            print("emission_org", emission_org)
-            print("category_set", category_set)
             emission_data_category = []
             for i in category_set:
-                print("i", i)
                 em = emission_org.filter(sector=i)
-                print("emission_org", em)
                 emission_data_category.append(em)
-            print("emission_data_category", emission_data_category)
             logging.info(f"emission_data_category - {emission_data_category}")
 
             category_arr = []
             for i_category, j_category in zip(emission_data_category, category_set):
                 if not i_category:
-                    print("category does not has data")
+                    logging.info(f"this iteration doesnt have data")
                 else:
                     total_co2e_category = calculate_total(i_category)
                     total_co2e_category["total"] = handle_none(
@@ -1020,41 +973,32 @@ def AnalyseView(request):
                     )
 
             resp[corporate["name"]]["source"] = category_arr
-            print("resp", resp)
             logging.info(f"response {resp}")
-            print("")
 
             # Location data starts here
-            print("   LOCATION DATA STARTS HERE   ")
             logging.info("LOCATION STARTS HERE")
             location_list = list(
                 Location.objects.filter(corporateentity__name=corporate["name"]).values(
                     "id", "name"
                 )
             )
-            print("location_list", location_list)
             logging.info(f"Location_list {location_list}")
             for i in location_list:
                 i_id = i["id"]
-                print("emission_org", emission_org)
-                print(
-                    "emission_org.filter(batch__location__id=i_id)",
-                    emission_org.filter(batch__location__id=i_id),
-                )
             emission_data_location = [
                 emission_org.filter(batch__location__id=i["id"]) for i in location_list
             ]
-            print("emission_data_location", emission_data_location)
+
             location_arr = []
             for i, j in zip(emission_data_location, location_list):
                 if not i:
-                    print("emission_data does not has data")
+                    logging.info(f"this iteration doesnt have data")
                 else:
                     total_co2e_location = calculate_total(i)
                     total_co2e_location["total"] = handle_none(
                         total_co2e_location["total"]
                     )
-                    print("total_co2e_location", total_co2e_location)
+
                     # Check if total_emission_value["total"] is very small or zero
                     if total_emission_value["total"] is None or abs(
                         total_emission_value["total"] < Decimal("1E-50")
@@ -1074,7 +1018,7 @@ def AnalyseView(request):
                         }
                     )
             resp[corporate["name"]]["location"] = location_arr
-            print("resp", resp)
+
             logging.info(f"response {resp}")
 
         return Response(resp, status=status.HTTP_200_OK)
@@ -1093,7 +1037,6 @@ class StakeholdergroupViewset(viewsets.ModelViewSet):
         log_call_start()
         logging.info("Fetching Stakeholdergroup data")
         queryset = Stakeholdergroup.objects.all()
-        print("queryset", Stakeholdergroup.objects.all())
 
         stakeholdegroup_data = StakeholdergroupSerializer(queryset, many=True).data
         return Response(stakeholdegroup_data)
@@ -1121,15 +1064,14 @@ class MygoalViewset(viewsets.ModelViewSet):
         log_call_start()
         req_para = request.query_params
         logging.info(f"Length of req.get: {len(request.GET)}")  # Log message
-        print("lenght of req.get ", len(request.GET))
+
         queryset = Mygoal.objects.filter(client_id=request.client.id)
         final_data = {"upcoming": "", "overdue": "", "completed": ""}
         today = date.today()
         logging.info(f"Today's date: {str(today)}")
-        print("Todays date : ", str(today))
         if len(request.GET) != 0:
             logging.info(f"The req is: {req_para}")
-            print("the req is ", req_para)
+
             req_field_value = request.query_params["assigned_to"]
 
             final_data["completed"] = queryset.filter(
@@ -1176,11 +1118,8 @@ class MygoalViewset(viewsets.ModelViewSet):
 
     def create(self, request):
         logging.info(f"Request data: {request.data}")
-        print("request.client", request.client)
         request_data = request.data.copy()
         request_data["client"] = request.client.id
-        print(dir(request))
-        print("data : ", request_data)
 
         _serializer = self.serializer_class(data=request_data)
         if _serializer.is_valid():
@@ -1209,7 +1148,6 @@ class MygoalViewset(viewsets.ModelViewSet):
         instance = self.get_object()
         logging.info(f"Deleting instance: {instance}")
         check_same_client(request.client, instance)
-        print(instance)
         self.perform_destroy(instance)
         # instance.delete()
         return Response({"message": "Successfully Deleted"}, status=status.HTTP_200_OK)
@@ -1225,18 +1163,15 @@ class TaskDashboardViewset(viewsets.ModelViewSet):
         log_call_start()
         req_para = request.query_params
         logging.info(f"Length of req.get: {len(request.GET)}")
-        print("lenght of req.get ", len(request.GET))
         # DONT FORGET IMPLEMENT IMPLEMENT QUERYSET 2 FOR 'TASK' AND COMBINE IT FOR FILTERING
         queryset = TaskDashboard.objects.all().filter(client=request.client)
         queryset2 = Mygoal.objects.all().filter(client=request.client)
         final_data = {"upcoming": "", "overdue": "", "completed": ""}
         today = date.today()
         logging.info(f"Todays date: {str(today)}")
-        print("Todays date : ", str(today))
 
         if len(request.GET) != 0:
             logging.info(f"The req is: {req_para}")
-            print("the req is ", req_para)
             req_field_value = request.query_params["assigned_to"]
             logging.error("KeyError: 'assigned_to' not found in request parameters")
             final_data["completed"] = queryset.filter(
@@ -1279,10 +1214,8 @@ class TaskDashboardViewset(viewsets.ModelViewSet):
 
     def create(self, request):
         logging.info(f"Request data: {request.data}")
-        print(dir(request))
         request_data = request.data.copy()
         request_data["client"] = request.client.id
-        print("data : ", request_data)
 
         _serializer = self.serializer_class(data=request_data)
         if _serializer.is_valid():
@@ -1311,7 +1244,6 @@ class TaskDashboardViewset(viewsets.ModelViewSet):
         instance = self.get_object()
         logging.info(f"Deleting instance: {instance}")
         check_same_client(request.client, instance)
-        print(instance)
         self.perform_destroy(instance)
         return Response({"message": "Successfully Deleted"}, status=status.HTTP_200_OK)
 
@@ -1381,8 +1313,6 @@ class ColourViewset(viewsets.ModelViewSet):
             location,
             year,
         )
-        print("location :", location, "and location type is :", type(location))
-        print("year :", year, type(year))
         try:
             location_obj = Location.objects.get(id=location)
             location_id = location_obj.id
@@ -1393,7 +1323,6 @@ class ColourViewset(viewsets.ModelViewSet):
                 location,
                 year,
             )
-            print("The id of the location is :", location_id)
             batch_data_query = Batch.objects.all().filter(
                 location=location_id, year=year
             )
@@ -1402,21 +1331,18 @@ class ColourViewset(viewsets.ModelViewSet):
                 location,
                 year,
             )
-            print("batch_data_query", batch_data_query)
             batch_data_ordered = BatchSerializer(batch_data_query, many=True).data
             logger.info(
                 "Received request for ColourViewset list with location: %s and year: %s",
                 location,
                 year,
             )
-            print(" batch_data_ordered", type(batch_data_ordered))
             batch_data = [dict(bd) for bd in batch_data_ordered]
             logger.info(
                 "Received request for ColourViewset list with location: %s and year: %s",
                 location,
                 year,
             )
-            print("models :", batch_data)  # the id below refers to the location id
             result = {
                 "id": location_id,
                 "location": location,
@@ -1441,18 +1367,13 @@ class ColourViewset(viewsets.ModelViewSet):
                 location,
                 year,
             )
-            print(
-                "______________________________________________________________________________________________"
-            )
             for each_data in batch_data:
                 logger.info(
                     "Received request for ColourViewset list with location: %s and year: %s",
                     location,
                     year,
                 )
-                print(
-                    each_data, each_data["month"]
-                )  # FOR EVERY MONTH IN BATCH DB WE ARE RETURNING 1
+                # FOR EVERY MONTH IN BATCH DB WE ARE RETURNING 1
                 result["months"][
                     each_data["month"]
                 ] = 1  # SHOULD THIS BE CHANGED ( should handle co2e)

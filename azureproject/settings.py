@@ -167,6 +167,9 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "EXCEPTION_HANDLER": "sustainapp.utils.custom_exception_handler",
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
 # JWT TOKEN LIFETIME
@@ -228,6 +231,12 @@ LOGGING = {
                 BASE_DIR, "error.log"
             ),  # Change the path as needed
         },
+        "user_file": {  # New handler for user.log
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "user.log"),
+            "formatter": "detailed",
+            "level": "INFO",
+        },
     },
     "loggers": {
         "": {
@@ -250,6 +259,11 @@ LOGGING = {
             "handlers": ["custom_file", "warning_file"],
             "propagate": False,
             "level": "INFO",  # Set the level to INFO to capture both info and warning messages
+        },
+        "user_logger": {  # New logger for user logins
+            "handlers": ["user_file"],
+            "level": "INFO",
+            "propagate": False,
         },
         "": {
             "handlers": ["file"],
