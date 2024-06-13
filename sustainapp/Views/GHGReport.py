@@ -441,7 +441,6 @@ class GHGReportView(generics.CreateAPIView):
 
 
 class AnalysisData2APIView(APIView):
-    permission_classes = [AllowAny]
 
     def get(self, request, report_id):
         try:
