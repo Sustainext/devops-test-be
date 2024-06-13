@@ -66,6 +66,19 @@ def calculate_contributions(self, emission_by_scope, total_emissions):
 
 
 def get_analysis_data_by_location(self, data_points, locations):
+    """
+    Retrieves the emission data by location and calculates the total emissions and contribution of each location to the overall emissions.
+
+    Args:
+        data_points (list): A list of data points containing emission data.
+        locations (list): A list of locations associated with the emission data.
+
+    Returns:
+        list: A list of dictionaries containing the emission data for each location, including the corporate name, location name, location address, location type, total CO2e, and contribution to the overall emissions.
+
+    Removed:
+        *It dosen't saves those locations where there is no emission data.
+    """
     emission_by_location = defaultdict(
         lambda: {
             "corporate_name": "",
@@ -127,6 +140,17 @@ def get_analysis_data_by_location(self, data_points, locations):
 
 
 def get_analysis_data_by_source(self, data_points):
+    """Function to gather source data inside data points and then make it on proper structure
+
+    Args:
+        data_points (list): A list of data points.
+
+    Finds the source name, category name, activity name and total emissions for each source.
+
+    Value to Find
+    * Need to find from where Unit2 will come.
+
+    """
     # This will hold the final structured data
     grouped_data = defaultdict(
         lambda: defaultdict(
@@ -204,7 +228,14 @@ def get_analysis_data_by_source(self, data_points):
 
 
 def get_analysis_data(
-    self, corporate_id, start_year, end_year, start_month, end_month, report_id
+    self,
+    corporate_id,
+    start_year,
+    end_year,
+    start_month,
+    end_month,
+    report_id,
+    client_id,
 ):
     """
     Retrieves analysis data for a given set of corporate IDs, start and end years, and start and end months.
@@ -345,7 +376,7 @@ def get_analysis_data(
     analysis_data_instance = AnalysisData2.objects.create(
         report_id=report_id,
         data=serialized_data,
-        client_id=1,
+        client_id=client_id,
     )
     return Response(
         {"message": f"Calculation success, Report created successfully ID:{report_id}"},
@@ -416,6 +447,7 @@ class GHGReportView(generics.CreateAPIView):
                 start_month,
                 end_month,
                 report_id,
+                client_id,
             )
         elif corporate_id:
             # If multiple corporate names are provided, pass the list of names
@@ -427,6 +459,7 @@ class GHGReportView(generics.CreateAPIView):
                 start_month,
                 end_month,
                 report_id,
+                client_id,
             )
 
         if isinstance(analysis_data, Response):
