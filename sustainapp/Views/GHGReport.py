@@ -55,7 +55,7 @@ def calculate_contributions(self, emission_by_scope, total_emissions):
             {
                 "scope_name": values["scope_name"],
                 "total_co2e": values["total_co2e"],
-                "contribution_scope": contribution_scope,
+                "contribution_scope": round(contribution_scope, 2),
                 "co2e_unit": values["co2e_unit"],
                 "unit_type": values["unit_type"],
                 "unit1": values["unit1"],
@@ -130,8 +130,8 @@ def get_analysis_data_by_location(self, data_points, locations):
             "location_name": emission_data["location_name"],
             "location_address": emission_data["location_address"],
             "location_type": emission_data["location_type"],
-            "total_co2e": f"{emission_data['total_co2e']:.2f}",
-            "contribution_scope": f"{emission_data['contribution_scope']:.2f}",
+            "total_co2e": round(emission_data["total_co2e"], 2),
+            "contribution_scope": round(emission_data["contribution_scope"], 2),
         }
         for emission_data in emission_by_location.values()
         if emission_data["total_co2e"] > 0
@@ -205,7 +205,7 @@ def get_analysis_data_by_source(self, data_points):
             entry["source"] = source
             entry["activity_data"] = activity_data
             entry["co2e_unit"] = co2e_unit
-            entry["total_co2e"] += total_co2e
+            entry["total_co2e"] += round(total_co2e, 2)
 
             total_co2e_all_sources += total_co2e
 
@@ -213,9 +213,9 @@ def get_analysis_data_by_source(self, data_points):
         for category_dict in scope_dict.values():
             for entry in category_dict.values():
                 if total_co2e_all_sources > 0:
-                    entry["contribution_source"] = (
-                        entry["total_co2e"] / total_co2e_all_sources
-                    ) * 100
+                    entry["contribution_source"] = round(
+                        (entry["total_co2e"] / total_co2e_all_sources) * 100, 2
+                    )
 
     # Flatten the nested dictionary into a list of dictionaries
     structured_data = [
@@ -331,7 +331,7 @@ def get_analysis_data(
 
             # Update the defaultdict with the new values
             emission_by_scope[scope_name]["scope_name"] = scope_name
-            emission_by_scope[scope_name]["total_co2e"] += total_co2e
+            emission_by_scope[scope_name]["total_co2e"] += round(total_co2e, 2)
             emission_by_scope[scope_name]["co2e_unit"] = co2e_unit
             emission_by_scope[scope_name]["unit1"] = unit1
             emission_by_scope[scope_name]["unit_type"] = unit_type
