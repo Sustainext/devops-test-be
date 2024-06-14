@@ -17,10 +17,7 @@ class ReportWordDownloadAPI(APIView):
             AnalysisData2.objects.only("report_id").get(report_id=pk)
         except (Report.DoesNotExist, AnalysisData2.DoesNotExist):
             raise ValidationError(f"Report with id {pk} does not exist")
-        try:
-            response = word_docx_report(pk=pk)
-        except Exception as e:
-            logger.info("Error generating word report", exc_info=True)
-            logger.error(e)
-            raise APIException("Error generating word report")
+        response = word_docx_report(pk=pk)
+
+        logger.info("Error generating word report", exc_info=True)
         return response
