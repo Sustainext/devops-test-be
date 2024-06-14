@@ -9,6 +9,7 @@ import logging
 from django.conf import settings
 import os
 from django.templatetags.static import static
+from django.core.files.storage import default_storage
 
 logger = logging.getLogger()
 
@@ -524,12 +525,7 @@ def generate_pdf_data(pk):
 
     # image_url = request.build_absolute_uri(staticfiles_storage.url('ghg-methodology-flowchart.png'))
     # image_path = finders.find("images/ghg-methodology-flowchart.png")
-    image_path = os.path.join(
-        settings.MEDIA_ROOT, "report", "files", "ghg-methodology-flowchart.png"
-    )
-    print(image_path)
-    image_url = static("images/ghg-methodology-flowchart.png")
-    print(image_url)
+    image_path = default_storage.path("ghg-methodology-flowchart.png")
 
     data_entry = get_object_or_404(AnalysisData2, report_id=pk)
 
@@ -608,7 +604,6 @@ def generate_pdf_data(pk):
         }
 
         organized_data_list.append(organized_data)
-        print(combined_scopes)
     if organized_data_list:
         highest_contribution_value = 0
         highest_source_name = None
