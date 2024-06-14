@@ -31,6 +31,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 import time
 from sustainapp.report import generate_pdf_data
+from django.core.files.storage import default_storage
 
 logger = logging.getLogger()
 
@@ -573,8 +574,10 @@ class ReportViewSet(viewsets.ModelViewSet):
             org_logo = request.FILES.get("org_logo", None)
 
             if reset_logo:
-                default_image_path = settings.DEFAULT_ORG_LOGO_PATH
-                with open(default_image_path, "rb") as image_file:
+                default_image_path = default_storage.path("sustainext.jpeg")
+                print(default_image_path)
+                with default_storage.open(default_image_path, "rb") as image_file:
+                    # Read the image content and save it to the instance's logo field
                     instance.org_logo.save(
                         os.path.basename(default_image_path),
                         ContentFile(image_file.read()),
