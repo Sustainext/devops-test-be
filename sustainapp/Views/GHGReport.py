@@ -166,8 +166,9 @@ def get_analysis_data_by_source(self, data_points):
                     "co2e_unit": "",
                     "unit_type": "",
                     "unit1": "",
-                    "unit2": "",
+                    "unit2": "",  # Need to find this
                     "source": "",
+                    "year": "",
                     "activity_data": [],
                 }
             )
@@ -192,6 +193,7 @@ def get_analysis_data_by_source(self, data_points):
             co2e_unit = climatiq_response.get("co2e_unit", "")
             activity_data = climatiq_response.get("activity_data", "")
             source = climatiq_response["emission_factor"]["source"]
+            year = climatiq_response["emission_factor"]["year"]
 
             # Aggregate data by scope_name, category, and activity_name
             entry = grouped_data[scope_name][category][activity]
@@ -206,6 +208,7 @@ def get_analysis_data_by_source(self, data_points):
             entry["activity_data"] = activity_data
             entry["co2e_unit"] = co2e_unit
             entry["total_co2e"] += round(total_co2e, 2)
+            entry["year"] = year
 
             total_co2e_all_sources += total_co2e
 
@@ -293,7 +296,7 @@ def get_analysis_data(
                 "scope_name": "",
                 "total_co2e": 0,
                 "co2e_unit": "",
-                "unit_type": "",  # Need to Find this
+                "unit_type": "",
                 "unit1": "",
                 "unit2": "",
                 "activity_data": {"activity_unit": "", "activity_value": 0},
