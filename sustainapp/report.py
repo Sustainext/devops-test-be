@@ -118,40 +118,22 @@ def word_generate_and_cache_donut_chart(data):
     wedges, texts, autotexts = ax.pie(
         donut_data, autopct="", startangle=90, colors=colors, wedgeprops=dict(width=0.3)
     )
-    ax.axis("equal")  # Equal aspect ratio ensures the pie chart is circular.
+    plt.axis("equal")  # Equal aspect ratio ensures the pie chart is circular.
 
-    # This is where you adjust the labels for the legend
-    legend_labels = [
-        "{0} - {1} ({2}%)".format(label, value, round(percentage, 1))
-        for label, value, percentage in zip(
-            donut_labels, donut_data, [d / sum(donut_data) * 100 for d in donut_data]
-        )
-    ]
-
-    # Here we calculate the number of columns needed, assuming 5 items per column is a good fit.
-    num_columns = len(legend_labels) // 5 + (1 if len(legend_labels) % 5 else 0)
-
-    ax.axis("equal")  # Equal aspect ratio ensures the pie chart is circular.
-
-    # Move the legend to the right side
-    ax.legend(
-        wedges,
-        legend_labels,
-        title="Categories",
-        loc="upper center",
-        bbox_to_anchor=(0.5, -0.1),
-        ncol=num_columns,
-    )
-
-    # Tight layout to minimize white space
-    plt.tight_layout()
-
-    # Convert the plot to a base64-encoded image
-    image_data = io.BytesIO()
-    plt.savefig(image_data, format="png", bbox_inches="tight", pad_inches=0)
+    chart_image = io.BytesIO()
+    plt.savefig(chart_image, format="png", bbox_inches="tight", pad_inches=0)
     plt.close(fig)
 
-    return image_data
+    fig, ax = plt.subplots(figsize=(2, 1), dpi=120)  # Adjust size to fit your needs
+    ax.axis("off")  # Turn off axis
+    fig.legend(wedges, donut_labels, loc="center", ncol=3)  # Adjust columns as needed
+    plt.tight_layout()
+
+    legend_image = io.BytesIO()
+    plt.savefig(legend_image, format="png", bbox_inches="tight", pad_inches=0)
+    plt.close(fig)
+
+    return chart_image, legend_image
 
 
 def extract_source_data(organized_data_list):
@@ -268,83 +250,66 @@ def generate_and_cache_donut_chart_source(data):
 
 def word_generate_and_cache_donut_chart_source(data):
     try:
-        # Use the Agg backend
-        matplotlib.use("Agg")
+        matplotlib.use("Agg")  # Set the backend to Agg for rendering to a buffer
 
-        # Filter data to exclude entries with 'total_co2e' less than 1
+        # Filter data entries with 'total_co2e' greater than 0
         filtered_data = [entry for entry in data if entry["total_co2e"] > 0]
 
+        # Extract necessary details from data
         source_labels = [entry["category_name"] for entry in filtered_data]
-        source_activity = [
-            (
-                entry["activity_name"].split("-")[0].strip()
-                if entry["activity_name"] is not None
-                else ""
-            )
-            for entry in filtered_data
-        ]
         source_data = [entry["total_co2e"] for entry in filtered_data]
 
-        # Exit early if no data meets the criteria
+        # Exit early if no valid data exists
         if not source_data:
             return "No data with values greater than or equal to 1."
 
-        # Auto-generating colors according to data length
-        colors = generate_colors(len(data))
+        # Generate a color palette
+        colors = generate_colors(len(source_data))
 
-        # making Fig size Fixed
+        # Define the size of the figure
         radius_cm = 10
-        figsize = (2 * radius_cm / 2.54, 2 * radius_cm / 2.54)
+        figsize = (
+            2 * radius_cm / 2.54,
+            2 * radius_cm / 2.54,
+        )  # Conversion from cm to inches
 
+        # Create the pie chart
         fig, ax = plt.subplots(figsize=figsize, dpi=120)
-
         wedges, texts, autotexts = ax.pie(
             source_data,
+            labels=None,
             autopct="",
-            labeldistance=1.25,
-            pctdistance=1.05,
             startangle=90,
             colors=colors,
             wedgeprops=dict(width=0.3),
+            pctdistance=0.85,
         )
+        plt.axis("equal")  # Equal aspect ratio ensures the pie chart is circular.
 
-        # This is where you adjust the labels for the legend
-        legend_labels = [
-            "{0} - {1} ({2}%)".format(label, value, round(percentage, 1))
-            for label, value, percentage in zip(
-                source_labels,
-                source_activity,
-                [d / sum(source_data) * 100 for d in source_data],
-            )
-        ]
+        # Save the pie chart without labels
+        chart_image = io.BytesIO()
+        plt.savefig(chart_image, format="png", bbox_inches="tight", pad_inches=0)
+        plt.close(fig)
 
-        # Here we calculate the number of columns needed, assuming 5 items per column is a good fit.
-        num_columns = len(legend_labels) // 10 + (1 if len(legend_labels) % 50 else 0)
-
-        ax.axis("equal")  # Equal aspect ratio ensures the pie chart is circular.
-
-        # Move the legend to the right side
-        ax.legend(
-            wedges,
-            legend_labels,
-            loc="upper center",
-            bbox_to_anchor=(0.5, -0.3),
-            ncol=num_columns,
-        )
-
-        # Tight layout to minimize white space
+        # Create a separate figure for the legend
+        num_columns = len(source_labels) // 5 + (1 if len(source_labels) % 5 else 0)
+        fig, ax = plt.subplots(figsize=(3, 2), dpi=120)  # Adjust size to fit your needs
+        ax.axis("off")  # Turn off axis
+        fig.legend(
+            wedges, source_labels, loc="center", ncol=num_columns
+        )  # Adjust columns as needed
         plt.tight_layout()
 
-        # Convert the plot to a base64-encoded image
-        image_data = io.BytesIO()
-        plt.savefig(image_data, format="png", bbox_inches="tight", pad_inches=0)
+        # Save the legend only
+        legend_image = io.BytesIO()
+        plt.savefig(legend_image, format="png", bbox_inches="tight", pad_inches=0)
         plt.close(fig)
-        return image_data
+
+        return chart_image, legend_image
+
     except Exception as e:
-        # Handle the exception gracefully
-        logger.exception("Unexpected error generating Source Chart")
-        logger.exception(e)
-        return None
+        print(f"Unexpected error generating Source Chart: {e}")
+        return None, None
 
 
 def extract_location_data(organized_data_list):
@@ -451,7 +416,7 @@ def word_generate_and_cache_donut_chart_location(data):
         colors = generate_colors(len(data))
 
         # Fixed radius
-        radius_cm = 5
+        radius_cm = 10
         figsize = (2 * radius_cm / 2.54, 2 * radius_cm / 2.54)
 
         fig, ax = plt.subplots(figsize=figsize, dpi=120)
@@ -463,40 +428,29 @@ def word_generate_and_cache_donut_chart_location(data):
             colors=colors,
             wedgeprops=dict(width=0.3),
         )
-        ax.axis("equal")  # Equal aspect ratio ensures the pie chart is circular.
-
-        # This is where you adjust the labels for the legend
-        legend_labels = [
-            "{0} - {1:.3f} ({2}%)".format(label, value, round(percentage, 1))
-            for label, value, percentage in zip(
-                donut_labels,
-                donut_data,
-                [d / sum(donut_data) * 100 for d in donut_data],
-            )
-        ]
+        plt.axis("equal")  # Equal aspect ratio ensures the pie chart is circular.
+        # Save the pie chart without labels
+        chart_image = io.BytesIO()
+        plt.savefig(chart_image, format="png", bbox_inches="tight", pad_inches=0)
+        plt.close(fig)
 
         # Here we calculate the number of columns needed, assuming 5 items per column is a good fit.
-        num_columns = len(legend_labels) // 5 + (1 if len(legend_labels) % 5 else 0)
+        num_columns = len(donut_labels) // 5 + (1 if len(donut_labels) % 5 else 0)
 
-        ax.axis("equal")  # Equal aspect ratio ensures the pie chart is circular.
-
-        # Move the legend to the right side
-        ax.legend(
-            wedges,
-            legend_labels,
-            title="Categories",
-            loc="upper center",
-            bbox_to_anchor=(0.5, -0.1),
-            ncol=num_columns,
-        )
-        # Tight layout to minimize white space
+        fig, ax = plt.subplots(figsize=(3, 2), dpi=120)  # Adjust size to fit your needs
+        ax.axis("off")  # Turn off axis
+        fig.legend(
+            wedges, donut_labels, loc="center", ncol=num_columns
+        )  # Adjust columns as needed
         plt.tight_layout()
 
         # Convert the plot to a base64-encoded image
-        image_data = io.BytesIO()
-        plt.savefig(image_data, format="png", bbox_inches="tight", pad_inches=0)
+        legend_image = io.BytesIO()
+        plt.savefig(legend_image, format="png", bbox_inches="tight", pad_inches=0)
         plt.close(fig)
-        return image_data
+
+        return chart_image, legend_image
+
     except Exception as e:
         logging.exception("Unexpected error generating Loacation Chart")
         logging.exception(e)

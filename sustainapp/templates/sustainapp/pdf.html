@@ -688,11 +688,7 @@
                 <td>{{source.category_name|safe}} - {{source.activity_name|split_string:"-"|first}} </td>
                 <td>{{source.co2e_unit }}CO<sub>2</sub>e / {{source.activity_data.activity_unit}}</td>
                 <td>{{source.source }}</td>
-                {% if start_date|date:"Y" == end_date|date:"Y" %}
-                <td>{{start_date|date:"Y" }}</td>
-                {% else %}
-                <td>{{start_date|date:"Y" }}-{{end_date|date:"Y"}} </td>
-                {%endif%}
+                <td>{{source.year}}</td>
             </tr>
             {% endfor %}
             {% endfor %}
