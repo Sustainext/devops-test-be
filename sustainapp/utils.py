@@ -555,7 +555,7 @@ def adjust_paragraphs(doc_stream):
         modified_stream.seek(0)
         return modified_stream
     except Exception as e:
-        print(f"Error adjusting paragraphs: {e}")
+        logger.error(f"Error adjusting paragraphs: {e}")
         return doc_stream
 
 
