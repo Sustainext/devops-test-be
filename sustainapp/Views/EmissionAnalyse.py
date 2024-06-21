@@ -26,7 +26,7 @@ class GetEmissionAnalysis(APIView):
                 {
                     key_name: scope_name,
                     "total": scope_value,
-                    "contribution": contribution,
+                    "contribution": round(contribution,2),
                     "Units": "tC02e",
                 }
             )
