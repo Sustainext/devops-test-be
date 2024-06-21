@@ -9,7 +9,7 @@ def create_or_update_data_points(
     data_metric: DataMetric, value, index, raw_response: RawResponse
 ):
     print("Creating or updating Data points")
-    print(data_metric, value, index, raw_response.path, raw_response.user)
+    print("Just this one",data_metric, value, index, raw_response.path, raw_response.user)
 
     path = raw_response.path
 
@@ -70,23 +70,41 @@ def process_json(json_obj, path, raw_response):
             # Print the first key and value
             print(f"Field Group Row: {first_key}")
             print(f"First Value: {first_value}")
-            try:
-                for key, value in first_value.items():
-                    data_metric = data_metrics.filter(name=key).first()
-                    print(data_metric, data_metric.response_type, "match found ...")
-                    print(f"For Index: {index}, Key: {key}, Value: {value}")
-                    # For each of the key pass this to function index, key, value, raw_response create a data point
-                    # data_point, value, path, index, location, year, month, client, user
-                    create_or_update_data_points(
-                        data_metric, value, index, raw_response
-                    )
-            except KeyError as e:
-                print(f"KeyError: {e}")
-            except IndexError as e:
-                print(f"IndexError: {e}")
-            except Exception as e:
-                print(f"An unexpected error occurred: {e}")
+            if type(first_value) in [int,str,bool] :
 
+                for key, value in item.items():
+                    data_metric = data_metrics.filter(name=key).first()
+                    if data_metric is not None:
+                        create_or_update_data_points(
+                            data_metric, value, index, raw_response
+                        )
+                    else :
+                        print(f"There is no datametric found for this path {path}")
+            else:
+                try:
+                    for key, value in first_value.items():
+                        data_metric = data_metrics.filter(name=key).first()
+                        print(data_metric, data_metric.response_type, "match found ...")
+                        print(f"For Index: {index}, Key: {key}, Value: {value}")
+                        # For each of the key pass this to function index, key, value, raw_response create a data point
+                        # data_point, value, path, index, location, year, month, client, user
+                        create_or_update_data_points(
+                            data_metric, value, index, raw_response
+                        )
+                except KeyError as e:
+                    print(f"KeyError: {e}")
+                except IndexError as e:
+                    print(f"IndexError: {e}")
+                except Exception as e:
+                    print(f"An unexpected error occurred: {e}")
+            # else :
+            #     print(f"The type of the first value is {type(first_value)}")
+            #     for item in first_value:
+            #         # if                                                        Please continue to write the code here
+            #         for key, value in item.items():
+            #             data_metric = data_metrics.filter(name=first_key).first()
+            #             create_or_update_data_points(data_metric, value, index, raw_response)
+            #             print(f"the datametric created with the value {value}")
 
 @receiver(post_save, sender=RawResponse)
 def create_response_points(sender, instance:RawResponse, created, **kwargs):

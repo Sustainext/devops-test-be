@@ -35,7 +35,7 @@ admin.site.register(FieldGroup, FieldGroupAdmin)
 
 
 class RawResponseAdmin(admin.ModelAdmin):
-    list_display = ("id","path", "created_at", "user", "client")
+    list_display = ("id","path", "location","year","month", "user", "client")
 
 
 admin.site.register(RawResponse, RawResponseAdmin)
@@ -46,11 +46,11 @@ class DataPointAdmin(admin.ModelAdmin):
         "id",
         "path",
         "raw_response",
-        "response_type",
         "value",
-        "number_holder",
-        "string_holder",
-        "json_holder",
+        "metric_name",
+        "location",
+        "year",
+        "month",
     )
 
 
