@@ -27,7 +27,7 @@ class CheckAnalysisViewSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 "At least one of 'location', 'organisation', or 'corporate' is required."
             )
-        if data.get("from_date") > data.get("to_date"):
+        if data.get("start") > data.get("end"):
             raise serializers.ValidationError(
                 "The 'from_date' must be before the 'to_date'."
             )
