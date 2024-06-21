@@ -10,6 +10,9 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from operator import itemgetter
 
+from django.db.models import Prefetch
+from rest_framework import serializers
+
 
 class GetEmissionAnalysis(APIView):
     permission_classes = [IsAuthenticated]
@@ -23,23 +26,51 @@ class GetEmissionAnalysis(APIView):
                 {
                     key_name: scope_name,
                     "total": scope_value,
-                    "contribution": contribution,
+                    "contribution": round(contribution,2),
+                    "Units": "tC02e",
                 }
             )
         scope_contributions.sort(key=itemgetter("contribution"), reverse=True)
         return scope_contributions
 
+    def set_locations_data(self):
+        """
+        If Organisation is given and Corporate and Location is not given, then get all corporate locations
+        If Corporate is given and Organisation and Location is not given, then get all locations of the given corporate
+        If Location is given, then get only that location
+        """
+        if self.organisation and self.corporate and self.location:
+            self.locations = Location.objects.filter(id=self.location.id)
+        elif (
+            self.organisation is None and self.corporate and self.location is None
+        ) or (self.organisation and self.corporate and self.location is None):
+            self.locations = self.corporate.location.all()
+        elif (
+            self.organisation and self.corporate is None and self.location is None
+        ) or (self.organisation is None and self.corporate and self.location):
+            self.locations = Location.objects.prefetch_related(
+                Prefetch(
+                    "corporateentity",
+                    queryset=self.organisation.corporatenetityorg.all(),
+                )
+            )
+        else:
+            raise serializers.ValidationError(
+                "Not send any of the following fields: organisation, corporate, location"
+            )
+
     def get_top_emission_by_scope(self):
         # * Get all Raw Respones based on location and year.
         self.raw_responses = RawResponse.objects.filter(
             path__slug__icontains="gri-environment-emissions-301-a-scope-",
-            year=self.year,
+            year__range=(self.start.year, self.end.year),
+            month__range=(self.start.month, self.end.month),
             user=self.request.user,
         )
         self.data_points = DataPoint.objects.filter(
             raw_response__in=self.raw_responses,
             json_holder__isnull=False,
-            location__in=self.locations,
+            location__in=self.locations.values_list("name", flat=True),
         ).select_related("raw_response")
         # * Get contribution of each path in raw_responses and sum the json_holder
         top_emission_by_scope = defaultdict(lambda: 0)
@@ -74,11 +105,15 @@ class GetEmissionAnalysis(APIView):
         # * Get all the RawResponses
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        self.year: int = serializer.validated_data["year"]
-        self.corporate: Corporateentity = serializer.validated_data["corporate"]
-        self.organisation: Organization = serializer.validated_data["organisation"]
-        # * 1. Get Locations based on Corporate and Organisations.
-        self.locations = self.corporate.location.all().values_list("name", flat=True)
+        self.start = serializer.validated_data["start"]
+        self.end = serializer.validated_data["end"]
+        self.corporate = serializer.validated_data.get(
+            "corporate"
+        )  # * This is optional
+        self.organisation = serializer.validated_data["organisation"]
+        self.location = serializer.validated_data.get("location")  # * This is optional
+        # * Set Locations Queryset
+        self.set_locations_data()
         # * Get top emissions by Scope
         response_data = dict()
         response_data["top_emission_by_scope"] = self.get_top_emission_by_scope()

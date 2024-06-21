@@ -355,7 +355,7 @@
                 </div>
                 <div class="logo">
                     {% if org_logo %}
-                    <img src="{{org_logo.url}}" alt="Valenta Logo">
+                    <img src="{{org_logo}}" alt="Valenta Logo">
                     {% endif %}
                 </div>
 
@@ -688,11 +688,7 @@
                 <td>{{source.category_name|safe}} - {{source.activity_name|split_string:"-"|first}} </td>
                 <td>{{source.co2e_unit }}CO<sub>2</sub>e / {{source.activity_data.activity_unit}}</td>
                 <td>{{source.source }}</td>
-                {% if start_date|date:"Y" == end_date|date:"Y" %}
-                <td>{{start_date|date:"Y" }}</td>
-                {% else %}
-                <td>{{start_date|date:"Y" }}-{{end_date|date:"Y"}} </td>
-                {%endif%}
+                <td>{{source.year}}</td>
             </tr>
             {% endfor %}
             {% endfor %}
@@ -731,7 +727,7 @@
             </tr>
             {% for report in data %}
             {% for source in report.sources %}
-            {% if source.scope_name == 1 %}
+            {% if source.scope_name == "Scope-1" %}
             <tr>
 
                 <td style="width: 50%;">{{source.source_name}}-{{source.category_name}} </td>
@@ -745,7 +741,7 @@
             <!-- Add more rows as needed -->
         </table>
         <p>The total Scope 1 emissions from {{organization_name}} were {% for scope in combined_scopes %}
-            {% if scope.scope_name == "scope 1" %}
+            {% if scope.scope_name == "Scope-1" %}
             {{scope.total_co2e|floatformat:2}}
             {% endif %}
             {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
@@ -778,7 +774,7 @@
             </tr>
             {% for report in data %}
             {% for source in report.sources %}
-            {% if source.scope_name == 2 %}
+            {% if source.scope_name == "Scope-2" %}
             <tr>
 
                 <td style="width: 50%;">{{source.source_name}}-{{source.category_name}} </td>
@@ -792,7 +788,7 @@
             <!-- Add more rows as needed -->
         </table>
         <p>The total Scope 2 emissions from {{organization_name}} were {% for scope in combined_scopes %}
-            {% if scope.scope_name == "scope 2" %}
+            {% if scope.scope_name == "Scope-2" %}
             {{scope.total_co2e|floatformat:2}}
             {% endif %}
             {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
@@ -826,7 +822,7 @@
 
             {% for report in data %}
             {% for source in report.sources %}
-            {% if source.scope_name == 3 %}
+            {% if source.scope_name == "Scope-3" %}
             <tr>
                 <td style="width: 50%;">{{ source.source_name }}-{{ source.category_name }} </td>
                 <td>{{ source.activity_data.activity_value }} {{ source.activity_data.activity_unit }}</td>
@@ -840,7 +836,7 @@
             <!-- Add more rows as needed -->
         </table>
         <p>The total Scope 3 emissions from {{organization_name}} were {% for scope in combined_scopes %}
-            {% if scope.scope_name == "scope 3" %}
+            {% if scope.scope_name == "Scope-3" %}
             {{scope.total_co2e|floatformat:2}}
             {% endif %}
             {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
