@@ -8,7 +8,8 @@ class CheckAnalysisViewSerializer(serializers.Serializer):
     It checks the input for the year, corporate entity and organisation.
     """
 
-    year = serializers.IntegerField(required=True)
+    start = serializers.DateField(required=True)
+    end = serializers.DateField(required=True)
     corporate = serializers.PrimaryKeyRelatedField(
         queryset=Corporateentity.objects.all(), required=False
     )
@@ -25,6 +26,10 @@ class CheckAnalysisViewSerializer(serializers.Serializer):
         ):
             raise serializers.ValidationError(
                 "At least one of 'location', 'organisation', or 'corporate' is required."
+            )
+        if data.get("from_date") > data.get("to_date"):
+            raise serializers.ValidationError(
+                "The 'from_date' must be before the 'to_date'."
             )
         return data
 

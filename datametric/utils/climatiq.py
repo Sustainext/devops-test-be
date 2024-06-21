@@ -49,7 +49,7 @@ class Climatiq:
                     value1=float(emission_data["Emission"]["Quantity"]),
                     unit1=emission_data["Emission"]["Unit"],
                     unit2=emission_data["Emission"].get("Unit2"),
-                    value2=float(emission_data["Emission"].get("Quantity2")),
+                    value2=float(emission_data["Emission"].get("Quantity2")) if emission_data["Emission"].get("Quantity2") is not None else None,
                 )
             )
         return payload
