@@ -40,7 +40,7 @@ class Climatiq:
             'Quantity': '16',
             'Subcategory': 'Fuel'}}
             """
-            print(emission_data, ' is the emission data')
+            print(emission_data, " is the emission data")
 
             payload.append(
                 self.construct_emission_req(
@@ -48,6 +48,8 @@ class Climatiq:
                     unit_type=emission_data["Emission"]["unit_type"],
                     value1=float(emission_data["Emission"]["Quantity"]),
                     unit1=emission_data["Emission"]["Unit"],
+                    unit2=emission_data["Emission"].get("Unit2"),
+                    value2=float(emission_data["Emission"].get("Quantity2")) if emission_data["Emission"].get("Quantity2") is not None else None,
                 )
             )
         return payload
@@ -94,7 +96,7 @@ class Climatiq:
             "number": {"number": value1},
             "numberovertime": {"number": value1, "time": value2, "time_unit": unit2},
             "passengeroverdistance": {
-                "passengers": value1,
+                "passengers": int(value1),
                 "distance": value2,
                 "distance_unit": unit2,
             },
@@ -127,6 +129,7 @@ class Climatiq:
         CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
         payload = self.payload_preparation_for_climatiq_api()
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
+        print(payload)
         response = requests.request(
             "POST",
             url="https://api.climatiq.io/batch",
@@ -134,7 +137,7 @@ class Climatiq:
             headers=headers,
         )
         response_data = response.json()
-        print(response_data, ' is the CLIMATIQ $$$$$$$$')
+        print(response_data, " is the CLIMATIQ $$$$$$$$")
         if response.status_code == 400:
             self.log_error_climatiq_api(response_data=response_data)
         self.log_in_part_emission_error(response_data=response_data)
@@ -146,9 +149,11 @@ class Climatiq:
         Cleans the response data from the climatiq api.
         """
         cleaned_response_data = []
-        for index,emission_data in enumerate(response_data["results"]):
+        for index, emission_data in enumerate(response_data["results"]):
             if "error" not in emission_data.keys():
-                emission_data["Category"] = self.raw_response.data[index]["Emission"]["Category"]
+                emission_data["Category"] = self.raw_response.data[index]["Emission"][
+                    "Category"
+                ]
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
 
@@ -214,18 +219,18 @@ class Climatiq:
         """
         Returns the response from the climatiq api.
         """
-        print(self.raw_response.path.slug, ' is the raw_response slug')
+        print(self.raw_response.path.slug, " is the raw_response slug")
         # Check if the path slug matches the required pattern
         if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
             return None
         else:
-            print('line 221')
+            print("line 221")
         # Get the response data from the climatiq API
         response_data = self.get_climatiq_api_response()
         if response_data is None:
             return None
-        print('line 226')
-        
+        print("line 226")
+
         # Get or create the path
         try:
             path_new, created = Path.objects.get_or_create(
@@ -237,9 +242,9 @@ class Climatiq:
         except Exception as e:
             print(f"An error occurred while getting or creating the path: {e}")
             return None
-        print('line 239')
+        print("line 239")
 
-    # Get or create the data metric
+        # Get or create the data metric
         try:
             datametric, created = DataMetric.objects.get_or_create(
                 name="CalculatedCollectedEmissions",
@@ -259,15 +264,25 @@ class Climatiq:
             return None
 
         # Ensure raw_response has the required attributes
-        if not hasattr(self.raw_response, 'path'):
+        if not hasattr(self.raw_response, "path"):
             print("Error: raw_response has no path attribute")
             return None
 
         # Ensure location, year, month, user, and client attributes are present
-        if self.location is None or self.year is None or self.month is None or self.user is None or self.user.client is None:
-            print("Error: Missing required attributes (location, year, month, user, or user.client)")
+        if (
+            self.location is None
+            or self.year is None
+            or self.month is None
+            or self.user is None
+            or self.user.client is None
+        ):
+            print(
+                "Error: Missing required attributes (location, year, month, user, or user.client)"
+            )
             return None
-        print(datametric.name, datametric.path.slug, ' -is the newly created datametric')
+        print(
+            datametric.name, datametric.path.slug, " -is the newly created datametric"
+        )
         # Update or create the data point
         try:
             datapoint, created = DataPoint.objects.update_or_create(
@@ -289,8 +304,8 @@ class Climatiq:
             if created:
                 datapoint.save()
             else:
-                print(datapoint.id, datapoint.metric_name, ' is the saved datapoint')
-                print('datapoint updated')
+                print(datapoint.id, datapoint.metric_name, " is the saved datapoint")
+                print("datapoint updated")
         except Exception as e:
             print(f"An error occurred while creating or updating the data point: {e}")
             return None

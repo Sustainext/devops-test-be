@@ -17,6 +17,7 @@ from sustainapp.Views.GHGReport import (
     ReportListView,
     ReportPDFView,
 )
+from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 
 router = routers.DefaultRouter()
@@ -49,6 +50,11 @@ urlpatterns = [
     path("report_create/", GHGReportView.as_view(), name="report_create"),
     path("report_details/", ReportListView.as_view(), name="report_details"),
     path("report_pdf/<int:pk>/", ReportPDFView.as_view(), name="report_pdf"),
+    path(
+        "get_location_as_per_corporate/",
+        GetLocationAsPerCorporate.as_view(),
+        name="get_location_as_per_corporate",
+    ),
     path(
         "get_material_analysis/",
         GetMaterialAnalysis.as_view(),
