@@ -65,7 +65,7 @@ class GetMaterialAnalysis(APIView):
     def get_reclaimed_materials(
         self, location, start_year, end_year, start_month, end_month, path_slug
     ):
-        """Funtion which will gather ansstructure data from table reclaimed materials,
+        """Funtion which will gather and structure data from table reclaimed materials,
         it distinguish data by path slug send on function arguments,
         it calcualte percentage of reclaimed products
         Field used to calculate:
