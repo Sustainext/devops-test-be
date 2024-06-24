@@ -17,6 +17,7 @@ from sustainapp.Views.GHGReport import (
     ReportListView,
     ReportPDFView,
 )
+from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -48,5 +49,10 @@ urlpatterns = [
     path("report_create/", GHGReportView.as_view(), name="report_create"),
     path("report_details/", ReportListView.as_view(), name="report_details"),
     path("report_pdf/<int:pk>/", ReportPDFView.as_view(), name="report_pdf"),
+    path(
+        "get_material_analysis/",
+        GetMaterialAnalysis.as_view(),
+        name="get_material_analysis",
+    ),
     path("", include(router.urls)),
 ]
