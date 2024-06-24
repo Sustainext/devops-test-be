@@ -8,6 +8,8 @@ from collections import defaultdict
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
+from django.db.models import Prefetch
+from rest_framework import serializers
 
 
 class GetMaterialAnalysis(APIView):
@@ -164,71 +166,78 @@ class GetMaterialAnalysis(APIView):
         return recycled_materials
 
     def get(self, request, format=None):
+
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
-        if serializer.is_valid():
-            validated_data = serializer.validated_data
-            organization = validated_data.get("organisation", None)
-            corporate = validated_data.get("corporate", None)
-            location = validated_data.get("location", None)
-            start = validated_data.get("start", None)
-            end = validated_data.get("end", None)
+        serializer.is_valid(raise_exception=True)
 
-            if organization:
-                corporate_ids = Corporateentity.objects.filter(
-                    organization_id=organization
-                ).values_list("pk", flat=True)
-                locations = Location.objects.filter(corporateentity__in=corporate_ids)
-                location_names = locations.values_list("name", flat=True)
-            elif corporate:
-                locations = Location.objects.filter(corporateentity=corporate)
-                location_names = locations.values_list("name", flat=True)
-            elif location:
-                locations = Location.objects.filter(pk=location.id)
-                location_names = locations.values_list("name", flat=True)
-            else:
-                return Response(
-                    "Invalid request parameters", status=status.HTTP_400_BAD_REQUEST
+        self.organisation = serializer.validated_data.get("organisation", None)
+        self.corporate = serializer.validated_data.get("corporate", None)
+        self.location = serializer.validated_data.get("location", None)
+        start = serializer.validated_data.get("start", None)
+        end = serializer.validated_data.get("end", None)
+        if self.organisation and self.corporate and self.location:
+            self.locations = Location.objects.filter(id=self.location.id)
+        elif (
+            self.organisation is None and self.corporate and self.location is None
+        ) or (self.organisation and self.corporate and self.location is None):
+            self.locations = self.corporate.location.all()
+        elif (
+            self.organisation and self.corporate is None and self.location is None
+        ) or (self.organisation is None and self.corporate and self.location):
+            self.locations = Location.objects.prefetch_related(
+                Prefetch(
+                    "corporateentity",
+                    queryset=self.organisation.corporatenetityorg.all(),
                 )
+            )
+        else:
+            raise serializers.ValidationError(
+                "Not send any of the following fields: organisation, corporate, location"
+            )
+        location_names = self.locations.values_list("name", flat=True)
 
-            renewable_materials = self.get_material_data(
-                location_names,
-                start.year,
-                end.year,
-                start.month,
-                end.month,
-                "gri-environment-materials-301-1a-renewable_materials",
-            )
-            non_renewable_materials = self.get_material_data(
-                location_names,
-                start.year,
-                end.year,
-                start.month,
-                end.month,
-                "gri-environment-materials-301-1a-non_renewable_materials",
-            )
-            recycled_materials = self.get_recycled_materials(
-                location_names,
-                start.year,
-                end.year,
-                start.month,
-                end.month,
-                "gri-environment-materials-301-2a-recycled_input_materials",
-            )
-            reclaimed_materials = self.get_reclaimed_materials(
-                location_names,
-                start.year,
-                end.year,
-                start.month,
-                end.month,
-                "gri-environment-materials-301-3a-3b-reclaimed_products",
-            )
+        renewable_materials = self.get_material_data(
+            location_names,
+            start.year,
+            end.year,
+            start.month,
+            end.month,
+            "gri-environment-materials-301-1a-renewable_materials",
+        )
 
-            return Response(
-                {
-                    "renewable_materials": renewable_materials,
-                    "non_renewable_materials": non_renewable_materials,
-                    "recycled_materials": recycled_materials,
-                    "reclaimed_materials": reclaimed_materials,
-                },
-                status=status.HTTP_200_OK,
-            )
+        non_renewable_materials = self.get_material_data(
+            location_names,
+            start.year,
+            end.year,
+            start.month,
+            end.month,
+            "gri-environment-materials-301-1a-non_renewable_materials",
+        )
+
+        recycled_materials = self.get_recycled_materials(
+            location_names,
+            start.year,
+            end.year,
+            start.month,
+            end.month,
+            "gri-environment-materials-301-2a-recycled_input_materials",
+        )
+
+        reclaimed_materials = self.get_reclaimed_materials(
+            location_names,
+            start.year,
+            end.year,
+            start.month,
+            end.month,
+            "gri-environment-materials-301-3a-3b-reclaimed_products",
+        )
+
+        return Response(
+            {
+                "renewable_materials": renewable_materials,
+                "non_renewable_materials": non_renewable_materials,
+                "recycled_materials": recycled_materials,
+                "reclaimed_materials": reclaimed_materials,
+            },
+            status=status.HTTP_200_OK,
+        )
