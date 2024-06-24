@@ -26,7 +26,7 @@ class GetEmissionAnalysis(APIView):
                 {
                     key_name: scope_name,
                     "total": scope_value,
-                    "contribution": round(contribution,2),
+                    "contribution": round(contribution, 2),
                     "Units": "tC02e",
                 }
             )
@@ -41,13 +41,9 @@ class GetEmissionAnalysis(APIView):
         """
         if self.organisation and self.corporate and self.location:
             self.locations = Location.objects.filter(id=self.location.id)
-        elif (
-            self.organisation is None and self.corporate and self.location is None
-        ) or (self.organisation and self.corporate and self.location is None):
+        elif self.location is None and self.corporate and self.organisation:
             self.locations = self.corporate.location.all()
-        elif (
-            self.organisation and self.corporate is None and self.location is None
-        ) or (self.organisation is None and self.corporate and self.location):
+        elif self.location is None and self.corporate is None and self.organisation:
             self.locations = Location.objects.prefetch_related(
                 Prefetch(
                     "corporateentity",
