@@ -11,7 +11,6 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 
 
 class GetMaterialAnalysis(APIView):
-    permission_classes = [AllowAny]
 
     def get_material_data(
         self, location, start_year, end_year, start_month, end_month, path_slug
