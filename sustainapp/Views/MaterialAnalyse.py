@@ -97,7 +97,7 @@ class GetMaterialAnalysis(APIView):
                 total_quantity = float(data["Amountsproduct"])
                 total_amount_of_product_packaging = float(data["Amountsproduct"])
 
-                key = type_of_product
+                key = (type_of_product, product_code, product_name)
 
                 reclaimed_materials_dict[key]["type_of_product"] = type_of_product
                 reclaimed_materials_dict[key]["product_code"] = product_code
