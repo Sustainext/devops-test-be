@@ -21,8 +21,8 @@ class GetMaterialAnalysis(APIView):
         it distinguish data by path slug send on function arguments"""
         raw_responses = RawResponse.objects.filter(
             path__slug=path_slug,
-            year__in=[start_year, end_year],
-            month__in=[start_month, end_month],
+            year__range=(start_year, end_year),
+            month__range=(start_month, end_month),
             location__in=location,
         )
 
@@ -75,8 +75,8 @@ class GetMaterialAnalysis(APIView):
         """
         raw_responses = RawResponse.objects.filter(
             path__slug=path_slug,
-            year__in=[start_year, end_year],
-            month__in=[start_month, end_month],
+            year__range=(start_year, end_year),
+            month__range=(start_month, end_month),
             location__in=location,
         )
         reclaimed_materials_dict = defaultdict(
@@ -122,8 +122,8 @@ class GetMaterialAnalysis(APIView):
         """
         raw_responses = RawResponse.objects.filter(
             path__slug=path_slug,
-            year__in=[start_year, end_year],
-            month__in=[start_month, end_month],
+            year__range=(start_year, end_year),
+            month__range=(start_month, end_month),
             location__in=location,
         )
         recycled_materials_dict = defaultdict(
