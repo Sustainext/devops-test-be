@@ -19,6 +19,7 @@ from sustainapp.Views.GHGReport import (
     ReportPDFView,
 )
 from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
+from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -59,6 +60,11 @@ urlpatterns = [
         "get_location_as_per_corporate/",
         GetLocationAsPerCorporate.as_view(),
         name="get_location_as_per_corporate",
+    ),
+    path(
+        "get_material_analysis/",
+        GetMaterialAnalysis.as_view(),
+        name="get_material_analysis",
     ),
     path("", include(router.urls)),
 ]

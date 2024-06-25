@@ -93,7 +93,7 @@ class Climatiq:
             },
             "energy": {"energy": value1, "energy_unit": unit1},
             "money": {"money": value1, "money_unit": unit1},
-            "number": {"number": value1},
+            "number": {"number": int(value1)},
             "numberovertime": {"number": value1, "time": value2, "time_unit": unit2},
             "passengeroverdistance": {
                 "passengers": int(value1),
