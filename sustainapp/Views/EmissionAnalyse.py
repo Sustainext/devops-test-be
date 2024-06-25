@@ -1,4 +1,4 @@
-from datametric.models import DataPoint, RawResponse, Path, DataMetric
+from datametric.models import DataPoint, Path, DataMetric
 from sustainapp.models import Organization, Corporateentity, Location
 from rest_framework.views import APIView
 from collections import defaultdict
@@ -57,15 +57,12 @@ class GetEmissionAnalysis(APIView):
 
     def get_top_emission_by_scope(self):
         # * Get all Raw Respones based on location and year.
-        self.raw_responses = RawResponse.objects.filter(
+        self.data_points = DataPoint.objects.filter(
             path__slug__icontains="gri-environment-emissions-301-a-scope-",
+            json_holder__isnull=False,
             year__range=(self.start.year, self.end.year),
             month__range=(self.start.month, self.end.month),
-            user=self.request.user,
-        )
-        self.data_points = DataPoint.objects.filter(
-            raw_response__in=self.raw_responses,
-            json_holder__isnull=False,
+            user_id=self.request.user.id,
             location__in=self.locations.values_list("name", flat=True),
         ).select_related("raw_response")
         # * Get contribution of each path in raw_responses and sum the json_holder

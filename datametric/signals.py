@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.db.models import prefetch_related_objects
 from datametric.utils.climatiq import Climatiq
 
+
 def create_or_update_data_points(
     data_metric: DataMetric, value, index, raw_response: RawResponse
 ):
@@ -70,27 +71,57 @@ def process_json(json_obj, path, raw_response):
             # Print the first key and value
             print(f"Field Group Row: {first_key}")
             print(f"First Value: {first_value}")
-            try:
-                for key, value in first_value.items():
+            """
+            This was required since emissions has different 
+            data structure in RawResponse data field when 
+            compared to other environment modules.
+            """
+            if type(first_value) in [
+                int,
+                str,
+                bool,
+            ]:
+
+                for key, value in item.items():
                     data_metric = data_metrics.filter(name=key).first()
-                    print(data_metric, data_metric.response_type, "match found ...")
-                    print(f"For Index: {index}, Key: {key}, Value: {value}")
-                    # For each of the key pass this to function index, key, value, raw_response create a data point
-                    # data_point, value, path, index, location, year, month, client, user
-                    create_or_update_data_points(
-                        data_metric, value, index, raw_response
-                    )
-            except KeyError as e:
-                print(f"KeyError: {e}")
-            except IndexError as e:
-                print(f"IndexError: {e}")
-            except Exception as e:
-                print(f"An unexpected error occurred: {e}")
+                    if data_metric is not None:
+                        create_or_update_data_points(
+                            data_metric, value, index, raw_response
+                        )
+                    else:
+                        print(f"There is no datametric found for this path {path}")
+            else:
+                try:
+                    if type(first_value) is list:
+                        for data_point in first_value:
+                            if isinstance(data_point, dict):
+                                for key, value in data_point.items():
+                                    data_metric = data_metrics.filter(name=key).first()
+                                    create_or_update_data_points(
+                                        data_metric, value, index, raw_response
+                                    )
+                        return None
+
+                    for key, value in first_value.items():
+                        data_metric = data_metrics.filter(name=key).first()
+                        print(data_metric, data_metric.response_type, "match found ...")
+                        print(f"For Index: {index}, Key: {key}, Value: {value}")
+                        # For each of the key pass this to function index, key, value, raw_response create a data point
+                        # data_point, value, path, index, location, year, month, client, user
+                        create_or_update_data_points(
+                            data_metric, value, index, raw_response
+                        )
+                except KeyError as e:
+                    print(f"KeyError: {e}")
+                except IndexError as e:
+                    print(f"IndexError: {e}")
+                except Exception as e:
+                    print(f"An unexpected error occurred: {e}")
 
 
 @receiver(post_save, sender=RawResponse)
-def create_response_points(sender, instance:RawResponse, created, **kwargs):
-    prefetch_related_objects([instance], "path", "user","client")
+def create_response_points(sender, instance: RawResponse, created, **kwargs):
+    prefetch_related_objects([instance], "path", "user", "client")
     # No matter, whether it is getting created or updated, this should be run.
     #! Don't save the instance again, goes to non stop recursion.
     process_json(instance.data, instance.path, instance)
