@@ -49,11 +49,11 @@ class DataPointAdmin(admin.ModelAdmin):
         "id",
         "path",
         "raw_response",
-        "response_type",
         "value",
-        "number_holder",
-        "string_holder",
-        "json_holder",
+        "metric_name",
+        "location",
+        "year",
+        "month",
     )
 
 
