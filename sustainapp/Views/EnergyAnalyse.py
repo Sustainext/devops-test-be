@@ -17,12 +17,12 @@ class EnergyAnalyzeView(APIView):
 
     def process_energy_data(self, path, sno, total_energy_consumption_within_org=None):
         conversions = {
-            "Joules": {"GJ": 1e-9, "kWh": 0.00000027778},
-            "KJ": {"GJ": 1e-6, "kWh": 0.00027778},
-            "Wh": {"GJ": 0.0000036, "kWh": 0.001},
-            "KWh": {"GJ": 0.0036, "kWh": 1},
-            "GJ": {"GJ": 1, "kWh": 277.78},
-            "MMBtu": {"GJ": 1.055056, "kWh": 293.071},
+            "Joules": {"GJ": 1e-9, "KWh": 0.00000027778},
+            "KJ": {"GJ": 1e-6, "KWh": 0.00027778},
+            "Wh": {"GJ": 0.0000036, "KWh": 0.001},
+            "KWh": {"GJ": 0.0036, "KWh": 1},
+            "GJ": {"GJ": 1, "KWh": 277.778},
+            "MMBtu": {"GJ": 1.055056, "KWh": 293.071},
         }
 
         consumed_ene_query = RawResponse.objects.filter(
@@ -32,12 +32,11 @@ class EnergyAnalyzeView(APIView):
             path__slug=path,
         )
 
-        if not consumed_ene_query : 
+        if not consumed_ene_query:
             if sno in [3, 4, 5, 6]:
                 return [], 0, 0
             else:
                 return [], [], 0, 0
-
 
         data = []
         for obj in consumed_ene_query:
@@ -54,7 +53,7 @@ class EnergyAnalyzeView(APIView):
             unit = item[unit_key]
             return (
                 conversions[unit]["GJ"] * quantity,
-                conversions[unit]["kWh"] * quantity,
+                conversions[unit]["KWh"] * quantity,
             )
 
         key_generators = {
@@ -128,22 +127,22 @@ class EnergyAnalyzeView(APIView):
             1: lambda key, total: {
                 "Energy_type": key[0],
                 "Source": key[1],
-                "Quantity_GJ": round(total, 3),
-                "Units_GJ": "GJ",
+                "Quantity": round(total, 3),
+                "Unit": "GJ",
             },
             2: lambda key, total: {
                 "Energy_type": key[0],
                 "Source": key[1],
                 "Entity_type": key[2],
                 "Entity_name": key[3],
-                "Quantity_GJ": round(total, 3),
-                "Units_GJ": "GJ",
+                "Quantity": round(total, 3),
+                "Unit": "GJ",
             },
             3: lambda key, total: {
                 "Energy_type": key[0],
                 "Purpose": key[1],
-                "Quantity_GJ": round(total, 3),
-                "Units_GJ": "GJ",
+                "Quantity": round(total, 3),
+                "Unit": "GJ",
             },
             4: lambda key, total: {
                 "Type_of_intervention": key[0],
@@ -151,32 +150,32 @@ class EnergyAnalyzeView(APIView):
                 "Energy_reduction": key[2],
                 "Base_year": key[3],
                 "Methodology": key[4],
-                "Quantity_GJ": round(total, 3),
-                "Units_GJ": "GJ",
-                "Quantity_kWh": round(total * 277.78, 3),
-                "Units_kWh": "kWh",
+                "Quantity1": round(total, 3),
+                "Unit1": "GJ",
+                "Quantity2": round(total * 277.778, 3),
+                "Unit2": "KWh",
             },
             5: lambda key, total: {
                 "Product": key,
-                "Quantity_GJ": round(total, 3),
-                "Units_GJ": "GJ",
-                "Quantity_kWh": round(total * 277.778, 3),
-                "Units_kWh": "kWh",
+                "Quantity1": round(total, 3),
+                "Unit1": "GJ",
+                "Quantity2": round(total * 277.778, 3),
+                "Unit2": "KWh",
             },
             6: lambda key, total: {
                 "Energy_quantity": total_energy_consumption_within_org,
                 "Organization_metric": key[0],
-                "Energy_intensity": round(
+                "Energy_intensity1": round(
                     total_energy_consumption_within_org / total["Metricquantity"], 2
                 ),
-                "Units_GJ": f"GJ/{key[1]}",
-                "Energy_intensity_in_kWh": round(
+                "Unit1": f"GJ/{key[1]}",
+                "Energy_intensity2": round(
                     total_energy_consumption_within_org
                     / total["Metricquantity"]
                     * 277.778,
                     3,
                 ),
-                "Units_kWh": f"kWh/{key[1]}",
+                "Unit2": f"KWh/{key[1]}",
             },
         }
 
@@ -255,15 +254,23 @@ class EnergyAnalyzeView(APIView):
                 path="gri-environment-energy-302-1c-1e-consumed_fuel", sno=1
             )
             response_data["fuel_consumption_from_renewable"] = consumed_renewable
-            response_data["fuel_consumption_from_non_renewable"] = consumed_non_renewable
-            if consumed_renewable  :
-                response_data["fuel_consumption_from_renewable"].append({
-                    "Total_GJ": consumed_total_renewable_gj,
-                    "Units": "GJ",})
-            if  consumed_non_renewable :
-                response_data["fuel_consumption_from_non_renewable"].append({
-                    "Total_GJ": consumed_total_non_renewable_gj,
-                    "Units": "GJ",})
+            response_data["fuel_consumption_from_non_renewable"] = (
+                consumed_non_renewable
+            )
+            if consumed_renewable:
+                response_data["fuel_consumption_from_renewable"].append(
+                    {
+                        "Total": consumed_total_renewable_gj,
+                        "Unit": "GJ",
+                    }
+                )
+            if consumed_non_renewable:
+                response_data["fuel_consumption_from_non_renewable"].append(
+                    {
+                        "Total": consumed_total_non_renewable_gj,
+                        "Unit": "GJ",
+                    }
+                )
 
             (
                 direct_renewable,
@@ -273,16 +280,22 @@ class EnergyAnalyzeView(APIView):
             ) = self.process_energy_data(
                 path="gri-environment-energy-302-1a-1b-direct_purchased", sno=1
             )
-            response_data["direct_purchased_from_renewable"]= direct_renewable
+            response_data["direct_purchased_from_renewable"] = direct_renewable
             response_data["direct_purchased_from_non_renewable"] = direct_non_renewable
-            if direct_renewable :
-                response_data["direct_purchased_from_renewable"].append({
-                    "Total_GJ": direct_total_renewable_gj,
-                    "Units": "GJ",})
-            if  direct_non_renewable:
-                response_data["direct_purchased_from_non_renewable"].append({
-                    "Total_GJ": direct_total_non_renewable_gj,
-                    "Units": "GJ",})
+            if direct_renewable:
+                response_data["direct_purchased_from_renewable"].append(
+                    {
+                        "Total": direct_total_renewable_gj,
+                        "Unit": "GJ",
+                    }
+                )
+            if direct_non_renewable:
+                response_data["direct_purchased_from_non_renewable"].append(
+                    {
+                        "Total": direct_total_non_renewable_gj,
+                        "Unit": "GJ",
+                    }
+                )
 
             (
                 self_generated_renewable,
@@ -293,17 +306,23 @@ class EnergyAnalyzeView(APIView):
                 path="gri-environment-energy-302-1-self_generated", sno=1
             )
             response_data["self_generated_from_renewable"] = self_generated_renewable
-            response_data["self_generated_from_non_renewable"] = self_generated_non_renewable
+            response_data["self_generated_from_non_renewable"] = (
+                self_generated_non_renewable
+            )
             if self_generated_renewable:
-                response_data["self_generated_from_renewable"].append({
-                    "Total_GJ": self_generated_total_renewable_gj,
-                    "Units": "GJ",
-                })
-            if  self_generated_non_renewable:
-                response_data["self_generated_from_non_renewable"].append({
-                    "Total_GJ": self_generated_total_non_renewable_gj,
-                    "Units": "GJ",
-                })
+                response_data["self_generated_from_renewable"].append(
+                    {
+                        "Total": self_generated_total_renewable_gj,
+                        "Unit": "GJ",
+                    }
+                )
+            if self_generated_non_renewable:
+                response_data["self_generated_from_non_renewable"].append(
+                    {
+                        "Total": self_generated_total_non_renewable_gj,
+                        "Unit": "GJ",
+                    }
+                )
 
             (
                 energy_sold_renewable,
@@ -316,15 +335,19 @@ class EnergyAnalyzeView(APIView):
             response_data["energy_sold_from_renewable"] = energy_sold_renewable
             response_data["energy_sold_from_non_renewable"] = energy_sold_non_renewable
             if energy_sold_renewable:
-                response_data["energy_sold_from_renewable"].append({
-                    "Total_GJ": energy_sold_total_renewable_gj,
-                    "Units": "GJ",
-                })
-            if  energy_sold_non_renewable:
-                response_data["energy_sold_from_non_renewable"].append({
-                    "Total_GJ": energy_sold_total_non_renewable_gj,
-                    "Units": "GJ",
-                })
+                response_data["energy_sold_from_renewable"].append(
+                    {
+                        "Total": energy_sold_total_renewable_gj,
+                        "Unit": "GJ",
+                    }
+                )
+            if energy_sold_non_renewable:
+                response_data["energy_sold_from_non_renewable"].append(
+                    {
+                        "Total": energy_sold_total_non_renewable_gj,
+                        "Unit": "GJ",
+                    }
+                )
 
             outside_org_data, outside_org_total_gj, outside_org_total_kwh = (
                 self.process_energy_data(
@@ -335,60 +358,78 @@ class EnergyAnalyzeView(APIView):
             response_data["energy_consumption_outside_the_org"] = outside_org_data
             if outside_org_data:
                 response_data["energy_consumption_outside_the_org"].append(
-                    {"Total_GJ": outside_org_total_gj, "Units_GJ": "GJ"}
+                    {"Total": outside_org_total_gj, "Unit": "GJ"}
                 )
 
             energy_consumption_within_the_org = [
                 {
                     "type_of_energy_consumed": "Non-renewable fuel consumed",
                     "consumption": consumed_total_renewable_gj,
-                    "units": "GJ",
+                    "unit": "GJ",
                 },
                 {
                     "type_of_energy_consumed": "Renewable fuel consumed",
                     "consumption": consumed_total_non_renewable_gj,
-                    "units": "GJ",
+                    "unit": "GJ",
                 },
                 {
                     "type_of_energy_consumed": "Electricity, heating, cooling, and steam purchased for consumption from renewable sources.",
                     "consumption": direct_total_renewable_gj,
-                    "units": "GJ",
+                    "unit": "GJ",
                 },
                 {
                     "type_of_energy_consumed": "Electricity, heating, cooling, and steam purchased for consumption from non-renewable sources.",
-                    "consumption":direct_total_non_renewable_gj,
-                    "units": "GJ",
+                    "consumption": direct_total_non_renewable_gj,
+                    "unit": "GJ",
                 },
                 {
                     "type_of_energy_consumed": "Self-generated electricity, heating, cooling, and steam, which are not consumed  from renewable source",
-                    "consumption":self_generated_total_renewable_gj,
-                    "units": "GJ",
+                    "consumption": self_generated_total_renewable_gj,
+                    "unit": "GJ",
                 },
                 {
                     "type_of_energy_consumed": "Self-generated electricity, heating, cooling, and steam, which are not consumed  from non-renewable source",
                     "consumption": self_generated_total_non_renewable_gj,
-                    "units": "GJ",
+                    "unit": "GJ",
                 },
                 {
                     "type_of_energy_consumed": "Electricity, heating, cooling, and steam sold (renewable energy)",
                     "consumption": energy_sold_total_renewable_gj,
-                    "units": "GJ",
+                    "unit": "GJ",
                 },
                 {
                     "type_of_energy_consumed": "Electricity, heating, cooling, and steam sold (non-renewable energy)",
                     "consumption": energy_sold_total_non_renewable_gj,
-                    "units": "GJ",
+                    "unit": "GJ",
                 },
                 {
-                    "Total": round(consumed_total_renewable_gj + consumed_total_non_renewable_gj + direct_total_renewable_gj + direct_total_non_renewable_gj + self_generated_total_renewable_gj + self_generated_total_non_renewable_gj  + energy_sold_total_renewable_gj + energy_sold_total_non_renewable_gj, 3,),
-                    "units": "GJ",
-                }
+                    "Total": round(
+                        consumed_total_renewable_gj
+                        + consumed_total_non_renewable_gj
+                        + direct_total_renewable_gj
+                        + direct_total_non_renewable_gj
+                        + self_generated_total_renewable_gj
+                        + self_generated_total_non_renewable_gj
+                        + energy_sold_total_renewable_gj
+                        + energy_sold_total_non_renewable_gj,
+                        3,
+                    ),
+                    "unit": "GJ",
+                },
             ]
+
             response_data["energy_consumption_within_the_org"] = (
                 energy_consumption_within_the_org
             )
 
             k = response_data["energy_consumption_within_the_org"][-1]["Total"]
+
+            if k != 0:
+                response_data["energy_consumption_within_the_org"] = (
+                    energy_consumption_within_the_org
+                )
+            else:
+                response_data["energy_consumption_within_the_org"] = []
 
             energy_intensity_data, _, _ = self.process_energy_data(
                 path="gri-environment-energy-302-3a-3b-3c-3d-energy_intensity",
@@ -397,8 +438,9 @@ class EnergyAnalyzeView(APIView):
             )
 
             if energy_intensity_data:
-                response_data["energy_intensity"] = energy_intensity_data   
-            else : response_data["energy_intensity"] = []
+                response_data["energy_intensity"] = energy_intensity_data
+            else:
+                response_data["energy_intensity"] = []
 
             reduction_energy_data, reduction_total_gj, reduction_total_kwh = (
                 self.process_energy_data(
@@ -410,12 +452,12 @@ class EnergyAnalyzeView(APIView):
             if reduction_energy_data:
                 response_data["reduction_of_ene_consump"].append(
                     {
-                        "Total_GJ": reduction_total_gj,
-                        "Units_GJ": "GJ",
-                        "Total_KWh": reduction_total_kwh,
-                        "Units_KWh": "KWh",
+                        "Total1": reduction_total_gj,
+                        "Unit1": "GJ",
+                        "Total2": reduction_total_kwh,
+                        "Unit2": "KWh",
                     }
-            )
+                )
 
             (
                 reduction_products_data,
@@ -425,35 +467,19 @@ class EnergyAnalyzeView(APIView):
                 path="gri-environment-energy-302-5a-5b-reduction_in_energy_in_products_and_servies",
                 sno=5,
             )
-            response_data["reduction_of_ene_prod_&_services"] = reduction_products_data
+            response_data["reduction_of_ene_prod_and_services"] = (
+                reduction_products_data
+            )
             if reduction_products_data:
-                response_data["reduction_of_ene_prod_&_services"].append(
+                response_data["reduction_of_ene_prod_and_services"].append(
                     {
-                        "Total_GJ": reduction_products_total_gj,
-                        "Units_GJ": "GJ",
-                        "Total_KWh": reduction_products_total_kwh,
-                        "Units_KWh": "KWh",
+                        "Total1": reduction_products_total_gj,
+                        "Unit1": "GJ",
+                        "Total2": reduction_products_total_kwh,
+                        "Unit2": "KWh",
                     }
                 )
 
-            
-            final_response = {
-                "fuel_consumption_from_renewable": response_data["fuel_consumption_from_renewable"],
-                "fuel_consumption_from_non_renewable": response_data["fuel_consumption_from_non_renewable"],
-                "energy_consumption_within_the_org" : response_data["energy_consumption_within_the_org"],
-                "direct_purchased_from_renewable" : response_data["direct_purchased_from_renewable"],
-                "direct_purchased_from_non_renewable ": response_data["direct_purchased_from_non_renewable"],
-                "self_generated_from_renewable" : response_data["self_generated_from_renewable"],
-                "self_generated_from_non_renewable" : response_data["self_generated_from_non_renewable"],
-                "energy_sold_from_renewable" : response_data["energy_sold_from_renewable"],
-                "energy_sold_from_non_renewable" : response_data["energy_sold_from_non_renewable"],
-                "energy_consumption_outside_the_org" : response_data["energy_consumption_outside_the_org"],
-                "energy_intensity" : response_data["energy_intensity"],
-                "reduction_of_ene_consump" : response_data["reduction_of_ene_consump"],
-                "reduction_of_ene_prod_&_services" : response_data["reduction_of_ene_prod_&_services"],
-            }
-            
-
-            return Response(final_response, status=status.HTTP_200_OK)
+            return Response(response_data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
