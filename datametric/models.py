@@ -50,7 +50,9 @@ class RawResponse(AbstractModel):
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
     location = models.CharField(max_length=200, null=False)
-    year = models.IntegerField(null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)])
+    year = models.IntegerField(
+        null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)]
+    )
     month = models.IntegerField(null=False, default=1)
 
 
@@ -71,6 +73,7 @@ class DataPoint(AbstractModel):
     """
     This is an OLAP table that is used for storing data points for data analysis
     """
+
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     raw_response = models.ForeignKey(
         RawResponse,
@@ -97,8 +100,25 @@ class DataPoint(AbstractModel):
     metric_name = models.CharField(default="Not Set", null=False)
     is_calculated = models.BooleanField(default=False, null=False)
     location = models.CharField(max_length=200, null=False)
-    year = models.IntegerField(null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)])
+    year = models.IntegerField(
+        null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)]
+    )
     month = models.IntegerField(null=False, default=1)
     user_id = models.PositiveIntegerField(default=1, null=False)
     client_id = models.PositiveIntegerField(default=1, null=False)
 
+
+class EmissionAnalysis(AbstractModel):
+    activity_id = models.CharField(max_length=200)
+    index = models.PositiveIntegerField()
+    co2e_total = models.DecimalField(max_digits=10, decimal_places=3)
+    co2 = models.DecimalField(max_digits=10, decimal_places=3)
+    n2o = models.DecimalField(max_digits=10, decimal_places=3)
+    co2e_other = models.DecimalField(max_digits=10, decimal_places=3)
+    ch4 = models.DecimalField(max_digits=10, decimal_places=3)
+    calculation_method = models.CharField(max_length=10)
+    category = models.CharField(max_length=100)
+    region = models.CharField(max_length=10)
+    year = models.IntegerField()
+    name = models.CharField(max_length=300)
+    raw_response = models.ForeignKey(RawResponse, on_delete=models.PROTECT)
