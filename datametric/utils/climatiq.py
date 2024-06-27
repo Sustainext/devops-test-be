@@ -1,4 +1,4 @@
-from datametric.models import DataPoint, RawResponse, Path, DataMetric
+from datametric.models import DataPoint, RawResponse, Path, DataMetric, EmissionAnalysis
 from authentication.models import CustomUser, Client
 import requests
 import logging
@@ -49,7 +49,11 @@ class Climatiq:
                     value1=float(emission_data["Emission"]["Quantity"]),
                     unit1=emission_data["Emission"]["Unit"],
                     unit2=emission_data["Emission"].get("Unit2"),
-                    value2=float(emission_data["Emission"].get("Quantity2")) if emission_data["Emission"].get("Quantity2") is not None else None,
+                    value2=(
+                        float(emission_data["Emission"].get("Quantity2"))
+                        if emission_data["Emission"].get("Quantity2") is not None
+                        else None
+                    ),
                 )
             )
         return payload
@@ -214,6 +218,29 @@ class Climatiq:
     #         },
     #     )
     #     datapoint.save()
+
+    def create_emission_analysis(self, response_data):
+        for index, emission in enumerate(response_data):
+            EmissionAnalysis.objects.create(
+                activity_id=emission["emission_factor"]["activity_id"],
+                index=index,
+                co2e_total=emission["constituent_gases"][
+                    "co2e_total"
+                ],  # * This can also be None
+                co2=emission["constituent_gases"]["co2"],
+                n2o=emission["constituent_gases"]["n2o"],
+                co2e_other=emission["constituent_gases"][
+                    "co2e_other"
+                ],  # * This can also be None
+                ch4=emission["constituent_gases"]["ch4"],
+                calculation_method=emission["co2e_calculation_method"],
+                category=emission["Category"],
+                region=emission["emission_factor"]["region"],
+                year=emission["emission_factor"]["year"],
+                name=emission["emission_factor"]["name"],
+                raw_response=self.raw_response,
+            ).save()
+            # ? What should be filtering factor for update_or_create?
 
     def create_calculated_data_point(self):
         """

@@ -9,6 +9,7 @@ from sustainapp.Views.ChangePassword import ChangePasswordAPIView
 from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
+from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
     GHGReportView,
@@ -19,6 +20,7 @@ from sustainapp.Views.GHGReport import (
 )
 from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
+from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -43,6 +45,11 @@ urlpatterns = [
         name="get_emission_analysis",
     ),
     path(
+        "get_energy_analysis/",
+        EnergyAnalyzeView.as_view(),
+        name="get_energy_analysis",
+    ),
+    path(
         "report_data/<str:report_id>/",
         AnalysisData2APIView.as_view(),
         name="report_data",
@@ -59,6 +66,11 @@ urlpatterns = [
         "get_material_analysis/",
         GetMaterialAnalysis.as_view(),
         name="get_material_analysis",
+    ),
+    path(
+        "get_waste_analysis/",
+        GetWasteAnalysis.as_view(),
+        name="get_waste_analysis",
     ),
     path("", include(router.urls)),
 ]
