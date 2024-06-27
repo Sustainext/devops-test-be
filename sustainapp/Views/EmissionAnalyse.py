@@ -58,7 +58,7 @@ class GetEmissionAnalysis(APIView):
     def get_top_emission_by_scope(self):
         # * Get all Raw Respones based on location and year.
         self.data_points = DataPoint.objects.filter(
-            path__slug__icontains="gri-environment-emissions-301-a-scope-",
+            path__slug__icontains="gri-collect-emissions-scope-combined",
             json_holder__isnull=False,
             year__range=(self.start.year, self.end.year),
             month__range=(self.start.month, self.end.month),
