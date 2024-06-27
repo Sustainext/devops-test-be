@@ -9,7 +9,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from django.db.models import Prefetch
 from rest_framework import serializers
-from sustainapp.models import Location
+from sustainapp.models import Location, Corporateentity
 
 
 class GetWasteAnalysis(APIView):
@@ -594,33 +594,28 @@ class GetWasteAnalysis(APIView):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        self.organisation = serializer.validated_data.get("organisation", None)
-        self.corporate = serializer.validated_data.get("corporate", None)
-        self.location = serializer.validated_data.get("location", None)
+        organisation = serializer.validated_data.get("organisation", None)
+        corporate = serializer.validated_data.get("corporate", None)
+        location = serializer.validated_data.get("location", None)
         start = serializer.validated_data.get("start", None)
         end = serializer.validated_data.get("end", None)
 
-        if self.organisation and self.corporate and self.location:
-            self.locations = Location.objects.filter(id=self.location.id)
-        elif (
-            self.organisation is None and self.corporate and self.location is None
-        ) or (self.organisation and self.corporate and self.location is None):
-            self.locations = self.corporate.location.all()
-        elif (
-            self.organisation and self.corporate is None and self.location is None
-        ) or (self.organisation is None and self.corporate and self.location):
-            self.locations = Location.objects.prefetch_related(
-                Prefetch(
-                    "corporateentity",
-                    queryset=self.organisation.corporatenetityorg.all(),
-                )
-            )
+        if location:
+            locations = Location.objects.filter(pk=location.id)
+        elif corporate:
+            locations = Location.objects.filter(corporateentity=corporate)
+        elif organisation:
+            corporate_entity = Corporateentity.objects.filter(
+                organization_id=organisation.id
+            ).values_list("id", flat=True)
+            locations = Location.objects.filter(corporateentity__in=corporate_entity)
         else:
-            raise serializers.ValidationError(
-                "Not send any of the following fields: organisation, corporate, location"
+            return Response(
+                {"error": "Please provide either organisation, corporate or location"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+        location_names = locations.values_list("name", flat=True)
 
-        location_names = self.locations.values_list("name", flat=True)
         (
             waste_generated_by_material,
             waste_generated_by_location,
