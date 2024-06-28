@@ -59,7 +59,7 @@ def calculate_contributions(self, emission_by_scope, total_emissions):
                 "co2e_unit": values["co2e_unit"],
                 "unit_type": values["unit_type"],
                 "unit1": values["unit1"],
-                "unit2": "",  # Add logic to determine unit2 if needed
+                "unit2": values["unit2"],  # Add logic to determine unit2 if needed
                 "activity_data": values["activity_data"],
             }
         )
@@ -188,7 +188,11 @@ def get_analysis_data_by_source(self, data_points):
             activity = emission_request["Emission"]["Activity"]
             unit_type = emission_request["Emission"]["unit_type"]
             unit1 = emission_request["Emission"]["Unit"]
-            # unit2 = emission_request["Emission"]["Unit2"] Need to find this too
+            unit2 = (
+                emission_request["Emission"]["Unit2"]
+                if "Unit2" in emission_request["Emission"]
+                else ""
+            )  # Need to find this too
             total_co2e = climatiq_response.get("co2e", 0)
             co2e_unit = climatiq_response.get("co2e_unit", "")
             activity_data = climatiq_response.get("activity_data", "")
@@ -202,7 +206,7 @@ def get_analysis_data_by_source(self, data_points):
             entry["category_name"] = sub_category
             entry["activity_name"] = activity
             entry["unit1"] = unit1
-            # entry["unit2"] = unit2
+            entry["unit2"] = unit2
             entry["unit_type"] = unit_type
             entry["source"] = source
             entry["activity_data"] = activity_data
@@ -263,12 +267,10 @@ def get_analysis_data(
         * Refactor and optimization
     """
     analysis_data_by_corporate = defaultdict(dict)
-    print(corporate_id)
     for id in corporate_id:
         locations = Location.objects.filter(corporateentity=id)
         location_names = locations.values_list("name", flat=True)
         corporate_name = Corporateentity.objects.get(pk=id).name
-        print(location_names)
         # * Get all Raw Respones based on location and year.
         raw_responses = RawResponse.objects.filter(
             path__slug__icontains="gri-environment-emissions-301-a-scope-",
@@ -310,6 +312,7 @@ def get_analysis_data(
             scope_name = "-".join(path_name.split("-")[-2:])
             for r in data.raw_response.data:
                 unit1 = r["Emission"]["Unit"]
+                unit2 = r["Emission"]["Unit2"] if "Unit2" in r["Emission"] else ""
                 unit_type = r["Emission"]["unit_type"]
 
             # Summing up the CO2e values
@@ -337,6 +340,7 @@ def get_analysis_data(
             emission_by_scope[scope_name]["total_co2e"] += round(total_co2e, 2)
             emission_by_scope[scope_name]["co2e_unit"] = co2e_unit
             emission_by_scope[scope_name]["unit1"] = unit1
+            emission_by_scope[scope_name]["unit2"] = unit2
             emission_by_scope[scope_name]["unit_type"] = unit_type
             emission_by_scope[scope_name]["activity_data"][
                 "activity_unit"
@@ -578,7 +582,6 @@ class ReportViewSet(viewsets.ModelViewSet):
 
             if reset_logo:
                 default_image_path = default_storage.path("sustainext.jpeg")
-                print(default_image_path)
                 with default_storage.open(default_image_path, "rb") as image_file:
                     # Read the image content and save it to the instance's logo field
                     instance.org_logo.save(
@@ -655,6 +658,5 @@ class ReportPDFView(View):
 
         except Exception as e:
             # Log the exception and prepare an error response
-            print(e)
             logger.exception("Unexpected error generating PDF")
             return HttpResponse("Unexpected error occurred", status=500)
