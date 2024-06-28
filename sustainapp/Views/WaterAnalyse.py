@@ -383,7 +383,36 @@ class WaterAnalyse(APIView):
             by_water_type,
         )
 
-    def process_water_data_by_location(self, data): ...
+    def process_water_data_by_location(self, data):
+        # * Convert the data into MegaLitre
+        for location_data in data:
+            for location in location_data:
+                location_data[location]["discharge"]
+                location_data[location]["withdrawal"]
+                location_data[location]["discharge"] = self.convert_to_megalitres(
+                    value=location_data[location]["discharge"],
+                    unit=location_data[location]["Unit"],
+                )
+                location_data[location]["withdrawal"] = self.convert_to_megalitres(
+                    value=location_data[location]["withdrawal"],
+                    unit=location_data[location]["Unit"],
+                )
+                # * Calculate Consumption
+                location_data[location]["consumed"] = float(
+                    location_data[location]["discharge"]
+                ) - float(location_data[location]["withdrawal"])
+                location_data[location]["total_discharge"] += float(
+                    location_data[location]["discharge"]
+                )
+                location_data[location]["total_withdrawal"] += float(
+                    location_data[location]["withdrawal"]
+                )
+                location_data[location]["total_consumed"] += float(
+                    location_data[location]["consumed"]
+                )
+
+        # * Now Calculate Discharge, Withdrawal and Consumption by Location in Percentage
+        return data
 
     def get_water_withdrawal_from_third_parties(self):
         local_raw_responses = self.raw_responses.filter(
@@ -414,7 +443,8 @@ class WaterAnalyse(APIView):
             )
             for raw_response in local_raw_responses:
                 data.append({location: raw_response.data})
-        return data
+        return None
+        # return self.process_water_data_by_location(data=data)
 
     def get_change_in_water_storage(self):
         slug = "gri-environment-water-303-5c-change_in_water_storage"
@@ -434,11 +464,11 @@ class WaterAnalyse(APIView):
             return_data.append(
                 {
                     "Unit": "KiloLitre",
-                    "Total Water Consumption": self.convert_to_megalitres(
+                    "total_water_consumption": self.convert_to_megalitres(
                         float(all_area["discharge"]) - float(all_area["withdrawal"]),
                         unit=all_area["Unit"],
                     ),
-                    "Water consumption from areas with water stress": self.convert_to_megalitres(
+                    "water_consumption_from_areas_with_water_stress": self.convert_to_megalitres(
                         float(stress_area["Waterdischarge"])
                         - float(stress_area["Waterwithdrawal"]),
                         unit=stress_area["Unit"],
