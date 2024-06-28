@@ -18,7 +18,73 @@ class GetMaterialAnalysis(APIView):
         self, location, start_year, end_year, start_month, end_month, path_slug
     ):
         """Function to gather data from table renewable and non-renewable materials,
-        it distinguish data by path slug send on function arguments"""
+        and convert them to the highest unit within their respective categories."""
+
+        # Define conversion factors and unit hierarchy
+        conversion_factors = {
+            "Milligram": 1e-3,  # to grams (g)
+            "Gram": 1,  # grams is the base unit for weight
+            "Kilogram Kg": 1e3,  # to grams (g)
+            "Metric ton": 1e6,  # to grams (g)
+            "Pound Lb": 453.592,  # to grams (g)
+            "US short ton (tn)": 907184.74,  # to grams (g)
+            "Milliliter": 1,  # milliliter is the base unit for liquid volume
+            "Liter": 1e3,  # to milliliters (ml)
+            "Fluid Ounce fl Oz": 29.5735,  # to milliliters (ml)
+            "Quart Qt": 946.353,  # to milliliters (ml)
+            "Gallon Gal": 3785.41,  # to milliliters (ml)
+            "Pint Pt": 473.176,  # to milliliters (ml)
+            "Cubic centimeter cm3": 1,  # cubic centimeter is the base unit for cubic volume
+            "Cubic decimeter dm3": 1e3,  # to cubic centimeters (cm³)
+            "Cubic meter m3": 1e6,  # to cubic centimeters (cm³)
+            "Cubic foot ft3": 28316.8,  # to cubic centimeters (cm³)
+        }
+
+        unit_hierarchy = {
+            "weight": [
+                "Milligram",
+                "Gram",
+                "Kilogram Kg",
+                "Metric ton",
+                "Pound Lb",
+                "US short ton (tn)",
+            ],
+            "volume": [
+                "Milliliter",
+                "Liter",
+                "Fluid Ounce fl Oz",
+                "Quart Qt",
+                "Gallon Gal",
+                "Pint Pt",
+            ],
+            "cubic_volume": [
+                "Cubic centimeter cm3",
+                "Cubic decimeter dm3",
+                "Cubic meter m3",
+                "Cubic foot ft3",
+            ],
+        }
+
+        # To identify unit categories
+        unit_categories = {
+            "Milligram": "weight",
+            "Gram": "weight",
+            "Kilogram Kg": "weight",
+            "Metric ton": "weight",
+            "Pound Lb": "weight",
+            "US short ton (tn)": "weight",
+            "Milliliter": "volume",
+            "Liter": "volume",
+            "Fluid Ounce fl Oz": "volume",
+            "Quart Qt": "volume",
+            "Gallon Gal": "volume",
+            "Pint Pt": "volume",
+            "Cubic centimeter cm3": "cubic_volume",
+            "Cubic decimeter dm3": "cubic_volume",
+            "Cubic meter m3": "cubic_volume",
+            "Cubic foot ft3": "cubic_volume",
+        }
+
         raw_responses = RawResponse.objects.filter(
             path__slug=path_slug,
             year__range=(start_year, end_year),
@@ -37,6 +103,9 @@ class GetMaterialAnalysis(APIView):
             }
         )
 
+        all_units = {"weight": set(), "volume": set(), "cubic_volume": set()}
+
+        # Aggregate quantities for initial grouping
         for rw in raw_responses:
             for data in rw.data:
                 material_type = data["Typeofmaterial"]
@@ -55,14 +124,129 @@ class GetMaterialAnalysis(APIView):
                 renewable_materials_dict[key]["data_source"] = data_source
                 renewable_materials_dict[key]["total_quantity"] += total_quantity
 
-        renewable_materials = list(renewable_materials_dict.values())
-        total_test = sum(
-            item["total_quantity"] for item in renewable_materials_dict.values()
-        )
-        total_weight = {"total_weight": total_test}
-        renewable_materials.append(total_weight)
+                # Identify unit category
+                category = unit_categories.get(units)
+                if category:
+                    all_units[category].add(units)
+                else:
+                    print(f"Warning: Unit '{units}' not categorized.")
 
-        return renewable_materials
+        # Determine the highest unit for each group
+        grouped_materials = []
+        processed_keys = set()  # Set to track processed group keys
+
+        for (
+            material_type,
+            material_category,
+            source,
+            _,
+            data_source,
+        ), value in renewable_materials_dict.items():
+            # Identify all units used for this group
+            relevant_units = [
+                units
+                for (_, cat, src, units, ds) in renewable_materials_dict
+                if cat == material_category and src == source and ds == data_source
+            ]
+
+            if not relevant_units:
+                continue
+
+            # Determine categories for all units in this group
+            categories = set(unit_categories.get(un) for un in relevant_units)
+
+            # Initialize a list to store results for each category
+            grouped_results = []
+
+            for category in categories:
+                if not category:
+                    print(f"Warning: No category found for units {relevant_units}")
+                    continue
+
+                # Filter units by category
+                category_units = [
+                    units
+                    for units in relevant_units
+                    if unit_categories.get(units) == category
+                ]
+
+                # Ensure there's at least one unit for this category
+                if not category_units:
+                    print(
+                        f"Warning: No units found for category {category} in {relevant_units}"
+                    )
+                    continue
+
+                # Determine the highest unit for this category
+                try:
+                    highest_unit = max(
+                        category_units, key=lambda u: unit_hierarchy[category].index(u)
+                    )
+                except ValueError as ve:
+                    print(f"Error: {ve}")
+                    print(f"Relevant units: {category_units}")
+                    print(f"Unit hierarchy: {unit_hierarchy[category]}")
+                    continue
+
+                # Initialize group key with highest unit
+                group_key = (
+                    material_type,
+                    material_category,
+                    source,
+                    highest_unit,
+                    data_source,
+                )
+
+                # Check if group_key has already been processed
+                if group_key in processed_keys:
+                    continue
+
+                # Mark group_key as processed
+                processed_keys.add(group_key)
+
+                total_quantity_converted = 0.0
+
+                # Sum up quantities for all relevant units converted to highest unit
+                for key, sub_value in renewable_materials_dict.items():
+                    if (
+                        key[1] == material_category
+                        and key[2] == source
+                        and key[4] == data_source
+                        and key[3]
+                        in category_units  # Only consider units in this category
+                    ):
+                        units = key[3]
+                        total_quantity = sub_value["total_quantity"]
+
+                        # Convert to the highest unit
+                        if (
+                            units in conversion_factors
+                            and highest_unit in conversion_factors
+                        ):
+                            total_quantity_converted += (
+                                total_quantity
+                                * conversion_factors[units]
+                                / conversion_factors[highest_unit]
+                            )
+                        else:
+                            total_quantity_converted += total_quantity
+
+                # Store the grouped material information for this category
+                grouped_results.append(
+                    {
+                        "material_type": material_type,
+                        "material_category": material_category,
+                        "source": source,
+                        "units": highest_unit,
+                        "data_source": data_source,
+                        "total_quantity": round(total_quantity_converted, 3),
+                    }
+                )
+
+            # Extend grouped_materials with results for all categories
+            grouped_materials.extend(grouped_results)
+
+        return grouped_materials
 
     def get_reclaimed_materials(
         self, location, start_year, end_year, start_month, end_month, path_slug
