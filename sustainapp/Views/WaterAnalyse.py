@@ -24,6 +24,12 @@ class WaterAnalyse(APIView):
     discharge_literal = "Total Discharge"
     withdrawal_literal = "Total Withdrawal"
     consumed_literal = "Total Consumed"
+    all_areas_slug = (
+        "gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas"
+    )
+    water_stress_area_slug = (
+        "gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress"
+    )
 
     def set_raw_responses(self, slugs: list):
         self.raw_responses = RawResponse.objects.filter(
@@ -46,10 +52,10 @@ class WaterAnalyse(APIView):
                 "Units": "",
             }
         )
-        if not isinstance(group_by_key, list):
-            group_by_keys = [group_by_key]
-        else:
-            group_by_keys = group_by_key
+
+        group_by_keys = (
+            group_by_key if isinstance(group_by_key, list) else [group_by_key]
+        )
         # Iterate over each entry in the data
         for entry in data:
             # Convert values to liters
@@ -117,12 +123,12 @@ class WaterAnalyse(APIView):
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
                 {
-                    "Total Discharge": total_discharge,
-                    "Total Withdrawal": total_withdrawal,
-                    "Total Consumed": total_consumed,
-                    "Consumption Percentage": consumption_percentage,
-                    "Withdrawal Percentage": withdrawal_percentage,
-                    "Discharge Percentage": discharge_percentage,
+                    self.discharge_literal: total_discharge,
+                    self.withdrawal_literal: total_withdrawal,
+                    "total_consumed": total_consumed,
+                    "consumption_percentage": consumption_percentage,
+                    "withdrawal_percentage": withdrawal_percentage,
+                    "discharge_percentage": discharge_percentage,
                     "Units": data["Units"],
                     "WaterType": data["Watertype"],
                     "Source": data["Source"],
@@ -179,7 +185,7 @@ class WaterAnalyse(APIView):
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
                 {
-                    "Total Withdrawal": total_withdrawal,
+                    self.discharge_literal: total_withdrawal,
                     "Withdrawal Percentage": withdrawal_percentage,
                     "Units": data["Units"],
                 }
@@ -230,7 +236,7 @@ class WaterAnalyse(APIView):
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
                 {
-                    "Total Discharge": total_discharge,
+                    self.discharge_literal: total_discharge,
                     "Discharge Percentage": discharge_percentage,
                     "Units": data["Units"],
                 }
@@ -278,7 +284,7 @@ class WaterAnalyse(APIView):
 
     def get_total_water_consumption_in_water_stress_areas(self):
         raw_responses = self.raw_responses.filter(
-            path__slug="gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress"
+            path__slug=self.water_stress_area_slug
         )
         data = []
         for raw_response in raw_responses:
@@ -324,9 +330,7 @@ class WaterAnalyse(APIView):
         )
 
     def get_total_water_consumption_in_all_areas(self):
-        raw_responses = self.raw_responses.filter(
-            path__slug="gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas"
-        )
+        raw_responses = self.raw_responses.filter(path__slug=self.all_areas_slug)
         data = []
         for raw_response in raw_responses:
             data.extend(raw_response.data)
@@ -379,6 +383,8 @@ class WaterAnalyse(APIView):
             by_water_type,
         )
 
+    def process_water_data_by_location(self, data): ...
+
     def get_water_withdrawal_from_third_parties(self):
         local_raw_responses = self.raw_responses.filter(
             path__slug="gri-environment-water-303-3b-water_withdrawal_areas_water_stress"
@@ -395,35 +401,20 @@ class WaterAnalyse(APIView):
         )
 
     def get_by_location(self, slug):
-        # TODO: Make it dynamic, instead of static.
-        water_discharge_data = [
-            {
-                "Location": "Location 1",
-                "Discharge Percentage": "x%",
-                "Total Discharge": "212123545",
-                "Total Withdrawal": "212123545",
-                "Total Consumed": "212123545",
-                "Units": "Megalitre",
-            },
-            {
-                "Location": "Location 2",
-                "Discharge Percentage": "x%",
-                "Total Discharge": "212123545",
-                "Total Withdrawal": "212123545",
-                "Total Consumed": "212123545",
-                "Units": "Megalitre",
-            },
-            {
-                "Location": "Location 3",
-                "Discharge Percentage": "x%",
-                "Total Discharge": "212123545",
-                "Total Withdrawal": "212123545",
-                "Total Consumed": "212123545",
-                "Units": "Megalitre",
-            },
-        ]
-
-        return water_discharge_data
+        # * Filter Raw Responses by their location
+        location_names = self.raw_responses.values_list(
+            "location", flat=True
+        ).distinct()
+        data = []
+        for location in location_names:
+            local_raw_responses = (
+                self.raw_responses.filter(location=location)
+                .filter(path__slug=self.all_areas_slug)
+                .only("data", "location")
+            )
+            for raw_response in local_raw_responses:
+                data.append({location: raw_response.data})
+        return data
 
     def get_change_in_water_storage(self):
         slug = "gri-environment-water-303-5c-change_in_water_storage"
@@ -457,14 +448,12 @@ class WaterAnalyse(APIView):
         return return_data
 
     def get_water_consumption_in_all_areas_and_stress_areas(self):
-        raw_responses = self.raw_responses.filter(
-            path__slug="gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas"
-        )
+        raw_responses = self.raw_responses.filter(path__slug=self.all_areas_slug)
         all_areas_data = []
         for raw_response in raw_responses:
             all_areas_data.extend(raw_response.data)
         raw_responses = self.raw_responses.filter(
-            path__slug="gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress"
+            path__slug=self.water_stress_area_slug
         )
         water_stress_areas_data = []
         for raw_response in raw_responses:
@@ -493,9 +482,9 @@ class WaterAnalyse(APIView):
             "gri-environment-water-303-1b-1c-1d-interaction_with_water",
             "gri-environment-water-303-2a-management_water_discharge",
             "gri-environment-water-303-2a-profile_receiving_waterbody",
-            "gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas",
+            self.all_areas_slug,
             "gri-environment-water-303-4a-third_party",
-            "gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress",
+            self.water_stress_area_slug,
             "gri-environment-water-303-3b-water_withdrawal_areas_water_stress",
             "gri-environment-water-303-4d-substances_of_concern",
             "gri-environment-water-303-3d-4e-sma",
