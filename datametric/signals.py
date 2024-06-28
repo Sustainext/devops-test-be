@@ -8,6 +8,9 @@ from datametric.utils.signal_utilities import (
     create_or_update_data_points,
     process_raw_response_data,
 )
+from logging import getLogger
+
+logger = getLogger("error.log")
 
 
 def process_json(json_obj, path, raw_response):
@@ -68,5 +71,7 @@ def create_response_points(sender, instance: RawResponse, created, **kwargs):
     DataPoint.objects.filter(raw_response=instance).delete()
     # No matter, whether it is getting created or updated, this should be run.
     #! Don't save the instance again, goes to non stop recursion.
-    process_json(instance.data, instance.path, instance)
-    
+    try:
+        process_json(instance.data, instance.path, instance)
+    except Exception as e:
+        logger.info(f"An error occurred: {e}")
