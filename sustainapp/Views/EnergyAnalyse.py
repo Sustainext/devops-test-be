@@ -49,7 +49,11 @@ class EnergyAnalyzeView(APIView):
         grand_total_kwh = 0
 
         def get_quantity_in_units(item, unit_key, quantity_key="Quantity"):
-            quantity = float(item[quantity_key])
+            try:
+                quantity = float(item[quantity_key])
+            except ValueError:
+                print(f"Error: Quantity '{item[quantity_key]}' is not a valid number.")
+                return 0, 0
             unit = item[unit_key]
             return (
                 conversions[unit]["GJ"] * quantity,
@@ -62,10 +66,10 @@ class EnergyAnalyzeView(APIView):
                 item["EnergyType"],
                 item["Source"],
                 item["Typeofentity"],
-                item["Nameofentity"],
+                item["Nameofentity"].capitalize(),
                 item["Renewable"],
             ),
-            3: lambda item: (item["EnergyType"], item["Purpose"]),
+            3: lambda item: (item["EnergyType"], item["Purpose"].capitalize()),
             4: lambda item: (
                 item["Typeofintervention"],
                 item["Energytypereduced"],
@@ -73,13 +77,22 @@ class EnergyAnalyzeView(APIView):
                 item["Baseyear"],
                 item["Methodologyused"],
             ),
-            5: lambda item: item["ProductServices"],
+            5: lambda item: item["ProductServices"].capitalize(),
             6: lambda item: (item["Organizationmetric"], item["Metricunit"]),
+            7: lambda item: (item["EnergyType"], item["Source"],item["Purpose"].capitalize(), item["Renewable"]),
         }
 
         for item in data:
+
+            if "Purpose" in item:
+                item["Purpose"] = item["Purpose"].capitalize()
+            elif "Nameofentity" in item:
+                item["Nameofentity"] = item["Nameofentity"].capitalize()
+            elif "ProductServices" in item:
+                item["ProductServices"] = item["ProductServices"].capitalize()
+
             try:
-                if sno < 4:
+                if sno < 4 or sno == 7:
                     quantity_in_gj, _ = get_quantity_in_units(item, "Unit")
                 elif sno == 4:
                     quantity_in_gj, quantity_in_kwh = get_quantity_in_units(
@@ -108,7 +121,7 @@ class EnergyAnalyzeView(APIView):
                     grand_total_gj += quantity_in_gj
                     grand_total_kwh += quantity_in_kwh
                 else:
-                    if sno in [1, 2]:
+                    if sno in [1, 2,7]:
                         if item["Renewable"] == "Renewable":
                             grand_total_renewable_gj += quantity_in_gj
                         else:
@@ -177,12 +190,19 @@ class EnergyAnalyzeView(APIView):
                 ),
                 "Unit2": f"KWh/{key[1]}",
             },
+            7: lambda key, total: {
+                "Energy_type": key[0],
+                "Source": key[1],
+                "Purpose": key[2],
+                "Quantity": round(total, 3),
+                "Unit": "GJ",
+            },
         }
 
         for key, total_quantity in grouped_data.items():
             energy_record = record_creators[sno](key, total_quantity)
 
-            if sno in [1, 2]:
+            if sno in [1, 2, 7]:
                 if key[-1] == "Renewable":
                     renewable_data.append(energy_record)
                 else:
@@ -278,7 +298,7 @@ class EnergyAnalyzeView(APIView):
                 direct_total_renewable_gj,
                 direct_total_non_renewable_gj,
             ) = self.process_energy_data(
-                path="gri-environment-energy-302-1a-1b-direct_purchased", sno=1
+                path="gri-environment-energy-302-1a-1b-direct_purchased", sno=7
             )
             response_data["direct_purchased_from_renewable"] = direct_renewable
             response_data["direct_purchased_from_non_renewable"] = direct_non_renewable
