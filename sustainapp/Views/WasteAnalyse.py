@@ -9,7 +9,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from django.db.models import Prefetch
 from rest_framework import serializers
-from sustainapp.models import Location
+from sustainapp.models import Location, Corporateentity
 
 
 class GetWasteAnalysis(APIView):
@@ -51,7 +51,7 @@ class GetWasteAnalysis(APIView):
         )
         waste_generated_by_category = defaultdict(
             lambda: {
-                "total_waste_by_category": "",
+                "material_type": "",
                 "contribution": 0.0,
                 "total_waste": 0.0,
                 "units": "t (metric tons)",
@@ -87,7 +87,7 @@ class GetWasteAnalysis(APIView):
                 # Update waste by category (table 3)
                 waste_category = data["Wastecategory"]
                 waste_generated_by_category[waste_category][
-                    "total_waste_by_category"
+                    "material_type"
                 ] = waste_category
                 waste_generated_by_category[waste_category][
                     "total_waste"
@@ -146,8 +146,8 @@ class GetWasteAnalysis(APIView):
         )
         hazardous_waste_diverted_from_data = defaultdict(
             lambda: {
-                "waste_type": "",
-                "quantity": 0.0,
+                "material_type": "",
+                "total_waste": 0.0,
                 "units": "t (metric tons)",
                 "recycled_quantity": 0.0,
                 "preparation_of_reuse_quantity": 0.0,
@@ -160,8 +160,8 @@ class GetWasteAnalysis(APIView):
         )
         non_hazardous_waste_diverted_from_data = defaultdict(
             lambda: {
-                "waste_type": "",
-                "quantity": 0.0,
+                "material_type": "",
+                "total_waste": 0.0,
                 "units": "t (metric tons)",
                 "recycled_quantity": 0.0,
                 "preparation_of_reuse_quantity": 0.0,
@@ -216,10 +216,10 @@ class GetWasteAnalysis(APIView):
 
                     # Update hazardous waste diverted (table 6)
                     hazardous_waste_diverted_from_data[waste_key][
-                        "waste_type"
+                        "material_type"
                     ] = waste_type
                     hazardous_waste_diverted_from_data[waste_key][
-                        "quantity"
+                        "total_waste"
                     ] += total_waste
                     hazardous_waste_diverted_from_data[waste_key]["site"] = site
                 else:
@@ -238,10 +238,10 @@ class GetWasteAnalysis(APIView):
 
                     # Update non-hazardous waste diverted (table 7)
                     non_hazardous_waste_diverted_from_data[waste_key][
-                        "waste_type"
+                        "material_type"
                     ] = waste_type
                     non_hazardous_waste_diverted_from_data[waste_key][
-                        "quantity"
+                        "total_waste"
                     ] += total_waste
                     non_hazardous_waste_diverted_from_data[waste_key]["site"] = site
 
@@ -251,7 +251,7 @@ class GetWasteAnalysis(APIView):
             )
 
         for key, value in hazardous_waste_diverted_from_data.items():
-            quantity = value["quantity"]
+            quantity = value["total_waste"]
             if quantity > 0:
                 hazardous_waste_diverted_from_data[key]["recycled_percentage"] = round(
                     (value["recycled_quantity"] / quantity) * 100, 2
@@ -268,7 +268,7 @@ class GetWasteAnalysis(APIView):
             del hazardous_waste_diverted_from_data[key]["other_quantity"]
 
         for key, value in non_hazardous_waste_diverted_from_data.items():
-            quantity = value["quantity"]
+            quantity = value["total_waste"]
             if quantity > 0:
                 non_hazardous_waste_diverted_from_data[key]["recycled_percentage"] = (
                     round((value["recycled_quantity"] / quantity) * 100, 2)
@@ -300,19 +300,19 @@ class GetWasteAnalysis(APIView):
 
         total_hazardeous_waste_generated = 0.0
         for waste in hazardous_waste_diverted_from_data_list:
-            total_hazardeous_waste_generated += float(waste["quantity"])
+            total_hazardeous_waste_generated += float(waste["total_waste"])
 
         total_hazardeous_waste = {
-            "total_hazardous_waste_generated": total_hazardeous_waste_generated
+            "total_waste_generated": total_hazardeous_waste_generated
         }
         hazardous_waste_diverted_from_data_list.append(total_hazardeous_waste)
 
         total_non_hazardeous_waste_generated = 0.0
         for waste in non_hazardous_waste_diverted_from_data_list:
-            total_non_hazardeous_waste_generated += float(waste["quantity"])
+            total_non_hazardeous_waste_generated += float(waste["total_waste"])
 
         total_non_hazardeous_waste = {
-            "total_non_hazardeous_waste_generated": total_non_hazardeous_waste_generated
+            "total_waste_generated": total_non_hazardeous_waste_generated
         }
         non_hazardous_waste_diverted_from_data_list.append(total_non_hazardeous_waste)
 
@@ -343,8 +343,8 @@ class GetWasteAnalysis(APIView):
         )
         hazardous_waste_directed_to_data = defaultdict(
             lambda: {
-                "waste_type": "",
-                "quantity": 0.0,
+                "material_type": "",
+                "total_waste": 0.0,
                 "units": "t (metric tons)",
                 "inceneration_with_energy_quantity": 0.0,
                 "inceneration_without_energy_quantity": 0.0,
@@ -361,8 +361,8 @@ class GetWasteAnalysis(APIView):
         )
         non_hazardous_waste_directed_to_data = defaultdict(
             lambda: {
-                "waste_type": "",
-                "quantity": 0.0,
+                "material_type": "",
+                "total_waste": 0.0,
                 "units": "t (metric tons)",
                 "inceneration_with_energy_quantity": 0.0,
                 "inceneration_without_energy_quantity": 0.0,
@@ -432,10 +432,10 @@ class GetWasteAnalysis(APIView):
 
                     # Update hazardous waste diverted (table 6)
                     hazardous_waste_directed_to_data[waste_key][
-                        "waste_type"
+                        "material_type"
                     ] = waste_type
                     hazardous_waste_directed_to_data[waste_key][
-                        "quantity"
+                        "total_waste"
                     ] += total_waste
                     hazardous_waste_directed_to_data[waste_key]["site"] = site
                 else:
@@ -465,10 +465,10 @@ class GetWasteAnalysis(APIView):
 
                     # Update hazardous waste diverted (table 6)
                     non_hazardous_waste_directed_to_data[waste_key][
-                        "waste_type"
+                        "material_type"
                     ] = waste_type
                     non_hazardous_waste_directed_to_data[waste_key][
-                        "quantity"
+                        "total_waste"
                     ] += total_waste
                     non_hazardous_waste_directed_to_data[waste_key]["site"] = site
 
@@ -478,7 +478,7 @@ class GetWasteAnalysis(APIView):
             )
 
         for key, value in hazardous_waste_directed_to_data.items():
-            quantity = value["quantity"]
+            quantity = value["total_waste"]
             if quantity > 0:
                 hazardous_waste_directed_to_data[key][
                     "inceneration_with_energy_percentage"
@@ -515,7 +515,7 @@ class GetWasteAnalysis(APIView):
             del hazardous_waste_directed_to_data[key]["external_quantity"]
 
         for key, value in non_hazardous_waste_directed_to_data.items():
-            quantity = value["quantity"]
+            quantity = value["total_waste"]
             if quantity > 0:
                 non_hazardous_waste_directed_to_data[key][
                     "inceneration_with_energy_percentage"
@@ -565,19 +565,19 @@ class GetWasteAnalysis(APIView):
 
         total_hazardeous_waste_generated = 0.0
         for waste in hazardous_waste_diverted_from_data_list:
-            total_hazardeous_waste_generated += float(waste["quantity"])
+            total_hazardeous_waste_generated += float(waste["total_waste"])
 
         total_hazardeous_waste = {
-            "total_hazardous_waste_generated": total_hazardeous_waste_generated
+            "total_waste_generated": total_hazardeous_waste_generated
         }
         hazardous_waste_diverted_from_data_list.append(total_hazardeous_waste)
 
         total_non_hazardeous_waste_generated = 0.0
         for waste in non_hazardous_waste_diverted_from_data_list:
-            total_non_hazardeous_waste_generated += float(waste["quantity"])
+            total_non_hazardeous_waste_generated += float(waste["total_waste"])
 
         total_non_hazardeous_waste = {
-            "total_non_hazardeous_waste_generated": total_non_hazardeous_waste_generated
+            "total_waste_generated": total_non_hazardeous_waste_generated
         }
         non_hazardous_waste_diverted_from_data_list.append(total_non_hazardeous_waste)
 
@@ -594,33 +594,28 @@ class GetWasteAnalysis(APIView):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        self.organisation = serializer.validated_data.get("organisation", None)
-        self.corporate = serializer.validated_data.get("corporate", None)
-        self.location = serializer.validated_data.get("location", None)
+        organisation = serializer.validated_data.get("organisation", None)
+        corporate = serializer.validated_data.get("corporate", None)
+        location = serializer.validated_data.get("location", None)
         start = serializer.validated_data.get("start", None)
         end = serializer.validated_data.get("end", None)
 
-        if self.organisation and self.corporate and self.location:
-            self.locations = Location.objects.filter(id=self.location.id)
-        elif (
-            self.organisation is None and self.corporate and self.location is None
-        ) or (self.organisation and self.corporate and self.location is None):
-            self.locations = self.corporate.location.all()
-        elif (
-            self.organisation and self.corporate is None and self.location is None
-        ) or (self.organisation is None and self.corporate and self.location):
-            self.locations = Location.objects.prefetch_related(
-                Prefetch(
-                    "corporateentity",
-                    queryset=self.organisation.corporatenetityorg.all(),
-                )
-            )
+        if location:
+            locations = Location.objects.filter(pk=location.id)
+        elif corporate:
+            locations = Location.objects.filter(corporateentity=corporate)
+        elif organisation:
+            corporate_entity = Corporateentity.objects.filter(
+                organization_id=organisation.id
+            ).values_list("id", flat=True)
+            locations = Location.objects.filter(corporateentity__in=corporate_entity)
         else:
-            raise serializers.ValidationError(
-                "Not send any of the following fields: organisation, corporate, location"
+            return Response(
+                {"error": "Please provide either organisation, corporate or location"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+        location_names = locations.values_list("name", flat=True)
 
-        location_names = self.locations.values_list("name", flat=True)
         (
             waste_generated_by_material,
             waste_generated_by_location,
@@ -660,12 +655,12 @@ class GetWasteAnalysis(APIView):
         final_response = {
             "waste_generated_by_material": waste_generated_by_material,
             "waste_generated_by_location": waste_generated_by_location,
-            "waste_generated_by_category": waste_generated_by_category,
-            "waste_diverted_from_data": waste_diverted_from_data,
-            "hazardeous_waste_diverted_from": hazardeous_waste_diverted_from,
-            "non_hazardeous_waste_diverted_from": non_hazardeous_waste_diverted_from,
-            "waste_directed_to_data": waste_directed_to_data,
-            "hazardeous_waste_directed_to_data": hazardeous_waste_directed_to_data,
-            "non_hazardeous_waste_directed_to_data": non_hazardeous_waste_directed_to_data,
+            "hazardous_and_non_hazardous_waste_composition": waste_generated_by_category,
+            "waste_directed_to_disposal_by_material_type": waste_directed_to_data,
+            "waste_diverted_from_disposal_by_material_type": waste_diverted_from_data,
+            "hazardous_waste_diverted_form_disposal": hazardeous_waste_diverted_from,
+            "non_hazardeous_waste_diverted_from_disposal": non_hazardeous_waste_diverted_from,
+            "hazardeous_waste_directed_to_disposal": hazardeous_waste_directed_to_data,
+            "non_hazardeous_waste_directed_to_disposal": non_hazardeous_waste_directed_to_data,
         }
         return Response(final_response, status=status.HTTP_200_OK)
