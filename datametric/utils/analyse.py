@@ -19,7 +19,7 @@ def set_locations_data(organisation, corporate, location):
                 "corporateentity",
                 queryset=organisation.corporatenetityorg.all(),
             )
-        )
+        ).filter(corporateentity__in=organisation.corporatenetityorg.all())
     else:
         raise serializers.ValidationError(
             "Not send any of the following fields: organisation, corporate, location"

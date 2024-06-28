@@ -21,6 +21,9 @@ class WaterAnalyse(APIView):
         "megalitre": 1,
         "million litrse per day": 1,
     }
+    discharge_literal = "Total Discharge"
+    withdrawal_literal = "Total Withdrawal"
+    consumed_literal = "Total Consumed"
 
     def set_raw_responses(self, slugs: list):
         self.raw_responses = RawResponse.objects.filter(
@@ -32,9 +35,9 @@ class WaterAnalyse(APIView):
         ).only("data", "location")
 
     def process_water_data(self, data, group_by_key, discharge_key, withdrawal_key):
-        discharge_literal = "Total Discharge"
-        withdrawal_literal = "Total Withdrawal"
-        consumed_literal = "Total Consumed"
+        discharge_literal = self.discharge_literal
+        withdrawal_literal = self.withdrawal_literal
+        consumed_literal = self.consumed_literal
         grouped_data = defaultdict(
             lambda: {
                 discharge_literal: 0,
@@ -454,6 +457,9 @@ class WaterAnalyse(APIView):
         # * Total Water Consumption in water stress areas
         self.set_raw_responses(slugs)
         response_data = []
+        self.response_data.append({"Total Water Consumption":{
+            
+        }})
         (
             by_water_consumption,
             by_water_source,
