@@ -457,9 +457,6 @@ class WaterAnalyse(APIView):
         # * Total Water Consumption in water stress areas
         self.set_raw_responses(slugs)
         response_data = []
-        self.response_data.append({"Total Water Consumption":{
-            
-        }})
         (
             by_water_consumption,
             by_water_source,
