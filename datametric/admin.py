@@ -14,9 +14,9 @@ class ClientAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "created_at")
 
 
-class DataMetricAdmin(admin.ModelAdmin):
+class DataMetricAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ("id", "name", "path", "label", "description", "response_type")
-
+    actions = ["export_as_csv"]
 
 admin.site.register(DataMetric, DataMetricAdmin)
 
