@@ -17,6 +17,11 @@ from rest_framework import serializers
 
 class GetEmissionAnalysis(APIView):
     permission_classes = [IsAuthenticated]
+    path_slug = {
+        "gri-environment-emissions-301-a-scope-1": "Scope 1",
+        "gri-environment-emissions-301-a-scope-2": "Scope 2",
+        "gri-environment-emissions-301-a-scope-3": "Scope 3",
+    }
 
     def calculate_scope_contribution(self, key_name, scope_total_values):
         total_emissions = sum(scope_total_values.values())
@@ -52,9 +57,9 @@ class GetEmissionAnalysis(APIView):
         self.top_emission_by_source = defaultdict(lambda: 0)
         self.top_emission_by_location = defaultdict(lambda: 0)
         for data_point in self.data_points:
-            top_emission_by_scope[data_point.raw_response.path.slug] += sum(
-                [i.get("co2e", 0) for i in data_point.json_holder]
-            )
+            top_emission_by_scope[
+                self.path_slug[data_point.raw_response.path.slug]
+            ] += sum([i.get("co2e", 0) for i in data_point.json_holder])
             self.top_emission_by_location[data_point.location] += sum(
                 [i.get("co2e", 0) for i in data_point.json_holder]
             )
