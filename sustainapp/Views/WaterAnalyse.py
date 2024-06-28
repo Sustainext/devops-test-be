@@ -1,4 +1,18 @@
-from datametric.models import DataPoint, Path, RawResponse
+"""
+The WaterAnalyse class is an API view that provides functionality for analyzing water-related data.
+
+The class has several methods that process and aggregate water data from various sources, including:
+- Total water consumption in all areas and water stress areas
+- Water consumption by business operation, location, source, and water type
+- Water withdrawal from third parties
+- Change in water storage
+
+The class uses various helper methods to convert units, group and process the data, and calculate totals and percentages.
+
+The get() method is the main entry point for the API, which takes query parameters to filter the data and returns a comprehensive response with various water-related metrics and statistics.
+"""
+
+from datametric.models import RawResponse
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.serializers import ValidationError
@@ -306,8 +320,6 @@ class WaterAnalyse(APIView):
             withdrawal_key="Waterwithdrawal",
         )
 
-        # ? Total Fresh Water withdrawal by Location/Country
-
         # Total Water withdrawal by Water type
         by_water_type = self.process_water_data(
             data=data,
@@ -383,36 +395,68 @@ class WaterAnalyse(APIView):
             by_water_type,
         )
 
-    def process_water_data_by_location(self, data):
-        # * Convert the data into MegaLitre
-        for location_data in data:
-            for location in location_data:
-                location_data[location]["discharge"]
-                location_data[location]["withdrawal"]
-                location_data[location]["discharge"] = self.convert_to_megalitres(
-                    value=location_data[location]["discharge"],
-                    unit=location_data[location]["Unit"],
-                )
-                location_data[location]["withdrawal"] = self.convert_to_megalitres(
-                    value=location_data[location]["withdrawal"],
-                    unit=location_data[location]["Unit"],
-                )
-                # * Calculate Consumption
-                location_data[location]["consumed"] = float(
-                    location_data[location]["discharge"]
-                ) - float(location_data[location]["withdrawal"])
-                location_data[location]["total_discharge"] += float(
-                    location_data[location]["discharge"]
-                )
-                location_data[location]["total_withdrawal"] += float(
-                    location_data[location]["withdrawal"]
-                )
-                location_data[location]["total_consumed"] += float(
-                    location_data[location]["consumed"]
+    def calculate_totals_per_location(self, data):
+        result = []
+
+        for location_dict in data:
+            for location_name, records in location_dict.items():
+                total_discharge = sum(record["discharge"] for record in records)
+                total_withdrawal = sum(record["withdrawal"] for record in records)
+                total_consumption = sum(record["consumed"] for record in records)
+
+                result.append(
+                    {
+                        "location": location_name,
+                        "total_discharge": total_discharge,
+                        "total_withdrawal": total_withdrawal,
+                        "total_consumption": total_consumption,
+                        "unit": "KiloLitre",
+                    }
                 )
 
-        # * Now Calculate Discharge, Withdrawal and Consumption by Location in Percentage
-        return data
+        return result
+
+    def process_water_data_by_location(self, data):
+
+        for location_data in data:
+            for location, entries in location_data.items():
+                location_data[location] = list(
+                    map(
+                        lambda entry: {
+                            "discharge": self.convert_to_megalitres(
+                                entry["discharge"], entry["Unit"]
+                            ),
+                            "withdrawal": self.convert_to_megalitres(
+                                entry["withdrawal"], entry["Unit"]
+                            ),
+                            "consumed": self.convert_to_megalitres(
+                                entry["discharge"], entry["Unit"]
+                            )
+                            - self.convert_to_megalitres(
+                                entry["withdrawal"], entry["Unit"]
+                            ),
+                            "total_discharge": entry.get("total_discharge", 0)
+                            + self.convert_to_megalitres(
+                                entry["discharge"], entry["Unit"]
+                            ),
+                            "total_withdrawal": entry.get("total_withdrawal", 0)
+                            + self.convert_to_megalitres(
+                                entry["withdrawal"], entry["Unit"]
+                            ),
+                            "total_consumed": entry.get("total_consumed", 0)
+                            + (
+                                self.convert_to_megalitres(
+                                    entry["discharge"], entry["Unit"]
+                                )
+                                - self.convert_to_megalitres(
+                                    entry["withdrawal"], entry["Unit"]
+                                )
+                            ),
+                        },
+                        entries,
+                    )
+                )
+        return self.calculate_totals_per_location(data)
 
     def get_water_withdrawal_from_third_parties(self):
         local_raw_responses = self.raw_responses.filter(
@@ -443,8 +487,7 @@ class WaterAnalyse(APIView):
             )
             for raw_response in local_raw_responses:
                 data.append({location: raw_response.data})
-        return None
-        # return self.process_water_data_by_location(data=data)
+        return self.process_water_data_by_location(data=data)
 
     def get_change_in_water_storage(self):
         slug = "gri-environment-water-303-5c-change_in_water_storage"
