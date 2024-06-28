@@ -396,29 +396,32 @@ class WaterAnalyse(APIView):
 
     def get_by_location(self, slug):
         # TODO: Make it dynamic, instead of static.
-        water_discharge_data = {
-            "Location 1": {
+        water_discharge_data = [
+            {
+                "Location": "Location 1",
                 "Discharge Percentage": "x%",
                 "Total Discharge": "212123545",
                 "Total Withdrawal": "212123545",
                 "Total Consumed": "212123545",
                 "Units": "Megalitre",
             },
-            "Location 2": {
+            {
+                "Location": "Location 2",
                 "Discharge Percentage": "x%",
                 "Total Discharge": "212123545",
                 "Total Withdrawal": "212123545",
                 "Total Consumed": "212123545",
                 "Units": "Megalitre",
             },
-            "Location 3": {
+            {
+                "Location": "Location 3",
                 "Discharge Percentage": "x%",
                 "Total Discharge": "212123545",
                 "Total Withdrawal": "212123545",
                 "Total Consumed": "212123545",
                 "Units": "Megalitre",
             },
-        }
+        ]
 
         return water_discharge_data
 
