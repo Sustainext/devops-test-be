@@ -21,8 +21,8 @@ class GetMaterialAnalysis(APIView):
         it distinguish data by path slug send on function arguments"""
         raw_responses = RawResponse.objects.filter(
             path__slug=path_slug,
-            year__in=[start_year, end_year],
-            month__in=[start_month, end_month],
+            year__range=(start_year, end_year),
+            month__range=(start_month, end_month),
             location__in=location,
         )
 
@@ -75,8 +75,8 @@ class GetMaterialAnalysis(APIView):
         """
         raw_responses = RawResponse.objects.filter(
             path__slug=path_slug,
-            year__in=[start_year, end_year],
-            month__in=[start_month, end_month],
+            year__range=(start_year, end_year),
+            month__range=(start_month, end_month),
             location__in=location,
         )
         reclaimed_materials_dict = defaultdict(
@@ -97,7 +97,7 @@ class GetMaterialAnalysis(APIView):
                 total_quantity = float(data["Amountsproduct"])
                 total_amount_of_product_packaging = float(data["Amountsproduct"])
 
-                key = type_of_product
+                key = (type_of_product, product_code, product_name)
 
                 reclaimed_materials_dict[key]["type_of_product"] = type_of_product
                 reclaimed_materials_dict[key]["product_code"] = product_code
@@ -122,8 +122,8 @@ class GetMaterialAnalysis(APIView):
         """
         raw_responses = RawResponse.objects.filter(
             path__slug=path_slug,
-            year__in=[start_year, end_year],
-            month__in=[start_month, end_month],
+            year__range=(start_year, end_year),
+            month__range=(start_month, end_month),
             location__in=location,
         )
         recycled_materials_dict = defaultdict(
@@ -170,31 +170,26 @@ class GetMaterialAnalysis(APIView):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        self.organisation = serializer.validated_data.get("organisation", None)
-        self.corporate = serializer.validated_data.get("corporate", None)
-        self.location = serializer.validated_data.get("location", None)
+        organisation = serializer.validated_data.get("organisation", None)
+        corporate = serializer.validated_data.get("corporate", None)
+        location = serializer.validated_data.get("location", None)
         start = serializer.validated_data.get("start", None)
         end = serializer.validated_data.get("end", None)
-        if self.organisation and self.corporate and self.location:
-            self.locations = Location.objects.filter(id=self.location.id)
-        elif (
-            self.organisation is None and self.corporate and self.location is None
-        ) or (self.organisation and self.corporate and self.location is None):
-            self.locations = self.corporate.location.all()
-        elif (
-            self.organisation and self.corporate is None and self.location is None
-        ) or (self.organisation is None and self.corporate and self.location):
-            self.locations = Location.objects.prefetch_related(
-                Prefetch(
-                    "corporateentity",
-                    queryset=self.organisation.corporatenetityorg.all(),
-                )
-            )
+        if location:
+            locations = Location.objects.filter(pk=location.id)
+        elif corporate:
+            locations = Location.objects.filter(corporateentity=corporate)
+        elif organisation:
+            corporate_entity = Corporateentity.objects.filter(
+                organization_id=organisation.id
+            ).values_list("id", flat=True)
+            locations = Location.objects.filter(corporateentity__in=corporate_entity)
         else:
-            raise serializers.ValidationError(
-                "Not send any of the following fields: organisation, corporate, location"
+            return Response(
+                {"error": "Please provide either organisation, corporate or location"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        location_names = self.locations.values_list("name", flat=True)
+        location_names = locations.values_list("name", flat=True)
 
         renewable_materials = self.get_material_data(
             location_names,
