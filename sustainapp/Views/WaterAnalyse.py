@@ -520,25 +520,25 @@ class WaterAnalyse(APIView):
         ) = self.get_total_water_consumption_in_all_areas()
 
         response_data = {
-            "Total Water Consumption": self.get_water_consumption_in_all_areas_and_stress_areas(),
-            "Total Water Consumption in water stress areas": water_stress_by_water_consumption,
-            "Total Water Consumption by business operation": all_areas_by_business_operation,
-            "Total Water Consumption by Location": self.get_by_location(slug=None),
-            "Total Water Consumption by source": all_areas_by_source,
-            "Total Fresh Water withdrawal by business operation": all_areas_by_fresh_water,
-            "Total Fresh Water withdrawal by source (from water stress area)": all_areas_by_source,
-            "Total Fresh Water withdrawal by Location/Country": self.get_by_location(
+            "total_water_consumption": self.get_water_consumption_in_all_areas_and_stress_areas(),
+            "total_water_consumption_in_water_stress_areas": water_stress_by_water_consumption,
+            "total_water_consumption_by_business_operation": all_areas_by_business_operation,
+            "total_water_consumption_by_location": self.get_by_location(slug=None),
+            "total_water_consumption_by_source": all_areas_by_source,
+            "total_fresh_water_withdrawal_by_business_operation": all_areas_by_fresh_water,
+            "total_fresh_water_withdrawal_by_source_from_water_stress_area": all_areas_by_source,
+            "total_fresh_water_withdrawal_by_location_country": self.get_by_location(
                 slug="gri-environment-water-303-3b-water_withdrawal_areas_water_stress"
             ),
-            "Total Water withdrawal by Water type": all_areas_by_water_type,
-            "Water withdrawal from third-parties": all_areas_by_source,
-            "Total Water Discharge by Location": self.get_by_location("something"),
-            "Total Water Discharge by source and type of water": all_areas_by_source_and_water_type,
-            "Total Water Discharge (from water stress area) by Business Operation": water_stress_by_water_stress_business_operation,
-            "Total Water Discharge by Business Operation": all_areas_by_business_operation,
-            "Total Water Discharge by Water type (from water stress area)": water_stress_by_water_type,
-            "Third-party Water discharge sent to use for other organizations": self.get_third_party_discharge_sent_to_use_other_organisations(),
-            "Change in water storage": self.get_change_in_water_storage(),
+            "total_water_withdrawal_by_water_type": all_areas_by_water_type,
+            "water_withdrawal_from_third_parties": all_areas_by_source,
+            "total_water_discharge_by_location": self.get_by_location("something"),
+            "total_water_discharge_by_source_and_type_of_water": all_areas_by_source_and_water_type,
+            "total_water_discharge_from_water_stress_area_by_business_operation": water_stress_by_water_stress_business_operation,
+            "total_water_discharge_by_business_operation": all_areas_by_business_operation,
+            "total_water_discharge_by_water_type_from_water_stress_area": water_stress_by_water_type,
+            "third_party_water_discharge_sent_to_use_for_other_organizations": self.get_third_party_discharge_sent_to_use_other_organisations(),
+            "change_in_water_storage": self.get_change_in_water_storage(),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
