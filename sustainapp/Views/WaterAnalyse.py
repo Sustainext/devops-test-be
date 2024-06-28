@@ -364,12 +364,19 @@ class WaterAnalyse(APIView):
             discharge_key="discharge",
             withdrawal_key="withdrawal",
         )
+        by_water_type = self.process_water_data(
+            data=data,
+            group_by_key="Watertype",
+            discharge_key="discharge",
+            withdrawal_key="withdrawal",
+        )
         return (
             by_consumption,
             by_business_operation,
             by_source,
             by_fresh_water,
             by_source_and_water_type,
+            by_water_type,
         )
 
     def get_water_withdrawal_from_third_parties(self):
@@ -425,6 +432,52 @@ class WaterAnalyse(APIView):
             data,
         )
 
+    def process_water_consumption_in_all_areas_and_stress_areas(
+        self, all_areas_data, stress_areas_data
+    ):
+        return_data = {
+            "all_areas_water_consumption": [],
+            "stress_areas_water_consumption": [],
+        }
+        for data in all_areas_data:
+            return_data["all_areas_water_consumption"].append(
+                {
+                    "Unit": "KiloLitre",
+                    "consumption": self.convert_to_megalitres(
+                        float(data["discharge"]) - float(data["withdrawal"]),
+                        unit=data["Unit"],
+                    ),
+                }
+            )
+        for data in stress_areas_data:
+            return_data["stress_areas_water_consumption"].append(
+                {
+                    "Unit": "KiloLitre",
+                    "consumption": self.convert_to_megalitres(
+                        float(data["Waterdischarge"]) - float(data["Waterwithdrawal"]),
+                        unit=data["Unit"],
+                    ),
+                }
+            )
+        return return_data
+
+    def get_water_consumption_in_all_areas_and_stress_areas(self):
+        raw_responses = self.raw_responses.filter(
+            path__slug="gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas"
+        )
+        all_areas_data = []
+        for raw_response in raw_responses:
+            all_areas_data.extend(raw_response.data)
+        raw_responses = self.raw_responses.filter(
+            path__slug="gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress"
+        )
+        water_stress_areas_data = []
+        for raw_response in raw_responses:
+            water_stress_areas_data.extend(raw_response.data[0]["formData"])
+        return self.process_water_consumption_in_all_areas_and_stress_areas(
+            all_areas_data=all_areas_data, stress_areas_data=water_stress_areas_data
+        )
+
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -454,73 +507,45 @@ class WaterAnalyse(APIView):
             "gri-environment-water-303-5c-change_in_water_storage",
             "gri-environment-water-303-5d-sma",
         ]
-        # * Total Water Consumption in water stress areas
         self.set_raw_responses(slugs)
         response_data = []
         (
-            by_water_consumption,
-            by_water_source,
-            by_water_type,
-            by_water_stress_business_operation,
+            water_stress_by_water_consumption,
+            water_stress_by_water_source,
+            water_stress_by_water_type,
+            water_stress_by_water_stress_business_operation,
         ) = self.get_total_water_consumption_in_water_stress_areas()
 
         (
-            by_consumption,
-            by_business_operation,
-            by_source,
-            by_fresh_water,
-            by_source_and_water_type,
+            all_areas_by_consumption,
+            all_areas_by_business_operation,
+            all_areas_by_source,
+            all_areas_by_fresh_water,
+            all_areas_by_source_and_water_type,
+            all_areas_by_water_type,
         ) = self.get_total_water_consumption_in_all_areas()
 
         response_data.append(
             {
-                "water_stress_areas": {
-                    "by_water_consumption": by_water_consumption,
-                    "by_water_source": by_water_source,
-                    "by_water_type": by_water_type,
-                    "by_business_operation": by_water_stress_business_operation,
-                    "Total Water Discharge by Water type (from water stress area)": by_water_type,
-                }
+                "Total Water Consumption": self.get_water_consumption_in_all_areas_and_stress_areas(),
+                "Total Water Consumption in water stress areas": water_stress_by_water_consumption,
+                "Total Water Consumption by business operation": all_areas_by_business_operation,
+                "Total Water Consumption by Location": self.get_by_location(slug=None),
+                "Total Water Consumption by source": all_areas_by_source,
+                "Total Fresh Water withdrawal by business operation": all_areas_by_fresh_water,
+                "Total Fresh Water withdrawal by source (from water stress area)": all_areas_by_source,
+                "Total Fresh Water withdrawal by Location/Country": self.get_by_location(
+                    slug="gri-environment-water-303-3b-water_withdrawal_areas_water_stress"
+                ),
+                "Total Water withdrawal by Water type": all_areas_by_water_type,
+                "Water withdrawal from third-parties": all_areas_by_source,
+                "Total Water Discharge by Location": self.get_by_location("something"),
+                "Total Water Discharge by source and type of water": all_areas_by_source_and_water_type,
+                "Total Water Discharge (from water stress area) by Business Operation": water_stress_by_water_stress_business_operation,
+                "Total Water Discharge by Business Operation": all_areas_by_business_operation,
+                "Total Water Discharge by Water type (from water stress area)": water_stress_by_water_type,
+                "Third-party Water discharge sent to use for other organizations": self.get_third_party_discharge_sent_to_use_other_organisations(),
+                "Change in water storage": self.get_change_in_water_storage(),
             }
-        )
-        response_data.append(
-            {
-                "all_areas": {
-                    "by_consumption": by_consumption,
-                    "by_business_operation": by_business_operation,
-                    "by_source": by_source,
-                    "by_fresh_water": by_fresh_water,
-                    "by_source_and_watertype": by_source_and_water_type,
-                }
-            }
-        )
-        response_data.append(
-            self.get_by_location(
-                slug="gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas"
-            )
-        )
-        response_data.append(
-            self.get_by_location(
-                slug="gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress"
-            ),
-        )
-
-        # Water withdrawal from third-parties
-        response_data.append(
-            {
-                "Water withdrawal from third-parties": self.get_water_withdrawal_from_third_parties()
-            }
-        )
-
-        # Third-party Water discharge sent to use for other organizations
-        response_data.append(
-            {
-                "Third-party Water discharge sent to use for other organizations": self.get_third_party_discharge_sent_to_use_other_organisations()
-            }
-        )
-
-        # Change in water storage
-        response_data.append(
-            {"Change in water storage": self.get_change_in_water_storage()}
         )
         return Response(response_data, status=status.HTTP_200_OK)
