@@ -41,16 +41,14 @@ class GetEmissionAnalysis(APIView):
 
     def get_top_emission_by_scope(self):
         # * Get all Raw Respones based on location and year.
-        self.raw_responses = RawResponse.objects.filter(
+        self.data_points = DataPoint.objects.filter(
+            json_holder__isnull=False,
+            is_calculated=True,
             year__range=(self.start.year, self.end.year),
             month__range=(self.start.month, self.end.month),
-            path__slug__icontains="gri-environment-emissions-301-a-scope-",
+            path__slug__icontains="gri-collect-emissions-scope-combined",
             location__in=self.locations.values_list("name", flat=True),
-            client=self.request.user.client,
-        )
-        self.data_points = DataPoint.objects.filter(
-            raw_response__in=self.raw_responses,
-            json_holder__isnull=False,
+            client_id=self.request.user.client.id,
         ).select_related("raw_response")
         # * Get contribution of each path in raw_responses and sum the json_holder
         top_emission_by_scope = defaultdict(lambda: 0)
