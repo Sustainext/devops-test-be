@@ -395,7 +395,6 @@ class WaterAnalyse(APIView):
             by_water_type,
         )
 
-
     def calculate_totals_per_location(self, data):
         result = []
         overall_discharge = 0
@@ -617,7 +616,7 @@ class WaterAnalyse(APIView):
             "total_water_consumption_by_location": self.get_by_location(slug=None),
             "total_water_consumption_by_source": all_areas_by_source,
             "total_fresh_water_withdrawal_by_business_operation": all_areas_by_fresh_water,
-            "total_fresh_water_withdrawal_by_source_from_water_stress_area": all_areas_by_source,
+            "total_fresh_water_withdrawal_by_source_from_water_stress_area": water_stress_by_water_source,
             "total_fresh_water_withdrawal_by_location_country": self.get_by_location(
                 slug="gri-environment-water-303-3b-water_withdrawal_areas_water_stress"
             ),
