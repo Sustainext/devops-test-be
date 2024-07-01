@@ -395,14 +395,40 @@ class WaterAnalyse(APIView):
             by_water_type,
         )
 
+
     def calculate_totals_per_location(self, data):
         result = []
+        overall_discharge = 0
+        overall_withdrawal = 0
+        overall_consumption = 0
+
+        for location_dict in data:
+            for location_name, records in location_dict.items():
+                overall_discharge += sum(record["discharge"] for record in records)
+                overall_withdrawal += sum(record["withdrawal"] for record in records)
+                overall_consumption += sum(record["consumed"] for record in records)
 
         for location_dict in data:
             for location_name, records in location_dict.items():
                 total_discharge = sum(record["discharge"] for record in records)
                 total_withdrawal = sum(record["withdrawal"] for record in records)
                 total_consumption = sum(record["consumed"] for record in records)
+
+                discharge_contribution = (
+                    (total_discharge / overall_discharge) * 100
+                    if overall_discharge > 0
+                    else 0
+                )
+                withdrawal_contribution = (
+                    (total_withdrawal / overall_withdrawal) * 100
+                    if overall_withdrawal > 0
+                    else 0
+                )
+                consumption_contribution = (
+                    (total_consumption / overall_consumption) * 100
+                    if overall_consumption > 0
+                    else 0
+                )
 
                 result.append(
                     {
@@ -411,6 +437,9 @@ class WaterAnalyse(APIView):
                         "total_withdrawal": total_withdrawal,
                         "total_consumption": total_consumption,
                         "unit": "KiloLitre",
+                        "discharge_contribution": discharge_contribution,
+                        "withdrawal_contribution": withdrawal_contribution,
+                        "consumption_contribution": consumption_contribution,
                     }
                 )
 
