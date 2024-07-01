@@ -128,4 +128,4 @@ class EmissionAnalysis(AbstractModel):
     raw_response = models.ForeignKey(RawResponse, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
-        return self.name + self.id
+        return self.name + str(self.id)

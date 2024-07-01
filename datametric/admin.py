@@ -70,7 +70,21 @@ admin.site.register(DataPoint, DataPointAdmin)
 
 
 class EmsissionAnalysisAdmin(admin.ModelAdmin):
-    list_display = "__all__"
+    list_display = (
+        "activity_id",
+        "index",
+        "co2e_total",
+        "co2",
+        "n2o",
+        "co2e_other",
+        "ch4",
+        "calculation_method",
+        "category",
+        "region",
+        "year",
+        "name",
+        "raw_response",
+    )
     list_filter = ("co2e_total", "category", "region", "year")
 
 
