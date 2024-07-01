@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import MyModel, DataPoint, Path, FieldGroup, RawResponse, DataMetric
+from .models import (
+    MyModel,
+    DataPoint,
+    Path,
+    FieldGroup,
+    RawResponse,
+    DataMetric,
+    EmissionAnalysis,
+)
 from common.Mixins.ExportCsvMixin import ExportCsvMixin
 
 
@@ -17,6 +25,7 @@ class ClientAdmin(admin.ModelAdmin):
 class DataMetricAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ("id", "name", "path", "label", "description", "response_type")
     actions = ["export_as_csv"]
+
 
 admin.site.register(DataMetric, DataMetricAdmin)
 
@@ -58,3 +67,11 @@ class DataPointAdmin(admin.ModelAdmin):
 
 
 admin.site.register(DataPoint, DataPointAdmin)
+
+
+class EmsissionAnalysisAdmin(admin.ModelAdmin):
+    list_display = "__all__"
+    list_filter = ("co2e_total", "category", "region", "year")
+
+
+admin.site.register(EmissionAnalysis, EmsissionAnalysisAdmin)
