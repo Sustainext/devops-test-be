@@ -379,13 +379,21 @@ def get_analysis_data(
 
             restructured_data[corporate_name] = corporate_entry
 
-    serialized_data = json.dumps(restructured_data, cls=DjangoJSONEncoder)
+    try:
+        serialized_data = json.dumps(restructured_data, cls=DjangoJSONEncoder)
+    except UnboundLocalError as e:
+        logger.error(f"Error in GHGReportView: {e}")
+        return Response(
+            {"message": "No data available for the given corporate IDs."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
     # Save the report_analysis_data dictionary in the AnalysisData JSONField
     analysis_data_instance = AnalysisData2.objects.create(
         report_id=report_id,
         data=serialized_data,
         client_id=client_id,
     )
+    analysis_data_instance.save()
     return Response(
         {"message": f"Calculation success, Report created successfully ID:{report_id}"},
         status=status.HTTP_200_OK,
