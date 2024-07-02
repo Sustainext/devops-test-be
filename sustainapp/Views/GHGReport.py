@@ -480,7 +480,7 @@ class GHGReportView(generics.CreateAPIView):
 
         if isinstance(analysis_data, Response):
             status_check = analysis_data.status_code
-            if status_check == 400:
+            if status_check in [404, 400, 500]:
                 new_report.delete()
             return Response(
                 {
