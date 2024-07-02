@@ -1,6 +1,8 @@
 from sustainapp.models import Location, Corporateentity, Organization
 from django.db.models import Prefetch
 from rest_framework import serializers
+from datetime import date, timedelta
+from django.db.models import Q
 
 
 def set_locations_data(organisation, corporate, location):
@@ -26,3 +28,27 @@ def set_locations_data(organisation, corporate, location):
         )
 
     return locations
+
+
+def get_year_month_combinations(start_date, end_date):
+    current_date = start_date
+    year_month_combinations = []
+
+    while current_date <= end_date:
+        year_month_combinations.append((current_date.year, current_date.month))
+        if current_date.month == 12:
+            current_date = date(current_date.year + 1, 1, 1)
+        else:
+            current_date = date(current_date.year, current_date.month + 1, 1)
+
+    return year_month_combinations
+
+
+def filter_by_start_end_dates(start_date, end_date):
+    year_month_combinations = get_year_month_combinations(start_date, end_date)
+    q_objects = Q()
+
+    for year, month in year_month_combinations:
+        q_objects |= Q(year=year, month=month)
+
+    return q_objects

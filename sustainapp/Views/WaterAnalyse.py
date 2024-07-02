@@ -21,8 +21,9 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from datametric.utils.analyse import set_locations_data
+from datametric.utils.analyse import set_locations_data, filter_by_start_end_dates
 from collections import defaultdict
+import datetime
 
 
 class WaterAnalyse(APIView):
@@ -47,11 +48,11 @@ class WaterAnalyse(APIView):
 
     def set_raw_responses(self, slugs: list):
         self.raw_responses = RawResponse.objects.filter(
-            year__range=(self.start.year, self.end.year),
-            month__range=(self.start.month, self.end.month),
             path__slug__in=slugs,
             client=self.request.user.client,
-            location__in=self.locations.values_list("name", flat=True),
+            location__in=self.locations.values_list("name", flat=True).filter(
+                filter_by_start_end_dates(start_date=self.start, end_date=self.end)
+            ),
         ).only("data", "location")
 
     def process_water_data(self, data, group_by_key, discharge_key, withdrawal_key):
