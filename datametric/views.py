@@ -149,5 +149,5 @@ class GetComputedClimatiqValue(APIView):
             print(f"Exception occurred: {e}")
             return Response(
                 {"message": "An unexpected error occurred for GetComputedClimatiqValue "},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
                 )

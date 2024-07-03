@@ -113,7 +113,12 @@ class GetMaterialAnalysis(APIView):
                 source = data["Source"]
                 units = data["Unit"]
                 data_source = data["Datasource"]
-                total_quantity = float(data["Totalweight"])
+                total_quantity = data["Totalweight"]
+                try:
+                    total_quantity = float(total_quantity)
+                except ValueError:
+                    # If total_waste cannot be converted to float, skip this data entry
+                    continue
 
                 key = (material_type, material_category, source, units, data_source)
 
@@ -278,8 +283,16 @@ class GetMaterialAnalysis(APIView):
                 type_of_product = data["Typesofproducts"]
                 product_code = data["Productcode"]
                 product_name = data["Productname"]
-                total_quantity = float(data["Amountsproduct"])
-                total_amount_of_product_packaging = float(data["Amountsproduct"])
+                total_quantity = data["Amountsproduct"]
+                total_amount_of_product_packaging = data["Amountsproduct"]
+                try:
+                    total_quantity = float(total_quantity)
+                    total_amount_of_product_packaging = float(
+                        total_amount_of_product_packaging
+                    )
+                except ValueError:
+                    # If total_waste cannot be converted to float, skip this data entry
+                    continue
 
                 key = (type_of_product, product_code, product_name)
 
@@ -321,11 +334,14 @@ class GetMaterialAnalysis(APIView):
         for rw in raw_responses:
             for data in rw.data:
                 type_of_recycled_material = data["Typeofrecycledmaterialused"]
-                recycled_input_material_used = float(
-                    data["Amountofrecycledinputmaterialused"]
-                )
-                material_recycled = float(data["Amountofmaterialrecycled"])
-
+                recycled_input_material_used = data["Amountofrecycledinputmaterialused"]
+                material_recycled = data["Amountofmaterialrecycled"]
+                try:
+                    recycled_input_material_used = float(recycled_input_material_used)
+                    material_recycled = float(material_recycled)
+                except ValueError:
+                    # If total_waste cannot be converted to float, skip this data entry
+                    continue
                 total_material_recycled += material_recycled
 
                 key = type_of_recycled_material

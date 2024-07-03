@@ -21,8 +21,9 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from datametric.utils.analyse import set_locations_data
+from datametric.utils.analyse import set_locations_data, filter_by_start_end_dates
 from collections import defaultdict
+import datetime
 
 
 class WaterAnalyse(APIView):
@@ -46,13 +47,15 @@ class WaterAnalyse(APIView):
     )
 
     def set_raw_responses(self, slugs: list):
-        self.raw_responses = RawResponse.objects.filter(
-            year__range=(self.start.year, self.end.year),
-            month__range=(self.start.month, self.end.month),
-            path__slug__in=slugs,
-            client=self.request.user.client,
-            location__in=self.locations.values_list("name", flat=True),
-        ).only("data", "location")
+        self.raw_responses = (
+            RawResponse.objects.filter(
+                path__slug__in=slugs,
+                client=self.request.user.client,
+                location__in=self.locations.values_list("name", flat=True),
+            )
+            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+            .only("data", "location")
+        )
 
     def process_water_data(self, data, group_by_key, discharge_key, withdrawal_key):
         discharge_literal = self.discharge_literal
@@ -397,12 +400,37 @@ class WaterAnalyse(APIView):
 
     def calculate_totals_per_location(self, data):
         result = []
+        overall_discharge = 0
+        overall_withdrawal = 0
+        overall_consumption = 0
+
+        for location_dict in data:
+            for location_name, records in location_dict.items():
+                overall_discharge += sum(record["discharge"] for record in records)
+                overall_withdrawal += sum(record["withdrawal"] for record in records)
+                overall_consumption += sum(record["consumed"] for record in records)
 
         for location_dict in data:
             for location_name, records in location_dict.items():
                 total_discharge = sum(record["discharge"] for record in records)
                 total_withdrawal = sum(record["withdrawal"] for record in records)
                 total_consumption = sum(record["consumed"] for record in records)
+
+                discharge_contribution = (
+                    (total_discharge / overall_discharge) * 100
+                    if overall_discharge > 0
+                    else 0
+                )
+                withdrawal_contribution = (
+                    (total_withdrawal / overall_withdrawal) * 100
+                    if overall_withdrawal > 0
+                    else 0
+                )
+                consumption_contribution = (
+                    (total_consumption / overall_consumption) * 100
+                    if overall_consumption > 0
+                    else 0
+                )
 
                 result.append(
                     {
@@ -411,6 +439,9 @@ class WaterAnalyse(APIView):
                         "total_withdrawal": total_withdrawal,
                         "total_consumption": total_consumption,
                         "unit": "KiloLitre",
+                        "discharge_contribution": discharge_contribution,
+                        "withdrawal_contribution": withdrawal_contribution,
+                        "consumption_contribution": consumption_contribution,
                     }
                 )
 
@@ -588,7 +619,7 @@ class WaterAnalyse(APIView):
             "total_water_consumption_by_location": self.get_by_location(slug=None),
             "total_water_consumption_by_source": all_areas_by_source,
             "total_fresh_water_withdrawal_by_business_operation": all_areas_by_fresh_water,
-            "total_fresh_water_withdrawal_by_source_from_water_stress_area": all_areas_by_source,
+            "total_fresh_water_withdrawal_by_source_from_water_stress_area": water_stress_by_water_source,
             "total_fresh_water_withdrawal_by_location_country": self.get_by_location(
                 slug="gri-environment-water-303-3b-water_withdrawal_areas_water_stress"
             ),

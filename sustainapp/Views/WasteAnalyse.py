@@ -64,8 +64,13 @@ class GetWasteAnalysis(APIView):
             location = rw.location
             for data in rw.data:
                 material_type = data["WasteType"]
-                total_waste = float(data["Wastegenerated"])
+                total_waste = data["Wastegenerated"]
                 units = data["Unit"]
+                try:
+                    total_waste = float(total_waste)
+                except ValueError:
+                    # If total_waste cannot be converted to float, skip this data entry
+                    continue
                 if units in self.conversion_factors:
                     total_waste *= self.conversion_factors[units]
                 else:
@@ -179,8 +184,13 @@ class GetWasteAnalysis(APIView):
             for data in rw.data:
                 recovery_operation = data["RecoveryOperations"]
                 material_type = data["WasteType"]
-                total_waste = float(data["Wastediverted"])
+                total_waste = data["Wastediverted"]
                 units = data["Unit"]
+                try:
+                    total_waste = float(total_waste)
+                except ValueError:
+                    # If total_waste cannot be converted to float, skip this data entry
+                    continue
                 if units in self.conversion_factors:
                     total_waste *= self.conversion_factors[units]
                 else:
@@ -384,8 +394,13 @@ class GetWasteAnalysis(APIView):
             for data in rw.data:
                 disposal_method = data["Methodofdisposal"]
                 material_type = data["WasteType"]
-                total_waste = float(data["Wastedisposed"])
+                total_waste = data["Wastedisposed"]
                 units = data["Unit"]
+                try:
+                    total_waste = float(total_waste)
+                except ValueError:
+                    # If total_waste cannot be converted to float, skip this data entry
+                    continue
                 if units in self.conversion_factors:
                     total_waste *= self.conversion_factors[units]
                 else:

@@ -142,7 +142,9 @@ class DataPoint(AbstractModel):
 class EmissionAnalysis(AbstractModel):
     activity_id = models.CharField(max_length=200)
     index = models.PositiveIntegerField()
-    co2e_total = models.DecimalField(max_digits=10, decimal_places=3)
+    co2e_total = models.DecimalField(
+        max_digits=10, decimal_places=3, null=True, blank=True
+    )
     co2 = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
     n2o = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
     co2e_other = models.DecimalField(
@@ -155,3 +157,6 @@ class EmissionAnalysis(AbstractModel):
     year = models.IntegerField()
     name = models.CharField(max_length=300)
     raw_response = models.ForeignKey(RawResponse, on_delete=models.PROTECT)
+
+    def __str__(self) -> str:
+        return self.name + str(self.id)

@@ -223,9 +223,9 @@ class Climatiq:
         for index, emission in enumerate(response_data):
             emission_analyse, _ = EmissionAnalysis.objects.update_or_create(
                 raw_response=self.raw_response,
+                index=index,
                 defaults={
                     "activity_id": emission["emission_factor"]["activity_id"],
-                    "index": index,
                     "co2e_total": emission["constituent_gases"][
                         "co2e_total"
                     ],  # * This can also be None
