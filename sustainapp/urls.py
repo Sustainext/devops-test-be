@@ -22,6 +22,7 @@ from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from sustainapp.Views.WaterAnalyse import WaterAnalyse
+from sustainapp.Views.Analyze.Social.ChildLabor import ChildLabourAnalyzeView
 
 
 router = routers.DefaultRouter()
@@ -78,6 +79,11 @@ urlpatterns = [
         "get_water_analysis/",
         WaterAnalyse.as_view(),
         name="get_water_analysis",
+    ),
+    path (
+        "get_child_labor_analysis/",
+        ChildLabourAnalyzeView.as_view(),
+        name='get_child_labor_analysis',
     ),
     path("", include(router.urls)),
 ]
