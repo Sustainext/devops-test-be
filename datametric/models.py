@@ -9,6 +9,8 @@ from authentication.models import CustomUser, Client
 from common.models.AbstractModel import AbstractModel
 from django.core.validators import MaxValueValidator, MinValueValidator
 from .data_types import DATA_TYPE_CHOICES
+import collections
+import json
 
 
 class MyModel(AbstractModel):
@@ -26,7 +28,36 @@ class Path(AbstractModel):
     def __str__(self):
         return self.slug
 
+class OrderedJSONField(models.JSONField):
+    def from_db_value(self, value, expression, connection):
+        '''Converts JSON data from the database into a Python OrderedDict.'''
+        if value is None:
+            return value
+        # return json.loads(value, object_pairs_hook=collections.OrderedDict)
+        return self.to_python(value)
+    
+    def get_prep_value(self, value):
+        ''' Prepares a Python object to be stored in the database as a JSON string.'''
+        if value is None:
+            return None
+        return json.dumps(value, separators=(',', ':'))
 
+    def to_python(self, value):
+        '''Converts a JSON string retrieved from the database back into a Python OrderedDict.'''
+        if isinstance(value, str):
+            try:
+                return json.loads(value, object_pairs_hook=collections.OrderedDict)
+            except ValueError:
+                pass
+        return value
+
+    # def from_db_value(self, value, expression, connection):
+    #     return self.to_python(value)
+
+    def db_type(self, connection):
+        '''Specifies the database column type as 'json' for PostgreSQL.'''
+        return 'json'
+    
 class FieldGroup(AbstractModel):
     name = models.CharField(max_length=200)
     path = models.ForeignKey(
@@ -34,7 +65,7 @@ class FieldGroup(AbstractModel):
     )
     meta_data = models.JSONField()
     ui_schema = models.JSONField()
-    schema = models.JSONField()
+    schema = OrderedJSONField()
 
 
 class RawResponse(AbstractModel):
