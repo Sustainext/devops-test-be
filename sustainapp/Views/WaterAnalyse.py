@@ -54,6 +54,7 @@ class WaterAnalyse(APIView):
                 location__in=self.locations.values_list("name", flat=True),
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+            .exclude(data=list())
             .only("data", "location")
         )
 
