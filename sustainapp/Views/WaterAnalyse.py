@@ -526,7 +526,8 @@ class WaterAnalyse(APIView):
         local_raw_response = self.raw_responses.filter(path__slug=slug)
         data = []
         for raw_response in local_raw_response:
-            data.extend(raw_response.data[0]["formData"])
+            if raw_response.data[0]["selectedOption"]!="no":
+                data.extend(raw_response.data[0]["formData"])
         return self.process_change_in_water_storage(
             data,
         )
