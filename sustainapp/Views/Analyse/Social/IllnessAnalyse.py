@@ -112,7 +112,7 @@ class IllnessAnalysisView(APIView):
                 )
             )
             local_response_data.append(temp)
-        return local_response_data
+        return self.convert_ohs_data_as_per_frontend_response(local_response_data)
 
     def get_work_related_ill_health(self):
         slug = "gri-social-ohs-403-9a-number_of_injuries_emp"
@@ -224,6 +224,29 @@ class IllnessAnalysisView(APIView):
             "month", "year"
         )
         return local_raw_response
+
+    def convert_ohs_data_as_per_frontend_response(self, data):
+        original_data = data[0]
+
+        response = [
+            {
+                "": "Covered by the system",
+                "Percentage of all Employees": f"{original_data['percentage_of_all_employees_covered_by_the_system']}%",
+                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data['percentage_of_internally_audited_workers']}%", #TODO: Fix this part of response.
+            },
+            {
+                "": "Internally audited",
+                "Percentage of all Employees": f"{original_data['percentage_of_all_employees_internally_audited']}%",
+                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data['percentage_of_workers_who_are_not_emplyees_internally_audited']}%",
+            },
+            {
+                "": "Audited or certified by an external party.",
+                "Percentage of all Employees": f"{original_data['percentage_of_all_employees_externally_audited']}%",
+                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data['percentage_of_workers_who_are_not_emplyees_externally_audited']}%",
+            },
+        ]
+
+        return response
 
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
