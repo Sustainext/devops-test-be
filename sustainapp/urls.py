@@ -23,6 +23,7 @@ from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from sustainapp.Views.WaterAnalyse import WaterAnalyse
 from sustainapp.Views.Give500Error import Give500Error
+from sustainapp.Views.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -78,6 +79,11 @@ urlpatterns = [
         "get_water_analysis/",
         WaterAnalyse.as_view(),
         name="get_water_analysis",
+    ),
+    path(
+        "get_social_forced_labor_analysis/",
+        ForcedLaborAnalyzeView.as_view(),
+        name="get_social_forced_labor_analysis",
     ),
     path("give_500_error/", Give500Error.as_view(), name="give_500_error"),
     path("", include(router.urls)),
