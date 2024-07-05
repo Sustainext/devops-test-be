@@ -29,7 +29,7 @@ class EnergyAnalyzeView(APIView):
             location__in=self.locations.values_list("name", flat=True),
             year__range=(self.from_date.year, self.to_date.year),
             month__range=(self.from_date.month, self.to_date.month),
-            path__slug=path,
+            path__slug=path, client__id=self.clients_id
         )
 
         if not consumed_ene_query:
@@ -261,6 +261,8 @@ class EnergyAnalyzeView(APIView):
             self.organisation = serializer.validated_data["organisation"]
             self.corporate = serializer.validated_data.get("corporate", None)
             self.location = serializer.validated_data.get("location", None)
+
+            self.clients_id = request.user.client.id
             # * Set Locations Queryset
             self.set_locations_data()
 

@@ -19,15 +19,16 @@ class ChildLabourAnalyzeView(APIView):
             location__in=self.locations.values_list("name", flat=True),
             year__range=(self.from_date.year, self.to_date.year),
             month__range=(self.from_date.month, self.to_date.month),
-            path__slug=path )
+            path__slug=path, client_id=self.clients_id )
         
         if not child_labour:
             return []
         
-        if path == "gri-social-human_rights-408-1a-1b-operations_risk_child_labour":
+        if path == "gri-social-human_rights-408-1a-1b-operations_risk_child_labour" or path == "gri-social-human_rights-408-1a-1b-supplier_risk_child_labor":
             necessary = ['childlabor', 'TypeofOperation', 'geographicareas']
         else :
             necessary = ['hazardouswork', 'TypeofOperation', 'geographicareas']
+        print(f"this is necessary {necessary}")
         indexed_data = {}
         for dp in child_labour:
             if dp.raw_response.id not in indexed_data:
@@ -36,12 +37,13 @@ class ChildLabourAnalyzeView(APIView):
                 if dp.index not in indexed_data[dp.raw_response.id]:
                     indexed_data[dp.raw_response.id][dp.index] = {}
                 indexed_data[dp.raw_response.id][dp.index][dp.metric_name] = dp.value
-        # print("Indexed data is \n", indexed_data)
+            else : print(f"the metric name {dp.metric_name} is not in the necessary list")
+        print(f"Indexed data for the path {path} is \n", indexed_data)
 
         grouped_data = []
         for i_key, i_val in indexed_data.items():
             for k,v in i_val.items():
-                if path == "gri-social-human_rights-408-1a-1b-operations_risk_child_labour":
+                if path == "gri-social-human_rights-408-1a-1b-operations_risk_child_labour" or path == "gri-social-human_rights-408-1a-1b-supplier_risk_child_labor":
                     temp_data = {
                         'childlabor': v['childlabor'],
                         'TypeofOperation': v['TypeofOperation'],
@@ -91,9 +93,6 @@ class ChildLabourAnalyzeView(APIView):
 
         try :
 
-            # print(f"request.data is : {request.data}")
-            # print(f"request.query_params is : {request.query_params}")
-            # print(f"reques.user is : {request.user}, and the client id is {request.user.client.id}")
             serializer = CheckAnalysisViewSerializer(data=request.query_params)
 
             serializer.is_valid(raise_exception=True)
@@ -104,14 +103,16 @@ class ChildLabourAnalyzeView(APIView):
             self.corporate = serializer.validated_data.get("corporate", None)
             self.location = serializer.validated_data.get("location", None)
 
+            self.clients_id = request.user.client.id
+
             self.set_locations_data()
             operations_childlabor = self.process_childlabor("gri-social-human_rights-408-1a-1b-operations_risk_child_labour")
             operations_young_workers = self.process_childlabor("gri-social-human_rights-408-1a-1b-operations_young_worker_exposed")
             suppliers_childlabor = self.process_childlabor("gri-social-human_rights-408-1a-1b-supplier_risk_child_labor")
             suppliers_young_workers = self.process_childlabor("gri-social-human_rights-408-1a-1b-supplier_young_worker_exposed")
 
-            return Response({
-               "operattion_significant_risk_of_child_labor": operations_childlabor,
+            return Response({   
+               "operation_significant_risk_of_child_labor": operations_childlabor,
                "operation_significant_risk_of_young_workers": operations_young_workers,
                "suppliers_significant_risk_of_child_labor": suppliers_childlabor,
                "suppliers_significant_risk_of_young_workers": suppliers_young_workers

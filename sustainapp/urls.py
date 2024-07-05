@@ -10,6 +10,7 @@ from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
+from sustainapp.Views.Social.EmploymentAnalyze import GetEmissionAnalysis
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
     GHGReportView,
@@ -22,7 +23,7 @@ from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from sustainapp.Views.WaterAnalyse import WaterAnalyse
-from sustainapp.Views.Analyze.Social.ChildLabor import ChildLabourAnalyzeView
+from sustainapp.Views.Social.ChildLabor import ChildLabourAnalyzeView
 
 
 router = routers.DefaultRouter()
@@ -79,6 +80,11 @@ urlpatterns = [
         "get_water_analysis/",
         WaterAnalyse.as_view(),
         name="get_water_analysis",
+    ),
+    path(
+        "get_employment_analysis/",
+        GetEmissionAnalysis.as_view(),
+        name="get_employment_analyze",
     ),
     path (
         "get_child_labor_analysis/",
