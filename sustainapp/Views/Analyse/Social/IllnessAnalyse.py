@@ -239,7 +239,6 @@ class IllnessAnalysisView(APIView):
         self.set_raw_responses()
         formal_joint_management = self.get_formal_joint_management()
         response_data = dict()
-        formal_joint_management = (formal_joint_management,)
         workers_covered_by_an_occupational_health_and_safety_management_system = (
             self.get_workers_covered_by_an_occupational_health_and_safety_management_system(),
         )
