@@ -15,8 +15,13 @@ class IllnessAnalysisView(APIView):
 
     def set_raw_responses(self):
         slugs = [
-            "gri-social-ohs-403-4d-formal_joint",
+            "gri-social-ohs-403-9b-number_of_injuries_workers",
+            "gri-social-ohs-403-9e-number_of_hours",
             "gri-social-ohs-403-8a-number_of_employees",
+            "gri-social-ohs-403-9a-number_of_injuries_emp",
+            "gri-social-ohs-403-10a-ill_health_emp",
+            "gri-social-ohs-403-10b-ill_health_workers",
+            "gri-social-ohs-403-4d-formal_joint",
         ]
         self.raw_responses = (
             RawResponse.objects.filter(
@@ -150,9 +155,9 @@ class IllnessAnalysisView(APIView):
         return data
 
     def process_number_of_hours(self, number_of_hours):
-        if isinstance(number_of_hours, dict):
+        if isinstance(number_of_hours, list):
             pattern = re.compile(r"\d+")
-            matches = pattern.findall(number_of_hours["Q1"])
+            matches = pattern.findall(number_of_hours[0]["Q1"])
             integer_value = int("".join(matches))
             return integer_value
         else:
@@ -237,30 +242,14 @@ class IllnessAnalysisView(APIView):
             location=self.location,
         )
         self.set_raw_responses()
-        formal_joint_management = self.get_formal_joint_management()
-        response_data = dict()
-        formal_joint_management = (formal_joint_management,)
-        workers_covered_by_an_occupational_health_and_safety_management_system = (
-            self.get_workers_covered_by_an_occupational_health_and_safety_management_system(),
-        )
-        rate_of_injuries_for_all_employees = (self.get_work_related_ill_health(),)
-        rate_of_injuries_for_not_included_in_company_employees = (
-            self.get_rate_of_injuries_who_are_workers_but_not_employees(),
-        )
-        ill_health_for_all_employees_analysis = (
-            self.get_ill_health_for_all_employees_analysis(),
-        )
-        ill_health_for_all_workers_who_are_not_employees_analysis = (
-            self.get_ill_health_for_all_workers_who_are_not_employees_analysis(),
-        )
 
-        response_data=            {
-                "formal_joint_management": formal_joint_management,
-                "workers_covered_by_an_occupational_health_and_safety_management_system": self.get_workers_covered_by_an_occupational_health_and_safety_management_system(),
-                "rate_of_injuries_for_all_employees": self.get_work_related_ill_health(),
-                "rate_of_injuries_for_not_included_in_company_employees": self.get_rate_of_injuries_who_are_workers_but_not_employees(),
-                "ill_health_for_all_employees_analysis": self.get_ill_health_for_all_employees_analysis(),
-                "ill_health_for_all_workers_who_are_not_employees_analysis": self.get_ill_health_for_all_workers_who_are_not_employees_analysis(),
-            }
-        
+        response_data = {
+            "formal_joint_management": self.get_formal_joint_management(),
+            "workers_covered_by_an_occupational_health_and_safety_management_system": self.get_workers_covered_by_an_occupational_health_and_safety_management_system(),
+            "rate_of_injuries_for_all_employees": self.get_work_related_ill_health(),
+            "rate_of_injuries_for_not_included_in_company_employees": self.get_rate_of_injuries_who_are_workers_but_not_employees(),
+            "ill_health_for_all_employees_analysis": self.get_ill_health_for_all_employees_analysis(),
+            "ill_health_for_all_workers_who_are_not_employees_analysis": self.get_ill_health_for_all_workers_who_are_not_employees_analysis(),
+        }
+
         return Response(response_data, status=status.HTTP_200_OK)
