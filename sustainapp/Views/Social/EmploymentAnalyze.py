@@ -38,7 +38,7 @@ def safe_divide(numerator, denominator, decimal_places=2):
     return round((numerator / denominator * 100), decimal_places) if denominator != 0 else 0
 
 
-class GetEmissionAnalysis(APIView):
+class EmploymentAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
     new_employee_hire_path_slugs = [
             "gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp",
