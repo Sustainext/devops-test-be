@@ -23,6 +23,7 @@ from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from sustainapp.Views.WaterAnalyse import WaterAnalyse
+from sustainapp.Views.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
 from sustainapp.Views.Social.ChildLabor import ChildLabourAnalyzeView
 
 
@@ -85,6 +86,11 @@ urlpatterns = [
         "get_employment_analysis/",
         GetEmissionAnalysis.as_view(),
         name="get_employment_analyze",
+    ),
+    path(
+        "get_forced_labor_analysis/",
+        ForcedLaborAnalyzeView.as_view(),
+        name="get_forced_labor_analysis",
     ),
     path (
         "get_child_labor_analysis/",
