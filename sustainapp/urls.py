@@ -22,10 +22,10 @@ from sustainapp.Views.GHGReport import (
 from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
-from sustainapp.Views.WaterAnalyse import WaterAnalyse
+from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
 from sustainapp.Views.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
 from sustainapp.Views.Social.ChildLabor import ChildLabourAnalyzeView
-
+from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -92,10 +92,15 @@ urlpatterns = [
         ForcedLaborAnalyzeView.as_view(),
         name="get_forced_labor_analysis",
     ),
-    path (
+    path(
         "get_child_labor_analysis/",
         ChildLabourAnalyzeView.as_view(),
-        name='get_child_labor_analysis',
+        name="get_child_labor_analysis",
+    ),
+    path(
+        "get_illness_analysis/",
+        IllnessAnalysisView.as_view(),
+        name="get_illness_analysis",
     ),
     path("", include(router.urls)),
 ]
