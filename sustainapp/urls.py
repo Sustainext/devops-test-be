@@ -10,7 +10,7 @@ from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
-from sustainapp.Views.Social.EmploymentAnalyze import GetEmissionAnalysis
+from sustainapp.Views.Social.EmploymentAnalyze import EmploymentAnalyzeView
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
     GHGReportView,
@@ -84,7 +84,7 @@ urlpatterns = [
     ),
     path(
         "get_employment_analysis/",
-        GetEmissionAnalysis.as_view(),
+        EmploymentAnalyzeView.as_view(),
         name="get_employment_analyze",
     ),
     path(
