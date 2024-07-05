@@ -15,6 +15,7 @@ from django.db.models import Prefetch
 from rest_framework import serializers
 from django.db.models import QuerySet
 from django.db.models import Sum
+from datametric.utils.analyse import filter_by_start_end_dates
 
 
 def get_integer(value):
@@ -673,10 +674,10 @@ class EmploymentAnalyzeView(APIView):
             location=self.location,
         )
         client_id = request.user.client.id
-        new_emp_data_points = DataPoint.objects.filter(client_id=client_id, path__slug__in = self.new_employee_hire_path_slugs, year=2024,location='Loc Yash',month=1)
-        emp_turnover_data_points = DataPoint.objects.filter(client_id=client_id, path__slug__in = self.employee_turnover_path_slugs,year=2024,location='Loc Yash',month=1)
-        benefits_data_points = DataPoint.objects.filter(client_id=client_id,path__slug__in = self.employee_benefits_path_slugs, year=2024, location='Loc Yash', month=1)
-        parental_leave_data_points = DataPoint.objects.filter(client_id=client_id,path__slug__in = self.employee_parental_leave_path_slugs, year=2024, location='Loc Yash', month=1)
+        new_emp_data_points = DataPoint.objects.filter(client_id=client_id, path__slug__in = self.new_employee_hire_path_slugs,location__in=self.locations.values_list("name", flat=True)).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        emp_turnover_data_points = DataPoint.objects.filter(client_id=client_id, path__slug__in = self.employee_turnover_path_slugs,location__in =self.locations.values_list("name", flat=True)).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        benefits_data_points = DataPoint.objects.filter(client_id=client_id,path__slug__in = self.employee_benefits_path_slugs, location__in =self.locations.values_list("name", flat=True)).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        parental_leave_data_points = DataPoint.objects.filter(client_id=client_id,path__slug__in = self.employee_parental_leave_path_slugs, location__in =self.locations.values_list("name", flat=True)).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
         
         # pushing for processing
         self.process_dataPoints(new_emp_data_points, emp_turnover_data_points, benefits_data_points, parental_leave_data_points)
