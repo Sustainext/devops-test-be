@@ -98,9 +98,9 @@ urlpatterns = [
         name="get_child_labor_analysis",
     ),
     path(
-        "get_illness_analysis/",
+        "get_ohs_analysis/",
         IllnessAnalysisView.as_view(),
-        name="get_illness_analysis",
+        name="get_ohs_analysis",
     ),
     path("", include(router.urls)),
 ]

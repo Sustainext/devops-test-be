@@ -106,7 +106,7 @@ class IllnessAnalysisView(APIView):
                     2,
                 )
             )
-        local_response_data.append(temp)
+            local_response_data.append(temp)
         return local_response_data
 
     def get_work_related_ill_health(self):
@@ -239,6 +239,21 @@ class IllnessAnalysisView(APIView):
         self.set_raw_responses()
         formal_joint_management = self.get_formal_joint_management()
         response_data = []
+        formal_joint_management = (formal_joint_management,)
+        workers_covered_by_an_occupational_health_and_safety_management_system = (
+            self.get_workers_covered_by_an_occupational_health_and_safety_management_system(),
+        )
+        rate_of_injuries_for_all_employees = (self.get_work_related_ill_health(),)
+        rate_of_injuries_for_not_included_in_company_employees = (
+            self.get_rate_of_injuries_who_are_workers_but_not_employees(),
+        )
+        ill_health_for_all_employees_analysis = (
+            self.get_ill_health_for_all_employees_analysis(),
+        )
+        ill_health_for_all_workers_who_are_not_employees_analysis = (
+            self.get_ill_health_for_all_workers_who_are_not_employees_analysis(),
+        )
+
         response_data.append(
             {
                 "formal_joint_management": formal_joint_management,
