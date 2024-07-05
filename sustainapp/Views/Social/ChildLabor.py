@@ -9,6 +9,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from rest_framework import serializers
 from datametric.utils.analyse import set_locations_data
+from datametric.utils.analyse import filter_by_start_end_dates
 from logging import getLogger
 
 logger = getLogger("error.log")
@@ -21,9 +22,7 @@ class ChildLabourAnalyzeView(APIView):
 
         child_labour = DataPoint.objects.filter( 
             location__in=self.locations.values_list("name", flat=True),
-            year__range=(self.from_date.year, self.to_date.year),
-            month__range=(self.from_date.month, self.to_date.month),
-            path__slug=path, client_id=self.clients_id )
+            path__slug=path, client_id=self.clients_id ).filter(filter_by_start_end_dates(start_date=self.from_date, end_date=self.to_date))
         
         if not child_labour:
             return []
