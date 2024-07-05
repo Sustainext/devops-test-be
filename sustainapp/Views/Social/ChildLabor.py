@@ -8,6 +8,10 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
 from rest_framework import serializers
+from datametric.utils.analyse import set_locations_data
+from logging import getLogger
+
+logger = getLogger("error.log")
 
 class ChildLabourAnalyzeView(APIView):
 
@@ -28,7 +32,6 @@ class ChildLabourAnalyzeView(APIView):
             necessary = ['childlabor', 'TypeofOperation', 'geographicareas']
         else :
             necessary = ['hazardouswork', 'TypeofOperation', 'geographicareas']
-        print(f"this is necessary {necessary}")
         indexed_data = {}
         for dp in child_labour:
             if dp.raw_response.id not in indexed_data:
@@ -37,8 +40,8 @@ class ChildLabourAnalyzeView(APIView):
                 if dp.index not in indexed_data[dp.raw_response.id]:
                     indexed_data[dp.raw_response.id][dp.index] = {}
                 indexed_data[dp.raw_response.id][dp.index][dp.metric_name] = dp.value
-            else : print(f"the metric name {dp.metric_name} is not in the necessary list")
-        print(f"Indexed data for the path {path} is \n", indexed_data)
+            else : 
+                logger.info(f"Child Labor Analyze : The metric name {dp.metric_name} is not in the necessary list")
 
         grouped_data = []
         for i_key, i_val in indexed_data.items():
@@ -60,35 +63,6 @@ class ChildLabourAnalyzeView(APIView):
 
         return grouped_data
 
-    def set_locations_data(self):
-        """
-        If Organisation is given and Corporate and Location is not given, then get all corporate locations
-        If Corporate is given and Organisation and Location is not given, then get all locations of the given corporate
-        If Location is given, then get only that location
-        """
-        if self.organisation and self.corporate and self.location:
-            self.locations = Location.objects.filter(id=self.location.id)
-        elif (
-            self.organisation is None and self.corporate and self.location is None
-        ) or (self.organisation and self.corporate and self.location is None):
-            self.corporates = Corporateentity.objects.filter(id=self.corporate.id)
-            self.locations = Location.objects.filter(
-                corporateentity__in=self.corporates
-            )
-        elif self.organisation and self.corporate is None and self.location is None:
-            self.organisations = Organization.objects.filter(id=self.organisation.id)
-            self.corporates = Corporateentity.objects.filter(
-                organization__in=self.organisations
-            )
-            self.locations = Location.objects.filter(
-                corporateentity__in=self.corporates
-            )
-        else:
-            raise serializers.ValidationError(
-                "Not send any of the following fields: organisation, corporate, location"
-            )
-
-
     def get(self, request) :
 
         try :
@@ -105,7 +79,8 @@ class ChildLabourAnalyzeView(APIView):
 
             self.clients_id = request.user.client.id
 
-            self.set_locations_data()
+            self.locations = set_locations_data(organisation=self.organisation,corporate=self.corporate,location=self.location,)
+
             operations_childlabor = self.process_childlabor("gri-social-human_rights-408-1a-1b-operations_risk_child_labour")
             operations_young_workers = self.process_childlabor("gri-social-human_rights-408-1a-1b-operations_young_worker_exposed")
             suppliers_childlabor = self.process_childlabor("gri-social-human_rights-408-1a-1b-supplier_risk_child_labor")
