@@ -54,6 +54,7 @@ class WaterAnalyse(APIView):
                 location__in=self.locations.values_list("name", flat=True),
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+            .exclude(data=list())
             .only("data", "location")
         )
 
@@ -525,7 +526,8 @@ class WaterAnalyse(APIView):
         local_raw_response = self.raw_responses.filter(path__slug=slug)
         data = []
         for raw_response in local_raw_response:
-            data.extend(raw_response.data[0]["formData"])
+            if raw_response.data[0]["selectedOption"]!="no":
+                data.extend(raw_response.data[0]["formData"])
         return self.process_change_in_water_storage(
             data,
         )
