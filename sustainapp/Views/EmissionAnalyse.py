@@ -27,7 +27,10 @@ class GetEmissionAnalysis(APIView):
         total_emissions = sum(scope_total_values.values())
         scope_contributions = []
         for scope_name, scope_value in scope_total_values.items():
-            contribution = (scope_value / total_emissions) * 100
+            try:
+                contribution = (scope_value / total_emissions) * 100
+            except ZeroDivisionError:
+                contribution = 0
             scope_contributions.append(
                 {
                     key_name: scope_name,
