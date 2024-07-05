@@ -7,16 +7,15 @@ from collections import defaultdict
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
+from datametric.utils.analyse import filter_by_start_end_dates
 
 
 class ForcedLaborAnalyzeView(APIView):
     def get_forced_labor_data(
         self,
         location,
-        start_year,
-        end_year,
-        start_month,
-        end_month,
+        start,
+        end,
         path_slug,
         client_id,
     ):
@@ -34,11 +33,9 @@ class ForcedLaborAnalyzeView(APIView):
 
         data_points = DataPoint.objects.filter(
             location__in=location,
-            year__range=(start_year, end_year),
-            month__range=(start_month, end_month),
             path__slug=path_slug,
             client_id=client_id,
-        )
+        ).filter(filter_by_start_end_dates(start_date=start, end_date=end))
 
         for data in data_points:
             if data.metric_name in metric_categories:
@@ -88,19 +85,15 @@ class ForcedLaborAnalyzeView(APIView):
 
         forced_labor_operations = self.get_forced_labor_data(
             location_names,
-            start.year,
-            end.year,
-            start.month,
-            end.month,
+            start,
+            end,
             "gri-social-human_rights-409-1a-operations_forced_labor",
             request.user.client_id,
         )
         forced_labor_suppliers = self.get_forced_labor_data(
             location_names,
-            start.year,
-            end.year,
-            start.month,
-            end.month,
+            start,
+            end,
             "gri-social-human_rights-409-1a-suppliers_forced_labor",
             request.user.client_id,
         )
