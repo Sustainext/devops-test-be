@@ -238,7 +238,7 @@ class IllnessAnalysisView(APIView):
         )
         self.set_raw_responses()
         formal_joint_management = self.get_formal_joint_management()
-        response_data = []
+        response_data = dict()
         formal_joint_management = (formal_joint_management,)
         workers_covered_by_an_occupational_health_and_safety_management_system = (
             self.get_workers_covered_by_an_occupational_health_and_safety_management_system(),
@@ -254,8 +254,7 @@ class IllnessAnalysisView(APIView):
             self.get_ill_health_for_all_workers_who_are_not_employees_analysis(),
         )
 
-        response_data.append(
-            {
+        response_data=            {
                 "formal_joint_management": formal_joint_management,
                 "workers_covered_by_an_occupational_health_and_safety_management_system": self.get_workers_covered_by_an_occupational_health_and_safety_management_system(),
                 "rate_of_injuries_for_all_employees": self.get_work_related_ill_health(),
@@ -263,5 +262,5 @@ class IllnessAnalysisView(APIView):
                 "ill_health_for_all_employees_analysis": self.get_ill_health_for_all_employees_analysis(),
                 "ill_health_for_all_workers_who_are_not_employees_analysis": self.get_ill_health_for_all_workers_who_are_not_employees_analysis(),
             }
-        )
+        
         return Response(response_data, status=status.HTTP_200_OK)
