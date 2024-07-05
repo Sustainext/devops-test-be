@@ -48,7 +48,6 @@ class FieldGroupListView(APIView):
         client_instance = user_instance.client
         raw_responses = RawResponse.objects.filter(
             path=path_instance,
-            user=user_instance,
             client=client_instance,
             location=location,
             year=year,

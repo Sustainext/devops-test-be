@@ -232,7 +232,7 @@ class IllnessAnalysisView(APIView):
             {
                 "": "Covered by the system",
                 "Percentage of all Employees": f"{original_data['percentage_of_all_employees_covered_by_the_system']}%",
-                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data['percentage_of_internally_audited_workers']}%",
+                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data['percentage_of_internally_audited_workers']}%", #TODO: Fix this part of response.
             },
             {
                 "": "Internally audited",
