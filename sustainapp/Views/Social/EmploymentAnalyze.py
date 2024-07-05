@@ -27,8 +27,18 @@ def get_integer(value):
             raise ValueError(f"Cannot convert '{value}' to an integer")
     else:
         raise TypeError(f"Expected int or str, got {type(value).__name__}")
+    
+def get_value(objectValue):
+    if objectValue is None:
+        return 0
+    else:
+        return objectValue
 
-class GetEmissionAnalysis(APIView):
+def safe_divide(numerator, denominator, decimal_places=2):
+    return round((numerator / denominator * 100), decimal_places) if denominator != 0 else 0
+
+
+class EmploymentAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
     new_employee_hire_path_slugs = [
             "gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp",
@@ -56,7 +66,7 @@ class GetEmissionAnalysis(APIView):
     }
     employee_turnover_paths = {
         "permanent": employee_turnover_path_slugs[0],
-        "temp_emp": employee_turnover_path_slugs[1],
+        "temporary": employee_turnover_path_slugs[1],
         "nonguaranteed": employee_turnover_path_slugs[2],
         "fulltime": employee_turnover_path_slugs[3],
         "parttime": employee_turnover_path_slugs[4]
@@ -242,13 +252,14 @@ class GetEmissionAnalysis(APIView):
         ne_permanent_50_qs = dp_employ_permanent_qs.filter(metric_name='yearsold50').aggregate(Sum('number_holder'))
 
         print(ne_male_permanent_qs['number_holder__sum'])
-        total_permanent = ne_male_permanent_qs['number_holder__sum'] + ne_female_permanent_qs['number_holder__sum'] + ne_nb_permanent_qs['number_holder__sum']
-        ne_per_male_percent = round((ne_male_permanent_qs['number_holder__sum'] / total_permanent * 100),2)
-        ne_per_female_percent = round((ne_female_permanent_qs['number_holder__sum']/ total_permanent * 100),2)
-        ne_per_nb_percent = round((ne_nb_permanent_qs['number_holder__sum']/total_permanent * 100),2)
-        ne_permanent_30_pc = round((ne_permanent_30_qs['number_holder__sum']/total_permanent * 100),2)
-        ne_permanent_30_50_pc = round((ne_permanent_30_50_qs['number_holder__sum']/total_permanent * 100),2)
-        ne_permanent_50_pc = round((ne_permanent_50_qs['number_holder__sum']/total_permanent * 100),2)
+        total_permanent = get_value(ne_male_permanent_qs['number_holder__sum']) + get_value(ne_female_permanent_qs['number_holder__sum']) + get_value(ne_nb_permanent_qs['number_holder__sum'])
+
+        ne_per_male_percent = safe_divide(get_value(ne_male_permanent_qs['number_holder__sum']), total_permanent)
+        ne_per_female_percent = safe_divide(get_value(ne_female_permanent_qs['number_holder__sum']), total_permanent)
+        ne_per_nb_percent = safe_divide(get_value(ne_nb_permanent_qs['number_holder__sum']), total_permanent)
+        ne_permanent_30_pc = safe_divide(get_value(ne_permanent_30_qs['number_holder__sum']), total_permanent)
+        ne_permanent_30_50_pc = safe_divide(get_value(ne_permanent_30_50_qs['number_holder__sum']), total_permanent)
+        ne_permanent_50_pc = safe_divide(get_value(ne_permanent_50_qs['number_holder__sum']), total_permanent)
 
         self.new_employee_reponse_table['new_employee_permanent_male_percent'] = ne_per_male_percent
         self.new_employee_reponse_table['new_employee_permanent_female_percent'] = ne_per_female_percent
@@ -265,22 +276,24 @@ class GetEmissionAnalysis(APIView):
             dp_employ_temporary_qs = DataPoint.objects.none()  # Assuming DataPoint is your model
 
 
-        ne_male_temporary_qs = dp_employ_temporary_qs.filter(index=0, metric_name='total').aggregate(Sum('number_holder'))
+        ne_male_temporary_qs = dp_employ_temporary_qs.filter(index=0, metric_name='total').aggregate(Sum('number_holder')) 
         ne_female_temporary_qs = dp_employ_temporary_qs.filter(index=1, metric_name='total').aggregate(Sum('number_holder'))
         ne_nb_temporary_qs = dp_employ_temporary_qs.filter(index=2, metric_name='total').aggregate(Sum('number_holder'))
 
-        ne_temporary_30_qs = dp_employ_temporary_qs.filter(metric_name='yearsold30').aggregate(Sum('number_holder'))
-        ne_temporary_30_50_qs = dp_employ_temporary_qs.filter(metric_name='yearsold30to50').aggregate(Sum('number_holder'))
+        ne_temporary_30_qs = dp_employ_temporary_qs.filter(metric_name='yearsold30').aggregate(Sum('number_holder')) 
+        ne_temporary_30_50_qs = dp_employ_temporary_qs.filter(metric_name='yearsold30to50').aggregate(Sum('number_holder')) 
         ne_temporary_50_qs = dp_employ_temporary_qs.filter(metric_name='yearsold50').aggregate(Sum('number_holder'))
 
-        total_temporary = ne_male_temporary_qs['number_holder__sum'] + ne_female_temporary_qs['number_holder__sum'] + ne_nb_temporary_qs['number_holder__sum']
+        print(ne_male_temporary_qs,ne_female_temporary_qs,ne_nb_temporary_qs)
+            
+        total_temporary = get_value(ne_male_temporary_qs['number_holder__sum']) + get_value( ne_female_temporary_qs['number_holder__sum'])  + get_value(ne_nb_temporary_qs['number_holder__sum'])
         
-        ne_temp_male_percent = round((ne_male_temporary_qs['number_holder__sum'] / total_temporary * 100),2)
-        ne_temp_female_percent = round((ne_female_temporary_qs['number_holder__sum']/ total_temporary * 100),2)
-        ne_temp_nb_percent = round((ne_nb_temporary_qs['number_holder__sum']/total_temporary * 100),2)
-        ne_temp_30_pc = round((ne_temporary_30_qs['number_holder__sum']/total_temporary * 100),2)
-        ne_temp_30_50_pc = round((ne_temporary_30_50_qs['number_holder__sum']/total_temporary * 100),2)
-        ne_temp_50_pc = round((ne_temporary_50_qs['number_holder__sum']/total_temporary * 100),2)
+        ne_temp_male_percent = safe_divide(get_value( ne_male_temporary_qs['number_holder__sum'] ),total_temporary)
+        ne_temp_female_percent = safe_divide( get_value(ne_female_temporary_qs['number_holder__sum']), total_temporary)
+        ne_temp_nb_percent = safe_divide(get_value(ne_nb_temporary_qs['number_holder__sum']),total_temporary)
+        ne_temp_30_pc = safe_divide( get_value( ne_temporary_30_qs['number_holder__sum']),total_temporary)
+        ne_temp_30_50_pc = safe_divide(get_value(ne_temporary_30_50_qs['number_holder__sum']),total_temporary)
+        ne_temp_50_pc = safe_divide(get_value( ne_temporary_50_qs['number_holder__sum']),total_temporary)
 
         self.new_employee_reponse_table['new_employee_temporary_male_percent'] = ne_temp_male_percent
         self.new_employee_reponse_table['new_employee_temporary_female_percent'] = ne_temp_female_percent
@@ -305,14 +318,14 @@ class GetEmissionAnalysis(APIView):
         ne_ng_30_50_qs = dp_employ_non_guaranteed_qs.filter(metric_name='yearsold30to50').aggregate(Sum('number_holder'))
         ne_ng_50_qs = dp_employ_non_guaranteed_qs.filter(metric_name='yearsold50').aggregate(Sum('number_holder'))
 
-        total_ng = ne_male_ng_qs['number_holder__sum'] + ne_female_ng_qs['number_holder__sum'] + ne_nb_ng_qs['number_holder__sum']
+        total_ng = get_value( ne_male_ng_qs['number_holder__sum'] )+ get_value(ne_female_ng_qs['number_holder__sum']) + get_value( ne_nb_ng_qs['number_holder__sum'])
         
-        ne_ng_male_percent = round((ne_male_ng_qs['number_holder__sum'] / total_ng * 100),2)
-        ne_ng_female_percent = round((ne_female_ng_qs['number_holder__sum']/ total_ng * 100),2)
-        ne_ng_nb_percent = round((ne_nb_ng_qs['number_holder__sum']/total_ng * 100),2)
-        ne_ng_30_pc = round((ne_ng_30_qs['number_holder__sum']/total_ng * 100),2)
-        ne_ng_30_50_pc = round((ne_ng_30_50_qs['number_holder__sum']/total_ng * 100),2)
-        ne_ng_50_pc = round((ne_ng_50_qs['number_holder__sum']/total_ng * 100),2)
+        ne_ng_male_percent = safe_divide(get_value( ne_male_ng_qs['number_holder__sum']) ,total_ng)
+        ne_ng_female_percent = safe_divide(get_value(ne_female_ng_qs['number_holder__sum']), total_ng)
+        ne_ng_nb_percent = safe_divide(get_value(ne_nb_ng_qs['number_holder__sum']),total_ng)
+        ne_ng_30_pc = safe_divide(get_value(ne_ng_30_qs['number_holder__sum']),total_ng)
+        ne_ng_30_50_pc = safe_divide(get_value(ne_ng_30_50_qs['number_holder__sum']),total_ng)
+        ne_ng_50_pc = safe_divide(get_value(ne_ng_50_qs['number_holder__sum']),total_ng)
 
         self.new_employee_reponse_table['new_employee_non_guaranteed_male_percent'] = ne_ng_male_percent
         self.new_employee_reponse_table['new_employee_non_guaranteed_female_percent'] = ne_ng_female_percent
@@ -337,14 +350,15 @@ class GetEmissionAnalysis(APIView):
         ne_ft_30_50_qs = dp_employ_full_time_qs.filter(metric_name='yearsold30to50').aggregate(Sum('number_holder'))
         ne_ft_50_qs = dp_employ_full_time_qs.filter(metric_name='yearsold50').aggregate(Sum('number_holder'))
 
-        total_ft = ne_male_ft_qs['number_holder__sum'] + ne_female_ft_qs['number_holder__sum'] + ne_nb_ft_qs['number_holder__sum']
+        total_ft = get_value(ne_male_ft_qs['number_holder__sum']) + get_value(ne_female_ft_qs['number_holder__sum']) + get_value(ne_nb_ft_qs['number_holder__sum'])
         
-        ne_ft_male_percent = round((ne_male_ft_qs['number_holder__sum'] / total_ft * 100),2)
-        ne_ft_female_percent = round((ne_female_ft_qs['number_holder__sum']/ total_ft * 100),2)
-        ne_ft_nb_percent = round((ne_nb_ft_qs['number_holder__sum']/total_ft * 100),2)
-        ne_ft_30_pc = round((ne_ft_30_qs['number_holder__sum']/total_ft * 100),2)
-        ne_ft_30_50_pc = round((ne_ft_30_50_qs['number_holder__sum']/total_ft * 100),2)
-        ne_ft_50_pc = round((ne_ft_50_qs['number_holder__sum']/total_ft * 100),2)
+        ne_ft_male_percent = safe_divide(get_value(ne_male_ft_qs['number_holder__sum']), total_ft)
+        ne_ft_female_percent = safe_divide(get_value(ne_female_ft_qs['number_holder__sum']), total_ft)
+        ne_ft_nb_percent = safe_divide(get_value(ne_nb_ft_qs['number_holder__sum']), total_ft)
+        ne_ft_30_pc = safe_divide(get_value(ne_ft_30_qs['number_holder__sum']), total_ft)
+        ne_ft_30_50_pc = safe_divide(get_value(ne_ft_30_50_qs['number_holder__sum']), total_ft)
+        ne_ft_50_pc = safe_divide(get_value(ne_ft_50_qs['number_holder__sum']), total_ft)
+
 
         self.new_employee_reponse_table['new_employee_full_time_male_percent'] = ne_ft_male_percent
         self.new_employee_reponse_table['new_employee_full_time_female_percent'] = ne_ft_female_percent
@@ -369,14 +383,14 @@ class GetEmissionAnalysis(APIView):
         ne_pt_30_50_qs = dp_employ_part_time_qs.filter(metric_name='yearsold30to50').aggregate(Sum('number_holder'))
         ne_pt_50_qs = dp_employ_part_time_qs.filter(metric_name='yearsold50').aggregate(Sum('number_holder'))
 
-        total_pt = ne_male_pt_qs['number_holder__sum'] + ne_female_pt_qs['number_holder__sum'] + ne_nb_pt_qs['number_holder__sum']
+        total_pt = get_value(ne_male_pt_qs['number_holder__sum']) + get_value(ne_female_pt_qs['number_holder__sum']) + get_value(ne_nb_pt_qs['number_holder__sum'])
         
-        ne_pt_male_percent = round((ne_male_pt_qs['number_holder__sum'] / total_pt * 100),2)
-        ne_pt_female_percent = round((ne_female_pt_qs['number_holder__sum']/ total_pt * 100),2)
-        ne_pt_nb_percent = round((ne_nb_pt_qs['number_holder__sum']/total_pt * 100),2)
-        ne_pt_30_pc = round((ne_pt_30_qs['number_holder__sum']/total_pt * 100),2)
-        ne_pt_30_50_pc = round((ne_pt_30_50_qs['number_holder__sum']/total_pt * 100),2)
-        ne_pt_50_pc = round((ne_pt_50_qs['number_holder__sum']/total_pt * 100),2)
+        ne_pt_male_percent = safe_divide(get_value(ne_male_pt_qs['number_holder__sum']), total_pt)
+        ne_pt_female_percent = safe_divide(get_value(ne_female_pt_qs['number_holder__sum']), total_pt)
+        ne_pt_nb_percent = safe_divide(get_value(ne_nb_pt_qs['number_holder__sum']), total_pt)
+        ne_pt_30_pc = safe_divide(get_value(ne_pt_30_qs['number_holder__sum']), total_pt)
+        ne_pt_30_50_pc = safe_divide(get_value(ne_pt_30_50_qs['number_holder__sum']), total_pt)
+        ne_pt_50_pc = safe_divide(get_value(ne_pt_50_qs['number_holder__sum']), total_pt)
 
         self.new_employee_reponse_table['new_employee_part_time_male_percent'] = ne_pt_male_percent
         self.new_employee_reponse_table['new_employee_part_time_female_percent'] = ne_pt_female_percent
@@ -424,14 +438,15 @@ class GetEmissionAnalysis(APIView):
 
         print(et_male_permanent_qs['number_holder__sum'])
 
-        total_permanent_eto = et_male_permanent_qs['number_holder__sum'] + et_female_permanent_qs['number_holder__sum'] + et_nb_permanent_qs['number_holder__sum']
-        et_per_male_percent = round((et_male_permanent_qs['number_holder__sum'] / total_permanent_eto * 100),2)
-        et_per_female_percent = round((et_female_permanent_qs['number_holder__sum']/ total_permanent_eto * 100),2)
-        et_per_nb_percent = round((et_nb_permanent_qs['number_holder__sum']/total_permanent_eto * 100),2)
-        et_permanent_30_pc = round((et_permanent_30_qs['number_holder__sum']/total_permanent_eto * 100),2)
-        et_permanent_30_50_pc = round((et_permanent_30_50_qs['number_holder__sum']/total_permanent_eto * 100),2)
-        et_permanent_50_pc = round((et_permanent_50_qs['number_holder__sum']/total_permanent_eto * 100),2)
-
+        total_permanent_eto = get_value(et_male_permanent_qs['number_holder__sum']) + get_value(et_female_permanent_qs['number_holder__sum']) + get_value(et_nb_permanent_qs['number_holder__sum'])
+        
+        et_per_male_percent = safe_divide(get_value(et_male_permanent_qs['number_holder__sum']), total_permanent_eto)
+        et_per_female_percent = safe_divide(get_value(et_female_permanent_qs['number_holder__sum']), total_permanent_eto)
+        et_per_nb_percent = safe_divide(get_value(et_nb_permanent_qs['number_holder__sum']), total_permanent_eto)
+        et_permanent_30_pc = safe_divide(get_value(et_permanent_30_qs['number_holder__sum']), total_permanent_eto)
+        et_permanent_30_50_pc = safe_divide(get_value(et_permanent_30_50_qs['number_holder__sum']), total_permanent_eto)
+        et_permanent_50_pc = safe_divide(get_value(et_permanent_50_qs['number_holder__sum']), total_permanent_eto)
+        
         self.new_employee_reponse_table['employee_turnover_permanent_male_percent'] = et_per_male_percent
         self.new_employee_reponse_table['employee_turnover_permanent_female_percent'] = et_per_female_percent
         self.new_employee_reponse_table['employee_turnover_permanent_non_binary_percent'] = et_per_nb_percent
@@ -458,14 +473,15 @@ class GetEmissionAnalysis(APIView):
 
         print(et_temporary_30_qs['number_holder__sum'])
 
-        total_temporary_eto = et_male_temporary_qs['number_holder__sum'] + et_female_temporary_qs['number_holder__sum'] + et_nb_temporary_qs['number_holder__sum']
-        et_temp_male_percent = round((et_male_temporary_qs['number_holder__sum'] / total_temporary_eto * 100),2)
-        et_temp_female_percent = round((et_female_temporary_qs['number_holder__sum']/ total_temporary_eto * 100),2)
-        et_temp_nb_percent = round((et_nb_temporary_qs['number_holder__sum']/total_temporary_eto * 100),2)
-        et_temp_30_pc = round((et_temporary_30_qs['number_holder__sum']/total_temporary_eto * 100),2)
-        et_temp_30_50_pc = round((et_temporary_30_50_qs['number_holder__sum']/total_temporary_eto * 100),2)
-        et_temp_50_pc = round((et_temporary_50_qs['number_holder__sum']/total_temporary_eto * 100),2)
-
+        total_temporary_eto = get_value(et_male_temporary_qs['number_holder__sum']) + get_value(et_female_temporary_qs['number_holder__sum']) + get_value(et_nb_temporary_qs['number_holder__sum'])        
+        
+        et_temp_male_percent = safe_divide(get_value(et_male_temporary_qs['number_holder__sum']), total_temporary_eto)
+        et_temp_female_percent = safe_divide(get_value(et_female_temporary_qs['number_holder__sum']), total_temporary_eto)
+        et_temp_nb_percent = safe_divide(get_value(et_nb_temporary_qs['number_holder__sum']), total_temporary_eto)
+        et_temp_30_pc = safe_divide(get_value(et_temporary_30_qs['number_holder__sum']), total_temporary_eto)
+        et_temp_30_50_pc = safe_divide(get_value(et_temporary_30_50_qs['number_holder__sum']), total_temporary_eto)
+        et_temp_50_pc = safe_divide(get_value(et_temporary_50_qs['number_holder__sum']), total_temporary_eto)
+        
         self.new_employee_reponse_table['employee_turnover_temporary_male_percent'] = et_temp_male_percent
         self.new_employee_reponse_table['employee_turnover_temporary_female_percent'] = et_temp_female_percent
         self.new_employee_reponse_table['employee_turnover_temporary_non_binary_percent'] = et_temp_nb_percent
@@ -491,14 +507,15 @@ class GetEmissionAnalysis(APIView):
 
         print(et_male_ng_qs['number_holder__sum'])
 
-        total_ng_eto = et_male_ng_qs['number_holder__sum'] + et_female_ng_qs['number_holder__sum'] + et_nb_ng_qs['number_holder__sum']
-        et_ng_male_percent = round((et_male_ng_qs['number_holder__sum'] / total_ng_eto * 100),2)
-        et_ng_female_percent = round((et_female_ng_qs['number_holder__sum']/ total_ng_eto * 100),2)
-        et_ng_nb_percent = round((et_nb_ng_qs['number_holder__sum']/total_ng_eto * 100),2)
-        et_ng_30_pc = round((et_ng_30_qs['number_holder__sum']/total_ng_eto * 100),2)
-        et_ng_30_50_pc = round((et_ng_30_50_qs['number_holder__sum']/total_ng_eto * 100),2)
-        et_ng_50_pc = round((et_ng_50_qs['number_holder__sum']/total_ng_eto * 100),2)
+        total_ng_eto = get_value(et_male_ng_qs['number_holder__sum']) + get_value(et_female_ng_qs['number_holder__sum']) + get_value(et_nb_ng_qs['number_holder__sum'])
 
+        et_ng_male_percent = safe_divide(get_value(et_male_ng_qs['number_holder__sum']), total_ng_eto)
+        et_ng_female_percent = safe_divide(get_value(et_female_ng_qs['number_holder__sum']), total_ng_eto)
+        et_ng_nb_percent = safe_divide(get_value(et_nb_ng_qs['number_holder__sum']), total_ng_eto)
+        et_ng_30_pc = safe_divide(get_value(et_ng_30_qs['number_holder__sum']), total_ng_eto)
+        et_ng_30_50_pc = safe_divide(get_value(et_ng_30_50_qs['number_holder__sum']), total_ng_eto)
+        et_ng_50_pc = safe_divide(get_value(et_ng_50_qs['number_holder__sum']), total_ng_eto)
+        
         self.new_employee_reponse_table['employee_turnover_non_guaranteed_male_percent'] = et_ng_male_percent
         self.new_employee_reponse_table['employee_turnover_non_guaranteed_female_percent'] = et_ng_female_percent
         self.new_employee_reponse_table['employee_turnover_non_guaranteed_non_binary_percent'] = et_ng_nb_percent
@@ -524,14 +541,15 @@ class GetEmissionAnalysis(APIView):
 
         print(et_male_ft_qs['number_holder__sum'])
 
-        total_ft_eto = et_male_ft_qs['number_holder__sum'] + et_female_ft_qs['number_holder__sum'] + et_nb_ft_qs['number_holder__sum']
-        et_ft_male_percent = round((et_male_ft_qs['number_holder__sum'] / total_ft_eto * 100),2)
-        et_ft_female_percent = round((et_female_ft_qs['number_holder__sum']/ total_ft_eto * 100),2)
-        et_ft_nb_percent = round((et_nb_ft_qs['number_holder__sum']/total_ft_eto * 100),2)
-        et_ft_30_pc = round((et_ft_30_qs['number_holder__sum']/total_ft_eto * 100),2)
-        et_ft_30_50_pc = round((et_ft_30_50_qs['number_holder__sum']/total_ft_eto * 100),2)
-        et_ft_50_pc = round((et_ft_50_qs['number_holder__sum']/total_ft_eto * 100),2)
+        total_ft_eto = get_value(et_male_ft_qs['number_holder__sum']) + get_value(et_female_ft_qs['number_holder__sum']) + get_value(et_nb_ft_qs['number_holder__sum'])
 
+        et_ft_male_percent = safe_divide(get_value(et_male_ft_qs['number_holder__sum']), total_ft_eto)
+        et_ft_female_percent = safe_divide(get_value(et_female_ft_qs['number_holder__sum']), total_ft_eto)
+        et_ft_nb_percent = safe_divide(get_value(et_nb_ft_qs['number_holder__sum']), total_ft_eto)
+        et_ft_30_pc = safe_divide(get_value(et_ft_30_qs['number_holder__sum']), total_ft_eto)
+        et_ft_30_50_pc = safe_divide(get_value(et_ft_30_50_qs['number_holder__sum']), total_ft_eto)
+        et_ft_50_pc = safe_divide(get_value(et_ft_50_qs['number_holder__sum']), total_ft_eto)
+        
         self.new_employee_reponse_table['employee_turnover_full_time_male_percent'] = et_ft_male_percent
         self.new_employee_reponse_table['employee_turnover_full_time_female_percent'] = et_ft_female_percent
         self.new_employee_reponse_table['employee_turnover_full_time_non_binary_percent'] = et_ft_nb_percent
@@ -557,14 +575,15 @@ class GetEmissionAnalysis(APIView):
 
         print(et_male_pt_qs['number_holder__sum'])
 
-        total_pt_eto = et_male_pt_qs['number_holder__sum'] + et_female_pt_qs['number_holder__sum'] + et_nb_pt_qs['number_holder__sum']
-        et_pt_male_percent = round((et_male_pt_qs['number_holder__sum'] / total_pt_eto * 100),2)
-        et_pt_female_percent = round((et_female_pt_qs['number_holder__sum']/ total_pt_eto * 100),2)
-        et_pt_nb_percent = round((et_nb_pt_qs['number_holder__sum']/total_pt_eto * 100),2)
-        et_pt_30_pc = round((et_pt_30_qs['number_holder__sum']/total_pt_eto * 100),2)
-        et_pt_30_50_pc = round((et_pt_30_50_qs['number_holder__sum']/total_pt_eto * 100),2)
-        et_pt_50_pc = round((et_pt_50_qs['number_holder__sum']/total_pt_eto * 100),2)
+        total_pt_eto = get_value(et_male_pt_qs['number_holder__sum']) + get_value(et_female_pt_qs['number_holder__sum']) + get_value(et_nb_pt_qs['number_holder__sum'])
 
+        et_pt_male_percent = safe_divide(get_value(et_male_pt_qs['number_holder__sum']), total_pt_eto)
+        et_pt_female_percent = safe_divide(get_value(et_female_pt_qs['number_holder__sum']), total_pt_eto)
+        et_pt_nb_percent = safe_divide(get_value(et_nb_pt_qs['number_holder__sum']), total_pt_eto)
+        et_pt_30_pc = safe_divide(get_value(et_pt_30_qs['number_holder__sum']), total_pt_eto)
+        et_pt_30_50_pc = safe_divide(get_value(et_pt_30_50_qs['number_holder__sum']), total_pt_eto)
+        et_pt_50_pc = safe_divide(get_value(et_pt_50_qs['number_holder__sum']), total_pt_eto)
+        
         self.new_employee_reponse_table['employee_turnover_part_time_male_percent'] = et_pt_male_percent
         self.new_employee_reponse_table['employee_turnover_part_time_female_percent'] = et_pt_female_percent
         self.new_employee_reponse_table['employee_turnover_part_time_non_binary_percent'] = et_pt_nb_percent
@@ -577,9 +596,49 @@ class GetEmissionAnalysis(APIView):
 
         # parental leave first
 
-        self.parental_leave_response_table['entitlement_male'] = get_integer(parental_leave_data_points.filter(index=0, metric_name="male").first().value)
-        self.parental_leave_response_table['entitlement_female'] = get_integer(parental_leave_data_points.filter(index=0, metric_name="female").first().value)
+        self.parental_leave_response_table['entitlement_male'] = get_integer(get_value(parental_leave_data_points.filter(index=0, metric_name="male").first().value))
+        self.parental_leave_response_table['entitlement_female'] = get_integer(get_value(parental_leave_data_points.filter(index=0, metric_name="female").first().value))
         self.parental_leave_response_table['entitlement_total'] = self.parental_leave_response_table['entitlement_male'] + self.parental_leave_response_table['entitlement_female']
+
+        self.parental_leave_response_table['taking_male'] = get_integer(get_value(parental_leave_data_points.filter(index=1, metric_name="male").first().value))
+        self.parental_leave_response_table['taking_female'] = get_integer(get_value(parental_leave_data_points.filter(index=1, metric_name="female").first().value))
+        self.parental_leave_response_table['taking_total'] = self.parental_leave_response_table['taking_male'] + self.parental_leave_response_table['taking_female']
+        
+        self.parental_leave_response_table['return_to_post_work_male'] = get_integer(get_value(parental_leave_data_points.filter(index=2, metric_name="male").first().value))
+        self.parental_leave_response_table['return_to_post_work_female'] = get_integer(get_value(parental_leave_data_points.filter(index=2, metric_name="female").first().value))
+        self.parental_leave_response_table['return_to_post_work_total'] = self.parental_leave_response_table['return_to_post_work_male'] + self.parental_leave_response_table['return_to_post_work_female']
+
+        self.parental_leave_response_table['retained_12_mts_male'] = get_integer(get_value(parental_leave_data_points.filter(index=3, metric_name="male").first().value))
+        self.parental_leave_response_table['retained_12_mts_female'] = get_integer(get_value(parental_leave_data_points.filter(index=3, metric_name="female").first().value))
+        self.parental_leave_response_table['retained_12_mts_total'] = self.parental_leave_response_table['retained_12_mts_male'] + self.parental_leave_response_table['retained_12_mts_female']
+
+        # benefits table
+
+        self.benefits_response_table['life_insurance_full_time'] = benefits_dps.filter(index=0,metric_name="fulltime").first().value
+        self.benefits_response_table['life_insurance_part_time'] = benefits_dps.filter(index=0,metric_name="parttime").first().value
+        self.benefits_response_table['life_insurance_temporary'] = benefits_dps.filter(index=0,metric_name="temporary").first().value
+
+        self.benefits_response_table['healthcare_full_time'] = benefits_dps.filter(index=1,metric_name="fulltime").first().value
+        self.benefits_response_table['healthcare_part_time'] = benefits_dps.filter(index=1,metric_name="parttime").first().value
+        self.benefits_response_table['healthcare_temporary'] = benefits_dps.filter(index=1,metric_name="temporary").first().value
+
+        self.benefits_response_table['disability_cover_full_time'] = benefits_dps.filter(index=2,metric_name="fulltime").first().value
+        self.benefits_response_table['disability_cover_part_time'] = benefits_dps.filter(index=2,metric_name="parttime").first().value
+        self.benefits_response_table['disability_cover_temporary'] = benefits_dps.filter(index=2,metric_name="temporary").first().value
+
+        self.benefits_response_table['parental_leave_full_time'] = benefits_dps.filter(index=3,metric_name="fulltime").first().value
+        self.benefits_response_table['parental_leave_part_time'] = benefits_dps.filter(index=3,metric_name="parttime").first().value
+        self.benefits_response_table['parental_leave_temporary'] = benefits_dps.filter(index=3,metric_name="temporary").first().value
+
+        self.benefits_response_table['retirement_full_time'] = benefits_dps.filter(index=4,metric_name="fulltime").first().value
+        self.benefits_response_table['retirement_part_time'] = benefits_dps.filter(index=4,metric_name="parttime").first().value
+        self.benefits_response_table['retirement_temporary'] = benefits_dps.filter(index=4,metric_name="temporary").first().value
+  
+        self.benefits_response_table['stock_ownership_full_time'] = benefits_dps.filter(index=5,metric_name="fulltime").first().value
+        self.benefits_response_table['stock_ownership_part_time'] = benefits_dps.filter(index=5,metric_name="parttime").first().value
+        self.benefits_response_table['stock_ownership_temporary'] = benefits_dps.filter(index=5,metric_name="temporary").first().value
+
+        
 
 
     def get(self, request, format=None):
@@ -617,4 +676,9 @@ class GetEmissionAnalysis(APIView):
         # * Get top emissions by Scope
         response_data = dict()
         response_data['success_true'] = 'true'
+        response_data['new_employee_response_table'] = self.new_employee_reponse_table
+        response_data['employee_turnover_reponse_table'] = self.employee_turnover_reponse_table
+        response_data['benefits_response_table'] = self.benefits_response_table
+        response_data['parental_leave_response_table'] = self.parental_leave_response_table
+
         return Response({"data": response_data}, status=status.HTTP_200_OK)
