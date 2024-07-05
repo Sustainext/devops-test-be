@@ -15,8 +15,13 @@ class IllnessAnalysisView(APIView):
 
     def set_raw_responses(self):
         slugs = [
-            "gri-social-ohs-403-4d-formal_joint",
+            "gri-social-ohs-403-9b-number_of_injuries_workers",
+            "gri-social-ohs-403-9e-number_of_hours",
             "gri-social-ohs-403-8a-number_of_employees",
+            "gri-social-ohs-403-9a-number_of_injuries_emp",
+            "gri-social-ohs-403-10a-ill_health_emp",
+            "gri-social-ohs-403-10b-ill_health_workers",
+            "gri-social-ohs-403-4d-formal_joint",
         ]
         self.raw_responses = (
             RawResponse.objects.filter(
@@ -253,13 +258,13 @@ class IllnessAnalysisView(APIView):
             self.get_ill_health_for_all_workers_who_are_not_employees_analysis(),
         )
 
-        response_data=            {
-                "formal_joint_management": formal_joint_management,
-                "workers_covered_by_an_occupational_health_and_safety_management_system": self.get_workers_covered_by_an_occupational_health_and_safety_management_system(),
-                "rate_of_injuries_for_all_employees": self.get_work_related_ill_health(),
-                "rate_of_injuries_for_not_included_in_company_employees": self.get_rate_of_injuries_who_are_workers_but_not_employees(),
-                "ill_health_for_all_employees_analysis": self.get_ill_health_for_all_employees_analysis(),
-                "ill_health_for_all_workers_who_are_not_employees_analysis": self.get_ill_health_for_all_workers_who_are_not_employees_analysis(),
-            }
-        
+        response_data = {
+            "formal_joint_management": formal_joint_management,
+            "workers_covered_by_an_occupational_health_and_safety_management_system": self.get_workers_covered_by_an_occupational_health_and_safety_management_system(),
+            "rate_of_injuries_for_all_employees": self.get_work_related_ill_health(),
+            "rate_of_injuries_for_not_included_in_company_employees": self.get_rate_of_injuries_who_are_workers_but_not_employees(),
+            "ill_health_for_all_employees_analysis": self.get_ill_health_for_all_employees_analysis(),
+            "ill_health_for_all_workers_who_are_not_employees_analysis": self.get_ill_health_for_all_workers_who_are_not_employees_analysis(),
+        }
+
         return Response(response_data, status=status.HTTP_200_OK)
