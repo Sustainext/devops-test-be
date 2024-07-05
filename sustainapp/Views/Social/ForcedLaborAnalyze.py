@@ -61,11 +61,11 @@ class ForcedLaborAnalyzeView(APIView):
             data=request.query_params, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
-        organisation = serializer.validated_data.get("organisation", None)
+        organisation = serializer.validated_data["organisation"]
         corporate = serializer.validated_data.get("corporate", None)
         location = serializer.validated_data.get("location", None)
-        start = serializer.validated_data.get("start", None)
-        end = serializer.validated_data.get("end", None)
+        start = serializer.validated_data["start"]
+        end = serializer.validated_data["end"]
 
         if location:
             locations = Location.objects.filter(pk=location.id)
