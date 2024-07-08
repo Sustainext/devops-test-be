@@ -163,24 +163,24 @@ class EmploymentAnalyzeView(APIView):
     benefits_response_table = {
         # "life insurance, healthcare, disability_cover, parental_leave, retirement, stock_ownership",
         # "fulltime, partime, temporary"
-        "life_insurance_full_time": True,
-        "life_insurance_part_time": True,
-        "life_insurance_temporary": True,
-        "healthcare_full_time": True,
-        "healthcare_part_time": True,
-        "healthcare_temporary": True,
-        "disability_cover_full_time": True,
-        "disability_cover_part_time": True,
-        "disability_cover_temporary": True,
-        "parental_leave_full_time": True,
-        "parental_leave_part_time": True,
-        "parental_leave_temporary": True,
-        "retirement_full_time": True,
-        "retirement_part_time": True,
-        "retirement_temporary": True,
-        "stock_ownership_full_time": True,
-        "stock_ownership_part_time": True,
-        "stock_ownership_temporary": True,
+        "life_insurance_full_time": None,
+        "life_insurance_part_time": None,
+        "life_insurance_temporary": None,
+        "healthcare_full_time": None,
+        "healthcare_part_time": None,
+        "healthcare_temporary": None,
+        "disability_cover_full_time": None,
+        "disability_cover_part_time": None,
+        "disability_cover_temporary": None,
+        "parental_leave_full_time": None,
+        "parental_leave_part_time": None,
+        "parental_leave_temporary": None,
+        "retirement_full_time": None,
+        "retirement_part_time": None,
+        "retirement_temporary": None,
+        "stock_ownership_full_time": None,
+        "stock_ownership_part_time": None,
+        "stock_ownership_temporary": None,
     }
     parental_leave_response_table = {
         # "life insurance, healthcare, disability_cover, parental_leave, retirement, stock_ownership",
@@ -728,13 +728,13 @@ class EmploymentAnalyzeView(APIView):
         response_data['new_employee_hires'].append(new_employee_full_time)
 
         new_employee_part_time = {}
-        new_employee_part_time['type_of_employee']   = 'Full Time employee'
+        new_employee_part_time['type_of_employee']   = 'Part time employee'
         new_employee_part_time['percentage_of_male_employee'] = self.new_employee_reponse_table['new_employee_part_time_male_percent']         
         new_employee_part_time['percentage_of_female_employee'] = self.new_employee_reponse_table['new_employee_part_time_female_percent']
         new_employee_part_time['percentage_of_non_binary_employee'] = self.new_employee_reponse_table['new_employee_part_time_non_binary_percent']
         new_employee_part_time['yearsold30'] = self.new_employee_reponse_table['new_employee_part_time_30_percent']
         new_employee_part_time['yearsold50'] = self.new_employee_reponse_table['new_employee_part_time_30-50_percent']
-        new_employee_full_time['yearsold30to50'] = self.new_employee_reponse_table['new_employee_part_time_50_percent']
+        new_employee_part_time['yearsold30to50'] = self.new_employee_reponse_table['new_employee_part_time_50_percent']
         response_data['new_employee_hires'].append(new_employee_part_time)
 
         response_data['employee_turnover'] = []
@@ -757,7 +757,7 @@ class EmploymentAnalyzeView(APIView):
         employee_turnover_temporary['percentage_of_non_binary_employee'] = self.new_employee_reponse_table['employee_turnover_temporary_non_binary_percent']
         employee_turnover_temporary['yearsold30'] = self.new_employee_reponse_table['employee_turnover_temporary_30_percent']
         employee_turnover_temporary['yearsold50'] = self.new_employee_reponse_table['employee_turnover_temporary_50_percent']
-        employee_turnover_permanent['yearsold30to50'] = self.new_employee_reponse_table['employee_turnover_temporary_30-50_percent']
+        employee_turnover_temporary['yearsold30to50'] = self.new_employee_reponse_table['employee_turnover_temporary_30-50_percent']
         response_data['employee_turnover'].append(employee_turnover_temporary)
 
         employee_turnover_ng = {}
