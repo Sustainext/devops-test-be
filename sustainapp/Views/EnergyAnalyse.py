@@ -10,6 +10,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 
 from django.db.models import Prefetch
 from rest_framework import serializers
+from datametric.utils.analyse import filter_by_start_end_dates
 
 
 class EnergyAnalyzeView(APIView):
@@ -27,10 +28,8 @@ class EnergyAnalyzeView(APIView):
 
         consumed_ene_query = RawResponse.objects.filter(
             location__in=self.locations.values_list("name", flat=True),
-            year__range=(self.from_date.year, self.to_date.year),
-            month__range=(self.from_date.month, self.to_date.month),
             path__slug=path, client__id=self.clients_id
-        )
+        ).filter(filter_by_start_end_dates(self.from_date, self.to_date))
 
         if not consumed_ene_query:
             if sno in [3, 4, 5, 6]:
