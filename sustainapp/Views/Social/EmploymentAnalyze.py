@@ -37,6 +37,13 @@ def get_value(objectValue):
         return objectValue
 
 
+def get_object_value(object_value):
+    if object_value is None:
+        return 0
+    else:
+        return object_value
+
+
 def safe_divide(numerator, denominator, decimal_places=2):
     return (
         round((numerator / denominator * 100), decimal_places)
@@ -329,9 +336,9 @@ class EmploymentAnalyzeView(APIView):
             new_employee_reponse_table["new_employee_permanent_female_percent"] = (
                 ne_per_female_percent
             )
-            new_employee_reponse_table[
-                "new_employee_permanent_non_binary_percent"
-            ] = ne_per_nb_percent
+            new_employee_reponse_table["new_employee_permanent_non_binary_percent"] = (
+                ne_per_nb_percent
+            )
             new_employee_reponse_table["new_employee_permanent_30_percent"] = (
                 ne_permanent_30_pc
             )
@@ -406,9 +413,9 @@ class EmploymentAnalyzeView(APIView):
             new_employee_reponse_table["new_employee_temporary_female_percent"] = (
                 ne_temp_female_percent
             )
-            new_employee_reponse_table[
-                "new_employee_temporary_non_binary_percent"
-            ] = ne_temp_nb_percent
+            new_employee_reponse_table["new_employee_temporary_non_binary_percent"] = (
+                ne_temp_nb_percent
+            )
             new_employee_reponse_table["new_employee_temporary_30_percent"] = (
                 ne_temp_30_pc
             )
@@ -475,24 +482,24 @@ class EmploymentAnalyzeView(APIView):
                 get_value(ne_ng_50_qs["number_holder__sum"]), total_ng
             )
 
-            new_employee_reponse_table[
-                "new_employee_non_guaranteed_male_percent"
-            ] = ne_ng_male_percent
-            new_employee_reponse_table[
-                "new_employee_non_guaranteed_female_percent"
-            ] = ne_ng_female_percent
+            new_employee_reponse_table["new_employee_non_guaranteed_male_percent"] = (
+                ne_ng_male_percent
+            )
+            new_employee_reponse_table["new_employee_non_guaranteed_female_percent"] = (
+                ne_ng_female_percent
+            )
             new_employee_reponse_table[
                 "new_employee_non_guaranteed_non_binary_percent"
             ] = ne_ng_nb_percent
-            new_employee_reponse_table[
-                "new_employee_non_guaranteed_30_percent"
-            ] = ne_ng_30_pc
-            new_employee_reponse_table[
-                "new_employee_non_guaranteed_30-50_percent"
-            ] = ne_ng_30_50_pc
-            new_employee_reponse_table[
-                "new_employee_non_guaranteed_50_percent"
-            ] = ne_ng_50_pc
+            new_employee_reponse_table["new_employee_non_guaranteed_30_percent"] = (
+                ne_ng_30_pc
+            )
+            new_employee_reponse_table["new_employee_non_guaranteed_30-50_percent"] = (
+                ne_ng_30_50_pc
+            )
+            new_employee_reponse_table["new_employee_non_guaranteed_50_percent"] = (
+                ne_ng_50_pc
+            )
 
             # new_employee full time
 
@@ -556,9 +563,9 @@ class EmploymentAnalyzeView(APIView):
             new_employee_reponse_table["new_employee_full_time_female_percent"] = (
                 ne_ft_female_percent
             )
-            new_employee_reponse_table[
-                "new_employee_full_time_non_binary_percent"
-            ] = ne_ft_nb_percent
+            new_employee_reponse_table["new_employee_full_time_non_binary_percent"] = (
+                ne_ft_nb_percent
+            )
             new_employee_reponse_table["new_employee_full_time_30_percent"] = (
                 ne_ft_30_pc
             )
@@ -631,9 +638,9 @@ class EmploymentAnalyzeView(APIView):
             new_employee_reponse_table["new_employee_part_time_female_percent"] = (
                 ne_pt_female_percent
             )
-            new_employee_reponse_table[
-                "new_employee_part_time_non_binary_percent"
-            ] = ne_pt_nb_percent
+            new_employee_reponse_table["new_employee_part_time_non_binary_percent"] = (
+                ne_pt_nb_percent
+            )
             new_employee_reponse_table["new_employee_part_time_30_percent"] = (
                 ne_pt_30_pc
             )
@@ -725,24 +732,24 @@ class EmploymentAnalyzeView(APIView):
                 get_value(et_permanent_50_qs["number_holder__sum"]), total_permanent_eto
             )
 
-            new_employee_reponse_table[
-                "employee_turnover_permanent_male_percent"
-            ] = et_per_male_percent
-            new_employee_reponse_table[
-                "employee_turnover_permanent_female_percent"
-            ] = et_per_female_percent
+            new_employee_reponse_table["employee_turnover_permanent_male_percent"] = (
+                et_per_male_percent
+            )
+            new_employee_reponse_table["employee_turnover_permanent_female_percent"] = (
+                et_per_female_percent
+            )
             new_employee_reponse_table[
                 "employee_turnover_permanent_non_binary_percent"
             ] = et_per_nb_percent
-            new_employee_reponse_table[
-                "employee_turnover_permanent_30_percent"
-            ] = et_permanent_30_pc
-            new_employee_reponse_table[
-                "employee_turnover_permanent_30-50_percent"
-            ] = et_permanent_30_50_pc
-            new_employee_reponse_table[
-                "employee_turnover_permanent_50_percent"
-            ] = et_permanent_50_pc
+            new_employee_reponse_table["employee_turnover_permanent_30_percent"] = (
+                et_permanent_30_pc
+            )
+            new_employee_reponse_table["employee_turnover_permanent_30-50_percent"] = (
+                et_permanent_30_50_pc
+            )
+            new_employee_reponse_table["employee_turnover_permanent_50_percent"] = (
+                et_permanent_50_pc
+            )
 
             # new_employee_turnover_temporary
 
@@ -805,24 +812,24 @@ class EmploymentAnalyzeView(APIView):
                 get_value(et_temporary_50_qs["number_holder__sum"]), total_temporary_eto
             )
 
-            new_employee_reponse_table[
-                "employee_turnover_temporary_male_percent"
-            ] = et_temp_male_percent
-            new_employee_reponse_table[
-                "employee_turnover_temporary_female_percent"
-            ] = et_temp_female_percent
+            new_employee_reponse_table["employee_turnover_temporary_male_percent"] = (
+                et_temp_male_percent
+            )
+            new_employee_reponse_table["employee_turnover_temporary_female_percent"] = (
+                et_temp_female_percent
+            )
             new_employee_reponse_table[
                 "employee_turnover_temporary_non_binary_percent"
             ] = et_temp_nb_percent
-            new_employee_reponse_table[
-                "employee_turnover_temporary_30_percent"
-            ] = et_temp_30_pc
-            new_employee_reponse_table[
-                "employee_turnover_temporary_30-50_percent"
-            ] = et_temp_30_50_pc
-            new_employee_reponse_table[
-                "employee_turnover_temporary_50_percent"
-            ] = et_temp_50_pc
+            new_employee_reponse_table["employee_turnover_temporary_30_percent"] = (
+                et_temp_30_pc
+            )
+            new_employee_reponse_table["employee_turnover_temporary_30-50_percent"] = (
+                et_temp_30_50_pc
+            )
+            new_employee_reponse_table["employee_turnover_temporary_50_percent"] = (
+                et_temp_50_pc
+            )
 
             # new_employee_turover _non guaranteed
 
@@ -959,24 +966,24 @@ class EmploymentAnalyzeView(APIView):
                 get_value(et_ft_50_qs["number_holder__sum"]), total_ft_eto
             )
 
-            new_employee_reponse_table[
-                "employee_turnover_full_time_male_percent"
-            ] = et_ft_male_percent
-            new_employee_reponse_table[
-                "employee_turnover_full_time_female_percent"
-            ] = et_ft_female_percent
+            new_employee_reponse_table["employee_turnover_full_time_male_percent"] = (
+                et_ft_male_percent
+            )
+            new_employee_reponse_table["employee_turnover_full_time_female_percent"] = (
+                et_ft_female_percent
+            )
             new_employee_reponse_table[
                 "employee_turnover_full_time_non_binary_percent"
             ] = et_ft_nb_percent
-            new_employee_reponse_table[
-                "employee_turnover_full_time_30_percent"
-            ] = et_ft_30_pc
-            new_employee_reponse_table[
-                "employee_turnover_full_time_30-50_percent"
-            ] = et_ft_30_50_pc
-            new_employee_reponse_table[
-                "employee_turnover_full_time_50_percent"
-            ] = et_ft_50_pc
+            new_employee_reponse_table["employee_turnover_full_time_30_percent"] = (
+                et_ft_30_pc
+            )
+            new_employee_reponse_table["employee_turnover_full_time_30-50_percent"] = (
+                et_ft_30_50_pc
+            )
+            new_employee_reponse_table["employee_turnover_full_time_50_percent"] = (
+                et_ft_50_pc
+            )
 
             # new_employee_turover _parttime
 
@@ -1036,24 +1043,24 @@ class EmploymentAnalyzeView(APIView):
                 get_value(et_pt_50_qs["number_holder__sum"]), total_pt_eto
             )
 
-            new_employee_reponse_table[
-                "employee_turnover_part_time_male_percent"
-            ] = et_pt_male_percent
-            new_employee_reponse_table[
-                "employee_turnover_part_time_female_percent"
-            ] = et_pt_female_percent
+            new_employee_reponse_table["employee_turnover_part_time_male_percent"] = (
+                et_pt_male_percent
+            )
+            new_employee_reponse_table["employee_turnover_part_time_female_percent"] = (
+                et_pt_female_percent
+            )
             new_employee_reponse_table[
                 "employee_turnover_part_time_non_binary_percent"
             ] = et_pt_nb_percent
-            new_employee_reponse_table[
-                "employee_turnover_part_time_30_percent"
-            ] = et_pt_30_pc
-            new_employee_reponse_table[
-                "employee_turnover_part_time_30-50_percent"
-            ] = et_pt_30_50_pc
-            new_employee_reponse_table[
-                "employee_turnover_part_time_50_percent"
-            ] = et_pt_50_pc
+            new_employee_reponse_table["employee_turnover_part_time_30_percent"] = (
+                et_pt_30_pc
+            )
+            new_employee_reponse_table["employee_turnover_part_time_30-50_percent"] = (
+                et_pt_30_50_pc
+            )
+            new_employee_reponse_table["employee_turnover_part_time_50_percent"] = (
+                et_pt_50_pc
+            )
 
             benefits_dps = benefits_data_points
             parental_leave_dps = parental_leave_data_points
@@ -1061,17 +1068,17 @@ class EmploymentAnalyzeView(APIView):
             # parental leave first
 
             parental_leave_response_table["entitlement_male"] = get_integer(
-                get_value(
-                    parental_leave_data_points.filter(index=0, metric_name="male")
-                    .first()
-                    .value
+                get_object_value(
+                    parental_leave_data_points.filter(
+                        index=0, metric_name="male"
+                    ).first()
                 )
             )
             parental_leave_response_table["entitlement_female"] = get_integer(
-                get_value(
-                    parental_leave_data_points.filter(index=0, metric_name="female")
-                    .first()
-                    .value
+                get_object_value(
+                    parental_leave_data_points.filter(
+                        index=0, metric_name="female"
+                    ).first()
                 )
             )
             parental_leave_response_table["entitlement_total"] = (
@@ -1080,17 +1087,17 @@ class EmploymentAnalyzeView(APIView):
             )
 
             parental_leave_response_table["taking_male"] = get_integer(
-                get_value(
-                    parental_leave_data_points.filter(index=1, metric_name="male")
-                    .first()
-                    .value
+                get_object_value(
+                    parental_leave_data_points.filter(
+                        index=1, metric_name="male"
+                    ).first()
                 )
             )
             parental_leave_response_table["taking_female"] = get_integer(
-                get_value(
-                    parental_leave_data_points.filter(index=1, metric_name="female")
-                    .first()
-                    .value
+                get_object_value(
+                    parental_leave_data_points.filter(
+                        index=1, metric_name="female"
+                    ).first()
                 )
             )
             parental_leave_response_table["taking_total"] = (
@@ -1098,22 +1105,18 @@ class EmploymentAnalyzeView(APIView):
                 + parental_leave_response_table["taking_female"]
             )
 
-            parental_leave_response_table["return_to_post_work_male"] = (
-                get_integer(
-                    get_value(
-                        parental_leave_data_points.filter(index=2, metric_name="male")
-                        .first()
-                        .value
-                    )
+            parental_leave_response_table["return_to_post_work_male"] = get_integer(
+                get_object_value(
+                    parental_leave_data_points.filter(
+                        index=2, metric_name="male"
+                    ).first()
                 )
             )
-            parental_leave_response_table["return_to_post_work_female"] = (
-                get_integer(
-                    get_value(
-                        parental_leave_data_points.filter(index=2, metric_name="female")
-                        .first()
-                        .value
-                    )
+            parental_leave_response_table["return_to_post_work_female"] = get_integer(
+                get_object_value(
+                    parental_leave_data_points.filter(
+                        index=2, metric_name="female"
+                    ).first()
                 )
             )
             parental_leave_response_table["return_to_post_work_total"] = (
@@ -1122,17 +1125,17 @@ class EmploymentAnalyzeView(APIView):
             )
 
             parental_leave_response_table["retained_12_mts_male"] = get_integer(
-                get_value(
-                    parental_leave_data_points.filter(index=3, metric_name="male")
-                    .first()
-                    .value
+                get_object_value(
+                    parental_leave_data_points.filter(
+                        index=3, metric_name="male"
+                    ).first()
                 )
             )
             parental_leave_response_table["retained_12_mts_female"] = get_integer(
-                get_value(
-                    parental_leave_data_points.filter(index=3, metric_name="female")
-                    .first()
-                    .value
+                get_object_value(
+                    parental_leave_data_points.filter(
+                        index=3, metric_name="female"
+                    ).first()
                 )
             )
             parental_leave_response_table["retained_12_mts_total"] = (
@@ -1142,64 +1145,70 @@ class EmploymentAnalyzeView(APIView):
 
             # benefits table
 
-            benefits_response_table["life_insurance_full_time"] = (
-                benefits_dps.filter(index=0, metric_name="fulltime").first().value
+            benefits_response_table["life_insurance_full_time"] = get_object_value(
+                benefits_dps.filter(index=0, metric_name="fulltime").first()
             )
-            benefits_response_table["life_insurance_part_time"] = (
-                benefits_dps.filter(index=0, metric_name="parttime").first().value
+            benefits_response_table["life_insurance_part_time"] = get_object_value(
+                benefits_dps.filter(index=0, metric_name="parttime").first()
             )
-            benefits_response_table["life_insurance_temporary"] = (
-                benefits_dps.filter(index=0, metric_name="temporary").first().value
-            )
-
-            benefits_response_table["healthcare_full_time"] = (
-                benefits_dps.filter(index=1, metric_name="fulltime").first().value
-            )
-            benefits_response_table["healthcare_part_time"] = (
-                benefits_dps.filter(index=1, metric_name="parttime").first().value
-            )
-            benefits_response_table["healthcare_temporary"] = (
-                benefits_dps.filter(index=1, metric_name="temporary").first().value
+            benefits_response_table["life_insurance_temporary"] = get_object_value(
+                benefits_dps.filter(index=0, metric_name="temporary").first()
             )
 
-            benefits_response_table["disability_cover_full_time"] = (
-                benefits_dps.filter(index=2, metric_name="fulltime").first().value
+            benefits_response_table["healthcare_full_time"] = get_object_value(
+                benefits_dps.filter(index=1, metric_name="fulltime").first()
             )
-            benefits_response_table["disability_cover_part_time"] = (
-                benefits_dps.filter(index=2, metric_name="parttime").first().value
+            benefits_response_table["healthcare_part_time"] = get_object_value(
+                benefits_dps.filter(index=1, metric_name="parttime").first()
             )
-            benefits_response_table["disability_cover_temporary"] = (
-                benefits_dps.filter(index=2, metric_name="temporary").first().value
-            )
-
-            benefits_response_table["parental_leave_full_time"] = (
-                benefits_dps.filter(index=3, metric_name="fulltime").first().value
-            )
-            benefits_response_table["parental_leave_part_time"] = (
-                benefits_dps.filter(index=3, metric_name="parttime").first().value
-            )
-            benefits_response_table["parental_leave_temporary"] = (
-                benefits_dps.filter(index=3, metric_name="temporary").first().value
+            benefits_response_table["healthcare_temporary"] = get_object_value(
+                benefits_dps.filter(index=1, metric_name="temporary").first()
             )
 
-            benefits_response_table["retirement_full_time"] = (
-                benefits_dps.filter(index=4, metric_name="fulltime").first().value
+            benefits_response_table["disability_cover_full_time"] = get_object_value(
+                benefits_dps.filter(index=2, metric_name="fulltime").first()
             )
-            benefits_response_table["retirement_part_time"] = (
-                benefits_dps.filter(index=4, metric_name="parttime").first().value
+            benefits_response_table["disability_cover_part_time"] = get_object_value(
+                benefits_dps.filter(index=2, metric_name="parttime").first()
             )
-            benefits_response_table["retirement_temporary"] = (
-                benefits_dps.filter(index=4, metric_name="temporary").first().value
+            benefits_response_table["disability_cover_temporary"] = get_object_value(
+                benefits_dps.filter(index=2, metric_name="temporary").first()
             )
 
-            benefits_response_table["stock_ownership_full_time"] = (
-                benefits_dps.filter(index=5, metric_name="fulltime").first().value
+            benefits_response_table["parental_leave_full_time"] = get_object_value(
+                benefits_dps.filter(index=3, metric_name="fulltime").first()
             )
-            benefits_response_table["stock_ownership_part_time"] = (
-                benefits_dps.filter(index=5, metric_name="parttime").first().value
+            benefits_response_table["parental_leave_part_time"] = get_object_value(
+                benefits_dps.filter(index=3, metric_name="parttime").first()
             )
-            benefits_response_table["stock_ownership_temporary"] = (
-                benefits_dps.filter(index=5, metric_name="temporary").first().value
+            benefits_response_table["parental_leave_temporary"] = get_object_value(
+                benefits_dps.filter(index=3, metric_name="temporary").first()
+            )
+
+            benefits_response_table["retirement_full_time"] = get_object_value(
+                benefits_dps.filter(index=4, metric_name="fulltime").first()
+            )
+            benefits_response_table["retirement_part_time"] = get_object_value(
+                benefits_dps.filter(index=4, metric_name="parttime").first()
+            )
+            benefits_response_table["retirement_temporary"] = get_object_value(
+                benefits_dps.filter(index=4, metric_name="temporary").first()
+            )
+
+            benefits_response_table["stock_ownership_full_time"] = get_object_value(
+                benefits_dps.filter(index=5, metric_name="fulltime").first()
+            )
+            benefits_response_table["stock_ownership_part_time"] = get_object_value(
+                benefits_dps.filter(index=5, metric_name="parttime").first()
+            )
+            benefits_response_table["stock_ownership_temporary"] = get_object_value(
+                benefits_dps.filter(index=5, metric_name="temporary").first()
+            )
+            return (
+                new_employee_reponse_table,
+                employee_turnover_reponse_table,
+                benefits_response_table,
+                parental_leave_response_table,
             )
         except Exception as e:
             print(e)
@@ -1253,7 +1262,6 @@ class EmploymentAnalyzeView(APIView):
             path__slug__in=self.employee_parental_leave_path_slugs,
             location__in=self.locations.values_list("name", flat=True),
         ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
-
         # pushing for processing
         (
             new_employee_reponse_table,
@@ -1322,14 +1330,10 @@ class EmploymentAnalyzeView(APIView):
             new_employee_reponse_table["new_employee_non_guaranteed_male_percent"]
         )
         new_employee_non_guaranteed["percentage_of_female_employee"] = (
-            new_employee_reponse_table[
-                "new_employee_non_guaranteed_female_percent"
-            ]
+            new_employee_reponse_table["new_employee_non_guaranteed_female_percent"]
         )
         new_employee_non_guaranteed["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table[
-                "new_employee_non_guaranteed_non_binary_percent"
-            ]
+            new_employee_reponse_table["new_employee_non_guaranteed_non_binary_percent"]
         )
         new_employee_non_guaranteed["yearsold30"] = new_employee_reponse_table[
             "new_employee_non_guaranteed_30_percent"
@@ -1394,14 +1398,10 @@ class EmploymentAnalyzeView(APIView):
             new_employee_reponse_table["employee_turnover_permanent_male_percent"]
         )
         employee_turnover_permanent["percentage_of_female_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_permanent_female_percent"
-            ]
+            new_employee_reponse_table["employee_turnover_permanent_female_percent"]
         )
         employee_turnover_permanent["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_permanent_non_binary_percent"
-            ]
+            new_employee_reponse_table["employee_turnover_permanent_non_binary_percent"]
         )
         employee_turnover_permanent["yearsold30"] = new_employee_reponse_table[
             "employee_turnover_permanent_30_percent"
@@ -1420,14 +1420,10 @@ class EmploymentAnalyzeView(APIView):
             new_employee_reponse_table["employee_turnover_temporary_male_percent"]
         )
         employee_turnover_temporary["percentage_of_female_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_temporary_female_percent"
-            ]
+            new_employee_reponse_table["employee_turnover_temporary_female_percent"]
         )
         employee_turnover_temporary["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_temporary_non_binary_percent"
-            ]
+            new_employee_reponse_table["employee_turnover_temporary_non_binary_percent"]
         )
         employee_turnover_temporary["yearsold30"] = new_employee_reponse_table[
             "employee_turnover_temporary_30_percent"
@@ -1443,9 +1439,7 @@ class EmploymentAnalyzeView(APIView):
         employee_turnover_ng = {}
         employee_turnover_ng["type_of_employee"] = "Non Guaranteed employee"
         employee_turnover_ng["percentage_of_male_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_male_percent"
-            ]
+            new_employee_reponse_table["employee_turnover_non_guaranteed_male_percent"]
         )
         employee_turnover_ng["percentage_of_female_employee"] = (
             new_employee_reponse_table[
@@ -1474,14 +1468,10 @@ class EmploymentAnalyzeView(APIView):
             new_employee_reponse_table["employee_turnover_full_time_male_percent"]
         )
         employee_turnover_ft["percentage_of_female_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_full_time_female_percent"
-            ]
+            new_employee_reponse_table["employee_turnover_full_time_female_percent"]
         )
         employee_turnover_ft["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_full_time_non_binary_percent"
-            ]
+            new_employee_reponse_table["employee_turnover_full_time_non_binary_percent"]
         )
         employee_turnover_ft["yearsold30"] = new_employee_reponse_table[
             "employee_turnover_full_time_30_percent"
@@ -1500,14 +1490,10 @@ class EmploymentAnalyzeView(APIView):
             new_employee_reponse_table["employee_turnover_part_time_male_percent"]
         )
         employee_turnover_pt["percentage_of_female_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_part_time_female_percent"
-            ]
+            new_employee_reponse_table["employee_turnover_part_time_female_percent"]
         )
         employee_turnover_pt["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_part_time_non_binary_percent"
-            ]
+            new_employee_reponse_table["employee_turnover_part_time_non_binary_percent"]
         )
         employee_turnover_pt["yearsold30"] = new_employee_reponse_table[
             "employee_turnover_part_time_30_percent"
@@ -1649,23 +1635,17 @@ class EmploymentAnalyzeView(APIView):
 
         post_leave = {}
         post_leave["employee_category"] = "Returning to work Post leave"
-        post_leave["male"] = parental_leave_response_table[
-            "return_to_post_work_male"
-        ]
+        post_leave["male"] = parental_leave_response_table["return_to_post_work_male"]
         post_leave["female"] = parental_leave_response_table[
             "return_to_post_work_female"
         ]
-        post_leave["total"] = parental_leave_response_table[
-            "return_to_post_work_total"
-        ]
+        post_leave["total"] = parental_leave_response_table["return_to_post_work_total"]
         parental_leave.append(post_leave)
 
         retained = {}
         retained["employee_category"] = "Retained 12th month after leave"
         retained["male"] = parental_leave_response_table["retained_12_mts_male"]
-        retained["female"] = parental_leave_response_table[
-            "retained_12_mts_female"
-        ]
+        retained["female"] = parental_leave_response_table["retained_12_mts_female"]
         retained["total"] = parental_leave_response_table["retained_12_mts_total"]
         parental_leave.append(retained)
 
