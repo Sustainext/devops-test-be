@@ -16,6 +16,7 @@ from rest_framework import serializers
 from django.db.models import QuerySet
 from django.db.models import Sum
 from datametric.utils.analyse import filter_by_start_end_dates
+from rest_framework.exceptions import APIException
 import logging
 logger = logging.getLogger("django")
 
@@ -248,975 +249,968 @@ class EmploymentAnalyzeView(APIView):
             benefits_response_table,
             parental_leave_response_table,
         ) = self.get_response_dictionaries()
-        try:
-
-            print("new employ dps *****")
-            dp_employ_permanent = []
-            dp_employ_permanent_qs = []
-
-            dp_employ_full_time = []
-            dp_employ_temporary = []
-            dp_employ_non_guaranteed = []
-            dp_employ_part_time = []
-            dp_employ_permanent_qs = []
-            total_new_employs = len(new_employ_dps)
-
-            for dp in new_employ_dps:
-                if dp.path.slug == self.new_employee_paths["permanent"]:
-                    dp_employ_permanent.append(dp)
-                if dp.path.slug == self.new_employee_paths["temporary"]:
-                    dp_employ_temporary.append(dp)
-                if dp.path.slug == self.new_employee_paths["nonguaranteed"]:
-                    dp_employ_non_guaranteed.append(dp)
-                if dp.path.slug == self.new_employee_paths["fulltime"]:
-                    dp_employ_full_time.append(dp)
-                if dp.path.slug == self.new_employee_paths["parttime"]:
-                    dp_employ_part_time.append(dp)
-                # male, female, non-binary ==> index; 30,30-50, 50 is metric_name
-
-            # new_employee_permanent
-
-            if dp_employ_permanent:
-                dp_employ_permanent_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_permanent]
-                )
-            else:
-                dp_employ_permanent_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            ne_male_permanent_qs = dp_employ_permanent_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_female_permanent_qs = dp_employ_permanent_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_nb_permanent_qs = dp_employ_permanent_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            ne_permanent_30_qs = dp_employ_permanent_qs.filter(
-                metric_name="yearsold30"
-            ).aggregate(Sum("number_holder"))
-            ne_permanent_30_50_qs = dp_employ_permanent_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            ne_permanent_50_qs = dp_employ_permanent_qs.filter(
-                metric_name="yearsold50"
-            ).aggregate(Sum("number_holder"))
-
-            print(ne_male_permanent_qs["number_holder__sum"])
-            total_permanent = (
-                get_value(ne_male_permanent_qs["number_holder__sum"])
-                + get_value(ne_female_permanent_qs["number_holder__sum"])
-                + get_value(ne_nb_permanent_qs["number_holder__sum"])
-            )
-
-            ne_per_male_percent = safe_divide(
-                get_value(ne_male_permanent_qs["number_holder__sum"]), total_permanent
-            )
-            ne_per_female_percent = safe_divide(
-                get_value(ne_female_permanent_qs["number_holder__sum"]), total_permanent
-            )
-            ne_per_nb_percent = safe_divide(
-                get_value(ne_nb_permanent_qs["number_holder__sum"]), total_permanent
-            )
-            ne_permanent_30_pc = safe_divide(
-                get_value(ne_permanent_30_qs["number_holder__sum"]), total_permanent
-            )
-            ne_permanent_30_50_pc = safe_divide(
-                get_value(ne_permanent_30_50_qs["number_holder__sum"]), total_permanent
-            )
-            ne_permanent_50_pc = safe_divide(
-                get_value(ne_permanent_50_qs["number_holder__sum"]), total_permanent
-            )
-
-            new_employee_reponse_table["new_employee_permanent_male_percent"] = (
-                ne_per_male_percent
-            )
-            new_employee_reponse_table["new_employee_permanent_female_percent"] = (
-                ne_per_female_percent
-            )
-            new_employee_reponse_table["new_employee_permanent_non_binary_percent"] = (
-                ne_per_nb_percent
-            )
-            new_employee_reponse_table["new_employee_permanent_30_percent"] = (
-                ne_permanent_30_pc
-            )
-            new_employee_reponse_table["new_employee_permanent_30-50_percent"] = (
-                ne_permanent_30_50_pc
-            )
-            new_employee_reponse_table["new_employee_permanent_50_percent"] = (
-                ne_permanent_50_pc
-            )
-
-            # new_employee temporary
-
-            if dp_employ_temporary:
-                dp_employ_temporary_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_temporary]
-                )
-            else:
-                dp_employ_temporary_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            ne_male_temporary_qs = dp_employ_temporary_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_female_temporary_qs = dp_employ_temporary_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_nb_temporary_qs = dp_employ_temporary_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            ne_temporary_30_qs = dp_employ_temporary_qs.filter(
-                metric_name="yearsold30"
-            ).aggregate(Sum("number_holder"))
-            ne_temporary_30_50_qs = dp_employ_temporary_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            ne_temporary_50_qs = dp_employ_temporary_qs.filter(
-                metric_name="yearsold50"
-            ).aggregate(Sum("number_holder"))
-
-            print(ne_male_temporary_qs, ne_female_temporary_qs, ne_nb_temporary_qs)
-
-            total_temporary = (
-                get_value(ne_male_temporary_qs["number_holder__sum"])
-                + get_value(ne_female_temporary_qs["number_holder__sum"])
-                + get_value(ne_nb_temporary_qs["number_holder__sum"])
-            )
-
-            ne_temp_male_percent = safe_divide(
-                get_value(ne_male_temporary_qs["number_holder__sum"]), total_temporary
-            )
-            ne_temp_female_percent = safe_divide(
-                get_value(ne_female_temporary_qs["number_holder__sum"]), total_temporary
-            )
-            ne_temp_nb_percent = safe_divide(
-                get_value(ne_nb_temporary_qs["number_holder__sum"]), total_temporary
-            )
-            ne_temp_30_pc = safe_divide(
-                get_value(ne_temporary_30_qs["number_holder__sum"]), total_temporary
-            )
-            ne_temp_30_50_pc = safe_divide(
-                get_value(ne_temporary_30_50_qs["number_holder__sum"]), total_temporary
-            )
-            ne_temp_50_pc = safe_divide(
-                get_value(ne_temporary_50_qs["number_holder__sum"]), total_temporary
-            )
-
-            new_employee_reponse_table["new_employee_temporary_male_percent"] = (
-                ne_temp_male_percent
-            )
-            new_employee_reponse_table["new_employee_temporary_female_percent"] = (
-                ne_temp_female_percent
-            )
-            new_employee_reponse_table["new_employee_temporary_non_binary_percent"] = (
-                ne_temp_nb_percent
-            )
-            new_employee_reponse_table["new_employee_temporary_30_percent"] = (
-                ne_temp_30_pc
-            )
-            new_employee_reponse_table["new_employee_temporary_30-50_percent"] = (
-                ne_temp_30_50_pc
-            )
-            new_employee_reponse_table["new_employee_temporary_50_percent"] = (
-                ne_temp_50_pc
-            )
-
-            # new_employee non guaranteed
-
-            if dp_employ_non_guaranteed:
-                dp_employ_non_guaranteed_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_non_guaranteed]
-                )
-            else:
-                dp_employ_non_guaranteed_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            ne_male_ng_qs = dp_employ_non_guaranteed_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_female_ng_qs = dp_employ_non_guaranteed_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_nb_ng_qs = dp_employ_non_guaranteed_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            ne_ng_30_qs = dp_employ_non_guaranteed_qs.filter(
-                metric_name="yearsold30"
-            ).aggregate(Sum("number_holder"))
-            ne_ng_30_50_qs = dp_employ_non_guaranteed_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            ne_ng_50_qs = dp_employ_non_guaranteed_qs.filter(
-                metric_name="yearsold50"
-            ).aggregate(Sum("number_holder"))
-
-            total_ng = (
-                get_value(ne_male_ng_qs["number_holder__sum"])
-                + get_value(ne_female_ng_qs["number_holder__sum"])
-                + get_value(ne_nb_ng_qs["number_holder__sum"])
-            )
-
-            ne_ng_male_percent = safe_divide(
-                get_value(ne_male_ng_qs["number_holder__sum"]), total_ng
-            )
-            ne_ng_female_percent = safe_divide(
-                get_value(ne_female_ng_qs["number_holder__sum"]), total_ng
-            )
-            ne_ng_nb_percent = safe_divide(
-                get_value(ne_nb_ng_qs["number_holder__sum"]), total_ng
-            )
-            ne_ng_30_pc = safe_divide(
-                get_value(ne_ng_30_qs["number_holder__sum"]), total_ng
-            )
-            ne_ng_30_50_pc = safe_divide(
-                get_value(ne_ng_30_50_qs["number_holder__sum"]), total_ng
-            )
-            ne_ng_50_pc = safe_divide(
-                get_value(ne_ng_50_qs["number_holder__sum"]), total_ng
-            )
-
-            new_employee_reponse_table["new_employee_non_guaranteed_male_percent"] = (
-                ne_ng_male_percent
-            )
-            new_employee_reponse_table["new_employee_non_guaranteed_female_percent"] = (
-                ne_ng_female_percent
-            )
-            new_employee_reponse_table[
-                "new_employee_non_guaranteed_non_binary_percent"
-            ] = ne_ng_nb_percent
-            new_employee_reponse_table["new_employee_non_guaranteed_30_percent"] = (
-                ne_ng_30_pc
-            )
-            new_employee_reponse_table["new_employee_non_guaranteed_30-50_percent"] = (
-                ne_ng_30_50_pc
-            )
-            new_employee_reponse_table["new_employee_non_guaranteed_50_percent"] = (
-                ne_ng_50_pc
-            )
-
-            # new_employee full time
-
-            if dp_employ_full_time:
-                dp_employ_full_time_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_full_time]
-                )
-            else:
-                dp_employ_full_time_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            ne_male_ft_qs = dp_employ_full_time_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_female_ft_qs = dp_employ_full_time_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_nb_ft_qs = dp_employ_full_time_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            ne_ft_30_qs = dp_employ_full_time_qs.filter(
-                metric_name="yearsold30"
-            ).aggregate(Sum("number_holder"))
-            ne_ft_30_50_qs = dp_employ_full_time_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            ne_ft_50_qs = dp_employ_full_time_qs.filter(
-                metric_name="yearsold50"
-            ).aggregate(Sum("number_holder"))
-
-            total_ft = (
-                get_value(ne_male_ft_qs["number_holder__sum"])
-                + get_value(ne_female_ft_qs["number_holder__sum"])
-                + get_value(ne_nb_ft_qs["number_holder__sum"])
-            )
-
-            ne_ft_male_percent = safe_divide(
-                get_value(ne_male_ft_qs["number_holder__sum"]), total_ft
-            )
-            ne_ft_female_percent = safe_divide(
-                get_value(ne_female_ft_qs["number_holder__sum"]), total_ft
-            )
-            ne_ft_nb_percent = safe_divide(
-                get_value(ne_nb_ft_qs["number_holder__sum"]), total_ft
-            )
-            ne_ft_30_pc = safe_divide(
-                get_value(ne_ft_30_qs["number_holder__sum"]), total_ft
-            )
-            ne_ft_30_50_pc = safe_divide(
-                get_value(ne_ft_30_50_qs["number_holder__sum"]), total_ft
-            )
-            ne_ft_50_pc = safe_divide(
-                get_value(ne_ft_50_qs["number_holder__sum"]), total_ft
-            )
-
-            new_employee_reponse_table["new_employee_full_time_male_percent"] = (
-                ne_ft_male_percent
-            )
-            new_employee_reponse_table["new_employee_full_time_female_percent"] = (
-                ne_ft_female_percent
-            )
-            new_employee_reponse_table["new_employee_full_time_non_binary_percent"] = (
-                ne_ft_nb_percent
-            )
-            new_employee_reponse_table["new_employee_full_time_30_percent"] = (
-                ne_ft_30_pc
-            )
-            new_employee_reponse_table["new_employee_full_time_30-50_percent"] = (
-                ne_ft_30_50_pc
-            )
-            new_employee_reponse_table["new_employee_full_time_50_percent"] = (
-                ne_ft_50_pc
-            )
-
-            # new_employee part time
-
-            if dp_employ_part_time:
-                dp_employ_part_time_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_part_time]
-                )
-            else:
-                dp_employ_part_time_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            ne_male_pt_qs = dp_employ_part_time_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_female_pt_qs = dp_employ_part_time_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            ne_nb_pt_qs = dp_employ_part_time_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            ne_pt_30_qs = dp_employ_part_time_qs.filter(
-                metric_name="yearsold30"
-            ).aggregate(Sum("number_holder"))
-            ne_pt_30_50_qs = dp_employ_part_time_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            ne_pt_50_qs = dp_employ_part_time_qs.filter(
-                metric_name="yearsold50"
-            ).aggregate(Sum("number_holder"))
-
-            total_pt = (
-                get_value(ne_male_pt_qs["number_holder__sum"])
-                + get_value(ne_female_pt_qs["number_holder__sum"])
-                + get_value(ne_nb_pt_qs["number_holder__sum"])
-            )
-
-            ne_pt_male_percent = safe_divide(
-                get_value(ne_male_pt_qs["number_holder__sum"]), total_pt
-            )
-            ne_pt_female_percent = safe_divide(
-                get_value(ne_female_pt_qs["number_holder__sum"]), total_pt
-            )
-            ne_pt_nb_percent = safe_divide(
-                get_value(ne_nb_pt_qs["number_holder__sum"]), total_pt
-            )
-            ne_pt_30_pc = safe_divide(
-                get_value(ne_pt_30_qs["number_holder__sum"]), total_pt
-            )
-            ne_pt_30_50_pc = safe_divide(
-                get_value(ne_pt_30_50_qs["number_holder__sum"]), total_pt
-            )
-            ne_pt_50_pc = safe_divide(
-                get_value(ne_pt_50_qs["number_holder__sum"]), total_pt
-            )
-
-            new_employee_reponse_table["new_employee_part_time_male_percent"] = (
-                ne_pt_male_percent
-            )
-            new_employee_reponse_table["new_employee_part_time_female_percent"] = (
-                ne_pt_female_percent
-            )
-            new_employee_reponse_table["new_employee_part_time_non_binary_percent"] = (
-                ne_pt_nb_percent
-            )
-            new_employee_reponse_table["new_employee_part_time_30_percent"] = (
-                ne_pt_30_pc
-            )
-            new_employee_reponse_table["new_employee_part_time_30-50_percent"] = (
-                ne_pt_30_50_pc
-            )
-            new_employee_reponse_table["new_employee_part_time_50_percent"] = (
-                ne_pt_50_pc
-            )
-
-            # employee Turnover Response table
-
-            dp_employ_to_full_time = []
-            dp_employ_to_temporary = []
-            dp_employ_to_non_guaranteed = []
-            dp_employ_to_part_time = []
-            dp_employ_to_permanent = []
-
-            for dp in emp_turnover_dps:
-                if dp.path.slug == self.employee_turnover_paths["permanent"]:
-                    dp_employ_to_permanent.append(dp)
-                if dp.path.slug == self.employee_turnover_paths["temporary"]:
-                    dp_employ_to_temporary.append(dp)
-                if dp.path.slug == self.employee_turnover_paths["nonguaranteed"]:
-                    dp_employ_to_non_guaranteed.append(dp)
-                if dp.path.slug == self.employee_turnover_paths["fulltime"]:
-                    dp_employ_to_full_time.append(dp)
-                if dp.path.slug == self.employee_turnover_paths["parttime"]:
-                    dp_employ_to_part_time.append(dp)
-
-            # new_employee_turnover_permanent
-
-            if dp_employ_to_permanent:
-                dp_employ_to_permanent_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_to_permanent]
-                )
-            else:
-                dp_employ_to_permanent_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            et_male_permanent_qs = dp_employ_to_permanent_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_female_permanent_qs = dp_employ_to_permanent_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_nb_permanent_qs = dp_employ_to_permanent_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            et_permanent_30_qs = dp_employ_to_permanent_qs.filter(
-                metric_name="yearsold30"
-            ).aggregate(Sum("number_holder"))
-            et_permanent_30_50_qs = dp_employ_to_permanent_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            et_permanent_50_qs = dp_employ_to_permanent_qs.filter(
-                metric_name="yearsold50"
-            ).aggregate(Sum("number_holder"))
-
-            print(et_male_permanent_qs["number_holder__sum"])
-
-            total_permanent_eto = (
-                get_value(et_male_permanent_qs["number_holder__sum"])
-                + get_value(et_female_permanent_qs["number_holder__sum"])
-                + get_value(et_nb_permanent_qs["number_holder__sum"])
-            )
-
-            et_per_male_percent = safe_divide(
-                get_value(et_male_permanent_qs["number_holder__sum"]),
-                total_permanent_eto,
-            )
-            et_per_female_percent = safe_divide(
-                get_value(et_female_permanent_qs["number_holder__sum"]),
-                total_permanent_eto,
-            )
-            et_per_nb_percent = safe_divide(
-                get_value(et_nb_permanent_qs["number_holder__sum"]), total_permanent_eto
-            )
-            et_permanent_30_pc = safe_divide(
-                get_value(et_permanent_30_qs["number_holder__sum"]), total_permanent_eto
-            )
-            et_permanent_30_50_pc = safe_divide(
-                get_value(et_permanent_30_50_qs["number_holder__sum"]),
-                total_permanent_eto,
-            )
-            et_permanent_50_pc = safe_divide(
-                get_value(et_permanent_50_qs["number_holder__sum"]), total_permanent_eto
-            )
-
-            new_employee_reponse_table["employee_turnover_permanent_male_percent"] = (
-                et_per_male_percent
-            )
-            new_employee_reponse_table["employee_turnover_permanent_female_percent"] = (
-                et_per_female_percent
-            )
-            new_employee_reponse_table[
-                "employee_turnover_permanent_non_binary_percent"
-            ] = et_per_nb_percent
-            new_employee_reponse_table["employee_turnover_permanent_30_percent"] = (
-                et_permanent_30_pc
-            )
-            new_employee_reponse_table["employee_turnover_permanent_30-50_percent"] = (
-                et_permanent_30_50_pc
-            )
-            new_employee_reponse_table["employee_turnover_permanent_50_percent"] = (
-                et_permanent_50_pc
-            )
-
-            # new_employee_turnover_temporary
-
-            if dp_employ_to_temporary:
-                dp_employ_to_temporary_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_to_temporary]
-                )
-            else:
-                dp_employ_to_temporary_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            et_male_temporary_qs = dp_employ_to_temporary_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_female_temporary_qs = dp_employ_to_temporary_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_nb_temporary_qs = dp_employ_to_temporary_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            et_temporary_30_qs = dp_employ_to_temporary_qs.filter(
-                metric_name="yearsold30"
-            ).aggregate(Sum("number_holder"))
-            et_temporary_30_50_qs = dp_employ_to_temporary_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            et_temporary_50_qs = dp_employ_to_temporary_qs.filter(
-                metric_name="yearsold50"
-            ).aggregate(Sum("number_holder"))
-
-            print(et_temporary_30_qs["number_holder__sum"])
-
-            total_temporary_eto = (
-                get_value(et_male_temporary_qs["number_holder__sum"])
-                + get_value(et_female_temporary_qs["number_holder__sum"])
-                + get_value(et_nb_temporary_qs["number_holder__sum"])
-            )
-
-            et_temp_male_percent = safe_divide(
-                get_value(et_male_temporary_qs["number_holder__sum"]),
-                total_temporary_eto,
-            )
-            et_temp_female_percent = safe_divide(
-                get_value(et_female_temporary_qs["number_holder__sum"]),
-                total_temporary_eto,
-            )
-            et_temp_nb_percent = safe_divide(
-                get_value(et_nb_temporary_qs["number_holder__sum"]), total_temporary_eto
-            )
-            et_temp_30_pc = safe_divide(
-                get_value(et_temporary_30_qs["number_holder__sum"]), total_temporary_eto
-            )
-            et_temp_30_50_pc = safe_divide(
-                get_value(et_temporary_30_50_qs["number_holder__sum"]),
-                total_temporary_eto,
-            )
-            et_temp_50_pc = safe_divide(
-                get_value(et_temporary_50_qs["number_holder__sum"]), total_temporary_eto
-            )
-
-            new_employee_reponse_table["employee_turnover_temporary_male_percent"] = (
-                et_temp_male_percent
-            )
-            new_employee_reponse_table["employee_turnover_temporary_female_percent"] = (
-                et_temp_female_percent
-            )
-            new_employee_reponse_table[
-                "employee_turnover_temporary_non_binary_percent"
-            ] = et_temp_nb_percent
-            new_employee_reponse_table["employee_turnover_temporary_30_percent"] = (
-                et_temp_30_pc
-            )
-            new_employee_reponse_table["employee_turnover_temporary_30-50_percent"] = (
-                et_temp_30_50_pc
-            )
-            new_employee_reponse_table["employee_turnover_temporary_50_percent"] = (
-                et_temp_50_pc
-            )
-
-            # new_employee_turover _non guaranteed
-
-            if dp_employ_to_non_guaranteed:
-                dp_employ_to_ng_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_to_non_guaranteed]
-                )
-            else:
-                dp_employ_to_ng_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            et_male_ng_qs = dp_employ_to_ng_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_female_ng_qs = dp_employ_to_ng_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_nb_ng_qs = dp_employ_to_ng_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            et_ng_30_qs = dp_employ_to_ng_qs.filter(metric_name="yearsold30").aggregate(
-                Sum("number_holder")
-            )
-            et_ng_30_50_qs = dp_employ_to_ng_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            et_ng_50_qs = dp_employ_to_ng_qs.filter(metric_name="yearsold50").aggregate(
-                Sum("number_holder")
-            )
-
-            print(et_male_ng_qs["number_holder__sum"])
-
-            total_ng_eto = (
-                get_value(et_male_ng_qs["number_holder__sum"])
-                + get_value(et_female_ng_qs["number_holder__sum"])
-                + get_value(et_nb_ng_qs["number_holder__sum"])
-            )
-
-            et_ng_male_percent = safe_divide(
-                get_value(et_male_ng_qs["number_holder__sum"]), total_ng_eto
-            )
-            et_ng_female_percent = safe_divide(
-                get_value(et_female_ng_qs["number_holder__sum"]), total_ng_eto
-            )
-            et_ng_nb_percent = safe_divide(
-                get_value(et_nb_ng_qs["number_holder__sum"]), total_ng_eto
-            )
-            et_ng_30_pc = safe_divide(
-                get_value(et_ng_30_qs["number_holder__sum"]), total_ng_eto
-            )
-            et_ng_30_50_pc = safe_divide(
-                get_value(et_ng_30_50_qs["number_holder__sum"]), total_ng_eto
-            )
-            et_ng_50_pc = safe_divide(
-                get_value(et_ng_50_qs["number_holder__sum"]), total_ng_eto
-            )
-
-            new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_male_percent"
-            ] = et_ng_male_percent
-            new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_female_percent"
-            ] = et_ng_female_percent
-            new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_non_binary_percent"
-            ] = et_ng_nb_percent
-            new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_30_percent"
-            ] = et_ng_30_pc
-            new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_30-50_percent"
-            ] = et_ng_30_50_pc
-            new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_50_percent"
-            ] = et_ng_50_pc
-
-            # new_employee_turover _full_time
-
-            if dp_employ_to_full_time:
-                dp_employ_to_ft_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_to_full_time]
-                )
-            else:
-                dp_employ_to_ft_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            et_male_ft_qs = dp_employ_to_ft_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_female_ft_qs = dp_employ_to_ft_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_nb_ft_qs = dp_employ_to_ft_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            et_ft_30_qs = dp_employ_to_ft_qs.filter(metric_name="yearsold30").aggregate(
-                Sum("number_holder")
-            )
-            et_ft_30_50_qs = dp_employ_to_ft_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            et_ft_50_qs = dp_employ_to_ft_qs.filter(metric_name="yearsold50").aggregate(
-                Sum("number_holder")
-            )
-
-            print(et_male_ft_qs["number_holder__sum"])
-
-            total_ft_eto = (
-                get_value(et_male_ft_qs["number_holder__sum"])
-                + get_value(et_female_ft_qs["number_holder__sum"])
-                + get_value(et_nb_ft_qs["number_holder__sum"])
-            )
-
-            et_ft_male_percent = safe_divide(
-                get_value(et_male_ft_qs["number_holder__sum"]), total_ft_eto
-            )
-            et_ft_female_percent = safe_divide(
-                get_value(et_female_ft_qs["number_holder__sum"]), total_ft_eto
-            )
-            et_ft_nb_percent = safe_divide(
-                get_value(et_nb_ft_qs["number_holder__sum"]), total_ft_eto
-            )
-            et_ft_30_pc = safe_divide(
-                get_value(et_ft_30_qs["number_holder__sum"]), total_ft_eto
-            )
-            et_ft_30_50_pc = safe_divide(
-                get_value(et_ft_30_50_qs["number_holder__sum"]), total_ft_eto
-            )
-            et_ft_50_pc = safe_divide(
-                get_value(et_ft_50_qs["number_holder__sum"]), total_ft_eto
-            )
-
-            new_employee_reponse_table["employee_turnover_full_time_male_percent"] = (
-                et_ft_male_percent
-            )
-            new_employee_reponse_table["employee_turnover_full_time_female_percent"] = (
-                et_ft_female_percent
-            )
-            new_employee_reponse_table[
-                "employee_turnover_full_time_non_binary_percent"
-            ] = et_ft_nb_percent
-            new_employee_reponse_table["employee_turnover_full_time_30_percent"] = (
-                et_ft_30_pc
-            )
-            new_employee_reponse_table["employee_turnover_full_time_30-50_percent"] = (
-                et_ft_30_50_pc
-            )
-            new_employee_reponse_table["employee_turnover_full_time_50_percent"] = (
-                et_ft_50_pc
-            )
-
-            # new_employee_turover _parttime
-
-            if dp_employ_to_part_time:
-                dp_employ_to_pt_qs = DataPoint.objects.filter(
-                    id__in=[dp.id for dp in dp_employ_to_part_time]
-                )
-            else:
-                dp_employ_to_pt_qs = (
-                    DataPoint.objects.none()
-                )  # Assuming DataPoint is your model
-
-            et_male_pt_qs = dp_employ_to_pt_qs.filter(
-                index=0, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_female_pt_qs = dp_employ_to_pt_qs.filter(
-                index=1, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-            et_nb_pt_qs = dp_employ_to_pt_qs.filter(
-                index=2, metric_name="total"
-            ).aggregate(Sum("number_holder"))
-
-            et_pt_30_qs = dp_employ_to_pt_qs.filter(metric_name="yearsold30").aggregate(
-                Sum("number_holder")
-            )
-            et_pt_30_50_qs = dp_employ_to_pt_qs.filter(
-                metric_name="yearsold30to50"
-            ).aggregate(Sum("number_holder"))
-            et_pt_50_qs = dp_employ_to_pt_qs.filter(metric_name="yearsold50").aggregate(
-                Sum("number_holder")
-            )
-
-            print(et_male_pt_qs["number_holder__sum"])
-
-            total_pt_eto = (
-                get_value(et_male_pt_qs["number_holder__sum"])
-                + get_value(et_female_pt_qs["number_holder__sum"])
-                + get_value(et_nb_pt_qs["number_holder__sum"])
-            )
-
-            et_pt_male_percent = safe_divide(
-                get_value(et_male_pt_qs["number_holder__sum"]), total_pt_eto
-            )
-            et_pt_female_percent = safe_divide(
-                get_value(et_female_pt_qs["number_holder__sum"]), total_pt_eto
-            )
-            et_pt_nb_percent = safe_divide(
-                get_value(et_nb_pt_qs["number_holder__sum"]), total_pt_eto
-            )
-            et_pt_30_pc = safe_divide(
-                get_value(et_pt_30_qs["number_holder__sum"]), total_pt_eto
-            )
-            et_pt_30_50_pc = safe_divide(
-                get_value(et_pt_30_50_qs["number_holder__sum"]), total_pt_eto
-            )
-            et_pt_50_pc = safe_divide(
-                get_value(et_pt_50_qs["number_holder__sum"]), total_pt_eto
-            )
-
-            new_employee_reponse_table["employee_turnover_part_time_male_percent"] = (
-                et_pt_male_percent
-            )
-            new_employee_reponse_table["employee_turnover_part_time_female_percent"] = (
-                et_pt_female_percent
-            )
-            new_employee_reponse_table[
-                "employee_turnover_part_time_non_binary_percent"
-            ] = et_pt_nb_percent
-            new_employee_reponse_table["employee_turnover_part_time_30_percent"] = (
-                et_pt_30_pc
-            )
-            new_employee_reponse_table["employee_turnover_part_time_30-50_percent"] = (
-                et_pt_30_50_pc
-            )
-            new_employee_reponse_table["employee_turnover_part_time_50_percent"] = (
-                et_pt_50_pc
-            )
-
-            benefits_dps = benefits_data_points
-            parental_leave_dps = parental_leave_data_points
-
-            # parental leave first
-
-            parental_leave_response_table["entitlement_male"] = get_integer(
-                get_object_value(
-                    parental_leave_data_points.filter(
-                        index=0, metric_name="male"
-                    ).first()
-                )
-            )
-            parental_leave_response_table["entitlement_female"] = get_integer(
-                get_object_value(
-                    parental_leave_data_points.filter(
-                        index=0, metric_name="female"
-                    ).first()
-                )
-            )
-            parental_leave_response_table["entitlement_total"] = (
-                parental_leave_response_table["entitlement_male"]
-                + parental_leave_response_table["entitlement_female"]
-            )
-
-            parental_leave_response_table["taking_male"] = get_integer(
-                get_object_value(
-                    parental_leave_data_points.filter(
-                        index=1, metric_name="male"
-                    ).first()
-                )
-            )
-            parental_leave_response_table["taking_female"] = get_integer(
-                get_object_value(
-                    parental_leave_data_points.filter(
-                        index=1, metric_name="female"
-                    ).first()
-                )
-            )
-            parental_leave_response_table["taking_total"] = (
-                parental_leave_response_table["taking_male"]
-                + parental_leave_response_table["taking_female"]
-            )
-
-            parental_leave_response_table["return_to_post_work_male"] = get_integer(
-                get_object_value(
-                    parental_leave_data_points.filter(
-                        index=2, metric_name="male"
-                    ).first()
-                )
-            )
-            parental_leave_response_table["return_to_post_work_female"] = get_integer(
-                get_object_value(
-                    parental_leave_data_points.filter(
-                        index=2, metric_name="female"
-                    ).first()
-                )
-            )
-            parental_leave_response_table["return_to_post_work_total"] = (
-                parental_leave_response_table["return_to_post_work_male"]
-                + parental_leave_response_table["return_to_post_work_female"]
-            )
-
-            parental_leave_response_table["retained_12_mts_male"] = get_integer(
-                get_object_value(
-                    parental_leave_data_points.filter(
-                        index=3, metric_name="male"
-                    ).first()
-                )
-            )
-            parental_leave_response_table["retained_12_mts_female"] = get_integer(
-                get_object_value(
-                    parental_leave_data_points.filter(
-                        index=3, metric_name="female"
-                    ).first()
-                )
-            )
-            parental_leave_response_table["retained_12_mts_total"] = (
-                parental_leave_response_table["retained_12_mts_male"]
-                + parental_leave_response_table["retained_12_mts_female"]
-            )
 
-            # benefits table
-
-            benefits_response_table["life_insurance_full_time"] = get_object_value(
-                benefits_dps.filter(index=0, metric_name="fulltime").first()
-            )
-            benefits_response_table["life_insurance_part_time"] = get_object_value(
-                benefits_dps.filter(index=0, metric_name="parttime").first()
-            )
-            benefits_response_table["life_insurance_temporary"] = get_object_value(
-                benefits_dps.filter(index=0, metric_name="temporary").first()
-            )
-
-            benefits_response_table["healthcare_full_time"] = get_object_value(
-                benefits_dps.filter(index=1, metric_name="fulltime").first()
-            )
-            benefits_response_table["healthcare_part_time"] = get_object_value(
-                benefits_dps.filter(index=1, metric_name="parttime").first()
-            )
-            benefits_response_table["healthcare_temporary"] = get_object_value(
-                benefits_dps.filter(index=1, metric_name="temporary").first()
-            )
-
-            benefits_response_table["disability_cover_full_time"] = get_object_value(
-                benefits_dps.filter(index=2, metric_name="fulltime").first()
-            )
-            benefits_response_table["disability_cover_part_time"] = get_object_value(
-                benefits_dps.filter(index=2, metric_name="parttime").first()
-            )
-            benefits_response_table["disability_cover_temporary"] = get_object_value(
-                benefits_dps.filter(index=2, metric_name="temporary").first()
-            )
-
-            benefits_response_table["parental_leave_full_time"] = get_object_value(
-                benefits_dps.filter(index=3, metric_name="fulltime").first()
-            )
-            benefits_response_table["parental_leave_part_time"] = get_object_value(
-                benefits_dps.filter(index=3, metric_name="parttime").first()
-            )
-            benefits_response_table["parental_leave_temporary"] = get_object_value(
-                benefits_dps.filter(index=3, metric_name="temporary").first()
-            )
-
-            benefits_response_table["retirement_full_time"] = get_object_value(
-                benefits_dps.filter(index=4, metric_name="fulltime").first()
-            )
-            benefits_response_table["retirement_part_time"] = get_object_value(
-                benefits_dps.filter(index=4, metric_name="parttime").first()
-            )
-            benefits_response_table["retirement_temporary"] = get_object_value(
-                benefits_dps.filter(index=4, metric_name="temporary").first()
-            )
-
-            benefits_response_table["stock_ownership_full_time"] = get_object_value(
-                benefits_dps.filter(index=5, metric_name="fulltime").first()
-            )
-            benefits_response_table["stock_ownership_part_time"] = get_object_value(
-                benefits_dps.filter(index=5, metric_name="parttime").first()
-            )
-            benefits_response_table["stock_ownership_temporary"] = get_object_value(
-                benefits_dps.filter(index=5, metric_name="temporary").first()
-            )
-            return (
-                new_employee_reponse_table,
-                employee_turnover_reponse_table,
-                benefits_response_table,
-                parental_leave_response_table,
-            )
-        except Exception as e:
-            logger.error(e)
-            return Response(
-                {"error": "Error while processing data"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        print("new employ dps *****")
+        dp_employ_permanent = []
+        dp_employ_permanent_qs = []
+
+        dp_employ_full_time = []
+        dp_employ_temporary = []
+        dp_employ_non_guaranteed = []
+        dp_employ_part_time = []
+        dp_employ_permanent_qs = []
+        total_new_employs = len(new_employ_dps)
+
+        for dp in new_employ_dps:
+            if dp.path.slug == self.new_employee_paths["permanent"]:
+                dp_employ_permanent.append(dp)
+            if dp.path.slug == self.new_employee_paths["temporary"]:
+                dp_employ_temporary.append(dp)
+            if dp.path.slug == self.new_employee_paths["nonguaranteed"]:
+                dp_employ_non_guaranteed.append(dp)
+            if dp.path.slug == self.new_employee_paths["fulltime"]:
+                dp_employ_full_time.append(dp)
+            if dp.path.slug == self.new_employee_paths["parttime"]:
+                dp_employ_part_time.append(dp)
+            # male, female, non-binary ==> index; 30,30-50, 50 is metric_name
+
+        # new_employee_permanent
+
+        if dp_employ_permanent:
+            dp_employ_permanent_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_permanent]
+            )
+        else:
+            dp_employ_permanent_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        ne_male_permanent_qs = dp_employ_permanent_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_female_permanent_qs = dp_employ_permanent_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_nb_permanent_qs = dp_employ_permanent_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        ne_permanent_30_qs = dp_employ_permanent_qs.filter(
+            metric_name="yearsold30"
+        ).aggregate(Sum("number_holder"))
+        ne_permanent_30_50_qs = dp_employ_permanent_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        ne_permanent_50_qs = dp_employ_permanent_qs.filter(
+            metric_name="yearsold50"
+        ).aggregate(Sum("number_holder"))
+
+        print(ne_male_permanent_qs["number_holder__sum"])
+        total_permanent = (
+            get_value(ne_male_permanent_qs["number_holder__sum"])
+            + get_value(ne_female_permanent_qs["number_holder__sum"])
+            + get_value(ne_nb_permanent_qs["number_holder__sum"])
+        )
+
+        ne_per_male_percent = safe_divide(
+            get_value(ne_male_permanent_qs["number_holder__sum"]), total_permanent
+        )
+        ne_per_female_percent = safe_divide(
+            get_value(ne_female_permanent_qs["number_holder__sum"]), total_permanent
+        )
+        ne_per_nb_percent = safe_divide(
+            get_value(ne_nb_permanent_qs["number_holder__sum"]), total_permanent
+        )
+        ne_permanent_30_pc = safe_divide(
+            get_value(ne_permanent_30_qs["number_holder__sum"]), total_permanent
+        )
+        ne_permanent_30_50_pc = safe_divide(
+            get_value(ne_permanent_30_50_qs["number_holder__sum"]), total_permanent
+        )
+        ne_permanent_50_pc = safe_divide(
+            get_value(ne_permanent_50_qs["number_holder__sum"]), total_permanent
+        )
+
+        new_employee_reponse_table["new_employee_permanent_male_percent"] = (
+            ne_per_male_percent
+        )
+        new_employee_reponse_table["new_employee_permanent_female_percent"] = (
+            ne_per_female_percent
+        )
+        new_employee_reponse_table["new_employee_permanent_non_binary_percent"] = (
+            ne_per_nb_percent
+        )
+        new_employee_reponse_table["new_employee_permanent_30_percent"] = (
+            ne_permanent_30_pc
+        )
+        new_employee_reponse_table["new_employee_permanent_30-50_percent"] = (
+            ne_permanent_30_50_pc
+        )
+        new_employee_reponse_table["new_employee_permanent_50_percent"] = (
+            ne_permanent_50_pc
+        )
+
+        # new_employee temporary
+
+        if dp_employ_temporary:
+            dp_employ_temporary_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_temporary]
+            )
+        else:
+            dp_employ_temporary_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        ne_male_temporary_qs = dp_employ_temporary_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_female_temporary_qs = dp_employ_temporary_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_nb_temporary_qs = dp_employ_temporary_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        ne_temporary_30_qs = dp_employ_temporary_qs.filter(
+            metric_name="yearsold30"
+        ).aggregate(Sum("number_holder"))
+        ne_temporary_30_50_qs = dp_employ_temporary_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        ne_temporary_50_qs = dp_employ_temporary_qs.filter(
+            metric_name="yearsold50"
+        ).aggregate(Sum("number_holder"))
+
+        print(ne_male_temporary_qs, ne_female_temporary_qs, ne_nb_temporary_qs)
+
+        total_temporary = (
+            get_value(ne_male_temporary_qs["number_holder__sum"])
+            + get_value(ne_female_temporary_qs["number_holder__sum"])
+            + get_value(ne_nb_temporary_qs["number_holder__sum"])
+        )
+
+        ne_temp_male_percent = safe_divide(
+            get_value(ne_male_temporary_qs["number_holder__sum"]), total_temporary
+        )
+        ne_temp_female_percent = safe_divide(
+            get_value(ne_female_temporary_qs["number_holder__sum"]), total_temporary
+        )
+        ne_temp_nb_percent = safe_divide(
+            get_value(ne_nb_temporary_qs["number_holder__sum"]), total_temporary
+        )
+        ne_temp_30_pc = safe_divide(
+            get_value(ne_temporary_30_qs["number_holder__sum"]), total_temporary
+        )
+        ne_temp_30_50_pc = safe_divide(
+            get_value(ne_temporary_30_50_qs["number_holder__sum"]), total_temporary
+        )
+        ne_temp_50_pc = safe_divide(
+            get_value(ne_temporary_50_qs["number_holder__sum"]), total_temporary
+        )
+
+        new_employee_reponse_table["new_employee_temporary_male_percent"] = (
+            ne_temp_male_percent
+        )
+        new_employee_reponse_table["new_employee_temporary_female_percent"] = (
+            ne_temp_female_percent
+        )
+        new_employee_reponse_table["new_employee_temporary_non_binary_percent"] = (
+            ne_temp_nb_percent
+        )
+        new_employee_reponse_table["new_employee_temporary_30_percent"] = (
+            ne_temp_30_pc
+        )
+        new_employee_reponse_table["new_employee_temporary_30-50_percent"] = (
+            ne_temp_30_50_pc
+        )
+        new_employee_reponse_table["new_employee_temporary_50_percent"] = (
+            ne_temp_50_pc
+        )
+
+        # new_employee non guaranteed
+
+        if dp_employ_non_guaranteed:
+            dp_employ_non_guaranteed_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_non_guaranteed]
+            )
+        else:
+            dp_employ_non_guaranteed_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        ne_male_ng_qs = dp_employ_non_guaranteed_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_female_ng_qs = dp_employ_non_guaranteed_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_nb_ng_qs = dp_employ_non_guaranteed_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        ne_ng_30_qs = dp_employ_non_guaranteed_qs.filter(
+            metric_name="yearsold30"
+        ).aggregate(Sum("number_holder"))
+        ne_ng_30_50_qs = dp_employ_non_guaranteed_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        ne_ng_50_qs = dp_employ_non_guaranteed_qs.filter(
+            metric_name="yearsold50"
+        ).aggregate(Sum("number_holder"))
+
+        total_ng = (
+            get_value(ne_male_ng_qs["number_holder__sum"])
+            + get_value(ne_female_ng_qs["number_holder__sum"])
+            + get_value(ne_nb_ng_qs["number_holder__sum"])
+        )
+
+        ne_ng_male_percent = safe_divide(
+            get_value(ne_male_ng_qs["number_holder__sum"]), total_ng
+        )
+        ne_ng_female_percent = safe_divide(
+            get_value(ne_female_ng_qs["number_holder__sum"]), total_ng
+        )
+        ne_ng_nb_percent = safe_divide(
+            get_value(ne_nb_ng_qs["number_holder__sum"]), total_ng
+        )
+        ne_ng_30_pc = safe_divide(
+            get_value(ne_ng_30_qs["number_holder__sum"]), total_ng
+        )
+        ne_ng_30_50_pc = safe_divide(
+            get_value(ne_ng_30_50_qs["number_holder__sum"]), total_ng
+        )
+        ne_ng_50_pc = safe_divide(
+            get_value(ne_ng_50_qs["number_holder__sum"]), total_ng
+        )
+
+        new_employee_reponse_table["new_employee_non_guaranteed_male_percent"] = (
+            ne_ng_male_percent
+        )
+        new_employee_reponse_table["new_employee_non_guaranteed_female_percent"] = (
+            ne_ng_female_percent
+        )
+        new_employee_reponse_table[
+            "new_employee_non_guaranteed_non_binary_percent"
+        ] = ne_ng_nb_percent
+        new_employee_reponse_table["new_employee_non_guaranteed_30_percent"] = (
+            ne_ng_30_pc
+        )
+        new_employee_reponse_table["new_employee_non_guaranteed_30-50_percent"] = (
+            ne_ng_30_50_pc
+        )
+        new_employee_reponse_table["new_employee_non_guaranteed_50_percent"] = (
+            ne_ng_50_pc
+        )
+
+        # new_employee full time
+
+        if dp_employ_full_time:
+            dp_employ_full_time_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_full_time]
+            )
+        else:
+            dp_employ_full_time_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        ne_male_ft_qs = dp_employ_full_time_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_female_ft_qs = dp_employ_full_time_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_nb_ft_qs = dp_employ_full_time_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        ne_ft_30_qs = dp_employ_full_time_qs.filter(
+            metric_name="yearsold30"
+        ).aggregate(Sum("number_holder"))
+        ne_ft_30_50_qs = dp_employ_full_time_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        ne_ft_50_qs = dp_employ_full_time_qs.filter(
+            metric_name="yearsold50"
+        ).aggregate(Sum("number_holder"))
+
+        total_ft = (
+            get_value(ne_male_ft_qs["number_holder__sum"])
+            + get_value(ne_female_ft_qs["number_holder__sum"])
+            + get_value(ne_nb_ft_qs["number_holder__sum"])
+        )
+
+        ne_ft_male_percent = safe_divide(
+            get_value(ne_male_ft_qs["number_holder__sum"]), total_ft
+        )
+        ne_ft_female_percent = safe_divide(
+            get_value(ne_female_ft_qs["number_holder__sum"]), total_ft
+        )
+        ne_ft_nb_percent = safe_divide(
+            get_value(ne_nb_ft_qs["number_holder__sum"]), total_ft
+        )
+        ne_ft_30_pc = safe_divide(
+            get_value(ne_ft_30_qs["number_holder__sum"]), total_ft
+        )
+        ne_ft_30_50_pc = safe_divide(
+            get_value(ne_ft_30_50_qs["number_holder__sum"]), total_ft
+        )
+        ne_ft_50_pc = safe_divide(
+            get_value(ne_ft_50_qs["number_holder__sum"]), total_ft
+        )
+
+        new_employee_reponse_table["new_employee_full_time_male_percent"] = (
+            ne_ft_male_percent
+        )
+        new_employee_reponse_table["new_employee_full_time_female_percent"] = (
+            ne_ft_female_percent
+        )
+        new_employee_reponse_table["new_employee_full_time_non_binary_percent"] = (
+            ne_ft_nb_percent
+        )
+        new_employee_reponse_table["new_employee_full_time_30_percent"] = (
+            ne_ft_30_pc
+        )
+        new_employee_reponse_table["new_employee_full_time_30-50_percent"] = (
+            ne_ft_30_50_pc
+        )
+        new_employee_reponse_table["new_employee_full_time_50_percent"] = (
+            ne_ft_50_pc
+        )
+
+        # new_employee part time
+
+        if dp_employ_part_time:
+            dp_employ_part_time_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_part_time]
+            )
+        else:
+            dp_employ_part_time_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        ne_male_pt_qs = dp_employ_part_time_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_female_pt_qs = dp_employ_part_time_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_nb_pt_qs = dp_employ_part_time_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        ne_pt_30_qs = dp_employ_part_time_qs.filter(
+            metric_name="yearsold30"
+        ).aggregate(Sum("number_holder"))
+        ne_pt_30_50_qs = dp_employ_part_time_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        ne_pt_50_qs = dp_employ_part_time_qs.filter(
+            metric_name="yearsold50"
+        ).aggregate(Sum("number_holder"))
+
+        total_pt = (
+            get_value(ne_male_pt_qs["number_holder__sum"])
+            + get_value(ne_female_pt_qs["number_holder__sum"])
+            + get_value(ne_nb_pt_qs["number_holder__sum"])
+        )
+
+        ne_pt_male_percent = safe_divide(
+            get_value(ne_male_pt_qs["number_holder__sum"]), total_pt
+        )
+        ne_pt_female_percent = safe_divide(
+            get_value(ne_female_pt_qs["number_holder__sum"]), total_pt
+        )
+        ne_pt_nb_percent = safe_divide(
+            get_value(ne_nb_pt_qs["number_holder__sum"]), total_pt
+        )
+        ne_pt_30_pc = safe_divide(
+            get_value(ne_pt_30_qs["number_holder__sum"]), total_pt
+        )
+        ne_pt_30_50_pc = safe_divide(
+            get_value(ne_pt_30_50_qs["number_holder__sum"]), total_pt
+        )
+        ne_pt_50_pc = safe_divide(
+            get_value(ne_pt_50_qs["number_holder__sum"]), total_pt
+        )
+
+        new_employee_reponse_table["new_employee_part_time_male_percent"] = (
+            ne_pt_male_percent
+        )
+        new_employee_reponse_table["new_employee_part_time_female_percent"] = (
+            ne_pt_female_percent
+        )
+        new_employee_reponse_table["new_employee_part_time_non_binary_percent"] = (
+            ne_pt_nb_percent
+        )
+        new_employee_reponse_table["new_employee_part_time_30_percent"] = (
+            ne_pt_30_pc
+        )
+        new_employee_reponse_table["new_employee_part_time_30-50_percent"] = (
+            ne_pt_30_50_pc
+        )
+        new_employee_reponse_table["new_employee_part_time_50_percent"] = (
+            ne_pt_50_pc
+        )
+
+        # employee Turnover Response table
+
+        dp_employ_to_full_time = []
+        dp_employ_to_temporary = []
+        dp_employ_to_non_guaranteed = []
+        dp_employ_to_part_time = []
+        dp_employ_to_permanent = []
+
+        for dp in emp_turnover_dps:
+            if dp.path.slug == self.employee_turnover_paths["permanent"]:
+                dp_employ_to_permanent.append(dp)
+            if dp.path.slug == self.employee_turnover_paths["temporary"]:
+                dp_employ_to_temporary.append(dp)
+            if dp.path.slug == self.employee_turnover_paths["nonguaranteed"]:
+                dp_employ_to_non_guaranteed.append(dp)
+            if dp.path.slug == self.employee_turnover_paths["fulltime"]:
+                dp_employ_to_full_time.append(dp)
+            if dp.path.slug == self.employee_turnover_paths["parttime"]:
+                dp_employ_to_part_time.append(dp)
+
+        # new_employee_turnover_permanent
+
+        if dp_employ_to_permanent:
+            dp_employ_to_permanent_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_to_permanent]
+            )
+        else:
+            dp_employ_to_permanent_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        et_male_permanent_qs = dp_employ_to_permanent_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_female_permanent_qs = dp_employ_to_permanent_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_nb_permanent_qs = dp_employ_to_permanent_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        et_permanent_30_qs = dp_employ_to_permanent_qs.filter(
+            metric_name="yearsold30"
+        ).aggregate(Sum("number_holder"))
+        et_permanent_30_50_qs = dp_employ_to_permanent_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        et_permanent_50_qs = dp_employ_to_permanent_qs.filter(
+            metric_name="yearsold50"
+        ).aggregate(Sum("number_holder"))
+
+        print(et_male_permanent_qs["number_holder__sum"])
+
+        total_permanent_eto = (
+            get_value(et_male_permanent_qs["number_holder__sum"])
+            + get_value(et_female_permanent_qs["number_holder__sum"])
+            + get_value(et_nb_permanent_qs["number_holder__sum"])
+        )
+
+        et_per_male_percent = safe_divide(
+            get_value(et_male_permanent_qs["number_holder__sum"]),
+            total_permanent_eto,
+        )
+        et_per_female_percent = safe_divide(
+            get_value(et_female_permanent_qs["number_holder__sum"]),
+            total_permanent_eto,
+        )
+        et_per_nb_percent = safe_divide(
+            get_value(et_nb_permanent_qs["number_holder__sum"]), total_permanent_eto
+        )
+        et_permanent_30_pc = safe_divide(
+            get_value(et_permanent_30_qs["number_holder__sum"]), total_permanent_eto
+        )
+        et_permanent_30_50_pc = safe_divide(
+            get_value(et_permanent_30_50_qs["number_holder__sum"]),
+            total_permanent_eto,
+        )
+        et_permanent_50_pc = safe_divide(
+            get_value(et_permanent_50_qs["number_holder__sum"]), total_permanent_eto
+        )
+
+        new_employee_reponse_table["employee_turnover_permanent_male_percent"] = (
+            et_per_male_percent
+        )
+        new_employee_reponse_table["employee_turnover_permanent_female_percent"] = (
+            et_per_female_percent
+        )
+        new_employee_reponse_table[
+            "employee_turnover_permanent_non_binary_percent"
+        ] = et_per_nb_percent
+        new_employee_reponse_table["employee_turnover_permanent_30_percent"] = (
+            et_permanent_30_pc
+        )
+        new_employee_reponse_table["employee_turnover_permanent_30-50_percent"] = (
+            et_permanent_30_50_pc
+        )
+        new_employee_reponse_table["employee_turnover_permanent_50_percent"] = (
+            et_permanent_50_pc
+        )
+
+        # new_employee_turnover_temporary
+
+        if dp_employ_to_temporary:
+            dp_employ_to_temporary_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_to_temporary]
+            )
+        else:
+            dp_employ_to_temporary_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        et_male_temporary_qs = dp_employ_to_temporary_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_female_temporary_qs = dp_employ_to_temporary_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_nb_temporary_qs = dp_employ_to_temporary_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        et_temporary_30_qs = dp_employ_to_temporary_qs.filter(
+            metric_name="yearsold30"
+        ).aggregate(Sum("number_holder"))
+        et_temporary_30_50_qs = dp_employ_to_temporary_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        et_temporary_50_qs = dp_employ_to_temporary_qs.filter(
+            metric_name="yearsold50"
+        ).aggregate(Sum("number_holder"))
+
+        print(et_temporary_30_qs["number_holder__sum"])
+
+        total_temporary_eto = (
+            get_value(et_male_temporary_qs["number_holder__sum"])
+            + get_value(et_female_temporary_qs["number_holder__sum"])
+            + get_value(et_nb_temporary_qs["number_holder__sum"])
+        )
+
+        et_temp_male_percent = safe_divide(
+            get_value(et_male_temporary_qs["number_holder__sum"]),
+            total_temporary_eto,
+        )
+        et_temp_female_percent = safe_divide(
+            get_value(et_female_temporary_qs["number_holder__sum"]),
+            total_temporary_eto,
+        )
+        et_temp_nb_percent = safe_divide(
+            get_value(et_nb_temporary_qs["number_holder__sum"]), total_temporary_eto
+        )
+        et_temp_30_pc = safe_divide(
+            get_value(et_temporary_30_qs["number_holder__sum"]), total_temporary_eto
+        )
+        et_temp_30_50_pc = safe_divide(
+            get_value(et_temporary_30_50_qs["number_holder__sum"]),
+            total_temporary_eto,
+        )
+        et_temp_50_pc = safe_divide(
+            get_value(et_temporary_50_qs["number_holder__sum"]), total_temporary_eto
+        )
+
+        new_employee_reponse_table["employee_turnover_temporary_male_percent"] = (
+            et_temp_male_percent
+        )
+        new_employee_reponse_table["employee_turnover_temporary_female_percent"] = (
+            et_temp_female_percent
+        )
+        new_employee_reponse_table[
+            "employee_turnover_temporary_non_binary_percent"
+        ] = et_temp_nb_percent
+        new_employee_reponse_table["employee_turnover_temporary_30_percent"] = (
+            et_temp_30_pc
+        )
+        new_employee_reponse_table["employee_turnover_temporary_30-50_percent"] = (
+            et_temp_30_50_pc
+        )
+        new_employee_reponse_table["employee_turnover_temporary_50_percent"] = (
+            et_temp_50_pc
+        )
+
+        # new_employee_turover _non guaranteed
+
+        if dp_employ_to_non_guaranteed:
+            dp_employ_to_ng_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_to_non_guaranteed]
+            )
+        else:
+            dp_employ_to_ng_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        et_male_ng_qs = dp_employ_to_ng_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_female_ng_qs = dp_employ_to_ng_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_nb_ng_qs = dp_employ_to_ng_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        et_ng_30_qs = dp_employ_to_ng_qs.filter(metric_name="yearsold30").aggregate(
+            Sum("number_holder")
+        )
+        et_ng_30_50_qs = dp_employ_to_ng_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        et_ng_50_qs = dp_employ_to_ng_qs.filter(metric_name="yearsold50").aggregate(
+            Sum("number_holder")
+        )
+
+        print(et_male_ng_qs["number_holder__sum"])
+
+        total_ng_eto = (
+            get_value(et_male_ng_qs["number_holder__sum"])
+            + get_value(et_female_ng_qs["number_holder__sum"])
+            + get_value(et_nb_ng_qs["number_holder__sum"])
+        )
+
+        et_ng_male_percent = safe_divide(
+            get_value(et_male_ng_qs["number_holder__sum"]), total_ng_eto
+        )
+        et_ng_female_percent = safe_divide(
+            get_value(et_female_ng_qs["number_holder__sum"]), total_ng_eto
+        )
+        et_ng_nb_percent = safe_divide(
+            get_value(et_nb_ng_qs["number_holder__sum"]), total_ng_eto
+        )
+        et_ng_30_pc = safe_divide(
+            get_value(et_ng_30_qs["number_holder__sum"]), total_ng_eto
+        )
+        et_ng_30_50_pc = safe_divide(
+            get_value(et_ng_30_50_qs["number_holder__sum"]), total_ng_eto
+        )
+        et_ng_50_pc = safe_divide(
+            get_value(et_ng_50_qs["number_holder__sum"]), total_ng_eto
+        )
+
+        new_employee_reponse_table[
+            "employee_turnover_non_guaranteed_male_percent"
+        ] = et_ng_male_percent
+        new_employee_reponse_table[
+            "employee_turnover_non_guaranteed_female_percent"
+        ] = et_ng_female_percent
+        new_employee_reponse_table[
+            "employee_turnover_non_guaranteed_non_binary_percent"
+        ] = et_ng_nb_percent
+        new_employee_reponse_table[
+            "employee_turnover_non_guaranteed_30_percent"
+        ] = et_ng_30_pc
+        new_employee_reponse_table[
+            "employee_turnover_non_guaranteed_30-50_percent"
+        ] = et_ng_30_50_pc
+        new_employee_reponse_table[
+            "employee_turnover_non_guaranteed_50_percent"
+        ] = et_ng_50_pc
+
+        # new_employee_turover _full_time
+
+        if dp_employ_to_full_time:
+            dp_employ_to_ft_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_to_full_time]
+            )
+        else:
+            dp_employ_to_ft_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        et_male_ft_qs = dp_employ_to_ft_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_female_ft_qs = dp_employ_to_ft_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_nb_ft_qs = dp_employ_to_ft_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        et_ft_30_qs = dp_employ_to_ft_qs.filter(metric_name="yearsold30").aggregate(
+            Sum("number_holder")
+        )
+        et_ft_30_50_qs = dp_employ_to_ft_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        et_ft_50_qs = dp_employ_to_ft_qs.filter(metric_name="yearsold50").aggregate(
+            Sum("number_holder")
+        )
+
+        print(et_male_ft_qs["number_holder__sum"])
+
+        total_ft_eto = (
+            get_value(et_male_ft_qs["number_holder__sum"])
+            + get_value(et_female_ft_qs["number_holder__sum"])
+            + get_value(et_nb_ft_qs["number_holder__sum"])
+        )
+
+        et_ft_male_percent = safe_divide(
+            get_value(et_male_ft_qs["number_holder__sum"]), total_ft_eto
+        )
+        et_ft_female_percent = safe_divide(
+            get_value(et_female_ft_qs["number_holder__sum"]), total_ft_eto
+        )
+        et_ft_nb_percent = safe_divide(
+            get_value(et_nb_ft_qs["number_holder__sum"]), total_ft_eto
+        )
+        et_ft_30_pc = safe_divide(
+            get_value(et_ft_30_qs["number_holder__sum"]), total_ft_eto
+        )
+        et_ft_30_50_pc = safe_divide(
+            get_value(et_ft_30_50_qs["number_holder__sum"]), total_ft_eto
+        )
+        et_ft_50_pc = safe_divide(
+            get_value(et_ft_50_qs["number_holder__sum"]), total_ft_eto
+        )
+
+        new_employee_reponse_table["employee_turnover_full_time_male_percent"] = (
+            et_ft_male_percent
+        )
+        new_employee_reponse_table["employee_turnover_full_time_female_percent"] = (
+            et_ft_female_percent
+        )
+        new_employee_reponse_table[
+            "employee_turnover_full_time_non_binary_percent"
+        ] = et_ft_nb_percent
+        new_employee_reponse_table["employee_turnover_full_time_30_percent"] = (
+            et_ft_30_pc
+        )
+        new_employee_reponse_table["employee_turnover_full_time_30-50_percent"] = (
+            et_ft_30_50_pc
+        )
+        new_employee_reponse_table["employee_turnover_full_time_50_percent"] = (
+            et_ft_50_pc
+        )
+
+        # new_employee_turover _parttime
+
+        if dp_employ_to_part_time:
+            dp_employ_to_pt_qs = DataPoint.objects.filter(
+                id__in=[dp.id for dp in dp_employ_to_part_time]
+            )
+        else:
+            dp_employ_to_pt_qs = (
+                DataPoint.objects.none()
+            )  # Assuming DataPoint is your model
+
+        et_male_pt_qs = dp_employ_to_pt_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_female_pt_qs = dp_employ_to_pt_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        et_nb_pt_qs = dp_employ_to_pt_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+
+        et_pt_30_qs = dp_employ_to_pt_qs.filter(metric_name="yearsold30").aggregate(
+            Sum("number_holder")
+        )
+        et_pt_30_50_qs = dp_employ_to_pt_qs.filter(
+            metric_name="yearsold30to50"
+        ).aggregate(Sum("number_holder"))
+        et_pt_50_qs = dp_employ_to_pt_qs.filter(metric_name="yearsold50").aggregate(
+            Sum("number_holder")
+        )
+
+        print(et_male_pt_qs["number_holder__sum"])
+
+        total_pt_eto = (
+            get_value(et_male_pt_qs["number_holder__sum"])
+            + get_value(et_female_pt_qs["number_holder__sum"])
+            + get_value(et_nb_pt_qs["number_holder__sum"])
+        )
+
+        et_pt_male_percent = safe_divide(
+            get_value(et_male_pt_qs["number_holder__sum"]), total_pt_eto
+        )
+        et_pt_female_percent = safe_divide(
+            get_value(et_female_pt_qs["number_holder__sum"]), total_pt_eto
+        )
+        et_pt_nb_percent = safe_divide(
+            get_value(et_nb_pt_qs["number_holder__sum"]), total_pt_eto
+        )
+        et_pt_30_pc = safe_divide(
+            get_value(et_pt_30_qs["number_holder__sum"]), total_pt_eto
+        )
+        et_pt_30_50_pc = safe_divide(
+            get_value(et_pt_30_50_qs["number_holder__sum"]), total_pt_eto
+        )
+        et_pt_50_pc = safe_divide(
+            get_value(et_pt_50_qs["number_holder__sum"]), total_pt_eto
+        )
+
+        new_employee_reponse_table["employee_turnover_part_time_male_percent"] = (
+            et_pt_male_percent
+        )
+        new_employee_reponse_table["employee_turnover_part_time_female_percent"] = (
+            et_pt_female_percent
+        )
+        new_employee_reponse_table[
+            "employee_turnover_part_time_non_binary_percent"
+        ] = et_pt_nb_percent
+        new_employee_reponse_table["employee_turnover_part_time_30_percent"] = (
+            et_pt_30_pc
+        )
+        new_employee_reponse_table["employee_turnover_part_time_30-50_percent"] = (
+            et_pt_30_50_pc
+        )
+        new_employee_reponse_table["employee_turnover_part_time_50_percent"] = (
+            et_pt_50_pc
+        )
+
+        benefits_dps = benefits_data_points
+        parental_leave_dps = parental_leave_data_points
+
+        # parental leave first
+
+        parental_leave_response_table["entitlement_male"] = get_integer(
+            get_object_value(
+                parental_leave_data_points.filter(
+                    index=0, metric_name="male"
+                ).first()
+            )
+        )
+        parental_leave_response_table["entitlement_female"] = get_integer(
+            get_object_value(
+                parental_leave_data_points.filter(
+                    index=0, metric_name="female"
+                ).first()
+            )
+        )
+        parental_leave_response_table["entitlement_total"] = (
+            parental_leave_response_table["entitlement_male"]
+            + parental_leave_response_table["entitlement_female"]
+        )
+
+        parental_leave_response_table["taking_male"] = get_integer(
+            get_object_value(
+                parental_leave_data_points.filter(
+                    index=1, metric_name="male"
+                ).first()
+            )
+        )
+        parental_leave_response_table["taking_female"] = get_integer(
+            get_object_value(
+                parental_leave_data_points.filter(
+                    index=1, metric_name="female"
+                ).first()
+            )
+        )
+        parental_leave_response_table["taking_total"] = (
+            parental_leave_response_table["taking_male"]
+            + parental_leave_response_table["taking_female"]
+        )
+
+        parental_leave_response_table["return_to_post_work_male"] = get_integer(
+            get_object_value(
+                parental_leave_data_points.filter(
+                    index=2, metric_name="male"
+                ).first()
+            )
+        )
+        parental_leave_response_table["return_to_post_work_female"] = get_integer(
+            get_object_value(
+                parental_leave_data_points.filter(
+                    index=2, metric_name="female"
+                ).first()
+            )
+        )
+        parental_leave_response_table["return_to_post_work_total"] = (
+            parental_leave_response_table["return_to_post_work_male"]
+            + parental_leave_response_table["return_to_post_work_female"]
+        )
+
+        parental_leave_response_table["retained_12_mts_male"] = get_integer(
+            get_object_value(
+                parental_leave_data_points.filter(
+                    index=3, metric_name="male"
+                ).first()
+            )
+        )
+        parental_leave_response_table["retained_12_mts_female"] = get_integer(
+            get_object_value(
+                parental_leave_data_points.filter(
+                    index=3, metric_name="female"
+                ).first()
+            )
+        )
+        parental_leave_response_table["retained_12_mts_total"] = (
+            parental_leave_response_table["retained_12_mts_male"]
+            + parental_leave_response_table["retained_12_mts_female"]
+        )
+
+        # benefits table
+
+        benefits_response_table["life_insurance_full_time"] = get_object_value(
+            benefits_dps.filter(index=0, metric_name="fulltime").first()
+        )
+        benefits_response_table["life_insurance_part_time"] = get_object_value(
+            benefits_dps.filter(index=0, metric_name="parttime").first()
+        )
+        benefits_response_table["life_insurance_temporary"] = get_object_value(
+            benefits_dps.filter(index=0, metric_name="temporary").first()
+        )
+
+        benefits_response_table["healthcare_full_time"] = get_object_value(
+            benefits_dps.filter(index=1, metric_name="fulltime").first()
+        )
+        benefits_response_table["healthcare_part_time"] = get_object_value(
+            benefits_dps.filter(index=1, metric_name="parttime").first()
+        )
+        benefits_response_table["healthcare_temporary"] = get_object_value(
+            benefits_dps.filter(index=1, metric_name="temporary").first()
+        )
+
+        benefits_response_table["disability_cover_full_time"] = get_object_value(
+            benefits_dps.filter(index=2, metric_name="fulltime").first()
+        )
+        benefits_response_table["disability_cover_part_time"] = get_object_value(
+            benefits_dps.filter(index=2, metric_name="parttime").first()
+        )
+        benefits_response_table["disability_cover_temporary"] = get_object_value(
+            benefits_dps.filter(index=2, metric_name="temporary").first()
+        )
+
+        benefits_response_table["parental_leave_full_time"] = get_object_value(
+            benefits_dps.filter(index=3, metric_name="fulltime").first()
+        )
+        benefits_response_table["parental_leave_part_time"] = get_object_value(
+            benefits_dps.filter(index=3, metric_name="parttime").first()
+        )
+        benefits_response_table["parental_leave_temporary"] = get_object_value(
+            benefits_dps.filter(index=3, metric_name="temporary").first()
+        )
+
+        benefits_response_table["retirement_full_time"] = get_object_value(
+            benefits_dps.filter(index=4, metric_name="fulltime").first()
+        )
+        benefits_response_table["retirement_part_time"] = get_object_value(
+            benefits_dps.filter(index=4, metric_name="parttime").first()
+        )
+        benefits_response_table["retirement_temporary"] = get_object_value(
+            benefits_dps.filter(index=4, metric_name="temporary").first()
+        )
+
+        benefits_response_table["stock_ownership_full_time"] = get_object_value(
+            benefits_dps.filter(index=5, metric_name="fulltime").first()
+        )
+        benefits_response_table["stock_ownership_part_time"] = get_object_value(
+            benefits_dps.filter(index=5, metric_name="parttime").first()
+        )
+        benefits_response_table["stock_ownership_temporary"] = get_object_value(
+            benefits_dps.filter(index=5, metric_name="temporary").first()
+        )
+        return (
+            new_employee_reponse_table,
+            employee_turnover_reponse_table,
+            benefits_response_table,
+            parental_leave_response_table,
+        )
 
     def get(self, request, format=None):
         """
@@ -1263,393 +1257,396 @@ class EmploymentAnalyzeView(APIView):
             path__slug__in=self.employee_parental_leave_path_slugs,
             location__in=self.locations.values_list("name", flat=True),
         ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
-        # pushing for processing
-        (
-            new_employee_reponse_table,
-            employee_turnover_reponse_table,
-            benefits_response_table,
-            parental_leave_response_table,
-        ) = self.process_dataPoints(
-            new_emp_data_points,
-            emp_turnover_data_points,
-            benefits_data_points,
-            parental_leave_data_points,
-        )
-        # * Get top emissions by Scope
-        response_data = dict()
-        response_data["success_true"] = "true"
+            # pushing for processing
+        try:
+            (
+                new_employee_reponse_table,
+                employee_turnover_reponse_table,
+                benefits_response_table,
+                parental_leave_response_table,
+            ) = self.process_dataPoints(
+                new_emp_data_points,
+                emp_turnover_data_points,
+                benefits_data_points,
+                parental_leave_data_points,
+            )
+            # * Get top emissions by Scope
+            response_data = dict()
+            response_data["success_true"] = "true"
 
-        response_data["new_employee_hires"] = []
+            response_data["new_employee_hires"] = []
 
-        new_employee_permanent = {}
-        new_employee_permanent["type_of_employee"] = "Permanent employee"
-        new_employee_permanent["percentage_of_male_employee"] = (
-            new_employee_reponse_table["new_employee_permanent_male_percent"]
-        )
-        new_employee_permanent["percentage_of_female_employee"] = (
-            new_employee_reponse_table["new_employee_permanent_female_percent"]
-        )
-        new_employee_permanent["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table["new_employee_permanent_non_binary_percent"]
-        )
-        new_employee_permanent["yearsold30"] = new_employee_reponse_table[
-            "new_employee_permanent_30_percent"
-        ]
-        new_employee_permanent["yearsold50"] = new_employee_reponse_table[
-            "new_employee_permanent_50_percent"
-        ]
-        new_employee_permanent["yearsold30to50"] = new_employee_reponse_table[
-            "new_employee_permanent_30-50_percent"
-        ]
-        response_data["new_employee_hires"].append(new_employee_permanent)
-
-        new_employee_temporary = {}
-        new_employee_temporary["type_of_employee"] = "Temporary employee"
-        new_employee_temporary["percentage_of_male_employee"] = (
-            new_employee_reponse_table["new_employee_temporary_male_percent"]
-        )
-        new_employee_temporary["percentage_of_female_employee"] = (
-            new_employee_reponse_table["new_employee_temporary_female_percent"]
-        )
-        new_employee_temporary["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table["new_employee_temporary_non_binary_percent"]
-        )
-        new_employee_temporary["yearsold30"] = new_employee_reponse_table[
-            "new_employee_temporary_30_percent"
-        ]
-        new_employee_temporary["yearsold50"] = new_employee_reponse_table[
-            "new_employee_temporary_50_percent"
-        ]
-        new_employee_temporary["yearsold30to50"] = new_employee_reponse_table[
-            "new_employee_temporary_30-50_percent"
-        ]
-        response_data["new_employee_hires"].append(new_employee_temporary)
-
-        new_employee_non_guaranteed = {}
-        new_employee_non_guaranteed["type_of_employee"] = "Non guaranteed employee"
-        new_employee_non_guaranteed["percentage_of_male_employee"] = (
-            new_employee_reponse_table["new_employee_non_guaranteed_male_percent"]
-        )
-        new_employee_non_guaranteed["percentage_of_female_employee"] = (
-            new_employee_reponse_table["new_employee_non_guaranteed_female_percent"]
-        )
-        new_employee_non_guaranteed["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table["new_employee_non_guaranteed_non_binary_percent"]
-        )
-        new_employee_non_guaranteed["yearsold30"] = new_employee_reponse_table[
-            "new_employee_non_guaranteed_30_percent"
-        ]
-        new_employee_non_guaranteed["yearsold50"] = new_employee_reponse_table[
-            "new_employee_non_guaranteed_30-50_percent"
-        ]
-        new_employee_non_guaranteed["yearsold30to50"] = new_employee_reponse_table[
-            "new_employee_temporary_30-50_percent"
-        ]
-        response_data["new_employee_hires"].append(new_employee_non_guaranteed)
-
-        new_employee_full_time = {}
-        new_employee_full_time["type_of_employee"] = "Full Time employee"
-        new_employee_full_time["percentage_of_male_employee"] = (
-            new_employee_reponse_table["new_employee_full_time_male_percent"]
-        )
-        new_employee_full_time["percentage_of_female_employee"] = (
-            new_employee_reponse_table["new_employee_full_time_female_percent"]
-        )
-        new_employee_full_time["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table["new_employee_full_time_non_binary_percent"]
-        )
-        new_employee_full_time["yearsold30"] = new_employee_reponse_table[
-            "new_employee_full_time_30_percent"
-        ]
-        new_employee_full_time["yearsold50"] = new_employee_reponse_table[
-            "new_employee_full_time_30-50_percent"
-        ]
-        new_employee_full_time["yearsold30to50"] = new_employee_reponse_table[
-            "new_employee_full_time_50_percent"
-        ]
-        response_data["new_employee_hires"].append(new_employee_full_time)
-
-        new_employee_part_time = {}
-        new_employee_part_time["type_of_employee"] = "Part time employee"
-        new_employee_part_time["percentage_of_male_employee"] = (
-            new_employee_reponse_table["new_employee_part_time_male_percent"]
-        )
-        new_employee_part_time["percentage_of_female_employee"] = (
-            new_employee_reponse_table["new_employee_part_time_female_percent"]
-        )
-        new_employee_part_time["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table["new_employee_part_time_non_binary_percent"]
-        )
-        new_employee_part_time["yearsold30"] = new_employee_reponse_table[
-            "new_employee_part_time_30_percent"
-        ]
-        new_employee_part_time["yearsold50"] = new_employee_reponse_table[
-            "new_employee_part_time_30-50_percent"
-        ]
-        new_employee_part_time["yearsold30to50"] = new_employee_reponse_table[
-            "new_employee_part_time_50_percent"
-        ]
-        response_data["new_employee_hires"].append(new_employee_part_time)
-
-        response_data["employee_turnover"] = []
-
-        employee_turnover_permanent = {}
-        employee_turnover_permanent["type_of_employee"] = "Permanent employee"
-        employee_turnover_permanent["percentage_of_male_employee"] = (
-            new_employee_reponse_table["employee_turnover_permanent_male_percent"]
-        )
-        employee_turnover_permanent["percentage_of_female_employee"] = (
-            new_employee_reponse_table["employee_turnover_permanent_female_percent"]
-        )
-        employee_turnover_permanent["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table["employee_turnover_permanent_non_binary_percent"]
-        )
-        employee_turnover_permanent["yearsold30"] = new_employee_reponse_table[
-            "employee_turnover_permanent_30_percent"
-        ]
-        employee_turnover_permanent["yearsold50"] = new_employee_reponse_table[
-            "employee_turnover_permanent_50_percent"
-        ]
-        employee_turnover_permanent["yearsold30to50"] = new_employee_reponse_table[
-            "employee_turnover_permanent_50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_permanent)
-
-        employee_turnover_temporary = {}
-        employee_turnover_temporary["type_of_employee"] = "Temporary employee"
-        employee_turnover_temporary["percentage_of_male_employee"] = (
-            new_employee_reponse_table["employee_turnover_temporary_male_percent"]
-        )
-        employee_turnover_temporary["percentage_of_female_employee"] = (
-            new_employee_reponse_table["employee_turnover_temporary_female_percent"]
-        )
-        employee_turnover_temporary["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table["employee_turnover_temporary_non_binary_percent"]
-        )
-        employee_turnover_temporary["yearsold30"] = new_employee_reponse_table[
-            "employee_turnover_temporary_30_percent"
-        ]
-        employee_turnover_temporary["yearsold50"] = new_employee_reponse_table[
-            "employee_turnover_temporary_50_percent"
-        ]
-        employee_turnover_temporary["yearsold30to50"] = new_employee_reponse_table[
-            "employee_turnover_temporary_30-50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_temporary)
-
-        employee_turnover_ng = {}
-        employee_turnover_ng["type_of_employee"] = "Non Guaranteed employee"
-        employee_turnover_ng["percentage_of_male_employee"] = (
-            new_employee_reponse_table["employee_turnover_non_guaranteed_male_percent"]
-        )
-        employee_turnover_ng["percentage_of_female_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_female_percent"
+            new_employee_permanent = {}
+            new_employee_permanent["type_of_employee"] = "Permanent employee"
+            new_employee_permanent["percentage_of_male_employee"] = (
+                new_employee_reponse_table["new_employee_permanent_male_percent"]
+            )
+            new_employee_permanent["percentage_of_female_employee"] = (
+                new_employee_reponse_table["new_employee_permanent_female_percent"]
+            )
+            new_employee_permanent["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table["new_employee_permanent_non_binary_percent"]
+            )
+            new_employee_permanent["yearsold30"] = new_employee_reponse_table[
+                "new_employee_permanent_30_percent"
             ]
-        )
-        employee_turnover_ng["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_non_binary_percent"
+            new_employee_permanent["yearsold50"] = new_employee_reponse_table[
+                "new_employee_permanent_50_percent"
             ]
-        )
-        employee_turnover_ng["yearsold30"] = new_employee_reponse_table[
-            "employee_turnover_non_guaranteed_30_percent"
-        ]
-        employee_turnover_ng["yearsold50"] = new_employee_reponse_table[
-            "employee_turnover_non_guaranteed_50_percent"
-        ]
-        employee_turnover_ng["yearsold30to50"] = new_employee_reponse_table[
-            "employee_turnover_non_guaranteed_30-50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_ng)
+            new_employee_permanent["yearsold30to50"] = new_employee_reponse_table[
+                "new_employee_permanent_30-50_percent"
+            ]
+            response_data["new_employee_hires"].append(new_employee_permanent)
 
-        employee_turnover_ft = {}
-        employee_turnover_ft["type_of_employee"] = "Full time employee"
-        employee_turnover_ft["percentage_of_male_employee"] = (
-            new_employee_reponse_table["employee_turnover_full_time_male_percent"]
-        )
-        employee_turnover_ft["percentage_of_female_employee"] = (
-            new_employee_reponse_table["employee_turnover_full_time_female_percent"]
-        )
-        employee_turnover_ft["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table["employee_turnover_full_time_non_binary_percent"]
-        )
-        employee_turnover_ft["yearsold30"] = new_employee_reponse_table[
-            "employee_turnover_full_time_30_percent"
-        ]
-        employee_turnover_ft["yearsold50"] = new_employee_reponse_table[
-            "employee_turnover_full_time_50_percent"
-        ]
-        employee_turnover_ft["yearsold30to50"] = new_employee_reponse_table[
-            "employee_turnover_full_time_30-50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_ft)
+            new_employee_temporary = {}
+            new_employee_temporary["type_of_employee"] = "Temporary employee"
+            new_employee_temporary["percentage_of_male_employee"] = (
+                new_employee_reponse_table["new_employee_temporary_male_percent"]
+            )
+            new_employee_temporary["percentage_of_female_employee"] = (
+                new_employee_reponse_table["new_employee_temporary_female_percent"]
+            )
+            new_employee_temporary["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table["new_employee_temporary_non_binary_percent"]
+            )
+            new_employee_temporary["yearsold30"] = new_employee_reponse_table[
+                "new_employee_temporary_30_percent"
+            ]
+            new_employee_temporary["yearsold50"] = new_employee_reponse_table[
+                "new_employee_temporary_50_percent"
+            ]
+            new_employee_temporary["yearsold30to50"] = new_employee_reponse_table[
+                "new_employee_temporary_30-50_percent"
+            ]
+            response_data["new_employee_hires"].append(new_employee_temporary)
 
-        employee_turnover_pt = {}
-        employee_turnover_pt["type_of_employee"] = "Part time employee"
-        employee_turnover_pt["percentage_of_male_employee"] = (
-            new_employee_reponse_table["employee_turnover_part_time_male_percent"]
-        )
-        employee_turnover_pt["percentage_of_female_employee"] = (
-            new_employee_reponse_table["employee_turnover_part_time_female_percent"]
-        )
-        employee_turnover_pt["percentage_of_non_binary_employee"] = (
-            new_employee_reponse_table["employee_turnover_part_time_non_binary_percent"]
-        )
-        employee_turnover_pt["yearsold30"] = new_employee_reponse_table[
-            "employee_turnover_part_time_30_percent"
-        ]
-        employee_turnover_pt["yearsold50"] = new_employee_reponse_table[
-            "employee_turnover_part_time_50_percent"
-        ]
-        employee_turnover_pt["yearsold30to50"] = new_employee_reponse_table[
-            "employee_turnover_part_time_30-50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_pt)
+            new_employee_non_guaranteed = {}
+            new_employee_non_guaranteed["type_of_employee"] = "Non guaranteed employee"
+            new_employee_non_guaranteed["percentage_of_male_employee"] = (
+                new_employee_reponse_table["new_employee_non_guaranteed_male_percent"]
+            )
+            new_employee_non_guaranteed["percentage_of_female_employee"] = (
+                new_employee_reponse_table["new_employee_non_guaranteed_female_percent"]
+            )
+            new_employee_non_guaranteed["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table["new_employee_non_guaranteed_non_binary_percent"]
+            )
+            new_employee_non_guaranteed["yearsold30"] = new_employee_reponse_table[
+                "new_employee_non_guaranteed_30_percent"
+            ]
+            new_employee_non_guaranteed["yearsold50"] = new_employee_reponse_table[
+                "new_employee_non_guaranteed_30-50_percent"
+            ]
+            new_employee_non_guaranteed["yearsold30to50"] = new_employee_reponse_table[
+                "new_employee_temporary_30-50_percent"
+            ]
+            response_data["new_employee_hires"].append(new_employee_non_guaranteed)
 
-        #       "benefits": [
-        # {
-        #   "temporary": true,
-        #   "significantlocation": "",
-        #   "benefits": "Parental Leave",
-        #   "fulltime": true,
-        #   "parttime": false
-        # },
+            new_employee_full_time = {}
+            new_employee_full_time["type_of_employee"] = "Full Time employee"
+            new_employee_full_time["percentage_of_male_employee"] = (
+                new_employee_reponse_table["new_employee_full_time_male_percent"]
+            )
+            new_employee_full_time["percentage_of_female_employee"] = (
+                new_employee_reponse_table["new_employee_full_time_female_percent"]
+            )
+            new_employee_full_time["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table["new_employee_full_time_non_binary_percent"]
+            )
+            new_employee_full_time["yearsold30"] = new_employee_reponse_table[
+                "new_employee_full_time_30_percent"
+            ]
+            new_employee_full_time["yearsold50"] = new_employee_reponse_table[
+                "new_employee_full_time_30-50_percent"
+            ]
+            new_employee_full_time["yearsold30to50"] = new_employee_reponse_table[
+                "new_employee_full_time_50_percent"
+            ]
+            response_data["new_employee_hires"].append(new_employee_full_time)
 
-        all_benefits = []
-        benefits_life_insurance = {}
-        benefits_life_insurance["temporary"] = benefits_response_table[
-            "life_insurance_temporary"
-        ]
-        benefits_life_insurance["significantlocation"] = ""
-        benefits_life_insurance["benefits"] = "Parental Leave"
-        benefits_life_insurance["fulltime"] = benefits_response_table[
-            "life_insurance_full_time"
-        ]
-        benefits_life_insurance["parttime"] = benefits_response_table[
-            "life_insurance_part_time"
-        ]
-        all_benefits.append(benefits_life_insurance)
+            new_employee_part_time = {}
+            new_employee_part_time["type_of_employee"] = "Part time employee"
+            new_employee_part_time["percentage_of_male_employee"] = (
+                new_employee_reponse_table["new_employee_part_time_male_percent"]
+            )
+            new_employee_part_time["percentage_of_female_employee"] = (
+                new_employee_reponse_table["new_employee_part_time_female_percent"]
+            )
+            new_employee_part_time["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table["new_employee_part_time_non_binary_percent"]
+            )
+            new_employee_part_time["yearsold30"] = new_employee_reponse_table[
+                "new_employee_part_time_30_percent"
+            ]
+            new_employee_part_time["yearsold50"] = new_employee_reponse_table[
+                "new_employee_part_time_30-50_percent"
+            ]
+            new_employee_part_time["yearsold30to50"] = new_employee_reponse_table[
+                "new_employee_part_time_50_percent"
+            ]
+            response_data["new_employee_hires"].append(new_employee_part_time)
 
-        benefits_healthcare = {}
-        benefits_healthcare["temporary"] = benefits_response_table[
-            "healthcare_temporary"
-        ]
-        benefits_healthcare["significantlocation"] = ""
-        benefits_healthcare["benefits"] = "Healthcare"
-        benefits_healthcare["fulltime"] = benefits_response_table[
-            "healthcare_full_time"
-        ]
-        benefits_healthcare["parttime"] = benefits_response_table[
-            "healthcare_part_time"
-        ]
-        all_benefits.append(benefits_healthcare)
+            response_data["employee_turnover"] = []
 
-        benefits_disability_cover = {}
-        benefits_disability_cover["temporary"] = benefits_response_table[
-            "disability_cover_temporary"
-        ]
-        benefits_disability_cover["significantlocation"] = ""
-        benefits_disability_cover["benefits"] = "Disability Cover"
-        benefits_disability_cover["fulltime"] = benefits_response_table[
-            "disability_cover_full_time"
-        ]
-        benefits_disability_cover["parttime"] = benefits_response_table[
-            "disability_cover_part_time"
-        ]
-        all_benefits.append(benefits_disability_cover)
+            employee_turnover_permanent = {}
+            employee_turnover_permanent["type_of_employee"] = "Permanent employee"
+            employee_turnover_permanent["percentage_of_male_employee"] = (
+                new_employee_reponse_table["employee_turnover_permanent_male_percent"]
+            )
+            employee_turnover_permanent["percentage_of_female_employee"] = (
+                new_employee_reponse_table["employee_turnover_permanent_female_percent"]
+            )
+            employee_turnover_permanent["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table["employee_turnover_permanent_non_binary_percent"]
+            )
+            employee_turnover_permanent["yearsold30"] = new_employee_reponse_table[
+                "employee_turnover_permanent_30_percent"
+            ]
+            employee_turnover_permanent["yearsold50"] = new_employee_reponse_table[
+                "employee_turnover_permanent_50_percent"
+            ]
+            employee_turnover_permanent["yearsold30to50"] = new_employee_reponse_table[
+                "employee_turnover_permanent_50_percent"
+            ]
+            response_data["employee_turnover"].append(employee_turnover_permanent)
 
-        benefits_parental_leave = {}
-        benefits_parental_leave["temporary"] = benefits_response_table[
-            "parental_leave_temporary"
-        ]
-        benefits_parental_leave["significantlocation"] = ""
-        benefits_parental_leave["benefits"] = "Parental Leave"
-        benefits_parental_leave["fulltime"] = benefits_response_table[
-            "parental_leave_full_time"
-        ]
-        benefits_parental_leave["parttime"] = benefits_response_table[
-            "parental_leave_part_time"
-        ]
-        all_benefits.append(benefits_parental_leave)
+            employee_turnover_temporary = {}
+            employee_turnover_temporary["type_of_employee"] = "Temporary employee"
+            employee_turnover_temporary["percentage_of_male_employee"] = (
+                new_employee_reponse_table["employee_turnover_temporary_male_percent"]
+            )
+            employee_turnover_temporary["percentage_of_female_employee"] = (
+                new_employee_reponse_table["employee_turnover_temporary_female_percent"]
+            )
+            employee_turnover_temporary["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table["employee_turnover_temporary_non_binary_percent"]
+            )
+            employee_turnover_temporary["yearsold30"] = new_employee_reponse_table[
+                "employee_turnover_temporary_30_percent"
+            ]
+            employee_turnover_temporary["yearsold50"] = new_employee_reponse_table[
+                "employee_turnover_temporary_50_percent"
+            ]
+            employee_turnover_temporary["yearsold30to50"] = new_employee_reponse_table[
+                "employee_turnover_temporary_30-50_percent"
+            ]
+            response_data["employee_turnover"].append(employee_turnover_temporary)
 
-        benefits_retirement = {}
-        benefits_retirement["temporary"] = benefits_response_table[
-            "retirement_temporary"
-        ]
-        benefits_retirement["significantlocation"] = ""
-        benefits_retirement["benefits"] = "Retirement Provisions"
-        benefits_retirement["fulltime"] = benefits_response_table[
-            "retirement_full_time"
-        ]
-        benefits_retirement["parttime"] = benefits_response_table[
-            "retirement_part_time"
-        ]
-        all_benefits.append(benefits_retirement)
+            employee_turnover_ng = {}
+            employee_turnover_ng["type_of_employee"] = "Non Guaranteed employee"
+            employee_turnover_ng["percentage_of_male_employee"] = (
+                new_employee_reponse_table["employee_turnover_non_guaranteed_male_percent"]
+            )
+            employee_turnover_ng["percentage_of_female_employee"] = (
+                new_employee_reponse_table[
+                    "employee_turnover_non_guaranteed_female_percent"
+                ]
+            )
+            employee_turnover_ng["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table[
+                    "employee_turnover_non_guaranteed_non_binary_percent"
+                ]
+            )
+            employee_turnover_ng["yearsold30"] = new_employee_reponse_table[
+                "employee_turnover_non_guaranteed_30_percent"
+            ]
+            employee_turnover_ng["yearsold50"] = new_employee_reponse_table[
+                "employee_turnover_non_guaranteed_50_percent"
+            ]
+            employee_turnover_ng["yearsold30to50"] = new_employee_reponse_table[
+                "employee_turnover_non_guaranteed_30-50_percent"
+            ]
+            response_data["employee_turnover"].append(employee_turnover_ng)
 
-        benefits_stock_ownership = {}
-        benefits_stock_ownership["temporary"] = benefits_response_table[
-            "stock_ownership_temporary"
-        ]
-        benefits_stock_ownership["significantlocation"] = ""
-        benefits_stock_ownership["benefits"] = "Stock Ownership"
-        benefits_stock_ownership["fulltime"] = benefits_response_table[
-            "stock_ownership_full_time"
-        ]
-        benefits_stock_ownership["parttime"] = benefits_response_table[
-            "stock_ownership_part_time"
-        ]
-        all_benefits.append(benefits_stock_ownership)
+            employee_turnover_ft = {}
+            employee_turnover_ft["type_of_employee"] = "Full time employee"
+            employee_turnover_ft["percentage_of_male_employee"] = (
+                new_employee_reponse_table["employee_turnover_full_time_male_percent"]
+            )
+            employee_turnover_ft["percentage_of_female_employee"] = (
+                new_employee_reponse_table["employee_turnover_full_time_female_percent"]
+            )
+            employee_turnover_ft["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table["employee_turnover_full_time_non_binary_percent"]
+            )
+            employee_turnover_ft["yearsold30"] = new_employee_reponse_table[
+                "employee_turnover_full_time_30_percent"
+            ]
+            employee_turnover_ft["yearsold50"] = new_employee_reponse_table[
+                "employee_turnover_full_time_50_percent"
+            ]
+            employee_turnover_ft["yearsold30to50"] = new_employee_reponse_table[
+                "employee_turnover_full_time_30-50_percent"
+            ]
+            response_data["employee_turnover"].append(employee_turnover_ft)
 
-        response_data["benefits"] = all_benefits
+            employee_turnover_pt = {}
+            employee_turnover_pt["type_of_employee"] = "Part time employee"
+            employee_turnover_pt["percentage_of_male_employee"] = (
+                new_employee_reponse_table["employee_turnover_part_time_male_percent"]
+            )
+            employee_turnover_pt["percentage_of_female_employee"] = (
+                new_employee_reponse_table["employee_turnover_part_time_female_percent"]
+            )
+            employee_turnover_pt["percentage_of_non_binary_employee"] = (
+                new_employee_reponse_table["employee_turnover_part_time_non_binary_percent"]
+            )
+            employee_turnover_pt["yearsold30"] = new_employee_reponse_table[
+                "employee_turnover_part_time_30_percent"
+            ]
+            employee_turnover_pt["yearsold50"] = new_employee_reponse_table[
+                "employee_turnover_part_time_50_percent"
+            ]
+            employee_turnover_pt["yearsold30to50"] = new_employee_reponse_table[
+                "employee_turnover_part_time_30-50_percent"
+            ]
+            response_data["employee_turnover"].append(employee_turnover_pt)
 
-        #           "parental_leave": [
-        #     {
-        #         "employee_category": "Parental Leave Entitlement",
-        #         "male": 0,
-        #         "female":0,
-        #         "total": 0
-        #     },
-        #     {
-        #         "employee_category": "Taking Parental Leave",
-        #         "male": 0,
-        #         "female": 0,
-        #         "total": 0
-        #     }
-        # ]
+            #       "benefits": [
+            # {
+            #   "temporary": true,
+            #   "significantlocation": "",
+            #   "benefits": "Parental Leave",
+            #   "fulltime": true,
+            #   "parttime": false
+            # },
 
-        parental_leave = []
-        entitlement = {}
-        entitlement["employee_category"] = "Parental Leave Entitlement"
-        entitlement["male"] = parental_leave_response_table["entitlement_male"]
-        entitlement["female"] = parental_leave_response_table["entitlement_female"]
-        entitlement["total"] = parental_leave_response_table["entitlement_total"]
-        parental_leave.append(entitlement)
+            all_benefits = []
+            benefits_life_insurance = {}
+            benefits_life_insurance["temporary"] = benefits_response_table[
+                "life_insurance_temporary"
+            ]
+            benefits_life_insurance["significantlocation"] = ""
+            benefits_life_insurance["benefits"] = "Parental Leave"
+            benefits_life_insurance["fulltime"] = benefits_response_table[
+                "life_insurance_full_time"
+            ]
+            benefits_life_insurance["parttime"] = benefits_response_table[
+                "life_insurance_part_time"
+            ]
+            all_benefits.append(benefits_life_insurance)
 
-        taking = {}
-        taking["employee_category"] = "Taking Parental Leave"
-        taking["male"] = parental_leave_response_table["taking_male"]
-        taking["female"] = parental_leave_response_table["taking_female"]
-        taking["total"] = parental_leave_response_table["taking_total"]
-        parental_leave.append(taking)
-        # Returning to work Post leave, Retained 12th month after leave
+            benefits_healthcare = {}
+            benefits_healthcare["temporary"] = benefits_response_table[
+                "healthcare_temporary"
+            ]
+            benefits_healthcare["significantlocation"] = ""
+            benefits_healthcare["benefits"] = "Healthcare"
+            benefits_healthcare["fulltime"] = benefits_response_table[
+                "healthcare_full_time"
+            ]
+            benefits_healthcare["parttime"] = benefits_response_table[
+                "healthcare_part_time"
+            ]
+            all_benefits.append(benefits_healthcare)
 
-        post_leave = {}
-        post_leave["employee_category"] = "Returning to work Post leave"
-        post_leave["male"] = parental_leave_response_table["return_to_post_work_male"]
-        post_leave["female"] = parental_leave_response_table[
-            "return_to_post_work_female"
-        ]
-        post_leave["total"] = parental_leave_response_table["return_to_post_work_total"]
-        parental_leave.append(post_leave)
+            benefits_disability_cover = {}
+            benefits_disability_cover["temporary"] = benefits_response_table[
+                "disability_cover_temporary"
+            ]
+            benefits_disability_cover["significantlocation"] = ""
+            benefits_disability_cover["benefits"] = "Disability Cover"
+            benefits_disability_cover["fulltime"] = benefits_response_table[
+                "disability_cover_full_time"
+            ]
+            benefits_disability_cover["parttime"] = benefits_response_table[
+                "disability_cover_part_time"
+            ]
+            all_benefits.append(benefits_disability_cover)
 
-        retained = {}
-        retained["employee_category"] = "Retained 12th month after leave"
-        retained["male"] = parental_leave_response_table["retained_12_mts_male"]
-        retained["female"] = parental_leave_response_table["retained_12_mts_female"]
-        retained["total"] = parental_leave_response_table["retained_12_mts_total"]
-        parental_leave.append(retained)
+            benefits_parental_leave = {}
+            benefits_parental_leave["temporary"] = benefits_response_table[
+                "parental_leave_temporary"
+            ]
+            benefits_parental_leave["significantlocation"] = ""
+            benefits_parental_leave["benefits"] = "Parental Leave"
+            benefits_parental_leave["fulltime"] = benefits_response_table[
+                "parental_leave_full_time"
+            ]
+            benefits_parental_leave["parttime"] = benefits_response_table[
+                "parental_leave_part_time"
+            ]
+            all_benefits.append(benefits_parental_leave)
 
-        response_data["parental_leave"] = parental_leave
+            benefits_retirement = {}
+            benefits_retirement["temporary"] = benefits_response_table[
+                "retirement_temporary"
+            ]
+            benefits_retirement["significantlocation"] = ""
+            benefits_retirement["benefits"] = "Retirement Provisions"
+            benefits_retirement["fulltime"] = benefits_response_table[
+                "retirement_full_time"
+            ]
+            benefits_retirement["parttime"] = benefits_response_table[
+                "retirement_part_time"
+            ]
+            all_benefits.append(benefits_retirement)
 
-        return Response({"data": response_data}, status=status.HTTP_200_OK)
+            benefits_stock_ownership = {}
+            benefits_stock_ownership["temporary"] = benefits_response_table[
+                "stock_ownership_temporary"
+            ]
+            benefits_stock_ownership["significantlocation"] = ""
+            benefits_stock_ownership["benefits"] = "Stock Ownership"
+            benefits_stock_ownership["fulltime"] = benefits_response_table[
+                "stock_ownership_full_time"
+            ]
+            benefits_stock_ownership["parttime"] = benefits_response_table[
+                "stock_ownership_part_time"
+            ]
+            all_benefits.append(benefits_stock_ownership)
+
+            response_data["benefits"] = all_benefits
+
+            #           "parental_leave": [
+            #     {
+            #         "employee_category": "Parental Leave Entitlement",
+            #         "male": 0,
+            #         "female":0,
+            #         "total": 0
+            #     },
+            #     {
+            #         "employee_category": "Taking Parental Leave",
+            #         "male": 0,
+            #         "female": 0,
+            #         "total": 0
+            #     }
+            # ]
+
+            parental_leave = []
+            entitlement = {}
+            entitlement["employee_category"] = "Parental Leave Entitlement"
+            entitlement["male"] = parental_leave_response_table["entitlement_male"]
+            entitlement["female"] = parental_leave_response_table["entitlement_female"]
+            entitlement["total"] = parental_leave_response_table["entitlement_total"]
+            parental_leave.append(entitlement)
+
+            taking = {}
+            taking["employee_category"] = "Taking Parental Leave"
+            taking["male"] = parental_leave_response_table["taking_male"]
+            taking["female"] = parental_leave_response_table["taking_female"]
+            taking["total"] = parental_leave_response_table["taking_total"]
+            parental_leave.append(taking)
+            # Returning to work Post leave, Retained 12th month after leave
+
+            post_leave = {}
+            post_leave["employee_category"] = "Returning to work Post leave"
+            post_leave["male"] = parental_leave_response_table["return_to_post_work_male"]
+            post_leave["female"] = parental_leave_response_table[
+                "return_to_post_work_female"
+            ]
+            post_leave["total"] = parental_leave_response_table["return_to_post_work_total"]
+            parental_leave.append(post_leave)
+
+            retained = {}
+            retained["employee_category"] = "Retained 12th month after leave"
+            retained["male"] = parental_leave_response_table["retained_12_mts_male"]
+            retained["female"] = parental_leave_response_table["retained_12_mts_female"]
+            retained["total"] = parental_leave_response_table["retained_12_mts_total"]
+            parental_leave.append(retained)
+
+            response_data["parental_leave"] = parental_leave
+
+            return Response({"data": response_data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            raise APIException(e)
