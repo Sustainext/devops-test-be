@@ -18,7 +18,9 @@ from django.db.models import Sum
 from datametric.utils.analyse import filter_by_start_end_dates
 from rest_framework.exceptions import APIException
 import logging
+
 logger = logging.getLogger("django")
+
 
 def get_integer(value):
     if isinstance(value, int):
@@ -43,7 +45,7 @@ def get_object_value(object_value):
     if object_value is None:
         return 0
     else:
-        return object_value
+        return object_value.value
 
 
 def safe_divide(numerator, denominator, decimal_places=2):
@@ -417,15 +419,11 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["new_employee_temporary_non_binary_percent"] = (
             ne_temp_nb_percent
         )
-        new_employee_reponse_table["new_employee_temporary_30_percent"] = (
-            ne_temp_30_pc
-        )
+        new_employee_reponse_table["new_employee_temporary_30_percent"] = ne_temp_30_pc
         new_employee_reponse_table["new_employee_temporary_30-50_percent"] = (
             ne_temp_30_50_pc
         )
-        new_employee_reponse_table["new_employee_temporary_50_percent"] = (
-            ne_temp_50_pc
-        )
+        new_employee_reponse_table["new_employee_temporary_50_percent"] = ne_temp_50_pc
 
         # new_employee non guaranteed
 
@@ -489,9 +487,9 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["new_employee_non_guaranteed_female_percent"] = (
             ne_ng_female_percent
         )
-        new_employee_reponse_table[
-            "new_employee_non_guaranteed_non_binary_percent"
-        ] = ne_ng_nb_percent
+        new_employee_reponse_table["new_employee_non_guaranteed_non_binary_percent"] = (
+            ne_ng_nb_percent
+        )
         new_employee_reponse_table["new_employee_non_guaranteed_30_percent"] = (
             ne_ng_30_pc
         )
@@ -523,15 +521,15 @@ class EmploymentAnalyzeView(APIView):
             index=2, metric_name="total"
         ).aggregate(Sum("number_holder"))
 
-        ne_ft_30_qs = dp_employ_full_time_qs.filter(
-            metric_name="yearsold30"
-        ).aggregate(Sum("number_holder"))
+        ne_ft_30_qs = dp_employ_full_time_qs.filter(metric_name="yearsold30").aggregate(
+            Sum("number_holder")
+        )
         ne_ft_30_50_qs = dp_employ_full_time_qs.filter(
             metric_name="yearsold30to50"
         ).aggregate(Sum("number_holder"))
-        ne_ft_50_qs = dp_employ_full_time_qs.filter(
-            metric_name="yearsold50"
-        ).aggregate(Sum("number_holder"))
+        ne_ft_50_qs = dp_employ_full_time_qs.filter(metric_name="yearsold50").aggregate(
+            Sum("number_holder")
+        )
 
         total_ft = (
             get_value(ne_male_ft_qs["number_holder__sum"])
@@ -567,15 +565,11 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["new_employee_full_time_non_binary_percent"] = (
             ne_ft_nb_percent
         )
-        new_employee_reponse_table["new_employee_full_time_30_percent"] = (
-            ne_ft_30_pc
-        )
+        new_employee_reponse_table["new_employee_full_time_30_percent"] = ne_ft_30_pc
         new_employee_reponse_table["new_employee_full_time_30-50_percent"] = (
             ne_ft_30_50_pc
         )
-        new_employee_reponse_table["new_employee_full_time_50_percent"] = (
-            ne_ft_50_pc
-        )
+        new_employee_reponse_table["new_employee_full_time_50_percent"] = ne_ft_50_pc
 
         # new_employee part time
 
@@ -598,15 +592,15 @@ class EmploymentAnalyzeView(APIView):
             index=2, metric_name="total"
         ).aggregate(Sum("number_holder"))
 
-        ne_pt_30_qs = dp_employ_part_time_qs.filter(
-            metric_name="yearsold30"
-        ).aggregate(Sum("number_holder"))
+        ne_pt_30_qs = dp_employ_part_time_qs.filter(metric_name="yearsold30").aggregate(
+            Sum("number_holder")
+        )
         ne_pt_30_50_qs = dp_employ_part_time_qs.filter(
             metric_name="yearsold30to50"
         ).aggregate(Sum("number_holder"))
-        ne_pt_50_qs = dp_employ_part_time_qs.filter(
-            metric_name="yearsold50"
-        ).aggregate(Sum("number_holder"))
+        ne_pt_50_qs = dp_employ_part_time_qs.filter(metric_name="yearsold50").aggregate(
+            Sum("number_holder")
+        )
 
         total_pt = (
             get_value(ne_male_pt_qs["number_holder__sum"])
@@ -642,15 +636,11 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["new_employee_part_time_non_binary_percent"] = (
             ne_pt_nb_percent
         )
-        new_employee_reponse_table["new_employee_part_time_30_percent"] = (
-            ne_pt_30_pc
-        )
+        new_employee_reponse_table["new_employee_part_time_30_percent"] = ne_pt_30_pc
         new_employee_reponse_table["new_employee_part_time_30-50_percent"] = (
             ne_pt_30_50_pc
         )
-        new_employee_reponse_table["new_employee_part_time_50_percent"] = (
-            ne_pt_50_pc
-        )
+        new_employee_reponse_table["new_employee_part_time_50_percent"] = ne_pt_50_pc
 
         # employee Turnover Response table
 
@@ -739,9 +729,9 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["employee_turnover_permanent_female_percent"] = (
             et_per_female_percent
         )
-        new_employee_reponse_table[
-            "employee_turnover_permanent_non_binary_percent"
-        ] = et_per_nb_percent
+        new_employee_reponse_table["employee_turnover_permanent_non_binary_percent"] = (
+            et_per_nb_percent
+        )
         new_employee_reponse_table["employee_turnover_permanent_30_percent"] = (
             et_permanent_30_pc
         )
@@ -819,9 +809,9 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["employee_turnover_temporary_female_percent"] = (
             et_temp_female_percent
         )
-        new_employee_reponse_table[
-            "employee_turnover_temporary_non_binary_percent"
-        ] = et_temp_nb_percent
+        new_employee_reponse_table["employee_turnover_temporary_non_binary_percent"] = (
+            et_temp_nb_percent
+        )
         new_employee_reponse_table["employee_turnover_temporary_30_percent"] = (
             et_temp_30_pc
         )
@@ -849,9 +839,9 @@ class EmploymentAnalyzeView(APIView):
         et_female_ng_qs = dp_employ_to_ng_qs.filter(
             index=1, metric_name="total"
         ).aggregate(Sum("number_holder"))
-        et_nb_ng_qs = dp_employ_to_ng_qs.filter(
-            index=2, metric_name="total"
-        ).aggregate(Sum("number_holder"))
+        et_nb_ng_qs = dp_employ_to_ng_qs.filter(index=2, metric_name="total").aggregate(
+            Sum("number_holder")
+        )
 
         et_ng_30_qs = dp_employ_to_ng_qs.filter(metric_name="yearsold30").aggregate(
             Sum("number_holder")
@@ -890,24 +880,24 @@ class EmploymentAnalyzeView(APIView):
             get_value(et_ng_50_qs["number_holder__sum"]), total_ng_eto
         )
 
-        new_employee_reponse_table[
-            "employee_turnover_non_guaranteed_male_percent"
-        ] = et_ng_male_percent
+        new_employee_reponse_table["employee_turnover_non_guaranteed_male_percent"] = (
+            et_ng_male_percent
+        )
         new_employee_reponse_table[
             "employee_turnover_non_guaranteed_female_percent"
         ] = et_ng_female_percent
         new_employee_reponse_table[
             "employee_turnover_non_guaranteed_non_binary_percent"
         ] = et_ng_nb_percent
-        new_employee_reponse_table[
-            "employee_turnover_non_guaranteed_30_percent"
-        ] = et_ng_30_pc
-        new_employee_reponse_table[
-            "employee_turnover_non_guaranteed_30-50_percent"
-        ] = et_ng_30_50_pc
-        new_employee_reponse_table[
-            "employee_turnover_non_guaranteed_50_percent"
-        ] = et_ng_50_pc
+        new_employee_reponse_table["employee_turnover_non_guaranteed_30_percent"] = (
+            et_ng_30_pc
+        )
+        new_employee_reponse_table["employee_turnover_non_guaranteed_30-50_percent"] = (
+            et_ng_30_50_pc
+        )
+        new_employee_reponse_table["employee_turnover_non_guaranteed_50_percent"] = (
+            et_ng_50_pc
+        )
 
         # new_employee_turover _full_time
 
@@ -926,9 +916,9 @@ class EmploymentAnalyzeView(APIView):
         et_female_ft_qs = dp_employ_to_ft_qs.filter(
             index=1, metric_name="total"
         ).aggregate(Sum("number_holder"))
-        et_nb_ft_qs = dp_employ_to_ft_qs.filter(
-            index=2, metric_name="total"
-        ).aggregate(Sum("number_holder"))
+        et_nb_ft_qs = dp_employ_to_ft_qs.filter(index=2, metric_name="total").aggregate(
+            Sum("number_holder")
+        )
 
         et_ft_30_qs = dp_employ_to_ft_qs.filter(metric_name="yearsold30").aggregate(
             Sum("number_holder")
@@ -973,9 +963,9 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["employee_turnover_full_time_female_percent"] = (
             et_ft_female_percent
         )
-        new_employee_reponse_table[
-            "employee_turnover_full_time_non_binary_percent"
-        ] = et_ft_nb_percent
+        new_employee_reponse_table["employee_turnover_full_time_non_binary_percent"] = (
+            et_ft_nb_percent
+        )
         new_employee_reponse_table["employee_turnover_full_time_30_percent"] = (
             et_ft_30_pc
         )
@@ -1003,9 +993,9 @@ class EmploymentAnalyzeView(APIView):
         et_female_pt_qs = dp_employ_to_pt_qs.filter(
             index=1, metric_name="total"
         ).aggregate(Sum("number_holder"))
-        et_nb_pt_qs = dp_employ_to_pt_qs.filter(
-            index=2, metric_name="total"
-        ).aggregate(Sum("number_holder"))
+        et_nb_pt_qs = dp_employ_to_pt_qs.filter(index=2, metric_name="total").aggregate(
+            Sum("number_holder")
+        )
 
         et_pt_30_qs = dp_employ_to_pt_qs.filter(metric_name="yearsold30").aggregate(
             Sum("number_holder")
@@ -1050,9 +1040,9 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["employee_turnover_part_time_female_percent"] = (
             et_pt_female_percent
         )
-        new_employee_reponse_table[
-            "employee_turnover_part_time_non_binary_percent"
-        ] = et_pt_nb_percent
+        new_employee_reponse_table["employee_turnover_part_time_non_binary_percent"] = (
+            et_pt_nb_percent
+        )
         new_employee_reponse_table["employee_turnover_part_time_30_percent"] = (
             et_pt_30_pc
         )
@@ -1070,16 +1060,12 @@ class EmploymentAnalyzeView(APIView):
 
         parental_leave_response_table["entitlement_male"] = get_integer(
             get_object_value(
-                parental_leave_data_points.filter(
-                    index=0, metric_name="male"
-                ).first()
+                parental_leave_data_points.filter(index=0, metric_name="male").first()
             )
         )
         parental_leave_response_table["entitlement_female"] = get_integer(
             get_object_value(
-                parental_leave_data_points.filter(
-                    index=0, metric_name="female"
-                ).first()
+                parental_leave_data_points.filter(index=0, metric_name="female").first()
             )
         )
         parental_leave_response_table["entitlement_total"] = (
@@ -1089,16 +1075,12 @@ class EmploymentAnalyzeView(APIView):
 
         parental_leave_response_table["taking_male"] = get_integer(
             get_object_value(
-                parental_leave_data_points.filter(
-                    index=1, metric_name="male"
-                ).first()
+                parental_leave_data_points.filter(index=1, metric_name="male").first()
             )
         )
         parental_leave_response_table["taking_female"] = get_integer(
             get_object_value(
-                parental_leave_data_points.filter(
-                    index=1, metric_name="female"
-                ).first()
+                parental_leave_data_points.filter(index=1, metric_name="female").first()
             )
         )
         parental_leave_response_table["taking_total"] = (
@@ -1108,16 +1090,12 @@ class EmploymentAnalyzeView(APIView):
 
         parental_leave_response_table["return_to_post_work_male"] = get_integer(
             get_object_value(
-                parental_leave_data_points.filter(
-                    index=2, metric_name="male"
-                ).first()
+                parental_leave_data_points.filter(index=2, metric_name="male").first()
             )
         )
         parental_leave_response_table["return_to_post_work_female"] = get_integer(
             get_object_value(
-                parental_leave_data_points.filter(
-                    index=2, metric_name="female"
-                ).first()
+                parental_leave_data_points.filter(index=2, metric_name="female").first()
             )
         )
         parental_leave_response_table["return_to_post_work_total"] = (
@@ -1127,16 +1105,12 @@ class EmploymentAnalyzeView(APIView):
 
         parental_leave_response_table["retained_12_mts_male"] = get_integer(
             get_object_value(
-                parental_leave_data_points.filter(
-                    index=3, metric_name="male"
-                ).first()
+                parental_leave_data_points.filter(index=3, metric_name="male").first()
             )
         )
         parental_leave_response_table["retained_12_mts_female"] = get_integer(
             get_object_value(
-                parental_leave_data_points.filter(
-                    index=3, metric_name="female"
-                ).first()
+                parental_leave_data_points.filter(index=3, metric_name="female").first()
             )
         )
         parental_leave_response_table["retained_12_mts_total"] = (
@@ -1257,7 +1231,7 @@ class EmploymentAnalyzeView(APIView):
             path__slug__in=self.employee_parental_leave_path_slugs,
             location__in=self.locations.values_list("name", flat=True),
         ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
-            # pushing for processing
+        # pushing for processing
         (
             new_employee_reponse_table,
             employee_turnover_reponse_table,
