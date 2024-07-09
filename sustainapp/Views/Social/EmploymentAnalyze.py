@@ -16,7 +16,8 @@ from rest_framework import serializers
 from django.db.models import QuerySet
 from django.db.models import Sum
 from datametric.utils.analyse import filter_by_start_end_dates
-
+import logging
+logger = logging.getLogger("django")
 
 def get_integer(value):
     if isinstance(value, int):
@@ -1211,7 +1212,7 @@ class EmploymentAnalyzeView(APIView):
                 parental_leave_response_table,
             )
         except Exception as e:
-            print(e)
+            logger.error(e)
             return Response(
                 {"error": "Error while processing data"},
                 status=status.HTTP_400_BAD_REQUEST,
