@@ -26,7 +26,7 @@ class UpdateResponseSerializer(serializers.Serializer):
 class UpdateResponseSerializer(serializers.Serializer):
     path = serializers.CharField(required=True)
     form_data = serializers.ListField(child=serializers.JSONField(), allow_empty=True)
-    location = serializers.CharField(required=True)
+    location = serializers.CharField(required=True, trim_whitespace=False)
     year = serializers.IntegerField(required=True)
     month = serializers.IntegerField(min_value=1, max_value=12, required=True)
     def validate(self, data):
