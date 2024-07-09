@@ -69,7 +69,7 @@ class FieldGroup(AbstractModel):
 
 
 class RawResponse(AbstractModel):
-    data = models.JSONField(default=list)
+    data = OrderedJSONField(default=list)       #models.JSONField(default=list)       #need to change this field to json and with the 
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     user = models.ForeignKey(
         CustomUser,
