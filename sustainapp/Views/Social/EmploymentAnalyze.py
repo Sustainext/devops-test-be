@@ -1258,395 +1258,392 @@ class EmploymentAnalyzeView(APIView):
             location__in=self.locations.values_list("name", flat=True),
         ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             # pushing for processing
-        try:
-            (
-                new_employee_reponse_table,
-                employee_turnover_reponse_table,
-                benefits_response_table,
-                parental_leave_response_table,
-            ) = self.process_dataPoints(
-                new_emp_data_points,
-                emp_turnover_data_points,
-                benefits_data_points,
-                parental_leave_data_points,
-            )
-            # * Get top emissions by Scope
-            response_data = dict()
-            response_data["success_true"] = "true"
+        (
+            new_employee_reponse_table,
+            employee_turnover_reponse_table,
+            benefits_response_table,
+            parental_leave_response_table,
+        ) = self.process_dataPoints(
+            new_emp_data_points,
+            emp_turnover_data_points,
+            benefits_data_points,
+            parental_leave_data_points,
+        )
+        # * Get top emissions by Scope
+        response_data = dict()
+        response_data["success_true"] = "true"
 
-            response_data["new_employee_hires"] = []
+        response_data["new_employee_hires"] = []
 
-            new_employee_permanent = {}
-            new_employee_permanent["type_of_employee"] = "Permanent employee"
-            new_employee_permanent["percentage_of_male_employee"] = (
-                new_employee_reponse_table["new_employee_permanent_male_percent"]
-            )
-            new_employee_permanent["percentage_of_female_employee"] = (
-                new_employee_reponse_table["new_employee_permanent_female_percent"]
-            )
-            new_employee_permanent["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table["new_employee_permanent_non_binary_percent"]
-            )
-            new_employee_permanent["yearsold30"] = new_employee_reponse_table[
-                "new_employee_permanent_30_percent"
-            ]
-            new_employee_permanent["yearsold50"] = new_employee_reponse_table[
-                "new_employee_permanent_50_percent"
-            ]
-            new_employee_permanent["yearsold30to50"] = new_employee_reponse_table[
-                "new_employee_permanent_30-50_percent"
-            ]
-            response_data["new_employee_hires"].append(new_employee_permanent)
+        new_employee_permanent = {}
+        new_employee_permanent["type_of_employee"] = "Permanent employee"
+        new_employee_permanent["percentage_of_male_employee"] = (
+            new_employee_reponse_table["new_employee_permanent_male_percent"]
+        )
+        new_employee_permanent["percentage_of_female_employee"] = (
+            new_employee_reponse_table["new_employee_permanent_female_percent"]
+        )
+        new_employee_permanent["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table["new_employee_permanent_non_binary_percent"]
+        )
+        new_employee_permanent["yearsold30"] = new_employee_reponse_table[
+            "new_employee_permanent_30_percent"
+        ]
+        new_employee_permanent["yearsold50"] = new_employee_reponse_table[
+            "new_employee_permanent_50_percent"
+        ]
+        new_employee_permanent["yearsold30to50"] = new_employee_reponse_table[
+            "new_employee_permanent_30-50_percent"
+        ]
+        response_data["new_employee_hires"].append(new_employee_permanent)
 
-            new_employee_temporary = {}
-            new_employee_temporary["type_of_employee"] = "Temporary employee"
-            new_employee_temporary["percentage_of_male_employee"] = (
-                new_employee_reponse_table["new_employee_temporary_male_percent"]
-            )
-            new_employee_temporary["percentage_of_female_employee"] = (
-                new_employee_reponse_table["new_employee_temporary_female_percent"]
-            )
-            new_employee_temporary["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table["new_employee_temporary_non_binary_percent"]
-            )
-            new_employee_temporary["yearsold30"] = new_employee_reponse_table[
-                "new_employee_temporary_30_percent"
-            ]
-            new_employee_temporary["yearsold50"] = new_employee_reponse_table[
-                "new_employee_temporary_50_percent"
-            ]
-            new_employee_temporary["yearsold30to50"] = new_employee_reponse_table[
-                "new_employee_temporary_30-50_percent"
-            ]
-            response_data["new_employee_hires"].append(new_employee_temporary)
+        new_employee_temporary = {}
+        new_employee_temporary["type_of_employee"] = "Temporary employee"
+        new_employee_temporary["percentage_of_male_employee"] = (
+            new_employee_reponse_table["new_employee_temporary_male_percent"]
+        )
+        new_employee_temporary["percentage_of_female_employee"] = (
+            new_employee_reponse_table["new_employee_temporary_female_percent"]
+        )
+        new_employee_temporary["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table["new_employee_temporary_non_binary_percent"]
+        )
+        new_employee_temporary["yearsold30"] = new_employee_reponse_table[
+            "new_employee_temporary_30_percent"
+        ]
+        new_employee_temporary["yearsold50"] = new_employee_reponse_table[
+            "new_employee_temporary_50_percent"
+        ]
+        new_employee_temporary["yearsold30to50"] = new_employee_reponse_table[
+            "new_employee_temporary_30-50_percent"
+        ]
+        response_data["new_employee_hires"].append(new_employee_temporary)
 
-            new_employee_non_guaranteed = {}
-            new_employee_non_guaranteed["type_of_employee"] = "Non guaranteed employee"
-            new_employee_non_guaranteed["percentage_of_male_employee"] = (
-                new_employee_reponse_table["new_employee_non_guaranteed_male_percent"]
-            )
-            new_employee_non_guaranteed["percentage_of_female_employee"] = (
-                new_employee_reponse_table["new_employee_non_guaranteed_female_percent"]
-            )
-            new_employee_non_guaranteed["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table["new_employee_non_guaranteed_non_binary_percent"]
-            )
-            new_employee_non_guaranteed["yearsold30"] = new_employee_reponse_table[
-                "new_employee_non_guaranteed_30_percent"
-            ]
-            new_employee_non_guaranteed["yearsold50"] = new_employee_reponse_table[
-                "new_employee_non_guaranteed_30-50_percent"
-            ]
-            new_employee_non_guaranteed["yearsold30to50"] = new_employee_reponse_table[
-                "new_employee_temporary_30-50_percent"
-            ]
-            response_data["new_employee_hires"].append(new_employee_non_guaranteed)
+        new_employee_non_guaranteed = {}
+        new_employee_non_guaranteed["type_of_employee"] = "Non guaranteed employee"
+        new_employee_non_guaranteed["percentage_of_male_employee"] = (
+            new_employee_reponse_table["new_employee_non_guaranteed_male_percent"]
+        )
+        new_employee_non_guaranteed["percentage_of_female_employee"] = (
+            new_employee_reponse_table["new_employee_non_guaranteed_female_percent"]
+        )
+        new_employee_non_guaranteed["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table["new_employee_non_guaranteed_non_binary_percent"]
+        )
+        new_employee_non_guaranteed["yearsold30"] = new_employee_reponse_table[
+            "new_employee_non_guaranteed_30_percent"
+        ]
+        new_employee_non_guaranteed["yearsold50"] = new_employee_reponse_table[
+            "new_employee_non_guaranteed_30-50_percent"
+        ]
+        new_employee_non_guaranteed["yearsold30to50"] = new_employee_reponse_table[
+            "new_employee_temporary_30-50_percent"
+        ]
+        response_data["new_employee_hires"].append(new_employee_non_guaranteed)
 
-            new_employee_full_time = {}
-            new_employee_full_time["type_of_employee"] = "Full Time employee"
-            new_employee_full_time["percentage_of_male_employee"] = (
-                new_employee_reponse_table["new_employee_full_time_male_percent"]
-            )
-            new_employee_full_time["percentage_of_female_employee"] = (
-                new_employee_reponse_table["new_employee_full_time_female_percent"]
-            )
-            new_employee_full_time["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table["new_employee_full_time_non_binary_percent"]
-            )
-            new_employee_full_time["yearsold30"] = new_employee_reponse_table[
-                "new_employee_full_time_30_percent"
-            ]
-            new_employee_full_time["yearsold50"] = new_employee_reponse_table[
-                "new_employee_full_time_30-50_percent"
-            ]
-            new_employee_full_time["yearsold30to50"] = new_employee_reponse_table[
-                "new_employee_full_time_50_percent"
-            ]
-            response_data["new_employee_hires"].append(new_employee_full_time)
+        new_employee_full_time = {}
+        new_employee_full_time["type_of_employee"] = "Full Time employee"
+        new_employee_full_time["percentage_of_male_employee"] = (
+            new_employee_reponse_table["new_employee_full_time_male_percent"]
+        )
+        new_employee_full_time["percentage_of_female_employee"] = (
+            new_employee_reponse_table["new_employee_full_time_female_percent"]
+        )
+        new_employee_full_time["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table["new_employee_full_time_non_binary_percent"]
+        )
+        new_employee_full_time["yearsold30"] = new_employee_reponse_table[
+            "new_employee_full_time_30_percent"
+        ]
+        new_employee_full_time["yearsold50"] = new_employee_reponse_table[
+            "new_employee_full_time_30-50_percent"
+        ]
+        new_employee_full_time["yearsold30to50"] = new_employee_reponse_table[
+            "new_employee_full_time_50_percent"
+        ]
+        response_data["new_employee_hires"].append(new_employee_full_time)
 
-            new_employee_part_time = {}
-            new_employee_part_time["type_of_employee"] = "Part time employee"
-            new_employee_part_time["percentage_of_male_employee"] = (
-                new_employee_reponse_table["new_employee_part_time_male_percent"]
-            )
-            new_employee_part_time["percentage_of_female_employee"] = (
-                new_employee_reponse_table["new_employee_part_time_female_percent"]
-            )
-            new_employee_part_time["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table["new_employee_part_time_non_binary_percent"]
-            )
-            new_employee_part_time["yearsold30"] = new_employee_reponse_table[
-                "new_employee_part_time_30_percent"
-            ]
-            new_employee_part_time["yearsold50"] = new_employee_reponse_table[
-                "new_employee_part_time_30-50_percent"
-            ]
-            new_employee_part_time["yearsold30to50"] = new_employee_reponse_table[
-                "new_employee_part_time_50_percent"
-            ]
-            response_data["new_employee_hires"].append(new_employee_part_time)
+        new_employee_part_time = {}
+        new_employee_part_time["type_of_employee"] = "Part time employee"
+        new_employee_part_time["percentage_of_male_employee"] = (
+            new_employee_reponse_table["new_employee_part_time_male_percent"]
+        )
+        new_employee_part_time["percentage_of_female_employee"] = (
+            new_employee_reponse_table["new_employee_part_time_female_percent"]
+        )
+        new_employee_part_time["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table["new_employee_part_time_non_binary_percent"]
+        )
+        new_employee_part_time["yearsold30"] = new_employee_reponse_table[
+            "new_employee_part_time_30_percent"
+        ]
+        new_employee_part_time["yearsold50"] = new_employee_reponse_table[
+            "new_employee_part_time_30-50_percent"
+        ]
+        new_employee_part_time["yearsold30to50"] = new_employee_reponse_table[
+            "new_employee_part_time_50_percent"
+        ]
+        response_data["new_employee_hires"].append(new_employee_part_time)
 
-            response_data["employee_turnover"] = []
+        response_data["employee_turnover"] = []
 
-            employee_turnover_permanent = {}
-            employee_turnover_permanent["type_of_employee"] = "Permanent employee"
-            employee_turnover_permanent["percentage_of_male_employee"] = (
-                new_employee_reponse_table["employee_turnover_permanent_male_percent"]
-            )
-            employee_turnover_permanent["percentage_of_female_employee"] = (
-                new_employee_reponse_table["employee_turnover_permanent_female_percent"]
-            )
-            employee_turnover_permanent["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table["employee_turnover_permanent_non_binary_percent"]
-            )
-            employee_turnover_permanent["yearsold30"] = new_employee_reponse_table[
-                "employee_turnover_permanent_30_percent"
-            ]
-            employee_turnover_permanent["yearsold50"] = new_employee_reponse_table[
-                "employee_turnover_permanent_50_percent"
-            ]
-            employee_turnover_permanent["yearsold30to50"] = new_employee_reponse_table[
-                "employee_turnover_permanent_50_percent"
-            ]
-            response_data["employee_turnover"].append(employee_turnover_permanent)
+        employee_turnover_permanent = {}
+        employee_turnover_permanent["type_of_employee"] = "Permanent employee"
+        employee_turnover_permanent["percentage_of_male_employee"] = (
+            new_employee_reponse_table["employee_turnover_permanent_male_percent"]
+        )
+        employee_turnover_permanent["percentage_of_female_employee"] = (
+            new_employee_reponse_table["employee_turnover_permanent_female_percent"]
+        )
+        employee_turnover_permanent["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table["employee_turnover_permanent_non_binary_percent"]
+        )
+        employee_turnover_permanent["yearsold30"] = new_employee_reponse_table[
+            "employee_turnover_permanent_30_percent"
+        ]
+        employee_turnover_permanent["yearsold50"] = new_employee_reponse_table[
+            "employee_turnover_permanent_50_percent"
+        ]
+        employee_turnover_permanent["yearsold30to50"] = new_employee_reponse_table[
+            "employee_turnover_permanent_50_percent"
+        ]
+        response_data["employee_turnover"].append(employee_turnover_permanent)
 
-            employee_turnover_temporary = {}
-            employee_turnover_temporary["type_of_employee"] = "Temporary employee"
-            employee_turnover_temporary["percentage_of_male_employee"] = (
-                new_employee_reponse_table["employee_turnover_temporary_male_percent"]
-            )
-            employee_turnover_temporary["percentage_of_female_employee"] = (
-                new_employee_reponse_table["employee_turnover_temporary_female_percent"]
-            )
-            employee_turnover_temporary["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table["employee_turnover_temporary_non_binary_percent"]
-            )
-            employee_turnover_temporary["yearsold30"] = new_employee_reponse_table[
-                "employee_turnover_temporary_30_percent"
-            ]
-            employee_turnover_temporary["yearsold50"] = new_employee_reponse_table[
-                "employee_turnover_temporary_50_percent"
-            ]
-            employee_turnover_temporary["yearsold30to50"] = new_employee_reponse_table[
-                "employee_turnover_temporary_30-50_percent"
-            ]
-            response_data["employee_turnover"].append(employee_turnover_temporary)
+        employee_turnover_temporary = {}
+        employee_turnover_temporary["type_of_employee"] = "Temporary employee"
+        employee_turnover_temporary["percentage_of_male_employee"] = (
+            new_employee_reponse_table["employee_turnover_temporary_male_percent"]
+        )
+        employee_turnover_temporary["percentage_of_female_employee"] = (
+            new_employee_reponse_table["employee_turnover_temporary_female_percent"]
+        )
+        employee_turnover_temporary["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table["employee_turnover_temporary_non_binary_percent"]
+        )
+        employee_turnover_temporary["yearsold30"] = new_employee_reponse_table[
+            "employee_turnover_temporary_30_percent"
+        ]
+        employee_turnover_temporary["yearsold50"] = new_employee_reponse_table[
+            "employee_turnover_temporary_50_percent"
+        ]
+        employee_turnover_temporary["yearsold30to50"] = new_employee_reponse_table[
+            "employee_turnover_temporary_30-50_percent"
+        ]
+        response_data["employee_turnover"].append(employee_turnover_temporary)
 
-            employee_turnover_ng = {}
-            employee_turnover_ng["type_of_employee"] = "Non Guaranteed employee"
-            employee_turnover_ng["percentage_of_male_employee"] = (
-                new_employee_reponse_table["employee_turnover_non_guaranteed_male_percent"]
-            )
-            employee_turnover_ng["percentage_of_female_employee"] = (
-                new_employee_reponse_table[
-                    "employee_turnover_non_guaranteed_female_percent"
-                ]
-            )
-            employee_turnover_ng["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table[
-                    "employee_turnover_non_guaranteed_non_binary_percent"
-                ]
-            )
-            employee_turnover_ng["yearsold30"] = new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_30_percent"
+        employee_turnover_ng = {}
+        employee_turnover_ng["type_of_employee"] = "Non Guaranteed employee"
+        employee_turnover_ng["percentage_of_male_employee"] = (
+            new_employee_reponse_table["employee_turnover_non_guaranteed_male_percent"]
+        )
+        employee_turnover_ng["percentage_of_female_employee"] = (
+            new_employee_reponse_table[
+                "employee_turnover_non_guaranteed_female_percent"
             ]
-            employee_turnover_ng["yearsold50"] = new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_50_percent"
+        )
+        employee_turnover_ng["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table[
+                "employee_turnover_non_guaranteed_non_binary_percent"
             ]
-            employee_turnover_ng["yearsold30to50"] = new_employee_reponse_table[
-                "employee_turnover_non_guaranteed_30-50_percent"
-            ]
-            response_data["employee_turnover"].append(employee_turnover_ng)
+        )
+        employee_turnover_ng["yearsold30"] = new_employee_reponse_table[
+            "employee_turnover_non_guaranteed_30_percent"
+        ]
+        employee_turnover_ng["yearsold50"] = new_employee_reponse_table[
+            "employee_turnover_non_guaranteed_50_percent"
+        ]
+        employee_turnover_ng["yearsold30to50"] = new_employee_reponse_table[
+            "employee_turnover_non_guaranteed_30-50_percent"
+        ]
+        response_data["employee_turnover"].append(employee_turnover_ng)
 
-            employee_turnover_ft = {}
-            employee_turnover_ft["type_of_employee"] = "Full time employee"
-            employee_turnover_ft["percentage_of_male_employee"] = (
-                new_employee_reponse_table["employee_turnover_full_time_male_percent"]
-            )
-            employee_turnover_ft["percentage_of_female_employee"] = (
-                new_employee_reponse_table["employee_turnover_full_time_female_percent"]
-            )
-            employee_turnover_ft["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table["employee_turnover_full_time_non_binary_percent"]
-            )
-            employee_turnover_ft["yearsold30"] = new_employee_reponse_table[
-                "employee_turnover_full_time_30_percent"
-            ]
-            employee_turnover_ft["yearsold50"] = new_employee_reponse_table[
-                "employee_turnover_full_time_50_percent"
-            ]
-            employee_turnover_ft["yearsold30to50"] = new_employee_reponse_table[
-                "employee_turnover_full_time_30-50_percent"
-            ]
-            response_data["employee_turnover"].append(employee_turnover_ft)
+        employee_turnover_ft = {}
+        employee_turnover_ft["type_of_employee"] = "Full time employee"
+        employee_turnover_ft["percentage_of_male_employee"] = (
+            new_employee_reponse_table["employee_turnover_full_time_male_percent"]
+        )
+        employee_turnover_ft["percentage_of_female_employee"] = (
+            new_employee_reponse_table["employee_turnover_full_time_female_percent"]
+        )
+        employee_turnover_ft["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table["employee_turnover_full_time_non_binary_percent"]
+        )
+        employee_turnover_ft["yearsold30"] = new_employee_reponse_table[
+            "employee_turnover_full_time_30_percent"
+        ]
+        employee_turnover_ft["yearsold50"] = new_employee_reponse_table[
+            "employee_turnover_full_time_50_percent"
+        ]
+        employee_turnover_ft["yearsold30to50"] = new_employee_reponse_table[
+            "employee_turnover_full_time_30-50_percent"
+        ]
+        response_data["employee_turnover"].append(employee_turnover_ft)
 
-            employee_turnover_pt = {}
-            employee_turnover_pt["type_of_employee"] = "Part time employee"
-            employee_turnover_pt["percentage_of_male_employee"] = (
-                new_employee_reponse_table["employee_turnover_part_time_male_percent"]
-            )
-            employee_turnover_pt["percentage_of_female_employee"] = (
-                new_employee_reponse_table["employee_turnover_part_time_female_percent"]
-            )
-            employee_turnover_pt["percentage_of_non_binary_employee"] = (
-                new_employee_reponse_table["employee_turnover_part_time_non_binary_percent"]
-            )
-            employee_turnover_pt["yearsold30"] = new_employee_reponse_table[
-                "employee_turnover_part_time_30_percent"
-            ]
-            employee_turnover_pt["yearsold50"] = new_employee_reponse_table[
-                "employee_turnover_part_time_50_percent"
-            ]
-            employee_turnover_pt["yearsold30to50"] = new_employee_reponse_table[
-                "employee_turnover_part_time_30-50_percent"
-            ]
-            response_data["employee_turnover"].append(employee_turnover_pt)
+        employee_turnover_pt = {}
+        employee_turnover_pt["type_of_employee"] = "Part time employee"
+        employee_turnover_pt["percentage_of_male_employee"] = (
+            new_employee_reponse_table["employee_turnover_part_time_male_percent"]
+        )
+        employee_turnover_pt["percentage_of_female_employee"] = (
+            new_employee_reponse_table["employee_turnover_part_time_female_percent"]
+        )
+        employee_turnover_pt["percentage_of_non_binary_employee"] = (
+            new_employee_reponse_table["employee_turnover_part_time_non_binary_percent"]
+        )
+        employee_turnover_pt["yearsold30"] = new_employee_reponse_table[
+            "employee_turnover_part_time_30_percent"
+        ]
+        employee_turnover_pt["yearsold50"] = new_employee_reponse_table[
+            "employee_turnover_part_time_50_percent"
+        ]
+        employee_turnover_pt["yearsold30to50"] = new_employee_reponse_table[
+            "employee_turnover_part_time_30-50_percent"
+        ]
+        response_data["employee_turnover"].append(employee_turnover_pt)
 
-            #       "benefits": [
-            # {
-            #   "temporary": true,
-            #   "significantlocation": "",
-            #   "benefits": "Parental Leave",
-            #   "fulltime": true,
-            #   "parttime": false
-            # },
+        #       "benefits": [
+        # {
+        #   "temporary": true,
+        #   "significantlocation": "",
+        #   "benefits": "Parental Leave",
+        #   "fulltime": true,
+        #   "parttime": false
+        # },
 
-            all_benefits = []
-            benefits_life_insurance = {}
-            benefits_life_insurance["temporary"] = benefits_response_table[
-                "life_insurance_temporary"
-            ]
-            benefits_life_insurance["significantlocation"] = ""
-            benefits_life_insurance["benefits"] = "Parental Leave"
-            benefits_life_insurance["fulltime"] = benefits_response_table[
-                "life_insurance_full_time"
-            ]
-            benefits_life_insurance["parttime"] = benefits_response_table[
-                "life_insurance_part_time"
-            ]
-            all_benefits.append(benefits_life_insurance)
+        all_benefits = []
+        benefits_life_insurance = {}
+        benefits_life_insurance["temporary"] = benefits_response_table[
+            "life_insurance_temporary"
+        ]
+        benefits_life_insurance["significantlocation"] = ""
+        benefits_life_insurance["benefits"] = "Parental Leave"
+        benefits_life_insurance["fulltime"] = benefits_response_table[
+            "life_insurance_full_time"
+        ]
+        benefits_life_insurance["parttime"] = benefits_response_table[
+            "life_insurance_part_time"
+        ]
+        all_benefits.append(benefits_life_insurance)
 
-            benefits_healthcare = {}
-            benefits_healthcare["temporary"] = benefits_response_table[
-                "healthcare_temporary"
-            ]
-            benefits_healthcare["significantlocation"] = ""
-            benefits_healthcare["benefits"] = "Healthcare"
-            benefits_healthcare["fulltime"] = benefits_response_table[
-                "healthcare_full_time"
-            ]
-            benefits_healthcare["parttime"] = benefits_response_table[
-                "healthcare_part_time"
-            ]
-            all_benefits.append(benefits_healthcare)
+        benefits_healthcare = {}
+        benefits_healthcare["temporary"] = benefits_response_table[
+            "healthcare_temporary"
+        ]
+        benefits_healthcare["significantlocation"] = ""
+        benefits_healthcare["benefits"] = "Healthcare"
+        benefits_healthcare["fulltime"] = benefits_response_table[
+            "healthcare_full_time"
+        ]
+        benefits_healthcare["parttime"] = benefits_response_table[
+            "healthcare_part_time"
+        ]
+        all_benefits.append(benefits_healthcare)
 
-            benefits_disability_cover = {}
-            benefits_disability_cover["temporary"] = benefits_response_table[
-                "disability_cover_temporary"
-            ]
-            benefits_disability_cover["significantlocation"] = ""
-            benefits_disability_cover["benefits"] = "Disability Cover"
-            benefits_disability_cover["fulltime"] = benefits_response_table[
-                "disability_cover_full_time"
-            ]
-            benefits_disability_cover["parttime"] = benefits_response_table[
-                "disability_cover_part_time"
-            ]
-            all_benefits.append(benefits_disability_cover)
+        benefits_disability_cover = {}
+        benefits_disability_cover["temporary"] = benefits_response_table[
+            "disability_cover_temporary"
+        ]
+        benefits_disability_cover["significantlocation"] = ""
+        benefits_disability_cover["benefits"] = "Disability Cover"
+        benefits_disability_cover["fulltime"] = benefits_response_table[
+            "disability_cover_full_time"
+        ]
+        benefits_disability_cover["parttime"] = benefits_response_table[
+            "disability_cover_part_time"
+        ]
+        all_benefits.append(benefits_disability_cover)
 
-            benefits_parental_leave = {}
-            benefits_parental_leave["temporary"] = benefits_response_table[
-                "parental_leave_temporary"
-            ]
-            benefits_parental_leave["significantlocation"] = ""
-            benefits_parental_leave["benefits"] = "Parental Leave"
-            benefits_parental_leave["fulltime"] = benefits_response_table[
-                "parental_leave_full_time"
-            ]
-            benefits_parental_leave["parttime"] = benefits_response_table[
-                "parental_leave_part_time"
-            ]
-            all_benefits.append(benefits_parental_leave)
+        benefits_parental_leave = {}
+        benefits_parental_leave["temporary"] = benefits_response_table[
+            "parental_leave_temporary"
+        ]
+        benefits_parental_leave["significantlocation"] = ""
+        benefits_parental_leave["benefits"] = "Parental Leave"
+        benefits_parental_leave["fulltime"] = benefits_response_table[
+            "parental_leave_full_time"
+        ]
+        benefits_parental_leave["parttime"] = benefits_response_table[
+            "parental_leave_part_time"
+        ]
+        all_benefits.append(benefits_parental_leave)
 
-            benefits_retirement = {}
-            benefits_retirement["temporary"] = benefits_response_table[
-                "retirement_temporary"
-            ]
-            benefits_retirement["significantlocation"] = ""
-            benefits_retirement["benefits"] = "Retirement Provisions"
-            benefits_retirement["fulltime"] = benefits_response_table[
-                "retirement_full_time"
-            ]
-            benefits_retirement["parttime"] = benefits_response_table[
-                "retirement_part_time"
-            ]
-            all_benefits.append(benefits_retirement)
+        benefits_retirement = {}
+        benefits_retirement["temporary"] = benefits_response_table[
+            "retirement_temporary"
+        ]
+        benefits_retirement["significantlocation"] = ""
+        benefits_retirement["benefits"] = "Retirement Provisions"
+        benefits_retirement["fulltime"] = benefits_response_table[
+            "retirement_full_time"
+        ]
+        benefits_retirement["parttime"] = benefits_response_table[
+            "retirement_part_time"
+        ]
+        all_benefits.append(benefits_retirement)
 
-            benefits_stock_ownership = {}
-            benefits_stock_ownership["temporary"] = benefits_response_table[
-                "stock_ownership_temporary"
-            ]
-            benefits_stock_ownership["significantlocation"] = ""
-            benefits_stock_ownership["benefits"] = "Stock Ownership"
-            benefits_stock_ownership["fulltime"] = benefits_response_table[
-                "stock_ownership_full_time"
-            ]
-            benefits_stock_ownership["parttime"] = benefits_response_table[
-                "stock_ownership_part_time"
-            ]
-            all_benefits.append(benefits_stock_ownership)
+        benefits_stock_ownership = {}
+        benefits_stock_ownership["temporary"] = benefits_response_table[
+            "stock_ownership_temporary"
+        ]
+        benefits_stock_ownership["significantlocation"] = ""
+        benefits_stock_ownership["benefits"] = "Stock Ownership"
+        benefits_stock_ownership["fulltime"] = benefits_response_table[
+            "stock_ownership_full_time"
+        ]
+        benefits_stock_ownership["parttime"] = benefits_response_table[
+            "stock_ownership_part_time"
+        ]
+        all_benefits.append(benefits_stock_ownership)
 
-            response_data["benefits"] = all_benefits
+        response_data["benefits"] = all_benefits
 
-            #           "parental_leave": [
-            #     {
-            #         "employee_category": "Parental Leave Entitlement",
-            #         "male": 0,
-            #         "female":0,
-            #         "total": 0
-            #     },
-            #     {
-            #         "employee_category": "Taking Parental Leave",
-            #         "male": 0,
-            #         "female": 0,
-            #         "total": 0
-            #     }
-            # ]
+        #           "parental_leave": [
+        #     {
+        #         "employee_category": "Parental Leave Entitlement",
+        #         "male": 0,
+        #         "female":0,
+        #         "total": 0
+        #     },
+        #     {
+        #         "employee_category": "Taking Parental Leave",
+        #         "male": 0,
+        #         "female": 0,
+        #         "total": 0
+        #     }
+        # ]
 
-            parental_leave = []
-            entitlement = {}
-            entitlement["employee_category"] = "Parental Leave Entitlement"
-            entitlement["male"] = parental_leave_response_table["entitlement_male"]
-            entitlement["female"] = parental_leave_response_table["entitlement_female"]
-            entitlement["total"] = parental_leave_response_table["entitlement_total"]
-            parental_leave.append(entitlement)
+        parental_leave = []
+        entitlement = {}
+        entitlement["employee_category"] = "Parental Leave Entitlement"
+        entitlement["male"] = parental_leave_response_table["entitlement_male"]
+        entitlement["female"] = parental_leave_response_table["entitlement_female"]
+        entitlement["total"] = parental_leave_response_table["entitlement_total"]
+        parental_leave.append(entitlement)
 
-            taking = {}
-            taking["employee_category"] = "Taking Parental Leave"
-            taking["male"] = parental_leave_response_table["taking_male"]
-            taking["female"] = parental_leave_response_table["taking_female"]
-            taking["total"] = parental_leave_response_table["taking_total"]
-            parental_leave.append(taking)
-            # Returning to work Post leave, Retained 12th month after leave
+        taking = {}
+        taking["employee_category"] = "Taking Parental Leave"
+        taking["male"] = parental_leave_response_table["taking_male"]
+        taking["female"] = parental_leave_response_table["taking_female"]
+        taking["total"] = parental_leave_response_table["taking_total"]
+        parental_leave.append(taking)
+        # Returning to work Post leave, Retained 12th month after leave
 
-            post_leave = {}
-            post_leave["employee_category"] = "Returning to work Post leave"
-            post_leave["male"] = parental_leave_response_table["return_to_post_work_male"]
-            post_leave["female"] = parental_leave_response_table[
-                "return_to_post_work_female"
-            ]
-            post_leave["total"] = parental_leave_response_table["return_to_post_work_total"]
-            parental_leave.append(post_leave)
+        post_leave = {}
+        post_leave["employee_category"] = "Returning to work Post leave"
+        post_leave["male"] = parental_leave_response_table["return_to_post_work_male"]
+        post_leave["female"] = parental_leave_response_table[
+            "return_to_post_work_female"
+        ]
+        post_leave["total"] = parental_leave_response_table["return_to_post_work_total"]
+        parental_leave.append(post_leave)
 
-            retained = {}
-            retained["employee_category"] = "Retained 12th month after leave"
-            retained["male"] = parental_leave_response_table["retained_12_mts_male"]
-            retained["female"] = parental_leave_response_table["retained_12_mts_female"]
-            retained["total"] = parental_leave_response_table["retained_12_mts_total"]
-            parental_leave.append(retained)
+        retained = {}
+        retained["employee_category"] = "Retained 12th month after leave"
+        retained["male"] = parental_leave_response_table["retained_12_mts_male"]
+        retained["female"] = parental_leave_response_table["retained_12_mts_female"]
+        retained["total"] = parental_leave_response_table["retained_12_mts_total"]
+        parental_leave.append(retained)
 
-            response_data["parental_leave"] = parental_leave
+        response_data["parental_leave"] = parental_leave
 
-            return Response({"data": response_data}, status=status.HTTP_200_OK)
-        except Exception as e:
-            raise APIException(e)
+        return Response({"data": response_data}, status=status.HTTP_200_OK)
