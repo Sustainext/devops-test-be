@@ -18,7 +18,7 @@ from django.contrib.auth.signals import user_logged_in
 # from django.utils.html import strip_tags
 from allauth.account.signals import user_signed_up
 from django.contrib.auth.models import update_last_login
-from sustainapp.models import LoginCounter
+from sustainapp.models import LoginCounter, UserProfile
 
 
 # Signals to send Activation mail
@@ -66,6 +66,7 @@ def send_activation_email(sender, instance, created, **kwargs):
 
         send_mail(subject, "", from_email, recipient_list, html_message=html_message)
         LoginCounter.objects.create(user=instance).save()
+        UserProfile.objects.create(user=instance).save()
 
 
 @receiver(user_signed_up)
@@ -79,3 +80,15 @@ def update_last_login(sender, user, request, **kwargs):
     user_login_counter, _ = LoginCounter.objects.get_or_create(user=user)
     user_login_counter.login_counter += 1
     user_login_counter.save()
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def update_client_id(sender, instance, **kwargs):
+    if (
+        hasattr(instance, "client")
+        and instance.client is not None
+        and instance.client.id is not None
+    ):
+        UserProfile.objects.update_or_create(
+            user=instance, defaults={"client_id": instance.client.id}
+        )

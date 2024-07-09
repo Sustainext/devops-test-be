@@ -36,6 +36,7 @@ from sustainapp.models import (
     ZohoInfo,
     LoginCounter,
     AnalysisData2,
+    UserProfile,
 )
 
 from django.db import migrations
@@ -281,6 +282,10 @@ class LoginCounterAdmin(admin.ModelAdmin):
     search_fields = ("user",)
 
 
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ["id","user","client"]
+
+
 UserExtendedModel = apps.get_model(settings.AUTH_USER_MODEL)
 
 admin.site.register(Regulation, RegulationAdmin),
@@ -313,3 +318,4 @@ admin.site.register(TaskDashboard, TaskDashboardAdmin),
 admin.site.register(ClientTaskDashboard, ClientTaskDashboardAdmin),
 admin.site.register(ZohoInfo, ZohoInfoAdmin),
 admin.site.register(LoginCounter, LoginCounterAdmin),
+admin.site.register(UserProfile, UserProfileAdmin),

@@ -108,12 +108,12 @@ class GetMaterialAnalysis(APIView):
         # Aggregate quantities for initial grouping
         for rw in raw_responses:
             for data in rw.data:
-                material_type = data["Typeofmaterial"]
-                material_category = data["Materialsused"]
-                source = data["Source"]
-                units = data["Unit"]
-                data_source = data["Datasource"]
-                total_quantity = data["Totalweight"]
+                material_type = data.get("Typeofmaterial", "")
+                material_category = data.get("Materialsused", "")
+                source = data.get("Source", "")
+                units = data.get("Unit", "")
+                data_source = data.get("Datasource", "")
+                total_quantity = data.get("Totalweight", 0)
                 try:
                     total_quantity = float(total_quantity)
                 except ValueError:
