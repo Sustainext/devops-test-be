@@ -34,11 +34,11 @@ def get_integer(value):
         raise TypeError(f"Expected int or str, got {type(value).__name__}")
 
 
-def get_value(objectValue):
-    if objectValue is None:
+def get_value(object_value):
+    if object_value is None:
         return 0
     else:
-        return objectValue
+        return object_value
 
 
 def get_object_value(object_value):
@@ -1119,7 +1119,7 @@ class EmploymentAnalyzeView(APIView):
         )
 
         # benefits table
-
+        #TODO: We have to fix this.
         benefits_response_table["life_insurance_full_time"] = get_object_value(
             benefits_dps.filter(index=0, metric_name="fulltime").first()
         )

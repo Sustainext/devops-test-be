@@ -75,6 +75,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "sustainapp.Middleware.middleware.JWTMiddleware",
+    "sustainapp.Middleware.middleware.MITMDetectionMiddleware",
 ]
 
 ROOT_URLCONF = "azureproject.urls"
