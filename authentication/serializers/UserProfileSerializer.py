@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from sustainapp.models import UserProfile
+from authentication.models import UserProfile
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

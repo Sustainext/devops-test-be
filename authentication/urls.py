@@ -10,11 +10,13 @@ from dj_rest_auth.views import (
 from authentication.views import email_confirm_redirect, password_reset_confirm_redirect
 from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
-from django.urls import path
-from django.urls import path
+from django.urls import path, include
 from authentication.Views.CustomLoginAPI import CustomLoginView
+from rest_framework import routers
+from authentication.Views.UserProfile import UserProfileViewSet
 
-
+router = routers.DefaultRouter()
+router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="rest_register"),
     # path("login/", LoginView.as_view(), name="rest_login"),
@@ -48,4 +50,5 @@ urlpatterns = [
         PasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
+    path("", include(router.urls)),
 ]

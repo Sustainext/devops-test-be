@@ -1040,19 +1040,3 @@ class ZohoInfo(AbstractModel):
     def __str__(self) -> str:
         return self.client_name + " " + self.table_name
     
-class UserProfile(AbstractModel):
-    """
-    Stores the user profile information
-    """
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_profile"
-    )
-    client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="user_profile_client",null=True, blank=True
-    )
-    designation = models.CharField(max_length=255, null=True, blank=True)
-    department = models.CharField(max_length=255, null=True, blank=True)
-    phone = models.CharField(max_length=255, null=True, blank=True)
-    profile_picture = models.ImageField(
-        upload_to="profile_pictures/", null=True, blank=True
-    )
