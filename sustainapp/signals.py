@@ -19,6 +19,7 @@ from django.contrib.auth.signals import user_logged_in
 from allauth.account.signals import user_signed_up
 from django.contrib.auth.models import update_last_login
 from sustainapp.models import LoginCounter
+from authentication.models import UserProfile
 
 
 # Signals to send Activation mail
@@ -66,6 +67,7 @@ def send_activation_email(sender, instance, created, **kwargs):
 
         send_mail(subject, "", from_email, recipient_list, html_message=html_message)
         LoginCounter.objects.create(user=instance).save()
+        UserProfile.objects.create(user=instance).save()
 
 
 @receiver(user_signed_up)

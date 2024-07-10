@@ -1039,3 +1039,4 @@ class ZohoInfo(AbstractModel):
 
     def __str__(self) -> str:
         return self.client_name + " " + self.table_name
+    
