@@ -1022,6 +1022,7 @@ class LoginCounter(AbstractModel):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="first_login"
     )
     login_counter = models.IntegerField(default=-1)
+    needs_password_change = models.BooleanField(default=True)
     objects = ClientFiltering()
 
 

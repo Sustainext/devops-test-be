@@ -277,13 +277,13 @@ class ZohoInfoAdmin(admin.ModelAdmin):
 
 
 class LoginCounterAdmin(admin.ModelAdmin):
-    list_display = ["login_counter", "user"]
+    list_display = ["login_counter", "user", "needs_password_change"]
     list_filter = ("user",)
     search_fields = ("user",)
 
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ["id","user","client"]
+    list_display = ["id", "user", "client"]
 
 
 UserExtendedModel = apps.get_model(settings.AUTH_USER_MODEL)
