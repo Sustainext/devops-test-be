@@ -26,12 +26,10 @@ from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
 from sustainapp.Views.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
 from sustainapp.Views.Social.ChildLabor import ChildLabourAnalyzeView
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
-from sustainapp.Views.UserProfile import UserProfileViewSet
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
 router.register(r"ghgreport", ReportViewSet, basename="ReportUpdate")
-router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
 urlpatterns = [
     path("subcategories/", SubCategoriesAPIView.as_view(), name="subcategories"),
     path(

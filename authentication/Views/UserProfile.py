@@ -1,6 +1,6 @@
-from sustainapp.models import UserProfile
+from authentication.models import UserProfile
 from rest_framework import viewsets
-from sustainapp.Serializers.UserProfileSerializer import UserProfileSerializer
+from authentication.serializers.UserProfileSerializer import UserProfileSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -38,4 +38,4 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        return Response(serializer.data)
+        return Response({"message": "Profile Updated Sucessfully"})
