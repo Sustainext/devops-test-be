@@ -288,15 +288,31 @@ class EmploymentAnalyzeView(APIView):
                 DataPoint.objects.none()
             )  # Assuming DataPoint is your model
 
-        ne_male_permanent_qs = dp_employ_permanent_qs.filter(
-            index=0, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        ne_female_permanent_qs = dp_employ_permanent_qs.filter(
-            index=1, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        ne_nb_permanent_qs = dp_employ_permanent_qs.filter(
-            index=2, metric_name="total"
-        ).aggregate(Sum("number_holder"))
+        ne_male_end = dp_employ_permanent_qs.filter(
+            index=0, metric_name="end"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        ne_male_beginning = dp_employ_permanent_qs.filter(
+            index=0, metric_name="beginning"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        ne_male_permanent_qs = get_value(ne_male_end) + get_value(ne_male_beginning)
+
+        ne_female_end = dp_employ_permanent_qs.filter(
+            index=1, metric_name="end"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        ne_female_beginning = dp_employ_permanent_qs.filter(
+            index=1, metric_name="beginning"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        ne_female_permanent_qs = get_value(ne_female_end) + get_value(
+            ne_female_beginning
+        )
+
+        ne_nb_end = dp_employ_permanent_qs.filter(index=2, metric_name="end").aggregate(
+            s=Sum("number_holder")
+        )["s"]
+        ne_nb_beginning = dp_employ_permanent_qs.filter(
+            index=2, metric_name="beginning"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        ne_nb_permanent_qs = get_value(ne_nb_end) + get_value(ne_nb_beginning)
 
         ne_permanent_30_qs = dp_employ_permanent_qs.filter(
             metric_name="yearsold30"
@@ -308,22 +324,19 @@ class EmploymentAnalyzeView(APIView):
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
 
-        print(ne_male_permanent_qs["number_holder__sum"])
         total_permanent = (
-            get_value(ne_male_permanent_qs["number_holder__sum"])
-            + get_value(ne_female_permanent_qs["number_holder__sum"])
-            + get_value(ne_nb_permanent_qs["number_holder__sum"])
+            get_value(ne_male_permanent_qs)
+            + get_value(ne_female_permanent_qs)
+            + get_value(ne_nb_permanent_qs)
         )
 
         ne_per_male_percent = safe_divide(
-            get_value(ne_male_permanent_qs["number_holder__sum"]), total_permanent
+            get_value(ne_male_permanent_qs), total_permanent
         )
         ne_per_female_percent = safe_divide(
-            get_value(ne_female_permanent_qs["number_holder__sum"]), total_permanent
+            get_value(ne_female_permanent_qs), total_permanent
         )
-        ne_per_nb_percent = safe_divide(
-            get_value(ne_nb_permanent_qs["number_holder__sum"]), total_permanent
-        )
+        ne_per_nb_percent = safe_divide(get_value(ne_nb_permanent_qs), total_permanent)
         ne_permanent_30_pc = safe_divide(
             get_value(ne_permanent_30_qs["number_holder__sum"]), total_permanent
         )
@@ -673,7 +686,7 @@ class EmploymentAnalyzeView(APIView):
             dp_employ_to_permanent_qs = (
                 DataPoint.objects.none()
             )  # Assuming DataPoint is your model
-        #TODO: Fix Metric Name here
+        # TODO: Fix Metric Name here
         et_male_permanent_qs = dp_employ_to_permanent_qs.filter(
             index=0, metric_name="total"
         ).aggregate(Sum("number_holder"))
@@ -1456,10 +1469,14 @@ class EmploymentAnalyzeView(APIView):
             employee_turnover_reponse_table["employee_turnover_temporary_male_percent"]
         )
         employee_turnover_temporary["percentage_of_female_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_temporary_female_percent"]
+            employee_turnover_reponse_table[
+                "employee_turnover_temporary_female_percent"
+            ]
         )
         employee_turnover_temporary["percentage_of_non_binary_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_temporary_non_binary_percent"]
+            employee_turnover_reponse_table[
+                "employee_turnover_temporary_non_binary_percent"
+            ]
         )
         employee_turnover_temporary["yearsold30"] = employee_turnover_reponse_table[
             "employee_turnover_temporary_30_percent"
@@ -1475,7 +1492,9 @@ class EmploymentAnalyzeView(APIView):
         employee_turnover_ng = {}
         employee_turnover_ng["type_of_employee"] = "Non Guaranteed employee"
         employee_turnover_ng["percentage_of_male_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_non_guaranteed_male_percent"]
+            employee_turnover_reponse_table[
+                "employee_turnover_non_guaranteed_male_percent"
+            ]
         )
         employee_turnover_ng["percentage_of_female_employee"] = (
             employee_turnover_reponse_table[
@@ -1504,10 +1523,14 @@ class EmploymentAnalyzeView(APIView):
             employee_turnover_reponse_table["employee_turnover_full_time_male_percent"]
         )
         employee_turnover_ft["percentage_of_female_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_full_time_female_percent"]
+            employee_turnover_reponse_table[
+                "employee_turnover_full_time_female_percent"
+            ]
         )
         employee_turnover_ft["percentage_of_non_binary_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_full_time_non_binary_percent"]
+            employee_turnover_reponse_table[
+                "employee_turnover_full_time_non_binary_percent"
+            ]
         )
         employee_turnover_ft["yearsold30"] = employee_turnover_reponse_table[
             "employee_turnover_full_time_30_percent"
@@ -1526,10 +1549,14 @@ class EmploymentAnalyzeView(APIView):
             employee_turnover_reponse_table["employee_turnover_part_time_male_percent"]
         )
         employee_turnover_pt["percentage_of_female_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_part_time_female_percent"]
+            employee_turnover_reponse_table[
+                "employee_turnover_part_time_female_percent"
+            ]
         )
         employee_turnover_pt["percentage_of_non_binary_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_part_time_non_binary_percent"]
+            employee_turnover_reponse_table[
+                "employee_turnover_part_time_non_binary_percent"
+            ]
         )
         employee_turnover_pt["yearsold30"] = employee_turnover_reponse_table[
             "employee_turnover_part_time_30_percent"
@@ -1542,128 +1569,11 @@ class EmploymentAnalyzeView(APIView):
         ]
         response_data["employee_turnover"].append(employee_turnover_pt)
 
-        #       "benefits": [
-        # {
-        #   "temporary": true,
-        #   "significantlocation": "",
-        #   "benefits": "Parental Leave",
-        #   "fulltime": true,
-        #   "parttime": false
-        # },
-
         all_benefits = []
-        # benefits_life_insurance = {}
-        # benefits_life_insurance["temporary"] = benefits_response_table[
-        #     "life_insurance_temporary"
-        # ]
-        # benefits_life_insurance["benefits"] = "Parental Leave"
-        # benefits_life_insurance["fulltime"] = benefits_response_table[
-        #     "life_insurance_full_time"
-        # ]
-        # benefits_life_insurance["parttime"] = benefits_response_table[
-        #     "life_insurance_part_time"
-        # ]
-        # benefits_life_insurance["significantlocation"] = benefits_response_table[
-        #     "life_insurance_significant_location"
-        # ]
-        # all_benefits.append(benefits_life_insurance)
 
-        # benefits_healthcare = {}
-        # benefits_healthcare["temporary"] = benefits_response_table[
-        #     "healthcare_temporary"
-        # ]
-        # benefits_healthcare["significantlocation"] = benefits_response_table[
-        #     "healthcare_significant_location"
-        # ]
-        # benefits_healthcare["benefits"] = "Healthcare"
-        # benefits_healthcare["fulltime"] = benefits_response_table[
-        #     "healthcare_full_time"
-        # ]
-        # benefits_healthcare["parttime"] = benefits_response_table[
-        #     "healthcare_part_time"
-        # ]
-        # all_benefits.append(benefits_healthcare)
-
-        # benefits_disability_cover = {}
-        # benefits_disability_cover["temporary"] = benefits_response_table[
-        #     "disability_cover_temporary"
-        # ]
-        # benefits_disability_cover["benefits"] = "Disability Cover"
-        # benefits_disability_cover["fulltime"] = benefits_response_table[
-        #     "disability_cover_full_time"
-        # ]
-        # benefits_disability_cover["parttime"] = benefits_response_table[
-        #     "disability_cover_part_time"
-        # ]
-        # benefits_disability_cover["significantlocation"] = benefits_response_table[
-        #     "disability_cover_significant_location"
-        # ]
-        # all_benefits.append(benefits_disability_cover)
-
-        # benefits_parental_leave = {}
-        # benefits_parental_leave["temporary"] = benefits_response_table[
-        #     "parental_leave_temporary"
-        # ]
-        # benefits_parental_leave["significantlocation"] = benefits_response_table[
-        #     "parental_leave_significant_location"
-        # ]
-        # benefits_parental_leave["benefits"] = "Parental Leave"
-        # benefits_parental_leave["fulltime"] = benefits_response_table[
-        #     "parental_leave_full_time"
-        # ]
-        # benefits_parental_leave["parttime"] = benefits_response_table[
-        #     "parental_leave_part_time"
-        # ]
-        # all_benefits.append(benefits_parental_leave)
-
-        # benefits_retirement = {}
-        # benefits_retirement["temporary"] = benefits_response_table[
-        #     "retirement_temporary"
-        # ]
-        # benefits_retirement["significantlocation"] = benefits_response_table[
-        #     "retirement_significant_location"
-        # ]
-        # benefits_retirement["benefits"] = "Retirement Provisions"
-        # benefits_retirement["fulltime"] = benefits_response_table[
-        #     "retirement_full_time"
-        # ]
-        # benefits_retirement["parttime"] = benefits_response_table[
-        #     "retirement_part_time"
-        # ]
-        # all_benefits.append(benefits_retirement)
-
-        # benefits_stock_ownership = {}
-        # benefits_stock_ownership["temporary"] = benefits_response_table[
-        #     "stock_ownership_temporary"
-        # ]
-        # benefits_stock_ownership["significantlocation"] = benefits_response_table[
-        #     "stock_ownership_significant_location"
-        # ]
-        # benefits_stock_ownership["benefits"] = "Stock Ownership"
-        # benefits_stock_ownership["fulltime"] = benefits_response_table[
-        #     "stock_ownership_full_time"
-        # ]
-        # benefits_stock_ownership["parttime"] = benefits_response_table[
-        #     "stock_ownership_part_time"
-        # ]
         all_benefits.extend(benefits_response_table["extra_benefits"])
 
         response_data["benefits"] = all_benefits
-
-        #           "parental_leave": [
-        #     {
-        #         "employee_category": "Parental Leave Entitlement",
-        #         "male": 0,
-        #         "female":0,
-        #         "total": 0
-        #     },
-        #     {
-        #         "employee_category": "Taking Parental Leave",
-        #         "male": 0,
-        #         "female": 0,
-        #         "total": 0
-        #     }
-        # ]
 
         parental_leave = []
         entitlement = {}
