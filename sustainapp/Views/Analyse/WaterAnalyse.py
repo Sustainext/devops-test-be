@@ -23,6 +23,8 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from datametric.utils.analyse import set_locations_data, filter_by_start_end_dates
 from collections import defaultdict
+from django.db.models.expressions import RawSQL
+from django.db.models import Q, Func, Value
 import datetime
 
 
@@ -54,7 +56,8 @@ class WaterAnalyse(APIView):
                 location__in=self.locations.values_list("name", flat=True),
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
-            .exclude(data=list())
+            .annotate(json_data=RawSQL("CAST(data AS JSONB)", []))
+            .exclude(json_data=Value("[]"))
             .only("data", "location")
         )
 
@@ -526,7 +529,7 @@ class WaterAnalyse(APIView):
         local_raw_response = self.raw_responses.filter(path__slug=slug)
         data = []
         for raw_response in local_raw_response:
-            if raw_response.data[0]["selectedOption"]!="no":
+            if raw_response.data[0]["selectedOption"] != "no":
                 data.extend(raw_response.data[0]["formData"])
         return self.process_change_in_water_storage(
             data,
