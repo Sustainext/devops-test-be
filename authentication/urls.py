@@ -14,6 +14,7 @@ from django.urls import path, include
 from authentication.Views.CustomLoginAPI import CustomLoginView
 from rest_framework import routers
 from authentication.Views.UserProfile import UserProfileViewSet
+from authentication.Views.ChangePassword import ChangePasswordAPIView
 
 router = routers.DefaultRouter()
 router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
@@ -50,5 +51,6 @@ urlpatterns = [
         PasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
+    path("change_password/", ChangePasswordAPIView.as_view(), name="change_password"),
     path("", include(router.urls)),
 ]
