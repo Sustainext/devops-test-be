@@ -67,3 +67,14 @@ class UserProfile(AbstractModel):
     profile_picture = models.ImageField(
         upload_to="profile_pictures/", null=True, blank=True
     )
+
+class LoginCounter(AbstractModel):
+    """
+    Stores the number of times user logs in
+    """
+
+    user = models.OneToOneField(
+        CustomUser, on_delete=models.CASCADE, related_name="first_login"
+    )
+    login_counter = models.IntegerField(default=-1)
+    needs_password_change = models.BooleanField(default=True,null=True, blank=True)
