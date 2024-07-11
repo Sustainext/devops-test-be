@@ -115,7 +115,6 @@ class IllnessAnalysisView(APIView):
                 )
             )
             local_response_data.append(temp)
-            print(local_raw_response)
         return self.convert_ohs_data_as_per_frontend_response(local_response_data)
 
     def get_work_related_ill_health(self):
@@ -239,7 +238,6 @@ class IllnessAnalysisView(APIView):
             return []
 
         original_data = data[0]
-        print(original_data)
 
         response = [
             {
