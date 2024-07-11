@@ -1,7 +1,5 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from sustainapp.models import LoginCounter
-from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from sustainapp.Serializers.ChangePasswordSerializer import ChangePasswordSerializer

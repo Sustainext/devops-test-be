@@ -1013,18 +1013,6 @@ class ClientTaskDashboard(AbstractModel):
     objects = ClientFiltering()
 
 
-class LoginCounter(AbstractModel):
-    """
-    Stores the number of times user logs in
-    """
-
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="first_login"
-    )
-    login_counter = models.IntegerField(default=-1)
-    needs_password_change = models.BooleanField(default=True)
-    objects = ClientFiltering()
-
 
 class ZohoInfo(AbstractModel):
     client = models.OneToOneField(

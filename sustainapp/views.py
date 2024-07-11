@@ -29,7 +29,6 @@ from sustainapp.models import (
     TaskDashboard,
     Client,
     User_client,
-    LoginCounter,
     Sdg,
     Rating,
     Certification,
@@ -138,6 +137,7 @@ import os
 from rest_framework.parsers import MultiPartParser, JSONParser
 import time
 from django.contrib.auth.decorators import login_required
+from authentication.models import LoginCounter
 
 # canada bill s-211 Annual report started from here
 # from .serializers import Screen1Serializer,Screen2Serializer,Screen3Serializer,Screen4Serializer,Screen5Serializer,Screen6Serializer,Screen7Serializer,Screen8Serializer
