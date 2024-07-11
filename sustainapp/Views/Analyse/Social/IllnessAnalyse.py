@@ -115,6 +115,7 @@ class IllnessAnalysisView(APIView):
                 )
             )
             local_response_data.append(temp)
+            print(local_raw_response)
         return self.convert_ohs_data_as_per_frontend_response(local_response_data)
 
     def get_work_related_ill_health(self):
@@ -235,29 +236,26 @@ class IllnessAnalysisView(APIView):
         }
 
         if len(data) == 0:
-            return [
-                {"": "Covered by the system", **default_response},
-                {"": "Internally audited", **default_response},
-                {"": "Audited or certified by an external party.", **default_response},
-            ]
+            return []
 
         original_data = data[0]
+        print(original_data)
 
         response = [
             {
                 "": "Covered by the system",
                 "Percentage of all Employees": f"{original_data.get('percentage_of_all_employees_covered_by_the_system', 0)}%",
-                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data.get('percentage_of_workers_who_are_not_employees_covered_by_the_system', 0)}%",
+                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data.get('percentage_of_internally_audited_workers', 0)}%",
             },
             {
                 "": "Internally audited",
                 "Percentage of all Employees": f"{original_data.get('percentage_of_all_employees_internally_audited', 0)}%",
-                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data.get('percentage_of_workers_who_are_not_employees_internally_audited', 0)}%",
+                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data.get('percentage_of_workers_who_are_not_emplyees_internally_audited', 0)}%",
             },
             {
                 "": "Audited or certified by an external party.",
                 "Percentage of all Employees": f"{original_data.get('percentage_of_all_employees_externally_audited', 0)}%",
-                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data.get('percentage_of_workers_who_are_not_employees_externally_audited', 0)}%",
+                "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data.get('percentage_of_workers_who_are_not_emplyees_externally_audited', 0)}%",
             },
         ]
 
