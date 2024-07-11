@@ -1119,7 +1119,7 @@ class EmploymentAnalyzeView(APIView):
         )
 
         # benefits table
-        #TODO: We have to fix this.
+        # TODO: We have to fix this.
         benefits_response_table["life_insurance_full_time"] = get_object_value(
             benefits_dps.filter(index=0, metric_name="fulltime").first()
         )
