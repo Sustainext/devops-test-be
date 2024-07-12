@@ -287,32 +287,15 @@ class EmploymentAnalyzeView(APIView):
             dp_employ_permanent_qs = (
                 DataPoint.objects.none()
             )  # Assuming DataPoint is your model
-
-        ne_male_end = dp_employ_permanent_qs.filter(
-            index=0, metric_name="end"
-        ).aggregate(s=Sum("number_holder"))["s"]
-        ne_male_beginning = dp_employ_permanent_qs.filter(
-            index=0, metric_name="beginning"
-        ).aggregate(s=Sum("number_holder"))["s"]
-        ne_male_permanent_qs = get_value(ne_male_end) + get_value(ne_male_beginning)
-
-        ne_female_end = dp_employ_permanent_qs.filter(
-            index=1, metric_name="end"
-        ).aggregate(s=Sum("number_holder"))["s"]
-        ne_female_beginning = dp_employ_permanent_qs.filter(
-            index=1, metric_name="beginning"
-        ).aggregate(s=Sum("number_holder"))["s"]
-        ne_female_permanent_qs = get_value(ne_female_end) + get_value(
-            ne_female_beginning
-        )
-
-        ne_nb_end = dp_employ_permanent_qs.filter(index=2, metric_name="end").aggregate(
-            s=Sum("number_holder")
-        )["s"]
-        ne_nb_beginning = dp_employ_permanent_qs.filter(
-            index=2, metric_name="beginning"
-        ).aggregate(s=Sum("number_holder"))["s"]
-        ne_nb_permanent_qs = get_value(ne_nb_end) + get_value(ne_nb_beginning)
+        ne_male_permanent_qs = dp_employ_permanent_qs.filter(
+            index=0, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_female_permanent_qs = dp_employ_permanent_qs.filter(
+            index=1, metric_name="total"
+        ).aggregate(Sum("number_holder"))
+        ne_nb_permanent_qs = dp_employ_permanent_qs.filter(
+            index=2, metric_name="total"
+        ).aggregate(Sum("number_holder"))
 
         ne_permanent_30_qs = dp_employ_permanent_qs.filter(
             metric_name="yearsold30"
@@ -687,15 +670,32 @@ class EmploymentAnalyzeView(APIView):
                 DataPoint.objects.none()
             )  # Assuming DataPoint is your model
         # TODO: Fix Metric Name here
-        et_male_permanent_qs = dp_employ_to_permanent_qs.filter(
-            index=0, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        et_female_permanent_qs = dp_employ_to_permanent_qs.filter(
-            index=1, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        et_nb_permanent_qs = dp_employ_to_permanent_qs.filter(
-            index=2, metric_name="total"
-        ).aggregate(Sum("number_holder"))
+
+        dp_male_end = dp_employ_to_permanent_qs.filter(
+            index=0, metric_name="end"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        dp_male_beginning = dp_employ_to_permanent_qs.filter(
+            index=0, metric_name="beginning"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        et_male_permanent_qs = get_value(dp_male_end) + get_value(dp_male_beginning)
+
+        dp_female_end = dp_employ_to_permanent_qs.filter(
+            index=1, metric_name="end"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        dp_female_beginning = dp_employ_to_permanent_qs.filter(
+            index=1, metric_name="beginning"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        et_female_permanent_qs = get_value(dp_female_end) + get_value(
+            dp_female_beginning
+        )
+
+        dp_nb_end = dp_employ_to_permanent_qs.filter(
+            index=2, metric_name="end"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        dp_nb_beginning = dp_employ_to_permanent_qs.filter(
+            index=2, metric_name="beginning"
+        ).aggregate(s=Sum("number_holder"))["s"]
+        et_nb_permanent_qs = get_value(dp_nb_end) + get_value(dp_nb_beginning)
 
         et_permanent_30_qs = dp_employ_to_permanent_qs.filter(
             metric_name="yearsold30"
@@ -709,22 +709,24 @@ class EmploymentAnalyzeView(APIView):
 
         print(et_male_permanent_qs["number_holder__sum"])
 
+        #* Total Number of employees
         total_permanent_eto = (
-            get_value(et_male_permanent_qs["number_holder__sum"])
-            + get_value(et_female_permanent_qs["number_holder__sum"])
-            + get_value(et_nb_permanent_qs["number_holder__sum"])
+            get_value(et_male_permanent_qs)
+            + get_value(et_female_permanent_qs)
+            + get_value(et_nb_permanent_qs)
         )
 
+        
         et_per_male_percent = safe_divide(
-            get_value(et_male_permanent_qs["number_holder__sum"]),
+            get_value(et_male_permanent_qs),
             total_permanent_eto,
         )
         et_per_female_percent = safe_divide(
-            get_value(et_female_permanent_qs["number_holder__sum"]),
+            get_value(et_female_permanent_qs),
             total_permanent_eto,
         )
         et_per_nb_percent = safe_divide(
-            get_value(et_nb_permanent_qs["number_holder__sum"]), total_permanent_eto
+            get_value(et_nb_permanent_qs), total_permanent_eto
         )
         et_permanent_30_pc = safe_divide(
             get_value(et_permanent_30_qs["number_holder__sum"]), total_permanent_eto
