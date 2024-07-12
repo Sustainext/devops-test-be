@@ -29,6 +29,7 @@ class UpdateResponseSerializer(serializers.Serializer):
     location = serializers.CharField(required=True, trim_whitespace=False)
     year = serializers.IntegerField(required=True)
     month = serializers.IntegerField(min_value=1, max_value=12, required=True)
+
     def validate(self, data):
         """
         Perform custom validation for the fields.
@@ -42,17 +43,21 @@ class RawResponseSerializer(serializers.ModelSerializer):
         model = RawResponse
         fields = ["id", "data", "updated_at"]
 
+
 class FieldGroupGetSerializer(serializers.Serializer):
     path_slug = serializers.CharField(required=True)
     location = serializers.CharField(required=True)
     year = serializers.IntegerField(required=True)
     month = serializers.IntegerField(min_value=1, max_value=12, required=True)
+
     class Meta:
         fields = ["path_slug", "location", "year", "month"]
+
 
 class GetClimatiqComputedSerializer(serializers.Serializer):
     location = serializers.CharField(required=True)
     year = serializers.IntegerField(required=True)
     month = serializers.IntegerField(min_value=1, max_value=12, required=True)
+
     class Meta:
         fields = ["location", "year", "month"]

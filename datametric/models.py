@@ -28,22 +28,23 @@ class Path(AbstractModel):
     def __str__(self):
         return self.slug
 
+
 class OrderedJSONField(models.JSONField):
     def from_db_value(self, value, expression, connection):
-        '''Converts JSON data from the database into a Python OrderedDict.'''
+        """Converts JSON data from the database into a Python OrderedDict."""
         if value is None:
             return value
         # return json.loads(value, object_pairs_hook=collections.OrderedDict)
         return self.to_python(value)
-    
+
     def get_prep_value(self, value):
-        ''' Prepares a Python object to be stored in the database as a JSON string.'''
+        """Prepares a Python object to be stored in the database as a JSON string."""
         if value is None:
             return None
-        return json.dumps(value, separators=(',', ':'))
+        return json.dumps(value, separators=(",", ":"))
 
     def to_python(self, value):
-        '''Converts a JSON string retrieved from the database back into a Python OrderedDict.'''
+        """Converts a JSON string retrieved from the database back into a Python OrderedDict."""
         if isinstance(value, str):
             try:
                 return json.loads(value, object_pairs_hook=collections.OrderedDict)
@@ -55,9 +56,10 @@ class OrderedJSONField(models.JSONField):
     #     return self.to_python(value)
 
     def db_type(self, connection):
-        '''Specifies the database column type as 'json' for PostgreSQL.'''
-        return 'json'
-    
+        """Specifies the database column type as 'json' for PostgreSQL."""
+        return "json"
+
+
 class FieldGroup(AbstractModel):
     name = models.CharField(max_length=200)
     path = models.ForeignKey(
@@ -69,7 +71,9 @@ class FieldGroup(AbstractModel):
 
 
 class RawResponse(AbstractModel):
-    data = OrderedJSONField(default=list)       #models.JSONField(default=list)       #need to change this field to json and with the 
+    data = OrderedJSONField(
+        default=list
+    )  # models.JSONField(default=list)       #need to change this field to json and with the
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     user = models.ForeignKey(
         CustomUser,
