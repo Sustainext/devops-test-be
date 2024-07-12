@@ -14,6 +14,9 @@ from .serializers import (
 from authentication.models import CustomUser, Client
 from rest_framework.permissions import IsAuthenticated
 from sustainapp.models import Organization, Corporateentity, Location
+from logging import getLogger
+
+logger = getLogger("error.log")
 
 
 class TestView(APIView):
@@ -51,6 +54,7 @@ class FieldGroupListView(APIView):
             field_groups = FieldGroup.objects.filter(path=path)
             serialized_field_groups = FieldGroupSerializer(field_groups, many=True)
             if locale:
+                # TODO: Need to change the query to be based on the location id, at present it's on location name
                 location = Location.objects.filter(id=locale.id).values_list("name")[0][
                     0
                 ]
@@ -184,10 +188,9 @@ class CreateOrUpdateFieldGroup(APIView):
                 raw_response.data = form_data
                 raw_response.save()
 
-            print("status check")
-            print(f"RawResponse: {raw_response}")
-            print(f"Created: {created}")
-
+            logger.info(f"status check")
+            logger.info(f"RawResponse: {raw_response}")
+            logger.info(f"created: {created}")
             return Response(
                 {"message": "Form data saved successfully."},
                 status=status.HTTP_200_OK,
@@ -198,26 +201,27 @@ class CreateOrUpdateFieldGroup(APIView):
             CustomUser.DoesNotExist,
             Client.DoesNotExist,
         ) as e:
-            print(f"Lookup error: {e}")
+            logger.info(f"Lookup error: {e}")
             return Response(
                 {"message": "Path, User, or Client does not exist."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logger.info(f"An unexpected error occurred: {e}")
             return Response(
                 {"message": "An unexpected error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        
+
 class GetComputedClimatiqValue(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         validation_serializer = GetClimatiqComputedSerializer(data=request.query_params)
         validation_serializer.is_valid(raise_exception=True)
-        location_id = validation_serializer.validated_data.get("location")[0][0]
-        location = Location.objects.get(id=location_id).values_list("name")
+        # TODO: Need to change the query to be based on the location id, at present it's on location name
+        location_obj = validation_serializer.validated_data.get("location")
+        location = Location.objects.filter(id=location_obj.id).values_list("name")[0][0]
         year = validation_serializer.validated_data.get("year")
         month = validation_serializer.validated_data.get("month")
         user_instance: CustomUser = self.request.user
@@ -236,7 +240,7 @@ class GetComputedClimatiqValue(APIView):
             resp_data["result"] = datapoint.json_holder
             return Response(resp_data, status=status.HTTP_200_OK)
         except Exception as e:
-            print(f"Exception occurred: {e}")
+            logger.info(f"Exception occurred: {e}")
             return Response(
                 {
                     "message": "An unexpected error occurred for GetComputedClimatiqValue "
