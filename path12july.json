@@ -1,0 +1,1002 @@
+[
+  {
+    "model": "datametric.path",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Emissions-Scope-1",
+      "slug": "gri-environment-emissions-301-a-scope-1"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Emissions-Scope-2",
+      "slug": "gri-environment-emissions-301-a-scope-2"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Emissions-Scope-3",
+      "slug": "gri-environment-emissions-301-a-scope-3"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Direct purchased heating cooling electricity and steam",
+      "slug": "gri-environment-energy-302-1a-1b-direct_purchased"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Consumed fuel and energy including self generated",
+      "slug": "gri-environment-energy-302-1c-1e-consumed_fuel"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Self generated not consumed or sold",
+      "slug": "gri-environment-energy-302-1-self_generated"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Energy sold",
+      "slug": "gri-environment-energy-302-1d-energy_sold"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Standards methodologies assumptions and calculation tools used",
+      "slug": "gri-environment-energy-302-1f-smac"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed inside the organization-Source of conversion factor",
+      "slug": "gri-environment-energy-302-1g-conversion_factor"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed outside the organization-Energy consumption outside organization",
+      "slug": "gri-environment-energy-302-2a-energy_consumption_outside_organization"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 11,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed outside the organization-Standards methodologies assumptions and calculation tools used",
+      "slug": "gri-environment-energy-302-2b-smac"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 12,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy consumed outside the organization-Source of conversion factor",
+      "slug": "gri-environment-energy-302-2c-conversion_factor"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 13,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Energy intensity",
+      "slug": "gri-environment-energy-302-3a-3b-3c-3d-energy_intensity"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 14,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction of energy consumption-Reduction of energy consumption",
+      "slug": "gri-environment-energy-302-4a-4b-reduction_of_energy_consumption"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 15,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction of energy consumption-Base year or baseline",
+      "slug": "gri-environment-energy-302-4c-base_year_or_baseline"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 16,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction of energy consumption-Standards methodologies assumptions and calculation tools used",
+      "slug": "gri-environment-energy-302-4d-smac"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 17,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction in energy requirements of products and services-Reduction of energy consumption",
+      "slug": "gri-environment-energy-302-5a-5b-reduction_in_energy_in_products_and_servies"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 18,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction in energy requirements of products and services-Base year or baseline",
+      "slug": "gri-environment-energy-302-5b-base_year_or_baseline"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 19,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Energy-Reduction in energy requirements of products and services-Standards methodologies assumption and calculation tools used",
+      "slug": "gri-environment-energy-302-5c-smac"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 20,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Significant waste",
+      "slug": "gri-environment-waste-306-1-significant_waste"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 21,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Management of significant waste",
+      "slug": "gri-environment-waste-306-2-management_of_significant_waste"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 22,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste generated-Waste generated",
+      "slug": "gri-environment-waste-306-3a-3b-waste_generated"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 23,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste generated-Contextual info",
+      "slug": "gri-environment-waste-306-3b-contextual_info"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 24,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste directed from disposal-Waste diverted",
+      "slug": "gri-environment-waste-306-4b-4c-4d-waste_diverted_from_disposal"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 25,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste directed from disposal-Contextual info",
+      "slug": "gri-environment-waste-306-4e-contextual_info"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 26,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste directed to disposal-Waste diverted to disposal",
+      "slug": "gri-environment-waste-306-5a-5b-5c-5d-5e-waste_diverted_to_disposal"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 27,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Waste-Waste directed to disposal-Contextual info",
+      "slug": "gri-environment-waste-306-5e-contextual_info"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 28,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Materials used by weight or volume-Non renewable materials",
+      "slug": "gri-environment-materials-301-1a-non_renewable_materials"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 29,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Materials used by weight or volume-Renewable materials",
+      "slug": "gri-environment-materials-301-1a-renewable_materials"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 30,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Recycled input materials used",
+      "slug": "gri-environment-materials-301-2a-recycled_input_materials"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 31,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Reclaimed products and their packaging-Reclaimed products",
+      "slug": "gri-environment-materials-301-3a-3b-reclaimed_products"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 32,
+    "fields": {
+      "created_at": "2024-05-21T10:13:17.938Z",
+      "updated_at": "2024-05-21T10:13:17.941Z",
+      "name": "GRI-Collect-Materials-Reclaimed products and their packaging-Data collection",
+      "slug": "gri-environment-materials-303-1b-data_collection"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 33,
+    "fields": {
+      "created_at": "2024-05-22T08:40:49.225Z",
+      "updated_at": "2024-05-22T08:40:49.225Z",
+      "name": "GRI-Collect-Water-Interaction_with_water-Interaction_with_water",
+      "slug": "gri-environment-water-303-1b-1c-1d-interaction_with_water"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 34,
+    "fields": {
+      "created_at": "2024-05-22T08:42:44.408Z",
+      "updated_at": "2024-05-22T08:42:44.408Z",
+      "name": "GRI-Collect-Water-Interaction_with_water-Management_of_water_discharge",
+      "slug": "gri-environment-water-303-2a-management_water_discharge"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 35,
+    "fields": {
+      "created_at": "2024-05-22T08:43:40.636Z",
+      "updated_at": "2024-05-22T08:43:40.636Z",
+      "name": "GRI-Collect-Water-Interaction_with_water-Profile_receving_waterbody",
+      "slug": "gri-environment-water-303-2a-profile_receiving_waterbody"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 36,
+    "fields": {
+      "created_at": "2024-05-22T08:46:35.487Z",
+      "updated_at": "2024-05-22T10:51:56.376Z",
+      "name": "GRI-Collect-Water-Water_withdrawal/discharge_from_all_areas-Water_withdrawl/discharge_from_all_areas",
+      "slug": "gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 37,
+    "fields": {
+      "created_at": "2024-05-22T10:42:46.382Z",
+      "updated_at": "2024-05-22T11:48:58.971Z",
+      "name": "GRI-Collect-Water-Water_withdrawal/discharge_from_all_areas-Third_party",
+      "slug": "gri-environment-water-303-4a-third_party"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 38,
+    "fields": {
+      "created_at": "2024-05-22T10:49:23.807Z",
+      "updated_at": "2024-05-22T13:18:46.358Z",
+      "name": "GRI-Collect-Water-Water_withdrawal/discharge_from_areas_water_stress-Water_withdrawal/discharge_from_areas_water_stress",
+      "slug": "gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 39,
+    "fields": {
+      "created_at": "2024-05-22T10:51:24.042Z",
+      "updated_at": "2024-05-22T13:16:13.552Z",
+      "name": "GRI-Collect-Water-Water_withdrawal/discharge_from_areas_water_stress-Water_withdrawal_from_areas_water_stress",
+      "slug": "gri-environment-water-303-3b-water_withdrawal_areas_water_stress"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 40,
+    "fields": {
+      "created_at": "2024-05-22T10:56:38.817Z",
+      "updated_at": "2024-05-22T10:56:38.817Z",
+      "name": "GRI-Collect-Water-Substances_of_concern-Substances_of_concern",
+      "slug": "gri-environment-water-303-4d-substances_of_concern"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 41,
+    "fields": {
+      "created_at": "2024-05-22T10:57:29.750Z",
+      "updated_at": "2024-05-22T10:57:29.750Z",
+      "name": "GRI-Collect-Water-Substances_of_concern-SMA",
+      "slug": "gri-environment-water-303-3d-4e-sma"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 42,
+    "fields": {
+      "created_at": "2024-05-22T10:59:34.314Z",
+      "updated_at": "2024-05-22T10:59:34.314Z",
+      "name": "GRI-Collect-Water-Change_in_water_storage-Change_in_water_storage",
+      "slug": "gri-environment-water-303-5c-change_in_water_storage"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 43,
+    "fields": {
+      "created_at": "2024-05-22T11:01:14.095Z",
+      "updated_at": "2024-05-22T11:01:14.095Z",
+      "name": "GRI-Collect-Water-Change_in_water_storage-SMA",
+      "slug": "gri-environment-water-303-5d-sma"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 44,
+    "fields": {
+      "created_at": "2024-05-29T11:43:59.752Z",
+      "updated_at": "2024-05-29T12:03:21.865Z",
+      "name": "GRI-Collect-OHS-OHS management-OHS management system",
+      "slug": "gri-social-ohs-403-1a-ohs_management_system"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 45,
+    "fields": {
+      "created_at": "2024-05-29T11:45:29.490Z",
+      "updated_at": "2024-05-29T12:03:30.965Z",
+      "name": "GRI-Collect-OHS-OHS management-Scope of workers",
+      "slug": "gri-social-ohs-403-1b-scope_of_workers"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 46,
+    "fields": {
+      "created_at": "2024-05-30T05:05:03.998Z",
+      "updated_at": "2024-05-30T05:05:03.998Z",
+      "name": "GRI-Collect-OHS-Risk assessment-Processes for Hazard Identification",
+      "slug": "gri-social-ohs-403-2a-process_for_hazard"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 47,
+    "fields": {
+      "created_at": "2024-05-30T05:05:58.081Z",
+      "updated_at": "2024-05-30T05:05:58.081Z",
+      "name": "GRI-Collect-OHS-Risk assessment-Quality Assurance",
+      "slug": "gri-social-ohs-403-2b-quality_assurance"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 48,
+    "fields": {
+      "created_at": "2024-05-30T05:06:55.327Z",
+      "updated_at": "2024-05-30T05:06:55.327Z",
+      "name": "GRI-Collect-OHS-Risk assessment-Worker right",
+      "slug": "gri-social-ohs-403-2c-worker_right"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 49,
+    "fields": {
+      "created_at": "2024-05-30T05:08:40.715Z",
+      "updated_at": "2024-05-30T05:08:40.715Z",
+      "name": "GRI-Collect-OHS-Risk assessment-Work related incident",
+      "slug": "gri-social-ohs-403-2d-work_related_incident"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 50,
+    "fields": {
+      "created_at": "2024-05-30T05:14:11.525Z",
+      "updated_at": "2024-05-30T05:14:11.525Z",
+      "name": "GRI-Collect-OHS-OHS services-OHS functions",
+      "slug": "gri-social-ohs-403-3a-ohs_functions"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 51,
+    "fields": {
+      "created_at": "2024-05-30T05:14:58.662Z",
+      "updated_at": "2024-05-30T05:14:58.662Z",
+      "name": "GRI-Collect-OHS-OHS services-Quality of services",
+      "slug": "gri-social-ohs-403-2b-quality_of_services"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 52,
+    "fields": {
+      "created_at": "2024-05-30T05:27:11.181Z",
+      "updated_at": "2024-05-30T05:29:26.041Z",
+      "name": "GRI-Collect-OHS-Worker involvement-OHS system-1question",
+      "slug": "gri-social-ohs-403-4a-ohs_system_1"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 53,
+    "fields": {
+      "created_at": "2024-05-30T05:28:51.834Z",
+      "updated_at": "2024-05-30T05:29:44.859Z",
+      "name": "GRI-Collect-OHS-Worker involvement-OHS system-2questions",
+      "slug": "gri-social-ohs-403-4a-ohs_system_2"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 54,
+    "fields": {
+      "created_at": "2024-05-30T05:31:32.622Z",
+      "updated_at": "2024-05-30T05:31:32.622Z",
+      "name": "GRI-Collect-OHS-Worker involvement-Formal joint",
+      "slug": "gri-social-ohs-403-4d-formal_joint"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 55,
+    "fields": {
+      "created_at": "2024-05-30T05:33:33.678Z",
+      "updated_at": "2024-05-30T05:33:33.678Z",
+      "name": "GRI-Collect-OHS-OHS training",
+      "slug": "gri-social-ohs-403-5a-ohs_training"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 56,
+    "fields": {
+      "created_at": "2024-05-30T05:46:16.006Z",
+      "updated_at": "2024-05-30T05:46:16.006Z",
+      "name": "GRI-Collect-OHS-Promotion Health-Access to non occupational",
+      "slug": "gri-social-ohs-403-6a-access_non_occupational"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 57,
+    "fields": {
+      "created_at": "2024-05-30T05:46:55.564Z",
+      "updated_at": "2024-05-30T05:46:55.564Z",
+      "name": "GRI-Collect-OHS-Promotion Health-Scope of access",
+      "slug": "gri-social-ohs-403-6a-scope_of_access"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 58,
+    "fields": {
+      "created_at": "2024-05-30T05:47:34.554Z",
+      "updated_at": "2024-05-30T05:47:34.554Z",
+      "name": "GRI-Collect-OHS-Promotion Health-Voluntary health",
+      "slug": "gri-social-ohs-403-6a-voluntary_health"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 59,
+    "fields": {
+      "created_at": "2024-05-30T05:48:11.922Z",
+      "updated_at": "2024-05-30T05:48:11.922Z",
+      "name": "GRI-Collect-OHS-Promotion Health-Health risk",
+      "slug": "gri-social-ohs-403-6a-health_risk"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 60,
+    "fields": {
+      "created_at": "2024-05-30T05:48:55.443Z",
+      "updated_at": "2024-05-30T05:48:55.443Z",
+      "name": "GRI-Collect-OHS-Promotion Health-Workers access",
+      "slug": "gri-social-ohs-403-6b-workers_access"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 61,
+    "fields": {
+      "created_at": "2024-05-30T05:52:18.279Z",
+      "updated_at": "2024-05-30T05:52:18.279Z",
+      "name": "GRI-Collect-OHS-Prevention of OHS-Negative occupational",
+      "slug": "gri-social-ohs-403-7a-negative_occupational"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 62,
+    "fields": {
+      "created_at": "2024-05-30T05:53:22.596Z",
+      "updated_at": "2024-05-30T05:53:22.596Z",
+      "name": "GRI-Collect-OHS-Prevention of OHS-Hazards and risks",
+      "slug": "gri-social-ohs-403-7a-hazards_risks"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 63,
+    "fields": {
+      "created_at": "2024-05-30T05:55:53.853Z",
+      "updated_at": "2024-05-30T05:56:52.892Z",
+      "name": "GRI-Collect-OHS-OHS System Coverage-Number of employees",
+      "slug": "gri-social-ohs-403-8a-number_of_employees"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 64,
+    "fields": {
+      "created_at": "2024-05-30T05:56:37.360Z",
+      "updated_at": "2024-05-30T05:56:37.360Z",
+      "name": "GRI-Collect-OHS-OHS System Coverage-Workers excluded",
+      "slug": "gri-social-ohs-403-8b-workers_excluded"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 65,
+    "fields": {
+      "created_at": "2024-05-30T06:44:23.035Z",
+      "updated_at": "2024-05-30T06:44:23.035Z",
+      "name": "GRI-Collect-OHS-OHS System Coverage-SMA",
+      "slug": "gri-social-ohs-403-8c-sma"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 66,
+    "fields": {
+      "created_at": "2024-05-30T06:45:17.899Z",
+      "updated_at": "2024-05-30T06:47:36.372Z",
+      "name": "GRI-Collect-OHS-Injuries-Number of injuries employee",
+      "slug": "gri-social-ohs-403-9a-number_of_injuries_emp"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 67,
+    "fields": {
+      "created_at": "2024-05-30T06:46:43.943Z",
+      "updated_at": "2024-05-30T06:47:54.469Z",
+      "name": "GRI-Collect-OHS-Injuries-Number of injuries workers",
+      "slug": "gri-social-ohs-403-9b-number_of_injuries_workers"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 68,
+    "fields": {
+      "created_at": "2024-05-30T06:49:27.252Z",
+      "updated_at": "2024-05-30T06:49:27.252Z",
+      "name": "GRI-Collect-OHS-Injuries-Work related hazards",
+      "slug": "gri-social-ohs-403-9c-9d-work_related_hazards"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 69,
+    "fields": {
+      "created_at": "2024-05-30T06:50:31.754Z",
+      "updated_at": "2024-05-30T06:50:31.754Z",
+      "name": "GRI-Collect-OHS-Injuries-Number of hours",
+      "slug": "gri-social-ohs-403-9e-number_of_hours"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 70,
+    "fields": {
+      "created_at": "2024-05-30T06:51:16.318Z",
+      "updated_at": "2024-05-30T06:51:16.319Z",
+      "name": "GRI-Collect-OHS-Injuries-Workers excluded",
+      "slug": "gri-social-ohs-403-9f-workers_excluded"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 71,
+    "fields": {
+      "created_at": "2024-05-30T06:52:06.568Z",
+      "updated_at": "2024-05-30T06:52:06.568Z",
+      "name": "GRI-Collect-OHS-Injuries-SMA",
+      "slug": "gri-social-ohs-403-9g-sma"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 72,
+    "fields": {
+      "created_at": "2024-05-30T06:53:39.189Z",
+      "updated_at": "2024-05-30T06:53:39.189Z",
+      "name": "GRI-Collect-OHS-Ill health-Ill health employees",
+      "slug": "gri-social-ohs-403-10a-ill_health_emp"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 73,
+    "fields": {
+      "created_at": "2024-05-30T06:55:57.605Z",
+      "updated_at": "2024-05-30T06:55:57.605Z",
+      "name": "GRI-Collect-OHS-Ill health-Ill health workers",
+      "slug": "gri-social-ohs-403-10b-ill_health_workers"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 74,
+    "fields": {
+      "created_at": "2024-05-30T06:58:11.067Z",
+      "updated_at": "2024-05-30T06:58:11.067Z",
+      "name": "GRI-Collect-OHS-Ill health-Work related hazards",
+      "slug": "gri-social-ohs-403-10c-work_related_hazards"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 75,
+    "fields": {
+      "created_at": "2024-05-30T07:00:16.756Z",
+      "updated_at": "2024-05-30T07:00:16.756Z",
+      "name": "GRI-Collect-OHS-Ill health-Workers excluded",
+      "slug": "gri-social-ohs-403-10d-workers_excluded"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 76,
+    "fields": {
+      "created_at": "2024-05-30T07:00:48.465Z",
+      "updated_at": "2024-05-30T07:00:48.465Z",
+      "name": "GRI-Collect-OHS-Ill health-SMA",
+      "slug": "gri-social-ohs-403-10e-sma"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 77,
+    "fields": {
+      "created_at": "2024-05-31T05:37:51.693Z",
+      "updated_at": "2024-05-31T05:38:26.173Z",
+      "name": "GRI-Collect-Human rights-Child labour-Operations risk of chlild labour",
+      "slug": "gri-social-human_rights-408-1a-1b-operations_risk_child_labour"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 78,
+    "fields": {
+      "created_at": "2024-05-31T05:39:48.862Z",
+      "updated_at": "2024-05-31T05:39:48.862Z",
+      "name": "GRI-Collect-Human rights-Child labour-Operations young workers hazard",
+      "slug": "gri-social-human_rights-408-1a-1b-operations_young_worker_exposed"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 79,
+    "fields": {
+      "created_at": "2024-05-31T05:41:09.395Z",
+      "updated_at": "2024-05-31T05:41:09.395Z",
+      "name": "GRI-Collect-Human rights-Child labour-Supplier risk child labour",
+      "slug": "gri-social-human_rights-408-1a-1b-supplier_risk_child_labor"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 80,
+    "fields": {
+      "created_at": "2024-05-31T05:41:56.180Z",
+      "updated_at": "2024-05-31T05:43:19.684Z",
+      "name": "GRI-Collect-Human rights-Child labour-Supplier young worker exposed",
+      "slug": "gri-social-human_rights-408-1a-1b-supplier_young_worker_exposed"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 81,
+    "fields": {
+      "created_at": "2024-05-31T05:44:07.616Z",
+      "updated_at": "2024-05-31T05:44:07.616Z",
+      "name": "GRI-Collect-Human rights-Child labour-Measures taken",
+      "slug": "gri-social-human_rights-408-1c-measures_taken"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 82,
+    "fields": {
+      "created_at": "2024-05-31T05:47:33.602Z",
+      "updated_at": "2024-05-31T05:47:33.602Z",
+      "name": "GRI-Collect-Human rights-Forced labor-Operations forced labor",
+      "slug": "gri-social-human_rights-409-1a-operations_forced_labor"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 83,
+    "fields": {
+      "created_at": "2024-05-31T05:48:20.446Z",
+      "updated_at": "2024-05-31T05:48:20.446Z",
+      "name": "GRI-Collect-Human rights-Forced labor-Suppliers forced labor",
+      "slug": "gri-social-human_rights-409-1a-suppliers_forced_labor"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 84,
+    "fields": {
+      "created_at": "2024-05-31T05:49:11.488Z",
+      "updated_at": "2024-05-31T05:49:11.488Z",
+      "name": "GRI-Collect-Human rights-Forced labor-Measures taken",
+      "slug": "gri-social-human_rights-409-1b-measures_taken"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 85,
+    "fields": {
+      "created_at": "2024-05-31T05:51:06.674Z",
+      "updated_at": "2024-05-31T05:51:06.674Z",
+      "name": "GRI-Collect-Human rights-Security personnel-Security personnel training",
+      "slug": "gri-social-human_rights-410-1a-security_personnel"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 86,
+    "fields": {
+      "created_at": "2024-05-31T05:51:44.465Z",
+      "updated_at": "2024-05-31T05:51:44.465Z",
+      "name": "GRI-Collect-Human rights-Security personnel-Training requirements",
+      "slug": "gri-social-human_rights-410-1b-training_requirements"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 87,
+    "fields": {
+      "created_at": "2024-06-03T11:26:41.268Z",
+      "updated_at": "2024-06-03T11:42:32.381Z",
+      "name": "GRI-Collect-Employment-Employee hires-New employee hire-Permanent employee",
+      "slug": "gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 88,
+    "fields": {
+      "created_at": "2024-06-03T11:27:30.995Z",
+      "updated_at": "2024-06-03T11:42:43.538Z",
+      "name": "GRI-Collect-Employment-Employee hires-New employee hire-Temporary employee",
+      "slug": "gri-social-employee_hires-401-1a-new_emp_hire-temp_emp"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 89,
+    "fields": {
+      "created_at": "2024-06-03T11:36:22.085Z",
+      "updated_at": "2024-06-03T11:43:52.886Z",
+      "name": "GRI-Collect-Employment-Employee hires-New employee hire-Nonguarantee",
+      "slug": "gri-social-employee_hires-401-1a-new_emp_hire-nongauranteed"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 90,
+    "fields": {
+      "created_at": "2024-06-03T11:36:49.561Z",
+      "updated_at": "2024-06-03T11:44:03.089Z",
+      "name": "GRI-Collect-Employment-Employee hires-New employee hire-Fulltime",
+      "slug": "gri-social-employee_hires-401-1a-new_emp_hire-fulltime"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 91,
+    "fields": {
+      "created_at": "2024-06-03T11:37:20.608Z",
+      "updated_at": "2024-06-03T11:42:55.008Z",
+      "name": "GRI-Collect-Employment-Employee hires-New employee hire-Parttime",
+      "slug": "gri-social-employee_hires-401-1a-new_emp_hire-parttime"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 92,
+    "fields": {
+      "created_at": "2024-06-03T11:41:07.408Z",
+      "updated_at": "2024-06-04T04:45:22.557Z",
+      "name": "GRI-Collect-Employment-Employee hires-Employee turnover-Permanent employee",
+      "slug": "gri-social-employee_hires-401-1a-emp_turnover-permanent_emp"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 93,
+    "fields": {
+      "created_at": "2024-06-03T11:45:40.450Z",
+      "updated_at": "2024-06-04T04:45:03.517Z",
+      "name": "GRI-Collect-Employment-Employee hires-Employee turnover-Temporary employee",
+      "slug": "gri-social-employee_hires-401-1a-emp_turnover-temp_emp"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 94,
+    "fields": {
+      "created_at": "2024-06-03T11:46:37.120Z",
+      "updated_at": "2024-06-04T04:44:48.685Z",
+      "name": "GRI-Collect-Employment-Employee hires-Employee turnover-Nonguaranteed",
+      "slug": "gri-social-employee_hires-401-1a-emp_turnover-nonguaranteed"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 95,
+    "fields": {
+      "created_at": "2024-06-03T11:47:04.157Z",
+      "updated_at": "2024-06-04T04:44:38.439Z",
+      "name": "GRI-Collect-Employment-Employee hires-Employee turnover-Fulltime",
+      "slug": "gri-social-employee_hires-401-1a-emp_turnover-fulltime"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 96,
+    "fields": {
+      "created_at": "2024-06-03T11:47:31.306Z",
+      "updated_at": "2024-06-04T04:44:17.848Z",
+      "name": "GRI-Collect-Employment-Employee hires-Employee turnover-Part time",
+      "slug": "gri-social-employee_hires-401-1a-emp_turnover-parttime"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 97,
+    "fields": {
+      "created_at": "2024-06-03T11:53:01.080Z",
+      "updated_at": "2024-06-03T11:53:01.080Z",
+      "name": "GRI-Collect-Employment-Benefits-Benefits provided",
+      "slug": "gri-social-benefits-401-2a-benefits_provided"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 98,
+    "fields": {
+      "created_at": "2024-06-03T11:53:39.621Z",
+      "updated_at": "2024-06-03T11:53:39.621Z",
+      "name": "GRI-Collect-Employment-Benefits-Significant loc",
+      "slug": "gri-social-benefits-401-2b-significant_loc"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 99,
+    "fields": {
+      "created_at": "2024-06-03T11:59:58.327Z",
+      "updated_at": "2024-06-03T11:59:58.327Z",
+      "name": "GRI-Collect-Employment-Parental leave",
+      "slug": "gri-social-parental_leave-401-3a-3b-3c-3d-parental_leave"
+    }
+  },
+  {
+    "model": "datametric.path",
+    "pk": 100,
+    "fields": {
+      "created_at": "2024-06-12T07:40:28.687Z",
+      "updated_at": "2024-06-12T07:40:28.695Z",
+      "name": "GRI-Collect-Emissions-Scope-Combined",
+      "slug": "gri-collect-emissions-scope-combined"
+    }
+  }
+]
