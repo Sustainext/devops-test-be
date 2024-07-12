@@ -29,7 +29,6 @@ from sustainapp.models import (
     TaskDashboard,
     Client,
     User_client,
-    LoginCounter,
     Sdg,
     Rating,
     Certification,
@@ -138,6 +137,7 @@ import os
 from rest_framework.parsers import MultiPartParser, JSONParser
 import time
 from django.contrib.auth.decorators import login_required
+from authentication.models import LoginCounter
 
 # canada bill s-211 Annual report started from here
 # from .serializers import Screen1Serializer,Screen2Serializer,Screen3Serializer,Screen4Serializer,Screen5Serializer,Screen6Serializer,Screen7Serializer,Screen8Serializer
@@ -298,80 +298,13 @@ class ClientViewset(viewsets.ModelViewSet):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def UserOrgView(request):
-    try:
-        log_call_start()
-        username = request.GET.get("username")
-        logging.info(
-            f"Fetching details for user with username '{username}' - {list(User.objects.filter(username=username).values_list('id', 'username'))}"
-        )
-        u = list(User.objects.filter(username=username).values_list("id"))
-        userorg = list(
-            Userorg.objects.filter(user_id=u[0][0]).values_list("organization_id")
-        )
-        logging.info(f"User details - {u}, Organization details - {userorg}")
-        list_user = list(
-            Userorg.objects.filter(organization_id=userorg[0][0]).values_list("user_id")
-        )
-        logging.info(f"List of users - {list_user}")
-        user_list = User.objects.filter(id__in=[i[0] for i in list_user])
-        logging.info(f"User list - {user_list}")
-        user_data = UserSerializer(user_list, many=True).data
-        return Response(user_data, status=status.HTTP_200_OK)
-    except Exception as e:
-        logging.error(f"UserOrgView: An error occurred - {e.args}")
-        response = JsonResponse({"message": e.args})
-        return response
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def UserOrgView(request):
-    try:
-        log_call_start()
-        user_id = request.query_params.get(
-            "user_id"
-        )  # Fetching 'id' from query parameters
-        user_obj = User.objects.filter(id=user_id).first()
-
-        if user_obj:
-            queryset = Userorg.objects.filter(user_id=user_obj.id)
-
-            if queryset.exists():
-                serializer = UserorgSerializer(
-                    queryset, many=True, context={"request": request}
-                )
-                logger.info(
-                    "UserOrg data fetched successfully for user_id: %s", user_id
-                )
-
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                logger.warning("UserOrg data not found for user_id: %s", user_id)
-                return JsonResponse(
-                    {"message": "UserOrg data not found for the provided user"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-        else:
-            logger.warning("User does not exist for user_id: %s", user_id)
-            return JsonResponse(
-                {"message": "User does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-    except Exception as e:
-        logger.error("Error in UserOrgView: %s", e, exc_info=True)
-        return JsonResponse({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
 def UserOrgDetails(request):
     try:
         username = request.user.username
 
         user = CustomUser.objects.get(username=username)
         user_login_counter = LoginCounter.objects.get(user=user)
-        is_first_login = 1 if user_login_counter.login_counter == 1 else 0
+        is_first_login = 1 if user_login_counter.needs_password_change == True else 0
     except Exception as e:
         return Response(
             {"error": "missing Details"}, status=status.HTTP_400_BAD_REQUEST
@@ -1062,34 +995,22 @@ class MygoalViewset(viewsets.ModelViewSet):
 
     def list(self, request):
         log_call_start()
-        req_para = request.query_params
-        logging.info(f"Length of req.get: {len(request.GET)}")  # Log message
-
         queryset = Mygoal.objects.filter(client_id=request.client.id)
         final_data = {"upcoming": "", "overdue": "", "completed": ""}
         today = date.today()
         logging.info(f"Today's date: {str(today)}")
-        if len(request.GET) != 0:
-            logging.info(f"The req is: {req_para}")
 
-            req_field_value = request.query_params["assigned_to"]
+        req_field_value = self.request.user.id
 
-            final_data["completed"] = queryset.filter(
-                completed=True, assigned_to=req_field_value
-            )
-            final_data["upcoming"] = queryset.filter(
-                Q(completed=False, deadline__gte=today) & Q(assigned_to=req_field_value)
-            )
-            final_data["overdue"] = queryset.filter(
-                Q(completed=False, deadline__lt=today) & Q(assigned_to=req_field_value)
-            )
-        else:
-            final_data["completed"] = queryset.filter(completed=True)
-            final_data["upcoming"] = queryset.filter(
-                completed=False, deadline__gte=today
-            )
-            final_data["overdue"] = queryset.filter(completed=False, deadline__lt=today)
-
+        final_data["completed"] = queryset.filter(
+            completed=True, assigned_to=req_field_value
+        )
+        final_data["upcoming"] = queryset.filter(
+            Q(completed=False, deadline__gte=today) & Q(assigned_to=req_field_value)
+        )
+        final_data["overdue"] = queryset.filter(
+            Q(completed=False, deadline__lt=today) & Q(assigned_to=req_field_value)
+        )
         serializerd_data_goal = {
             "upcoming": None,
             "overdue": None,
@@ -1161,34 +1082,24 @@ class TaskDashboardViewset(viewsets.ModelViewSet):
 
     def list(self, request):
         log_call_start()
-        req_para = request.query_params
         logging.info(f"Length of req.get: {len(request.GET)}")
         # DONT FORGET IMPLEMENT IMPLEMENT QUERYSET 2 FOR 'TASK' AND COMBINE IT FOR FILTERING
         queryset = TaskDashboard.objects.all().filter(client=request.client)
-        queryset2 = Mygoal.objects.all().filter(client=request.client)
         final_data = {"upcoming": "", "overdue": "", "completed": ""}
         today = date.today()
         logging.info(f"Todays date: {str(today)}")
 
-        if len(request.GET) != 0:
-            logging.info(f"The req is: {req_para}")
-            req_field_value = request.query_params["assigned_to"]
-            logging.error("KeyError: 'assigned_to' not found in request parameters")
-            final_data["completed"] = queryset.filter(
-                completed=True, assigned_to=req_field_value
-            )
-            final_data["upcoming"] = queryset.filter(
-                Q(completed=False, deadline__gte=today) & Q(assigned_to=req_field_value)
-            )
-            final_data["overdue"] = queryset.filter(
-                Q(completed=False, deadline__lt=today) & Q(assigned_to=req_field_value)
-            )
-        else:
-            final_data["completed"] = queryset.filter(completed=True)
-            final_data["upcoming"] = queryset.filter(
-                completed=False, deadline__gte=today
-            )
-            final_data["overdue"] = queryset.filter(completed=False, deadline__lt=today)
+        req_field_value = self.request.user.id
+        logging.error("KeyError: 'assigned_to' not found in request parameters")
+        final_data["completed"] = queryset.filter(
+            completed=True, assigned_to=req_field_value
+        )
+        final_data["upcoming"] = queryset.filter(
+            Q(completed=False, deadline__gte=today) & Q(assigned_to=req_field_value)
+        )
+        final_data["overdue"] = queryset.filter(
+            Q(completed=False, deadline__lt=today) & Q(assigned_to=req_field_value)
+        )
 
         serializerd_data_task = {"upcoming": None, "overdue": None, "completed": None}
 
@@ -1209,7 +1120,7 @@ class TaskDashboardViewset(viewsets.ModelViewSet):
         )
 
         task_data_union = serializerd_data_task
-        logging.info("Returning task data union", task_data_union)
+        logging.info(f"Task data union: {task_data_union}")
         return Response(task_data_union, status=status.HTTP_200_OK)
 
     def create(self, request):

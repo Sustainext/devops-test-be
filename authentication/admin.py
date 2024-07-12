@@ -1,3 +1,18 @@
 from django.contrib import admin
+from authentication.models import UserProfile,LoginCounter
+
+
 
 # Register your models here.
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ["id", "user_id", "user"]
+    
+    
+class LoginCounterAdmin(admin.ModelAdmin):
+    list_display = ["login_counter", "user", "needs_password_change"]
+    list_filter = ("user",)
+    search_fields = ("user",)
+
+
+admin.site.register(UserProfile, UserProfileAdmin),
+admin.site.register(LoginCounter, LoginCounterAdmin),

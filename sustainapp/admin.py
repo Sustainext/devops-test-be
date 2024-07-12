@@ -34,7 +34,6 @@ from sustainapp.models import (
     Sdg,
     Certification,
     ZohoInfo,
-    LoginCounter,
     AnalysisData2,
 )
 
@@ -275,10 +274,6 @@ class ZohoInfoAdmin(admin.ModelAdmin):
     search_fields = ("client__name", "table_no", "table_name")
 
 
-class LoginCounterAdmin(admin.ModelAdmin):
-    list_display = ["login_counter", "user"]
-    list_filter = ("user",)
-    search_fields = ("user",)
 
 
 UserExtendedModel = apps.get_model(settings.AUTH_USER_MODEL)
@@ -312,4 +307,4 @@ admin.site.register(Mygoal, MygoalAdmin),
 admin.site.register(TaskDashboard, TaskDashboardAdmin),
 admin.site.register(ClientTaskDashboard, ClientTaskDashboardAdmin),
 admin.site.register(ZohoInfo, ZohoInfoAdmin),
-admin.site.register(LoginCounter, LoginCounterAdmin),
+

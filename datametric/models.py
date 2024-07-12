@@ -30,6 +30,7 @@ class Path(AbstractModel):
         return self.slug
 
 
+
 class OrderedJSONField(models.JSONField):
     def from_db_value(self, value, expression, connection):
         """Converts JSON data from the database into a Python OrderedDict."""

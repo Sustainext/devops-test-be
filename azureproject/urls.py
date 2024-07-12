@@ -112,8 +112,6 @@ urlpatterns = [
     path("orggetonly", views.orggetonly, name="orggetonly"),
     path("", include(router.urls)),
     path("locationdata", views.locationview),
-    # why is below URL used for??
-    path("accounts/user", views.UserOrgView, name="UserOrg"),
     # this call happens After login
     path("user_org", views.UserOrgDetails, name="UserOrgDetails"),
     path("get_org", views.get_org, name="get_org"),
@@ -134,7 +132,6 @@ urlpatterns = [
     ),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     # swagger ended
-    path("user_details/", views.UserOrgView, name="userorg_view"),
     path("user_profile_update/", views.UserOrgUpdateView, name="userorg_update_view"),
     path(
         "select_preference/", PreferencesView.TypeOfPreference, name="TypeOfPreference"
@@ -147,7 +144,7 @@ urlpatterns = [
         PreferencesView.UpdatePreference,
         name="UpdatePreference",
     ),
-    path('datametric/', include('datametric.urls')),
+    path("datametric/", include("datametric.urls")),
     path("refresh_token/", TokenRefreshView.as_view(), name="refresh_token"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEVELOPMENT_MODE:

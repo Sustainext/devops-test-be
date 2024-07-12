@@ -28,7 +28,8 @@ class EnergyAnalyzeView(APIView):
 
         consumed_ene_query = RawResponse.objects.filter(
             location__in=self.locations.values_list("name", flat=True),
-            path__slug=path, client__id=self.clients_id
+            path__slug=path,
+            client__id=self.clients_id,
         ).filter(filter_by_start_end_dates(self.from_date, self.to_date))
 
         if not consumed_ene_query:
@@ -78,7 +79,12 @@ class EnergyAnalyzeView(APIView):
             ),
             5: lambda item: item["ProductServices"].capitalize(),
             6: lambda item: (item["Organizationmetric"], item["Metricunit"]),
-            7: lambda item: (item["EnergyType"], item["Source"],item["Purpose"].capitalize(), item["Renewable"]),
+            7: lambda item: (
+                item["EnergyType"],
+                item["Source"],
+                item["Purpose"].capitalize(),
+                item["Renewable"],
+            ),
         }
 
         for item in data:
@@ -120,7 +126,7 @@ class EnergyAnalyzeView(APIView):
                     grand_total_gj += quantity_in_gj
                     grand_total_kwh += quantity_in_kwh
                 else:
-                    if sno in [1, 2,7]:
+                    if sno in [1, 2, 7]:
                         if item["Renewable"] == "Renewable":
                             grand_total_renewable_gj += quantity_in_gj
                         else:

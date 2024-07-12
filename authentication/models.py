@@ -51,3 +51,30 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class UserProfile(AbstractModel):
+    """
+    Stores the user profile information
+    """
+
+    user = models.OneToOneField(
+        CustomUser, on_delete=models.CASCADE, related_name="user_profile"
+    )
+    designation = models.CharField(max_length=255, null=True, blank=True)
+    department = models.CharField(max_length=255, null=True, blank=True)
+    phone = models.CharField(max_length=255, null=True, blank=True)
+    profile_picture = models.ImageField(
+        upload_to="profile_pictures/", null=True, blank=True
+    )
+
+class LoginCounter(AbstractModel):
+    """
+    Stores the number of times user logs in
+    """
+
+    user = models.OneToOneField(
+        CustomUser, on_delete=models.CASCADE, related_name="first_login"
+    )
+    login_counter = models.IntegerField(default=-1)
+    needs_password_change = models.BooleanField(default=True,null=True, blank=True)

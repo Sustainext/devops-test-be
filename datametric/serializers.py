@@ -58,6 +58,7 @@ class RawResponseSerializer(serializers.ModelSerializer):
         model = RawResponse
         fields = ["id", "data", "updated_at"]
 
+
 class FieldGroupGetSerializer(serializers.Serializer):
     path_slug = serializers.CharField(required=True)
     # location = serializers.CharField(required=True)
@@ -95,6 +96,7 @@ class FieldGroupGetSerializer(serializers.Serializer):
         return data
 
 
+
 class GetClimatiqComputedSerializer(serializers.Serializer):
     # location = serializers.CharField(required=True)
     location = serializers.PrimaryKeyRelatedField(
@@ -102,5 +104,6 @@ class GetClimatiqComputedSerializer(serializers.Serializer):
     )
     year = serializers.IntegerField(required=True)
     month = serializers.IntegerField(min_value=1, max_value=12, required=True)
+
     class Meta:
         fields = ["location", "year", "month"]

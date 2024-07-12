@@ -9,7 +9,7 @@ from .serializers import (
     UpdateResponseSerializer,
     RawResponseSerializer,
     FieldGroupGetSerializer,
-    GetClimatiqComputedSerializer
+    GetClimatiqComputedSerializer,
 )
 from authentication.models import CustomUser, Client
 from rest_framework.permissions import IsAuthenticated
@@ -136,6 +136,7 @@ class FieldGroupListView(APIView):
 
 class CreateOrUpdateFieldGroup(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         serializer = UpdateResponseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -208,48 +209,7 @@ class CreateOrUpdateFieldGroup(APIView):
                 {"message": "An unexpected error occurred."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        # elif corporate:
-        #     try:
-        #         raw_response, created = RawResponse.objects.get_or_create(
-        #             path=path,
-        #             user=user_instance,
-        #             client=client_instance,
-        #             locale=locale,
-        #             corporate=corporate,
-        #             organisation=organisation,
-        #             year=year,
-        #             month=month,
-        #             defaults={"data": form_data},
-        #         )
-
-        #         if not created:
-        #             # If the RawResponse already exists, update its data
-        #             raw_response.data = form_data
-        #             raw_response.save()
-
-        #         return Response(
-        #             {"message": "Form data saved successfully."},
-        #             status=status.HTTP_200_OK,
-        #         )
-        #     except Exception as e:
-        #         return Response(
-        #             {"error": f"{e}"},
-        #             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        #         )
-        # elif organisation:
-        #     try:
-        #         raw_response, created = RawResponse.objects.get_or_create(
-        #             path=path,
-        #             user=user_instance,
-        #             client=client_instance,
-        #             locale=locale,
-        #             corporate=corporate,
-        #             organisation=organisation,
-        #             year=year,
-        #             month=month,
-        #             defaults={"data": form_data},
-        #         )
-
+        
 class GetComputedClimatiqValue(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -262,7 +222,7 @@ class GetComputedClimatiqValue(APIView):
         month = validation_serializer.validated_data.get("month")
         user_instance: CustomUser = self.request.user
         client_instance = user_instance.client
-        path = Path.objects.filter(slug='gri-collect-emissions-scope-combined').first()
+        path = Path.objects.filter(slug="gri-collect-emissions-scope-combined").first()
         try:
             datapoint = DataPoint.objects.filter(
                 user_id=user_instance.id,
@@ -270,14 +230,16 @@ class GetComputedClimatiqValue(APIView):
                 month=month,
                 year=year,
                 location=location,
-                path=path
+                path=path,
             ).first()
             resp_data = {}
             resp_data["result"] = datapoint.json_holder
-            return Response(resp_data,status=status.HTTP_200_OK)
+            return Response(resp_data, status=status.HTTP_200_OK)
         except Exception as e:
             print(f"Exception occurred: {e}")
             return Response(
-                {"message": "An unexpected error occurred for GetComputedClimatiqValue "},
+                {
+                    "message": "An unexpected error occurred for GetComputedClimatiqValue "
+                },
                 status=status.HTTP_400_BAD_REQUEST,
-                )
+            )
