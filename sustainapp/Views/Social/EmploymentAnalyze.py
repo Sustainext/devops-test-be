@@ -1330,11 +1330,8 @@ class EmploymentAnalyzeView(APIView):
         )
         benefits_response_table["extra_benefits"] = []
         # * Get extra fields that have index more than 5
-        for i in range(
-            benefits_dps.filter(index__gt=5).aggregate(max_index=Max("index"))[
-                "max_index"
-            ]
-            + 1,
+        for i in (
+            benefits_dps.order_by("index").values_list("index", flat=True).distinct()
         ):
             benefits_response_table["extra_benefits"].append(
                 {
