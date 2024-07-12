@@ -57,6 +57,18 @@ def safe_divide(numerator, denominator, decimal_places=2):
     )
 
 
+def get_integer(value):
+    if isinstance(value, int):
+        return value
+    elif isinstance(value, str):
+        try:
+            return int(value)
+        except ValueError:
+            raise ValueError(f"Cannot convert '{value}' to an integer")
+    else:
+        raise TypeError(f"Expected int or str, got {type(value).__name__}")
+
+
 class EmploymentAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
     new_employee_hire_path_slugs = [
@@ -183,7 +195,7 @@ class EmploymentAnalyzeView(APIView):
         }
 
         benefits_response_table = {
-            # "life insurance, healthcare, disability_cover, parental_leave, retirement, stock_ownership",
+            
             # "fulltime, partime, temporary"
             "life_insurance_full_time": None,
             "life_insurance_part_time": None,
@@ -205,7 +217,7 @@ class EmploymentAnalyzeView(APIView):
             "stock_ownership_temporary": None,
         }
         parental_leave_response_table = {
-            # "life insurance, healthcare, disability_cover, parental_leave, retirement, stock_ownership",
+            
             # "fulltime, partime, temporary"
             "entitlement_male": 0,
             "entitlement_female": 0,
@@ -227,17 +239,6 @@ class EmploymentAnalyzeView(APIView):
             benefits_response_table,
             parental_leave_response_table,
         )
-
-    def get_integer(value):
-        if isinstance(value, int):
-            return value
-        elif isinstance(value, str):
-            try:
-                return int(value)
-            except ValueError:
-                raise ValueError(f"Cannot convert '{value}' to an integer")
-        else:
-            raise TypeError(f"Expected int or str, got {type(value).__name__}")
 
     def process_dataPoints(
         self,
@@ -669,7 +670,6 @@ class EmploymentAnalyzeView(APIView):
             dp_employ_to_permanent_qs = (
                 DataPoint.objects.none()
             )  # Assuming DataPoint is your model
-        # TODO: Fix Metric Name here
 
         dp_male_end = dp_employ_to_permanent_qs.filter(
             index=0, metric_name="end"
@@ -1085,10 +1085,6 @@ class EmploymentAnalyzeView(APIView):
                 DataPoint.objects.none()
             )  # Assuming DataPoint is your model
 
-        et_male_pt_qs = dp_employ_to_pt_qs.filter(
-            index=0, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-
         et_male_pt_beginning_qs = get_value(
             dp_employ_to_pt_qs.filter(index=0, metric_name="beginning").aggregate(
                 Sum("number_holder")
@@ -1146,15 +1142,9 @@ class EmploymentAnalyzeView(APIView):
             + get_value(et_nb_pt_qs)
         )
 
-        et_pt_male_percent = safe_divide(
-            get_value(et_male_pt_qs), total_pt_eto
-        )
-        et_pt_female_percent = safe_divide(
-            get_value(et_female_pt_qs), total_pt_eto
-        )
-        et_pt_nb_percent = safe_divide(
-            get_value(et_nb_pt_qs), total_pt_eto
-        )
+        et_pt_male_percent = safe_divide(get_value(et_male_pt_qs), total_pt_eto)
+        et_pt_female_percent = safe_divide(get_value(et_female_pt_qs), total_pt_eto)
+        et_pt_nb_percent = safe_divide(get_value(et_nb_pt_qs), total_pt_eto)
         et_pt_30_pc = safe_divide(
             get_value(et_pt_30_qs["number_holder__sum"]), total_pt_eto
         )
