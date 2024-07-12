@@ -709,14 +709,13 @@ class EmploymentAnalyzeView(APIView):
 
         print(et_male_permanent_qs["number_holder__sum"])
 
-        #* Total Number of employees
+        # * Total Number of employees
         total_permanent_eto = (
             get_value(et_male_permanent_qs)
             + get_value(et_female_permanent_qs)
             + get_value(et_nb_permanent_qs)
         )
 
-        
         et_per_male_percent = safe_divide(
             get_value(et_male_permanent_qs),
             total_permanent_eto,
@@ -769,15 +768,47 @@ class EmploymentAnalyzeView(APIView):
                 DataPoint.objects.none()
             )  # Assuming DataPoint is your model
 
-        et_male_temporary_qs = dp_employ_to_temporary_qs.filter(
-            index=0, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        et_female_temporary_qs = dp_employ_to_temporary_qs.filter(
-            index=1, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        et_nb_temporary_qs = dp_employ_to_temporary_qs.filter(
-            index=2, metric_name="total"
-        ).aggregate(Sum("number_holder"))
+        et_male_temporary_beginning_qs = get_value(
+            dp_employ_to_temporary_qs.filter(
+                index=0, metric_name="beginning"
+            ).aggregate(Sum("number_holder"))["number_holder__sum"]
+        )
+        et_male_temporary_end_qs = get_value(
+            dp_employ_to_temporary_qs.filter(index=0, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_male_temporary_qs = et_male_temporary_beginning_qs + et_male_temporary_end_qs
+
+        et_female_temporary_beginning_qs = get_value(
+            dp_employ_to_temporary_qs.filter(
+                index=1, metric_name="beginning"
+            ).aggregate(Sum("number_holder"))["number_holder__sum"]
+        )
+
+        et_female_temporary_end_qs = get_value(
+            dp_employ_to_temporary_qs.filter(index=1, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+        et_female_temporary_qs = (
+            et_female_temporary_beginning_qs + et_female_temporary_end_qs
+        )
+
+        et_nb_temporary_beginning_qs = get_value(
+            dp_employ_to_temporary_qs.filter(
+                index=2, metric_name="beginning"
+            ).aggregate(Sum("number_holder"))["number_holder__sum"]
+        )
+
+        et_nb_temporary_end_qs = get_value(
+            dp_employ_to_temporary_qs.filter(index=2, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_nb_temporary_qs = et_nb_temporary_beginning_qs + et_nb_temporary_end_qs
 
         et_temporary_30_qs = dp_employ_to_temporary_qs.filter(
             metric_name="yearsold30"
@@ -792,21 +823,21 @@ class EmploymentAnalyzeView(APIView):
         print(et_temporary_30_qs["number_holder__sum"])
 
         total_temporary_eto = (
-            get_value(et_male_temporary_qs["number_holder__sum"])
-            + get_value(et_female_temporary_qs["number_holder__sum"])
-            + get_value(et_nb_temporary_qs["number_holder__sum"])
+            get_value(et_male_temporary_qs)
+            + get_value(et_female_temporary_qs)
+            + get_value(et_nb_temporary_qs)
         )
 
         et_temp_male_percent = safe_divide(
-            get_value(et_male_temporary_qs["number_holder__sum"]),
+            get_value(et_male_temporary_qs),
             total_temporary_eto,
         )
         et_temp_female_percent = safe_divide(
-            get_value(et_female_temporary_qs["number_holder__sum"]),
+            get_value(et_female_temporary_qs),
             total_temporary_eto,
         )
         et_temp_nb_percent = safe_divide(
-            get_value(et_nb_temporary_qs["number_holder__sum"]), total_temporary_eto
+            get_value(et_nb_temporary_qs), total_temporary_eto
         )
         et_temp_30_pc = safe_divide(
             get_value(et_temporary_30_qs["number_holder__sum"]), total_temporary_eto
@@ -849,15 +880,47 @@ class EmploymentAnalyzeView(APIView):
                 DataPoint.objects.none()
             )  # Assuming DataPoint is your model
 
-        et_male_ng_qs = dp_employ_to_ng_qs.filter(
-            index=0, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        et_female_ng_qs = dp_employ_to_ng_qs.filter(
-            index=1, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        et_nb_ng_qs = dp_employ_to_ng_qs.filter(index=2, metric_name="total").aggregate(
-            Sum("number_holder")
+        et_male_ng_beginning_qs = get_value(
+            dp_employ_to_ng_qs.filter(index=0, metric_name="beginning").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
         )
+
+        et_male_ng_end_qs = get_value(
+            dp_employ_to_ng_qs.filter(index=0, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_male_ng_qs = et_male_ng_beginning_qs + et_male_ng_end_qs
+
+        et_female_beginning_ng_qs = get_value(
+            dp_employ_to_ng_qs.filter(index=1, metric_name="beginning").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_female_end_ng_qs = get_value(
+            dp_employ_to_ng_qs.filter(index=1, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_female_ng_qs = et_female_beginning_ng_qs + et_female_end_ng_qs
+
+        et_nb_ng_beginning_qs = get_value(
+            dp_employ_to_ng_qs.filter(index=2, metric_name="beginning").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_nb_ng_end_qs = get_value(
+            dp_employ_to_ng_qs.filter(index=2, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_nb_ng_qs = et_nb_ng_beginning_qs + et_nb_ng_end_qs
 
         et_ng_30_qs = dp_employ_to_ng_qs.filter(metric_name="yearsold30").aggregate(
             Sum("number_holder")
@@ -872,20 +935,14 @@ class EmploymentAnalyzeView(APIView):
         print(et_male_ng_qs["number_holder__sum"])
 
         total_ng_eto = (
-            get_value(et_male_ng_qs["number_holder__sum"])
-            + get_value(et_female_ng_qs["number_holder__sum"])
-            + get_value(et_nb_ng_qs["number_holder__sum"])
+            get_value(et_male_ng_qs)
+            + get_value(et_female_ng_qs)
+            + get_value(et_nb_ng_qs)
         )
 
-        et_ng_male_percent = safe_divide(
-            get_value(et_male_ng_qs["number_holder__sum"]), total_ng_eto
-        )
-        et_ng_female_percent = safe_divide(
-            get_value(et_female_ng_qs["number_holder__sum"]), total_ng_eto
-        )
-        et_ng_nb_percent = safe_divide(
-            get_value(et_nb_ng_qs["number_holder__sum"]), total_ng_eto
-        )
+        et_ng_male_percent = safe_divide(get_value(et_male_ng_qs), total_ng_eto)
+        et_ng_female_percent = safe_divide(get_value(et_female_ng_qs), total_ng_eto)
+        et_ng_nb_percent = safe_divide(get_value(et_nb_ng_qs), total_ng_eto)
         et_ng_30_pc = safe_divide(
             get_value(et_ng_30_qs["number_holder__sum"]), total_ng_eto
         )
@@ -926,15 +983,46 @@ class EmploymentAnalyzeView(APIView):
                 DataPoint.objects.none()
             )  # Assuming DataPoint is your model
 
-        et_male_ft_qs = dp_employ_to_ft_qs.filter(
-            index=0, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        et_female_ft_qs = dp_employ_to_ft_qs.filter(
-            index=1, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        et_nb_ft_qs = dp_employ_to_ft_qs.filter(index=2, metric_name="total").aggregate(
-            Sum("number_holder")
+        et_male_ft_beginning_qs = get_value(
+            dp_employ_to_ft_qs.filter(index=0, metric_name="beginning").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
         )
+        et_male_ft_end_qs = get_value(
+            dp_employ_to_ft_qs.filter(index=0, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_male_ft_qs = et_male_ft_beginning_qs + et_male_ft_end_qs
+
+        et_female_ft_beginning_qs = get_value(
+            dp_employ_to_ft_qs.filter(index=1, metric_name="beginning").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_female_ft_end_qs = get_value(
+            dp_employ_to_ft_qs.filter(index=1, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_female_ft_qs = et_female_ft_beginning_qs + et_female_ft_end_qs
+
+        et_nb_ft_beginning_qs = get_value(
+            dp_employ_to_ft_qs.filter(index=2, metric_name="beginning").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_nb_ft_end_qs = get_value(
+            dp_employ_to_ft_qs.filter(index=2, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_nb_ft_qs = et_nb_ft_beginning_qs + et_nb_ft_end_qs
 
         et_ft_30_qs = dp_employ_to_ft_qs.filter(metric_name="yearsold30").aggregate(
             Sum("number_holder")
@@ -949,20 +1037,14 @@ class EmploymentAnalyzeView(APIView):
         print(et_male_ft_qs["number_holder__sum"])
 
         total_ft_eto = (
-            get_value(et_male_ft_qs["number_holder__sum"])
-            + get_value(et_female_ft_qs["number_holder__sum"])
-            + get_value(et_nb_ft_qs["number_holder__sum"])
+            get_value(et_male_ft_qs)
+            + get_value(et_female_ft_qs)
+            + get_value(et_nb_ft_qs)
         )
 
-        et_ft_male_percent = safe_divide(
-            get_value(et_male_ft_qs["number_holder__sum"]), total_ft_eto
-        )
-        et_ft_female_percent = safe_divide(
-            get_value(et_female_ft_qs["number_holder__sum"]), total_ft_eto
-        )
-        et_ft_nb_percent = safe_divide(
-            get_value(et_nb_ft_qs["number_holder__sum"]), total_ft_eto
-        )
+        et_ft_male_percent = safe_divide(get_value(et_male_ft_qs), total_ft_eto)
+        et_ft_female_percent = safe_divide(get_value(et_female_ft_qs), total_ft_eto)
+        et_ft_nb_percent = safe_divide(get_value(et_nb_ft_qs), total_ft_eto)
         et_ft_30_pc = safe_divide(
             get_value(et_ft_30_qs["number_holder__sum"]), total_ft_eto
         )
@@ -1006,12 +1088,45 @@ class EmploymentAnalyzeView(APIView):
         et_male_pt_qs = dp_employ_to_pt_qs.filter(
             index=0, metric_name="total"
         ).aggregate(Sum("number_holder"))
-        et_female_pt_qs = dp_employ_to_pt_qs.filter(
-            index=1, metric_name="total"
-        ).aggregate(Sum("number_holder"))
-        et_nb_pt_qs = dp_employ_to_pt_qs.filter(index=2, metric_name="total").aggregate(
-            Sum("number_holder")
+
+        et_male_pt_beginning_qs = get_value(
+            dp_employ_to_pt_qs.filter(index=0, metric_name="beginning").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
         )
+
+        et_male_pt_end_qs = get_value(
+            dp_employ_to_pt_qs.filter(index=0, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_male_pt_qs = et_male_pt_beginning_qs + et_male_pt_end_qs
+
+        et_female_pt_beginning_qs = get_value(
+            dp_employ_to_pt_qs.filter(index=1, metric_name="beginning").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+
+        et_female_pt_end_qs = get_value(
+            dp_employ_to_pt_qs.filter(index=1, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+        et_female_pt_qs = et_female_pt_beginning_qs + et_female_pt_end_qs
+
+        et_nb_pt_beginning_qs = get_value(
+            dp_employ_to_pt_qs.filter(index=2, metric_name="beginning").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+        et_nb_pt_end_qs = get_value(
+            dp_employ_to_pt_qs.filter(index=2, metric_name="end").aggregate(
+                Sum("number_holder")
+            )["number_holder__sum"]
+        )
+        et_nb_pt_qs = et_nb_pt_beginning_qs + et_nb_pt_end_qs
 
         et_pt_30_qs = dp_employ_to_pt_qs.filter(metric_name="yearsold30").aggregate(
             Sum("number_holder")
@@ -1026,19 +1141,19 @@ class EmploymentAnalyzeView(APIView):
         print(et_male_pt_qs["number_holder__sum"])
 
         total_pt_eto = (
-            get_value(et_male_pt_qs["number_holder__sum"])
-            + get_value(et_female_pt_qs["number_holder__sum"])
-            + get_value(et_nb_pt_qs["number_holder__sum"])
+            get_value(et_male_pt_qs)
+            + get_value(et_female_pt_qs)
+            + get_value(et_nb_pt_qs)
         )
 
         et_pt_male_percent = safe_divide(
-            get_value(et_male_pt_qs["number_holder__sum"]), total_pt_eto
+            get_value(et_male_pt_qs), total_pt_eto
         )
         et_pt_female_percent = safe_divide(
-            get_value(et_female_pt_qs["number_holder__sum"]), total_pt_eto
+            get_value(et_female_pt_qs), total_pt_eto
         )
         et_pt_nb_percent = safe_divide(
-            get_value(et_nb_pt_qs["number_holder__sum"]), total_pt_eto
+            get_value(et_nb_pt_qs), total_pt_eto
         )
         et_pt_30_pc = safe_divide(
             get_value(et_pt_30_qs["number_holder__sum"]), total_pt_eto
