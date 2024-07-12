@@ -195,7 +195,6 @@ class EmploymentAnalyzeView(APIView):
         }
 
         benefits_response_table = {
-            
             # "fulltime, partime, temporary"
             "life_insurance_full_time": None,
             "life_insurance_part_time": None,
@@ -217,7 +216,6 @@ class EmploymentAnalyzeView(APIView):
             "stock_ownership_temporary": None,
         }
         parental_leave_response_table = {
-            
             # "fulltime, partime, temporary"
             "entitlement_male": 0,
             "entitlement_female": 0,
@@ -309,18 +307,20 @@ class EmploymentAnalyzeView(APIView):
         ).aggregate(Sum("number_holder"))
 
         total_permanent = (
-            get_value(ne_male_permanent_qs)
-            + get_value(ne_female_permanent_qs)
-            + get_value(ne_nb_permanent_qs)
+            get_value(ne_male_permanent_qs["number_holder__sum"])
+            + get_value(ne_female_permanent_qs["number_holder__sum"])
+            + get_value(ne_nb_permanent_qs["number_holder__sum"])
         )
 
         ne_per_male_percent = safe_divide(
-            get_value(ne_male_permanent_qs), total_permanent
+            get_value(ne_male_permanent_qs["number_holder__sum"]), total_permanent
         )
         ne_per_female_percent = safe_divide(
-            get_value(ne_female_permanent_qs), total_permanent
+            get_value(ne_female_permanent_qs["number_holder__sum"]), total_permanent
         )
-        ne_per_nb_percent = safe_divide(get_value(ne_nb_permanent_qs), total_permanent)
+        ne_per_nb_percent = safe_divide(
+            get_value(ne_nb_permanent_qs["number_holder__sum"]), total_permanent
+        )
         ne_permanent_30_pc = safe_divide(
             get_value(ne_permanent_30_qs["number_holder__sum"]), total_permanent
         )
@@ -707,7 +707,7 @@ class EmploymentAnalyzeView(APIView):
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
 
-        print(et_male_permanent_qs["number_holder__sum"])
+        print(et_male_permanent_qs)
 
         # * Total Number of employees
         total_permanent_eto = (
@@ -820,7 +820,7 @@ class EmploymentAnalyzeView(APIView):
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
 
-        print(et_temporary_30_qs["number_holder__sum"])
+        print(et_temporary_30_qs)
 
         total_temporary_eto = (
             get_value(et_male_temporary_qs)
@@ -932,7 +932,7 @@ class EmploymentAnalyzeView(APIView):
             Sum("number_holder")
         )
 
-        print(et_male_ng_qs["number_holder__sum"])
+        print(et_male_ng_qs)
 
         total_ng_eto = (
             get_value(et_male_ng_qs)
@@ -1034,7 +1034,7 @@ class EmploymentAnalyzeView(APIView):
             Sum("number_holder")
         )
 
-        print(et_male_ft_qs["number_holder__sum"])
+        print(et_male_ft_qs)
 
         total_ft_eto = (
             get_value(et_male_ft_qs)
@@ -1134,7 +1134,7 @@ class EmploymentAnalyzeView(APIView):
             Sum("number_holder")
         )
 
-        print(et_male_pt_qs["number_holder__sum"])
+        print(et_male_pt_qs)
 
         total_pt_eto = (
             get_value(et_male_pt_qs)
@@ -1409,11 +1409,15 @@ class EmploymentAnalyzeView(APIView):
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .order_by("-year", "-month")
         )
-        parental_leave_data_points = DataPoint.objects.filter(
-            client_id=client_id,
-            path__slug__in=self.employee_parental_leave_path_slugs,
-            location__in=self.locations.values_list("name", flat=True),
-        ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        parental_leave_data_points = (
+            DataPoint.objects.filter(
+                client_id=client_id,
+                path__slug__in=self.employee_parental_leave_path_slugs,
+                location__in=self.locations.values_list("name", flat=True),
+            )
+            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+            .order_by("-year", "-month")
+        )
         # pushing for processing
         (
             new_employee_reponse_table,
@@ -1715,5 +1719,36 @@ class EmploymentAnalyzeView(APIView):
         parental_leave.append(retained)
 
         response_data["parental_leave"] = parental_leave
+
+        # * Return to work rate and retention rate of employee
+        return_to_work_rate_and_retention_rate_of_employee = []
+        return_to_work_rate = {}
+        return_to_work_rate["employee_category"] = "Return to work rate"
+        # * Return to work rate = (Total number of employees that did return to work after parental leave)/(Total number of employees due to return to work after taking parental leave)
+        return_to_work_rate["male"] = safe_divide(
+            parental_leave_response_table["return_to_post_work_male"],
+            parental_leave_response_table["taking_total"],
+        )
+
+        return_to_work_rate["female"] = safe_divide(
+            parental_leave_response_table["return_to_post_work_female"],
+            parental_leave_response_table["taking_total"],
+        )
+        return_to_work_rate_and_retention_rate_of_employee.append(return_to_work_rate)
+
+        retention_rate = {}
+        retention_rate["employee_category"] = "Retention rate"
+        retention_rate["male"] = safe_divide(
+            parental_leave_response_table["retained_12_mts_male"],
+            parental_leave_response_table["return_to_post_work_total"],
+        )
+        retention_rate["female"] = safe_divide(
+            parental_leave_response_table["retained_12_mts_female"],
+            parental_leave_response_table["return_to_post_work_total"],
+        )
+        return_to_work_rate_and_retention_rate_of_employee.append(retention_rate)
+        response_data["return_to_work_rate_and_retention_rate_of_employee"] = (
+            return_to_work_rate_and_retention_rate_of_employee
+        )
 
         return Response({"data": response_data}, status=status.HTTP_200_OK)
