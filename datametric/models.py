@@ -7,6 +7,7 @@ from django.contrib.auth.models import (
 )
 from authentication.models import CustomUser, Client
 from common.models.AbstractModel import AbstractModel
+from sustainapp.models import Location, Corporateentity, Organization
 from django.core.validators import MaxValueValidator, MinValueValidator
 from .data_types import DATA_TYPE_CHOICES
 import collections
@@ -28,22 +29,23 @@ class Path(AbstractModel):
     def __str__(self):
         return self.slug
 
+
 class OrderedJSONField(models.JSONField):
     def from_db_value(self, value, expression, connection):
-        '''Converts JSON data from the database into a Python OrderedDict.'''
+        """Converts JSON data from the database into a Python OrderedDict."""
         if value is None:
             return value
         # return json.loads(value, object_pairs_hook=collections.OrderedDict)
         return self.to_python(value)
-    
+
     def get_prep_value(self, value):
-        ''' Prepares a Python object to be stored in the database as a JSON string.'''
+        """Prepares a Python object to be stored in the database as a JSON string."""
         if value is None:
             return None
-        return json.dumps(value, separators=(',', ':'))
+        return json.dumps(value, separators=(",", ":"))
 
     def to_python(self, value):
-        '''Converts a JSON string retrieved from the database back into a Python OrderedDict.'''
+        """Converts a JSON string retrieved from the database back into a Python OrderedDict."""
         if isinstance(value, str):
             try:
                 return json.loads(value, object_pairs_hook=collections.OrderedDict)
@@ -55,9 +57,10 @@ class OrderedJSONField(models.JSONField):
     #     return self.to_python(value)
 
     def db_type(self, connection):
-        '''Specifies the database column type as 'json' for PostgreSQL.'''
-        return 'json'
-    
+        """Specifies the database column type as 'json' for PostgreSQL."""
+        return "json"
+
+
 class FieldGroup(AbstractModel):
     name = models.CharField(max_length=200)
     path = models.ForeignKey(
@@ -69,7 +72,7 @@ class FieldGroup(AbstractModel):
 
 
 class RawResponse(AbstractModel):
-    data = OrderedJSONField(default=list)       #models.JSONField(default=list)       #need to change this field to json and with the 
+    data = OrderedJSONField(default=list)  # models.JSONField(default=list)
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     user = models.ForeignKey(
         CustomUser,
@@ -80,11 +83,22 @@ class RawResponse(AbstractModel):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
-    location = models.CharField(max_length=200, null=False)
+    location = models.CharField(max_length=200, null=True)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, default=None, null=True
+    )
+    corporate = models.ForeignKey(
+        Corporateentity, on_delete=models.CASCADE, default=None, null=True
+    )
+    locale = models.ForeignKey(
+        Location, on_delete=models.CASCADE, default=None, null=True
+    )
     year = models.IntegerField(
         null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)]
     )
-    month = models.IntegerField(null=False, default=1)
+    month = models.IntegerField(
+        null=True, validators=[MinValueValidator(1), MaxValueValidator(12)]
+    )
 
 
 class DataMetric(AbstractModel):
@@ -130,11 +144,22 @@ class DataPoint(AbstractModel):
     value = models.JSONField(default=None, null=True)
     metric_name = models.CharField(default="Not Set", null=False)
     is_calculated = models.BooleanField(default=False, null=False)
-    location = models.CharField(max_length=200, null=False)
+    location = models.CharField(max_length=200, null=True)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, default=None, null=True
+    )
+    corporate = models.ForeignKey(
+        Corporateentity, on_delete=models.CASCADE, default=None, null=True
+    )
+    locale = models.ForeignKey(
+        Location, on_delete=models.CASCADE, default=None, null=True
+    )
     year = models.IntegerField(
         null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)]
     )
-    month = models.IntegerField(null=False, default=1)
+    month = models.IntegerField(
+        null=True, validators=[MinValueValidator(1), MaxValueValidator(12)]
+    )
     user_id = models.PositiveIntegerField(default=1, null=False)
     client_id = models.PositiveIntegerField(default=1, null=False)
 
