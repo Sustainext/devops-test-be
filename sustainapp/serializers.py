@@ -390,10 +390,15 @@ class UserorgSerializer(serializers.ModelSerializer):
 class CustomRegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField()
     first_name = serializers.CharField(required=True)
+    client_id = serializers.PrimaryKeyRelatedField(
+        queryset=Client.objects.all(), required=True
+    )
 
     def custom_signup(self, request, user):
         first_name = self.validated_data.get("first_name")
+        client_id = self.validated_data.get("client_id")
         user.first_name = first_name
+        user.client = client_id
         user.save()
 
     def to_representation(self, instance):

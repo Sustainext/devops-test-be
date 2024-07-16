@@ -18,8 +18,9 @@ class CustomLoginView(LoginView):
         refresh = RefreshToken.for_user(user)
         serializer = CustomTokenObtainPairSerializer()
         token = serializer.get_token(user)
+        needs_password_reset = 1 if user.first_login.needs_password_change == True else 0
         data = {
             "refresh": str(token),
             "access": str(token.access_token),
         }
-        return Response({"key": data}, status=200)
+        return Response({"key": data,"needs_password_reset":needs_password_reset}, status=200)
