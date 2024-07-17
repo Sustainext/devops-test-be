@@ -9,6 +9,7 @@ from datametric.utils.analyse import (
     set_locations_data,
     filter_by_start_end_dates,
     safe_divide,
+    get_raw_response_filters,
 )
 from datametric.models import RawResponse
 
@@ -29,10 +30,9 @@ class DiversityAndInclusionAnalyse(APIView):
             RawResponse.objects.filter(
                 path__slug__in=self.slugs,
                 client=user.client,
-                locale__in=self.locations,
-                user=user,
             )
-            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+            .get_raw_response_filters()
+            .filter(year__range=(self.start.year, self.end.year))
             .order_by("-year", "-month")
         )
 
@@ -40,48 +40,55 @@ class DiversityAndInclusionAnalyse(APIView):
         local_raw_response = (
             self.raw_response.only("data").filter(path__slug=slug).first()
         )
-        local_data = local_raw_response.data
-        local_response_dictionary = dict()
-        for index, category_data in enumerate(local_data):
-            local_response_dictionary[str(index) + category_data["category"]] = {
-                "percentage_of_female_with_org_governance": safe_divide(
-                    category_data["female"] / category_data["totalGender"]
-                ),
-                "percentage_of_male_with_org_governance": safe_divide(
-                    category_data["male"] / category_data["totalGender"]
-                ),
-                "percentage_of_non_binary_with_org_governance": safe_divide(
-                    category_data["nonBinary"] / category_data["totalGender"]
-                ),
-                "percentage_of_employees_within_30_age_group": safe_divide(
-                    category_data["lessThan30"] / category_data["totalAge"]
-                ),
-                "percentage_of_employees_within_30_to_50_age_group": safe_divide(
-                    category_data["between30and50"] / category_data["totalAge"]
-                ),
-                "percentage_of_employees_more than_50_age_group": safe_divide(
-                    category_data["moreThan50"] / category_data["totalAge"]
-                ),
-                "percentage_of_employees_in_minority_group": safe_divide(
-                    category_data["minorityGroup"]
-                    / category_data["vulnerableCommunities"]
-                ),
-            }
-        return local_response_dictionary
+        local_data = local_raw_response.data if local_raw_response is not None else []
+        local_response = list()
+        for category_data in local_data:
+            local_response.append(
+                {
+                    "Category": category_data["category"],
+                    "percentage_of_female_with_org_governance": safe_divide(
+                        int(category_data["female"]), int(category_data["totalGender"])
+                    ),
+                    "percentage_of_male_with_org_governance": safe_divide(
+                        int(category_data["male"]), int(category_data["totalGender"])
+                    ),
+                    "percentage_of_non_binary_with_org_governance": safe_divide(
+                        int(category_data["nonBinary"]),
+                        int(category_data["totalGender"]),
+                    ),
+                    "percentage_of_employees_within_30_age_group": safe_divide(
+                        int(category_data["lessThan30"]), int(category_data["totalAge"])
+                    ),
+                    "percentage_of_employees_within_30_to_50_age_group": safe_divide(
+                        int(category_data["between30and50"]),
+                        int(category_data["totalAge"]),
+                    ),
+                    "percentage_of_employees_more than_50_age_group": safe_divide(
+                        int(category_data["moreThan50"]), int(category_data["totalAge"])
+                    ),
+                    "percentage_of_employees_in_minority_group": safe_divide(
+                        int(category_data["minorityGroup"]),
+                        int(category_data["vulnerableCommunities"]),
+                    ),
+                }
+            )
+        return local_response
 
     def get_salary_ration(self, slug):  # 405-2
         local_raw_response = (
             self.raw_response.only("data").filter(path__slug=slug).first()
         )
-        local_data = local_raw_response.data
+        local_data = local_raw_response.data if local_raw_response is not None else []
         return local_data
 
-    def post(self, request):
-        serializer = CheckAnalysisViewSerializer(data=request.data)
+    def get(self, request):
+        serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         organisation = serializer.validated_data["organisation"]
         corporate = serializer.validated_data.get("corporate")
         location = serializer.validated_data.get("location")
+        self.start = serializer.validated_data["start"]
+        self.end = serializer.validated_data["end"]
         self.locations = set_locations_data(
             organisation=organisation, corporate=corporate, location=location
         )

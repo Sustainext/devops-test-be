@@ -60,3 +60,17 @@ def safe_divide(numerator, denominator, decimal_places=2):
         if denominator != 0
         else 0
     )
+
+
+def get_raw_response_filters(organisation=None, corporate=None, location=None):
+    locations = set_locations_data(organisation, corporate, location)
+
+    filters = Q()
+    if organisation:
+        filters |= Q(organization=organisation)
+    if corporate:
+        filters |= Q(corporate=corporate)
+    if locations.exists():
+        filters |= Q(locale__in=locations)
+
+    return filters
