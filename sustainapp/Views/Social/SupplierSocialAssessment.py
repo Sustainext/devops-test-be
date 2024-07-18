@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from collections import defaultdict
-from sustainapp.Serializers.SocialAnalyzeSerializer import (
-    SocialAnalysisSerializer,
+from sustainapp.Serializers.CheckAnalysisViewSerializer import (
+    CheckAnalysisViewSerializer,
 )
 from datametric.utils.analyse import filter_by_start_end_dates
 
@@ -65,20 +65,29 @@ class SupplierSocialAssessmentView(APIView):
         return pos
 
     def get(self, request, format=None):
-        serializer = SocialAnalysisSerializer(data=request.query_params, context={"request": request})
+        serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        organization = serializer.validated_data.get("organization", None)
-        year = serializer.validated_data["year"]
-        corporate = serializer.validated_data.get("corporate", None)
+        organisation = serializer.validated_data.get("organisation")
+        corporate = serializer.validated_data.get("corporate")
+        self.start = serializer.validated_data["start"]
+        self.end = serializer.validated_data["end"]
         client_id = self.request.user.client.id
+
+        if self.start.year == self.end.year:
+            year = self.start.year
+        else:
+            return Response(
+                {"error": "Start and End year should be same."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         dp, pos = {}, {}
         filter_by = {}
 
         if corporate:
             filter_by['corporate'] = corporate
-        elif organization:
-            filter_by['organization'] = organization
+        elif organisation:
+            filter_by['organization'] = organisation
 
         if filter_by:
             dp_data, pos_data = self.get_data(year, client_id, filter_by)
