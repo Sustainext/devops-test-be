@@ -16,17 +16,12 @@ def set_locations_data(organisation, corporate, location):
     elif location is None and corporate and organisation:
         locations = corporate.location.all()
     elif location is None and corporate is None and organisation:
-        locations = Location.objects.prefetch_related(
-            Prefetch(
-                "corporateentity",
-                queryset=organisation.corporatenetityorg.all(),
-            )
-        ).filter(corporateentity__in=organisation.corporatenetityorg.all())
-    else:
-        raise serializers.ValidationError(
-            "Not send any of the following fields: organisation, corporate, location"
+        locations = Location.objects.filter(
+            corporateentity__in=organisation.corporatenetityorg.all()
         )
-
+    else:
+        locations = Location.objects.none()
+    print(locations)
     return locations
 
 
