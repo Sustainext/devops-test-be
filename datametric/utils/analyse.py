@@ -11,17 +11,33 @@ def set_locations_data(organisation, corporate, location):
     If Corporate is given and Organisation and Location is not given, then get all locations of the given corporate
     If Location is given, then get only that location
     """
-    if organisation and corporate and location:
+    if location and corporate and organisation:  # * If all three are given
         locations = Location.objects.filter(id=location.id)
-    elif location is None and corporate and organisation:
+    elif (
+        location is None and corporate and organisation
+    ):  # * If location is not given, corporate and organisation are given
         locations = corporate.location.all()
-    elif location is None and corporate is None and organisation:
+    elif (
+        location is None and corporate is None and organisation
+    ):  # * If location and corporate is not given and organisation are given
         locations = Location.objects.filter(
             corporateentity__in=organisation.corporatenetityorg.all()
         )
+    elif (
+        location and corporate is None and organisation is None
+    ):  # * If location is given and corporate and organisation are not given
+        locations = Location.objects.filter(id=location.id)
+    elif (
+        location is None and corporate is None and organisation is None
+    ):  # * If all three are not given
+        locations = Location.objects.none()
+    elif (
+        location is None and corporate and organisation is None
+    ):  # * If location is not given, corporate is given and organisation is not given
+        locations = corporate.location.all()
     else:
         locations = Location.objects.none()
-    print(locations)
+
     return locations
 
 
@@ -63,8 +79,10 @@ def get_raw_response_filters(organisation=None, corporate=None, location=None):
     filters = Q()
     if organisation:
         filters |= Q(organization=organisation)
+
     if corporate:
         filters |= Q(corporate=corporate)
+
     if locations.exists():
         filters |= Q(locale__in=locations)
 
