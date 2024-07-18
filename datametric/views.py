@@ -55,85 +55,29 @@ class FieldGroupListView(APIView):
             serialized_field_groups = FieldGroupSerializer(field_groups, many=True)
             if locale:
                 # TODO: Need to change the query to be based on the location id, at present it's on location name
-                location = Location.objects.filter(id=locale.id).values_list("name")[0][
-                    0
-                ]
+                location = Location.objects.filter(id=locale.id).values_list("name")[0][0]
+            else : location = None
 
                 # Checking form data if any
-                path_instance = path
-                if month:
-                    raw_responses = RawResponse.objects.filter(
-                        path=path_instance,
-                        client=client_instance,
-                        location=location,
-                        year=year,
-                        month=month,
-                    )
-                else:
-                    raw_responses = RawResponse.objects.filter(
-                        path=path_instance,
-                        client=client_instance,
-                        location=location,
-                        year=year,
-                        month=None,
-                    )
-                serialized_raw_responses = RawResponseSerializer(
-                    raw_responses, many=True
+            path_instance = path
+            # if month:
+            raw_responses = RawResponse.objects.filter(
+                path=path_instance,
+                client=client_instance,
+                location=location,
+                locale=locale,
+                corporate=corporate,
+                organization=organisation,
+                year=year,
+                month=month,
                 )
-                resp_data = {}
-                resp_data["form"] = serialized_field_groups.data
-                resp_data["form_data"] = serialized_raw_responses.data
-                return Response(resp_data)
-            elif corporate:
-                if month:
-                    raw_responses = RawResponse.objects.filter(
-                        path__slug=path,
-                        client=client_instance,
-                        corporate=corporate,
-                        organization=organisation,
-                        year=year,
-                        month=month,
-                    )
-                else:
-                    raw_responses = RawResponse.objects.filter(
-                        path__slug=path,
-                        client=client_instance,
-                        corporate=corporate,
-                        organization=organisation,
-                        year=year,
-                        month=None,
-                    )
-                serialized_raw_responses = RawResponseSerializer(
-                    raw_responses, many=True
-                )
-                resp_data = {}
-                resp_data["form"] = serialized_field_groups.data
-                resp_data["form_data"] = serialized_raw_responses.data
-                return Response(resp_data)
-            elif organisation:
-                if month:
-                    raw_responses = RawResponse.objects.filter(
-                        path__slug=path,
-                        client=client_instance,
-                        organization=organisation,
-                        year=year,
-                        month=month,
-                    )
-                else:
-                    raw_responses = RawResponse.objects.filter(
-                        path__slug=path,
-                        client=client_instance,
-                        organization=organisation,
-                        year=year,
-                        month=None,
-                    )
-                serialized_raw_responses = RawResponseSerializer(
-                    raw_responses, many=True
-                )
-                resp_data = {}
-                resp_data["form"] = serialized_field_groups.data
-                resp_data["form_data"] = serialized_raw_responses.data
-                return Response(resp_data)
+            serialized_raw_responses = RawResponseSerializer(
+                raw_responses, many=True
+            )
+            resp_data = {}
+            resp_data["form"] = serialized_field_groups.data
+            resp_data["form_data"] = serialized_raw_responses.data
+            return Response(resp_data)
         except Exception as e:
             return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
 
