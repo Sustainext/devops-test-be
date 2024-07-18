@@ -91,7 +91,7 @@ class LocationAdmin(admin.ModelAdmin):
 
 class UserorgAdmin(admin.ModelAdmin):
 
-    list_display = ["id", "user_id", "organization_id"]
+    list_display = ["id", "user", "organization"]
 
 
 class SdgAdmin(admin.ModelAdmin):
