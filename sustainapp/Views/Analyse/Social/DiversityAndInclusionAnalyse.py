@@ -31,8 +31,9 @@ class DiversityAndInclusionAnalyse(APIView):
                 path__slug__in=self.slugs,
                 client=user.client,
             )
-            .get_raw_response_filters()
             .filter(year__range=(self.start.year, self.end.year))
+            .prefetch_related("path", "location")
+            .filter(get_raw_response_filters())
             .order_by("-year", "-month")
         )
 
@@ -63,7 +64,7 @@ class DiversityAndInclusionAnalyse(APIView):
                         int(category_data["between30and50"]),
                         int(category_data["totalAge"]),
                     ),
-                    "percentage_of_employees_more than_50_age_group": safe_divide(
+                    "percentage_of_employees_more_than_50_age_group": safe_divide(
                         int(category_data["moreThan50"]), int(category_data["totalAge"])
                     ),
                     "percentage_of_employees_in_minority_group": safe_divide(
@@ -100,10 +101,10 @@ class DiversityAndInclusionAnalyse(APIView):
             "number_of_employee_per_employee_category": self.get_diversity_of_the_board(
                 self.slugs[1]
             ),
-            "ratio-of-basic-salary-of-women-to-men": self.get_salary_ration(
+            "ratio_of_basic_salary_of_women_to_men": self.get_salary_ration(
                 self.slugs[2]
             ),
-            "ratio-of-remuneration-of-women-to-men": self.get_salary_ration(
+            "ratio_of_remuneration_of_women_to_men": self.get_salary_ration(
                 self.slugs[3]
             ),
         }
