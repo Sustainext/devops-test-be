@@ -22,7 +22,7 @@ class ChildLabourAnalyzeView(APIView):
     def process_childlabor(self, path):
 
         child_labour = DataPoint.objects.filter(
-            location__in=self.locations.values_list("name", flat=True),
+            locale__in=self.locations,  # .values_list("name", flat=True),
             path__slug=path,
             client_id=self.clients_id,
         ).filter(

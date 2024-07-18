@@ -29,12 +29,12 @@ class IllnessAnalysisView(APIView):
             RawResponse.objects.filter(
                 path__slug__in=slugs,
                 client=self.request.user.client,
-                location__in=self.locations.values_list("name", flat=True),
+                locale__in=self.locations,  # .values_list("name", flat=True),
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .annotate(json_data=RawSQL("CAST(data AS JSONB)", []))
             .exclude(json_data=Value("[]"))
-            .only("data", "location")
+            .only("data")
         )
 
     def get_formal_joint_management(self):

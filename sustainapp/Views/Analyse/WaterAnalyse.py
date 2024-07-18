@@ -53,12 +53,13 @@ class WaterAnalyse(APIView):
             RawResponse.objects.filter(
                 path__slug__in=slugs,
                 client=self.request.user.client,
-                location__in=self.locations.values_list("name", flat=True),
+                # location__in=self.locations.values_list("name", flat=True),
+                locale__in=self.locations,
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .annotate(json_data=RawSQL("CAST(data AS JSONB)", []))
             .exclude(json_data=Value("[]"))
-            .only("data", "location")
+            .only("data")
         )
 
     def process_water_data(self, data, group_by_key, discharge_key, withdrawal_key):
@@ -511,14 +512,17 @@ class WaterAnalyse(APIView):
     def get_by_location(self, slug):
         # * Filter Raw Responses by their location
         location_names = self.raw_responses.values_list(
-            "location", flat=True
+            "locale__name", flat=True
         ).distinct()
+        # location_names = self.raw_responses.values_list(
+        #     "location", flat=True
+        # ).distinct()
         data = []
         for location in location_names:
             local_raw_responses = (
-                self.raw_responses.filter(location=location)
-                .filter(path__slug=self.all_areas_slug)
-                .only("data", "location")
+                self.raw_responses.filter(locale__name=location)
+                # self.raw_responses.filter(location=location)
+                .filter(path__slug=self.all_areas_slug).only("data", "locale__name")
             )
             for raw_response in local_raw_responses:
                 data.append({location: raw_response.data})
