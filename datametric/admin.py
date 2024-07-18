@@ -60,7 +60,7 @@ class DataPointAdmin(admin.ModelAdmin):
         "raw_response",
         "value",
         "metric_name",
-        "location",
+        # "location",
         "year",
         "month",
     )

@@ -32,7 +32,7 @@ class ForcedLaborAnalyzeView(APIView):
         forced_labor_data = defaultdict(lambda: {})
 
         data_points = DataPoint.objects.filter(
-            location__in=location,
+            locale__in=location,
             path__slug=path_slug,
             client_id=client_id,
         ).filter(filter_by_start_end_dates(start_date=start, end_date=end))
@@ -81,7 +81,7 @@ class ForcedLaborAnalyzeView(APIView):
                 {"error": "Please provide either organisation, corporate or location"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        location_names = locations.values_list("name", flat=True)
+        location_names = locations  # .values_list("name", flat=True)
 
         forced_labor_operations = self.get_forced_labor_data(
             location_names,

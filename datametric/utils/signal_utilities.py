@@ -38,7 +38,7 @@ def create_or_update_data_points(
                 "json_holder": json_value,
                 "value": value,
                 "metric_name": metric_name,
-                "location": raw_response.location,
+                # "location": raw_response.location,
                 "locale": raw_response.locale,
                 "corporate": raw_response.corporate,
                 "organization": raw_response.organization,
