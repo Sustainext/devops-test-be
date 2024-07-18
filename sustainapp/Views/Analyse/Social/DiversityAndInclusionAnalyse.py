@@ -32,8 +32,14 @@ class DiversityAndInclusionAnalyse(APIView):
                 client=user.client,
             )
             .filter(year__range=(self.start.year, self.end.year))
-            .prefetch_related("path", "location")
-            .filter(get_raw_response_filters())
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
+            )
+            .prefetch_related("path")
             .order_by("-year", "-month")
         )
 
@@ -85,14 +91,11 @@ class DiversityAndInclusionAnalyse(APIView):
     def get(self, request):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        organisation = serializer.validated_data["organisation"]
-        corporate = serializer.validated_data.get("corporate")
-        location = serializer.validated_data.get("location")
+        self.organisation = serializer.validated_data.get("organisation")
+        self.corporate = serializer.validated_data.get("corporate")
+        self.location = serializer.validated_data.get("location")
         self.start = serializer.validated_data["start"]
         self.end = serializer.validated_data["end"]
-        self.locations = set_locations_data(
-            organisation=organisation, corporate=corporate, location=location
-        )
         self.set_raw_responses()
         response_data = {
             "percentage_of_employees_within_government_bodies": self.get_diversity_of_the_board(
