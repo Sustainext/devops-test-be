@@ -18,6 +18,7 @@ from django.db.models import Sum
 from datametric.utils.analyse import filter_by_start_end_dates
 from rest_framework.exceptions import APIException
 from django.db.models import Max
+from datametric.utils.analyse import safe_divide
 import logging
 
 logger = logging.getLogger("django")
@@ -47,14 +48,6 @@ def get_object_value(object_value):
         return 0
     else:
         return object_value.value
-
-
-def safe_divide(numerator, denominator, decimal_places=2):
-    return (
-        round((numerator / denominator * 100), decimal_places)
-        if denominator != 0
-        else 0
-    )
 
 
 def get_integer(value):

@@ -52,3 +52,25 @@ def filter_by_start_end_dates(start_date, end_date):
         q_objects |= Q(year=year, month=month)
 
     return q_objects
+
+
+def safe_divide(numerator, denominator, decimal_places=2):
+    return (
+        round((numerator / denominator * 100), decimal_places)
+        if denominator != 0
+        else 0
+    )
+
+
+def get_raw_response_filters(organisation=None, corporate=None, location=None):
+    locations = set_locations_data(organisation, corporate, location)
+
+    filters = Q()
+    if organisation:
+        filters |= Q(organization=organisation)
+    if corporate:
+        filters |= Q(corporate=corporate)
+    if locations.exists():
+        filters |= Q(locale__in=locations)
+
+    return filters
