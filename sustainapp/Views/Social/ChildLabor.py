@@ -78,12 +78,9 @@ class ChildLabourAnalyzeView(APIView):
         return grouped_data
 
     def get(self, request):
-
+        serializer = CheckAnalysisViewSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
         try:
-
-            serializer = CheckAnalysisViewSerializer(data=request.query_params)
-
-            serializer.is_valid(raise_exception=True)
             self.from_date = serializer.validated_data["start"]
             self.to_date = serializer.validated_data["end"]
 

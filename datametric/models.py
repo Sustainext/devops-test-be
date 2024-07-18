@@ -35,7 +35,6 @@ class OrderedJSONField(models.JSONField):
         """Converts JSON data from the database into a Python OrderedDict."""
         if value is None:
             return value
-        # return json.loads(value, object_pairs_hook=collections.OrderedDict)
         return self.to_python(value)
 
     def get_prep_value(self, value):
@@ -53,8 +52,6 @@ class OrderedJSONField(models.JSONField):
                 pass
         return value
 
-    # def from_db_value(self, value, expression, connection):
-    #     return self.to_python(value)
 
     def db_type(self, connection):
         """Specifies the database column type as 'json' for PostgreSQL."""

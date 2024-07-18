@@ -30,10 +30,10 @@ def rev_add_locationid(apps, schema_editor):
     rr = apps.get_model("datametric", "RawResponse")
     loc = apps.get_model("sustainapp", "Location")
 
-    rr_objs = rr.objects.all()
+    rr_objs = rr.objects.all().filter(location__isnull=False)
 
     for obj in rr_objs:
-
+        obj.location = obj.locale.name
         obj.locale = None
         obj.save()
 
