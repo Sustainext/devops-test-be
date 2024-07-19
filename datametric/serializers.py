@@ -97,7 +97,8 @@ class FieldGroupGetSerializer(serializers.Serializer):
 
 
 class GetClimatiqComputedSerializer(serializers.Serializer):
-    # location = serializers.CharField(required=True)
+    
+    #TODO: Location should be based on the client.
     location = serializers.PrimaryKeyRelatedField(
         queryset=Location.objects.all(), required=True
     )

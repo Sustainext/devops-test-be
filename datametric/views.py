@@ -53,13 +53,10 @@ class FieldGroupListView(APIView):
             client_instance = user_instance.client
             field_groups = FieldGroup.objects.filter(path=path)
             serialized_field_groups = FieldGroupSerializer(field_groups, many=True)
-            # if locale:
             # TODO: Need to change the query to be based on the location id, at present it's on location name
-            # location = Location.objects.filter(id=locale.id).values_list("name")[0][0]
 
             # Checking form data if any
             path_instance = path
-            # if month:
             raw_responses = RawResponse.objects.filter(
                 path=path_instance,
                 client=client_instance,
@@ -112,20 +109,22 @@ class CreateOrUpdateFieldGroup(APIView):
             # Try to get an existing RawResponse instance
             raw_response, created = RawResponse.objects.get_or_create(
                 path=path_instance,
-                user=user_instance,
                 client=client_instance,
-                # location=location,
                 locale=locale,
                 corporate=corporate,
                 organization=organisation,
                 year=year,
                 month=month,
-                defaults={"data": form_data},
+                defaults={
+                    "data": form_data,
+                    "user": user_instance,
+                },
             )
 
             if not created:
                 # If the RawResponse already exists, update its data
                 raw_response.data = form_data
+                #? Should we also update the user field on who has latest updated the data?
                 raw_response.save()
 
             logger.info(f"status check")
@@ -153,7 +152,12 @@ class CreateOrUpdateFieldGroup(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
 class GetComputedClimatiqValue(APIView):
+    """
+    This API view is used to get the computed climatiq value for a given location, year, and month.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
@@ -161,9 +165,6 @@ class GetComputedClimatiqValue(APIView):
         validation_serializer.is_valid(raise_exception=True)
         # TODO: Need to change the query to be based on the location id, at present it's on location name
         location_obj = validation_serializer.validated_data.get("location")
-        # location = Location.objects.filter(
-        #     id=location_obj.id
-        # )  # .values_list("name")[0][0]
         year = validation_serializer.validated_data.get("year")
         month = validation_serializer.validated_data.get("month")
         user_instance: CustomUser = self.request.user
@@ -175,7 +176,6 @@ class GetComputedClimatiqValue(APIView):
                 client_id=client_instance.id,
                 month=month,
                 year=year,
-                # location=location,
                 locale=location_obj,
                 path=path,
             ).first()

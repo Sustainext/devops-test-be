@@ -80,7 +80,7 @@ class RawResponse(AbstractModel):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
-    # location = models.CharField(max_length=200, null=True, blank=True)
+    
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, default=None, null=True, blank=True
     )
@@ -141,7 +141,7 @@ class DataPoint(AbstractModel):
     value = models.JSONField(default=None, null=True)
     metric_name = models.CharField(default="Not Set", null=False)
     is_calculated = models.BooleanField(default=False, null=False)
-    # location = models.CharField(max_length=200, null=True)
+
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, default=None, null=True
     )
