@@ -29,7 +29,8 @@ class GetWasteAnalysis(APIView):
             path__slug=path_slug,
             year__range=(start_year, end_year),
             month__range=(start_month, end_month),
-            location__in=location,
+            # location__in=location,
+            locale__in=location,
         )
 
         waste_generated_dict = defaultdict(
@@ -61,7 +62,8 @@ class GetWasteAnalysis(APIView):
         total_waste_generated = 0.0
 
         for rw in raw_responses:
-            location = rw.location
+            location = rw.locale.name
+            # location = rw.location
             for data in rw.data:
                 material_type = data["WasteType"]
                 total_waste = data["Wastegenerated"]
@@ -138,7 +140,8 @@ class GetWasteAnalysis(APIView):
             path__slug=path_slug,
             year__range=(start_year, end_year),
             month__range=(start_month, end_month),
-            location__in=location,
+            locale__in=location,
+            # location__in=location,
         )
         waste_diverted_from_data = defaultdict(
             lambda: {
@@ -340,7 +343,8 @@ class GetWasteAnalysis(APIView):
             path__slug=path_slug,
             year__range=(start_year, end_year),
             month__range=(start_month, end_month),
-            location__in=location,
+            locale__in=location,
+            # location__in=location,
         )
         waste_diverted_from_data = defaultdict(
             lambda: {
@@ -629,7 +633,7 @@ class GetWasteAnalysis(APIView):
                 {"error": "Please provide either organisation, corporate or location"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        location_names = locations.values_list("name", flat=True)
+        location_names = locations  # .values_list("name", flat=True)
 
         (
             waste_generated_by_material,

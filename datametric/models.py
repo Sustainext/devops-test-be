@@ -30,13 +30,11 @@ class Path(AbstractModel):
         return self.slug
 
 
-
 class OrderedJSONField(models.JSONField):
     def from_db_value(self, value, expression, connection):
         """Converts JSON data from the database into a Python OrderedDict."""
         if value is None:
             return value
-        # return json.loads(value, object_pairs_hook=collections.OrderedDict)
         return self.to_python(value)
 
     def get_prep_value(self, value):
@@ -54,8 +52,6 @@ class OrderedJSONField(models.JSONField):
                 pass
         return value
 
-    # def from_db_value(self, value, expression, connection):
-    #     return self.to_python(value)
 
     def db_type(self, connection):
         """Specifies the database column type as 'json' for PostgreSQL."""
@@ -84,15 +80,15 @@ class RawResponse(AbstractModel):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
-    location = models.CharField(max_length=200, null=True)
+    
     organization = models.ForeignKey(
-        Organization, on_delete=models.CASCADE, default=None, null=True
+        Organization, on_delete=models.CASCADE, default=None, null=True, blank=True
     )
     corporate = models.ForeignKey(
-        Corporateentity, on_delete=models.CASCADE, default=None, null=True
+        Corporateentity, on_delete=models.CASCADE, default=None, null=True, blank=True
     )
     locale = models.ForeignKey(
-        Location, on_delete=models.CASCADE, default=None, null=True
+        Location, on_delete=models.CASCADE, default=None, null=True, blank=True
     )
     year = models.IntegerField(
         null=False, validators=[MinValueValidator(1999), MaxValueValidator(2100)]
@@ -145,7 +141,7 @@ class DataPoint(AbstractModel):
     value = models.JSONField(default=None, null=True)
     metric_name = models.CharField(default="Not Set", null=False)
     is_calculated = models.BooleanField(default=False, null=False)
-    location = models.CharField(max_length=200, null=True)
+
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, default=None, null=True
     )

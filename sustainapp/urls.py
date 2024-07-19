@@ -25,6 +25,10 @@ from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
 from sustainapp.Views.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
 from sustainapp.Views.Social.ChildLabor import ChildLabourAnalyzeView
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
+from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
+    DiversityAndInclusionAnalyse,
+)
+from sustainapp.Views.Social.SupplierSocialAssessment import SupplierSocialAssessmentView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -99,6 +103,16 @@ urlpatterns = [
         "get_ohs_analysis/",
         IllnessAnalysisView.as_view(),
         name="get_ohs_analysis",
+    ),
+    path(
+        "get_diversity_inclusion_analysis/",
+        DiversityAndInclusionAnalyse.as_view(),
+        name="get_diversity_inclusion_analysis",
+    ),
+    path(
+        "get_supplier_social_assessment_analysis/",
+        SupplierSocialAssessmentView.as_view(),
+        name="get_supplier_social_assessment_analysis",
     ),
     path("", include(router.urls)),
 ]

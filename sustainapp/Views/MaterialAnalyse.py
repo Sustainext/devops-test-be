@@ -89,7 +89,8 @@ class GetMaterialAnalysis(APIView):
             path__slug=path_slug,
             year__range=(start_year, end_year),
             month__range=(start_month, end_month),
-            location__in=location,
+            locale__in=location,
+            # location__in=location,
         )
 
         renewable_materials_dict = defaultdict(
@@ -266,7 +267,8 @@ class GetMaterialAnalysis(APIView):
             path__slug=path_slug,
             year__range=(start_year, end_year),
             month__range=(start_month, end_month),
-            location__in=location,
+            locale__in=location,
+            # location__in=location,
         )
         reclaimed_materials_dict = defaultdict(
             lambda: {
@@ -321,7 +323,8 @@ class GetMaterialAnalysis(APIView):
             path__slug=path_slug,
             year__range=(start_year, end_year),
             month__range=(start_month, end_month),
-            location__in=location,
+            locale__in=location,
+            # location__in=location,
         )
         recycled_materials_dict = defaultdict(
             lambda: {
@@ -389,7 +392,7 @@ class GetMaterialAnalysis(APIView):
                 {"error": "Please provide either organisation, corporate or location"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        location_names = locations.values_list("name", flat=True)
+        location_names = locations  # .values_list("name", flat=True)
 
         renewable_materials = self.get_material_data(
             location_names,

@@ -18,6 +18,7 @@ from django.db.models import Sum
 from datametric.utils.analyse import filter_by_start_end_dates
 from rest_framework.exceptions import APIException
 from django.db.models import Max
+from datametric.utils.analyse import safe_divide
 import logging
 
 logger = logging.getLogger("django")
@@ -47,14 +48,6 @@ def get_object_value(object_value):
         return 0
     else:
         return object_value.value
-
-
-def safe_divide(numerator, denominator, decimal_places=2):
-    return (
-        round((numerator / denominator * 100), decimal_places)
-        if denominator != 0
-        else 0
-    )
 
 
 def get_integer(value):
@@ -1390,18 +1383,18 @@ class EmploymentAnalyzeView(APIView):
         new_emp_data_points = DataPoint.objects.filter(
             client_id=client_id,
             path__slug__in=self.new_employee_hire_path_slugs,
-            location__in=self.locations.values_list("name", flat=True),
+            locale__in=self.locations,  # .values_list("name", flat=True),
         ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
         emp_turnover_data_points = DataPoint.objects.filter(
             client_id=client_id,
             path__slug__in=self.employee_turnover_path_slugs,
-            location__in=self.locations.values_list("name", flat=True),
+            locale__in=self.locations,  # .values_list("name", flat=True),
         ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
         benefits_data_points = (
             DataPoint.objects.filter(
                 client_id=client_id,
                 path__slug__in=self.employee_benefits_path_slugs,
-                location__in=self.locations.values_list("name", flat=True),
+                locale__in=self.locations,  # .values_list("name", flat=True),
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .order_by("-year", "-month")
@@ -1410,7 +1403,7 @@ class EmploymentAnalyzeView(APIView):
             DataPoint.objects.filter(
                 client_id=client_id,
                 path__slug__in=self.employee_parental_leave_path_slugs,
-                location__in=self.locations.values_list("name", flat=True),
+                locale__in=self.locations,  # .values_list("name", flat=True),
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .order_by("-year", "-month")

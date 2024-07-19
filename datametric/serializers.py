@@ -28,13 +28,13 @@ class UpdateResponseSerializer(serializers.Serializer):
     form_data = serializers.ListField(child=serializers.JSONField(), allow_empty=True)
     # location = serializers.CharField(required=True, trim_whitespace=False)
     location = serializers.PrimaryKeyRelatedField(
-        queryset=Location.objects.all(), required=False
+        queryset=Location.objects.all(), required=False, allow_null=True
     )
     organisation = serializers.PrimaryKeyRelatedField(
-        queryset=Organization.objects.all(), required=False
+        queryset=Organization.objects.all(), required=False, allow_null=True
     )
     corporate = serializers.PrimaryKeyRelatedField(
-        queryset=Corporateentity.objects.all(), required=False
+        queryset=Corporateentity.objects.all(), required=False, allow_null=True
     )
     year = serializers.IntegerField(required=True)
     month = serializers.IntegerField(min_value=1, max_value=12, required=False)
@@ -96,9 +96,9 @@ class FieldGroupGetSerializer(serializers.Serializer):
         return data
 
 
-
 class GetClimatiqComputedSerializer(serializers.Serializer):
-    # location = serializers.CharField(required=True)
+    
+    #TODO: Location should be based on the client.
     location = serializers.PrimaryKeyRelatedField(
         queryset=Location.objects.all(), required=True
     )
