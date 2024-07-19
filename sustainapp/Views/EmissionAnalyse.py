@@ -50,7 +50,7 @@ class GetEmissionAnalysis(APIView):
             year__range=(self.start.year, self.end.year),
             month__range=(self.start.month, self.end.month),
             path__slug__icontains="gri-collect-emissions-scope-combined",
-            location__in=self.locations.values_list("name", flat=True),
+            locale__in=self.locations,  # .values_list("name", flat=True),
             client_id=self.request.user.client.id,
         ).select_related("raw_response")
         # * Get contribution of each path in raw_responses and sum the json_holder
@@ -61,7 +61,7 @@ class GetEmissionAnalysis(APIView):
             top_emission_by_scope[
                 self.path_slug[data_point.raw_response.path.slug]
             ] += sum([i.get("co2e", 0) for i in data_point.json_holder])
-            self.top_emission_by_location[data_point.location] += sum(
+            self.top_emission_by_location[data_point.locale.name] += sum(
                 [i.get("co2e", 0) for i in data_point.json_holder]
             )
             for emission_request, climatiq_response in zip(

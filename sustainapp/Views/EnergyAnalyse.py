@@ -27,7 +27,8 @@ class EnergyAnalyzeView(APIView):
         }
 
         consumed_ene_query = RawResponse.objects.filter(
-            location__in=self.locations.values_list("name", flat=True),
+            # location__in=self.locations.values_list("name", flat=True),
+            locale__in=self.locations,
             path__slug=path,
             client__id=self.clients_id,
         ).filter(filter_by_start_end_dates(self.from_date, self.to_date))

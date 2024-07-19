@@ -22,7 +22,8 @@ class Climatiq:
         self.user = raw_response.user
         self.raw_response: RawResponse = raw_response
         self.client = raw_response.user.client
-        self.location = raw_response.location
+        # self.location = raw_response.location
+        self.locale = raw_response.locale
         self.month = raw_response.month
         self.year = raw_response.year
 
@@ -300,7 +301,8 @@ class Climatiq:
 
         # Ensure location, year, month, user, and client attributes are present
         if (
-            self.location is None
+            # self.location is None    commented on July18th
+            self.locale is None
             or self.year is None
             or self.month is None
             or self.user is None
@@ -321,7 +323,8 @@ class Climatiq:
                 response_type=ARRAY_OF_OBJECTS,
                 data_metric=datametric,
                 is_calculated=True,
-                location=self.location,
+                # location=self.location,
+                locale=self.locale,
                 year=self.year,
                 month=self.month,
                 user_id=self.user.id,
