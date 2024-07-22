@@ -172,7 +172,6 @@ class GetComputedClimatiqValue(APIView):
         path = Path.objects.filter(slug="gri-collect-emissions-scope-combined").first()
         try:
             datapoint = DataPoint.objects.filter(
-                user_id=user_instance.id,
                 client_id=client_instance.id,
                 month=month,
                 year=year,
