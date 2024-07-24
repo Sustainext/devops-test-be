@@ -31,11 +31,13 @@ from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
 from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
     SupplierSocialAssessmentView,
 )
+from sustainapp.Views.Analyse.Social.TrainingAnalyse import TrainingSocial
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
 router.register(r"ghgreport", ReportViewSet, basename="ReportUpdate")
 urlpatterns = [
+    path("", include(router.urls)),
     path("subcategories/", SubCategoriesAPIView.as_view(), name="subcategories"),
     path(
         "scope_categories/", ScopeCategoriesAPIView.as_view(), name="scope_categories"
@@ -116,5 +118,9 @@ urlpatterns = [
         SupplierSocialAssessmentView.as_view(),
         name="get_supplier_social_assessment_analysis",
     ),
-    path("", include(router.urls)),
+    path(
+        "get_training_social_analysis/",
+        TrainingSocial.as_view(),
+        name="get_training_social_analysis",
+    ),
 ]
