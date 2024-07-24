@@ -73,6 +73,13 @@ def safe_divide(numerator, denominator, decimal_places=2):
     )
 
 
+def safe_integer_divide(numerator, denominator, decimal_places=2):
+    try:
+        return round((int(numerator) / int(denominator) * 100), decimal_places)
+    except (ZeroDivisionError, ValueError):
+        return 0
+
+
 def get_raw_response_filters(organisation=None, corporate=None, location=None):
     locations = set_locations_data(organisation, corporate, location)
 
@@ -87,3 +94,20 @@ def get_raw_response_filters(organisation=None, corporate=None, location=None):
         filters |= Q(locale__in=locations)
 
     return filters
+
+
+def get_sum_from_dictionary_list(dictionary_list, key):
+    """
+    This function takes a list of dictionaries and a key as input and returns the sum of the values associated with the key in all dictionaries in the list.
+    """
+    return sum(dictionary.get(key, 0) for dictionary in dictionary_list)
+
+
+def convert_from_str_into_int(string):
+    """
+    This function takes a string as input and returns an integer if the string is a valid integer, otherwise it returns the original string.
+    """
+    try:
+        return int(string)
+    except ValueError:
+        return 0
