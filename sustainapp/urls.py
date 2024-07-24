@@ -9,7 +9,7 @@ from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
-from sustainapp.Views.Social.EmploymentAnalyze import EmploymentAnalyzeView
+from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
     GHGReportView,
@@ -22,13 +22,15 @@ from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
-from sustainapp.Views.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
-from sustainapp.Views.Social.ChildLabor import ChildLabourAnalyzeView
+from sustainapp.Views.Analyse.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
+from sustainapp.Views.Analyse.Social.ChildLabor import ChildLabourAnalyzeView
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
 )
-from sustainapp.Views.Social.SupplierSocialAssessment import SupplierSocialAssessmentView
+from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
+    SupplierSocialAssessmentView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
