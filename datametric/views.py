@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.models import Organization, Corporateentity, Location
 from logging import getLogger
 
-logger = getLogger("error.log")
+logger = getLogger("file")
 
 
 class TestView(APIView):
@@ -172,18 +172,19 @@ class GetComputedClimatiqValue(APIView):
         path = Path.objects.filter(slug="gri-collect-emissions-scope-combined").first()
         try:
             datapoint = DataPoint.objects.filter(
-                user_id=user_instance.id,
                 client_id=client_instance.id,
                 month=month,
                 year=year,
                 locale=location_obj,
                 path=path,
-            ).first()
-            resp_data = {}
-            resp_data["result"] = datapoint.json_holder
+            )
+            resp_data = {"result": []}
+            for datapoints in datapoint:
+                values = datapoints.json_holder
+                resp_data["result"].extend(values)
             return Response(resp_data, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.info(f"Exception occurred: {e}")
+            logger.error(f"Exception occurred: {e}",exc_info=True)
             return Response(
                 {
                     "message": "An unexpected error occurred for GetComputedClimatiqValue "

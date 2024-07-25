@@ -9,7 +9,7 @@ from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
-from sustainapp.Views.Social.EmploymentAnalyze import EmploymentAnalyzeView
+from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
     GHGReportView,
@@ -22,18 +22,22 @@ from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
-from sustainapp.Views.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
-from sustainapp.Views.Social.ChildLabor import ChildLabourAnalyzeView
+from sustainapp.Views.Analyse.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
+from sustainapp.Views.Analyse.Social.ChildLabor import ChildLabourAnalyzeView
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
 )
-from sustainapp.Views.Social.SupplierSocialAssessment import SupplierSocialAssessmentView
+from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
+    SupplierSocialAssessmentView,
+)
+from sustainapp.Views.Analyse.Social.TrainingAnalyse import TrainingSocial
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
 router.register(r"ghgreport", ReportViewSet, basename="ReportUpdate")
 urlpatterns = [
+    path("", include(router.urls)),
     path("subcategories/", SubCategoriesAPIView.as_view(), name="subcategories"),
     path(
         "scope_categories/", ScopeCategoriesAPIView.as_view(), name="scope_categories"
@@ -114,5 +118,9 @@ urlpatterns = [
         SupplierSocialAssessmentView.as_view(),
         name="get_supplier_social_assessment_analysis",
     ),
-    path("", include(router.urls)),
+    path(
+        "get_training_social_analysis/",
+        TrainingSocial.as_view(),
+        name="get_training_social_analysis",
+    ),
 ]

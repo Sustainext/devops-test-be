@@ -41,7 +41,7 @@ class SupplierSocialAssessmentView(APIView):
         new_supplier_data["percentage"] = (total_new_suppliers / total_suppliers) * 100 if total_suppliers > 0 else 0
 
         return new_supplier_data
-
+    
     def get_pos_data(self, data_points):
         pos = defaultdict(lambda: 0.0)
         metric_mapping = {
@@ -63,7 +63,10 @@ class SupplierSocialAssessmentView(APIView):
         pos["percentage_improved"] = (total_number_of_improved_suppliers / total_number_of_suppliers_assessed) * 100 if total_number_of_suppliers_assessed > 0 else 0
 
         return pos
-
+    
+    def filter_non_zero_values(self, data):
+        return {k: v for k, v in data.items() if v != 0.0}
+    
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -95,8 +98,8 @@ class SupplierSocialAssessmentView(APIView):
             pos = self.get_pos_data(pos_data)
 
         final = {
-            "new_suppliers_that_were_screened_using_social_criteria": dp,
-            "negative_social_impacts_in_the_supply_chain_and_actions_taken": pos,
+            "new_suppliers_that_were_screened_using_social_criteria": self.filter_non_zero_values(dp),
+            "negative_social_impacts_in_the_supply_chain_and_actions_taken": self.filter_non_zero_values(pos),
         }
 
         return Response(final, status=status.HTTP_200_OK)
