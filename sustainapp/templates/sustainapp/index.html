@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Report Actions</title>
+</head>
+
+<body>
+    <h1>Report Actions</h1>
+    <p>Choose an action for the report:</p>
+    <a href="{% url 'report_pdf' pk=report_id %}?view=inline" target="_blank">
+        <button>View PDF</button>
+    </a>
+    <a href="{% url 'report_pdf' pk=report_id %}?download=true">
+        <button>Download PDF</button>
+    </a>
+</body>
+
+</html>

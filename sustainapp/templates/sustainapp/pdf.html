@@ -1,0 +1,924 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;700&display=swap">
+
+    <title>GHG Emissions Report</title>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 1cm;
+
+            @frame header_frame {
+                /* Static frame */
+                -pdf-frame-content: header_content;
+                left: 50pt;
+                width: 512pt;
+                top: 50pt;
+                height: 40pt;
+            }
+
+            @frame footer_frame {
+                /* Another static Frame */
+                -pdf-frame-content: footer_content;
+                /* text-align: center; */
+                left: 265pt;
+                width: 512pt;
+                top: 820pt;
+                height: 20pt;
+                /* display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%; */
+            }
+        }
+
+        body {
+            font-family: 'Arial';
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+
+            /* Adjust as needed */
+            display: flex;
+        }
+
+        .logo {
+            margin-top: 100px;
+            height: 250px;
+            width: 250px;
+            text-align: center;
+        }
+
+        .provided p {
+            text-align: left;
+            margin-top: 300px;
+            font-size: 14px;
+            position: relative;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .section {
+            text-align: left;
+            margin-bottom: 20px;
+            /* font-size: 14px; */
+            /* -pdf-keep-with-next: true; */
+        }
+
+        .section-introduction {
+            page-break-before: always;
+        }
+
+        .summary {
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        h1 {
+            -pdf-outline: false;
+            font-size: 50px;
+        }
+
+        h2 {
+            -pdf-outline: false;
+            color: #000066;
+            font-size: 20px;
+            line-height: 0.8;
+        }
+
+        h3 {
+            -pdf-outline: false;
+            color: #333399;
+            font-size: 16px;
+            line-height: 0.8;
+        }
+
+        h4 {
+            -pdf-outline: true;
+            color: #333399;
+            font-size: 16px;
+            line-height: 0.8;
+        }
+
+        h5 {
+            -pdf-outline: true;
+            color: #333399;
+            font-size: 16px;
+            line-height: 0.8;
+        }
+
+        h6 {
+            color: #000066;
+            font-size: 20px;
+            line-height: 0.8;
+        }
+
+        .viewhtml>p {
+            font-size: 104px;
+        }
+
+        .viewhtml>p>h4 {
+            font-size: 60px;
+        }
+
+        .graph-align {
+            text-align: center;
+        }
+
+        p {
+            font-size: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed;
+            /* Important to make sure that the table adheres to the set widths */
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+            font-size: 14px;
+            /* Adjust font size to ensure content fits */
+            word-break: break-all;
+            /* Break words at any character */
+        }
+
+
+        .table-header {
+            background-color: #f2f2f2;
+        }
+
+        ul,
+        li {
+            margin-left: 20px;
+            padding: 0;
+            list-style-position: inside;
+        }
+
+        li {
+            margin-bottom: 0px;
+            /* Adjust as necessary */
+            line-height: 0.6;
+            /* Adjust as necessary */
+            font-size: 14px;
+        }
+
+
+        .principles {
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .orgname {
+            /* width: 50%; */
+            /* display: flexbox; */
+            position: absolute;
+            font-size: 17px;
+            margin-top: 0px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+
+        .section-introduction {
+            page-break-before: always;
+        }
+
+        .margin-bottom {
+            margin-bottom: 20px;
+        }
+
+        /* .loop-table {
+            -pdf-keep-with-next: true;
+        } */
+
+        .keep-with-next {
+            -pdf-keep-with-next: true;
+        }
+
+        .keep-with-next1 {
+            -pdf-keep-with-next: true;
+        }
+
+        .contents {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        .contents li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            text-align: left;
+            text-indent: 20px;
+        }
+
+        .contents li::after {
+            content: '';
+            display: inline-block;
+            width: 100%;
+            height: 1px;
+            background-color: #000;
+            position: relative;
+            top: -10px;
+            margin-left: 10px;
+
+            text-indent: 20px;
+        }
+
+        .contents li span {
+            float: right;
+            position: relative;
+            top: -5px;
+            padding-left: 10px;
+            text-align: center;
+        }
+
+        .contents-1 {
+            text-align: center;
+
+            text-indent: 20px;
+        }
+
+        .span {
+            float: right;
+        }
+
+        .margin-right {
+            text-align: right;
+        }
+
+        .year {
+            font-size: 35px;
+        }
+
+        .text-center {
+            /* margin-top: 10px; */
+            text-align: center;
+        }
+
+        .text-center-orgname {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .content-section {
+            text-align: center;
+        }
+
+        .report-name {
+            font-size: 50px;
+            line-height: 10px;
+            color: green;
+        }
+
+        .reph4 {
+            color: #333399;
+            font-size: 15px;
+            line-height: 0.8;
+            font-weight: bold;
+        }
+
+        pdftoc {
+            color: #666;
+        }
+
+        pdftoc.pdftoclevel5 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 1em;
+            margin-top: 0.5em;
+        }
+
+        pdftoc.pdftoclevel4 {
+            font-size: 16px;
+            margin-left: 3em;
+        }
+
+        pdftoc.pdftoclevel3 {
+            font-size: 14px;
+            margin-left: 6em;
+        }
+
+        div>strong {
+            font-size: 15px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="header_content"></div>
+    <div id="footer_content"> page <pdf:pagenumber>
+            of <pdf:pagecount>
+    </div>
+    <div class="container">
+        <div>
+            <div class="flex">
+                <div class="orgname">
+                    <h1 class="report-name">GHG <br> Accounting <br>
+                        Report
+                    </h1>
+
+                    <h2 class="year">Year:{% if start_date|date:"Y" == end_date|date:"Y" %}
+                        {{start_date|date:"Y" }}
+                        {% else %}
+                        {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+                        {%endif%}</h2>
+                </div>
+                <div class="logo">
+                    {% if org_logo %}
+                    <img src="{{org_logo}}" alt="Valenta Logo">
+                    {% endif %}
+                </div>
+
+                <h2 class="text-center-orgname">{{organization_name}}
+                </h2>
+            </div>
+
+        </div>
+        <div class="provided">
+            <p>Provided by – Sustainext</p>
+        </div>
+        <div class="section-introduction">
+            <h2 class="contents-1">CONTENTS
+                <pdf:toc />
+            </h2>
+        </div>
+
+
+
+        {% if report_by == 'Organization' %}
+        <div class="section-introduction"></div>
+        <h6 class="loop-table">EXECUTIVE SUMMARY</h6>
+        <p class="loop-table">This report details the Greenhouse Gas Emissions (GHG) accounting for the organization
+            {{organization_name}}.
+            The total
+            GHG emissions for the reporting period {{start_date|date:"d-M-Y"}} to {{end_date|date:"d-M-Y"}} were found
+            to be
+            {{ total_co2e_combined }} tCO2e. The
+            largest source of emissions was {{highest_source_name}}.</p>
+        <!-- Table Section -->
+        <div class="section"></div>
+        <h3 class="table-allcorp">Table 1: GHG emissions by Scopes {{organization_name}}</h3>
+        <table>
+            <tr class="table-header">
+                <th>SCOPE</th>
+                <th>TOTAL EMISSIONS (tCO2e)</th>
+                <th>% OF TOTAL</th>
+            </tr>
+            {% for scope in combined_scopes %}
+            <tr>
+                <td>{{ scope.scope_name }}</td>
+                <td>{{ scope.total_co2e|floatformat:2 }} {{scope.co2e_unit}}</td>
+                <td>{{ scope.combined_percentage|floatformat:2 }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <!-- <h3>Table 1: GHG emissions by scope</h3> -->
+        {% for company_data in data %}
+
+        <!-- <h2>{{ company_data.corporate_name }}</h2> -->
+        <h3>Table 1.{{ forloop.counter }}: GHG emissions by scope for Corporate {{ company_data.corporate_name }} </h3>
+        <table>
+            <tr class="table-header">
+                <th>SCOPE</th>
+                <th>EMISSIONS (tCO2e)</th>
+                <th>% OF TOTAL</th>
+            </tr>
+            {% for scope in company_data.scopes %}
+            <tr>
+                <td>{{ scope.scope_name }}</td>
+                <td>{{ scope.total_co2e }} {{scope.co2e_unit}}</td>
+                <td>{{ scope.contribution_scope }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="section-introduction"></div>
+    <h6 class="loop-table">EXECUTIVE SUMMARY</h6>
+    <p class="loop-table">This report details the Greenhouse Gas Emissions (GHG) accounting for the organization
+        {{organization_name}}.
+        The total
+        GHG emissions for the reporting period {{start_date|date:"d-M-Y"}} to {{end_date|date:"d-M-Y"}} were found
+        to be
+        {{ total_co2e_combined }} tCO2e. The
+        largest source of emissions was {{highest_source_name}}.</p>
+    <div class="section">
+        <!-- <h3>Table 1: GHG emissions by scope</h3> -->
+        {% for company_data in data %}
+
+        <!-- <h2>{{ company_data.corporate_name }}</h2> -->
+        <h3>Table 1: GHG emissions by scope for Corporate {{ company_data.corporate_name }} </h3>
+        <table>
+            <tr class="table-header">
+                <th>SCOPE</th>
+                <th>EMISSIONS (tCO2e)</th>
+                <th>% OF TOTAL</th>
+            </tr>
+            {% for scope in company_data.scopes %}
+            <tr>
+                <td>{{ scope.scope_name }}</td>
+                <td>{{ scope.total_co2e }} {{scope.co2e_unit}}</td>
+                <td>{{ scope.contribution_scope }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Introduction Section -->
+    <div class="section section-introduction">
+        <h6>INTRODUCTION</h6>
+        <h5>About The Report</h5>
+        <p>{{organization_name}}'s GHG emissions inventory for the period {{start_date|date:"d-M-Y"}} to
+            {{end_date|date:"d-M-Y"}} are presented in this Carbon
+            Accounting
+            Report. It covers {{organization_name}} operations across {{country}} and is presented in
+            accordance with ISO 14064 and GHG Protocol. The report facilitates improvement of {{organization_name}}'s
+            sustainability performance by demonstrating an accurate assessment of the organization's GHG emissions
+            arising from its activities and facilities. Through this evaluation, key GHG emissions sources are
+            identified which will assist {{organization_name}} in designing appropriate emission reduction and
+            mitigation
+            strategies. Evaluating principal sources of GHG emissions will enable the identification of areas for
+            improvement and further emission reduction.</p>
+
+        <h5>Reporting Period</h5>
+        <p>The GHG emissions inventory presented in this report covers {{organization_name}} GHG emissions for
+            reporting period, starting from {{start_date|date:"M-Y"}} to {{end_date|date:"M-Y"}} . The base year for
+            {{organization_name}} GHG
+            emissions inventory is
+            {% if calender_year %}
+            {{ calender_year|date:"Y" }}
+            {% else %}
+            {% if from_year and to_year %}
+            {{ from_year|date:"Y" }} to {{ to_year|date:"Y" }}
+            {% else %}
+            No Data Added
+            {% endif %}
+            {% endif %}.
+        </p>
+
+        <h5>About The Organization</h5>
+        <p class="viewhtml">
+            {% if about_the_organization %}
+            {{about_the_organization|safe}}
+            {% else %}
+            No Data Added
+            {% endif %}
+        </p>
+
+        <h6>CARBON ACCOUNTING OBJECTIVES</h6>
+        <p>The carbon accounting report aims to:</p>
+        <ul>
+            <li>Quantify {{organization_name}}'s GHG emissions during the period {{start_date|date:"d-M-Y"}} to
+                {{end_date|date:"d-M-Y"}}.</li>
+            <li>Identify gaps and to identify emission reduction opportunities.</li>
+            <li>Communicate results to the third-party agency for verification.</li>
+            <li>Support development of sustainability strategies.</li>
+            <li>Increase opportunities to register in voluntary GHG programs.</li>
+        </ul>
+
+        <h5 class="keep-with-next">Roles and Responsibilities</h5>
+        <p class="keep-with-next"> {% if roles_and_responsibilities %}
+            {{roles_and_responsibilities|safe}}.
+            {% else %}
+            No Data Added.
+            {% endif %}
+
+        </p>
+        <p class="keep-with-next">The quantification of {{organization_name}}'s carbon emissions was led by the
+            {% if designation_of_organizational_admin %}
+            {{designation_of_organizational_admin}}.
+            {% else %}
+            No Data Added.
+            {% endif %}
+            Data has been collected using the Sustainext.ai platform.</p>
+    </div>
+
+    </div>
+    <div class="section">
+        <h5 class="keep-with-next">Methodology Used</h5>
+        <p class="keep-with-next">This report follows the GHG protocol corporate standard and specifications for
+            quantification of GHG
+            Emissions. The methodology can be summarized as follows:</p>
+        <img src="{{image_path}}" alt="GHG Methodology Flowchart" style="width:100%; max-width:800px;">
+        <!-- Adjust width and max-width as needed -->
+        <!-- Rest of the content -->
+        <!-- Omitting the image as instructed -->
+
+        <h5 class="keep-with-next1">Principles Of Carbon Accounting</h5>
+        <div class="principles">
+            <p class="keep-with-next1">GHG accounting and reporting practices are constantly evolving alongside
+                advancements in the science of
+                climate change. The GHG Protocol and ISO 14064 standards advise that GHG emissions inventories be
+                carried out in accordance with the following principles:</p>
+
+            <p class="keep-with-next1 reph4">RELEVANCE:</p>
+            <p class="keep-with-next1">For an organization's GHG emissions inventory to contain information that users
+                might need for making
+                "informed" decisions. Accordingly, The organization has identified the appropriate boundaries that
+                reflect its business operations.</p>
+
+            <p class="keep-with-next reph4">COMPLETENESS:</p>
+            <p class="keep-with-next">All relevant emission sources within the chosen inventory boundary have been
+                accounted for in the GHG
+                inventory so that a comprehensive and meaningful inventory of total emissions is compiled.</p>
+
+            <p class="keep-with-next reph4">CONSISTENCY:</p>
+            <p class="keep-with-next">The GHG inventory has been compiled in a manner that ensures that the overall
+                emissions estimates are
+                consistent and comparable over time.</p>
+
+            <p class="keep-with-next reph4">TRANSPARENCY:</p>
+            <p class="keep-with-next">All necessary information has been recorded, compiled, and analyzed in a manner
+                that enables internal
+                reviewers and external verifiers to attest to its credibility.</p>
+
+            <p class="keep-with-next reph4">ACCURACY:</p>
+            <p class="keep-with-next">Data reported is sufficiently precise to enable us to make decisions with
+                reasonable assurance and the
+                reported information is credible. Uncertainties in measurements, recording and calculations have been
+                reduced so far as possible and practicable.</p>
+        </div>
+
+    </div>
+    </div>
+    <div class="section-introduction keep-with-next">
+
+        <h6>BOUNDARIES</h6>
+        <div class=" principles">
+            <h5>Organizational boundaries</h5>
+            <p>According to the GHG Protocol — Corporate Standard, the reporting company must set the scope and boundary
+                for calculation of emissions by deciding the approach to consolidate GHG emissions.
+                {{organization_name}} adopts
+                the
+                {% if organizational_boundries %}
+                {{organizational_boundries}}
+                {% else %}
+                No Data Added
+                {% endif %}
+                approach to consolidate and report on its emissions.</p>
+        </div>
+        <h5 class="keep-with-next1">Operational boundaries</h5>
+        <p class="keep-with-next1">The following table lists the sites operated by {{organization_name}} and their
+            corresponding addresses</p>
+        <h3>Table 2: Geographical Locations of Offices / Factories</h3>
+        <table>
+            <tr class="table-header">
+                <th>NAME</th>
+                <th>TYPE OF LOCATION</th>
+                <th>ADDRESS</th>
+            </tr>
+            {% for report in data %}
+            {% for location in report.locations %}
+            <tr>
+                <td>{{ location.location_name }}</td>
+                <td>{{ location.location_type }}</td>
+                <td>{{ location.location_address }}</td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Data Collection and Quantification Methodology Section -->
+    <div class="section">
+        <h6>DATA COLLECTION AND QUANTIFICATION METHODOLOGY</h6>
+
+        <h5>Data Collection and Monitoring Methodology</h5>
+        <p>All emission activity data is collected from multiple data owners using the Sustainext platform. Data is
+            centralized on the platform and is reviewed for completeness, accuracy, duplication and human errors.</p>
+
+        <h5>Quantification Methodology</h5>
+        <p>The process of identifying GHG emission sources is the first step involved in the quantification of GHG
+            emissions. The GHG sources are then classified following the GHG Protocol — Corporate Standard. This is
+            followed by gathering accurate activity data. Selection of nationally or internationally accepted emission
+            factors is a crucial step and these are available through DEFRA, IPCC and National GHG Inventories for the
+            calculation of GHG emissions.</p>
+        <p>{{organization_name}} {{end_date|date:"Y"}} GHG inventory is based on the activity data and the use of
+            appropriate emission
+            factors to arrive at a total emission value or carbon footprint.</p>
+
+
+        <!-- Assuming there is another table or list here that was not included in the image -->
+    </div>
+    <!-- Emission Sources Section -->
+    <div class="section section-introduction">
+        <h5>GHG Emission Activity Data Sources</h5>
+        <p>The following table shows the sources of emissions for which activity data has been collected along with the
+            sources of data:</p>
+        <h3>Table 3: Emission Sources</h3>
+        <table>
+            <tr class="table-header">
+                <th>EMISSION SOURCE</th>
+                <th>DATA SOURCE</th>
+            </tr>
+
+            {% for key, value in data_source.items %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+    <!-- Excluded Sources Section -->
+    <div class="section">
+        <h5 class="keep-with-next">Excluded Sources</h5>
+        <p class="keep-with-next">The following sources of emissions have been excluded from the calculation of
+            {{organization_name}} total
+            emissions,
+            {% if excluded_sources %}
+            {{ excluded_sources|safe }}
+            {% else %}
+            No Data Added
+            {% endif %}
+        </p>
+
+    </div>
+
+    <!-- Emission Factors Considered Section -->
+    <div class="section section-introduction">
+        <h5>Emission Factors Considered</h5>
+        <h3>Table 4: Emission Factors</h3>
+        <table>
+            <tr class="table-header">
+                <th style="width: 50%">EMISSION FACTOR NAME</th>
+                <th style="width: 20%;">UNIT</th>
+                <th>SOURCE</th>
+                <th>YEAR</th>
+            </tr>
+            {% for report in data %}
+            {% for source in report.sources%}
+            <tr>
+                <td>{{source.category_name|safe}} - {{source.activity_name|split_string:"-"|first}} </td>
+                <td>{{source.co2e_unit }}CO<sub>2</sub>e / {{source.activity_data.activity_unit}}</td>
+                <td>{{source.source }}</td>
+                <td>{{source.year}}</td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+            <!-- Add more rows as needed -->
+        </table>
+    </div>
+    <!-- Quantification of Direct & Indirect Emissions Section -->
+    <div class="section keep-with-next">
+        <h5>Quantification of Direct and Indirect Emissions</h5>
+        <p class="keep-with-next">The following are the direct and indirect emissions from {{organization_name}}
+            operations during FY
+            {% if start_date|date:"Y" == end_date|date:"Y" %}
+            {{start_date|date:"Y" }}
+            {% else %}
+            {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+            {%endif%}</p>
+    </div>
+    <!-- Continue with the rest of the content -->
+    </div>
+    <div class="section">
+        <h4 class="keep-with-next">Direct GHG Emission: Scope 1</h4>
+        <h3 class="keep-with-next">Table 5: Scope 1</h3>
+        <table>
+            <tr class="table-header">
+                <th>SCOPE 1 - ACTIVITY</th>
+                <th>CONSUMPTION {% if start_date|date:"Y" == end_date|date:"Y" %}
+                    {{start_date|date:"Y" }}
+                    {% else %}
+                    {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+                    {%endif%}</th>
+                <th>GREENHOUSE GAS EMISSIONS {% if start_date|date:"Y" == end_date|date:"Y" %}
+                    {{start_date|date:"Y" }}
+                    {% else %}
+                    {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+                    {%endif%} (tCO2e)</th>
+            </tr>
+            {% for report in data %}
+            {% for source in report.sources %}
+            {% if source.scope_name == "Scope-1" %}
+            <tr>
+
+                <td style="width: 50%;">{{source.source_name}}-{{source.category_name}} </td>
+                <td>{{source.activity_data.activity_value}} {{source.activity_data.activity_unit}}</td>
+                <td>{{source.total_co2e|floatformat:2}}</td>
+
+            </tr>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+            <!-- Add more rows as needed -->
+        </table>
+        <p>The total Scope 1 emissions from {{organization_name}} were {% for scope in combined_scopes %}
+            {% if scope.scope_name == "Scope-1" %}
+            {{scope.total_co2e|floatformat:2}}
+            {% endif %}
+            {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
+            {{start_date|date:"Y" }}
+            {% else %}
+            {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+            {%endif%}</p>
+    </div>
+
+    <!-- Indirect GHG Emission: Scope 2 Section -->
+    <div class="section ">
+        <h4 class="keep-with-next">Indirect GHG Emission: Scope 2</h4>
+        <p class="keep-with-next">The grid electricity purchased to run operations for the {{organization_name}}
+            offices/factories along with
+            the purchased backup electricity and purchased cooling/HVAC are considered indirect emissions (Scope 2)</p>
+        <h3 class="keep-with-next">Table 6: Scope 2</h3>
+        <table>
+            <tr class="table-header">
+                <th>SCOPE 2 - ACTIVITY</th>
+                <th>CONSUMPTION {% if start_date|date:"Y" == end_date|date:"Y" %}
+                    {{start_date|date:"Y" }}
+                    {% else %}
+                    {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+                    {%endif%}</th>
+                <th>GREENHOUSE GAS EMISSIONS {% if start_date|date:"Y" == end_date|date:"Y" %}
+                    {{start_date|date:"Y" }}
+                    {% else %}
+                    {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+                    {%endif%} (tCO2e)</th>
+            </tr>
+            {% for report in data %}
+            {% for source in report.sources %}
+            {% if source.scope_name == "Scope-2" %}
+            <tr>
+
+                <td style="width: 50%;">{{source.source_name}}-{{source.category_name}} </td>
+                <td>{{source.activity_data.activity_value}} {{source.activity_data.activity_unit}}</td>
+                <td>{{source.total_co2e|floatformat:2}}</td>
+
+            </tr>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+            <!-- Add more rows as needed -->
+        </table>
+        <p>The total Scope 2 emissions from {{organization_name}} were {% for scope in combined_scopes %}
+            {% if scope.scope_name == "Scope-2" %}
+            {{scope.total_co2e|floatformat:2}}
+            {% endif %}
+            {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
+            {{start_date|date:"Y" }}
+            {% else %}
+            {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+            {%endif%}</p>
+    </div>
+
+    <!-- Other Indirect GHG Emission: Scope 3 Section -->
+    <div class="section">
+        <h4 class="keep-with-next">Other indirect GHG Emission: Scope 3</h4>
+        <p class="keep-with-next">Employee commute, business travel, public transport travel, waste consumption and T&D
+            losses from grid
+            electricity are categorized under other indirect emissions (Scope 3).</p>
+        <h3>Table 7: Scope 3</h3>
+        <table>
+            <tr class="table-header">
+                <th>SCOPE 3 - ACTIVITY</th>
+                <th>CONSUMPTION {% if start_date|date:"Y" == end_date|date:"Y" %}
+                    {{start_date|date:"Y" }}
+                    {% else %}
+                    {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+                    {%endif%}</th>
+                <th>GREENHOUSE GAS EMISSIONS {% if start_date|date:"Y" == end_date|date:"Y" %}
+                    {{start_date|date:"Y" }}
+                    {% else %}
+                    {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+                    {%endif%} (tCO2e)</th>
+            </tr>
+
+            {% for report in data %}
+            {% for source in report.sources %}
+            {% if source.scope_name == "Scope-3" %}
+            <tr>
+                <td style="width: 50%;">{{ source.source_name }}-{{ source.category_name }} </td>
+                <td>{{ source.activity_data.activity_value }} {{ source.activity_data.activity_unit }}</td>
+                <td>{{ source.total_co2e|floatformat:2 }}</td>
+            </tr>
+
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+
+            <!-- Add more rows as needed -->
+        </table>
+        <p>The total Scope 3 emissions from {{organization_name}} were {% for scope in combined_scopes %}
+            {% if scope.scope_name == "Scope-3" %}
+            {{scope.total_co2e|floatformat:2}}
+            {% endif %}
+            {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
+            {{start_date|date:"Y" }}
+            {% else %}
+            {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
+            {%endif%}</p>
+    </div>
+    <div class="section">
+
+        <h5 class="keep-with-next">Reducing uncertainties</h5>
+        <p class="keep-with-next">It is assumed that there is +/- 5% to 10% uncertainty associated with the calculation
+            of total emission of
+            {{organization_name}} each year. It is based on the following:</p>
+        <ul>
+            <li>Based on the accuracy of the activity data collected, the uncertainty associated can be approximately
+                5%.</li>
+            <li>Uncertainty associated with estimating emission factors.</li>
+            <li>Concerning Activity Data (AD), calculation methodology with less uncertainty has been prioritized.</li>
+        </ul>
+    </div>
+
+    <!-- Results Section -->
+    <div class="section">
+        <h6 class="keep-with-next">RESULTS</h6>
+        <p class="keep-with-next">{{organization_name}}’s total emissions for the period {{start_date|date:"d-M-Y"}} to
+            {{end_date|date:"d-M-Y"}}
+            were
+            {{total_co2e_combined|floatformat:2}} tCO2e.</p>
+
+        <h3 class="keep-with-next">GHG emissions by Scope</h3>
+        <table class="keep-with-next">
+            <tr class="table-header">
+                <th>SCOPE</th>
+                <th>EMISSIONS (TCO2E)</th>
+                <th>% OF TOTAL</th>
+            </tr>
+            {% for scope in combined_scopes %}
+            <tr>
+                <td>{{ scope.scope_name }}</td>
+                <td>{{ scope.total_co2e|floatformat:2 }} {{scope.co2e_unit}}</td>
+                <td>{{ scope.combined_percentage|floatformat:2 }}%</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+        <div class="section">
+            <h3 class="margin-bottom keep-with-next">Emissions by Scope</h3>
+            <!-- Scope chart -->
+            <div class="graph-align keep-with-next">{% if donut_chart_html %}
+
+                {{ donut_chart_html|safe }}
+                {% else %}
+                <p>No donut chart available.</p>
+                {% endif %}
+            </div>
+
+        </div>
+        <div class="section-introduction">
+            <h3 class="margin-bottom keep-with-next">Emissions by Sources</h3>
+            <!-- Source chart -->
+            <div class="graph-align keep-with-next">{% if donut_chart_html %}
+
+                {{ source_donut_chart_html|safe }}
+                {% else %}
+                <p>No donut chart available.</p>
+                {% endif %}
+            </div>
+
+        </div>
+        <div class="section section-introduction">
+            <h3 class="margin-bottom keep-with-next">Emissions by Location</h3>
+            <!--Location Chart -->
+            <div class="graph-align keep-with-next">{% if donut_chart_html %}
+
+                {{ location_donut_chart_html|safe }}
+                {% else %}
+                <p>No donut chart available.</p>
+                {% endif %}
+            </div>
+
+        </div>
+</body>
+
+</html>

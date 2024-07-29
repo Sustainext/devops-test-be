@@ -1,0 +1,279 @@
+[
+  {
+    "model": "sustainapp.framework",
+    "pk": 1,
+    "fields": { "name": "GRI", "Image": "" }
+  },
+  {
+    "model": "sustainapp.framework",
+    "pk": 2,
+    "fields": { "name": "GRI: With reference to", "Image": "" }
+  },
+  {
+    "model": "authentication.client",
+    "pk": 1,
+    "fields": {
+      "name": "TATA",
+      "customer": true,
+      "created_at": "2024-04-01T09:51:58.270Z",
+      "updated_at": "2024-04-01T09:52:29.988Z"
+    }
+  },
+  {
+    "model": "authentication.client",
+    "pk": 2,
+    "fields": {
+      "name": "client_random_user",
+      "customer": false,
+      "created_at": "2024-04-01T09:55:16.268Z",
+      "updated_at": "2024-04-01T09:55:16.268Z"
+    }
+  },
+  {
+    "model": "sustainapp.organization",
+    "pk": 1,
+    "fields": {
+      "client": 1,
+      "name": "TATA_org",
+      "type_corporate_entity": null,
+      "owner": null,
+      "phone": null,
+      "mobile": null,
+      "website": null,
+      "fax": null,
+      "employeecount": null,
+      "sector": null,
+      "revenue": null,
+      "subindustry": null,
+      "address": null,
+      "countryoperation": null,
+      "state": null,
+      "city": null,
+      "date_format": null,
+      "currency": null,
+      "timezone": null,
+      "language": null,
+      "from_date": null,
+      "to_date": null,
+      "active": false,
+      "no_of_employees": null,
+      "amount": null,
+      "ownership_and_legal_form": null,
+      "group": null,
+      "type_of_corporate_entity": null,
+      "location_of_headquarters": null,
+      "sub_industry": null,
+      "type_of_business_activities": null,
+      "type_of_product": null,
+      "type_of_services": null,
+      "sdg": [],
+      "rating": [],
+      "certification": [],
+      "target": [],
+      "framework": [],
+      "regulation": []
+    }
+  },
+  { "model": "sustainapp.scope", "pk": 1, "fields": { "name": "1" } },
+  { "model": "sustainapp.scope", "pk": 2, "fields": { "name": "2" } },
+  { "model": "sustainapp.scope", "pk": 3, "fields": { "name": "3" } },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 1,
+    "fields": {
+      "name": "No Poverty",
+      "Image": "images/sdg/E-WEB-Goal-01_54bIQpU.png",
+      "Target_no": 7,
+      "goal_no": 1
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 2,
+    "fields": {
+      "name": "Zero Hunger",
+      "Image": "images/sdg/E-WEB-Goal-02_ItqInFE.png",
+      "Target_no": 7,
+      "goal_no": 2
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 3,
+    "fields": {
+      "name": "Good Health & Well-Being",
+      "Image": "images/sdg/E-WEB-Goal-03_P6VsjeM.png",
+      "Target_no": 7,
+      "goal_no": 3
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 4,
+    "fields": {
+      "name": "Quality Education",
+      "Image": "images/sdg/E-WEB-Goal-04_uvzsYs0.png",
+      "Target_no": 7,
+      "goal_no": 4
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 5,
+    "fields": {
+      "name": "Gender Equality",
+      "Image": "images/sdg/E-WEB-Goal-05_83ZnZQj.png",
+      "Target_no": 7,
+      "goal_no": 5
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 6,
+    "fields": {
+      "name": "Clean Water & Sanitation",
+      "Image": "images/sdg/E-WEB-Goal-06_v4OAIHz.png",
+      "Target_no": 7,
+      "goal_no": 6
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 7,
+    "fields": {
+      "name": "Affordable & Clean Energy",
+      "Image": "images/sdg/E-WEB-Goal-07_7vFVqHo.png",
+      "Target_no": 7,
+      "goal_no": 7
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 8,
+    "fields": {
+      "name": "Decent Work & Economic Growth",
+      "Image": "images/sdg/E-WEB-Goal-08_V9LH0tc.png",
+      "Target_no": 7,
+      "goal_no": 8
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 9,
+    "fields": {
+      "name": "Industry, Innovation & Infrastructure",
+      "Image": "images/sdg/E-WEB-Goal-09_uIRFPAr.png",
+      "Target_no": 7,
+      "goal_no": 9
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 10,
+    "fields": {
+      "name": "Reduced Inequalities",
+      "Image": "images/sdg/E-WEB-Goal-10_CclkRfV.png",
+      "Target_no": 7,
+      "goal_no": 10
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 11,
+    "fields": {
+      "name": "Sustainable Cities And Communities",
+      "Image": "images/sdg/E-WEB-Goal-11_KYxjbcc.png",
+      "Target_no": 7,
+      "goal_no": 11
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 12,
+    "fields": {
+      "name": "Responsible Consumption An Production",
+      "Image": "images/sdg/E-WEB-Goal-12_J2jkKWw.png",
+      "Target_no": 7,
+      "goal_no": 12
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 13,
+    "fields": {
+      "name": "Climate Action",
+      "Image": "images/sdg/E-WEB-Goal-13_iPC9p1D.png",
+      "Target_no": 7,
+      "goal_no": 13
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 14,
+    "fields": {
+      "name": "Life Below Water",
+      "Image": "images/sdg/E-WEB-Goal-14_jDX1nST.png",
+      "Target_no": 7,
+      "goal_no": 14
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 15,
+    "fields": {
+      "name": "Life On Land",
+      "Image": "images/sdg/E-WEB-Goal-15_GaKuiH0.png",
+      "Target_no": 7,
+      "goal_no": 15
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 16,
+    "fields": {
+      "name": "Peace, Justice And Strong Institutions",
+      "Image": "images/sdg/E-WEB-Goal-16_JOuHHmx.png",
+      "Target_no": 7,
+      "goal_no": 16
+    }
+  },
+  {
+    "model": "sustainapp.sdg",
+    "pk": 17,
+    "fields": {
+      "name": "Partnership For The Goals",
+      "Image": "images/sdg/E-WEB-Goal-17_BF5y05d.png",
+      "Target_no": 7,
+      "goal_no": 17
+    }
+  },
+  {
+    "model": "sustainapp.regulation",
+    "pk": 1,
+    "fields": {
+      "name": "SB-253",
+      "Image": "images/regulation/SB-253_OjG0XhP.png"
+    }
+  },
+  {
+    "model": "sustainapp.regulation",
+    "pk": 2,
+    "fields": {
+      "name": "SB-261",
+      "Image": "images/regulation/SB-261_1dJG1q5.png"
+    }
+  },
+  {
+    "model": "sustainapp.regulation",
+    "pk": 3,
+    "fields": {
+      "name": "BILL S-211",
+      "Image": "images/regulation/Bill_S-211.png"
+    }
+  },
+  {
+    "model": "sustainapp.regulation",
+    "pk": 4,
+    "fields": { "name": "GHGRP", "Image": "images/regulation/GHGRP.png" }
+  }
+]
