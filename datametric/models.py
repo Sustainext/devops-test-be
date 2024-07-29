@@ -119,7 +119,7 @@ class DataPoint(AbstractModel):
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     raw_response = models.ForeignKey(
         RawResponse,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         default=None,
         related_name="response_points",
         null=True,
