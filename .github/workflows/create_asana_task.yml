@@ -49,8 +49,7 @@ jobs:
         name: asana_task_id
         path: asana_task_id.txt
 
-  update_asana_task:
-    needs: create_asana_task 
+  update_asana_task: 
     if: ${{ github.event.action == 'closed' && github.base_ref == 'dev' && github.head_ref != 'dev' }}
     runs-on: ubuntu-latest
 
