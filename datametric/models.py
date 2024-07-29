@@ -178,7 +178,7 @@ class EmissionAnalysis(AbstractModel):
     region = models.CharField(max_length=10)
     year = models.IntegerField()
     name = models.CharField(max_length=300)
-    raw_response = models.ForeignKey(RawResponse, on_delete=models.PROTECT)
+    raw_response = models.ForeignKey(RawResponse, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.name + str(self.id)
