@@ -52,23 +52,6 @@ jobs:
         name: asana_task_id
         path: asana_task_id.txt
 
-    - name: Verify Artifact Upload
-      run: |
-        echo "Verifying that asana_task_id.txt is present before artifact upload"
-        ls -alh
-
-    - name: Add GitHub Link to Asana Attachment
-      run: |
-        asana_task_id=$(cat asana_task_id.txt)
-        echo "Adding attachment to Asana Task ID: $asana_task_id"
-        pr_title="${{ github.event.pull_request.title }}"
-        curl -X POST https://app.asana.com/api/1.0/attachments \
-          -H "Authorization: Bearer 2/1206370253774697/1207905742780138:8d2035b60ee02493ca800700970a18f6" \
-          -F parent=$asana_task_id \
-          -F resource_subtype=external \
-          -F url=${{ github.event.pull_request.html_url }} \
-          -F name="#${{ github.event.pull_request.number }} $pr_title"
-
   update_asana_task:
     if: ${{ github.event.action == 'closed' && github.base_ref == 'dev' && github.head_ref != 'dev' }}
     runs-on: ubuntu-latest
@@ -88,10 +71,8 @@ jobs:
       with:
         name: asana_task_id
 
-    - name: Debug Artifact Directory
-      run: |
-        echo "Checking the contents of the artifact directory"
-        ls -alh asana_task_id
+    - name: List Artifact Directory
+      run: ls -alh asana_task_id
 
     - name: Read Asana Task ID
       run: |
