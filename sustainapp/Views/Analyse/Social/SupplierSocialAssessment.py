@@ -21,7 +21,7 @@ class SupplierSocialAssessmentView(APIView):
             client_id=client_id,
             year=year,
             **filter_by
-        )
+        ) 
         return dp_data, pos_data
 
     def get_social_data(self, data_points):
