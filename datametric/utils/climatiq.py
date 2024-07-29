@@ -175,6 +175,12 @@ class Climatiq:
                 error_message = f"Error with emission: {emission_data} \n"
                 logger.error(error_message)
 
+    def round_decimal_or_nulls(self, value, decimal_point):
+        if value is None:
+            return None
+        else:
+            return round(value, decimal_point)
+
     def create_emission_analysis(self, response_data):
         for index, emission in enumerate(response_data):
             emission_analyse, _ = EmissionAnalysis.objects.update_or_create(
@@ -182,13 +188,21 @@ class Climatiq:
                 index=index,
                 defaults={
                     "activity_id": emission["emission_factor"]["activity_id"],
-                    "co2e_total": emission["co2e"],  # * This can also be None
-                    "co2": emission["constituent_gases"]["co2"],
-                    "n2o": emission["constituent_gases"]["n2o"],
-                    "co2e_other": emission["constituent_gases"][
-                        "co2e_other"
-                    ],  # * This can also be None
-                    "ch4": emission["constituent_gases"]["ch4"],
+                    "co2e_total": self.round_decimal_or_nulls(
+                        emission["co2e"], 3
+                    ),  # * This can also be None
+                    "co2": self.round_decimal_or_nulls(
+                        emission["constituent_gases"]["co2"], 3
+                    ),
+                    "n2o": self.round_decimal_or_nulls(
+                        emission["constituent_gases"]["n2o"], 3
+                    ),
+                    "co2e_other": self.round_decimal_or_nulls(
+                        emission["constituent_gases"]["co2e_other"], 3
+                    ),  # * This can also be None
+                    "ch4": self.round_decimal_or_nulls(
+                        emission["constituent_gases"]["ch4"], 3
+                    ),
                     "calculation_method": emission["co2e_calculation_method"],
                     "category": emission["Category"],
                     "region": emission["emission_factor"]["region"],
@@ -263,7 +277,7 @@ class Climatiq:
             )
             return None
         logger.error(
-            datametric.name, datametric.path.slug, " -is the newly created datametric",exc_info=True
+            f"{datametric.name}{datametric.path.slug} -is the newly created datametric"
         )
         # Update or create the data point
         try:

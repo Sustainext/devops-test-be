@@ -165,14 +165,14 @@ class EmissionAnalysis(AbstractModel):
     activity_id = models.CharField(max_length=200)
     index = models.PositiveIntegerField()
     co2e_total = models.DecimalField(
-        max_digits=10, decimal_places=3, null=True, blank=True
+        max_digits=20, decimal_places=3, null=True, blank=True
     )
-    co2 = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
-    n2o = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
+    co2 = models.DecimalField(max_digits=20, decimal_places=3, null=True, blank=True)
+    n2o = models.DecimalField(max_digits=20, decimal_places=3, null=True, blank=True)
     co2e_other = models.DecimalField(
-        max_digits=10, decimal_places=3, null=True, blank=True
+        max_digits=20, decimal_places=3, null=True, blank=True
     )
-    ch4 = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
+    ch4 = models.DecimalField(max_digits=20, decimal_places=3, null=True, blank=True)
     calculation_method = models.CharField(max_length=10)
     category = models.CharField(max_length=100)
     region = models.CharField(max_length=10)
