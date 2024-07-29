@@ -1,13 +1,14 @@
-name: Create Asana Task on Pull Request
+name: Manage Asana Task on Pull Request Events
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, closed]
     branches:
       - dev
 
 jobs:
   create_asana_task:
+    if: ${{ github.event.action == 'opened' && github.base_ref == 'dev' && github.head_ref != 'dev' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -15,25 +16,107 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Create Asana Task
-      env:
-        ASANA_TOKEN: "2/1206370253774697/1207905742780138:8d2035b60ee02493ca800700970a18f6"
-        ASANA_WORKSPACE_ID: "1203486548572199"
-        ASANA_PROJECT_ID: "1207703004239689"
       run: |
-        pr_title=$(echo "${{ github.event.pull_request.title }}" | jq -Rr @uri)
+        pr_title="${{ github.event.pull_request.title }}"
         pr_url="${{ github.event.pull_request.html_url }}"
-        pr_body=$(echo "${{ github.event.pull_request.body }}" | jq -Rr @uri)
-        user_name="${{ github.event.pull_request.user.login }}"
-        user_email=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/users/${{ github.event.pull_request.user.login }} | jq -r .email)
-        
-        curl -X POST https://app.asana.com/api/1.0/tasks \
-          -H "Authorization: Bearer $ASANA_TOKEN" \
+        pr_body="${{ github.event.pull_request.body }}"
+
+        asana_task_id=$(curl -X POST https://app.asana.com/api/1.0/tasks \
+          -H "Authorization: Bearer 2/1206370253774697/1207905742780138:8d2035b60ee02493ca800700970a18f6" \
           -H "Content-Type: application/json" \
           -d "{
                 \"data\": {
-                  \"workspace\": \"$ASANA_WORKSPACE_ID\",
-                  \"projects\": [\"$ASANA_PROJECT_ID\"],
+                  \"workspace\": \"1203486548572199\",
+                  \"projects\": [\"1207906053156776\"],
                   \"name\": \"$pr_title\",
-                  \"notes\": \"Pull Request URL: $pr_url\n\n$pr_body\"
+                  \"notes\": \"Pull Request URL: $pr_url\n\n$pr_body\",
+                  \"custom_fields\": {
+                    \"1205222382328468\": \"1205222382328471\"
+                  }
+                }
+              }" | jq -r .data.gid)
+
+        echo "Asana Task ID: $asana_task_id"
+        echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
+        echo $asana_task_id > asana_task_id.txt
+
+    - name: Check Asana Task ID File
+      run: cat asana_task_id.txt
+
+    - name: List Directory Before Uploading Artifact
+      run: ls -alh
+
+    - name: Persist Asana Task ID
+      uses: actions/upload-artifact@v2
+      with:
+        name: asana_task_id
+        path: asana_task_id.txt
+
+    - name: Verify Artifact Upload
+      run: |
+        echo "Verifying that asana_task_id.txt is present before artifact upload"
+        ls -alh
+
+    - name: Add GitHub Link to Asana Attachment
+      run: |
+        asana_task_id=$(cat asana_task_id.txt)
+        echo "Adding attachment to Asana Task ID: $asana_task_id"
+        pr_title="${{ github.event.pull_request.title }}"
+        curl -X POST https://app.asana.com/api/1.0/attachments \
+          -H "Authorization: Bearer 2/1206370253774697/1207905742780138:8d2035b60ee02493ca800700970a18f6" \
+          -F parent=$asana_task_id \
+          -F resource_subtype=external \
+          -F url=${{ github.event.pull_request.html_url }} \
+          -F name="#${{ github.event.pull_request.number }} $pr_title"
+
+  update_asana_task:
+    if: ${{ github.event.action == 'closed' && github.base_ref == 'dev' && github.head_ref != 'dev' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Delay for artifact availability
+      run: sleep 10
+
+    - name: List Directory Before Downloading Artifact
+      run: ls -alh
+
+    - name: Retrieve Asana Task ID
+      uses: actions/download-artifact@v2
+      with:
+        name: asana_task_id
+
+    - name: Debug Artifact Directory
+      run: |
+        echo "Checking the contents of the artifact directory"
+        ls -alh asana_task_id
+
+    - name: Read Asana Task ID
+      run: |
+        asana_task_id=$(cat asana_task_id/asana_task_id.txt)
+        echo "Retrieved Asana Task ID: $asana_task_id"
+        echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
+
+    - name: Update Asana Task
+      run: |
+        if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
+          status="Pull Request has been merged."
+          status_field="1205222382328469"
+        else
+          status="Pull Request has been closed."
+          status_field="1205222382328469"
+        fi
+
+        curl -X PUT https://app.asana.com/api/1.0/tasks/${{ env.asana_task_id }} \
+          -H "Authorization: Bearer 2/1206370253774697/1207905742780138:8d2035b60ee02493ca800700970a18f6" \
+          -H "Content-Type: application/json" \
+          -d "{
+                \"data\": {
+                  \"notes\": \"$status\",
+                  \"custom_fields\": {
+                    \"1205222382328468\": \"$status_field\"
+                  }
                 }
               }"
