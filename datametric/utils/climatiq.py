@@ -22,7 +22,6 @@ class Climatiq:
         self.user = raw_response.user
         self.raw_response: RawResponse = raw_response
         self.client = raw_response.user.client
-        # self.location = raw_response.location
         self.locale = raw_response.locale
         self.month = raw_response.month
         self.year = raw_response.year
@@ -156,7 +155,7 @@ class Climatiq:
                 emission_data["Category"] = self.raw_response.data[index]["Emission"][
                     "Category"
                 ]
-                
+
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
 
@@ -176,7 +175,6 @@ class Climatiq:
                 error_message = f"Error with emission: {emission_data} \n"
                 logger.error(error_message)
 
-    
     def create_emission_analysis(self, response_data):
         for index, emission in enumerate(response_data):
             emission_analyse, _ = EmissionAnalysis.objects.update_or_create(
@@ -184,9 +182,7 @@ class Climatiq:
                 index=index,
                 defaults={
                     "activity_id": emission["emission_factor"]["activity_id"],
-                    "co2e_total": emission["constituent_gases"][
-                        "co2e_total"
-                    ],  # * This can also be None
+                    "co2e_total": emission["co2e"],  # * This can also be None
                     "co2": emission["constituent_gases"]["co2"],
                     "n2o": emission["constituent_gases"]["n2o"],
                     "co2e_other": emission["constituent_gases"][
@@ -277,7 +273,6 @@ class Climatiq:
                 response_type=ARRAY_OF_OBJECTS,
                 data_metric=datametric,
                 is_calculated=True,
-                # location=self.location,
                 locale=self.locale,
                 year=self.year,
                 month=self.month,
