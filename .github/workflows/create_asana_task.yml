@@ -5,6 +5,7 @@ on:
     types: [opened, closed]
     branches:
       - dev
+  workflow_dispatch:
 
 jobs:
   create_asana_task:
@@ -48,52 +49,3 @@ jobs:
       with:
         name: asana_task_id
         path: asana_task_id.txt
-
-  update_asana_task: 
-    if: ${{ github.event.action == 'closed' && github.base_ref == 'dev' && github.head_ref != 'dev' }}
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Delay for artifact availability
-      run: sleep 10
-
-    - name: List Directory Before Downloading Artifact
-      run: ls -alh
-
-    - name: Retrieve Asana Task ID
-      uses: actions/download-artifact@v4
-      with:
-        name: asana_task_id
-        path: artifact_asana
-
-    - name: List Artifact Directory
-      run: ls -alh artifact_asana
-
-    - name: Read Asana Task ID
-      run: |
-        asana_task_id=$(cat artifact_asana/asana_task_id.txt)
-        echo "Retrieved Asana Task ID: $asana_task_id"
-        echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
-    - name: Update Asana Task
-      run: |
-        if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
-          status="Pull Request has been merged."
-          status_field="1205222382328469"
-        else
-          status="Pull Request has been closed."
-          status_field="1205222382328469"
-        fi
-        curl -X PUT https://app.asana.com/api/1.0/tasks/${{ env.asana_task_id }} \
-          -H "Authorization: Bearer 2/1206370253774697/1207905742780138:8d2035b60ee02493ca800700970a18f6" \
-          -H "Content-Type: application/json" \
-          -d "{
-                \"data\": {
-                  \"notes\": \"$status\",
-                  \"custom_fields\": {
-                    \"1205222382328468\": \"$status_field\"
-                  }
-                }
-              }"
