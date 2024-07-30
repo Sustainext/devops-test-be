@@ -41,6 +41,9 @@ from sustainapp.Views.Analyse.Social.CollectiveBargainingAnalysis import (
 from sustainapp.Views.Analyse.Social.CommunityDevelopmentAnalyse import (
     SocialCommunityDevelopmentAnalysis,
 )
+from sustainapp.Views.Analyse.Social.CustomerPrivacyAnalyze import (
+    CustomerPrivacyAnalyzeView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -146,5 +149,10 @@ urlpatterns = [
         "get_community_development_analysis/",
         SocialCommunityDevelopmentAnalysis.as_view(),
         name="get_community_development_analysis",
+    ),
+    path(
+        "get_customer_privacy_analysis/",
+        CustomerPrivacyAnalyzeView.as_view(),
+        name="get_customer_privacy_analysis",
     ),
 ]
