@@ -64,6 +64,7 @@ jobs:
                   \"notes\": \"$status\",
                   \"custom_fields\": {
                     \"1205222382328468\": \"$status_field\"
-                  }
+                  },
+                  \"completed\": true
                 }
               }"
