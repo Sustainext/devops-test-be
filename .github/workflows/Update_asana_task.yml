@@ -46,6 +46,7 @@ jobs:
         asana_task_id=$(cat artifact_asana/asana_task_id.txt)
         echo "Retrieved Asana Task ID: $asana_task_id"
         echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
+
     - name: Update Asana Task
       run: |
         pr_url="${{ github.event.pull_request.html_url }}"
@@ -57,13 +58,13 @@ jobs:
           status_field="1205222382328469"
         fi
         curl -X PUT https://app.asana.com/api/1.0/tasks/${{ env.asana_task_id }} \
-          -H "Authorization: Bearer 2/1206370253774697/1207905742780138:8d2035b60ee02493ca800700970a18f6" \
+          -H "Authorization: Bearer ${{ secrets.ASANA_ACCESS_TOKEN }}" \
           -H "Content-Type: application/json" \
           -d "{
                 \"data\": {
                   \"notes\": \"$status\",
                   \"custom_fields\": {
-                    \"1205222382328468\": \"$status_field\"
+                    \"${{ secrets.ASANA_CUSTOM_FIELD_ID }}\": \"$status_field\"
                   },
                   \"completed\": true
                 }
