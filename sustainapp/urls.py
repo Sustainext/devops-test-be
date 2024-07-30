@@ -35,6 +35,12 @@ from sustainapp.Views.Analyse.Social.TrainingAnalyse import TrainingSocial
 from sustainapp.Views.Analyse.Social.NonDiscrimationAnalysis import (
     SocialNonDiscrimationAnalysis,
 )
+from sustainapp.Views.Analyse.Social.CollectiveBargainingAnalysis import (
+    SocialCollectiveBargainingAnalysis,
+)
+from sustainapp.Views.Analyse.Social.CommunityDevelopmentAnalyse import (
+    SocialCommunityDevelopmentAnalysis,
+)
 from sustainapp.Views.Analyse.Social.CustomerPrivacyAnalyze import (
     CustomerPrivacyAnalyzeView,
 )
@@ -133,6 +139,16 @@ urlpatterns = [
         "get_non_discrimination_analysis/",
         SocialNonDiscrimationAnalysis.as_view(),
         name="get_non_discrimination_analysis",
+    ),
+    path(
+        "get_collective_bargaining_analysis/",
+        SocialCollectiveBargainingAnalysis.as_view(),
+        name="get_collective_bargaining_analysis",
+    ),
+    path(
+        "get_community_development_analysis/",
+        SocialCommunityDevelopmentAnalysis.as_view(),
+        name="get_community_development_analysis",
     ),
     path(
         "get_customer_privacy_analysis/",
