@@ -2,7 +2,7 @@ name: Manage Asana Task on Pull Request Events
 
 on:
   pull_request:
-    types: [opened, closed]
+    types: [opened]
     branches:
       - dev
   workflow_dispatch:
@@ -14,13 +14,16 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4 #using v4
+      uses: actions/checkout@v4
 
     - name: Create Asana Task
       run: |
         pr_title="${{ github.event.pull_request.title }}"
         pr_url="${{ github.event.pull_request.html_url }}"
         pr_body="${{ github.event.pull_request.body }}"
+        due_date=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
+        assignee_id="1206533652911255" 
+        
         asana_task_id=$(curl -X POST https://app.asana.com/api/1.0/tasks \
           -H "Authorization: Bearer 2/1206370253774697/1207905742780138:8d2035b60ee02493ca800700970a18f6" \
           -H "Content-Type: application/json" \
@@ -30,14 +33,18 @@ jobs:
                   \"projects\": [\"1207906053156776\"],
                   \"name\": \"$pr_title\",
                   \"notes\": \"Pull Request URL: $pr_url\n\n$pr_body\",
+                  \"due_on\": \"$due_date\",
+                  \"assignee\": \"$assignee_id\",
                   \"custom_fields\": {
                     \"1205222382328468\": \"1205222382328471\"
                   }
                 }
               }" | jq -r .data.gid)
+        
         echo "Asana Task ID: $asana_task_id"
         echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
         echo $asana_task_id > asana_task_id.txt
+
     - name: Check Asana Task ID File
       run: cat asana_task_id.txt
 
