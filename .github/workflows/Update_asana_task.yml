@@ -15,8 +15,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Delay for artifact availability
-      run: sleep 10
+    - name: Get latest successful run-id of create_asana_task
+      id: get_run_id
+      run: |
+        latest_run_id=$(curl -s -H "Authorization: token ${{ github.token }}" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/workflows/create_asana_task.yml/runs?branch=dev&status=success" \
+          | jq -r '.workflow_runs[0].id')
+        echo "Latest successful run-id: $latest_run_id"
+        echo "run_id=$latest_run_id" >> $GITHUB_ENV
 
     - name: List Directory Before Downloading Artifact
       run: ls -alh
@@ -28,7 +34,7 @@ jobs:
         path: artifact_asana
         github-token: ${{ github.token }}
         repository: ${{ github.repository }}
-        run-id: 10156604831
+        run-id: ${{ env.run_id }}
 
     - name: List Artifact Directory
       run: ls -alh artifact_asana
