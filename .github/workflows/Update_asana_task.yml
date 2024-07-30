@@ -40,11 +40,12 @@ jobs:
         echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
     - name: Update Asana Task
       run: |
+        pr_url="${{ github.event.pull_request.html_url }}"
         if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
-          status="Pull Request has been merged."
+          status="Pull Request has been merged. PR URL: $pr_url"
           status_field="1205222382328469"
         else
-          status="Pull Request has been closed."
+          status="Pull Request has been closed. PR URL: $pr_url"
           status_field="1205222382328469"
         fi
         curl -X PUT https://app.asana.com/api/1.0/tasks/${{ env.asana_task_id }} \
