@@ -25,7 +25,7 @@ jobs:
         echo "API Response: $response"
         matching_run_id=$(echo $response | jq -r --arg head_ref "$head_ref" '
           .workflow_runs | map(select(.head_branch == $head_ref)) | 
-          sort_by(.created_at) | reverse | .[0].id')
+          sort_by(.created_at) | reverse | .[0].id') # Sorting by created at date
         echo "Matching run-id: $matching_run_id"
         if [ -z "$matching_run_id" ]; then
           echo "No matching run ID found"
