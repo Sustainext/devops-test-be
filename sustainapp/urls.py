@@ -35,6 +35,9 @@ from sustainapp.Views.Analyse.Social.TrainingAnalyse import TrainingSocial
 from sustainapp.Views.Analyse.Social.NonDiscrimationAnalysis import (
     SocialNonDiscrimationAnalysis,
 )
+from sustainapp.Views.Analyse.Social.CustomerPrivacyAnalyze import (
+    CustomerPrivacyAnalyzeView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -130,5 +133,10 @@ urlpatterns = [
         "get_non_discrimination_analysis/",
         SocialNonDiscrimationAnalysis.as_view(),
         name="get_non_discrimination_analysis",
+    ),
+    path(
+        "get_customer_privacy_analysis/",
+        CustomerPrivacyAnalyzeView.as_view(),
+        name="get_customer_privacy_analysis",
     ),
 ]
