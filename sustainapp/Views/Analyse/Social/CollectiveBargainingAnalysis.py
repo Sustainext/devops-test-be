@@ -26,7 +26,7 @@ class SocialCollectiveBargainingAnalysis(APIView):
         self.raw_responses = (
             RawResponse.objects.filter(client=user.client)
             .filter(path__slug__in=self.slugs)
-            .filter(filter_by_start_end_dates(self.start, self.end))
+            .filter(year__range=(self.start.year, self.end.year))
             .filter(
                 get_raw_response_filters(
                     organisation=self.organisation,
