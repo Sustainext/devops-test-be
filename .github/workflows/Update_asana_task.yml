@@ -5,9 +5,9 @@ on:
     branches:
       - dev
   workflow_dispatch:
-  
+
 jobs:
-  update_asana_task: 
+  update_asana_task:
     if: ${{ github.event.action == 'closed' && github.base_ref == 'dev' && github.head_ref != 'dev' }}
     runs-on: ubuntu-latest
 
@@ -19,12 +19,12 @@ jobs:
       id: get_run_id
       run: |
         echo "Checking for matching run ID"
-        base_ref="${{ github.base_ref }}"
-        head_ref="${{ github.head_ref }}"
+        base_ref="${{ github.event.pull_request.base.ref }}"
+        head_ref="${{ github.event.pull_request.head.ref }}"
         response=$(curl -s -H "Authorization: token ${{ github.token }}" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/workflows/create_asana_task.yml/runs?status=success&branch=${head_ref}")
+          "https://api.github.com/repos/${{ github.repository }}/actions/workflows/create_asana_task.yml/runs?status=success")
         echo "API Response: $response"
-        matching_run_id=$(echo $response | jq -r --arg head_ref "$head_ref" '.workflow_runs[] | select(.head_branch == $head_ref) | .id' | select(length > 0) | first')
+        matching_run_id=$(echo $response | jq -r --arg base_ref "$base_ref" --arg head_ref "$head_ref" '.workflow_runs[] | select(.head_branch == $head_ref and .base_ref == $base_ref) | .id | select(length > 0) | first')
         if [ -z "$matching_run_id" ]; then
           echo "No matching run ID found"
           exit 1
