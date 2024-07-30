@@ -18,9 +18,11 @@ jobs:
     - name: Get latest successful run-id of create_asana_task
       id: get_run_id
       run: |
-        latest_run_id=$(curl -s -H "Authorization: token ${{ github.token }}" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/workflows/create_asana_task.yml/runs?branch=dev&status=success" \
-          | jq -r '.workflow_runs[0].id')
+        echo "Checking latest successful run ID"
+        response=$(curl -s -H "Authorization: token ${{ github.token }}" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/workflows/create_asana_task.yml/runs?status=success")
+        echo "API Response: $response"
+        latest_run_id=$(echo $response | jq -r '.workflow_runs[0].id')
         echo "Latest successful run-id: $latest_run_id"
         echo "run_id=$latest_run_id" >> $GITHUB_ENV
 
