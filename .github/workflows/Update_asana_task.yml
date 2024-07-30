@@ -40,6 +40,8 @@ jobs:
       with:
         name: asana_task_id
         path: artifact_asana
+        github-token: ${{ github.token }}
+        repository: ${{ github.repository }}
         run-id: ${{ env.run_id }}
 
     - name: List Artifact Directory
