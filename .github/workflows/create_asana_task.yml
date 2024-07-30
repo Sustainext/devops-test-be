@@ -1,0 +1,61 @@
+name: Create Asana Tasks
+
+on:
+  pull_request:
+    types: [opened]
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  create_asana_task:
+    if: ${{ github.event.action == 'opened' && github.base_ref == 'dev' && github.head_ref != 'dev' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create Asana Task
+      run: |
+        pr_title="${{ github.event.pull_request.title }}"
+        pr_url="${{ github.event.pull_request.html_url }}"
+        pr_body="${{ github.event.pull_request.body }}"
+        due_date=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
+        
+        asana_task_id=$(curl -X POST https://app.asana.com/api/1.0/tasks \
+          -H "Authorization: Bearer ${{ secrets.ASANA_ACCESS_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d "{
+                \"data\": {
+                  \"workspace\": \"${{ secrets.ASANA_WORKSPACE_ID }}\",
+                  \"projects\": [\"${{ secrets.ASANA_PROJECT_ID }}\"],
+                  \"name\": \"$pr_title\",
+                  \"notes\": \"Pull Request URL: $pr_url\n\n$pr_body\",
+                  \"due_on\": \"$due_date\",
+                  \"assignee\": \"${{ secrets.ASANA_ASSIGNEE_ID }}\",
+                  \"memberships\": [{
+                    \"project\": \"${{ secrets.ASANA_PROJECT_ID }}\",
+                    \"section\": \"${{ secrets.ASANA_SECTION_ID }}\"
+                  }],
+                  \"custom_fields\": {
+                    \"${{ secrets.ASANA_CUSTOM_FIELD_ID }}\": \"1205222382328471\"
+                  }
+                }
+              }" | jq -r .data.gid)
+        
+        echo "Asana Task ID: $asana_task_id"
+        echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
+        echo $asana_task_id > asana_task_id.txt
+
+    - name: Check Asana Task ID File
+      run: cat asana_task_id.txt
+
+    - name: List Directory Before Uploading Artifact
+      run: ls -alh
+
+    - name: Persist Asana Task ID
+      uses: actions/upload-artifact@v4
+      with:
+        name: asana_task_id
+        path: asana_task_id.txt
