@@ -1,4 +1,4 @@
-name: Manage Asana Task on Pull Request Events
+name: Create Asana Tasks
 
 on:
   pull_request:
