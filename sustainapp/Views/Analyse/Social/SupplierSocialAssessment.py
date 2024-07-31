@@ -82,7 +82,7 @@ class SupplierSocialAssessmentView(APIView):
             return Response(
                 {"error": "Start and End year should be same."},
                 status=status.HTTP_400_BAD_REQUEST,
-            ) 
+            )
 
         dp, pos = {}, {}
         filter_by = {}
