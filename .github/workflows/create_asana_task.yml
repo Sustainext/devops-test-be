@@ -33,7 +33,7 @@ jobs:
                   \"name\": \"$pr_title\",
                   \"notes\": \"Pull Request URL: $pr_url\n\n$pr_body\",
                   \"due_on\": \"$due_date\",
-                  # \"assignee\": \"${{ secrets.ASANA_ASSIGNEE_ID }}\",
+                  \"assignee\": \"${{ secrets.ASANA_ASSIGNEE_ID }}\",
                   \"memberships\": [{
                     \"project\": \"${{ secrets.ASANA_PROJECT_ID }}\",
                     \"section\": \"${{ secrets.ASANA_SECTION_ID }}\"
