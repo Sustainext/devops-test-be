@@ -24,6 +24,7 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
         
         reviewer_email=$(echo $reviewers | jq -r '.users[0].email')
+        echo "Reviewer email: $reviewer_email"
         
         if [ -z "$reviewer_email" ]; then
           reviewer_email="${{ secrets.ASANA_ASSIGNEE_ID }}"
