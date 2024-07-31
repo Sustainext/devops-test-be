@@ -42,7 +42,15 @@ class SocialNonDiscrimationAnalysis(APIView):
         """
         This function is used to get the incidents of discrimination.
         """
+        """
+        Response Example:
+        [
+            { "Type of Incident": "Race", "Total number of Incidents of discrimination": "" },
+            { "Type of Incident": "Gender", "Total number of Incidents of discrimination": "" }
+        ]
+        """
         incidents_of_discrimination = defaultdict(int)
+        response_data = []
 
         data = [
             item
@@ -54,8 +62,16 @@ class SocialNonDiscrimationAnalysis(APIView):
             incidents_of_discrimination[item["typeofincident"]] += int(
                 item["totalnumberofincidentsofdiscrimination"]
             )
+        #* Preparing Response
+        for key, value in incidents_of_discrimination.items():
+            response_data.append(
+                {
+                    "Type of Incident": key,
+                    "Total number of Incidents of discrimination": value,
+                }
+            )
 
-        return dict(incidents_of_discrimination)
+        return response_data
 
     def get(self, request, format=None):
         """
