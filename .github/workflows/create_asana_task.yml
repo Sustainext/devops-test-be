@@ -19,11 +19,12 @@ jobs:
     - name: Get Pull Request Reviewer Email
       id: get_reviewer_email
       run: |
-        reviewers=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        reviewers=$(curl -H "Authorization: token ${{ github.token }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
         
         reviewer_email=$(echo $reviewers | jq -r '.users[0].email')
+        echo "Reviewer email: $reviewer_email"
         
         if [ -z "$reviewer_email" ]; then
           reviewer_email="${{ secrets.ASANA_ASSIGNEE_ID }}"
