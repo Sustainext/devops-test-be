@@ -7,7 +7,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from datametric.utils.analyse import filter_by_start_end_dates, get_raw_response_filters
 from datametric.models import RawResponse
-from collections import defaultdict
+from collections import Counter
 
 
 class SocialNonDiscrimationAnalysis(APIView):
@@ -42,20 +42,25 @@ class SocialNonDiscrimationAnalysis(APIView):
         """
         This function is used to get the incidents of discrimination.
         """
-        incidents_of_discrimination = defaultdict(int)
-
         data = [
             item
             for raw_response in self.raw_responses.filter(path__slug=self.slugs[0])
             for item in raw_response.data
         ]
 
+        incidents_counter = Counter()
         for item in data:
-            incidents_of_discrimination[item["typeofincident"]] += int(
+            incidents_counter[item["typeofincident"]] += int(
                 item["totalnumberofincidentsofdiscrimination"]
             )
 
-        return dict(incidents_of_discrimination)
+        return [
+            {
+                "Type of Incident": incident_type,
+                "Total number of Incidents of discrimination": count,
+            }
+            for incident_type, count in incidents_counter.items()
+        ]
 
     def get(self, request, format=None):
         """

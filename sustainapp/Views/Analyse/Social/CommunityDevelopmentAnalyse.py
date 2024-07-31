@@ -41,6 +41,33 @@ class SocialCommunityDevelopmentAnalysis(APIView):
         )
 
     def get_community_engagement(self):
+        #* Making Response like this
+        [
+            {
+                "": "Percentage of Security Personnel (in organisation)",
+                "Percentage of operations implemented by engaging local communities": "",
+            },
+            {
+                "": "Environmental impact assessments",
+                "Percentage of operations implemented by engaging local communities": "",
+            },
+            {
+                "": "Public disclosure",
+                "Percentage of operations implemented by engaging local communities": "",
+            },
+            {
+                "": "Community development programs",
+                "Percentage of operations implemented by engaging local communities": "",
+            },
+            {
+                "": "Stakeholder engagement plans",
+                "Percentage of operations implemented by engaging local communities": "",
+            },
+            {
+                "": "Local community consultation committes",
+                "Percentage of operations implemented by engaging local communities": "",
+            },
+        ]
         """
         This function is used to get the community engagement.
         """
@@ -89,7 +116,7 @@ class SocialCommunityDevelopmentAnalysis(APIView):
                 each_month_data[7]["operations"]
             )
         for key, value in response_data.items():
-            response_data[key] = round(value / sum_of_total_operation * 100, 2)
+            response_data[key] = safe_integer_divide(value, sum_of_total_operation)
         return response_data
 
     def get(self, request, format=None):

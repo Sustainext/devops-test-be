@@ -16,6 +16,26 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Determine Asana Token
+      id: determine_asana_token
+      run: |
+        creator="${{ github.event.pull_request.user.login }}"
+        asana_token_variable="ASANA_TOKEN_${creator^^}"
+        
+        echo "Checking for secret: $asana_token_variable"
+        
+        # Fetch the secret value dynamically
+        asana_token="${{ secrets.[asana_token_variable] }}"
+        
+        echo "Checking asana token: $asana_token"
+        
+        if [ -z "$asana_token" ]; then
+          echo "No specific Asana token found for user $creator, using default."
+          asana_token="${{ secrets.ASANA_ACCESS_TOKEN }}"
+        fi
+        
+        echo "asana_token=$asana_token" >> $GITHUB_ENV
+
     - name: Create Asana Task
       run: |
         pr_title="${{ github.event.pull_request.title }}"
@@ -24,7 +44,7 @@ jobs:
         due_date=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
         
         asana_task_id=$(curl -X POST https://app.asana.com/api/1.0/tasks \
-          -H "Authorization: Bearer ${{ secrets.ASANA_ACCESS_TOKEN }}" \
+          -H "Authorization: Bearer $asana_token" \
           -H "Content-Type: application/json" \
           -d "{
                 \"data\": {
@@ -51,10 +71,7 @@ jobs:
     - name: Check Asana Task ID File
       run: cat asana_task_id.txt
 
-    - name: List Directory Before Uploading Artifact
-      run: ls -alh
-
-    - name: Persist Asana Task ID
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: asana_task_id
