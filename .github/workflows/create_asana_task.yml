@@ -20,7 +20,7 @@ jobs:
       id: determine_asana_token
       run: |
         creator="${{ github.event.pull_request.user.login }}"
-        asana_token_variable="ASANA_TOKEN_${creator^^}"
+        asana_token_variable="ASANA_ACCESS_${creator^^}"
 
         echo "Checking for secret: $asana_token_variable"
 
