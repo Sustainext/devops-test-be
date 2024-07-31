@@ -16,21 +16,25 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Get Pull Request Reviewer Email
-      id: get_reviewer_email
+    - name: Determine Asana Token
+      id: determine_asana_token
       run: |
-        reviewers=$(curl -H "Authorization: token ${{ github.token }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
+        creator="${{ github.event.pull_request.user.login }}"
+        asana_token_variable="ASANA_TOKEN_${creator^^}"
         
-        reviewer_email=$(echo $reviewers | jq -r '.users[0].email')
-        echo "Reviewer email: $reviewer_email"
+        echo "Checking for secret: $asana_token_variable"
         
-        if [ -z "$reviewer_email" ]; then
-          reviewer_email="${{ secrets.ASANA_ASSIGNEE_ID }}"
+        # Fetch the secret value dynamically
+        asana_token="${{ secrets.[asana_token_variable] }}"
+        
+        echo "Checking asana token: $asana_token"
+        
+        if [ -z "$asana_token" ]; then
+          echo "No specific Asana token found for user $creator, using default."
+          asana_token="${{ secrets.ASANA_ACCESS_TOKEN }}"
         fi
-
-        echo "reviewer_email=$reviewer_email" >> $GITHUB_ENV
+        
+        echo "asana_token=$asana_token" >> $GITHUB_ENV
 
     - name: Create Asana Task
       run: |
@@ -40,7 +44,7 @@ jobs:
         due_date=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
         
         asana_task_id=$(curl -X POST https://app.asana.com/api/1.0/tasks \
-          -H "Authorization: Bearer ${{ secrets.ASANA_ACCESS_TOKEN }}" \
+          -H "Authorization: Bearer $asana_token" \
           -H "Content-Type: application/json" \
           -d "{
                 \"data\": {
@@ -49,7 +53,7 @@ jobs:
                   \"name\": \"$pr_title\",
                   \"notes\": \"Pull Request URL: $pr_url\n\n$pr_body\",
                   \"due_on\": \"$due_date\",
-                  \"assignee\": \"$reviewer_email\",
+                  \"assignee\": \"${{ secrets.ASANA_ASSIGNEE_ID }}\",
                   \"memberships\": [{
                     \"project\": \"${{ secrets.ASANA_PROJECT_ID }}\",
                     \"section\": \"${{ secrets.ASANA_SECTION_ID }}\"
