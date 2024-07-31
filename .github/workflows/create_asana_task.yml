@@ -125,11 +125,16 @@ jobs:
         echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
         echo $asana_task_id > asana_task_id.txt
 
-    - name: Check Asana Task ID File
-      run: cat asana_task_id.txt
+    - name: Save Reviewer Token and Task ID
+      run: |
+        echo "Saving reviewer's Asana token and task ID"
+        echo "$reviewer_asana_token" > reviewer_asana_token.txt
+        echo "$asana_task_id" > asana_task_id.txt
 
-    - name: Upload artifact
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: asana_task_id
-        path: asana_task_id.txt
+        name: asana_details
+        path: |
+          reviewer_asana_token.txt
+          asana_task_id.txt
