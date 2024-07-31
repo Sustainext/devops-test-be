@@ -58,27 +58,30 @@ jobs:
         echo "reviewer_asana_token=$reviewer_asana_token" >> $GITHUB_ENV
         echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
 
-    - name: Update Asana Task
+    - name: Format Date and Time
+      id: format_datetime
       run: |
-        pr_url="${{ github.event.pull_request.html_url }}"
         pr_closed_at="${{ github.event.pull_request.closed_at }}"
         pr_merged_at="${{ github.event.pull_request.merged_at }}"
 
         if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
-          status="Pull Request has been merged on $pr_merged_at. PR URL: $pr_url"
-          status_field="1205222382328469"
+          status="Pull Request has been merged on $(date -d "$pr_merged_at" +"%B %d, %Y at %H:%M %Z"). PR URL: $pr_url"
         else
-          status="Pull Request has been closed on $pr_closed_at. PR URL: $pr_url"
-          status_field="1205222382328469"
+          status="Pull Request has been closed on $(date -d "$pr_closed_at" +"%B %d, %Y at %H:%M %Z"). PR URL: $pr_url"
         fi
+
+        echo "status=$status" >> $GITHUB_ENV
+
+    - name: Update Asana Task
+      run: |
         curl -X PUT https://app.asana.com/api/1.0/tasks/${{ env.asana_task_id }} \
           -H "Authorization: Bearer ${{ env.reviewer_asana_token }}" \
           -H "Content-Type: application/json" \
           -d "{
                 \"data\": {
-                  \"notes\": \"$status\",
+                  \"notes\": \"${{ env.status }}\",
                   \"custom_fields\": {
-                    \"${{ secrets.ASANA_CUSTOM_FIELD_ID }}\": \"$status_field\"
+                    \"${{ secrets.ASANA_CUSTOM_FIELD_ID }}\": \"1205222382328469\"
                   },
                   \"completed\": true
                 }
