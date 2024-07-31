@@ -21,16 +21,14 @@ jobs:
       run: |
         creator="${{ github.event.pull_request.user.login }}"
         asana_token_variable="ASANA_TOKEN_${creator^^}"
-        
+
         echo "Checking for secret: $asana_token_variable"
-        
-        # Fetch the secret value dynamically
-        asana_token=$(eval echo "\${{ secrets.${asana_token_variable} }}")
-        
-        echo "Checking asana token: $asana_token"
-        
-        if [ -z "$asana_token" ]; then
-          echo "No specific Asana token found for user $creator, using default."
+
+        if [[ $asana_token_variable == "ASANA_ACCESS_UTSAVSUSTAINX" ]]; then
+          asana_token="${{ secrets.ASANA_ACCESS_UTSAVSUSTAINX }}"
+        elif [[ $asana_token_variable == "ASANA_ACCESS_YASHWANTH39" ]]; then
+          asana_token="${{ secrets.ASANA_ACCESS_YASHWANTH39 }}"
+        else
           asana_token="${{ secrets.ASANA_ACCESS_TOKEN }}"
         fi
         
