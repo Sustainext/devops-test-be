@@ -68,7 +68,7 @@ jobs:
         elif [[ $asana_token_variable == "ASANA_ACCESS_JAIRAJSUSTAINED" ]]; then
           reviewer_asana_token="${{ secrets.ASANA_ACCESS_JAIRAJSUSTAINED }}"
         else
-          reviewer_asana_token="${{ secrets.ASANA_ACCESS_TOKEN }}"
+          reviewer_asana_token=""
         fi
         
         echo "reviewer_asana_token=$reviewer_asana_token" >> $GITHUB_ENV
