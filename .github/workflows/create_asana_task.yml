@@ -16,6 +16,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Get Pull Request Reviewer Email
+      id: get_reviewer_email
+      run: |
+        reviewers=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
+        
+        reviewer_email=$(echo $reviewers | jq -r '.users[0].email')
+        
+        if [ -z "$reviewer_email" ]; then
+          reviewer_email="${{ secrets.ASANA_ASSIGNEE_ID }}"
+        fi
+
+        echo "reviewer_email=$reviewer_email" >> $GITHUB_ENV
+
     - name: Create Asana Task
       run: |
         pr_title="${{ github.event.pull_request.title }}"
@@ -33,7 +48,7 @@ jobs:
                   \"name\": \"$pr_title\",
                   \"notes\": \"Pull Request URL: $pr_url\n\n$pr_body\",
                   \"due_on\": \"$due_date\",
-                  \"assignee\": \"${{ secrets.ASANA_ASSIGNEE_ID }}\",
+                  \"assignee\": \"$reviewer_email\",
                   \"memberships\": [{
                     \"project\": \"${{ secrets.ASANA_PROJECT_ID }}\",
                     \"section\": \"${{ secrets.ASANA_SECTION_ID }}\"
@@ -51,35 +66,8 @@ jobs:
     - name: Check Asana Task ID File
       run: cat asana_task_id.txt
 
-    - name: List Directory Before Uploading Artifact
-      run: ls -alh
-
-    - name: Persist Asana Task ID
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: asana_task_id
         path: asana_task_id.txt
-
-    - name: Update PR Description with Asana Task Link
-      run: |
-        asana_task_id=$(cat asana_task_id.txt)
-        asana_task_url="https://app.asana.com/0/${{ secrets.ASANA_PROJECT_ID }}/$asana_task_id"
-        pr_number=${{ github.event.pull_request.number }}
-        pr_body="${{ github.event.pull_request.body }}"
-        updated_pr_body="$pr_body\n\nAsana Task: $asana_task_url"
-        
-        curl -X PATCH \
-          -H "Authorization: Bearer ${{ github.token }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/${{ github.repository }}/pulls/$pr_number \
-          -d "{\"body\": \"$updated_pr_body\"}"
-          
-    - name: Attach pull request to Asana task
-      uses: Asana/create-app-attachment-github-action@v1.3
-      id: postAttachment
-      with:
-        asana-secret: "OA7YVTJJH7ZW3OTGBPHBESNAJREDYHUWJT5BZGPSQSLV3VCG2JQSYTXZ"
-        allowed-projects: |
-          ${{ secrets.ASANA_PROJECT_ID }}
-    - name: Log output status
-      run: echo "Status is ${{ steps.postAttachment.outputs.status }}"
