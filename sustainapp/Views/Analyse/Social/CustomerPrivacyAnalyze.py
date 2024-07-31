@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
+from sustainapp.Serializers.CheckAnalysisViewSerializer import (
+    CheckAnalysisViewSerializer,
+)
 from datametric.utils.analyse import filter_by_start_end_dates
 from logging import getLogger
 
@@ -57,6 +60,7 @@ class CustomerPrivacyAnalyzeView(APIView):
         """What if they have added the data in corporate but not organization.
         Then we'll not show data for the organization"""
         serialized_data = CheckOrgCoprDateSerializer(data=request.query_params)
+        # serialized_data = CheckAnalysisViewSerializer(data=request.query_params)
         serialized_data.is_valid(raise_exception=True)
         try:
             self.org = serialized_data.validated_data["organisation"].id
@@ -74,7 +78,7 @@ class CustomerPrivacyAnalyzeView(APIView):
             )
 
             return Response(
-                customer_privacy_data,
+                {"customer_privacy_data": customer_privacy_data},
                 status=status.HTTP_200_OK,
             )
 
