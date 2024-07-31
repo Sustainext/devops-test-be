@@ -57,7 +57,7 @@ jobs:
       id: determine_reviewer_asana_token
       run: |
         reviewer_login="${{ env.reviewer_login }}"
-        asana_token_variable="ASANA_TOKEN_${reviewer_login^^}"
+        asana_token_variable="ASANA_ACCESS_${reviewer_login^^}"
 
         echo "Checking for secret: $asana_token_variable"
 
@@ -68,7 +68,7 @@ jobs:
         elif [[ $asana_token_variable == "ASANA_ACCESS_JAIRAJSUSTAINED" ]]; then
           reviewer_asana_token="${{ secrets.ASANA_ACCESS_JAIRAJSUSTAINED }}"
         else
-          reviewer_asana_token="${{ secrets.ASANA_ACCESS_TOKEN }}"
+          reviewer_asana_token=""
         fi
         
         echo "reviewer_asana_token=$reviewer_asana_token" >> $GITHUB_ENV
@@ -80,7 +80,7 @@ jobs:
                               -H "Content-Type: application/json" \
                               https://app.asana.com/api/1.0/users/me)
         
-        reviewer_id=$(echo $user_details | jq -r '.data.id')
+        reviewer_id=$(echo $user_details | jq -r '.data.gid')
         reviewer_email=$(echo $user_details | jq -r '.data.email')
 
         if [ -z "$reviewer_id" ] || [ -z "$reviewer_email" ]; then
@@ -125,11 +125,16 @@ jobs:
         echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
         echo $asana_task_id > asana_task_id.txt
 
-    - name: Check Asana Task ID File
-      run: cat asana_task_id.txt
+    - name: Save Reviewer Token and Task ID
+      run: |
+        echo "Saving reviewer's Asana token and task ID"
+        echo "$reviewer_asana_token" > reviewer_asana_token.txt
+        echo "$asana_task_id" > asana_task_id.txt
 
-    - name: Upload artifact
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: asana_task_id
-        path: asana_task_id.txt
+        name: asana_details
+        path: |
+          reviewer_asana_token.txt
+          asana_task_id.txt
