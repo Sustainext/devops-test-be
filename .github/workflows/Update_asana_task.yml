@@ -65,9 +65,9 @@ jobs:
         pr_merged_at="${{ github.event.pull_request.merged_at }}"
 
         if [ "${{ github.event.pull_request.merged }}" == "true" ]; then
-          status="Pull Request has been merged on $(date -d "$pr_merged_at" +"%B %d, %Y at %H:%M %Z"). PR URL: $pr_url"
+          status="Pull Request has been merged on $(TZ=Asia/Kolkata date -d "$pr_merged_at" +"%B %d, %Y at %H:%M %Z"). PR URL: $pr_url"
         else
-          status="Pull Request has been closed on $(date -d "$pr_closed_at" +"%B %d, %Y at %H:%M %Z"). PR URL: $pr_url"
+          status="Pull Request has been closed on $(TZ=Asia/Kolkata date -d "$pr_closed_at" +"%B %d, %Y at %H:%M %Z"). PR URL: $pr_url"
         fi
 
         echo "status=$status" >> $GITHUB_ENV
