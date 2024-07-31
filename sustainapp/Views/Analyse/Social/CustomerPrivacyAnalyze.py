@@ -74,7 +74,7 @@ class CustomerPrivacyAnalyzeView(APIView):
             )
 
             return Response(
-                customer_privacy_data,
+                {"customer_privacy_data": customer_privacy_data},
                 status=status.HTTP_200_OK,
             )
 
