@@ -25,7 +25,7 @@ jobs:
         echo "Checking for secret: $asana_token_variable"
         
         # Fetch the secret value dynamically
-        asana_token="${{ secrets[asana_token_variable] }}"
+        asana_token=$(eval echo "\${{ secrets.${asana_token_variable} }}")
         
         echo "Checking asana token: $asana_token"
         
