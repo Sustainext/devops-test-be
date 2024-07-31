@@ -57,7 +57,7 @@ jobs:
       id: determine_reviewer_asana_token
       run: |
         reviewer_login="${{ env.reviewer_login }}"
-        asana_token_variable="ASANA_TOKEN_${reviewer_login^^}"
+        asana_token_variable="ASANA_ACCESS_${reviewer_login^^}"
 
         echo "Checking for secret: $asana_token_variable"
 
@@ -80,7 +80,7 @@ jobs:
                               -H "Content-Type: application/json" \
                               https://app.asana.com/api/1.0/users/me)
         
-        reviewer_id=$(echo $user_details | jq -r '.data.id')
+        reviewer_id=$(echo $user_details | jq -r '.data.gid')
         reviewer_email=$(echo $user_details | jq -r '.data.email')
 
         if [ -z "$reviewer_id" ] || [ -z "$reviewer_email" ]; then
