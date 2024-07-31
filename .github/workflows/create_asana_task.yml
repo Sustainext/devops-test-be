@@ -16,21 +16,59 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Get Pull Request Reviewer Email
-      id: get_reviewer_email
+    - name: Determine Asana Token
+      id: determine_asana_token
       run: |
-        reviewers=$(curl -H "Authorization: token ${{ github.token }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
-        
-        reviewer_email=$(echo $reviewers | jq -r '.users[0].email')
-        echo "Reviewer email: $reviewer_email"
-        
-        if [ -z "$reviewer_email" ]; then
-          reviewer_email="${{ secrets.ASANA_ASSIGNEE_ID }}"
-        fi
+        creator="${{ github.event.pull_request.user.login }}"
+        asana_token_variable="ASANA_ACCESS_${creator^^}"
 
+        echo "Checking for secret: $asana_token_variable"
+
+        if [[ $asana_token_variable == "ASANA_ACCESS_UTSAVSUSTAINX" ]]; then
+          asana_token="${{ secrets.ASANA_ACCESS_UTSAVSUSTAINX }}"
+        elif [[ $asana_token_variable == "ASANA_ACCESS_YASHWANTH39" ]]; then
+          asana_token="${{ secrets.ASANA_ACCESS_YASHWANTH39 }}"
+        elif [[ $asana_token_variable == "ASANA_ACCESS_JAIRAJSUSTAINED" ]]; then
+          asana_token="${{ secrets.ASANA_ACCESS_JAIRAJSUSTAINED }}"
+        else
+          asana_token="${{ secrets.ASANA_ACCESS_TOKEN }}"
+        fi
+        
+        echo "asana_token=$asana_token" >> $GITHUB_ENV
+
+    - name: Determine Reviewer Asana Token
+      id: determine_reviewer_asana_token
+      run: |
+        reviewer_login="${{ env.reviewer_login }}"
+        asana_token_variable="ASANA_TOKEN_${reviewer_login^^}"
+
+        echo "Checking for secret: $asana_token_variable"
+
+        if [[ $asana_token_variable == "ASANA_TOKEN_GITHUB_USER_A" ]]; then
+          reviewer_asana_token="${{ secrets.ASANA_TOKEN_GITHUB_USER_A }}"
+        elif [[ $asana_token_variable == "ASANA_TOKEN_GITHUB_USER_B" ]]; then
+          reviewer_asana_token="${{ secrets.ASANA_TOKEN_GITHUB_USER_B }}"
+        else
+          reviewer_asana_token="${{ secrets.ASANA_TOKEN_DEFAULT }}"
+        fi
+        
+        echo "reviewer_asana_token=$reviewer_asana_token" >> $GITHUB_ENV
+
+    - name: Get Reviewer Asana User Details
+      id: get_reviewer_asana_user_details
+      run: |
+        user_details=$(curl -H "Authorization: Bearer $reviewer_asana_token" \
+                              -H "Content-Type: application/json" \
+                              https://app.asana.com/api/1.0/users/me)
+        
+        reviewer_id=$(echo $user_details | jq -r '.data.id')
+        reviewer_email=$(echo $user_details | jq -r '.data.email')
+        
+        echo "reviewer_id=$reviewer_id" >> $GITHUB_ENV
         echo "reviewer_email=$reviewer_email" >> $GITHUB_ENV
+
+        echo "Reviewer Asana User ID: $reviewer_id"
+        echo "Reviewer Asana User Email: $reviewer_email"
 
     - name: Create Asana Task
       run: |
@@ -40,7 +78,7 @@ jobs:
         due_date=$(TZ=Asia/Kolkata date +"%Y-%m-%d")
         
         asana_task_id=$(curl -X POST https://app.asana.com/api/1.0/tasks \
-          -H "Authorization: Bearer ${{ secrets.ASANA_ACCESS_TOKEN }}" \
+          -H "Authorization: Bearer $asana_token" \
           -H "Content-Type: application/json" \
           -d "{
                 \"data\": {
@@ -49,7 +87,7 @@ jobs:
                   \"name\": \"$pr_title\",
                   \"notes\": \"Pull Request URL: $pr_url\n\n$pr_body\",
                   \"due_on\": \"$due_date\",
-                  \"assignee\": \"$reviewer_email\",
+                  \"assignee\": \"$reviewer_id\",
                   \"memberships\": [{
                     \"project\": \"${{ secrets.ASANA_PROJECT_ID }}\",
                     \"section\": \"${{ secrets.ASANA_SECTION_ID }}\"

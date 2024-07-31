@@ -39,13 +39,33 @@ class SocialCollectiveBargainingAnalysis(APIView):
             .only("data")
         )
 
-    def get_bargaining(self, slug):
-        data = [
-            item
+    def get_operation_bargaining(self):
+        slug = self.slugs[0]
+        return [
+            {
+                "Operations in which workers' rights to exercise freedom of association or collective bargaining may be violated or at significant risk": item[
+                    "significantrisk"
+                ],
+                "Type of Operation": item["TypeofOperation"],
+                "Countries or Geographic Areas": item["geographicareas"],
+            }
             for raw_response in self.raw_responses.filter(path__slug=slug)
             for item in raw_response.data
         ]
-        return data
+
+    def get_supplier_bargaining(self, slug):
+        slug = self.slugs[1]
+        return [
+            {
+                "Suppliers in which workers' rights to exercise freedom of association or collective bargaining may be violated or at significant risk": item[
+                    "significantrisk"
+                ],
+                "Type of Supplier": item["TypeofOperation"],
+                "Countries or Geographic Areas": item["geographicareas"],
+            }
+            for raw_response in self.raw_responses.filter(path__slug=slug)
+            for item in raw_response.data
+        ]
 
     def get(self, request, format=None):
         """
@@ -61,12 +81,8 @@ class SocialCollectiveBargainingAnalysis(APIView):
         self.set_raw_responses()
         return Response(
             {
-                "operations_where_workers_freedom_of_association_or_collective_bargaining_is_at_risk": self.get_bargaining(
-                    self.slugs[0]
-                ),
-                "suppliers_in_which_the_right_to_freedom_of_association_or_collective_bargaining_may_be_at_risk": self.get_bargaining(
-                    self.slugs[1]
-                ),
+                "operation_bargaining": self.get_operation_bargaining(),
+                "supplier_bargaining": self.get_supplier_bargaining(self.slugs[1]),
             },
             status=status.HTTP_200_OK,
         )
