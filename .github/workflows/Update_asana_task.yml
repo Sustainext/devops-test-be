@@ -61,6 +61,7 @@ jobs:
     - name: Format Date and Time
       id: format_datetime
       run: |
+        pr_url="${{ github.event.pull_request.html_url }}"
         pr_closed_at="${{ github.event.pull_request.closed_at }}"
         pr_merged_at="${{ github.event.pull_request.merged_at }}"
 
