@@ -19,7 +19,7 @@ jobs:
     - name: Get Pull Request Reviewer Email
       id: get_reviewer_email
       run: |
-        reviewers=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        reviewers=$(curl -H "Authorization: token ${{ github.token }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
         
