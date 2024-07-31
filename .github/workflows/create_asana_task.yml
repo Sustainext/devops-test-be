@@ -36,6 +36,23 @@ jobs:
         
         echo "asana_token=$asana_token" >> $GITHUB_ENV
 
+    - name: Get Pull Request Reviewer Login
+      id: get_reviewer_login
+      run: |
+        reviewers=$(curl -H "Authorization: token ${{ github.token }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
+        
+        reviewer_login=$(echo $reviewers | jq -r '.users[0].login')
+        
+        echo "Reviewer login: $reviewer_login"
+        
+        if [ -z "$reviewer_login" ]; then
+          reviewer_login="${{ github.event.pull_request.user.login }}"
+        fi
+
+        echo "reviewer_login=$reviewer_login" >> $GITHUB_ENV
+  
     - name: Determine Reviewer Asana Token
       id: determine_reviewer_asana_token
       run: |
@@ -44,12 +61,14 @@ jobs:
 
         echo "Checking for secret: $asana_token_variable"
 
-        if [[ $asana_token_variable == "ASANA_TOKEN_GITHUB_USER_A" ]]; then
-          reviewer_asana_token="${{ secrets.ASANA_TOKEN_GITHUB_USER_A }}"
-        elif [[ $asana_token_variable == "ASANA_TOKEN_GITHUB_USER_B" ]]; then
-          reviewer_asana_token="${{ secrets.ASANA_TOKEN_GITHUB_USER_B }}"
+        if [[ $asana_token_variable == "ASANA_ACCESS_UTSAVSUSTAINX" ]]; then
+          reviewer_asana_token="${{ secrets.ASANA_ACCESS_UTSAVSUSTAINX }}"
+        elif [[ $asana_token_variable == "ASANA_ACCESS_YASHWANTH39" ]]; then
+          reviewer_asana_token="${{ secrets.ASANA_ACCESS_YASHWANTH39 }}"
+        elif [[ $asana_token_variable == "ASANA_ACCESS_JAIRAJSUSTAINED" ]]; then
+          reviewer_asana_token="${{ secrets.ASANA_ACCESS_JAIRAJSUSTAINED }}"
         else
-          reviewer_asana_token="${{ secrets.ASANA_TOKEN_DEFAULT }}"
+          reviewer_asana_token="${{ secrets.ASANA_ACCESS_TOKEN }}"
         fi
         
         echo "reviewer_asana_token=$reviewer_asana_token" >> $GITHUB_ENV
@@ -63,6 +82,10 @@ jobs:
         
         reviewer_id=$(echo $user_details | jq -r '.data.id')
         reviewer_email=$(echo $user_details | jq -r '.data.email')
+
+        if [ -z "$reviewer_id" ] || [ -z "$reviewer_email" ]; then
+          reviewer_id="${{ secrets.ASANA_ASSIGNEE_ID }}"
+        fi
         
         echo "reviewer_id=$reviewer_id" >> $GITHUB_ENV
         echo "reviewer_email=$reviewer_email" >> $GITHUB_ENV
