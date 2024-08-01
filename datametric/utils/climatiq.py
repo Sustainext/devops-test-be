@@ -22,7 +22,6 @@ class Climatiq:
         self.user = raw_response.user
         self.raw_response: RawResponse = raw_response
         self.client = raw_response.user.client
-        # self.location = raw_response.location
         self.locale = raw_response.locale
         self.month = raw_response.month
         self.year = raw_response.year
@@ -41,7 +40,6 @@ class Climatiq:
             'Quantity': '16',
             'Subcategory': 'Fuel'}}
             """
-            print(emission_data, " is the emission data")
 
             payload.append(
                 self.construct_emission_req(
@@ -134,7 +132,6 @@ class Climatiq:
         CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
         payload = self.payload_preparation_for_climatiq_api()
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
-        print(payload)
         response = requests.request(
             "POST",
             url="https://api.climatiq.io/batch",
@@ -142,7 +139,6 @@ class Climatiq:
             headers=headers,
         )
         response_data = response.json()
-        print(response_data, " is the CLIMATIQ $$$$$$$$")
         if response.status_code == 400:
             self.log_error_climatiq_api(response_data=response_data)
         self.log_in_part_emission_error(response_data=response_data)
@@ -159,6 +155,7 @@ class Climatiq:
                 emission_data["Category"] = self.raw_response.data[index]["Emission"][
                     "Category"
                 ]
+
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
 
@@ -178,47 +175,11 @@ class Climatiq:
                 error_message = f"Error with emission: {emission_data} \n"
                 logger.error(error_message)
 
-    # def create_calculated_data_point(self):
-    #     """
-    #     Returns the response from the climatiq api.
-    #     """
-    #     if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
-    #         return None
-    #     response_data = self.get_climatiq_api_response()
-    #     if response_data == None:
-    #         return None
-    #     path, created = Path.objects.get_or_create(
-    #         name="GRI-Collect-Emissions-Scope-Combined",
-    #         slug=slugify("GRI-Collect-Emissions-Scope-Combined"),
-    #     )
-    #     if created:
-    #         path.save()
-    #     datametric, created = DataMetric.objects.get_or_create(
-    #         name="CalculatedCollectedEmissions",
-    #         label="Calculated Collected Emissions",
-    #         description="Stores the calculated emissions from the GRI-Collect-Emissions-Scope-Combined",
-    #         path=path,
-    #         response_type=ARRAY_OF_OBJECTS,
-    #     )
-    #     if created:
-    #         datametric.save()
-    #     datapoint, created = DataPoint.objects.update_or_create(
-    #         path=self.raw_response.path,
-    #         raw_response=self.raw_response,
-    #         response_type=ARRAY_OF_OBJECTS,
-    #         data_metric=datametric,
-    #         is_calculated=True,
-    #         location=self.location,
-    #         year=self.year,
-    #         month=self.month,
-    #         user_id=self.user.id,
-    #         client_id=self.user.client.id,
-    #         metric_name=datametric.name,
-    #         defaults={
-    #             "json_holder": response_data,
-    #         },
-    #     )
-    #     datapoint.save()
+    def round_decimal_or_nulls(self, value, decimal_point):
+        if value is None:
+            return None
+        else:
+            return round(value, decimal_point)
 
     def create_emission_analysis(self, response_data):
         for index, emission in enumerate(response_data):
@@ -227,15 +188,21 @@ class Climatiq:
                 index=index,
                 defaults={
                     "activity_id": emission["emission_factor"]["activity_id"],
-                    "co2e_total": emission["constituent_gases"][
-                        "co2e_total"
-                    ],  # * This can also be None
-                    "co2": emission["constituent_gases"]["co2"],
-                    "n2o": emission["constituent_gases"]["n2o"],
-                    "co2e_other": emission["constituent_gases"][
-                        "co2e_other"
-                    ],  # * This can also be None
-                    "ch4": emission["constituent_gases"]["ch4"],
+                    "co2e_total": self.round_decimal_or_nulls(
+                        emission["co2e"], 3
+                    ),  # * This can also be None
+                    "co2": self.round_decimal_or_nulls(
+                        emission["constituent_gases"]["co2"], 3
+                    ),
+                    "n2o": self.round_decimal_or_nulls(
+                        emission["constituent_gases"]["n2o"], 3
+                    ),
+                    "co2e_other": self.round_decimal_or_nulls(
+                        emission["constituent_gases"]["co2e_other"], 3
+                    ),  # * This can also be None
+                    "ch4": self.round_decimal_or_nulls(
+                        emission["constituent_gases"]["ch4"], 3
+                    ),
                     "calculation_method": emission["co2e_calculation_method"],
                     "category": emission["Category"],
                     "region": emission["emission_factor"]["region"],
@@ -250,17 +217,13 @@ class Climatiq:
         """
         Returns the response from the climatiq api.
         """
-        print(self.raw_response.path.slug, " is the raw_response slug")
         # Check if the path slug matches the required pattern
         if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
             return None
-        else:
-            print("line 221")
         # Get the response data from the climatiq API
         response_data = self.get_climatiq_api_response()
         if response_data is None:
             return None
-        print("line 226")
 
         # Get or create the path
         try:
@@ -271,9 +234,8 @@ class Climatiq:
             if created:
                 path_new.save()
         except Exception as e:
-            print(f"An error occurred while getting or creating the path: {e}")
+            logger.error(f"An error occurred while getting or creating the path: {e}")
             return None
-        print("line 239")
 
         # Get or create the data metric
         try:
@@ -287,16 +249,18 @@ class Climatiq:
             if created:
                 datametric.save()
         except Exception as e:
-            print(f"An error occurred while getting or creating the data metric: {e}")
+            logger.error(
+                f"An error occurred while getting or creating the data metric: {e}"
+            )
             return None
         # Ensure datametric is not None
         if datametric is None:
-            print("Error: datametric is None")
+            logger.error("Error: datametric is None")
             return None
 
         # Ensure raw_response has the required attributes
         if not hasattr(self.raw_response, "path"):
-            print("Error: raw_response has no path attribute")
+            logger.error("Error: raw_response has no path attribute")
             return None
 
         # Ensure location, year, month, user, and client attributes are present
@@ -308,12 +272,12 @@ class Climatiq:
             or self.user is None
             or self.user.client is None
         ):
-            print(
+            logger.error(
                 "Error: Missing required attributes (location, year, month, user, or user.client)"
             )
             return None
-        print(
-            datametric.name, datametric.path.slug, " -is the newly created datametric"
+        logger.error(
+            f"{datametric.name}{datametric.path.slug} -is the newly created datametric"
         )
         # Update or create the data point
         try:
@@ -323,7 +287,6 @@ class Climatiq:
                 response_type=ARRAY_OF_OBJECTS,
                 data_metric=datametric,
                 is_calculated=True,
-                # location=self.location,
                 locale=self.locale,
                 year=self.year,
                 month=self.month,

@@ -1,7 +1,7 @@
 from django.db.models.manager import BaseManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import RawResponse, DataPoint, DataMetric
+from .models import RawResponse, DataPoint, DataMetric, EmissionAnalysis
 from django.db.models import Q
 from django.db.models import prefetch_related_objects
 from datametric.utils.signal_utilities import (
@@ -69,6 +69,7 @@ def process_json(json_obj, path, raw_response):
 def create_response_points(sender, instance: RawResponse, created, **kwargs):
     prefetch_related_objects([instance], "path", "user", "client")
     DataPoint.objects.filter(raw_response=instance).delete()
+    EmissionAnalysis.objects.filter(raw_response=instance).delete()
     # No matter, whether it is getting created or updated, this should be run.
     #! Don't save the instance again, goes to non stop recursion.
     try:

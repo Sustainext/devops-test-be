@@ -32,6 +32,24 @@ from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
     SupplierSocialAssessmentView,
 )
 from sustainapp.Views.Analyse.Social.TrainingAnalyse import TrainingSocial
+from sustainapp.Views.Analyse.Social.NonDiscrimationAnalysis import (
+    SocialNonDiscrimationAnalysis,
+)
+from sustainapp.Views.Analyse.Social.CollectiveBargainingAnalysis import (
+    SocialCollectiveBargainingAnalysis,
+)
+from sustainapp.Views.Analyse.Social.CommunityDevelopmentAnalyse import (
+    SocialCommunityDevelopmentAnalysis,
+)
+from sustainapp.Views.Analyse.Social.CustomerPrivacyAnalyze import (
+    CustomerPrivacyAnalyzeView,
+)
+from sustainapp.Views.Analyse.Social.CustomerHealthAnalyze import (
+    CustomerHealthAnalyzeView,
+)
+from sustainapp.Views.Analyse.Social.MarketingLabelingAnalyze import (
+    MarketingLabelingAnalyzeView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -122,5 +140,35 @@ urlpatterns = [
         "get_training_social_analysis/",
         TrainingSocial.as_view(),
         name="get_training_social_analysis",
+    ),
+    path(
+        "get_non_discrimination_analysis/",
+        SocialNonDiscrimationAnalysis.as_view(),
+        name="get_non_discrimination_analysis",
+    ),
+    path(
+        "get_collective_bargaining_analysis/",
+        SocialCollectiveBargainingAnalysis.as_view(),
+        name="get_collective_bargaining_analysis",
+    ),
+    path(
+        "get_community_development_analysis/",
+        SocialCommunityDevelopmentAnalysis.as_view(),
+        name="get_community_development_analysis",
+    ),
+    path(
+        "get_customer_privacy_analysis/",
+        CustomerPrivacyAnalyzeView.as_view(),
+        name="get_customer_privacy_analysis",
+    ),
+    path(
+        "get_customer_health_safety_analysis/",
+        CustomerHealthAnalyzeView.as_view(),
+        name="get_customer_health_safety_analysis",
+    ),
+    path(
+        "get_marketing_and_labeling_analysis/",
+        MarketingLabelingAnalyzeView.as_view(),
+        name="get_marketing_and_labeling_analysis",
     ),
 ]

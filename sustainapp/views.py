@@ -411,6 +411,7 @@ class OrganizationViewset(viewsets.ModelViewSet):
         return Response({"message": "Successfully deleted"}, status=status.HTTP_200_OK)
 
     def perform_destroy(self, instance):
+        instance.datapoint_set.all().delete()
         return super().perform_destroy(instance)
 
     def update(self, request, *args, **kwargs):
@@ -522,6 +523,7 @@ class CorporateViewset(viewsets.ModelViewSet):
         return Response({"message": "Successfully deleted"}, status=status.HTTP_200_OK)
 
     def perform_destroy(self, instance):
+        instance.datapoint_set.all().delete()
         return super().perform_destroy(instance)
 
     def update(self, request, *args, **kwargs):
@@ -644,6 +646,7 @@ class LocationViewset(viewsets.ModelViewSet):
         return Response({"message": "Successfully deleted"}, status=status.HTTP_200_OK)
 
     def perform_destroy(self, instance):
+        instance.datapoint_set.all().delete()
         return super().perform_destroy(instance)
 
 

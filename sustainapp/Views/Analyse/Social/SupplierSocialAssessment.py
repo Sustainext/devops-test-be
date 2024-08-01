@@ -21,7 +21,7 @@ class SupplierSocialAssessmentView(APIView):
             client_id=client_id,
             year=year,
             **filter_by
-        )
+        ) 
         return dp_data, pos_data
 
     def get_social_data(self, data_points):
@@ -100,6 +100,6 @@ class SupplierSocialAssessmentView(APIView):
         final = {
             "new_suppliers_that_were_screened_using_social_criteria": self.filter_non_zero_values(dp),
             "negative_social_impacts_in_the_supply_chain_and_actions_taken": self.filter_non_zero_values(pos),
-        }
+        } 
 
         return Response(final, status=status.HTTP_200_OK)
