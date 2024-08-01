@@ -53,7 +53,7 @@ class SocialCollectiveBargainingAnalysis(APIView):
             for item in raw_response.data
         ]
 
-    def get_supplier_bargaining(self, slug):
+    def get_supplier_bargaining(self):
         slug = self.slugs[1]
         return [
             {
@@ -82,7 +82,7 @@ class SocialCollectiveBargainingAnalysis(APIView):
         return Response(
             {
                 "operation_bargaining": self.get_operation_bargaining(),
-                "supplier_bargaining": self.get_supplier_bargaining(self.slugs[1]),
+                "supplier_bargaining": self.get_supplier_bargaining(),
             },
             status=status.HTTP_200_OK,
         )
