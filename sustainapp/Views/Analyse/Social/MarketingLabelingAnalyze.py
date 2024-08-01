@@ -5,20 +5,19 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
 from sustainapp.models import Corporateentity
-from datametric.utils.analyse import filter_by_start_end_dates
 from logging import getLogger
 
 logger = getLogger("error.log")
 
 
-class CustomerHealthAnalyzeView(APIView):
+class MarketingLabelingAnalyzeView(APIView):
     """
-    This is to Analyze the data for the Customer Health and Safety from the Collect/Social of the Platform
+    This is to Analyze the data for the Marketing and Labeling from the Collect/Social of the Platform
     """
 
     permission_classes = [IsAuthenticated]
 
-    def process_customer_health(self, path, filter_by):
+    def process_marketing_labeling(self, path, filter_by):
 
         cust = DataPoint.objects.filter(
             **filter_by,
@@ -27,18 +26,19 @@ class CustomerHealthAnalyzeView(APIView):
             year=self.year,
         )
 
-        req_data = {"Q1": "", "Q2": "", "Q3": ""}
-        temp_req_data_2 = req_data.copy()
-        for i in cust:
-            temp_req_data_2[i.metric_name] = i.value
-        if temp_req_data_2["Q1"] in ["No", ""]:
-            pass
-        elif temp_req_data_2["Q2"] == "" or temp_req_data_2["Q3"] == "":
-            logger.info(
-                f"Customer Health Analyze : Either the user has selected NO or the user missed to add required data "
-            )
-            return []
-        if not cust or temp_req_data_2["Q1"] == "No":
+        req_data = {"Q1": "", "Q2": ""}
+        temp_req_data = req_data.copy()
+        if cust:
+            # There is data for the selected Organization or Coporate
+            for i in cust:
+                temp_req_data[i.metric_name] = i.number_holder
+            if temp_req_data["Q1"] == "" or temp_req_data["Q2"] == "":
+                logger.info(
+                    f"Marketing and Labeling Analyze : User has not added required data"
+                )
+                return []
+        elif not cust and self.corp is None:
+            # There is no data added for Organization and hence checking for it's corporates
             logger.info(
                 f"Customer Health Analyze : There is no data for the organization {self.org} and the path {path} and the year {self.year}, So proceeding to check for its Corporates"
             )
@@ -53,16 +53,12 @@ class CustomerHealthAnalyzeView(APIView):
             res = []
             # filtering the data as per corporate
             for a_corp in corps_of_org:
-                temp_req_data = req_data.copy()
+                temp_req_data_2 = req_data.copy()
                 k = cust.filter(corporate=a_corp)
                 if k:
                     for i in k:
-                        temp_req_data[i.metric_name] = i.value
-                    if (
-                        temp_req_data["Q1"] == "No"
-                        or temp_req_data["Q2"] == ""
-                        or temp_req_data["Q3"] == ""
-                    ):
+                        temp_req_data_2[i.metric_name] = i.number_holder
+                    if temp_req_data_2["Q1"] == "" or temp_req_data_2["Q2"] == "":
                         logger.info(
                             f"Customer Health Analyze : Either the user has selected NO or the user missed to add required data "
                         )
@@ -70,31 +66,34 @@ class CustomerHealthAnalyzeView(APIView):
                         res.append(
                             {
                                 "org_or_corp": a_corp.name,
-                                "number_of_products_category": temp_req_data["Q2"],
-                                "number_of_products_category_imporved": temp_req_data[
-                                    "Q3"
+                                "number_of_products_with_procedurs": temp_req_data_2[
+                                    "Q1"
                                 ],
+                                "number_of_products_category": temp_req_data_2["Q2"],
                                 "percentage": (
                                     (
-                                        int(temp_req_data["Q3"])
-                                        / int(temp_req_data["Q2"])
+                                        temp_req_data_2["Q1"]
+                                        / temp_req_data_2["Q2"]
                                         * 100
                                     )
-                                    if int(temp_req_data["Q2"]) != 0
+                                    if temp_req_data_2["Q2"] != 0
                                     else 0
                                 ),
                             }
                         )
             return res
+        else:
+            # There is no data added
+            return []
 
         return [
             {
                 "org_or_corp": self.corp.name if self.corp else self.org.name,
-                "number_of_products_category": temp_req_data_2["Q2"],
-                "number_of_products_category_imporved": temp_req_data_2["Q3"],
+                "number_of_products_with_procedurs": temp_req_data["Q1"],
+                "number_of_products_category": temp_req_data["Q2"],
                 "percentage": (
-                    (int(temp_req_data_2["Q3"]) / int(temp_req_data_2["Q2"]) * 100)
-                    if int(temp_req_data_2["Q2"]) != 0
+                    (temp_req_data["Q1"] / temp_req_data["Q2"] * 100)
+                    if temp_req_data["Q2"] != 0
                     else 0
                 ),
             }
@@ -114,6 +113,9 @@ class CustomerHealthAnalyzeView(APIView):
             if self.from_date.year == self.to_date.year:
                 self.year = self.from_date.year
             else:
+                logger.info(
+                    "Marketing and Labeling error: Start and End year should be same."
+                )
                 return Response(
                     {"error": "Start and End year should be same."},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -130,17 +132,17 @@ class CustomerHealthAnalyzeView(APIView):
             else:
                 filter_by["corporate__id"] = None
 
-            customer_health_percent = self.process_customer_health(
-                "gri-social-product_safety-416-1a-number", filter_by
+            marketing_labeling_percent = self.process_marketing_labeling(
+                "gri-social-product_labeling-417-1b-number", filter_by
             )
 
             return Response(
-                {"customer_health_percent": customer_health_percent},
+                {"marketing_labeling": marketing_labeling_percent},
                 status=status.HTTP_200_OK,
             )
 
         except Exception as e:
             logger.info(
-                f"An error occured while analyzing Customer Health and Safelty : {e}"
+                f"An error occured while analyzing Marketing and Labeling : {e}"
             )
             return Response({"error": f"{e}"}, status=status.HTTP_400_BAD_REQUEST)
