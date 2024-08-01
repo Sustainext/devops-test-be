@@ -24,14 +24,11 @@ jobs:
 
         echo "Checking for secret: $asana_token_variable"
 
-        if [[ $asana_token_variable == "ASANA_ACCESS_UTSAVSUSTAINX" ]]; then
-          asana_token="${{ secrets.ASANA_ACCESS_UTSAVSUSTAINX }}"
-        elif [[ $asana_token_variable == "ASANA_ACCESS_YASHWANTH39" ]]; then
-          asana_token="${{ secrets.ASANA_ACCESS_YASHWANTH39 }}"
-        elif [[ $asana_token_variable == "ASANA_ACCESS_JAIRAJSUSTAINED" ]]; then
-          asana_token="${{ secrets.ASANA_ACCESS_JAIRAJSUSTAINED }}"
-        else
-          asana_token="${{ secrets.ASANA_ACCESS_TOKEN }}"
+        asana_token = ${{ secrets.asana_token_variable }}
+        echo "asana creator token: $asana_token"
+
+        if [ -z "$asana_token" ]; then
+          asana_token = "${{ secrets.ASANA_ACCESS_TOKEN }}"
         fi
         
         echo "asana_token=$asana_token" >> $GITHUB_ENV
