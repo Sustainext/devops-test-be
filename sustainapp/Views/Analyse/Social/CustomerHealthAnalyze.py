@@ -12,6 +12,9 @@ logger = getLogger("error.log")
 
 
 class CustomerHealthAnalyzeView(APIView):
+    """
+    This is to Analyze the data for the Customer Health and Safety from the Collect/Social of the Platform
+    """
 
     permission_classes = [IsAuthenticated]
 
@@ -101,10 +104,9 @@ class CustomerHealthAnalyzeView(APIView):
         """What if they have added the data in corporate but not organization.
         Then we'll not show data for the organization"""
         serialized_data = CheckOrgCoprDateSerializer(data=request.query_params)
-        # serialized_data = CheckAnalysisViewSerializer(data=request.query_params)
         serialized_data.is_valid(raise_exception=True)
         try:
-            self.org = serialized_data.validated_data["organisation"]  # .id
+            self.org = serialized_data.validated_data["organisation"]
             self.corp = serialized_data.validated_data.get("corporate", None)
             self.from_date = serialized_data.validated_data["start"]
             self.to_date = serialized_data.validated_data["end"]
@@ -122,8 +124,8 @@ class CustomerHealthAnalyzeView(APIView):
             filter_by = {}
 
             filter_by["organization__id"] = self.org.id
+
             if self.corp is not None:
-                # self.corp = self.corp.id
                 filter_by["corporate__id"] = self.corp.id
             else:
                 filter_by["corporate__id"] = None
@@ -138,4 +140,7 @@ class CustomerHealthAnalyzeView(APIView):
             )
 
         except Exception as e:
+            logger.info(
+                f"An error occured while analyzing Customer Health and Safelty : {e}"
+            )
             return Response({"error": f"{e}"}, status=status.HTTP_400_BAD_REQUEST)
