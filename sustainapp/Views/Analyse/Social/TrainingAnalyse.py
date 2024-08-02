@@ -195,7 +195,7 @@ class TrainingSocial(APIView):
         local_raw_response = self.raw_responses.filter(path__slug=self.slugs[1]).first()
         data = local_raw_response.data
 
-        total_employees = sum(item["totalEmployees"] for item in data)
+        total_employees = sum(int(item["totalEmployees"]) for item in data)
 
         genders = [
             ("Male", "male", "male1"),
