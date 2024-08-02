@@ -68,6 +68,9 @@ class TrainingSocial(APIView):
                     "average_training_hours_per_male_employee": safe_integer_divide(
                         item["male1"], item["male"]
                     ),
+                    "average_training_hours_per_non_binary_employee": safe_integer_divide(
+                        item["others1"], item["others"]
+                    ),
                 }
             )
 
@@ -93,6 +96,10 @@ class TrainingSocial(APIView):
                             item["average_training_hours_per_male_employee"]
                             for item in data_list
                         ]
+                    ),
+                    "average_training_hours_per_non_binary_employee": mean(
+                        item["average_training_hours_per_non_binary_employee"]
+                        for item in data_list
                     ),
                 }
             )
@@ -125,6 +132,9 @@ class TrainingSocial(APIView):
                     "average_training_hours_per_male_employee": safe_integer_divide(
                         local_data_item["male"], local_data_item["male1"]
                     ),
+                    "average_training_hours_per_non_binary_employee": safe_integer_divide(
+                        local_data_item["others"], local_data_item["others1"]
+                    ),
                 }
             )
         # * Get average of every item in response_data
@@ -149,57 +159,62 @@ class TrainingSocial(APIView):
                         for item in local_response_data
                     ],
                 ),
+                "average_training_hours_per_non_binary_employee": mean(
+                    [
+                        item["average_training_hours_per_non_binary_employee"]
+                        for item in local_response_data
+                    ],
+                ),
             },
         ]
 
     def get_percentage_of_employees_receiving_regular_performance_and_career_development_reviews(
         self,
     ):
-        return [
-            {
-                "Category": "A",
-                "percentage_of_employees_who_received_regular_performance_reviews": 0.0,
-                "percentage_of_employees_who_received_regular_career_development_reviews": 0.0,
-            },
-            {
-                "Category": "B",
-                "percentage_of_employees_who_received_regular_performance_reviews": 59.00,
-                "percentage_of_employees_who_received_regular_career_development_reviews": 12.00,
-            },
-            {
-                "Category": "C",
-                "percentage_of_employees_who_received_regular_performance_reviews": 12.0,
-                "percentage_of_employees_who_received_regular_career_development_reviews": 41.0,
-            },
-        ]
+        local_raw_response = self.raw_responses.filter(path__slug=self.slugs[1]).first()
+        data = local_raw_response.data
+
+        response_data = []
+        for item in data:
+            response_data.append(
+                {
+                    "Category": item["category"],
+                    "percentage_of_employees_who_received_regular_performance_reviews": safe_integer_divide(
+                        item["totalTrainingHours"], item["totalEmployees"]
+                    ),
+                    "percentage_of_employees_who_received_regular_career_development_reviews": safe_integer_divide(
+                        item["totalEmployees"], item["totalEmployees"]
+                    ),
+                }
+            )
+        return response_data
 
     def get_percentage_of_employees_receiving_regular_performance_and_career_development_reviews_by_gender(
         self,
     ):
-        return [
-            {
-                "Gender": "Male",
-                "percentage_of_employees_who_received_regular_performance_reviews": 12.0,
-                "percentage_of_employees_who_received_regular_career_development_reviews": 41.0,
-            },
-            {
-                "Gender": "Female",
-                "percentage_of_employees_who_received_regular_performance_reviews": 59.00,
-                "percentage_of_employees_who_received_regular_career_development_reviews": 12.00,
-            },
-            {
-                "Gender": "Non-Binary",
-                "percentage_of_employees_who_received_regular_performance_reviews": 0.0,
-                "percentage_of_employees_who_received_regular_career_development_reviews": 0.0,
-            },
+        local_raw_response = self.raw_responses.filter(path__slug=self.slugs[1]).first()
+        data = local_raw_response.data
+
+        total_employees = sum(item["totalEmployees"] for item in data)
+
+        genders = [
+            ("Male", "male", "male1"),
+            ("Female", "female", "female1"),
+            ("Non-Binary", "others", "others1"),
         ]
 
-    def get_employees_receiving_regular_updates(self):  # 404-3
-        """
-        Percentage of employees receiving regular performance and career development reviews
-        """
-        slug = self.slugs[1]
-        local_raw_response = self.raw_responses.filter(path__slug=slug).first()
+        return [
+            {
+                "Gender": gender,
+                "percentage_of_employees_who_received_regular_performance_reviews": safe_integer_divide(
+                    sum(item[key1] for item in data), total_employees
+                ),
+                "percentage_of_employees_who_received_regular_career_development_reviews": safe_integer_divide(
+                    sum(item[key2] for item in data), total_employees
+                ),
+            }
+            for gender, key1, key2 in genders
+        ]
 
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
