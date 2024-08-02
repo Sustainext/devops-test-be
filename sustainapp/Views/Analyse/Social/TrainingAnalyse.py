@@ -207,10 +207,10 @@ class TrainingSocial(APIView):
             {
                 "Gender": gender,
                 "percentage_of_employees_who_received_regular_performance_reviews": safe_integer_divide(
-                    sum(item[key1] for item in data), total_employees
+                    sum(int(item[key1]) for item in data), total_employees
                 ),
                 "percentage_of_employees_who_received_regular_career_development_reviews": safe_integer_divide(
-                    sum(item[key2] for item in data), total_employees
+                    sum(int(item[key2]) for item in data), total_employees
                 ),
             }
             for gender, key1, key2 in genders
