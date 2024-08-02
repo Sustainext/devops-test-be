@@ -136,23 +136,19 @@ class TrainingSocial(APIView):
                         item["average_training_hours_per_employee"]
                         for item in local_response_data
                     ],
-                )
-            },
-            {
+                ),
                 "average_training_hours_per_female_employee": mean(
                     [
                         item["average_training_hours_per_female_employee"]
                         for item in local_response_data
                     ],
-                )
-            },
-            {
+                ),
                 "average_training_hours_per_male_employee": mean(
                     [
                         item["average_training_hours_per_male_employee"]
                         for item in local_response_data
                     ],
-                )
+                ),
             },
         ]
 
