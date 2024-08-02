@@ -47,7 +47,9 @@ from sustainapp.Views.Analyse.Social.CustomerPrivacyAnalyze import (
 from sustainapp.Views.Analyse.Social.CustomerHealthAnalyze import (
     CustomerHealthAnalyzeView,
 )
-
+from sustainapp.Views.Analyse.Social.MarketingLabelingAnalyze import (
+    MarketingLabelingAnalyzeView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -164,5 +166,9 @@ urlpatterns = [
         CustomerHealthAnalyzeView.as_view(),
         name="get_customer_health_safety_analysis",
     ),
-
+    path(
+        "get_marketing_and_labeling_analysis/",
+        MarketingLabelingAnalyzeView.as_view(),
+        name="get_marketing_and_labeling_analysis",
+    ),
 ]
