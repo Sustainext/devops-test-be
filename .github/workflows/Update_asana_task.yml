@@ -55,6 +55,13 @@ jobs:
         asana_task_id=$(cat artifact_asana/asana_task_id.txt)
         echo "Retrieved Reviewer's Asana Token: $reviewer_asana_token"
         echo "Retrieved Asana Task ID: $asana_task_id"
+    
+        # Check if reviewer_asana_token is null or empty, use default token if true
+        if [ -z "$reviewer_asana_token" ]; then
+          reviewer_asana_token="${{ secrets.ASANA_ACCESS_TOKEN }}"
+          echo "Reviewer token is null or empty, using default token"
+        fi
+    
         echo "reviewer_asana_token=$reviewer_asana_token" >> $GITHUB_ENV
         echo "asana_task_id=$asana_task_id" >> $GITHUB_ENV
 

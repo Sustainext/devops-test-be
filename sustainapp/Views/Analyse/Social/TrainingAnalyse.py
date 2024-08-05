@@ -13,6 +13,7 @@ from datametric.utils.analyse import (
     get_raw_response_filters,
     get_sum_from_dictionary_list,
 )
+from statistics import mean
 
 
 class TrainingSocial(APIView):
@@ -21,16 +22,6 @@ class TrainingSocial(APIView):
         "gri-social-training_hours-404-1a-number_of_hours",
         "gri-social-performance_and_career-414-2b-number_of_suppliers",
     ]
-
-    def get_average_training_hours_per_employee_category(self, date_item_dict):
-        temp_dict = {}
-        for date_item in date_item_dict:
-            temp_dict[
-                "Average training hours per employee category: " + date_item["category"]
-            ] = safe_integer_divide(
-                date_item["totalEmployees"], date_item["totalTrainingHours"]
-            )
-        return temp_dict
 
     def set_raw_responses(self):
         user = self.request.user
@@ -53,126 +44,177 @@ class TrainingSocial(APIView):
             .only("data")
         )
 
-    def get_average_training_hours(self):  # 404-1
+    def get_average_training_hours_per_employee_category(self):  # 404-1a
         local_raw_responses = self.raw_responses.filter(path__slug=self.slugs[0])
         local_data = []
-        for local_raw_response in local_raw_responses:
-            local_data.append(local_raw_response.data)
-        # * local_data contains list of data for each month of each year.
-        local_response_data = []
-        for each_date_item in local_data:
-            for each_category_data in each_date_item:
-                temp_dict = {}
-                temp_dict["Average training hours per employee"] = safe_integer_divide(
-                    each_category_data["totalEmployees"],
-                    each_category_data["totalTrainingHours"],
-                )
-                temp_dict["Average training hours per Female employee"] = (
-                    safe_integer_divide(
-                        each_category_data["female"],
-                        each_category_data["female1"],
-                    )
-                )
-                temp_dict["Average training hours per Male employee"] = (
-                    safe_integer_divide(
-                        each_category_data["male"],
-                        each_category_data["male1"],
-                    )
-                )
-                temp_dict["Average training hours per employee category"] = (
-                    safe_integer_divide(
-                        each_category_data["totalEmployees"],
-                        each_category_data["totalTrainingHours"],
-                    )
-                )
-                local_response_data.append(temp_dict)
-        return local_response_data
+        for raw_response in local_raw_responses:
+            local_data.extend(raw_response.data)
 
-    def get_employees_receiving_regular_updates(self):  # 404-3
+        categories = {}
+
+        for item in local_data:
+            category = item["category"]
+            if category not in categories:
+                categories[category] = []
+
+            categories[category].append(
+                {
+                    "average_training_hours_per_employee": safe_integer_divide(
+                        item["totalTrainingHours"], item["totalEmployees"]
+                    ),
+                    "average_training_hours_per_female_employee": safe_integer_divide(
+                        item["female1"], item["female"]
+                    ),
+                    "average_training_hours_per_male_employee": safe_integer_divide(
+                        item["male1"], item["male"]
+                    ),
+                    "average_training_hours_per_non_binary_employee": safe_integer_divide(
+                        item["others1"], item["others"]
+                    ),
+                }
+            )
+
+        result = []
+        for category, data_list in categories.items():
+            result.append(
+                {
+                    "category": category,
+                    "average_training_hours_per_employee": mean(
+                        [
+                            item["average_training_hours_per_employee"]
+                            for item in data_list
+                        ]
+                    ),
+                    "average_training_hours_per_female_employee": mean(
+                        [
+                            item["average_training_hours_per_female_employee"]
+                            for item in data_list
+                        ]
+                    ),
+                    "average_training_hours_per_male_employee": mean(
+                        [
+                            item["average_training_hours_per_male_employee"]
+                            for item in data_list
+                        ]
+                    ),
+                    "average_training_hours_per_non_binary_employee": mean(
+                        item["average_training_hours_per_non_binary_employee"]
+                        for item in data_list
+                    ),
+                }
+            )
+
+        return result
+
+    def get_average_hours_of_training_provided_to_employees(self):  # 404-1
         """
-        Percentage of employees receiving regular performance and career development reviews
+        Response Example:
+
         """
-        slug = self.slugs[1]
-        local_raw_response = self.raw_responses.filter(path__slug=slug).first()
-        local_data = local_raw_response.data if local_raw_response is not None else []
-        """
-        *Response Format
-        [
+        local_raw_responses = self.raw_responses.filter(path__slug=self.slugs[0])
+        local_data = []
+        local_response_data = []
+        for raw_response in local_raw_responses:
+            local_data.extend(raw_response.data)
+
+        for local_data_item in local_data:
+            local_response_data.append(
+                {
+                    "average_training_hours_per_employee": safe_integer_divide(
+                        local_data_item[
+                            "totalEmployees"
+                        ],  # * This is wrong data metriced, this gives total working hours instead of total number of employees.
+                        local_data_item["totalTrainingHours"],
+                    ),
+                    "average_training_hours_per_female_employee": safe_integer_divide(
+                        local_data_item["female"], local_data_item["female1"]
+                    ),
+                    "average_training_hours_per_male_employee": safe_integer_divide(
+                        local_data_item["male"], local_data_item["male1"]
+                    ),
+                    "average_training_hours_per_non_binary_employee": safe_integer_divide(
+                        local_data_item["others"], local_data_item["others1"]
+                    ),
+                }
+            )
+        # * Get average of every item in response_data
+        # * Get sum of Average training hours per employee.
+        return [
             {
-            "category": 'Percentage of employees who received regular performance review',
-            "a": '',
-            "b": '',
-            "male": '',
-            "female": '',
-            "nonBinary": '',
-            },
-            {
-            "category": 'Percentage of employees who received regular career development review',
-            "a": '',
-            "b": '',
-            "male": '',
-            "female": '',
-            "nonBinary": '',
+                "average_training_hours_per_employee": mean(
+                    [
+                        item["average_training_hours_per_employee"]
+                        for item in local_response_data
+                    ],
+                ),
+                "average_training_hours_per_female_employee": mean(
+                    [
+                        item["average_training_hours_per_female_employee"]
+                        for item in local_response_data
+                    ],
+                ),
+                "average_training_hours_per_male_employee": mean(
+                    [
+                        item["average_training_hours_per_male_employee"]
+                        for item in local_response_data
+                    ],
+                ),
+                "average_training_hours_per_non_binary_employee": mean(
+                    [
+                        item["average_training_hours_per_non_binary_employee"]
+                        for item in local_response_data
+                    ],
+                ),
             },
         ]
-        """
-        local_response_data = [
-            {
-                "category": "Percentage of employees who received regular performance review",
-                "a": safe_integer_divide(
-                    local_data[0]["male"]
-                    + local_data[0]["female"]
-                    + local_data[0]["nonBinary"],
-                    local_data[0]["totalTrainingHours"],
-                ),
-                "b": safe_integer_divide(
-                    local_data[0]["male2"]
-                    + local_data[0]["female2"]
-                    + local_data[0]["nonBinary2"],
-                    local_data[0]["totalTrainingHours2"],
-                ),
-                "female": safe_integer_divide(
-                    local_data[0]["female"],
-                    local_data[0]["totalTrainingHours"],
-                ),
-                "male": safe_integer_divide(
-                    local_data[0]["male"],
-                    local_data[0]["totalTrainingHours"],
-                ),
-                "nonBinary": safe_integer_divide(
-                    local_data[0]["nonBinary"],
-                    local_data[0]["totalTrainingHours"],
-                ),
-            },
-            {
-                "category": "Percentage of employees who received regular career development review",
-                "a": safe_integer_divide(
-                    local_data[0]["male"]
-                    + local_data[0]["female"]
-                    + local_data[0]["nonBinary"],
-                    local_data[0]["totalTrainingHours"],
-                ),
-                "b": safe_integer_divide(
-                    local_data[0]["male2"]
-                    + local_data[0]["female2"]
-                    + local_data[0]["nonBinary2"],
-                    local_data[0]["totalTrainingHours2"],
-                ),
-                "female": safe_integer_divide(
-                    local_data[0]["female2"],
-                    local_data[0]["totalTrainingHours2"],
-                ),
-                "male": safe_integer_divide(
-                    local_data[0]["male2"],
-                    local_data[0]["totalTrainingHours2"],
-                ),
-                "nonBinary": safe_integer_divide(
-                    local_data[0]["nonBinary2"],
-                    local_data[0]["totalTrainingHours2"],
-                ),
-            },
+
+    def get_percentage_of_employees_receiving_regular_performance_and_career_development_reviews(
+        self,
+    ):
+        local_raw_response = self.raw_responses.filter(path__slug=self.slugs[1]).first()
+        data = local_raw_response.data
+
+        response_data = []
+        for item in data:
+            response_data.append(
+                {
+                    "Category": item["category"],
+                    "percentage_of_employees_who_received_regular_performance_reviews": safe_integer_divide(
+                        item["totalTrainingHours"], item["totalEmployees"]
+                    ),
+                    "percentage_of_employees_who_received_regular_career_development_reviews": safe_integer_divide(
+                        item["totalEmployees"], item["totalEmployees"]
+                    ),
+                }
+            )
+        return response_data
+
+    def get_percentage_of_employees_receiving_regular_performance_and_career_development_reviews_by_gender(
+        self,
+    ):
+        local_raw_response = self.raw_responses.filter(path__slug=self.slugs[1]).first()
+        data = local_raw_response.data
+
+        total_employees = sum(int(item["totalEmployees"]) for item in data)
+
+        genders = [
+            ("Male", "male", "male1"),
+            ("Female", "female", "female1"),
+            ("Non-Binary", "others", "others1"),
         ]
-        return local_response_data
+
+        return [
+            {
+                "Gender": gender,
+                "percentage_of_employees_who_received_regular_performance_reviews": safe_integer_divide(
+                    sum(int(item[key1]) for item in data), total_employees
+                ),
+                "percentage_of_employees_who_received_regular_career_development_reviews": safe_integer_divide(
+                    sum(int(item[key2]) for item in data), total_employees
+                ),
+            }
+            for gender, key1, key2 in genders
+        ]
 
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
@@ -184,8 +226,10 @@ class TrainingSocial(APIView):
         self.end = serializer.validated_data["end"]
         self.set_raw_responses()
         response_data = {
-            "average_hours_of_training_provided_to_employees": self.get_average_training_hours(),
-            "employees_receiving_regular_updates": self.get_employees_receiving_regular_updates(),
+            "average_hours_of_training_provided_to_employees": self.get_average_hours_of_training_provided_to_employees(),
+            "average_training_hours_per_employee_category": self.get_average_training_hours_per_employee_category(),
+            "percentage_of_employees_receiving_regular_performance_and_career_development_reviews": self.get_percentage_of_employees_receiving_regular_performance_and_career_development_reviews(),
+            "percentage_of_employees_receiving_regular_performance_and_career_development_reviews_by_gender": self.get_percentage_of_employees_receiving_regular_performance_and_career_development_reviews_by_gender(),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
