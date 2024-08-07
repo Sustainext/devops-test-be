@@ -32,6 +32,7 @@ from django.shortcuts import get_object_or_404
 import time
 from sustainapp.report import generate_pdf_data
 from django.core.files.storage import default_storage
+from datametric.utils.analyse import filter_by_start_end_dates
 
 logger = logging.getLogger()
 
@@ -238,10 +239,8 @@ def get_analysis_data_by_source(self, data_points):
 def get_analysis_data(
     self,
     corporate_id,
-    start_year,
-    end_year,
-    start_month,
-    end_month,
+    start_date,
+    end_date,
     report_id,
     client_id,
 ):
@@ -274,10 +273,9 @@ def get_analysis_data(
         # * Get all Raw Respones based on location and year.
         raw_responses = RawResponse.objects.filter(
             path__slug__icontains="gri-environment-emissions-301-a-scope-",
-            year__range=(start_year, end_year),
-            month__range=(start_month, end_month),
             locale__in=location_names,
-        )
+            client_id=client_id,
+        ).filter(filter_by_start_end_dates(start_date=start_date, end_date=end_date))
 
         data_points = DataPoint.objects.filter(
             raw_response__in=raw_responses, json_holder__isnull=False
@@ -458,10 +456,8 @@ class GHGReportView(generics.CreateAPIView):
             analysis_data = get_analysis_data(
                 self,
                 corporate_ids_list,
-                start_year,
-                end_year,
-                start_month,
-                end_month,
+                start_date,
+                end_date,
                 report_id,
                 client_id,
             )
@@ -470,10 +466,8 @@ class GHGReportView(generics.CreateAPIView):
             analysis_data = get_analysis_data(
                 self,
                 corporate_id,
-                start_year,
-                end_year,
-                start_month,
-                end_month,
+                start_date,
+                end_date,
                 report_id,
                 client_id,
             )
