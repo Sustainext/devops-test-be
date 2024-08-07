@@ -8,6 +8,7 @@ from datametric.utils.signal_utilities import (
     create_or_update_data_points,
     process_raw_response_data,
 )
+from datametric.utils.signal_utilities import climatiq_data_creation
 from logging import getLogger
 
 logger = getLogger("error.log")
@@ -57,12 +58,13 @@ def process_json(json_obj, path, raw_response):
                     index=index,
                     raw_response=raw_response,
                 )
-            # except KeyError as e:
-            #     print(f"KeyError: {e}")
-            # except IndexError as e:
-            #     print(f"IndexError: {e}")
-            # except Exception as e:
-            #     print(f"An unexpected error occurred: {e}")
+    climatiq_data_creation(raw_response=raw_response)
+    # except KeyError as e:
+    #     print(f"KeyError: {e}")
+    # except IndexError as e:
+    #     print(f"IndexError: {e}")
+    # except Exception as e:
+    #     print(f"An unexpected error occurred: {e}")
 
 
 @receiver(post_save, sender=RawResponse)
