@@ -190,7 +190,7 @@ class Climatiq:
                 error_message = f"Error with emission: {emission_data} \n"
                 logger.error(error_message)
 
-    def round_decimal_or_nulls(self, value, decimal_point):
+    def round_decimal_or_nulls(self, value, decimal_point=3):
         if value is None:
             return None
         else:
@@ -223,6 +223,10 @@ class Climatiq:
                     "region": emission["emission_factor"]["region"],
                     "year": emission["emission_factor"]["year"],
                     "name": emission["emission_factor"]["name"],
+                    "unit": emission["activity_data"]["activity_unit"],
+                    "consumption": self.round_decimal_or_nulls(
+                        emission["activity_data"]["activity_value"]
+                    ),
                 },
             )
             emission_analyse.save()
