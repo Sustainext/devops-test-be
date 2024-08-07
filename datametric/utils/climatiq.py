@@ -8,7 +8,7 @@ from datametric.data_types import ARRAY_OF_OBJECTS
 import decimal
 from django.template.defaultfilters import slugify
 
-logger = logging.getLogger("django")
+logger = logging.getLogger("custom_logger")
 
 
 class Climatiq:
@@ -40,21 +40,23 @@ class Climatiq:
             'Quantity': '16',
             'Subcategory': 'Fuel'}}
             """
-
-            payload.append(
-                self.construct_emission_req(
-                    activity_id=emission_data["Emission"]["activity_id"],
-                    unit_type=emission_data["Emission"]["unit_type"],
-                    value1=float(emission_data["Emission"]["Quantity"]),
-                    unit1=emission_data["Emission"]["Unit"],
-                    unit2=emission_data["Emission"].get("Unit2"),
-                    value2=(
-                        float(emission_data["Emission"].get("Quantity2"))
-                        if emission_data["Emission"].get("Quantity2") is not None
-                        else None
-                    ),
+            try:
+                payload.append(
+                    self.construct_emission_req(
+                        activity_id=emission_data["Emission"]["activity_id"],
+                        unit_type=emission_data["Emission"]["unit_type"],
+                        value1=float(emission_data["Emission"]["Quantity"]),
+                        unit1=emission_data["Emission"]["Unit"],
+                        unit2=emission_data["Emission"].get("Unit2"),
+                        value2=(
+                            float(emission_data["Emission"].get("Quantity2"))
+                            if emission_data["Emission"].get("Quantity2") is not None
+                            else None
+                        ),
+                    )
                 )
-            )
+            except Exception as e:
+                logger.error(f"Error with emission payload: {emission_data} \n {e}")
         return payload
 
     def construct_emission_req(
@@ -132,18 +134,31 @@ class Climatiq:
         CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
         payload = self.payload_preparation_for_climatiq_api()
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
-        response = requests.request(
-            "POST",
-            url="https://api.climatiq.io/batch",
-            data=json.dumps(payload),
-            headers=headers,
-        )
-        response_data = response.json()
-        if response.status_code == 400:
-            self.log_error_climatiq_api(response_data=response_data)
-        self.log_in_part_emission_error(response_data=response_data)
-        response_data = self.clean_response_data(response_data=response_data)
-        return response_data
+        logger.info("Requesting Climatiq API")
+
+        all_response_data = []
+        batch_size = 100
+
+        for i in range(0, len(payload), batch_size):
+            batch_payload = payload[i : i + batch_size]
+            response = requests.request(
+                "POST",
+                url="https://api.climatiq.io/batch",
+                data=json.dumps(batch_payload),
+                headers=headers,
+            )
+            response_data = response.json()
+
+            if response.status_code == 400:
+                self.log_error_climatiq_api(response_data=response_data)
+            else:
+                self.log_in_part_emission_error(response_data=response_data)
+                cleaned_response_data = self.clean_response_data(
+                    response_data=response_data
+                )
+                all_response_data.extend(cleaned_response_data)
+
+        return all_response_data
 
     def clean_response_data(self, response_data):
         """
@@ -218,6 +233,8 @@ class Climatiq:
         Returns the response from the climatiq api.
         """
         # Check if the path slug matches the required pattern
+        logger.info("Climatiq API Has been called")
+        logger.info(self.raw_response)
         if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
             return None
         # Get the response data from the climatiq API
@@ -276,7 +293,7 @@ class Climatiq:
                 "Error: Missing required attributes (location, year, month, user, or user.client)"
             )
             return None
-        logger.error(
+        logger.info(
             f"{datametric.name}{datametric.path.slug} -is the newly created datametric"
         )
         # Update or create the data point
