@@ -106,7 +106,7 @@ def get_analysis_data_by_location(self, data_points, locations):
     # Update emission data based on data points
     for data in data_points:
         total_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
-        location_name = data.location  # Assuming location name is available here
+        location_name = data.locale.name  # Assuming location name is available here
         if location_name in emission_by_location:
             emission_by_location[location_name]["total_co2e"] += total_co2e
             total_co2e_all_locations += total_co2e
@@ -269,14 +269,14 @@ def get_analysis_data(
     analysis_data_by_corporate = defaultdict(dict)
     for id in corporate_id:
         locations = Location.objects.filter(corporateentity=id)
-        location_names = locations.values_list("name", flat=True)
+        location_names = locations.values_list("id", flat=True)
         corporate_name = Corporateentity.objects.get(pk=id).name
         # * Get all Raw Respones based on location and year.
         raw_responses = RawResponse.objects.filter(
             path__slug__icontains="gri-environment-emissions-301-a-scope-",
             year__range=(start_year, end_year),
             month__range=(start_month, end_month),
-            location__in=location_names,
+            locale__in=location_names,
         )
 
         data_points = DataPoint.objects.filter(
