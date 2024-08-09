@@ -1,12 +1,28 @@
 from datametric.utils.climatiq import Climatiq
 from datametric.models import DataMetric, RawResponse, DataPoint
+import logging
+from django.db.models.signals import post_save
+
+
+logger = logging.getLogger("custom_logger")
+
+
+def climatiq_data_creation(raw_response: RawResponse):
+    """
+    This function is called when a raw response is created.
+    It creates the climatiq data points.
+    """
+    climatiq_call = Climatiq(raw_response=raw_response)
+    climatiq_call.create_calculated_data_point()
 
 
 def create_or_update_data_points(
     data_metric: DataMetric, value, index, raw_response: RawResponse
 ):
-    print("Creating or updating Data points")
-    print(data_metric, value, index, raw_response.path, raw_response.user)
+    logger.info("Creating or updating Data points")
+    logger.info(
+        f"{data_metric} {value} {index} {raw_response.path} {raw_response.user}"
+    )
 
     path = raw_response.path
 
@@ -51,13 +67,11 @@ def create_or_update_data_points(
         data_point.save()
 
         if created:
-            print("DataPoint created")
+            logger.info("DataPoint created")
         else:
-            print("DataPoint updated")
-        climatiq_call = Climatiq(raw_response=raw_response)
-        climatiq_call.create_calculated_data_point()
+            logger.info("DataPoint updated")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}", exc_info=True)
 
 
 def process_raw_response_data(
@@ -69,3 +83,4 @@ def process_raw_response_data(
     for key, value in data_point_dict.items():
         data_metric = data_metrics.filter(name=key).first()
         create_or_update_data_points(data_metric, value, index, raw_response)
+
