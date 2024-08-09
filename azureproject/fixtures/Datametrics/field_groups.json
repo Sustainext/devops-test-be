@@ -12181,5 +12181,1694 @@
                 }
             }
         }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 137,
+        "fields": {
+            "created_at": "2024-08-06T08:26:21.056Z",
+            "updated_at": "2024-08-06T08:26:21.056Z",
+            "name": "Board Invlovement-Management of Impact-Senior Executives",
+            "path": 137,
+            "meta_data": {
+                "key": "values to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "title": "The organization's purpose",
+                            "tooltip": "Describe the role of the highest governance body and of senior executives in developing, approving, and updating the following:"
+                        },
+                        {
+                            "title": "Value or mission statements",
+                            "tooltip": "What is the role of the highest governance body and of senior executives in developing, approving,and updating the value or mission statements?"
+                        },
+                        {
+                            "title": "Strategies",
+                            "tooltip": "Describe the role of the highest governance body and of senior executives in developing, approving, and updating the following"
+                        },
+                        {
+                            "title": "Policies",
+                            "tooltip": "What is the role of the highest governance body and of senior executives in developing, approving, and updating policies?"
+                        },
+                        {
+                            "title": "Goals related to sustainable development",
+                            "tooltip": "What is the role of the highest governance body and of senior executives in developing, approving, and updating goals related to sustainable development?"
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Theorganizationpurpose": {
+                            "type": "string",
+                            "title": "The organizations purpose"
+                        },
+                        "Valueormissionstatements": {
+                            "type": "string",
+                            "title": "Value or mission statements"
+                        },
+                        "Strategies": {
+                            "type": "string",
+                            "title": "Strategies"
+                        },
+                        "Policies": {
+                            "type": "string",
+                            "title": "Policies"
+                        },
+                        "Goalsrelatedtosustainabledevelopment": {
+                            "type": "string",
+                            "title": "Goals related to sustainable development"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 138,
+        "fields": {
+            "created_at": "2024-08-06T08:26:59.967Z",
+            "updated_at": "2024-08-06T08:26:59.967Z",
+            "name": "Board Invlovement-Management of Impact-Due Diligence",
+            "path": 138,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the role of the highest governance body and of senior executives in overseeing the organization's due diligence and other processes to identify and manage the organization's impact on the economy, environment and people:",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Due diligence:process to identify, prevent, mitigate, and account for how the organization addresses its actual and potential negative impacts",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "Does the organisation's highest governance body engage with stakeholders to support above processes?",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the highest governance body engages with stakeholders to support these processes. ",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q3": {
+                        "ui:title": "If yes, how the highest governance body engage with stakeholders to support these processes?",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide an explanation of how the highest governance body engages with stakeholders to support these processes? ",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q4": {
+                        "ui:title": "How the highest governance body considers the outcomes of these processes?",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Describe about the safe use of the product or service.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2",
+                        "Q3",
+                        "Q4"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the role of the highest governance body and of senior executives in overseeing the organization's due diligence and other processes to identify and manage the organization's impact on the economy, environment and people:"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Does the organisation's highest governance body engage with stakeholders to support above processes?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "Q4": {
+                            "type": "string",
+                            "title": "How the highest governance body considers the outcomes of these processes?"
+                        }
+                    },
+                    "dependencies": {
+                        "Q2": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q2": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q3": {
+                                            "type": "string",
+                                            "title": "If yes, how the highest governance body engage with stakeholders to support these processes?"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 139,
+        "fields": {
+            "created_at": "2024-08-06T08:27:31.843Z",
+            "updated_at": "2024-08-06T08:27:31.843Z",
+            "name": "Board Invlovement-Management of Impact-Effectiveness",
+            "path": 139,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the role of the highest governance body in reviewing the effectiveness of the organization's processes as described in 2-12-b, and report the frequency of this review:",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is role of the highest governance body in reviewing the effectiveness of the or anization's processes as described in 2-12-b, and report the frequency of this review?",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the role of the highest governance body and of senior executives in overseeing the organization's due diligence and other processes to identify and manage the organization's impact on the economy, environment and people:"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 140,
+        "fields": {
+            "created_at": "2024-08-06T08:28:04.809Z",
+            "updated_at": "2024-08-06T08:28:04.809Z",
+            "name": "Board Invlovement-Deligation of Responsibility-Managing",
+            "path": 140,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe how the highest governance body delegates responsibility for managing the organization's impacts on economy, environment and people:",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Due diligence:process to identify, prevent, mitigate, and account for how the organization addresses its actual and potential negative impacts",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "Q2": {
+                        "ui:title": "Whether it has appointed any senior executives with responsibility for the management of impacts",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether highest governance body has appointed any senior executives with responsibility for the management of impacts. If yes then provide an explanation. ",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q3": {
+                        "ui:title": "",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide an explanation of how the highest governance body engages with stakeholders to support these processes? ",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "Q4": {
+                        "ui:title": "Whether it has delegated responsibility for the management of impacts to other employees",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether highest governance body has delegated responsibility for the management of impacts to other employees. If yes then provide an explanation.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q5": {
+                        "ui:title": "If yes, ",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide an explanation of how the highest governance body engages with stakeholders to support these processes?",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2",
+                        "Q3",
+                        "Q4",
+                        "Q5"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe how the highest governance body delegates responsibility for managing the organization's impacts on economy, environment and people:"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Whether it has appointed any senior executives with responsibility for the management of impacts",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "Q4": {
+                            "type": "string",
+                            "title": "Whether it has delegated responsibility for the management of impacts to other employees",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    },
+                    "dependencies": {
+                        "Q2": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q2": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q3": {
+                                            "type": "string",
+                                            "title": ""
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "Q4": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q4": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q5": {
+                                            "type": "string",
+                                            "title": ""
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 141,
+        "fields": {
+            "created_at": "2024-08-06T08:28:38.460Z",
+            "updated_at": "2024-08-06T08:28:38.460Z",
+            "name": "Board Invlovement-Deligation of Responsibility-Frequency",
+            "path": 141,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the process and frequency for senior executives or other employees to report back to the highest governance body on the management of the organization's impacts on the economy, environment and people.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is role of the highest governance body in reviewing the effectiveness of the or anization's processes as described in 2-12-b, and report the frequency of this review?",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the process and frequency for senior executives or other employees to report back to the highest governance body on the management of the organization's impacts on the economy, environment and people."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 142,
+        "fields": {
+            "created_at": "2024-08-06T11:53:41.175Z",
+            "updated_at": "2024-08-07T06:35:20.674Z",
+            "name": "Board Invlovement-Sustainability Reporting-Role",
+            "path": 142,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Report whether the highest governance body is responsible for reviewing and approving the reported information, including the organization's material topics",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the highest governance body is responsible for reviewing and approving the reported information, including the organization's material topics.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "If yes, please describe the process for reviewing and approving the information",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is the process for reviewing and approving the reported information.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q3": {
+                        "ui:title": "If no, explain the reason",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Explain the reason for not reviewing and approving the reported information.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2",
+                        "Q3"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Report whether the highest governance body is responsible for reviewing and approving the reported information, including the organization's material topics",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    },
+                    "dependencies": {
+                        "Q1": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q1": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q2": {
+                                            "type": "string",
+                                            "title": "If yes, please describe the process for reviewing and approving the information"
+                                        }
+                                    }
+                                },
+                                {
+                                    "properties": {
+                                        "Q1": {
+                                            "enum": [
+                                                "No"
+                                            ]
+                                        },
+                                        "Q3": {
+                                            "type": "string",
+                                            "title": "If no, explain the reason"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 143,
+        "fields": {
+            "created_at": "2024-08-07T04:54:49.046Z",
+            "updated_at": "2024-08-07T04:54:49.046Z",
+            "name": "Board Info-Structure-Governance Structure",
+            "path": 143,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the governance structure, including the committees of the highest governance body",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide a description of governance structure of the organisation, including the committees of the highest governance body Highest governance body: governance body with the highest authority in the organization.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the governance structure, including the committees of the highest governance body"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 144,
+        "fields": {
+            "created_at": "2024-08-07T04:55:39.330Z",
+            "updated_at": "2024-08-07T04:55:39.330Z",
+            "name": "Board Info-Structure-Committees of the highest governance body",
+            "path": 144,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "List the committees of the highest governance body that are responsible for decision-making on and overseeing the management of the organization's impacts on the economy, environment and people",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": " Provide a list of committees of the highest governance body, including those responsible for overseeing the management of the organization's impacts on the economy, environment, and people (e.g., Sustainability Committee, Corporate Social Responsibility Committee etc.).",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": true,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "array",
+                            "title": "List the committees of the highest governance body that are responsible for decision-making on and overseeing the management of the organization's impacts on the economy, environment and people",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 145,
+        "fields": {
+            "created_at": "2024-08-07T04:56:13.133Z",
+            "updated_at": "2024-08-07T04:56:13.133Z",
+            "name": "Board Info-Structure-Composition",
+            "path": 145,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "GovernanceRowWidget",
+                "ui:options": {
+                    "gender": {
+                        "options": [
+                            {
+                                "label": "Male",
+                                "value": "Male"
+                            },
+                            {
+                                "label": "Female",
+                                "value": "Female"
+                            },
+                            {
+                                "label": "Other",
+                                "value": "Other"
+                            }
+                        ]
+                    },
+                    "titles": [
+                        {
+                            "title": "Name",
+                            "tooltip": "Mention name of the member of the governance body."
+                        },
+                        {
+                            "title": "Executive Power",
+                            "tooltip": "Please indicate the executive power."
+                        },
+                        {
+                            "title": "Independence",
+                            "tooltip": "Indicate whether the highest governance body members are considered as independent or non-independent.\u2018Independence\u2019 refers to conditions that enable the <br/>members of the highest governance body toexercise independent judgment free from any external <br/>influence or conflicts of interest."
+                        },
+                        {
+                            "title": "Tenure On The Governance Body",
+                            "tooltip": "Specify the tenure of members <br/>on the governance body"
+                        },
+                        {
+                            "title": "Number Of Significant Positions",
+                            "tooltip": "Provide an information on number of significant positions."
+                        },
+                        {
+                            "title": "Commitments Held By Member",
+                            "tooltip": "Describe the commitments held by member of the highest governance body."
+                        },
+                        {
+                            "title": "The Nature Of Commitments",
+                            "tooltip": "Describe the nature of commitments"
+                        },
+                        {
+                            "title": "Under-Represented Social Groups",
+                            "tooltip": "Specify the number of members of the highest governance <br/>body who identify as under-represented groups represented on the board.(e.g., any minority groups etc.)."
+                        },
+                        {
+                            "title": "Competencies Relevant To The Impacts Of The Organization",
+                            "tooltip": "Describe competencies relevant to the impacts of the organization"
+                        }
+                    ],
+                    "orderable": false,
+                    "independence": {
+                        "options": [
+                            {
+                                "label": "Independent",
+                                "value": "Independent"
+                            },
+                            {
+                                "label": "Non-Independent",
+                                "value": "Non-Independent"
+                            }
+                        ]
+                    },
+                    "executivePower": {
+                        "options": [
+                            {
+                                "label": "Executive Member",
+                                "value": "Executive Member"
+                            },
+                            {
+                                "label": "Non-Executive Member",
+                                "value": "Non-Executive Member"
+                            },
+                            {
+                                "label": "Others (Please specify)",
+                                "value": "Others (Please specify)"
+                            }
+                        ]
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "title": "Name"
+                        },
+                        "executivePower": {
+                            "type": "string",
+                            "title": "Executive Power",
+                            "enum": [
+                                "Executive Member",
+                                "Non-Executive Member",
+                                "Others (Please specify)"
+                            ]
+                        },
+                        "independence": {
+                            "type": "string",
+                            "title": "Independence",
+                            "enum": [
+                                "Independent",
+                                "Non-Independent"
+                            ]
+                        },
+                        "tenure": {
+                            "type": "string",
+                            "title": "Tenure On The Governance Body"
+                        },
+                        "significantPositions": {
+                            "type": "string",
+                            "title": "Number Of Significant Positions"
+                        },
+                        "commitmentsHeld": {
+                            "type": "string",
+                            "title": "Commitments Held By Member"
+                        },
+                        "natureOfCommitments": {
+                            "type": "string",
+                            "title": "The Nature Of Commitments"
+                        },
+                        "gender": {
+                            "type": "string",
+                            "title": "Gender",
+                            "enum": [
+                                "Male",
+                                "Female",
+                                "Other"
+                            ]
+                        },
+                        "underRepresentedGroups": {
+                            "type": "string",
+                            "title": "Under-Represented Social Groups"
+                        },
+                        "competencies": {
+                            "type": "string",
+                            "title": "Competencies Relevant To The Impacts Of The Organization"
+                        },
+                        "stakeholderRepresentation": {
+                            "type": "string",
+                            "title": "Stakeholder Representation"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 146,
+        "fields": {
+            "created_at": "2024-08-07T10:05:08.119Z",
+            "updated_at": "2024-08-07T10:05:08.119Z",
+            "name": "Governance-Conflict of Interest-Highest",
+            "path": 146,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the processes for the highest governance body to ensure that conflicts of interest are prevented and mitigated",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Conflict of interest: situation where an individual is confronted with choosing between the requirements of their function in the organization and their other personal or professional interests or responsibilities",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the processes for the highest governance body to ensure that conflicts of interest are prevented and mitigated"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 147,
+        "fields": {
+            "created_at": "2024-08-07T10:13:41.881Z",
+            "updated_at": "2024-08-08T06:19:46.260Z",
+            "name": "Governance-Conflict of Interest-Report",
+            "path": 147,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "Criteria",
+                            "type": "number",
+                            "title": "Conflict of interest relating to:",
+                            "display": "none"
+                        },
+                        {
+                            "key": "Disclosed",
+                            "type": "number",
+                            "title": "Disclosed?",
+                            "display": "block",
+                            "tooltip": "Indicate whether the given conflict of interest are disclosed to stakeholders."
+                        }
+                    ],
+                    "rowLabels": [
+                        {
+                            "title": "Cross-board membership",
+                            "display": "none",
+                            "tooltip": "Mention the number of operations that include the use of social impact assessments, including gender impact assessments, based on participatory processes."
+                        },
+                        {
+                            "title": "Cross-shareholding with suppliers and other stakeholders",
+                            "display": "none",
+                            "tooltip": "Mention the number of operations that include the use of environmental impact assessments and ongoing monitoring."
+                        },
+                        {
+                            "title": "Existence of controlling shareholders",
+                            "display": "none",
+                            "tooltip": "Mention the number of operations that include the use of public disclosure of results of environmental and social impact assessments"
+                        },
+                        {
+                            "title": "Related parties, theri relationships, transactions, and outstanding balances",
+                            "display": "none",
+                            "tooltip": "Mention the number of operations that include the use of local community development programs based on local communities' needs."
+                        },
+                        {
+                            "title": "Others",
+                            "display": "none",
+                            "tooltip": "Mention the number of operations that include the use of local community development programs based on local communities' needs."
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Criteria": {
+                            "type": "string",
+                            "title": "Conflict of interest relating to:"
+                        },
+                        "Disclosed": {
+                            "type": "string",
+                            "enum": [
+                                "Yes",
+                                "No",
+                                "NA"
+                            ],
+                            "title": "Disclosed?"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 148,
+        "fields": {
+            "created_at": "2024-08-07T12:07:13.794Z",
+            "updated_at": "2024-08-07T12:07:13.794Z",
+            "name": "Board Info-Nomination and Selection-Nomination",
+            "path": 148,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the nomination and selection process for the highest governance body and its committees",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "This section documents data corresponding to the nomination & selection process of the highest governance body and committees.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the nomination and selection process for the highest governance body and its committees"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 149,
+        "fields": {
+            "created_at": "2024-08-07T12:08:10.221Z",
+            "updated_at": "2024-08-07T12:08:10.221Z",
+            "name": "Board Info-Nomination and Selection-Criteria",
+            "path": 149,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the 'criteria' used for nominating and selecting the highest governance body members",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the 'criteria' used for nominating and selecting the highest governance body members"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 150,
+        "fields": {
+            "created_at": "2024-08-07T12:08:40.506Z",
+            "updated_at": "2024-08-07T12:08:40.506Z",
+            "name": "Board Info-Nomination and Selection-Consideration and selection",
+            "path": 150,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "Criteria",
+                            "type": "number",
+                            "title": "Criteria",
+                            "display": "none"
+                        },
+                        {
+                            "key": "Whethertakenintoconsideration",
+                            "type": "number",
+                            "title": "Whether taken into consideration?",
+                            "display": "block"
+                        },
+                        {
+                            "key": "How",
+                            "type": "number",
+                            "title": "How?",
+                            "display": "block"
+                        }
+                    ],
+                    "rowLabels": [
+                        {
+                            "title": "Views of stakeholders (including shareholders)",
+                            "display": "none",
+                            "tooltip": "Mention the number of operations that include the use of social impact assessments, including gender impact assessments, based on participatory processes."
+                        },
+                        {
+                            "title": "Diversity",
+                            "display": "none",
+                            "tooltip": "Mention the number of operations that include the use of environmental impact assessments and ongoing monitoring."
+                        },
+                        {
+                            "title": "Independence",
+                            "display": "none",
+                            "tooltip": "Mention the number of operations that include the use of public disclosure of results of environmental and social impact assessments"
+                        },
+                        {
+                            "title": "Competencies relevant to the impacts of the organization",
+                            "display": "none",
+                            "tooltip": "Mention the number of operations that include the use of local community development programs based on local communities\u2019 needs."
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Criteria": {
+                            "type": "string",
+                            "title": "Criteria"
+                        },
+                        "Whethertakenintoconsideration": {
+                            "type": "string",
+                            "enum": [
+                                "Yes",
+                                "No",
+                                "NA"
+                            ],
+                            "title": "No. of operations implemented by engaging local communities"
+                        },
+                        "How": {
+                            "type": "string",
+                            "title": "Total no. of operations"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 151,
+        "fields": {
+            "created_at": "2024-08-07T12:09:37.349Z",
+            "updated_at": "2024-08-08T06:04:25.518Z",
+            "name": "Board Info-Chair of Board-Chair",
+            "path": 151,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q2": {
+                        "ui:title": "Is the chair of the highest governance body also a senior executive in the organization?",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the chair of the highest governance body is also a senior executive in the organization.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q3": {
+                        "ui:widget": "TableWidget",
+                        "ui:options": {
+                            "titles": [
+                                {
+                                    "title": "Their function within the organization",
+                                    "tooltip": "Provide an explanation on the function of the senior executive within the organization\u2019s management."
+                                },
+                                {
+                                    "title": "Reasons for this arrangement",
+                                    "tooltip": "If the chair of the highest governance body is also a senior executive in the organization; explain the reason for this arrangement."
+                                },
+                                {
+                                    "title": "How conflicts of interest are prevented and mitigated",
+                                    "tooltip": "Conflict of interest: situation where an individual is confronted with choosing between the requirements of their function in the organization and their other personal or professional interests or responsibilities."
+                                }
+                            ]
+                        },
+                        "ui:description": " ",
+                        "ui:descriptionClassNames": "mb-4"
+                    },
+                    "ui:order": [
+                        "Q2",
+                        "Q3"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q2": {
+                            "type": "string",
+                            "title": "Is the chair of the highest governance body also a senior executive in the organization?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    },
+                    "dependencies": {
+                        "Q2": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q2": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q3": {
+                                            "type": "array",
+                                            "title": "If yes, please explain the following:",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "TheirFunctionWithinTheOrganization": {
+                                                        "type": "string",
+                                                        "title": "Their function within the organization"
+                                                    },
+                                                    "ReasonsForThisArrangement": {
+                                                        "type": "string",
+                                                        "title": "Reasons for this arrangement"
+                                                    },
+                                                    "HowConFlictsArePrevented": {
+                                                        "type": "string",
+                                                        "title": "How conflicts of interest are prevented and mitigated"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "properties": {
+                                        "Q2": {
+                                            "enum": [
+                                                "No"
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 152,
+        "fields": {
+            "created_at": "2024-08-08T05:15:38.623Z",
+            "updated_at": "2024-08-08T05:15:38.623Z",
+            "name": "Governance - Critical Concerns - Critical Concerns",
+            "path": 152,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Are critical concerns communicated to the highest governance body.",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the critical concerns are communicated to the highest governance body.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "Describe how critical concerns are communicated to the highest governance body",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Explain the process of communicating critical concerns to the highest governance body of the organisation.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Are critical concerns communicated to the highest governance body.",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Describe how critical concerns are communicated to the highest governance body"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 153,
+        "fields": {
+            "created_at": "2024-08-08T05:16:35.288Z",
+            "updated_at": "2024-08-08T05:16:35.288Z",
+            "name": "Governance - Critical Concerns - Report",
+            "path": 153,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Report the total number of critical concerns that were communicated to the highest governance body",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is the total number of critical concerns that were communicated to the highest governance body during the reporting period.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "Report the nature of the critical concerns that were communicated to the highest governance body",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is the total nature of critical concerns that were communicated to the highest governance body during the reporting period.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Report the total number of critical concerns that were communicated to the highest governance body"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Report the nature of the critical concerns that were communicated to the highest governance body"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 154,
+        "fields": {
+            "created_at": "2024-08-08T06:27:54.489Z",
+            "updated_at": "2024-08-08T06:27:54.489Z",
+            "name": "Performance and Renumerations-Sustainability Knowledge",
+            "path": 154,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Report measures taken to advance the collective knowledge, skills, and experience of the highest governance body on sustainable development.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Specify all the measures taken to advance the collective knowledge, skills, and experience of the highest governance body on sustainable development.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Report measures taken to advance the collective knowledge, skills, and experience of the highest governance body on sustainable development."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 156,
+        "fields": {
+            "created_at": "2024-08-08T06:31:31.709Z",
+            "updated_at": "2024-08-08T06:31:31.709Z",
+            "name": "Performance and Renumerations-Performance Evaluations-Processes",
+            "path": 155,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the processes for evaluating the performance of the highest governance body in overseeing the management of the organization\u2019s impacts on the economy, environment, and people",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the processes for evaluating the performance of the highest governance body in overseeing the management of the organization\u2019s impacts on the economy, environment, and people"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 157,
+        "fields": {
+            "created_at": "2024-08-08T06:32:41.636Z",
+            "updated_at": "2024-08-08T07:01:19.121Z",
+            "name": "Performance and Renumerations-Performance Evaluations-Evaluation",
+            "path": 156,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q2": {
+                        "ui:title": "Whether it has appointed any senior executives with responsibility for the management of impacts",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether highest governance body has appointed any senior executives with responsibility for the management of impacts. If yes then provide an explanation.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q3": {
+                        "ui:title": "Report the frequency of the evaluations",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide an explanation of how the highest governance body engages with stakeholders to support these processes?",
+                        "ui:description": " ",
+                        "ui:tooltipdisplay": "none",
+                        "ui:descriptionClassNames": "mb-2"
+                    },
+                    "ui:order": [
+                        "Q2",
+                        "Q3"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q2": {
+                            "type": "string",
+                            "title": "Whether it has appointed any senior executives with responsibility for the management of impacts",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    },
+                    "dependencies": {
+                        "Q2": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q2": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q3": {
+                                            "type": "string",
+                                            "title": "Report the frequency of the evaluations"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 158,
+        "fields": {
+            "created_at": "2024-08-08T06:33:47.229Z",
+            "updated_at": "2024-08-08T06:33:47.229Z",
+            "name": "Performance and Renumerations-Performance Evaluations-Actions",
+            "path": 157,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe actions taken in response to the evaluations",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "While describing actions taken in response to the evaluations; Include: changes to the composition of the highest governance body and organizational practices.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe actions taken in response to the evaluations"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 159,
+        "fields": {
+            "created_at": "2024-08-08T06:35:19.264Z",
+            "updated_at": "2024-08-08T06:35:19.264Z",
+            "name": "Sustainability Strategy-Sustainability Strategy",
+            "path": 158,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": ""
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 160,
+        "fields": {
+            "created_at": "2024-08-08T06:36:09.236Z",
+            "updated_at": "2024-08-08T07:46:10.960Z",
+            "name": "Managing Concerns-Advice & Concerns",
+            "path": 159,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Seek advice on implementing the organization\u2019s policies and practices for responsible business conduct.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is the mechanism for individuals to seek advice on implementing the organization\u2019s policies and practices responsible business conduct?",
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "Raise concerns about the organization's business conduct",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is the mechanism for individuals to raise concerns about the organization\u2019s business conduct?",
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ]
+                },
+                "ui:options": {
+                    "addable": false,
+                    "orderable": false,
+                    "removable": false
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Seek advice on implementing the organization's policies and practices for responsible business conduct."
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Raise concerns about the organization's business conduct"
+                        }
+                    }
+                }
+            }
+        }
     }
 ]
