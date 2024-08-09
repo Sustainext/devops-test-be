@@ -67,16 +67,16 @@ class MarketingLabelingAnalyzeView(APIView):
                             {
                                 "org_or_corp": a_corp.name,
                                 "number_of_products_with_procedurs": temp_req_data_2[
-                                    "Q1"
+                                    "Q2"
                                 ],
-                                "number_of_products_category": temp_req_data_2["Q2"],
+                                "number_of_products_category": temp_req_data_2["Q1"],
                                 "percentage": (
                                     (
-                                        temp_req_data_2["Q1"]
-                                        / temp_req_data_2["Q2"]
+                                        temp_req_data_2["Q2"]
+                                        / temp_req_data_2["Q1"]
                                         * 100
                                     )
-                                    if temp_req_data_2["Q2"] != 0
+                                    if temp_req_data_2["Q1"] != 0
                                     else 0
                                 ),
                             }
@@ -89,11 +89,11 @@ class MarketingLabelingAnalyzeView(APIView):
         return [
             {
                 "org_or_corp": self.corp.name if self.corp else self.org.name,
-                "number_of_products_with_procedurs": temp_req_data["Q1"],
-                "number_of_products_category": temp_req_data["Q2"],
+                "number_of_products_with_procedurs": temp_req_data["Q2"],
+                "number_of_products_category": temp_req_data["Q1"],
                 "percentage": (
-                    (temp_req_data["Q1"] / temp_req_data["Q2"] * 100)
-                    if temp_req_data["Q2"] != 0
+                    (temp_req_data["Q2"] / temp_req_data["Q1"] * 100)
+                    if temp_req_data["Q1"] != 0
                     else 0
                 ),
             }
