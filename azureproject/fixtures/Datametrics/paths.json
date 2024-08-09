@@ -1358,5 +1358,235 @@
             "name": "GRI-Collect-Markenting and Labeling-Statement Marketing-Statement",
             "slug": "gri-social-statement_marketing-417-3b-statement"
         }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 137,
+        "fields": {
+            "created_at": "2024-08-06T08:24:08.276Z",
+            "updated_at": "2024-08-06T08:24:08.276Z",
+            "name": "GRI-Collect-Board Involvement-Management of Impace-Senior Executives",
+            "slug": "gri-governance-management_of_impact-2-12-a-senior_executives"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 138,
+        "fields": {
+            "created_at": "2024-08-06T08:24:24.878Z",
+            "updated_at": "2024-08-06T08:24:24.878Z",
+            "name": "GRI-Collect-Board Involvement-Management of Impace-Due Diligence",
+            "slug": "gri-governance-management_of_impact-2-12-b-due_diligence"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 139,
+        "fields": {
+            "created_at": "2024-08-06T08:24:38.969Z",
+            "updated_at": "2024-08-06T08:24:38.969Z",
+            "name": "GRI-Collect-Board Involvement-Management of Impace-Effectiveness",
+            "slug": "gri-governance-management_of_impact-2-12-c-effectiveness"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 140,
+        "fields": {
+            "created_at": "2024-08-06T08:24:56.389Z",
+            "updated_at": "2024-08-06T08:24:56.389Z",
+            "name": "GRI-Collect-Board Involvement-Deligation of Responsibility-Managing",
+            "slug": "gri-governance-delegation-2-13-a-managing"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 141,
+        "fields": {
+            "created_at": "2024-08-06T08:25:13.746Z",
+            "updated_at": "2024-08-06T08:25:13.746Z",
+            "name": "GRI-Collect-Board Involvement-Deligation of Responsibility-Frequency",
+            "slug": "gri-governance-delegation-2-13-b-frequency"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 142,
+        "fields": {
+            "created_at": "2024-08-06T11:52:40.558Z",
+            "updated_at": "2024-08-06T11:52:40.558Z",
+            "name": "GRI-Collect-Board Involvement-Sustainability Reporting-Role",
+            "slug": "gri-governance-sustainability_reporting-2-14-role"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 143,
+        "fields": {
+            "created_at": "2024-08-07T04:53:10.526Z",
+            "updated_at": "2024-08-07T04:53:10.526Z",
+            "name": "GRI-Collect-Board Info-Structure-Governance Structure",
+            "slug": "gri-governance-structure-2-9-a-governance_structure"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 144,
+        "fields": {
+            "created_at": "2024-08-07T04:53:44.510Z",
+            "updated_at": "2024-08-07T04:53:44.510Z",
+            "name": "GRI-Collect-Board Info-Structure-Committees",
+            "slug": "gri-governance-structure-2-9-b-committees"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 145,
+        "fields": {
+            "created_at": "2024-08-07T04:54:04.625Z",
+            "updated_at": "2024-08-07T04:54:04.625Z",
+            "name": "GRI-Collect-Board Info-Structure-Composition",
+            "slug": "gri-governance-structure-2-9-c-composition"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 146,
+        "fields": {
+            "created_at": "2024-08-07T10:03:50.111Z",
+            "updated_at": "2024-08-07T10:03:50.112Z",
+            "name": "GRI-Collect-Governance-Conflict of Interest-Highest",
+            "slug": "gri-governance-conflict_of_interest-2-15-a-highest"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 147,
+        "fields": {
+            "created_at": "2024-08-07T10:04:16.213Z",
+            "updated_at": "2024-08-07T10:04:16.213Z",
+            "name": "GRI-Collect-Governance-Conflict of Interest-Report",
+            "slug": "gri-governance-conflict_of_interest-2-15-b-report"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 148,
+        "fields": {
+            "created_at": "2024-08-07T12:04:44.474Z",
+            "updated_at": "2024-08-07T12:04:44.474Z",
+            "name": "GRI-Collect-Board Info-Nomination and Selection-Nomination",
+            "slug": "gri-governance-nomination-2-10-a-nomination"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 149,
+        "fields": {
+            "created_at": "2024-08-07T12:05:00.791Z",
+            "updated_at": "2024-08-07T12:05:00.791Z",
+            "name": "GRI-Collect-Board Info-Nomination and Selection-Criteria",
+            "slug": "gri-governance-nomination-2-10-b-criteria"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 150,
+        "fields": {
+            "created_at": "2024-08-07T12:05:27.433Z",
+            "updated_at": "2024-08-07T12:05:27.433Z",
+            "name": "GRI-Collect-Board Info-Nomination and Selection-Consideration and selection",
+            "slug": "gri-governance-nomination-2-10-b-consideration_and_selection"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 151,
+        "fields": {
+            "created_at": "2024-08-07T12:05:45.570Z",
+            "updated_at": "2024-08-08T06:05:43.735Z",
+            "name": "GRI-Collect-Board Info-Chair of Board-Chair",
+            "slug": "gri-governance-chair_of_board-2-11-b-chair"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 152,
+        "fields": {
+            "created_at": "2024-08-08T05:14:18.050Z",
+            "updated_at": "2024-08-08T05:14:18.050Z",
+            "name": "GRI-Collect-Governance-Critical Concerns-Critical Concerns",
+            "slug": "gri-governance-critical_concerns-2-16-a-critical_concerns"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 153,
+        "fields": {
+            "created_at": "2024-08-08T05:14:39.326Z",
+            "updated_at": "2024-08-08T05:14:39.326Z",
+            "name": "GRI-Collect-Governance-Critical Concerns-Report",
+            "slug": "gri-governance-critical_concerns-2-16-b-report"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 154,
+        "fields": {
+            "created_at": "2024-08-08T05:59:17.409Z",
+            "updated_at": "2024-08-08T05:59:17.409Z",
+            "name": "GRI-Collect-Performance and Renumerations-Sustainability Knowledge",
+            "slug": "gri-governance-sustainability_knowledge-2-17-a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 155,
+        "fields": {
+            "created_at": "2024-08-08T06:16:53.358Z",
+            "updated_at": "2024-08-08T06:16:53.358Z",
+            "name": "GRI-Collect-Performance and Renumerations-Performance Evaluations-Processes",
+            "slug": "gri-governance-performance_evaluations-2-18-a-processes"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 156,
+        "fields": {
+            "created_at": "2024-08-08T06:17:34.937Z",
+            "updated_at": "2024-08-08T06:17:34.937Z",
+            "name": "GRI-Collect-Performance and Renumerations-Performance Evaluations-Evaluation",
+            "slug": "gri-governance-performance_evaluations-2-18-b-evaluation"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 157,
+        "fields": {
+            "created_at": "2024-08-08T06:18:28.597Z",
+            "updated_at": "2024-08-08T06:18:28.597Z",
+            "name": "GRI-Collect-Performance and Renumerations-Performance Evaluations-Actions",
+            "slug": "gri-governance-performance_evaluations-2-18-c-actions"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 158,
+        "fields": {
+            "created_at": "2024-08-08T06:21:06.638Z",
+            "updated_at": "2024-08-08T06:21:06.638Z",
+            "name": "GRI-Collect-Sustainability Strategy-Sustainability Strategy",
+            "slug": "gri-governance-sustainability_strategy-2-22-a_provide"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 159,
+        "fields": {
+            "created_at": "2024-08-08T06:23:04.435Z",
+            "updated_at": "2024-08-08T06:23:04.435Z",
+            "name": "GRI-Collect-Managing Concerns-Advice & Concerns",
+            "slug": "gri-governance-advice_and_concerns-2-26-a"
+        }
     }
 ]
