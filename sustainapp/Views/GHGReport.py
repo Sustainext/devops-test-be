@@ -315,6 +315,7 @@ def get_analysis_data(
 
             # Summing up the CO2e values
             total_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
+            total_co2e = total_co2e/1000 if total_co2e > 0 else 0
             co2e_unit = ""
             activity_unit = ""
             activity_value = 0
