@@ -388,13 +388,14 @@
         <!-- Table Section -->
         <div class="section"></div>
         <h3 class="table-allcorp">Table 1: GHG emissions by Scopes {{organization_name}}</h3>
+        {% with combined_scopes|dictsort:"scope_name" as sorted_scopes %}
         <table>
             <tr class="table-header">
                 <th>SCOPE</th>
                 <th>TOTAL EMISSIONS (tCO2e)</th>
                 <th>% OF TOTAL</th>
             </tr>
-            {% for scope in combined_scopes %}
+            {% for scope in sorted_scopes %}
             <tr>
                 <td>{{ scope.scope_name }}</td>
                 <td>{{ scope.total_co2e|floatformat:2 }} {{scope.co2e_unit}}</td>
@@ -402,25 +403,28 @@
             </tr>
             {% endfor %}
         </table>
+        {% endwith %}
         <!-- <h3>Table 1: GHG emissions by scope</h3> -->
         {% for company_data in data %}
 
         <!-- <h2>{{ company_data.corporate_name }}</h2> -->
         <h3>Table 1.{{ forloop.counter }}: GHG emissions by scope for Corporate {{ company_data.corporate_name }} </h3>
+        {% with company_data.scopes|dictsort:"scope_name" as sorted_scopes %}
         <table>
             <tr class="table-header">
                 <th>SCOPE</th>
                 <th>EMISSIONS (tCO2e)</th>
                 <th>% OF TOTAL</th>
             </tr>
-            {% for scope in company_data.scopes %}
+            {% for scope in sorted_scopes %}
             <tr>
                 <td>{{ scope.scope_name }}</td>
-                <td>{{ scope.total_co2e }} {{scope.co2e_unit}}</td>
-                <td>{{ scope.contribution_scope }}%</td>
+                <td>{{ scope.total_co2e|floatformat:2 }} {{scope.co2e_unit}}</td>
+                <td>{{ scope.contribution_scope|floatformat:2 }}%</td>
             </tr>
             {% endfor %}
         </table>
+        {% endwith %}
     </div>
     {% endfor %}
     {% else %}
