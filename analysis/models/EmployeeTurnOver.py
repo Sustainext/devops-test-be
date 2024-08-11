@@ -41,6 +41,7 @@ class EmploymentTurnover(AbstractModel):
     employee_turnover_beginning = models.IntegerField()
     employee_turnover_ending = models.IntegerField()
     value = models.IntegerField()
+    index = models.IntegerField()
 
     def __str__(self):
         return self.employmee_table_name + " " + self.employment_type
