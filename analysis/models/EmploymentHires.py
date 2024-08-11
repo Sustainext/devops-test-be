@@ -42,6 +42,7 @@ class EmploymentHires(AbstractModel):
         related_name="employment_hire_and_turnover_gender",
     )
     value = models.IntegerField()
+    index = models.IntegerField()
 
     def __str__(self):
         return self.employmee_table_name + " " + self.employment_type
