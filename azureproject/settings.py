@@ -46,6 +46,7 @@ PROJECT_APPS = [
     "sustainapp.apps.SustainappConfig",
     "authentication.apps.AuthenticationConfig",
     "datametric.apps.DatametricConfig",
+    "analysis.apps.AnalysisConfig",
 ]
 
 THIRD_PARTY = [

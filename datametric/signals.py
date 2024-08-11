@@ -9,6 +9,7 @@ from datametric.utils.signal_utilities import (
     process_raw_response_data,
 )
 from datametric.utils.signal_utilities import climatiq_data_creation
+from analysis.utils.analysis_data_maker import create_analysis_data
 from logging import getLogger
 
 logger = getLogger("error.log")
@@ -76,5 +77,6 @@ def create_response_points(sender, instance: RawResponse, created, **kwargs):
     #! Don't save the instance again, goes to non stop recursion.
     try:
         process_json(instance.data, instance.path, instance)
+        create_analysis_data(instance)
     except Exception as e:
         logger.info(f"An error occurred: {e}")
