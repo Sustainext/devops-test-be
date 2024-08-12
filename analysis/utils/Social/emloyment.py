@@ -2,6 +2,8 @@ from datametric.models import RawResponse
 from analysis.models.EmployeeTurnOver import EmploymentTurnover
 from analysis.models.EmploymentHires import EmploymentHires
 from analysis.models.Gender import Gender
+from analysis.models.ParentalLeave import ParentalLeave, EMPLOYEE_CATEGORIES
+from common.utils.value_types import get_integer
 
 EMPLOYMENT_TYPE_MAPPING = {
     "permanent_emp": "permanent employee",
@@ -20,10 +22,6 @@ AGE_GROUP_MAPPING = {
 
 def get_employment_type(slug):
     return EMPLOYMENT_TYPE_MAPPING[slug.split("-")[-1]]
-
-
-def get_integer(value):
-    return int(value) if isinstance(value, (int, str)) and str(value).isdigit() else 0
 
 
 def get_age_group_and_value(data):
@@ -86,3 +84,24 @@ def employment_analysis(raw_response: RawResponse):
         if raw_response.path.slug.startswith(slug_prefix):
             create_data(raw_response, table_name, model)
             break
+
+
+def parental_leave_analysis(raw_response: RawResponse):
+    if (
+        "gri-social-parental_leave-401-3a-3b-3c-3d-parental_leave"
+        == raw_response.path.slug
+    ):
+
+        for index, category_data in enumerate(raw_response.data):
+            category_data.pop("total")
+            for gender, value in category_data.items():
+                ParentalLeave.objects.update_or_create(
+                    month=raw_response.month,
+                    year=raw_response.year,
+                    location=raw_response.locale,
+                    organisation=raw_response.locale.corporateentity.organization,
+                    corporate=raw_response.locale.corporateentity,
+                    gender=Gender.objects.get(gender=gender),
+                    employee_category=EMPLOYEE_CATEGORIES[index][0],
+                    defaults={"value": get_integer(value)},
+                )[0].save()

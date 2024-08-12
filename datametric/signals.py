@@ -12,7 +12,7 @@ from datametric.utils.signal_utilities import climatiq_data_creation
 from analysis.utils.analysis_data_maker import create_analysis_data
 from logging import getLogger
 
-logger = getLogger("error.log")
+logger = getLogger("django.log")
 
 
 def process_json(json_obj, path, raw_response):
@@ -79,4 +79,4 @@ def create_response_points(sender, instance: RawResponse, created, **kwargs):
         process_json(instance.data, instance.path, instance)
         create_analysis_data(instance)
     except Exception as e:
-        logger.info(f"An error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
