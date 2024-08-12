@@ -24,6 +24,7 @@ class OrganisationGovernanceBodies(AbstractModel, AbstractAnalysisModel):
     gender_value = models.IntegerField()
     age_group_value = models.IntegerField()
     index = models.IntegerField()
+    table_name = models.CharField(max_length=500)
 
     def __str__(self) -> str:
         return self.employee_category
