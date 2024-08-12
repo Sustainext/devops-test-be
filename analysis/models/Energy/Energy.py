@@ -2,7 +2,8 @@ from django.db import models
 from common.models.AbstractModel import AbstractModel
 from sustainapp.models import Location, Organization, Corporateentity
 from datametric.models import RawResponse
-
+from common.models.AbstractModel import AbstractModel
+from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 from logging import getLogger
 
 logger = getLogger("error.log")
@@ -24,6 +25,7 @@ class BasicDataForEnergy(AbstractModel):
     )
     unit = models.CharField(max_length=8, null=True, blank=True)
     index = models.PositiveIntegerField(null=True, blank=True)
+
     class Meta:
         abstract = True
 
@@ -41,7 +43,7 @@ class BasicDataForEnergy(AbstractModel):
         if factor is None:
             raise ValueError(f"Unsupported unit: {unit}")
 
-        return round(quantity * factor,5)
+        return round(quantity * factor, 5)
 
     def save(self, *args, **kwargs):
         if self.quantity and self.unit:
@@ -109,17 +111,19 @@ class EnergyConsumedOutsideOrg(BasicDataForEnergy):
 
 
 # Models for 3rd energy screen
-class EnergyIntensity(BasicDataForEnergy):
+class EnergyIntensity(AbstractAnalysisModel, AbstractModel):
     energy_type = models.CharField(max_length=64, null=True, blank=True)
     energy_quantity = models.DecimalField(
-        max_digits=12, decimal_places=5, null=True, blank=True
+        max_digits=20, decimal_places=5, null=True, blank=True
     )
     energy_unit = models.CharField(max_length=1024, null=True, blank=True)
     org_metric = models.CharField(max_length=64, null=True, blank=True)
     metric_quantity = models.DecimalField(
-        max_digits=12, decimal_places=5, null=True, blank=True
+        max_digits=20, decimal_places=5, null=True, blank=True
     )
     metric_unit = models.CharField(max_length=32, null=True, blank=True)
+    index = models.PositiveIntegerField(null=True, blank=True)
+    raw_response = models.ForeignKey(RawResponse, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"EnergyIntensity with id {self.id}"

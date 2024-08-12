@@ -14,15 +14,6 @@ def create_data_for_reduction_in_energy_consumption(raw_response: RawResponse):
         != "gri-environment-energy-302-4a-4b-reduction_of_energy_consumption"
     ):
         return
-    {
-        "Baseyear": "1996",
-        "Energyreductionis": "modeled",
-        "Energytypereduced": "cooling",
-        "Methodologyused": "123123",
-        "Quantitysavedduetointervention": "313213",
-        "Typeofintervention": "Process changes",
-        "Unit": "KWh",
-    }
 
     for index, local_data in enumerate(raw_response.data):
         organisation = get_organisation(raw_response.locale)
