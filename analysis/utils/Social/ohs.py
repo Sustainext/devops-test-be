@@ -1,5 +1,5 @@
-from analysis.models.OHSEmployeeWorkerData import EmployeeWorkerData, CATEGORY_CHOICES
-from analysis.models.InjuryReport import InjuryReport, INJURIES_FOR_WHOM_CHOICES
+from analysis.models.Social.OHSEmployeeWorkerData import EmployeeWorkerData, CATEGORY_CHOICES
+from analysis.models.Social.InjuryReport import InjuryReport, INJURIES_FOR_WHOM_CHOICES
 from common.utils.value_types import get_integer
 from datametric.models import RawResponse
 

@@ -1,7 +1,7 @@
 from common.models.AbstractModel import AbstractModel
 from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 from django.db import models
-from analysis.models.Gender import Gender
+from analysis.models.Social.Gender import Gender
 
 TABLE_NAME_CHOICES = (
     (

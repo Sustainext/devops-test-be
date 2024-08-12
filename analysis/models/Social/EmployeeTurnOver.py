@@ -1,9 +1,13 @@
 from common.models.AbstractModel import AbstractModel
 from django.db import models
 from sustainapp.models import Location, Organization, Corporateentity
-from analysis.models.Gender import Gender
-from common.enums.Social import AGE_GROUP_CHOICES
+from analysis.models.Social.Gender import Gender
 
+AGE_GROUP_CHOICES = [
+    ("less than 30 years old", "Less than 30 years old"),
+    ("30-50 years old", "30-50 years old"),
+    ("greater than 50 years old", "Greater than 50 years old"),
+]
 
 EMPLOYMENT_TYPE_CHOICES = [
     ("permanent employee", "Permanent Employee"),
@@ -19,14 +23,12 @@ EMPLOYMENT_TABLE_CHOICES = [
 ]
 
 
-class EmploymentHires(AbstractModel):
+class EmploymentTurnover(AbstractModel):
     month = models.IntegerField()
     year = models.IntegerField()
     organisation = models.ForeignKey(Organization, on_delete=models.CASCADE)
     corporate = models.ForeignKey(Corporateentity, on_delete=models.CASCADE)
-    location = models.ForeignKey(
-        Location, on_delete=models.CASCADE, related_name="location"
-    )
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
     age_group = models.CharField(max_length=255, choices=AGE_GROUP_CHOICES)
     employment_type = models.CharField(max_length=255, choices=EMPLOYMENT_TYPE_CHOICES)
     employmee_table_name = models.CharField(
@@ -35,8 +37,9 @@ class EmploymentHires(AbstractModel):
     gender = models.ForeignKey(
         Gender,
         on_delete=models.PROTECT,
-        related_name="employment_hire_and_turnover_gender",
     )
+    employee_turnover_beginning = models.IntegerField()
+    employee_turnover_ending = models.IntegerField()
     value = models.IntegerField()
     index = models.IntegerField()
 

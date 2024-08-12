@@ -1,4 +1,4 @@
-from analysis.models.CommunityDevelopmentNumberOfOperation import (
+from analysis.models.Social.CommunityDevelopmentNumberOfOperation import (
     CommunityDevelopmentNumberOfOperation,
     OPERATION_CHOICES,
 )
