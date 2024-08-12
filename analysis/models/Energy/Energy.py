@@ -41,7 +41,7 @@ class BasicDataForEnergy(AbstractModel):
         if factor is None:
             raise ValueError(f"Unsupported unit: {unit}")
 
-        return quantity * factor
+        return round(quantity * factor,5)
 
     def save(self, *args, **kwargs):
         if self.quantity and self.unit:
