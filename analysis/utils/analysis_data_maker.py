@@ -13,6 +13,15 @@ from analysis.utils.Social.governance_body_details import (
 from analysis.utils.Social.community_development_number_of_operations import (
     create_data_for_community_development_number_of_operations,
 )
+from analysis.utils.Waste.waste_generated_analysis import (
+    create_data_for_waste_generated_analysis,
+)
+from analysis.utils.Waste.waste_diverted_from_disposal_analysis import (
+    create_data_for_waste_diverted_from_disposal_analysis,
+)
+from analysis.utils.Waste.waste_directed_to_disposal_analysis import (
+    create_data_for_waste_diverted_to_disposal_analysis,
+)
 from datametric.models import RawResponse
 
 
@@ -27,3 +36,6 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_community_development_number_of_operations(
         raw_response=raw_response
     )
+    create_data_for_waste_generated_analysis(raw_response=raw_response)
+    create_data_for_waste_diverted_from_disposal_analysis(raw_response=raw_response)
+    create_data_for_waste_diverted_to_disposal_analysis(raw_response=raw_response)

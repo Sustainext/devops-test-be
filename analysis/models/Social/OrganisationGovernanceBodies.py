@@ -1,6 +1,6 @@
 from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 from common.models.AbstractModel import AbstractModel
-from analysis.models.Gender import Gender
+from analysis.models.Social.Gender import Gender
 from django.db import models
 from common.enums.Social import AGE_GROUP_CHOICES
 
