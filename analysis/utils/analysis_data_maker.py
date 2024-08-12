@@ -22,6 +22,21 @@ from analysis.utils.Waste.waste_diverted_from_disposal_analysis import (
 from analysis.utils.Waste.waste_directed_to_disposal_analysis import (
     create_data_for_waste_diverted_to_disposal_analysis,
 )
+from analysis.utils.Energy.reduction_in_energy_product_services_analysis import (
+    create_data_for_reduction_in_energy_product_services,
+)
+from analysis.utils.Energy.energy_consumed_within_org import (
+    create_data_for_direct_purchased_energy,
+    create_data_for_consumed_energy,
+    create_data_for_self_genereted,
+    create_data_for_energy_sold,
+)
+from analysis.utils.Energy.reduction_in_energy_consumption import (
+    create_data_for_reduction_in_energy_consumption,
+)
+from analysis.utils.Energy.energy_intensity_analysis import (
+    create_data_for_energy_intensity_analysis,
+)
 from datametric.models import RawResponse
 
 
@@ -39,3 +54,10 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_waste_generated_analysis(raw_response=raw_response)
     create_data_for_waste_diverted_from_disposal_analysis(raw_response=raw_response)
     create_data_for_waste_diverted_to_disposal_analysis(raw_response=raw_response)
+    create_data_for_reduction_in_energy_product_services(raw_response=raw_response)
+    create_data_for_direct_purchased_energy(raw_response=raw_response)
+    create_data_for_consumed_energy(raw_response=raw_response)
+    create_data_for_self_genereted(raw_response=raw_response)
+    create_data_for_energy_sold(raw_response=raw_response)
+    create_data_for_reduction_in_energy_consumption(raw_response=raw_response)
+    create_data_for_energy_intensity_analysis(raw_response=raw_response)

@@ -1,4 +1,6 @@
-from analysis.models.Social.OrganisationGovernanceBodies import OrganisationGovernanceBodies
+from analysis.models.Social.OrganisationGovernanceBodies import (
+    OrganisationGovernanceBodies,
+)
 from common.utils.value_types import get_integer
 from common.enums.Social import AGE_GROUP_CHOICES
 from analysis.models.Social.Gender import Gender
@@ -28,7 +30,16 @@ def get_gender(local_data):
 
 
 def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
-    if raw_response.path.slug == "gri-social-diversity_of_board-405-1a-number_of_individuals":
+    if (
+        raw_response.path.slug
+        == "gri-social-diversity_of_board-405-1a-number_of_individuals"
+    ):
+        table_name = "Number of individuals within the organizations governance bodies"
+    elif (
+        raw_response.path.slug
+        == "gri-social-diversity_of_board-405-1b-number_of_employee"
+    ):
+        table_name = "Number of employee per employee category"
         for index, local_data in enumerate(raw_response.data):
             age_group_and_value = get_age_group_and_value(local_data)
             gender_group_and_value = get_gender(local_data)
@@ -54,5 +65,6 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                         defaults=defaults,
                         index=index,
                         age_group=age_group,
+                        table_name=table_name,
                         gender=Gender.objects.get(gender=gender),
                     )[0].save()

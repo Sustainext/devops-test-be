@@ -12,3 +12,4 @@ from .Social.CommunityDevelopmentNumberOfOperation import (
 from .Waste.WasteGenerated import WasteGenerated
 from .Waste.WasteDivertedFromDisposal import WasteDivertedFromDisposal
 from .Waste.WasteDirectedToDisposal import WasteDirectedToDisposal
+from .Energy.Energy import *
