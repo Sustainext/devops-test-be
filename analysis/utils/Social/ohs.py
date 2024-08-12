@@ -7,7 +7,7 @@ from datametric.models import RawResponse
 def ohs_employee_worker_data(raw_response: RawResponse):
     if "gri-social-ohs-403-8a-number_of_employees" == raw_response.path.slug:
         for index, employee_type_data in enumerate(raw_response.data):
-            category = CATEGORY_CHOICES[index]
+            category = CATEGORY_CHOICES[index][0]
             EmployeeWorkerData.objects.update_or_create(
                 month=raw_response.month,
                 year=raw_response.year,
