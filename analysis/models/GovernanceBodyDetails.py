@@ -3,10 +3,22 @@ from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 from django.db import models
 from analysis.models.Gender import Gender
 
+TABLE_NAME_CHOICES = (
+    (
+        "number_of_individuals_within_the_organizations_governance_bodies",
+        "Number of individuals within the organizations governance bodies",
+    ),
+    ("ratio_of_remuneration_of_women_to_men", "Ratio of remuneration of women to men"),
+)
+
 
 class GovernanceBodyDetails(AbstractAnalysisModel, AbstractModel):
 
     # Employee Category
+    table_name = models.CharField(
+        max_length=500,
+        help_text="Table Name",
+    )
     employee_category = models.CharField(
         max_length=500, help_text="Basic Salary per Employee Category"
     )
