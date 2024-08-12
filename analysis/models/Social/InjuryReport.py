@@ -1,5 +1,6 @@
 from django.db import models
 from common.models.AbstractModel import AbstractModel
+from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 from sustainapp.models import Organization, Corporateentity, Location
 
 INJURIES_FOR_WHOM_CHOICES = (
@@ -14,13 +15,7 @@ INJURIES_FOR_WHOM_CHOICES = (
 )
 
 
-class InjuryReport(AbstractModel):
-
-    month = models.IntegerField()
-    year = models.IntegerField()
-    organisation = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    corporate = models.ForeignKey(Corporateentity, on_delete=models.CASCADE)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+class InjuryReport(AbstractModel,AbstractAnalysisModel):
     table_name = models.CharField(max_length=120, choices=INJURIES_FOR_WHOM_CHOICES)
     employee_category = models.CharField(
         max_length=500,
