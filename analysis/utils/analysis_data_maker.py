@@ -4,6 +4,15 @@ from analysis.utils.Social.ohs import (
     ohs_the_number_of_injuries,
 )
 from analysis.utils.Social.illhealth import ill_health_report_analysis
+from analysis.utils.Social.organisation_governance_bodies import (
+    create_data_for_organisation_governance_bodies,
+)
+from analysis.utils.Social.governance_body_details import (
+    create_data_for_governance_bodies_details,
+)
+from analysis.utils.Social.community_development_number_of_operations import (
+    create_data_for_community_development_number_of_operations,
+)
 from datametric.models import RawResponse
 
 
@@ -13,3 +22,8 @@ def create_analysis_data(raw_response: RawResponse):
     ohs_employee_worker_data(raw_response=raw_response)
     ohs_the_number_of_injuries(raw_response=raw_response)
     ill_health_report_analysis(raw_response=raw_response)
+    create_data_for_organisation_governance_bodies(raw_response=raw_response)
+    create_data_for_governance_bodies_details(raw_response=raw_response)
+    create_data_for_community_development_number_of_operations(
+        raw_response=raw_response
+    )

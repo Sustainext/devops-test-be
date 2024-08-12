@@ -2,12 +2,8 @@ from common.models.AbstractModel import AbstractModel
 from django.db import models
 from sustainapp.models import Location, Organization, Corporateentity
 from analysis.models.Gender import Gender
+from common.enums.Social import AGE_GROUP_CHOICES
 
-AGE_GROUP_CHOICES = [
-    ("less than 30 years old", "Less than 30 years old"),
-    ("30-50 years old", "30-50 years old"),
-    ("greater than 50 years old", "Greater than 50 years old"),
-]
 
 EMPLOYMENT_TYPE_CHOICES = [
     ("permanent employee", "Permanent Employee"),

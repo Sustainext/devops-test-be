@@ -275,7 +275,7 @@ LOGGING = {
     },
     "formatters": {
         "detailed": {
-            "format": "{asctime} {levelname} {name} {lineno} {message}",
+            "format": "{asctime} {levelname} {name} {filename} {lineno} {message}",
             "style": "{",
         },
     },
