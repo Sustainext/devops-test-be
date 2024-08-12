@@ -33,6 +33,7 @@ def create_data_for_governance_bodies_details(raw_response: RawResponse):
         for gender_name, count in genders.items():
             gender, created = Gender.objects.get_or_create(gender=gender_name)
             GovernanceBodyDetails.objects.update_or_create(
+                raw_response=raw_response,
                 month=raw_response.month,
                 year=raw_response.year,
                 location=raw_response.locale,

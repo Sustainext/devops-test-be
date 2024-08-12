@@ -12,6 +12,7 @@ def ill_health_report_analysis(raw_response: RawResponse):
         return
     for index, local_data in enumerate(raw_response.data):
         IllHealthReport.objects.update_or_create(
+            raw_response=raw_response,
             table_name=table_name,
             month=raw_response.month,
             year=raw_response.year,

@@ -28,6 +28,7 @@ def create_data_for_waste_diverted_from_disposal_analysis(raw_response: RawRespo
         location = raw_response.locale
         waste_diverted_from_disposal, _ = (
             WasteDivertedFromDisposal.objects.update_or_create(
+                raw_response=raw_response,
                 month=raw_response.month,
                 year=raw_response.year,
                 organisation=organisation,
