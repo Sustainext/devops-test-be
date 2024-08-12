@@ -1,7 +1,9 @@
 from django.db import connection
 from django.db.utils import OperationalError
 from datametric.models import RawResponse
+import logging
 
+logger = logging.getLogger("django")
 SQL_SCRIPT = """
 -- Create the table if it doesn't exist
 CREATE TABLE IF NOT EXISTS emission_data (
@@ -91,8 +93,11 @@ ORDER BY
 
 
 def updating_emission_data(raw_response: RawResponse):
-
-    if "gri-environment-emissions-301-a-scope-" in raw_response.path.slug:
-        with connection.cursor() as cursor:
-            cursor.execute(SQL_SCRIPT)
-        return "Successfully updated emission_data table"
+    try:
+        if "gri-environment-emissions-301-a-scope-" in raw_response.path.slug:
+            with connection.cursor() as cursor:
+                cursor.execute(SQL_SCRIPT)
+            return "Successfully updated emission_data table"
+    except Exception as e:
+        logger.error(e)
+        return "Failed to update emission_data table"
