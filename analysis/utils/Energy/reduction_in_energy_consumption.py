@@ -31,7 +31,7 @@ def create_data_for_reduction_in_energy_consumption(raw_response: RawResponse):
         ReductionEnergyConsumption.objects.update_or_create(
             month=raw_response.month,
             year=raw_response.year,
-            organisation=organisation,
+            organization=organisation,
             corporate=corporate,
             location=location,
             index=index,
