@@ -3,9 +3,7 @@ from common.models.AbstractModel import AbstractModel
 from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 
 
-class IllHealthReport(
-    AbstractModel,
-):
+class IllHealthReport(AbstractModel, AbstractAnalysisModel):
     TABLE_NAME_CHOICES = [
         ("employees", "Employees"),
         ("non_employees", "Non-Employees (Controlled by Organization)"),
@@ -28,9 +26,10 @@ class IllHealthReport(
     types_of_ill_health = models.TextField(
         help_text="Main types of work-related ill health"
     )
+    index = models.PositiveIntegerField(help_text="Index of the report within the year")
 
     def __str__(self):
-        return f"{self.employee_category()} - Ill Health Report"
+        return f"{self.employee_category} - Ill Health Report"
 
     class Meta:
         verbose_name_plural = "Ill Health Reports"
