@@ -1,8 +1,8 @@
-from analysis.models.GovernanceBodyDetails import GovernanceBodyDetails
+from analysis.models.Social.GovernanceBodyDetails import GovernanceBodyDetails
 from common.utils.value_types import get_integer
 from datametric.models import RawResponse
-from analysis.models.GovernanceBodyDetails import GovernanceBodyDetails
-from analysis.models.Gender import Gender
+from analysis.models.Social.GovernanceBodyDetails import GovernanceBodyDetails
+from analysis.models.Social.Gender import Gender
 from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,

@@ -1,7 +1,7 @@
 from django.db import models
 from common.models.AbstractModel import AbstractModel
 from sustainapp.models import Location, Organization, Corporateentity
-from analysis.models.Gender import Gender
+from analysis.models.Social.Gender import Gender
 
 EMPLOYEE_CATEGORIES = [
     ("parental_leave_entitlement", "Parental Leave Entitlement"),

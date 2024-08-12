@@ -1,7 +1,7 @@
-from analysis.models.OrganisationGovernanceBodies import OrganisationGovernanceBodies
+from analysis.models.Social.OrganisationGovernanceBodies import OrganisationGovernanceBodies
 from common.utils.value_types import get_integer
 from common.enums.Social import AGE_GROUP_CHOICES
-from analysis.models.Gender import Gender
+from analysis.models.Social.Gender import Gender
 from datametric.models import RawResponse
 
 AGE_GROUP_MAPPING = {

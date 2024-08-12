@@ -1,5 +1,5 @@
 from common.utils.value_types import get_integer
-from analysis.models.IllHealth import IllHealthReport
+from analysis.models.Social.IllHealth import IllHealthReport
 from datametric.models import RawResponse
 
 

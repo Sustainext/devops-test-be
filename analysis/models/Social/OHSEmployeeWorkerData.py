@@ -9,7 +9,7 @@ CATEGORY_CHOICES = [
 ]
 
 
-class EmployeeWorkerData(models.Model):
+class EmployeeWorkerData(AbstractModel):
 
     month = models.IntegerField()
     year = models.IntegerField()

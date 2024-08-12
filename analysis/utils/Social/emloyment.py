@@ -1,8 +1,8 @@
 from datametric.models import RawResponse
-from analysis.models.EmployeeTurnOver import EmploymentTurnover
-from analysis.models.EmploymentHires import EmploymentHires
-from analysis.models.Gender import Gender
-from analysis.models.ParentalLeave import ParentalLeave, EMPLOYEE_CATEGORIES
+from analysis.models.Social.EmployeeTurnOver import EmploymentTurnover
+from analysis.models.Social.EmploymentHires import EmploymentHires
+from analysis.models.Social.Gender import Gender
+from analysis.models.Social.ParentalLeave import ParentalLeave, EMPLOYEE_CATEGORIES
 from common.utils.value_types import get_integer
 
 EMPLOYMENT_TYPE_MAPPING = {
