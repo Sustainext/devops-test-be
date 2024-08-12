@@ -10,14 +10,15 @@ def ill_health_report_analysis(raw_response: RawResponse):
         table_name = "non_employees"
     else:
         return
-    for local_data in raw_response.data:
+    for index, local_data in enumerate(raw_response.data):
         IllHealthReport.objects.update_or_create(
             table_name=table_name,
             month=raw_response.month,
             year=raw_response.year,
-            organization=raw_response.locale.corporateentity.organization,
+            organisation=raw_response.locale.corporateentity.organization,
             corporate=raw_response.locale.corporateentity,
-            location=raw_response.locale.location,
+            location=raw_response.locale,
+            index=index,
             defaults={
                 "employee_category": local_data["employeeCategory"],
                 "fatalities_due_to_ill_health": get_integer(local_data["fatalities"]),
