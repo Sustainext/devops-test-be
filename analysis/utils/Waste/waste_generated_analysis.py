@@ -14,13 +14,13 @@ def create_data_for_waste_generated_analysis(raw_response: RawResponse):
     for index, local_data in enumerate(raw_response.data):
         organisation = (
             raw_response.organization
-            if get_organisation(raw_response) is None
-            else get_organisation(raw_response)
+            if get_organisation(raw_response.locale) is None
+            else get_organisation(raw_response.locale)
         )
         corporate = (
             raw_response.corporate
-            if get_corporate(raw_response) is None
-            else get_corporate(raw_response)
+            if get_corporate(raw_response.locale) is None
+            else get_corporate(raw_response.locale)
         )
         location = raw_response.locale
         waste_generated_object, _ = WasteGenerated.objects.update_or_create(

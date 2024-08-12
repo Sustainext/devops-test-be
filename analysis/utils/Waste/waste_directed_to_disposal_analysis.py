@@ -17,13 +17,13 @@ def create_data_for_waste_diverted_to_disposal_analysis(raw_response: RawRespons
     for index, local_data in enumerate(raw_response.data):
         organisation = (
             raw_response.organization
-            if get_organisation(raw_response) is None
-            else get_organisation(raw_response)
+            if get_organisation(raw_response.locale) is None
+            else get_organisation(raw_response.locale)
         )
         corporate = (
             raw_response.corporate
-            if get_corporate(raw_response) is None
-            else get_corporate(raw_response)
+            if get_corporate(raw_response.locale) is None
+            else get_corporate(raw_response.locale)
         )
         location = raw_response.locale
         waste_diverted_from_disposal_object, _ = (

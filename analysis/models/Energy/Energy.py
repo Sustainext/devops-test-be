@@ -23,7 +23,7 @@ class BasicDataForEnergy(AbstractModel):
         max_digits=12, decimal_places=5, null=True, blank=True
     )
     unit = models.CharField(max_length=8, null=True, blank=True)
-
+    index = models.PositiveIntegerField(null=True, blank=True)
     class Meta:
         abstract = True
 
