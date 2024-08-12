@@ -10,6 +10,9 @@ from analysis.utils.Social.organisation_governance_bodies import (
 from analysis.utils.Social.governance_body_details import (
     create_data_for_governance_bodies_details,
 )
+from analysis.utils.Social.community_development_number_of_operations import (
+    create_data_for_community_development_number_of_operations,
+)
 from datametric.models import RawResponse
 
 
@@ -21,3 +24,6 @@ def create_analysis_data(raw_response: RawResponse):
     ill_health_report_analysis(raw_response=raw_response)
     create_data_for_organisation_governance_bodies(raw_response=raw_response)
     create_data_for_governance_bodies_details(raw_response=raw_response)
+    create_data_for_community_development_number_of_operations(
+        raw_response=raw_response
+    )
