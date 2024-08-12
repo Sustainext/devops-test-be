@@ -14,9 +14,9 @@ from common.utils.energy_unit_converter import convert_to_gj
 
 
 def create_data_for_direct_purchased_energy(raw_response: RawResponse):
-    if raw_response.path.slug != "gri-environment-energy-302-1a-1b-direct_purchasedy":
+    if raw_response.path.slug != "gri-environment-energy-302-1a-1b-direct_purchased":
         return
-
+    
     for index, local_data in enumerate(raw_response.data):
         organisation = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)
