@@ -309,9 +309,9 @@ def get_analysis_data(
             path_name = data.raw_response.path.name
             scope_name = "-".join(path_name.split("-")[-2:])
             for r in data.raw_response.data:
-                unit1 = r["Emission"]["Unit"]
+                unit1 = r["Emission"]["Unit"] if "Unit" in r["Emission"] else ""
                 unit2 = r["Emission"]["Unit2"] if "Unit2" in r["Emission"] else ""
-                unit_type = r["Emission"]["unit_type"]
+                unit_type = r["Emission"]["unit_type"] if "unit_type" in r["Emission"] else ""
 
             # Summing up the CO2e values
             total_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
