@@ -37,6 +37,7 @@ from analysis.utils.Energy.reduction_in_energy_consumption import (
 from analysis.utils.Energy.energy_intensity_analysis import (
     create_data_for_energy_intensity_analysis,
 )
+from analysis.utils.Environment.updating_emission_data import updating_emission_data
 from datametric.models import RawResponse
 
 
@@ -61,3 +62,4 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_energy_sold(raw_response=raw_response)
     create_data_for_reduction_in_energy_consumption(raw_response=raw_response)
     create_data_for_energy_intensity_analysis(raw_response=raw_response)
+    updating_emission_data(raw_response=raw_response)
