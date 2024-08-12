@@ -1,4 +1,5 @@
 from common.models.AbstractModel import AbstractModel
+from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 from django.db import models
 from sustainapp.models import Location, Organization, Corporateentity
 from analysis.models.Social.Gender import Gender
@@ -23,12 +24,7 @@ EMPLOYMENT_TABLE_CHOICES = [
 ]
 
 
-class EmploymentTurnover(AbstractModel):
-    month = models.IntegerField()
-    year = models.IntegerField()
-    organisation = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    corporate = models.ForeignKey(Corporateentity, on_delete=models.CASCADE)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+class EmploymentTurnover(AbstractModel, AbstractAnalysisModel):
     age_group = models.CharField(max_length=255, choices=AGE_GROUP_CHOICES)
     employment_type = models.CharField(max_length=255, choices=EMPLOYMENT_TYPE_CHOICES)
     employmee_table_name = models.CharField(

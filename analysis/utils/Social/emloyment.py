@@ -60,6 +60,7 @@ def create_data(raw_response: RawResponse, table_name, model):
                 organisation=raw_response.locale.corporateentity.organization,
                 corporate=raw_response.locale.corporateentity,
                 age_group=age_group,
+                raw_response=raw_response,
                 employment_type=get_employment_type(raw_response.path.slug),
                 gender=get_gender(index),
                 employmee_table_name=table_name,
@@ -96,6 +97,7 @@ def parental_leave_analysis(raw_response: RawResponse):
             category_data.pop("total")
             for gender, value in category_data.items():
                 ParentalLeave.objects.update_or_create(
+                    raw_response=raw_response,
                     month=raw_response.month,
                     year=raw_response.year,
                     location=raw_response.locale,

@@ -24,6 +24,7 @@ def create_data_for_waste_generated_analysis(raw_response: RawResponse):
         )
         location = raw_response.locale
         waste_generated_object, _ = WasteGenerated.objects.update_or_create(
+            raw_response=raw_response,
             month=raw_response.month,
             year=raw_response.year,
             organisation=organisation,

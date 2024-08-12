@@ -23,6 +23,7 @@ def create_data_for_community_development_number_of_operations(
         return
     for index, entry in enumerate(raw_response.data):
         CommunityDevelopmentNumberOfOperation.objects.update_or_create(
+            raw_response=raw_response,
             month=raw_response.month,
             year=raw_response.year,
             location=raw_response.locale,

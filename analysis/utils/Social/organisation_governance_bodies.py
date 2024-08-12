@@ -57,6 +57,7 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                         "employee_category": local_data["category"],
                     }
                     OrganisationGovernanceBodies.objects.update_or_create(
+                        raw_response=raw_response,
                         month=raw_response.month,
                         year=raw_response.year,
                         location=raw_response.locale,
