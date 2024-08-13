@@ -1,7 +1,8 @@
 from django.db import models
 from common.models.AbstractModel import AbstractModel
+from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 from sustainapp.models import Location, Organization, Corporateentity
-from analysis.models.Gender import Gender
+from analysis.models.Social.Gender import Gender
 
 EMPLOYEE_CATEGORIES = [
     ("parental_leave_entitlement", "Parental Leave Entitlement"),
@@ -11,14 +12,7 @@ EMPLOYEE_CATEGORIES = [
 ]
 
 
-class ParentalLeave(AbstractModel):
-    month = models.IntegerField()
-    year = models.IntegerField()
-    organisation = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    corporate = models.ForeignKey(Corporateentity, on_delete=models.CASCADE)
-    location = models.ForeignKey(
-        Location, on_delete=models.CASCADE, related_name="parental_leave_location"
-    )
+class ParentalLeave(AbstractModel, AbstractAnalysisModel):
     value = models.IntegerField()
     gender = models.ForeignKey(
         Gender, on_delete=models.PROTECT, related_name="parental_leave_gender"

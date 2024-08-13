@@ -1,6 +1,6 @@
 from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 from common.models.AbstractModel import AbstractModel
-from analysis.models.Gender import Gender
+from analysis.models.Social.Gender import Gender
 from django.db import models
 from common.enums.Social import AGE_GROUP_CHOICES
 
@@ -24,6 +24,7 @@ class OrganisationGovernanceBodies(AbstractModel, AbstractAnalysisModel):
     gender_value = models.IntegerField()
     age_group_value = models.IntegerField()
     index = models.IntegerField()
+    table_name = models.CharField(max_length=500)
 
     def __str__(self) -> str:
         return self.employee_category

@@ -1,5 +1,8 @@
-from analysis.models.OHSEmployeeWorkerData import EmployeeWorkerData, CATEGORY_CHOICES
-from analysis.models.InjuryReport import InjuryReport, INJURIES_FOR_WHOM_CHOICES
+from analysis.models.Social.OHSEmployeeWorkerData import (
+    EmployeeWorkerData,
+    CATEGORY_CHOICES,
+)
+from analysis.models.Social.InjuryReport import InjuryReport, INJURIES_FOR_WHOM_CHOICES
 from common.utils.value_types import get_integer
 from datametric.models import RawResponse
 
@@ -7,8 +10,9 @@ from datametric.models import RawResponse
 def ohs_employee_worker_data(raw_response: RawResponse):
     if "gri-social-ohs-403-8a-number_of_employees" == raw_response.path.slug:
         for index, employee_type_data in enumerate(raw_response.data):
-            category = CATEGORY_CHOICES[index]
+            category = CATEGORY_CHOICES[index][0]
             EmployeeWorkerData.objects.update_or_create(
+                raw_response=raw_response,
                 month=raw_response.month,
                 year=raw_response.year,
                 organisation=raw_response.locale.corporateentity.organization,
@@ -38,6 +42,7 @@ def ohs_the_number_of_injuries(raw_response: RawResponse):
         return
     for local_data in raw_response.data:
         InjuryReport.objects.update_or_create(
+            raw_response=raw_response,
             month=raw_response.month,
             year=raw_response.year,
             organisation=raw_response.locale.corporateentity.organization,

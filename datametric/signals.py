@@ -79,4 +79,4 @@ def create_response_points(sender, instance: RawResponse, created, **kwargs):
         process_json(instance.data, instance.path, instance)
         create_analysis_data(instance)
     except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}", exc_info=True)
