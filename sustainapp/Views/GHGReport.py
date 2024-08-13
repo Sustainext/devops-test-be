@@ -348,13 +348,17 @@ def process_corporate_data(self, id, start_date, end_date, client_id, corporate_
         )
         emission_by_source = defaultdict(
             lambda: {
-                "source_name": "investment_source", 
+                "scope_name": "Scope-3", 
+                "source_name": corporate_name, 
                 "category_name": "Investment",
                 "activity_name":"On other Corporates",
                 "source":"Other",
                 "year":2024,
                 "total_co2e": 0,
-                "contribution_source": 0
+                "contribution_source": 0,
+                "activity_data": {
+                        "activity_unit": "-",
+                    }
             }
         )
         total_co2e = 0 
