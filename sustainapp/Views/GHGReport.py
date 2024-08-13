@@ -319,6 +319,11 @@ def process_corporate_data(self, id, start_date, end_date, client_id, corporate_
     location_names = locations.values_list("id", flat=True)
     corporate_name = Corporateentity.objects.get(pk=id).name
 
+    co2e_unit = ""
+    activity_unit = ""
+    activity_value = 0
+    activity_data = {}
+
     # Get all Raw Responses based on location and year.
     raw_responses = RawResponse.objects.filter(
         path__slug__icontains="gri-environment-emissions-301-a-scope-",
