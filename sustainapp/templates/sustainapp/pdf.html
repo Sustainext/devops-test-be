@@ -687,13 +687,15 @@
                 <th>YEAR</th>
             </tr>
             {% for report in data %}
-            {% for source in report.sources%}
+            {% for source in report.sources %}
+            {% if source.category_name != "Investment" %}
             <tr>
-                <td>{{source.category_name|safe}} - {{source.activity_name|split_string:"-"|first}} </td>
-                <td>{{source.co2e_unit }}CO<sub>2</sub>e / {{source.activity_data.activity_unit}}</td>
-                <td>{{source.source }}</td>
-                <td>{{source.year}}</td>
+                <td>{{ source.category_name|safe }} - {{ source.activity_name|split_string:"-"|first }}</td>
+                <td>{{ source.co2e_unit }} CO<sub>2</sub>e / {{ source.activity_data.activity_unit }}</td>
+                <td>{{ source.source }}</td>
+                <td>{{ source.year }}</td>
             </tr>
+            {% endif %}
             {% endfor %}
             {% endfor %}
             <!-- Add more rows as needed -->
