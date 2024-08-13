@@ -50,6 +50,7 @@ from sustainapp.Views.Analyse.Social.CustomerHealthAnalyze import (
 from sustainapp.Views.Analyse.Social.MarketingLabelingAnalyze import (
     MarketingLabelingAnalyzeView,
 )
+from sustainapp.Views.GetAllCorporates import AllCorporateList
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -171,4 +172,5 @@ urlpatterns = [
         MarketingLabelingAnalyzeView.as_view(),
         name="get_marketing_and_labeling_analysis",
     ),
+    path("all_corporate_list/", AllCorporateList.as_view(), name="all_corporate_list"),
 ]

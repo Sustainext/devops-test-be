@@ -235,7 +235,6 @@ def get_analysis_data_by_source(self, data_points):
 
     return structured_data
 
-
 def get_analysis_data(
     self,
     corporate_id,
@@ -243,6 +242,7 @@ def get_analysis_data(
     end_date,
     report_id,
     client_id,
+    investment_corporates=None  # Added argument for investment corporates
 ):
     """
     Retrieves analysis data for a given set of corporate IDs, start and end years, and start and end months.
@@ -254,43 +254,167 @@ def get_analysis_data(
         end_year (str): The end year for the analysis.
         start_month (str): The start month for the analysis.
         end_month (str): The end month for the analysis.
+        investment_corporates (list): A list of investment corporate IDs.
 
     Returns:
         dict: A dictionary containing the analysis data, including the contribution of each scope to the total emissions.
-
-    Task left to do:
-        * Add logic to determine unit1, take it from rawresponse>data>emission>unit.
-        * Need to Find unit2.
-        * Add logic to determine unit_type, take it from rawresponse>data>emission>unit_type .
-        * Still need to work on Scource data and location data
-        * Refactor and optimization
     """
     analysis_data_by_corporate = defaultdict(dict)
+
+    # Process regular corporates
     for id in corporate_id:
-        locations = Location.objects.filter(corporateentity=id)
-        location_names = locations.values_list("id", flat=True)
-        corporate_name = Corporateentity.objects.get(pk=id).name
-        # * Get all Raw Respones based on location and year.
-        raw_responses = RawResponse.objects.filter(
-            path__slug__icontains="gri-environment-emissions-301-a-scope-",
-            locale__in=location_names,
-            client_id=client_id,
-        ).filter(filter_by_start_end_dates(start_date=start_date, end_date=end_date))
+        process_corporate_data(self,id, start_date, end_date, client_id, "Regular", analysis_data_by_corporate)
 
-        data_points = DataPoint.objects.filter(
-            raw_response__in=raw_responses, json_holder__isnull=False
-        ).select_related("raw_response")
+    # Process investment corporates if provided
+    if investment_corporates:
+        for investment_corporate in investment_corporates:
+            id = investment_corporate["corporate_id"]
+            ownership_ratio = investment_corporate["ownership_ratio"]
+            process_corporate_data(self,id, start_date, end_date, client_id, "Investment", analysis_data_by_corporate, ownership_ratio)
 
-        if not data_points:
-            # Skip this corporate if there are no data points
-            continue
-
-        emission_by_source = get_analysis_data_by_source(self, data_points)
-
-        emission_by_location = get_analysis_data_by_location(
-            self, data_points, locations
+    if not analysis_data_by_corporate:
+        return Response(
+            {"message": "No data available for the given corporate IDs."},
+            status=status.HTTP_204_NO_CONTENT,
         )
 
+    # Restructure data for the final response
+    restructured_data = {}
+
+    for corporate_name, corporate_data in analysis_data_by_corporate.items():
+        corporate_entry = {
+            "corporate_name": corporate_name,
+            "corporate_type": corporate_data["corporate_type"],  # Include corporate_type
+            "scope": corporate_data["scopes"],
+            "location": corporate_data["locations"],
+            "source": corporate_data["sources"],
+        }
+
+        restructured_data[corporate_name] = corporate_entry
+
+    try:
+        serialized_data = json.dumps(restructured_data, cls=DjangoJSONEncoder)
+    except UnboundLocalError as e:
+        logger.error(f"Error in GHGReportView: {e}")
+        return Response(
+            {"message": "No data available for the given corporate IDs."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    
+    # Save the report_analysis_data dictionary in the AnalysisData JSONField
+    analysis_data_instance = AnalysisData2.objects.create(
+        report_id=report_id,
+        data=serialized_data,
+        client_id=client_id,
+    )
+    analysis_data_instance.save()
+
+    return Response(
+        {"message": f"Calculation success, Report created successfully ID:{report_id}"},
+        status=status.HTTP_200_OK,
+    )
+
+def process_corporate_data(self, id, start_date, end_date, client_id, corporate_type, analysis_data_by_corporate, ownership_ratio=None):
+    locations = Location.objects.filter(corporateentity=id)
+    location_names = locations.values_list("id", flat=True)
+    corporate_name = Corporateentity.objects.get(pk=id).name
+
+    co2e_unit = ""
+    activity_unit = ""
+    activity_value = 0
+    activity_data = {}
+
+    # Get all Raw Responses based on location and year.
+    raw_responses = RawResponse.objects.filter(
+        path__slug__icontains="gri-environment-emissions-301-a-scope-",
+        locale__in=location_names,
+        client_id=client_id,
+    ).filter(filter_by_start_end_dates(start_date=start_date, end_date=end_date))
+
+    data_points = DataPoint.objects.filter(
+        raw_response__in=raw_responses, json_holder__isnull=False
+    ).select_related("raw_response")
+
+    if not data_points:
+        return
+
+    if corporate_type == "Investment":
+        emission_by_scope = defaultdict(
+            lambda: {
+                "scope_name": "Scope-3",  # Aggregate under Scope-3
+                "total_co2e": 0,
+                "co2e_unit": "",
+                "unit_type": "",
+                "unit1": "",
+                "unit2": "",
+                "activity_data": {"activity_unit": "", "activity_value": 0},
+                "entries": [],
+            }
+        )
+        emission_by_source = defaultdict(
+            lambda: {
+                "scope_name": "Scope-3", 
+                "source_name": corporate_name, 
+                "category_name": "Investment",
+                "activity_name":"On other Corporates",
+                "source":"Other",
+                "year":2024,
+                "total_co2e": 0,
+                "contribution_source": 0,
+                "activity_data": {
+                        "activity_unit": "-",
+                    }
+            }
+        )
+        total_co2e = 0 
+        for data in data_points:
+            # Sum up the CO2e from all scopes
+            scope_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
+            if ownership_ratio:
+                scope_co2e = (scope_co2e * ownership_ratio) / 100
+            scope_co2e = scope_co2e / 1000 if scope_co2e > 0 else 0
+            total_co2e += scope_co2e
+
+            if data.json_holder:
+                first_entry = data.json_holder[0]
+                co2e_unit = first_entry.get("co2e_unit", "")
+                activity_data = first_entry.get("activity_data", {})
+                activity_unit = activity_data.get("activity_unit", "")
+                activity_value = sum(
+                    [
+                        i.get("activity_data", {}).get("activity_value", 0)
+                        for i in data.json_holder
+                    ]
+                )
+
+            # Aggregate everything under Scope-3
+            emission_by_scope["Scope-3"]["total_co2e"] += scope_co2e
+            emission_by_scope["Scope-3"]["co2e_unit"] = co2e_unit
+            emission_by_scope["Scope-3"]["activity_data"]["activity_unit"] = activity_unit
+            emission_by_scope["Scope-3"]["activity_data"]["activity_value"] += activity_value
+
+            # Aggregate the CO2e values by source
+            emission_by_source["investment_source"]["total_co2e"] += scope_co2e
+
+        print(total_co2e)
+            
+        structured_emission_data = calculate_contributions(self,emission_by_scope, total_co2e)
+
+        # Calculate contribution for the source
+        for source, values in emission_by_source.items():
+            contribution_source = (values["total_co2e"] / total_co2e) * 100 if total_co2e else 0
+            emission_by_source[source]["contribution"] = round(contribution_source, 2)
+
+        analysis_data_by_corporate[corporate_name] = {
+            "corporate_type": corporate_type,
+            "scopes": structured_emission_data,  # Convert defaultdict to regular dict
+            "locations":[],
+            "sources":list(emission_by_source.values()),
+        }
+    else:
+        # Regular corporate processing (as you have already implemented)
+        emission_by_source = get_analysis_data_by_source(self, data_points)
+        emission_by_location = get_analysis_data_by_location(self, data_points, locations)
         emission_by_scope = defaultdict(
             lambda: {
                 "scope_name": "",
@@ -304,7 +428,6 @@ def get_analysis_data(
             }
         )
 
-        # Assuming data_points is a list of objects containing the necessary data
         for data in data_points:
             path_name = data.raw_response.path.name
             scope_name = "-".join(path_name.split("-")[-2:])
@@ -313,15 +436,9 @@ def get_analysis_data(
                 unit2 = r["Emission"]["Unit2"] if "Unit2" in r["Emission"] else ""
                 unit_type = r["Emission"]["unit_type"] if "unit_type" in r["Emission"] else ""
 
-            # Summing up the CO2e values
             total_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
-            total_co2e = total_co2e/1000 if total_co2e > 0 else 0
-            co2e_unit = ""
-            activity_unit = ""
-            activity_value = 0
-            activity_data = {}
+            total_co2e = total_co2e / 1000 if total_co2e > 0 else 0
 
-            # Assuming all entries have the same unit and activity data
             if data.json_holder:
                 first_entry = data.json_holder[0]
                 co2e_unit = first_entry.get("co2e_unit", "")
@@ -334,70 +451,25 @@ def get_analysis_data(
                     ]
                 )
 
-            # Update the defaultdict with the new values
             emission_by_scope[scope_name]["scope_name"] = scope_name
             emission_by_scope[scope_name]["total_co2e"] += round(total_co2e, 2)
             emission_by_scope[scope_name]["co2e_unit"] = co2e_unit
             emission_by_scope[scope_name]["unit1"] = unit1
             emission_by_scope[scope_name]["unit2"] = unit2
             emission_by_scope[scope_name]["unit_type"] = unit_type
-            emission_by_scope[scope_name]["activity_data"][
-                "activity_unit"
-            ] = activity_unit
-            emission_by_scope[scope_name]["activity_data"][
-                "activity_value"
-            ] += activity_value
+            emission_by_scope[scope_name]["activity_data"]["activity_unit"] = activity_unit
+            emission_by_scope[scope_name]["activity_data"]["activity_value"] += activity_value
             emission_by_scope[scope_name]["entries"].extend(data.json_holder)
 
-        # Example total emissions for calculating contributions
         total_emissions = sum([v["total_co2e"] for v in emission_by_scope.values()])
-
-        data = calculate_contributions(self, emission_by_scope, total_emissions)
+        scopes = calculate_contributions(self, emission_by_scope, total_emissions)
 
         analysis_data_by_corporate[corporate_name] = {
-            "scopes": calculate_contributions(self, emission_by_scope, total_emissions),
+            "corporate_type": corporate_type,  # Add corporate_type here
+            "scopes": scopes,
             "locations": emission_by_location,
             "sources": emission_by_source,
         }
-
-        if not analysis_data_by_corporate:
-            return Response(
-                {"message": "No data available for the given corporate IDs."},
-                status=status.HTTP_204_NO_CONTENT,
-            )
-
-        restructured_data = {}
-
-        for corporate_name, corporate_data in analysis_data_by_corporate.items():
-            corporate_entry = {
-                "corporate_name": corporate_name,
-                "scope": corporate_data["scopes"],
-                "location": corporate_data["locations"],
-                "source": corporate_data["sources"],
-            }
-
-            restructured_data[corporate_name] = corporate_entry
-
-    try:
-        serialized_data = json.dumps(restructured_data, cls=DjangoJSONEncoder)
-    except UnboundLocalError as e:
-        logger.error(f"Error in GHGReportView: {e}")
-        return Response(
-            {"message": "No data available for the given corporate IDs."},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-    # Save the report_analysis_data dictionary in the AnalysisData JSONField
-    analysis_data_instance = AnalysisData2.objects.create(
-        report_id=report_id,
-        data=serialized_data,
-        client_id=client_id,
-    )
-    analysis_data_instance.save()
-    return Response(
-        {"message": f"Calculation success, Report created successfully ID:{report_id}"},
-        status=status.HTTP_200_OK,
-    )
-
 
 class GHGReportView(generics.CreateAPIView):
     serializer_class = ReportSerializer
@@ -441,12 +513,9 @@ class GHGReportView(generics.CreateAPIView):
         end_date = serializer.validated_data.get("end_date")
         corporate_id = serializer.validated_data.get("corporate")
         organization = serializer.validated_data.get("organization")
-
+        report_type = serializer.validated_data.get("report_type")
+        investment_corporates = serializer.validated_data.get("investment_corporates")
         organization_id = organization.id
-        start_month = start_date.month
-        end_month = end_date.month
-        start_year = start_date.year
-        end_year = end_date.year
 
         if organization_id:
             corporate_ids = Corporateentity.objects.filter(
@@ -461,7 +530,10 @@ class GHGReportView(generics.CreateAPIView):
                 end_date,
                 report_id,
                 client_id,
+                # report_type,
+                investment_corporates,
             )
+
         elif corporate_id:
             # If multiple corporate names are provided, pass the list of names
             analysis_data = get_analysis_data(
@@ -471,6 +543,8 @@ class GHGReportView(generics.CreateAPIView):
                 end_date,
                 report_id,
                 client_id,
+                # report_type,
+                investment_corporates,
             )
 
         if isinstance(analysis_data, Response):
@@ -506,6 +580,7 @@ class AnalysisData2APIView(APIView):
             # Iterate over each corporate in data_dict
             for corporate_name, corporate_data in data_dict.items():
                 corporate_name = corporate_data.get("corporate_name", [])
+                corporate_type = corporate_data.get("corporate_type",[])
                 scopes = corporate_data.get("scope", [])
                 locations = corporate_data.get("location", [])
                 sources = corporate_data.get("source", [])
@@ -513,6 +588,7 @@ class AnalysisData2APIView(APIView):
                 # Organize the data into the desired structure
                 organized_data = {
                     "corporate_name": corporate_name,
+                    "corporate_type":corporate_type,
                     "scopes": scopes,
                     "locations": locations,
                     "sources": sources,

@@ -414,6 +414,7 @@ class ReportSerializer(serializers.ModelSerializer):
     status = serializers.CharField(required=False)
     client = serializers.CharField(required=False)
     user = serializers.CharField(required=False)
+    investment_corporates = serializers.JSONField(required=False)
 
     class Meta:
         model = Report
