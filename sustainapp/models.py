@@ -904,6 +904,7 @@ class Report(models.Model):
     STATUS_CHOICES = [(0, "Deactivate"), (1, "Activate")]
 
     status = models.IntegerField(choices=STATUS_CHOICES)
+    investment_corporates = models.JSONField(blank=True, null=True) 
 
     def clean(self):
         if self.corporate and self.organization:
