@@ -13870,5 +13870,1240 @@
                 }
             }
         }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 161,
+        "fields": {
+            "created_at": "2024-08-12T07:36:07.975Z",
+            "updated_at": "2024-08-12T07:36:07.975Z",
+            "name": "Performance and Renumerations-Annual & Median",
+            "path": 160,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "What is the annual total compensation for the organization's highest paid-individual?",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Annual total compensation includes salary, bonus, stock awards, option awards, non-equity incentive plan compensation, change in pension value, and nonqualified deferred compensation earnings provided over the course of a year.",
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "What is the median annual total compensation for all of the organization's employees excluding the highest-paid individual?",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide a detail information about median annual total compensation for all of the organization's employees excluding the highest-paid individual.",
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ]
+                },
+                "ui:options": {
+                    "addable": false,
+                    "orderable": false,
+                    "removable": false
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "What is the annual total compensation for the organization's highest paid-individual?"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "What is the median annual total compensation for all of the organization's employees excluding the highest-paid individual?"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 162,
+        "fields": {
+            "created_at": "2024-08-12T07:37:00.163Z",
+            "updated_at": "2024-08-12T07:37:00.163Z",
+            "name": "Performance and Renumerations-Percentage",
+            "path": 161,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Report contextual information necessary to understand the data and how the data has been compiled.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide contextual information necessary to understand the data and how the data has been compiled. Include: Any standard, methodology and assumption used to compile data.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Report contextual information necessary to understand the data and how the data has been compiled."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 163,
+        "fields": {
+            "created_at": "2024-08-12T07:37:50.419Z",
+            "updated_at": "2024-08-12T07:37:50.419Z",
+            "name": "Performance and Renumerations-Contextual",
+            "path": 162,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "What is the percentage increase in annual total compensation for the organization's highest-paid",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Specify the percentage increase in annual total compensation for the organization's highest-paid individual.",
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "What is the median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual?",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Specify the median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual.",
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ]
+                },
+                "ui:options": {
+                    "addable": false,
+                    "orderable": false,
+                    "removable": false
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "What is the percentage increase in annual total compensation for the organization's highest-paid"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "What is the median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual?"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 164,
+        "fields": {
+            "created_at": "2024-08-13T11:39:05.414Z",
+            "updated_at": "2024-08-13T11:39:05.414Z",
+            "name": "Remediation-Process-Commitments",
+            "path": 163,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "what are the organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to?",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 165,
+        "fields": {
+            "created_at": "2024-08-13T11:39:44.774Z",
+            "updated_at": "2024-08-13T11:39:44.774Z",
+            "name": "Remediation-Process-Approach",
+            "path": 164,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe organisation's approach to identify and address grievances, including the grievance mechanisms that the organization has established or participates in",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Grievance mechanisms refer to any routinized, state-based or non-state-based, judicial or non judicial processes through which stakeholders can raise grievances and seek remedy.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe organisation's approach to identify and address grievances, including the grievance mechanisms that the organization has established or participates in"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 166,
+        "fields": {
+            "created_at": "2024-08-13T11:46:49.217Z",
+            "updated_at": "2024-08-13T11:46:49.217Z",
+            "name": "Remediation-Process-Other Processes",
+            "path": 165,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe other processes by which the organization provides for or cooperates in the remediation of negative impacts that it identifies it has caused or contributed to.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "This disclosure can include remediation processes other than grievance mechanisms. Such processes lead to the remediation of an impact without mechanisms for filing a formal complaint.Examples include instances where the organization takes action to remediate an actual impact evidenced in an impact assessment or a report published by a civil society organization.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe other processes by which the organization provides for or cooperates in the remediation of negative impacts that it identifies it has caused or contributed to."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 167,
+        "fields": {
+            "created_at": "2024-08-13T11:47:29.122Z",
+            "updated_at": "2024-08-13T11:47:29.122Z",
+            "name": "Remediation-Process-Stakeholders",
+            "path": 166,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe how the stakeholders who are the intended users of the grievance mechanisms are involved in the design, review, operation, and improvement of these mechanisms",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "The organization can describe, for example, how it engages with stakeholders who are the intended users of the grievance mechanisms, to understand how they want to access the mechanisms to raise concerns, and their expectations about how the mechanisms will operate.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe how the stakeholders who are the intended users of the grievance mechanisms are involved in the design, review, operation, and improvement of these mechanisms"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 168,
+        "fields": {
+            "created_at": "2024-08-13T11:48:03.048Z",
+            "updated_at": "2024-08-13T11:48:03.048Z",
+            "name": "Remediation-Process-Effectiveness",
+            "path": 167,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe how the organization tracks the effectiveness of the grievance mechanisms and other remediation processes, and report examples of their effectiveness, including stakeholder feedback.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "The organization can report:<ul><li>whether and how the intended users are informed about the grievance mechanisms and remediation processes;</li><li>whether and how the intended users are trained to use the grievance mechanisms and remediation processes;</li><li>the accessibility of the grievance mechanisms and remediation processes, such as the number of hours per day or days per week they are accessible, and their availability in different languages;</li><li>how the organization seeks to ensure it respects users' human rights and protects them against reprisals;</li><li>how satisfied users are with the grievance mechanisms and remediation processes, and with the resulting outcomes, as well as how the organization assesses user satisfaction;</li><li>the number and types of grievances filed during the reporting period, and the percentage of grievances that were addressed and resolved, including the percentage that were resolved through remediation;</li><li>the number of grievances filed during the reporting period that are repeated or recurring;</li><li>changes made to the grievance mechanisms and remediation processes in response to lessons learned about their effectiveness.</li></ul>",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe how the organization tracks the effectiveness of the grievance mechanisms and other remediation processes, and report examples of their effectiveness, including stakeholder feedback."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 169,
+        "fields": {
+            "created_at": "2024-08-14T10:44:38.134Z",
+            "updated_at": "2024-08-14T10:44:38.134Z",
+            "name": "Performance and Remuneration-Remuneration-Remuneration",
+            "path": 168,
+            "meta_data": {
+                "key": "value"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Fixed pay & variable pay",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Report on fixed pay and variable pay. This can include performance-based pay, equity-based pay, bonuses, and deferred and vested shares.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "Sign-on bonuses or recruitment incentive payments",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Report on sign-on bonuses or recruitment incentive payments.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q3": {
+                        "ui:title": "Termination payments",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Report on termination payments.Termination payments are all payments and benefits given to a departing member of the highest governance body or senior executive whose appointment is terminated.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q4": {
+                        "ui:title": "Clawbacks",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Clawbacks are repayments of previously received compensation that a highest governance body member or senior executive is required to make to their employer if certain conditions of employment or goals are not met",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q5": {
+                        "ui:title": "Retirement benefits",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Report on retirement benefits. This can also include the differences between the retirement benefit schemes and the contribution rates for the highest governance body members, senior executives, and all other employee. ",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2",
+                        "Q3",
+                        "Q4",
+                        "Q5"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Fixed pay & variable pay"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Sign-on bonuses or recruitment incentive payments"
+                        },
+                        "Q3": {
+                            "type": "string",
+                            "title": "Termination payments"
+                        },
+                        "Q4": {
+                            "type": "string",
+                            "title": "Clawbacks"
+                        },
+                        "Q5": {
+                            "type": "string",
+                            "title": "Retirement benefits"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 170,
+        "fields": {
+            "created_at": "2024-08-14T10:47:09.543Z",
+            "updated_at": "2024-08-14T10:47:09.543Z",
+            "name": "Performance and Remuneration-Remuneration-Policies",
+            "path": 169,
+            "meta_data": {
+                "key": "values"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe how the remuneration policies for members of the highest governance body and senior executives relate to their objectives and performance in relation to the management of the organization's impacts on the economy, environment, and people.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is the total number of critical concerns that were communicated to the highest governance body during the reporting period.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe how the remuneration policies for members of the highest governance body and senior executives relate to their objectives and performance in relation to the management of the organization's impacts on the economy, environment, and people."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 171,
+        "fields": {
+            "created_at": "2024-08-16T04:59:42.554Z",
+            "updated_at": "2024-08-16T05:02:23.411Z",
+            "name": "Performance and Remuneration-Determine Remuneration-process",
+            "path": 170,
+            "meta_data": {
+                "key": "values"
+            },
+            "ui_schema": {
+                "items": {
+                    "tableData": {
+                        "ui:label": false,
+                        "ui:title": null,
+                        "ui:widget": "TableWidget",
+                        "ui:options": {
+                            "titles": [
+                                {
+                                    "key": "Criteria",
+                                    "type": "number",
+                                    "title": "",
+                                    "display": "none"
+                                },
+                                {
+                                    "key": "Whethertakenintoconsideration",
+                                    "type": "number",
+                                    "title": "",
+                                    "display": "block"
+                                },
+                                {
+                                    "key": "How",
+                                    "type": "number",
+                                    "title": "",
+                                    "display": "block"
+                                }
+                            ],
+                            "hideLabel": true,
+                            "rowLabels": [
+                                {
+                                    "title": "Whether independent highest governance body members or an independent remuneration committee oversees the process for determining remuneration",
+                                    "display": "none",
+                                    "tooltip": ""
+                                },
+                                {
+                                    "title": "Whether and how the views of stakeholders (including shareholders) regarding remuneration are sought and taken into consideration",
+                                    "display": "none",
+                                    "tooltip": ""
+                                },
+                                {
+                                    "title": "Whether remuneration consultants are involved in determining remuneration and, if so, whether they are independent of the organization, its highest governance body, and senior executives",
+                                    "display": "none",
+                                    "tooltip": ""
+                                }
+                            ]
+                        }
+                    },
+                    "processDescription": {
+                        "ui:label": false,
+                        "ui:title": "",
+                        "ui:widget": "inputWidget",
+                        "ui:tooltip": "Describe the process for designing remuneration policies and determining remuneration",
+                        "ui:tooltipdisplay": "none"
+                    }
+                },
+                "ui:order": [
+                    "processDescription",
+                    "tableData"
+                ]
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "processDescription": {
+                            "type": "string",
+                            "title": "Process Description"
+                        },
+                        "tableData": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "Criteria": {
+                                        "type": "string",
+                                        "title": "Criteria"
+                                    },
+                                    "Whethertakenintoconsideration": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Gender",
+                                            "Race",
+                                            "Others"
+                                        ],
+                                        "title": ""
+                                    },
+                                    "How": {
+                                        "type": "string",
+                                        "title": "Total no. of operations"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 172,
+        "fields": {
+            "created_at": "2024-08-16T05:01:31.734Z",
+            "updated_at": "2024-08-16T05:01:31.734Z",
+            "name": "Performance and Remuneration-Determine Remuneration-Results",
+            "path": 171,
+            "meta_data": {
+                "key": "values"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Report the results of votes of stakeholders (including shareholders) on remuneration policies and proposals. (if applicable)",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What are the results of votes of stakeholders (including shareholders) on remuneration policies and proposals?",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Report the results of votes of stakeholders (including shareholders) on remuneration policies and proposals. (if applicable)"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 173,
+        "fields": {
+            "created_at": "2024-08-16T05:05:01.882Z",
+            "updated_at": "2024-08-16T05:05:01.882Z",
+            "name": "Policy-Implementing Commitments-Describe",
+            "path": 172,
+            "meta_data": {
+                "key": "values"
+            },
+            "ui_schema": {
+                "items": {
+                    "tableData": {
+                        "ui:label": false,
+                        "ui:title": null,
+                        "ui:widget": "TableWidget",
+                        "ui:options": {
+                            "titles": [
+                                {
+                                    "key": "Criteria",
+                                    "type": "number",
+                                    "title": "",
+                                    "display": "none"
+                                },
+                                {
+                                    "key": "How",
+                                    "type": "string",
+                                    "title": "Description",
+                                    "display": "block"
+                                }
+                            ],
+                            "hideLabel": true,
+                            "rowLabels": [
+                                {
+                                    "title": "How the organization allocates responsibility to implement the commitments across different levels within the organization",
+                                    "display": "inline-block",
+                                    "tooltip": "Examples of different levels within an organization include the highest governance body, senior executives, and operational levels."
+                                },
+                                {
+                                    "title": "How the organization integrates the commitments into organizational strategies, operational policies, and operational procedures",
+                                    "display": "inline-block",
+                                    "tooltip": "The organization can describe:\u2022 how it aligns the policy commitments with broader risk management systems, economic, environmental, social, and human rights impact assessments, policies and procedures that set financial and other performance incentives for management or workers, etc.\u2022 how it applies the policy commitments when making decisions, such as about its sourcing and operating locations."
+                                },
+                                {
+                                    "title": "How the organization implements its commitments with and through its business relationships",
+                                    "display": "inline-block",
+                                    "tooltip": "Briefly explain how the organization implements its commitments with and through its business relationships."
+                                },
+                                {
+                                    "title": "Training that the organization provides on implementing the commitments",
+                                    "display": "inline-block",
+                                    "tooltip": "The organization can report:\u2022 the content of the training;\u2022 to whom the training is provided, and whether it is mandatory;\u2022 the form (e.g., in-person, online) and frequency of the training;\u2022 examples of how the organization has determined that the training is effective."
+                                }
+                            ]
+                        }
+                    }
+                },
+                "ui:order": [
+                    "tableData"
+                ]
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "tableData": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "Criteria": {
+                                        "type": "string",
+                                        "title": "Criteria"
+                                    },
+                                    "How": {
+                                        "type": "string",
+                                        "title": "Description"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 174,
+        "fields": {
+            "created_at": "2024-08-16T06:31:45.441Z",
+            "updated_at": "2024-08-16T06:31:45.441Z",
+            "name": "Policy-Policy Commitments-Business Conduct",
+            "path": 173,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "column1",
+                            "type": "text",
+                            "title": "column1",
+                            "display": "none"
+                        },
+                        {
+                            "key": "column2",
+                            "type": "text",
+                            "title": "column2",
+                            "display": "none",
+                            "tooltip": "Indicate whether the given conflict of interest are disclosed to stakeholders."
+                        }
+                    ],
+                    "rowLabels": [
+                        {
+                            "key": "text1",
+                            "file": "yes",
+                            "type": "text",
+                            "title": "Overall",
+                            "display": "none",
+                            "tooltip": "If the organisation's policy commitment covers all internationally recognized human rights, a brief statement of this fact is sufficient to comply with the requirement. The organization can also state if the policy commitment references certain rights that require particular attention."
+                        },
+                        {
+                            "key": "text2",
+                            "file": "yes",
+                            "type": "text",
+                            "title": "Authoritative governmental instruments that the commitments reference",
+                            "display": "block",
+                            "tooltip": "See the Bibliographies of the GRI Standards for a list of authoritative intergovernmental instruments for responsible business conduct."
+                        },
+                        {
+                            "key": "text3",
+                            "file": "yes",
+                            "type": "select",
+                            "title": "Whether the commitments stipulate conducting due diligence",
+                            "display": "block",
+                            "tooltip": "Due diligence: Process to identify, prevent, mitigate, and account for how the organization addresses its actual and potential negative impacts.",
+                            "selectoption": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "key": "text4",
+                            "file": "yes",
+                            "type": "select",
+                            "title": "Whether the commitments stipulate applying the precautionary principle",
+                            "display": "block",
+                            "tooltip": "The precautionary principle means taking early action to prevent and mitigate potential negative impacts in situations where conclusive scientific understanding or evidence is lacking, but there is sufficient reason to expect serious or irreversible damage. (The precautionary principle is set out in Principle 15 of the UN Rio Declaration on Environment and Development.)",
+                            "selectoption": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "key": "text5",
+                            "file": "yes",
+                            "type": "select",
+                            "title": "Whether the commitments stipulate respecting human rights",
+                            "display": "none",
+                            "tooltip": "If the organisation's policy commitment covers all internationally recognized human rights, a brief statement of this fact is sufficient to comply with the requirement. The organization can also state if the policy commitment references certain rights that require particular attention.",
+                            "selectoption": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "column1": {
+                            "type": "string",
+                            "title": "Policy Commitment"
+                        },
+                        "column2": {
+                            "type": "string",
+                            "title": "Level at which the policy commitments was approved within the organization"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 175,
+        "fields": {
+            "created_at": "2024-08-16T06:33:30.954Z",
+            "updated_at": "2024-08-16T06:33:30.954Z",
+            "name": "Policy-Policy Commitments-Human Rights",
+            "path": 174,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "",
+                            "type": "text",
+                            "title": "Qcolumn1",
+                            "display": "none"
+                        },
+                        {
+                            "key": "",
+                            "type": "text",
+                            "title": "Qcolumn2",
+                            "display": "none",
+                            "tooltip": "Indicate whether the given conflict of interest are disclosed to stakeholders."
+                        }
+                    ],
+                    "rowLabels": [
+                        {
+                            "title": "The internationally recognized human rights that the commitment covers",
+                            "display": "block",
+                            "tooltip": "If the organisation's policy commitment covers all internationally recognized human rights, a brief statement of this fact is sufficient to comply with the requirement.The organization can also state if the policy commitment references certain rights that require particular attention."
+                        },
+                        {
+                            "title": "The categories of stakeholders, including at-risk or vulnerable groups, that the organization gives particular attention to in the commitment",
+                            "display": "block",
+                            "tooltip": "Categories of stakeholders that the organization gives particular attention to can include consumers, customers, employees and other workers, and local communities.For example, a bank may give particular attention in its policy commitment to avoid discriminating against specific categories of customers, or a mining organization may give particular attention to avoid infringing on the rights of indigenous peoples"
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Qcolumn1": {
+                            "type": "string",
+                            "title": "Qcolumn1"
+                        },
+                        "Qcolumn2": {
+                            "type": "string",
+                            "title": "Qcolumn2"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 176,
+        "fields": {
+            "created_at": "2024-08-16T07:04:03.809Z",
+            "updated_at": "2024-08-16T07:04:03.809Z",
+            "name": "Policy-Policy Commitments-Links",
+            "path": 175,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Are the organization's policy commitments publicly available?",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the highest governance body is responsible for reviewing and approving the reported information, including the organization's material topics.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "Q2": {
+                        "ui:title": "If yes, please provide links to the policy commitments",
+                        "ui:widget": "inputWidget5",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is the process for reviewing and approving the reported information.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "Q3": {
+                        "ui:title": "If the policy commitments are not publicly available, explain the reason for this.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Explain the reason for not reviewing and approving the reported information.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2",
+                        "Q3"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Are the organization's policy commitments publicly available?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "Q3": {
+                            "type": "string",
+                            "title": "If the policy commitments are not publicly available, explain the reason for this."
+                        }
+                    },
+                    "dependencies": {
+                        "Q1": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q1": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q2": {
+                                            "type": "string",
+                                            "title": "If yes, please provide links to the policy commitments"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 177,
+        "fields": {
+            "created_at": "2024-08-16T07:05:30.950Z",
+            "updated_at": "2024-08-16T07:05:30.950Z",
+            "name": "Policy-Policy Commitments-Leave",
+            "path": 176,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "PolicyCommitment",
+                            "title": "Policy Commitment",
+                            "tooltip": "Specify the policy commitment. "
+                        },
+                        {
+                            "key": "Levelorganization",
+                            "title": "Level at which the policy commitments was approved within the organization",
+                            "tooltip": "Specify the level at which the policy commitments was approved within the organization"
+                        },
+                        {
+                            "key": "Seniorlevel",
+                            "title": "Whether this is the most senior level",
+                            "tooltip": "Indicate whether the level at which each of the policy commitments was approved within the organization is the most senior level."
+                        },
+                        {
+                            "key": "Specifylevel",
+                            "title": "If yes, specify senior level",
+                            "tooltip": "For example, the most senior level in an organization could be the highest governance body (e.g., the board) or the most senior executive (e.g., chief executive officer)"
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "PolicyCommitment": {
+                            "type": "string",
+                            "title": "Policy Commitment"
+                        },
+                        "Levelorganization": {
+                            "type": "string",
+                            "title": "Level at which the policy commitments was approved within the organization"
+                        },
+                        "Seniorlevel": {
+                            "type": "string",
+                            "title": "Whether this is the most senior level",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "Specifylevel": {
+                            "type": "string",
+                            "title": "If yes, specify senior level"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 178,
+        "fields": {
+            "created_at": "2024-08-16T07:10:04.595Z",
+            "updated_at": "2024-08-16T07:10:04.595Z",
+            "name": "Policy-Policy Commitments-Report",
+            "path": 177,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Report the extent to which the policy commitments apply to the organization's activities and to its business relationships",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "If the policy commitments apply to all of the organization's activities and business relationships equally, a brief statement of this fact is sufficient to comply with the requirement.Business relationships: relationships that the organization has with business partners, with entities in its value chain including those beyond the first tier, and with any other entities directly linked to its operations,products, or services.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Report the extent to which the policy commitments apply to the organization's activities and to its business relationships"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 179,
+        "fields": {
+            "created_at": "2024-08-16T07:13:07.043Z",
+            "updated_at": "2024-08-16T07:13:07.043Z",
+            "name": "Policy-Policy Commitments-Describe",
+            "path": 178,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe how the policy commitments are communicated to workers, business partners, and other relevant parties.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "If the policy commitments apply to all of the organization\u2019s activities and business relationships equally, a brief statement of this fact is sufficient to comply with the requirement.Business relationships: relationships that the organization has with business partners, with entities in its value chain including those beyond the first tier, and with any other entities directly linked to its operations,products, or services.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe how the policy commitments are communicated to workers, business partners, and other relevant parties."
+                        }
+                    }
+                }
+            }
+        }
     }
 ]
