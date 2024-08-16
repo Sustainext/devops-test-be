@@ -10,6 +10,7 @@ from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
+from sustainapp.Views.Analyse.Governance.GovernanceAnalyse import GovernanceAnalyse
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
     GHGReportView,
@@ -173,4 +174,9 @@ urlpatterns = [
         name="get_marketing_and_labeling_analysis",
     ),
     path("all_corporate_list/", AllCorporateList.as_view(), name="all_corporate_list"),
+    path(
+        "get_governance_analysis/",
+        GovernanceAnalyse.as_view(),
+        name="get_governance_analysis",
+    ),
 ]

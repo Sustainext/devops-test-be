@@ -1588,5 +1588,195 @@
             "name": "GRI-Collect-Managing Concerns-Advice & Concerns",
             "slug": "gri-governance-advice_and_concerns-2-26-a"
         }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 160,
+        "fields": {
+            "created_at": "2024-08-12T07:32:34.680Z",
+            "updated_at": "2024-08-12T07:32:34.680Z",
+            "name": "GRI-Collect-Performance and Renumerations-Annual & Median",
+            "slug": "gri-governance-compensation_ratio-2-21-a-annual"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 161,
+        "fields": {
+            "created_at": "2024-08-12T07:33:28.564Z",
+            "updated_at": "2024-08-12T07:33:28.564Z",
+            "name": "GRI-Collect-Performance and Renumerations-Percentage",
+            "slug": "gri-governance-compensation_ratio-2-21-b-percentage"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 162,
+        "fields": {
+            "created_at": "2024-08-12T07:34:00.623Z",
+            "updated_at": "2024-08-12T07:34:00.623Z",
+            "name": "GRI-Collect-Performance and Renumerations-Contextual",
+            "slug": "gri-governance-compensation_ratio-2-21-c-contextual"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 163,
+        "fields": {
+            "created_at": "2024-08-13T11:36:52.275Z",
+            "updated_at": "2024-08-13T11:36:52.275Z",
+            "name": "GRI-Collect-Remediation-Process-Commitments",
+            "slug": "gri-governance-process-2-25-a-commitments"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 164,
+        "fields": {
+            "created_at": "2024-08-13T11:37:11.122Z",
+            "updated_at": "2024-08-13T11:37:11.122Z",
+            "name": "GRI-Collect-Remediation-Process-Approach",
+            "slug": "gri-governance-process-2-25-b-approach"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 165,
+        "fields": {
+            "created_at": "2024-08-13T11:37:26.244Z",
+            "updated_at": "2024-08-13T11:37:26.244Z",
+            "name": "GRI-Collect-Remediation-Process-Other Processes",
+            "slug": "gri-governance-process-2-25-c-other_processes"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 166,
+        "fields": {
+            "created_at": "2024-08-13T11:37:40.893Z",
+            "updated_at": "2024-08-13T11:37:40.893Z",
+            "name": "GRI-Collect-Remediation-Process-Stakeholders",
+            "slug": "gri-governance-process-2-25-d-stakeholders"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 167,
+        "fields": {
+            "created_at": "2024-08-13T11:37:53.941Z",
+            "updated_at": "2024-08-13T11:37:53.941Z",
+            "name": "GRI-Collect-Remediation-Process-Effectiveness",
+            "slug": "gri-governance-process-2-25-e-effectiveness"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 168,
+        "fields": {
+            "created_at": "2024-08-14T10:35:39.450Z",
+            "updated_at": "2024-08-14T10:35:39.450Z",
+            "name": "GRI-Collect-Performance and Remuneration-Remuneration-Remuneration",
+            "slug": "gri-governance-remuneration-2-19-a-remuneration"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 169,
+        "fields": {
+            "created_at": "2024-08-14T10:40:42.379Z",
+            "updated_at": "2024-08-14T10:40:42.379Z",
+            "name": "GRI-Collect-Performance and Remuneration-Remuneration-Policies",
+            "slug": "gri-governance-remuneration-2-19-b-policies"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 170,
+        "fields": {
+            "created_at": "2024-08-16T04:51:58.249Z",
+            "updated_at": "2024-08-16T04:53:56.657Z",
+            "name": "GRI-Collect-Performance and Remuneration-Determine Remuneration-process",
+            "slug": "gri-governance-determine-remuneration-2-20-a-process"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 171,
+        "fields": {
+            "created_at": "2024-08-16T04:53:43.673Z",
+            "updated_at": "2024-08-16T04:53:43.673Z",
+            "name": "GRI-Collect-Performance and Remuneration-Determine Remuneration-Results",
+            "slug": "gri-governance-determine-remuneration-2-22-b-results"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 172,
+        "fields": {
+            "created_at": "2024-08-16T04:56:47.996Z",
+            "updated_at": "2024-08-16T04:56:47.996Z",
+            "name": "GRI-Collect-Policy-Implementing Commitments-Describe",
+            "slug": "gri-governance-implementing-commitments-2-24-a-describe"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 173,
+        "fields": {
+            "created_at": "2024-08-16T06:20:45.670Z",
+            "updated_at": "2024-08-16T06:29:23.120Z",
+            "name": "GRI-Collect-Policy-Policy Commitments-Business Conduct",
+            "slug": "gri-governance-policy_commitments-2-23-a-business_conduct"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 174,
+        "fields": {
+            "created_at": "2024-08-16T06:21:58.346Z",
+            "updated_at": "2024-08-16T06:21:58.346Z",
+            "name": "GRI-Collect-Policy-Policy Commitments-Human Rights",
+            "slug": "gri-governance-policy_commitments-2-23-b-human_rights"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 175,
+        "fields": {
+            "created_at": "2024-08-16T06:22:35.489Z",
+            "updated_at": "2024-08-16T06:22:35.489Z",
+            "name": "GRI-Collect-Policy-Policy Commitments-Links",
+            "slug": "gri-governance-policy_commitments-2-23-c-links"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 176,
+        "fields": {
+            "created_at": "2024-08-16T06:23:34.844Z",
+            "updated_at": "2024-08-16T06:23:34.844Z",
+            "name": "GRI-Collect-Policy-Policy Commitments-Leave",
+            "slug": "gri-governance-policy_commitments-2-23-c-leave"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 177,
+        "fields": {
+            "created_at": "2024-08-16T06:24:18.477Z",
+            "updated_at": "2024-08-16T06:24:18.477Z",
+            "name": "GRI-Collect-Policy-Policy Commitments-Report",
+            "slug": "gri-governance-policy_commitments-2-23-e-report"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 178,
+        "fields": {
+            "created_at": "2024-08-16T06:25:03.382Z",
+            "updated_at": "2024-08-16T06:25:03.382Z",
+            "name": "GRI-Collect-Policy-Policy Commitments-Describe",
+            "slug": "gri-governance-policy_commitments-2-23-f-describe"
+        }
     }
 ]
