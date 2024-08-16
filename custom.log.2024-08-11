@@ -1,0 +1,80 @@
+2024-08-11 08:32:57,590 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,590 INFO custom_logger 23 yearsold30 100 0 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,595 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,597 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,597 INFO custom_logger 23 yearsold30to50 101 0 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,601 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,602 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,603 INFO custom_logger 23 yearsold50 102 0 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,606 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,608 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,608 INFO custom_logger 23 total 303 0 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,612 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,613 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,614 INFO custom_logger 23 yearsold30 200 1 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,617 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,619 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,619 INFO custom_logger 23 yearsold30to50 201 1 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,623 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,624 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,624 INFO custom_logger 23 yearsold50 202 1 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,628 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,630 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,630 INFO custom_logger 23 total 603 1 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,634 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,635 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,635 INFO custom_logger 23 yearsold30 300 2 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,639 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,641 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,641 INFO custom_logger 23 yearsold30to50 301 2 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,645 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,646 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,646 INFO custom_logger 23 yearsold50 302 2 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,650 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,652 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:32:57,652 INFO custom_logger 23 total 903 2 gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:32:57,656 INFO custom_logger 70 DataPoint created
+2024-08-11 08:32:57,656 INFO custom_logger 240 Climatiq API Has been called
+2024-08-11 08:32:57,656 INFO custom_logger 241 RawResponse object (497)
+2024-08-11 08:34:42,302 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,302 INFO custom_logger 23 yearsold30 100 0 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,306 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,308 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,308 INFO custom_logger 23 yearsold30to50 102 0 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,312 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,313 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,313 INFO custom_logger 23 yearsold50 103 0 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,317 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,319 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,319 INFO custom_logger 23 total 305 0 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,322 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,324 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,324 INFO custom_logger 23 yearsold30 200 1 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,328 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,329 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,330 INFO custom_logger 23 yearsold30to50 201 1 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,333 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,335 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,335 INFO custom_logger 23 yearsold50 202 1 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,339 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,340 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,340 INFO custom_logger 23 total 603 1 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,344 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,346 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,346 INFO custom_logger 23 yearsold30 300 2 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,350 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,351 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,351 INFO custom_logger 23 yearsold30to50 301 2 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,355 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,357 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,357 INFO custom_logger 23 yearsold50 302 2 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,361 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,362 INFO custom_logger 22 Creating or updating Data points
+2024-08-11 08:34:42,362 INFO custom_logger 23 total 903 2 gri-social-employee_hires-401-1a-new_emp_hire-temp_emp jairaj.sahgal@sustainext.ai
+2024-08-11 08:34:42,366 INFO custom_logger 70 DataPoint created
+2024-08-11 08:34:42,366 INFO custom_logger 240 Climatiq API Has been called
+2024-08-11 08:34:42,366 INFO custom_logger 241 RawResponse object (499)
+2024-08-12 11:09:28,851 INFO custom_logger signal_utilities.py 22 Creating or updating Data points
+2024-08-12 11:09:28,852 INFO custom_logger signal_utilities.py 23 None abc 0 gri-governance-compensation_ratio-2-21-b-percentage mahinder.singh@sustainext.ai
+2024-08-12 11:09:40,983 INFO custom_logger signal_utilities.py 22 Creating or updating Data points
+2024-08-12 11:09:40,983 INFO custom_logger signal_utilities.py 23 None abc 0 gri-governance-compensation_ratio-2-21-c-contextual mahinder.singh@sustainext.ai
