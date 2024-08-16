@@ -77,6 +77,6 @@ class GovernanceAnalyse(APIView):
         self.end = serializer.validated_data["end"]
         self.set_raw_responses()
         response_data = {
-            "ratio_of_annual_total_compensation_&_ratio_of_percentage_increase_in_annual_total_compensation": self.get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation()
+            "compensation_ratio_annual_total_and_increase": self.get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation()
         }
         return Response(response_data, status=status.HTTP_200_OK)
