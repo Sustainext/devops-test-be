@@ -195,6 +195,7 @@ def get_analysis_data_by_source(self, data_points):
                 else ""
             )  # Need to find this too
             total_co2e = climatiq_response.get("co2e", 0)
+            total_co2e = total_co2e/1000  # Convert to tonnes
             co2e_unit = climatiq_response.get("co2e_unit", "")
             activity_data = climatiq_response.get("activity_data", "")
             source = climatiq_response["emission_factor"]["source"]
@@ -262,8 +263,13 @@ def get_analysis_data(
     analysis_data_by_corporate = defaultdict(dict)
 
     # Process regular corporates
-    for id in corporate_id:
-        process_corporate_data(self,id, start_date, end_date, client_id, "Regular", analysis_data_by_corporate)
+    if isinstance(corporate_id, list) and len(corporate_id) > 1:
+        # If corporate_id is a list with more than one element, iterate over it
+        for id in corporate_id:
+            process_corporate_data(self, id, start_date, end_date, client_id, "Regular", analysis_data_by_corporate)
+    else:
+        # If corporate_id is a single element, process it
+        process_corporate_data(self, corporate_id.id, start_date, end_date, client_id, "Regular", analysis_data_by_corporate)
 
     # Process investment corporates if provided
     if investment_corporates:
@@ -275,7 +281,7 @@ def get_analysis_data(
     if not analysis_data_by_corporate:
         return Response(
             {"message": "No data available for the given corporate IDs."},
-            status=status.HTTP_204_NO_CONTENT,
+            status=status.HTTP_404_NOT_FOUND,
         )
 
     # Restructure data for the final response
@@ -395,8 +401,6 @@ def process_corporate_data(self, id, start_date, end_date, client_id, corporate_
 
             # Aggregate the CO2e values by source
             emission_by_source["investment_source"]["total_co2e"] += scope_co2e
-
-        print(total_co2e)
             
         structured_emission_data = calculate_contributions(self,emission_by_scope, total_co2e)
 
@@ -517,7 +521,20 @@ class GHGReportView(generics.CreateAPIView):
         investment_corporates = serializer.validated_data.get("investment_corporates")
         organization_id = organization.id
 
-        if organization_id:
+        if corporate_id and organization_id:
+            # If multiple corporate names are provided, pass the list of names
+            analysis_data = get_analysis_data(
+                self,
+                corporate_id,
+                start_date,
+                end_date,
+                report_id,
+                client_id,
+                # report_type,
+                investment_corporates,
+            )
+
+        elif organization_id and corporate_id == None:
             corporate_ids = Corporateentity.objects.filter(
                 organization_id=organization_id
             ).values_list("id", flat=True)
@@ -534,22 +551,9 @@ class GHGReportView(generics.CreateAPIView):
                 investment_corporates,
             )
 
-        elif corporate_id:
-            # If multiple corporate names are provided, pass the list of names
-            analysis_data = get_analysis_data(
-                self,
-                corporate_id,
-                start_date,
-                end_date,
-                report_id,
-                client_id,
-                # report_type,
-                investment_corporates,
-            )
-
         if isinstance(analysis_data, Response):
             status_check = analysis_data.status_code
-            if status_check in [404, 400, 500]:
+            if status_check in [204,404, 400, 500]:
                 new_report.delete()
             return Response(
                 {
