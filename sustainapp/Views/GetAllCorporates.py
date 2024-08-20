@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from sustainapp.Serializers.AllCorporateListSerializer import AllCorporateListSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from datametric.models import RawResponse
 
 class AllCorporateList(APIView):
     def get(self, request):
@@ -19,4 +20,10 @@ class AllCorporateList(APIView):
             corporates = Corporateentity.objects.all()
 
         serializer = AllCorporateListSerializer(corporates, many=True)
+
+        for corporate in serializer.data:
+            corporate_id = corporate['id']
+            emission_data = RawResponse.objects.filter(locale__corporateentity=corporate_id).exists()
+            corporate['emission_data'] = emission_data
+
         return Response(serializer.data)
