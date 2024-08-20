@@ -12187,7 +12187,7 @@
         "pk": 137,
         "fields": {
             "created_at": "2024-08-06T08:26:21.056Z",
-            "updated_at": "2024-08-06T08:26:21.056Z",
+            "updated_at": "2024-08-16T10:27:10.746Z",
             "name": "Board Invlovement-Management of Impact-Senior Executives",
             "path": 137,
             "meta_data": {
@@ -12199,7 +12199,7 @@
                     "titles": [
                         {
                             "title": "The organization's purpose",
-                            "tooltip": "Describe the role of the highest governance body and of senior executives in developing, approving, and updating the following:"
+                            "tooltip": "What is the role of the highest governance body and of senior executives in developing, approving, and updating the organisation's purpose?"
                         },
                         {
                             "title": "Value or mission statements",
@@ -12207,7 +12207,7 @@
                         },
                         {
                             "title": "Strategies",
-                            "tooltip": "Describe the role of the highest governance body and of senior executives in developing, approving, and updating the following"
+                            "tooltip": "What is the role of the highest governance body and of senior executives in developing, approving, and updating strategies?"
                         },
                         {
                             "title": "Policies",
@@ -12227,7 +12227,7 @@
                     "properties": {
                         "Theorganizationpurpose": {
                             "type": "string",
-                            "title": "The organizations purpose"
+                            "title": "The organization's purpose"
                         },
                         "Valueormissionstatements": {
                             "type": "string",
@@ -12815,7 +12815,7 @@
         "pk": 145,
         "fields": {
             "created_at": "2024-08-07T04:56:13.133Z",
-            "updated_at": "2024-08-07T04:56:13.133Z",
+            "updated_at": "2024-08-16T08:45:07.283Z",
             "name": "Board Info-Structure-Composition",
             "path": 145,
             "meta_data": {
@@ -12851,11 +12851,11 @@
                         },
                         {
                             "title": "Independence",
-                            "tooltip": "Indicate whether the highest governance body members are considered as independent or non-independent.\u2018Independence\u2019 refers to conditions that enable the <br/>members of the highest governance body toexercise independent judgment free from any external <br/>influence or conflicts of interest."
+                            "tooltip": "Indicate whether the highest governance body members are considered as independent or non-independent. \u2018Independence\u2019 refers to conditions that enable the members of the highest governance body to exercise independent judgment free from any external influence or conflicts of interest."
                         },
                         {
                             "title": "Tenure On The Governance Body",
-                            "tooltip": "Specify the tenure of members <br/>on the governance body"
+                            "tooltip": "Specify the tenure of members on the governance body."
                         },
                         {
                             "title": "Number Of Significant Positions",
@@ -12867,15 +12867,15 @@
                         },
                         {
                             "title": "The Nature Of Commitments",
-                            "tooltip": "Describe the nature of commitments"
+                            "tooltip": "Describe the nature of commitments."
                         },
                         {
                             "title": "Under-Represented Social Groups",
-                            "tooltip": "Specify the number of members of the highest governance <br/>body who identify as under-represented groups represented on the board.(e.g., any minority groups etc.)."
+                            "tooltip": "Specify the number of members of the highest governance body who identify as under-represented groups represented on the board (e.g., any minority groups etc.)."
                         },
                         {
                             "title": "Competencies Relevant To The Impacts Of The Organization",
-                            "tooltip": "Describe competencies relevant to the impacts of the organization"
+                            "tooltip": "Describe competencies relevant to the impacts of the organization."
                         }
                     ],
                     "orderable": false,
@@ -13111,7 +13111,7 @@
         "pk": 148,
         "fields": {
             "created_at": "2024-08-07T12:07:13.794Z",
-            "updated_at": "2024-08-07T12:07:13.794Z",
+            "updated_at": "2024-08-16T08:53:51.970Z",
             "name": "Board Info-Nomination and Selection-Nomination",
             "path": 148,
             "meta_data": {
@@ -13127,7 +13127,7 @@
                         },
                         "ui:tooltip": "This section documents data corresponding to the nomination & selection process of the highest governance body and committees.",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "block"
+                        "ui:tooltipdisplay": "none"
                     },
                     "ui:order": [
                         "Q1"
@@ -13159,7 +13159,7 @@
         "pk": 149,
         "fields": {
             "created_at": "2024-08-07T12:08:10.221Z",
-            "updated_at": "2024-08-07T12:08:10.221Z",
+            "updated_at": "2024-08-16T08:48:42.796Z",
             "name": "Board Info-Nomination and Selection-Criteria",
             "path": 149,
             "meta_data": {
@@ -13175,7 +13175,7 @@
                         },
                         "ui:tooltip": "",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "block"
+                        "ui:tooltipdisplay": "none"
                     },
                     "ui:order": [
                         "Q1"
@@ -13207,7 +13207,7 @@
         "pk": 150,
         "fields": {
             "created_at": "2024-08-07T12:08:40.506Z",
-            "updated_at": "2024-08-07T12:08:40.506Z",
+            "updated_at": "2024-08-16T08:50:40.784Z",
             "name": "Board Info-Nomination and Selection-Consideration and selection",
             "path": 150,
             "meta_data": {
@@ -13227,13 +13227,15 @@
                             "key": "Whethertakenintoconsideration",
                             "type": "number",
                             "title": "Whether taken into consideration?",
-                            "display": "block"
+                            "display": "block",
+                            "tooltip": "Indicate which criteria is taken into consideration while nominating and selecting the highest governance body members."
                         },
                         {
                             "key": "How",
                             "type": "number",
                             "title": "How?",
-                            "display": "block"
+                            "display": "block",
+                            "tooltip": "Provide an explanation on criteria considered"
                         }
                     ],
                     "rowLabels": [
@@ -13250,7 +13252,7 @@
                         {
                             "title": "Independence",
                             "display": "none",
-                            "tooltip": "Mention the number of operations that include the use of public disclosure of results of environmental and social impact assessments"
+                            "tooltip": "Mention the number of operations that include the use of public disclosure of results of environmental and social impact assessments."
                         },
                         {
                             "title": "Competencies relevant to the impacts of the organization",
@@ -13292,7 +13294,7 @@
         "pk": 151,
         "fields": {
             "created_at": "2024-08-07T12:09:37.349Z",
-            "updated_at": "2024-08-08T06:04:25.518Z",
+            "updated_at": "2024-08-16T08:52:49.426Z",
             "name": "Board Info-Chair of Board-Chair",
             "path": 151,
             "meta_data": {
@@ -13311,6 +13313,8 @@
                         "ui:tooltipdisplay": "block"
                     },
                     "Q3": {
+                        "ui:tag": "GRI 2-11-b",
+                        "ui:title": "If yes, please explain the following",
                         "ui:widget": "TableWidget",
                         "ui:options": {
                             "titles": [
@@ -13328,7 +13332,7 @@
                                 }
                             ]
                         },
-                        "ui:description": " ",
+                        "ui:description": "If yes, please explain the following",
                         "ui:descriptionClassNames": "mb-4"
                     },
                     "ui:order": [
@@ -13589,7 +13593,7 @@
         "pk": 156,
         "fields": {
             "created_at": "2024-08-08T06:31:31.709Z",
-            "updated_at": "2024-08-08T06:31:31.709Z",
+            "updated_at": "2024-08-16T08:54:46.211Z",
             "name": "Performance and Renumerations-Performance Evaluations-Processes",
             "path": 155,
             "meta_data": {
@@ -13605,7 +13609,7 @@
                         },
                         "ui:tooltip": "",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "block"
+                        "ui:tooltipdisplay": "none"
                     },
                     "ui:order": [
                         "Q1"
@@ -13637,7 +13641,7 @@
         "pk": 157,
         "fields": {
             "created_at": "2024-08-08T06:32:41.636Z",
-            "updated_at": "2024-08-08T07:01:19.121Z",
+            "updated_at": "2024-08-16T08:55:34.512Z",
             "name": "Performance and Renumerations-Performance Evaluations-Evaluation",
             "path": 156,
             "meta_data": {
@@ -13646,12 +13650,12 @@
             "ui_schema": {
                 "items": {
                     "Q2": {
-                        "ui:title": "Whether it has appointed any senior executives with responsibility for the management of impacts",
+                        "ui:title": "Report whether the evaluations are independent or not",
                         "ui:widget": "RadioWidget2",
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Indicate whether highest governance body has appointed any senior executives with responsibility for the management of impacts. If yes then provide an explanation.",
+                        "ui:tooltip": "Indicate whether the evaluations are independent or not.",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
@@ -13661,9 +13665,9 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Provide an explanation of how the highest governance body engages with stakeholders to support these processes?",
+                        "ui:tooltip": "What is the frequency of the evaluations?",
                         "ui:description": " ",
-                        "ui:tooltipdisplay": "none",
+                        "ui:tooltipdisplay": "block",
                         "ui:descriptionClassNames": "mb-2"
                     },
                     "ui:order": [
@@ -13685,7 +13689,7 @@
                     "properties": {
                         "Q2": {
                             "type": "string",
-                            "title": "Whether it has appointed any senior executives with responsibility for the management of impacts",
+                            "title": "Report whether the evaluations are independent or not",
                             "enum": [
                                 "Yes",
                                 "No"
@@ -13876,7 +13880,7 @@
         "pk": 161,
         "fields": {
             "created_at": "2024-08-12T07:36:07.975Z",
-            "updated_at": "2024-08-12T07:36:07.975Z",
+            "updated_at": "2024-08-16T08:56:28.974Z",
             "name": "Performance and Renumerations-Annual & Median",
             "path": 160,
             "meta_data": {
@@ -13888,7 +13892,8 @@
                         "ui:title": "What is the annual total compensation for the organization's highest paid-individual?",
                         "ui:widget": "inputWidget",
                         "ui:options": {
-                            "label": false
+                            "label": false,
+                            "inputType": "number"
                         },
                         "ui:tooltip": "Annual total compensation includes salary, bonus, stock awards, option awards, non-equity incentive plan compensation, change in pension value, and nonqualified deferred compensation earnings provided over the course of a year.",
                         "ui:tooltipdisplay": "block"
@@ -13897,9 +13902,10 @@
                         "ui:title": "What is the median annual total compensation for all of the organization's employees excluding the highest-paid individual?",
                         "ui:widget": "inputWidget",
                         "ui:options": {
-                            "label": false
+                            "label": false,
+                            "inputType": "number"
                         },
-                        "ui:tooltip": "Provide a detail information about median annual total compensation for all of the organization's employees excluding the highest-paid individual.",
+                        "ui:tooltip": "Provide detailed information about median annual total compensation for all of the organization's employees excluding the highest-paid individual.",
                         "ui:tooltipdisplay": "block"
                     },
                     "ui:order": [
@@ -13919,11 +13925,11 @@
                     "type": "object",
                     "properties": {
                         "Q1": {
-                            "type": "string",
+                            "type": "number",
                             "title": "What is the annual total compensation for the organization's highest paid-individual?"
                         },
                         "Q2": {
-                            "type": "string",
+                            "type": "number",
                             "title": "What is the median annual total compensation for all of the organization's employees excluding the highest-paid individual?"
                         }
                     }
@@ -13936,7 +13942,7 @@
         "pk": 162,
         "fields": {
             "created_at": "2024-08-12T07:37:00.163Z",
-            "updated_at": "2024-08-12T07:37:00.163Z",
+            "updated_at": "2024-08-16T11:26:28.447Z",
             "name": "Performance and Renumerations-Percentage",
             "path": 161,
             "meta_data": {
@@ -13945,24 +13951,34 @@
             "ui_schema": {
                 "items": {
                     "Q1": {
-                        "ui:title": "Report contextual information necessary to understand the data and how the data has been compiled.",
+                        "ui:title": "What is the percentage increase in annual total compensation for the organization's highest-paid",
                         "ui:widget": "inputWidget",
                         "ui:options": {
-                            "label": false
+                            "label": false,
+                            "inputType": "number"
                         },
-                        "ui:tooltip": "Provide contextual information necessary to understand the data and how the data has been compiled. Include: Any standard, methodology and assumption used to compile data.",
-                        "ui:horizontal": true,
+                        "ui:tooltip": "Specify the percentage increase in annual total compensation for the organization's highest-paid individual.",
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "What is the median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual?",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false,
+                            "inputType": "number"
+                        },
+                        "ui:tooltip": "Specify the median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual.",
                         "ui:tooltipdisplay": "block"
                     },
                     "ui:order": [
-                        "Q1"
-                    ],
-                    "ui:options": {
-                        "layout": "horizontal",
-                        "addable": false,
-                        "orderable": false,
-                        "removable": false
-                    }
+                        "Q1",
+                        "Q2"
+                    ]
+                },
+                "ui:options": {
+                    "addable": false,
+                    "orderable": false,
+                    "removable": false
                 }
             },
             "schema": {
@@ -13971,8 +13987,12 @@
                     "type": "object",
                     "properties": {
                         "Q1": {
-                            "type": "string",
-                            "title": "Report contextual information necessary to understand the data and how the data has been compiled."
+                            "type": "number",
+                            "title": "What is the percentage increase in annual total compensation for the organization's highest-paid"
+                        },
+                        "Q2": {
+                            "type": "number",
+                            "title": "What is the median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual?"
                         }
                     }
                 }
