@@ -15,7 +15,7 @@ class GovernanceAnalyse(APIView):
 
     slugs = [
         "gri-governance-compensation_ratio-2-21-a-annual",
-        "gri-governance-compensation_ratio-2-21-c-contextual",
+        "gri-governance-compensation_ratio-2-21-b-percentage",
     ]
 
     def set_raw_responses(self):

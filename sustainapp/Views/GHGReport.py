@@ -243,6 +243,8 @@ def get_analysis_data(
     end_date,
     report_id,
     client_id,
+    report_by,
+    report_type,
     investment_corporates=None  # Added argument for investment corporates
 ):
     """
@@ -263,7 +265,7 @@ def get_analysis_data(
     analysis_data_by_corporate = defaultdict(dict)
 
     # Process regular corporates
-    if isinstance(corporate_id, list) and len(corporate_id) > 1:
+    if isinstance(corporate_id, list) and report_by == "Organization":
         # If corporate_id is a list with more than one element, iterate over it
         for id in corporate_id:
             process_corporate_data(self, id, start_date, end_date, client_id, "Regular", analysis_data_by_corporate)
@@ -272,7 +274,7 @@ def get_analysis_data(
         process_corporate_data(self, corporate_id.id, start_date, end_date, client_id, "Regular", analysis_data_by_corporate)
 
     # Process investment corporates if provided
-    if investment_corporates:
+    if investment_corporates and report_type == "GHG Report - Investments":
         for investment_corporate in investment_corporates:
             id = investment_corporate["corporate_id"]
             ownership_ratio = investment_corporate["ownership_ratio"]
@@ -517,9 +519,12 @@ class GHGReportView(generics.CreateAPIView):
         end_date = serializer.validated_data.get("end_date")
         corporate_id = serializer.validated_data.get("corporate")
         organization = serializer.validated_data.get("organization")
+        report_by = serializer.validated_data.get("report_by")
         report_type = serializer.validated_data.get("report_type")
         investment_corporates = serializer.validated_data.get("investment_corporates")
         organization_id = organization.id
+
+        print(report_by)
 
         if corporate_id and organization_id:
             # If multiple corporate names are provided, pass the list of names
@@ -530,7 +535,8 @@ class GHGReportView(generics.CreateAPIView):
                 end_date,
                 report_id,
                 client_id,
-                # report_type,
+                report_by,
+                report_type,
                 investment_corporates,
             )
 
@@ -547,7 +553,8 @@ class GHGReportView(generics.CreateAPIView):
                 end_date,
                 report_id,
                 client_id,
-                # report_type,
+                report_by,
+                report_type,
                 investment_corporates,
             )
 
