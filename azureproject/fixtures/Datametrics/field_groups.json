@@ -13942,7 +13942,7 @@
         "pk": 162,
         "fields": {
             "created_at": "2024-08-12T07:37:00.163Z",
-            "updated_at": "2024-08-16T11:26:28.447Z",
+            "updated_at": "2024-08-23T09:49:49.017Z",
             "name": "Performance and Renumerations-Percentage",
             "path": 161,
             "meta_data": {
@@ -13951,7 +13951,7 @@
             "ui_schema": {
                 "items": {
                     "Q1": {
-                        "ui:title": "What is the percentage increase in annual total compensation for the organization's highest-paid",
+                        "ui:title": "What is the percentage increase in annual total compensation for the organization's highest-paid individual?",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false,
@@ -13988,7 +13988,7 @@
                     "properties": {
                         "Q1": {
                             "type": "number",
-                            "title": "What is the percentage increase in annual total compensation for the organization's highest-paid"
+                            "title": "What is the percentage increase in annual total compensation for the organization's highest-paid individual?"
                         },
                         "Q2": {
                             "type": "number",
@@ -14004,7 +14004,7 @@
         "pk": 163,
         "fields": {
             "created_at": "2024-08-12T07:37:50.419Z",
-            "updated_at": "2024-08-12T07:37:50.419Z",
+            "updated_at": "2024-08-23T09:48:22.578Z",
             "name": "Performance and Renumerations-Contextual",
             "path": 162,
             "meta_data": {
@@ -14013,32 +14013,24 @@
             "ui_schema": {
                 "items": {
                     "Q1": {
-                        "ui:title": "What is the percentage increase in annual total compensation for the organization's highest-paid",
+                        "ui:title": "Report contextual information necessary to understand the data and how the data has been compiled.",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Specify the percentage increase in annual total compensation for the organization's highest-paid individual.",
-                        "ui:tooltipdisplay": "block"
-                    },
-                    "Q2": {
-                        "ui:title": "What is the median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual?",
-                        "ui:widget": "inputWidget",
-                        "ui:options": {
-                            "label": false
-                        },
-                        "ui:tooltip": "Specify the median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual.",
+                        "ui:tooltip": "Provide contextual information necessary to understand the data and how the data has been compiled. Include: Any standard, methodology and assumption used to compile data.",
+                        "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
                     "ui:order": [
-                        "Q1",
-                        "Q2"
-                    ]
-                },
-                "ui:options": {
-                    "addable": false,
-                    "orderable": false,
-                    "removable": false
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
                 }
             },
             "schema": {
@@ -14048,11 +14040,7 @@
                     "properties": {
                         "Q1": {
                             "type": "string",
-                            "title": "What is the percentage increase in annual total compensation for the organization's highest-paid"
-                        },
-                        "Q2": {
-                            "type": "string",
-                            "title": "What is the median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual?"
+                            "title": "Report contextual information necessary to understand the data and how the data has been compiled."
                         }
                     }
                 }
@@ -14304,7 +14292,7 @@
         "pk": 169,
         "fields": {
             "created_at": "2024-08-14T10:44:38.134Z",
-            "updated_at": "2024-08-14T10:44:38.134Z",
+            "updated_at": "2024-08-20T12:16:22.589Z",
             "name": "Performance and Remuneration-Remuneration-Remuneration",
             "path": 168,
             "meta_data": {
@@ -14314,53 +14302,73 @@
                 "items": {
                     "Q1": {
                         "ui:title": "Fixed pay & variable pay",
+                        "ui:hading": "",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false
                         },
                         "ui:tooltip": "Report on fixed pay and variable pay. This can include performance-based pay, equity-based pay, bonuses, and deferred and vested shares.",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "block"
+                        "ui:hadingdisplay": "none",
+                        "ui:hadingtooltip": "",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "none"
                     },
                     "Q2": {
                         "ui:title": "Sign-on bonuses or recruitment incentive payments",
+                        "ui:hading": "",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false
                         },
                         "ui:tooltip": "Report on sign-on bonuses or recruitment incentive payments.",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "block"
+                        "ui:hadingdisplay": "none",
+                        "ui:hadingtooltip": "",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "none"
                     },
                     "Q3": {
                         "ui:title": "Termination payments",
+                        "ui:hading": "",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false
                         },
                         "ui:tooltip": "Report on termination payments.Termination payments are all payments and benefits given to a departing member of the highest governance body or senior executive whose appointment is terminated.",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "block"
+                        "ui:hadingdisplay": "none",
+                        "ui:hadingtooltip": "",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "none"
                     },
                     "Q4": {
                         "ui:title": "Clawbacks",
+                        "ui:hading": "",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false
                         },
                         "ui:tooltip": "Clawbacks are repayments of previously received compensation that a highest governance body member or senior executive is required to make to their employer if certain conditions of employment or goals are not met",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "block"
+                        "ui:hadingdisplay": "none",
+                        "ui:hadingtooltip": "",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "none"
                     },
                     "Q5": {
                         "ui:title": "Retirement benefits",
+                        "ui:hading": "",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Report on retirement benefits. This can also include the differences between the retirement benefit schemes and the contribution rates for the highest governance body members, senior executives, and all other employee. ",
+                        "ui:tooltip": "Report on retirement benefits. This can also include the differences between the retirement benefit schemes and the contribution rates for the highest governance body members, senior executives, and all other employee.",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "block"
+                        "ui:hadingdisplay": "none",
+                        "ui:hadingtooltip": "",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "none"
                     },
                     "ui:order": [
                         "Q1",
@@ -14460,7 +14468,7 @@
         "pk": 171,
         "fields": {
             "created_at": "2024-08-16T04:59:42.554Z",
-            "updated_at": "2024-08-16T05:02:23.411Z",
+            "updated_at": "2024-08-23T10:41:56.126Z",
             "name": "Performance and Remuneration-Determine Remuneration-process",
             "path": 170,
             "meta_data": {
@@ -14547,9 +14555,9 @@
                                     "Whethertakenintoconsideration": {
                                         "type": "string",
                                         "enum": [
-                                            "Gender",
-                                            "Race",
-                                            "Others"
+                                            "Yes",
+                                            "No",
+                                            "N/A"
                                         ],
                                         "title": ""
                                     },
@@ -14706,7 +14714,7 @@
         "pk": 174,
         "fields": {
             "created_at": "2024-08-16T06:31:45.441Z",
-            "updated_at": "2024-08-16T06:31:45.441Z",
+            "updated_at": "2024-08-20T05:39:42.346Z",
             "name": "Policy-Policy Commitments-Business Conduct",
             "path": 173,
             "meta_data": {
@@ -14756,7 +14764,8 @@
                             "tooltip": "Due diligence: Process to identify, prevent, mitigate, and account for how the organization addresses its actual and potential negative impacts.",
                             "selectoption": [
                                 "Yes",
-                                "No"
+                                "No",
+                                "NA"
                             ]
                         },
                         {
@@ -14768,7 +14777,8 @@
                             "tooltip": "The precautionary principle means taking early action to prevent and mitigate potential negative impacts in situations where conclusive scientific understanding or evidence is lacking, but there is sufficient reason to expect serious or irreversible damage. (The precautionary principle is set out in Principle 15 of the UN Rio Declaration on Environment and Development.)",
                             "selectoption": [
                                 "Yes",
-                                "No"
+                                "No",
+                                "NA"
                             ]
                         },
                         {
@@ -14780,7 +14790,8 @@
                             "tooltip": "If the organisation's policy commitment covers all internationally recognized human rights, a brief statement of this fact is sufficient to comply with the requirement. The organization can also state if the policy commitment references certain rights that require particular attention.",
                             "selectoption": [
                                 "Yes",
-                                "No"
+                                "No",
+                                "NA"
                             ]
                         }
                     ]
@@ -15120,6 +15131,2274 @@
                         "Q1": {
                             "type": "string",
                             "title": "Describe how the policy commitments are communicated to workers, business partners, and other relevant parties."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 180,
+        "fields": {
+            "created_at": "2024-08-21T10:24:01.031Z",
+            "updated_at": "2024-08-23T05:38:12.297Z",
+            "name": "Reporting info-Org Details",
+            "path": 179,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Legal name",
+                        "ui:hading": "",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "If your company has a different trading name from its legal name. Name both. E.g. Legal Name: Yum! Brands, Inc.Trading Name: Kentucky Fried Chicken (KFC)",
+                        "ui:horizontal": true,
+                        "ui:hadingdisplay": "none",
+                        "ui:hadingtooltip": "",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "none"
+                    },
+                    "Q2": {
+                        "ui:title": "Nature of ownership & legal form",
+                        "ui:hading": "",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please specify the nature of ownership & legal form. E.g. Sole proprietorship,Partnership (general or limited), Corporation, Limited Liability Company (LLC) etc.",
+                        "ui:horizontal": true,
+                        "ui:hadingdisplay": "none",
+                        "ui:hadingtooltip": "",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "none"
+                    },
+                    "Q3": {
+                        "ui:title": "Location of headquarters",
+                        "ui:hading": "",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please specify the location of organization's headquarters. Headquarters are an organization\u2019s global administrative center, the place from which it is controlled or directed.",
+                        "ui:horizontal": true,
+                        "ui:hadingdisplay": "none",
+                        "ui:hadingtooltip": "",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "none"
+                    },
+                    "Q4": {
+                        "ui:title": "Countries of operation",
+                        "ui:widget": "Textboxmultirowfile",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate the countries in which the organisation operates. Include: The organization can also specify the regions or specific locations within countries (e.g., states, cities) where it has operations.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2",
+                        "Q3",
+                        "Q4"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Legal name"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Nature of ownership & legal form"
+                        },
+                        "Q3": {
+                            "type": "string",
+                            "title": "Location of headquarters"
+                        },
+                        "Q4": {
+                            "type": "array",
+                            "title": "Countries of operation",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "text": {
+                                        "type": "string",
+                                        "title": "Country"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 181,
+        "fields": {
+            "created_at": "2024-08-21T10:26:52.487Z",
+            "updated_at": "2024-08-21T10:26:52.487Z",
+            "name": "GRI Reporting info-Entities-List",
+            "path": 180,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide a list of all entities included in the sustainability report.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "List all entities included in the sustainability report"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 182,
+        "fields": {
+            "created_at": "2024-08-21T10:27:56.695Z",
+            "updated_at": "2024-08-21T10:27:56.695Z",
+            "name": "GRI Reporting info-Entities-Audited",
+            "path": 181,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Does the organization have audited, consolidated financial statements or financial information filed on public record?",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please select 'Yes' if the organization has audited, consolidated financial statements or financial information filed on public record, or select 'No' if not.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "If yes, then please specify the differences between the list of entities included in the financial reporting and the list included in the sustainability reporting.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Describe the differences between the list of entities included in the financial reporting and the list included in the sustainability reporting.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Does the organization have audited, consolidated financial statements or financial information filed on public record?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    },
+                    "dependencies": {
+                        "Q1": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q1": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q2": {
+                                            "type": "string",
+                                            "title": "If yes, then please specify the differences between the list of entities included in the financial reporting and the list included in the sustainability reporting."
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 183,
+        "fields": {
+            "created_at": "2024-08-21T10:28:52.020Z",
+            "updated_at": "2024-08-21T10:28:52.020Z",
+            "name": "GRI Reporting info-Entities-Multiple",
+            "path": 182,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Does the organization consist of multiple entities?",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please select 'Yes' if the organization consists of multiple entities, or select 'No' if not.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "Q2": {
+                        "ui:title": "If yes, then explain the approach used for consolidating information.",
+                        "ui:hading": "Approach used to consolidate information",
+                        "ui:widget": "TextareaWidget3",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Include: i. whether the approach involves adjustments to information for minority interests ii. how the approach takes into account mergers, acquisitions, and disposal of entities or parts of entities iii. whether and how the approach differs across the disclosures within GRI Standards and across material topics",
+                        "ui:horizontal": true,
+                        "ui:hadingtooltip": "Approach used to consolidate information",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Does the organization consist of multiple entities?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    },
+                    "dependencies": {
+                        "Q1": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q1": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q2": {
+                                            "type": "string",
+                                            "title": "If yes, then explain the approach used for consolidating information."
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 184,
+        "fields": {
+            "created_at": "2024-08-21T10:30:05.191Z",
+            "updated_at": "2024-08-21T10:30:05.191Z",
+            "name": "Report Details-Report Period-1",
+            "path": 183,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Please specify the reporting period for the organization's sustainability reporting",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Specify the period of sustainability reporting.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "Please specify the reporting frequency for the organization's sustainability reporting",
+                        "ui:widget": "selectWidget4",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Specify the frequency of sustainability reporting.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Please specify the reporting period for the organization's sustainability reporting"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Please specify the reporting frequency for the organization's sustainability reporting",
+                            "enum": [
+                                "Annual",
+                                "Half-yearly",
+                                "Quarterly"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 185,
+        "fields": {
+            "created_at": "2024-08-21T10:31:15.398Z",
+            "updated_at": "2024-08-21T10:31:15.398Z",
+            "name": "Report Details-Report Period-2",
+            "path": 184,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Does the reporting period for the organization's financial reporting align with the period for its sustainability reporting?",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the reporting period for the organization's financial reporting aligns with the period for its sustainability reporting.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "If not, then please explain why",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide an explanation if the reporting period for the organization's financial reporting does not align with the period for its sustainability reporting.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Does the reporting period for the organization's financial reporting align with the period for its sustainability reporting?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    },
+                    "dependencies": {
+                        "Q1": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q1": {
+                                            "enum": [
+                                                "No"
+                                            ]
+                                        },
+                                        "Q2": {
+                                            "type": "string",
+                                            "title": "If not, then please explain why"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 186,
+        "fields": {
+            "created_at": "2024-08-21T10:32:46.601Z",
+            "updated_at": "2024-08-21T10:32:46.601Z",
+            "name": "Report Details-Publication",
+            "path": 185,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Date of report/report information",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the reporting period for the organization's financial reporting aligns with the period for its sustainability reporting.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Date of report/report information"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 187,
+        "fields": {
+            "created_at": "2024-08-21T10:34:12.307Z",
+            "updated_at": "2024-08-21T10:34:12.307Z",
+            "name": "Report Details-Point",
+            "path": 186,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Please indicate the contact point for questions about the report",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Specify the contact point for questions about the report or reported information. E.g., provide name and email address, etc.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Please indicate the contact point for questions about the report"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 188,
+        "fields": {
+            "created_at": "2024-08-22T11:51:51.000Z",
+            "updated_at": "2024-08-22T11:51:51.000Z",
+            "name": "GRI Reporting info-Restatement",
+            "path": 187,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Are there any restatements of information you would like to make from the previous periods?",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether there are any restatements of information you would like to make from the previous periods.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "If yes, please explain the reason for the restatements and the effects of the restatements (this refers to the consequence of the change or correction. Where quantitative information is relevant to the restatement, then specify the quantitative change in restated information.)",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Reason for restatements can include:<ul><li>\u2022 Change of base period or length of the reporting period;</li> <li>\u2022 change in the nature of the business;</li> <li>\u2022 change in the measurement methodologies or in the definitions used;</li> <li>\u2022 disposals, mergers, or acquisitions;</li> <li>\u2022 error made in previous reporting periods Effect of the restatement: The Effect of the restatement refers to the consequences of the change or correction made to previously reported information</li></ul>",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Are there any restatements of information you would like to make from the previous periods?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    },
+                    "dependencies": {
+                        "Q1": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q1": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q2": {
+                                            "type": "string",
+                                            "title": "If yes, please explain the reason for the restatements and the effects of the restatements (this refers to the consequence of the change or correction. Where quantitative information is relevant to the restatement, then specify the quantitative change in restated information.)"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 189,
+        "fields": {
+            "created_at": "2024-08-22T11:52:59.112Z",
+            "updated_at": "2024-08-22T11:52:59.112Z",
+            "name": "GRI Reporting info-Assurance-Policy",
+            "path": 188,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the policy and practice for seeking external assurance.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What are the organization's policy and practices for seeking external assurance.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the policy and practice for seeking external assurance."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 190,
+        "fields": {
+            "created_at": "2024-08-22T11:54:05.655Z",
+            "updated_at": "2024-08-22T11:54:05.655Z",
+            "name": "GRI Reporting info-Assurance-Highest",
+            "path": 189,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the policy and practice for seeking external assurance.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What are the organization's policy and practices for seeking external assurance.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Please describe whether and how the highest governance body and senior executives are involved in the process."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 191,
+        "fields": {
+            "created_at": "2024-08-22T11:55:55.554Z",
+            "updated_at": "2024-08-22T11:55:55.555Z",
+            "name": "GRI Reporting info-Assurance-External",
+            "path": 190,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Has the organization's sustainability report been externally assured?",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the organization's sustainability report has been externally assured.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "If yes, please provide a link or reference to the external assurance reports or assurance statements",
+                        "ui:hading": "Link/Reference",
+                        "ui:widget": "Textboxwithfileupload",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the organization's sustainability report has been externally assured.",
+                        "ui:horizontal": true,
+                        "ui:hadingdisplay": "block",
+                        "ui:hadingtooltip": "This section documents data corresponding to the external assurance of the sustainability report.",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "block"
+                    },
+                    "Q3": {
+                        "ui:title": "Please describe what has been assured and on what basis",
+                        "ui:hading": "What has been assured and on what basis",
+                        "ui:widget": "TextareaWidget3",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please specify what has been assured and on what basis it has been assured.",
+                        "ui:horizontal": true,
+                        "ui:hadingtooltip": "This section documents data corresponding to what has been assured and on what basis.",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "block"
+                    },
+                    "Q4": {
+                        "ui:title": "What is the Assurance Standard used?",
+                        "ui:hading": "Assurance standard",
+                        "ui:widget": "TextareaWidget3",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please specify the standard used for assurance.",
+                        "ui:horizontal": true,
+                        "ui:hadingtooltip": "This section documents data corresponding to the assurance standard used.",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "block"
+                    },
+                    "Q5": {
+                        "ui:title": "What is the level of Assurance obtained?",
+                        "ui:hading": "Level of assurance",
+                        "ui:widget": "TextareaWidget3",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please specify the level of assurance obtained.",
+                        "ui:horizontal": true,
+                        "ui:hadingtooltip": "This section documents data corresponding to the level of assurance.",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "block"
+                    },
+                    "Q6": {
+                        "ui:title": "Please describe any limitations of the assurance process",
+                        "ui:hading": "Limitation of the assurance process",
+                        "ui:widget": "TextareaWidget3",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please provide a description of any limitations of the assurance process.",
+                        "ui:horizontal": true,
+                        "ui:hadingtooltip": "This section documents data corresponding to the limitation of the assurance process.",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "block"
+                    },
+                    "Q7": {
+                        "ui:title": "Please describe the relationship between the organization and the assurance provider",
+                        "ui:hading": "Relationship between organization and the assurance provider",
+                        "ui:widget": "TextareaWidget3",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is the relationship between the organization and the assurance provider?",
+                        "ui:horizontal": true,
+                        "ui:hadingtooltip": "This section documents data corresponding to the relationship between the organization and the assurance provider",
+                        "ui:tooltipdisplay": "block",
+                        "ui:hadingtooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2",
+                        "Q3",
+                        "Q4",
+                        "Q5",
+                        "Q6",
+                        "Q7"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Has the organization's sustainability report been externally assured?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "Q3": {
+                            "type": "string",
+                            "title": "Please describe what has been assured and on what basis"
+                        },
+                        "Q4": {
+                            "type": "string",
+                            "title": "What is the Assurance Standard used?"
+                        },
+                        "Q5": {
+                            "type": "string",
+                            "title": "What is the level of Assurance obtained?"
+                        },
+                        "Q6": {
+                            "type": "string",
+                            "title": "Please describe any limitations of the assurance process"
+                        },
+                        "Q7": {
+                            "type": "string",
+                            "title": "Please describe the relationship between the organization and the assurance provider"
+                        }
+                    },
+                    "dependencies": {
+                        "Q1": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q1": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q2": {
+                                            "type": "string",
+                                            "title": "If yes, please provide a link or reference to the external assurance reports or assurance statements"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 192,
+        "fields": {
+            "created_at": "2024-08-23T07:08:25.513Z",
+            "updated_at": "2024-08-23T07:08:25.513Z",
+            "name": "Workforce-Employees-Total Number-Permanent Employee",
+            "path": 191,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "yearsold30",
+                            "title": "< 30 years old"
+                        },
+                        {
+                            "key": "yearsold30to50",
+                            "title": "30 - 50 years old"
+                        },
+                        {
+                            "key": "yearsold50",
+                            "title": "> 50 years old"
+                        }
+                    ],
+                    "rowLabels": [
+                        {
+                            "title": "Male"
+                        },
+                        {
+                            "title": "Female"
+                        },
+                        {
+                            "title": "Others"
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "yearsold30": {
+                            "type": "number",
+                            "title": "< 30 years old"
+                        },
+                        "yearsold30to50": {
+                            "type": "number",
+                            "title": "30 - 50 years old"
+                        },
+                        "yearsold50": {
+                            "type": "number",
+                            "title": "> 50 years old"
+                        },
+                        "total": {
+                            "type": "number",
+                            "title": "Total"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 193,
+        "fields": {
+            "created_at": "2024-08-23T07:17:23.938Z",
+            "updated_at": "2024-08-23T10:58:48.971Z",
+            "name": "Membership Association-Membership Association-List",
+            "path": 207,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "ui:order": [
+                        "MembershipAssociations"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    },
+                    "MembershipAssociations": {
+                        "ui:title": "Report industry associations, other membership associations, and national or international advocacy organizations in which it participates in a significant role",
+                        "ui:widget": "FileUploadWithAddRowAndCols",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Describe an organization's involvement in industry associations, other membership associations, and national or international advocacy organizations where it plays a significant role.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "MembershipAssociations": {
+                            "type": "string",
+                            "title": "Report industry associations, other membership associations, and national or international advocacy organizations in which it participates in a significant role."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 194,
+        "fields": {
+            "created_at": "2024-08-23T07:18:24.415Z",
+            "updated_at": "2024-08-23T07:18:24.415Z",
+            "name": "Stakeholder Engagement-Stakeholder Engagement-Describe",
+            "path": 208,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "Organisationengages",
+                            "title": "What are the categories of stakeholders organisation engages with",
+                            "tooltip": "Here the organization can explain how the organisation determines which categories of stakeholders to engage with and which categories not to engage with."
+                        },
+                        {
+                            "key": "Stakeholdersidentified",
+                            "title": "How the stakeholders are identified.",
+                            "tooltip": "Explain the process of stakeholder indentification."
+                        },
+                        {
+                            "key": "Stakeholderengagement",
+                            "title": "Describe the purpose of stakeholder engagement",
+                            "tooltip": "The purpose of stakeholder engagement can be, for example, to identify actual and potential impacts or to determine prevention and mitigation responses to potential negative impacts."
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Organisationengages": {
+                            "type": "string",
+                            "title": "What are the categories of stakeholders organisation engages with",
+                            "texttype": "text"
+                        },
+                        "Stakeholdersidentified": {
+                            "type": "string",
+                            "title": "How the stakeholders are identified.",
+                            "texttype": "text"
+                        },
+                        "Stakeholderengagement": {
+                            "type": "string",
+                            "title": "Describe the purpose of stakeholder engagement",
+                            "texttype": "text"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 195,
+        "fields": {
+            "created_at": "2024-08-23T07:19:02.532Z",
+            "updated_at": "2024-08-23T07:19:02.532Z",
+            "name": "Stakeholder Engagement-Stakeholder Engagement-Stakeholder",
+            "path": 209,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "Stakeholder",
+                            "title": "Stakeholder",
+                            "tooltip": "Provide the category of the stakeholder."
+                        },
+                        {
+                            "key": "RepresentativeGroup",
+                            "title": "Representative Group",
+                            "tooltip": "Mention the representative group of the stakeholder."
+                        },
+                        {
+                            "key": "EngagementMethod",
+                            "title": "Engagement Method",
+                            "tooltip": "What is the method of engagement?"
+                        },
+                        {
+                            "key": "Frequency",
+                            "title": "Frequency",
+                            "tooltip": "Indicate the frequency of engagement with stakeholder"
+                        },
+                        {
+                            "key": "Keyconcernraised",
+                            "title": "Key concern raised",
+                            "tooltip": "Mention a key concern raised."
+                        },
+                        {
+                            "key": "Responsetoconcerns",
+                            "title": "Response to concerns",
+                            "tooltip": "Mention a response to the concerns raised."
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Stakeholder": {
+                            "type": "string",
+                            "title": "Stakeholder",
+                            "texttype": "text"
+                        },
+                        "RepresentativeGroup": {
+                            "type": "string",
+                            "title": "Representative Group",
+                            "texttype": "text"
+                        },
+                        "EngagementMethod": {
+                            "type": "string",
+                            "title": "Engagement Method",
+                            "texttype": "text"
+                        },
+                        "Frequency": {
+                            "type": "string",
+                            "title": "Frequency",
+                            "enum": [
+                                "Weekly",
+                                "Fourthnightly",
+                                "Monthly",
+                                "Quarterly",
+                                "Half-yearly",
+                                "Annual",
+                                "Need-based"
+                            ]
+                        },
+                        "Keyconcernraised": {
+                            "type": "string",
+                            "title": "Key concern raised",
+                            "texttype": "text"
+                        },
+                        "Responsetoconcerns": {
+                            "type": "string",
+                            "title": "Response to concerns",
+                            "texttype": "text"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 196,
+        "fields": {
+            "created_at": "2024-08-23T07:20:01.833Z",
+            "updated_at": "2024-08-23T07:20:01.833Z",
+            "name": "Collective Bargaining-Collective Bargaining-Percentage",
+            "path": 210,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "What is the total number of employees covered by collective bargaining agreements?",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Specify the Number of employees covered by collective bargaining agreements. The employees covered by collective bargaining agreements are those employees to whom the organization is obligated to apply the agreement.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "If yes, please provide a link or reference to the external assurance reports or assurance statements",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Total number of employees should be same as reported under the disclosure 2-7.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "What is the total number of employees covered by collective bargaining agreements?"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "What is the total number of employees in the organisation (as reported under disclosure 2-7) ?"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 197,
+        "fields": {
+            "created_at": "2024-08-23T07:21:23.120Z",
+            "updated_at": "2024-08-23T07:21:23.120Z",
+            "name": "Collective Bargaining-Collective Bargaining-Employees",
+            "path": 211,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "For employees not covered by collective bargaining agreements, describe whether the Organization determines their working conditions and terms of employment based on collective bargaining agreements that cover its other employees or based on collective bargaining agreements from other organizations.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "The description of significant instances of non-compliance can include the geographic location where the instance occurred, and the matter to which the instance relates, such as a tax fraud or a spill. The organization is required to report sufficient information for information users to understand the type and the context of significant instances of non-compliance.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "For employees not covered by collective bargaining agreements, describe whether the Organization determines their working conditions and terms of employment based on collective bargaining agreements that cover its other employees or based on collective bargaining agreements from other organizations."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 198,
+        "fields": {
+            "created_at": "2024-08-23T07:22:09.163Z",
+            "updated_at": "2024-08-23T07:22:09.163Z",
+            "name": "Workforce-Employees-Total Number-Temporary Employee",
+            "path": 192,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "yearsold30",
+                            "title": "< 30 years old"
+                        },
+                        {
+                            "key": "yearsold30to50",
+                            "title": "30 - 50 years old"
+                        },
+                        {
+                            "key": "yearsold50",
+                            "title": "> 50 years old"
+                        }
+                    ],
+                    "rowLabels": [
+                        {
+                            "title": "Male"
+                        },
+                        {
+                            "title": "Female"
+                        },
+                        {
+                            "title": "Others"
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "yearsold30": {
+                            "type": "number",
+                            "title": "< 30 years old"
+                        },
+                        "yearsold30to50": {
+                            "type": "number",
+                            "title": "30 - 50 years old"
+                        },
+                        "yearsold50": {
+                            "type": "number",
+                            "title": "> 50 years old"
+                        },
+                        "total": {
+                            "type": "number",
+                            "title": "Total"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 199,
+        "fields": {
+            "created_at": "2024-08-23T07:23:05.054Z",
+            "updated_at": "2024-08-23T07:23:05.054Z",
+            "name": "Workforce-Employees-Total Number-Nonguaranteed Hours Employees",
+            "path": 193,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "yearsold30",
+                            "title": "< 30 years old"
+                        },
+                        {
+                            "key": "yearsold30to50",
+                            "title": "30 - 50 years old"
+                        },
+                        {
+                            "key": "yearsold50",
+                            "title": "> 50 years old"
+                        }
+                    ],
+                    "rowLabels": [
+                        {
+                            "title": "Male"
+                        },
+                        {
+                            "title": "Female"
+                        },
+                        {
+                            "title": "Others"
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "yearsold30": {
+                            "type": "number",
+                            "title": "< 30 years old"
+                        },
+                        "yearsold30to50": {
+                            "type": "number",
+                            "title": "30 - 50 years old"
+                        },
+                        "yearsold50": {
+                            "type": "number",
+                            "title": "> 50 years old"
+                        },
+                        "total": {
+                            "type": "number",
+                            "title": "Total"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 200,
+        "fields": {
+            "created_at": "2024-08-23T07:24:16.872Z",
+            "updated_at": "2024-08-23T07:24:16.872Z",
+            "name": "Workforce-Employees-Total Number-Full-Time Employee",
+            "path": 194,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "yearsold30",
+                            "title": "< 30 years old"
+                        },
+                        {
+                            "key": "yearsold30to50",
+                            "title": "30 - 50 years old"
+                        },
+                        {
+                            "key": "yearsold50",
+                            "title": "> 50 years old"
+                        }
+                    ],
+                    "rowLabels": [
+                        {
+                            "title": "Male"
+                        },
+                        {
+                            "title": "Female"
+                        },
+                        {
+                            "title": "Others"
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "yearsold30": {
+                            "type": "number",
+                            "title": "< 30 years old"
+                        },
+                        "yearsold30to50": {
+                            "type": "number",
+                            "title": "30 - 50 years old"
+                        },
+                        "yearsold50": {
+                            "type": "number",
+                            "title": "> 50 years old"
+                        },
+                        "total": {
+                            "type": "number",
+                            "title": "Total"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 201,
+        "fields": {
+            "created_at": "2024-08-23T07:25:01.506Z",
+            "updated_at": "2024-08-23T07:25:01.506Z",
+            "name": "Workforce-Employees-Total Number-Part-Time Employee",
+            "path": 195,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "yearsold30",
+                            "title": "< 30 years old"
+                        },
+                        {
+                            "key": "yearsold30to50",
+                            "title": "30 - 50 years old"
+                        },
+                        {
+                            "key": "yearsold50",
+                            "title": "> 50 years old"
+                        }
+                    ],
+                    "rowLabels": [
+                        {
+                            "title": "Male"
+                        },
+                        {
+                            "title": "Female"
+                        },
+                        {
+                            "title": "Others"
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "yearsold30": {
+                            "type": "number",
+                            "title": "< 30 years old"
+                        },
+                        "yearsold30to50": {
+                            "type": "number",
+                            "title": "30 - 50 years old"
+                        },
+                        "yearsold50": {
+                            "type": "number",
+                            "title": "> 50 years old"
+                        },
+                        "total": {
+                            "type": "number",
+                            "title": "Total"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 202,
+        "fields": {
+            "created_at": "2024-08-23T07:27:17.682Z",
+            "updated_at": "2024-08-23T07:27:17.682Z",
+            "name": "Workforce-Employees-Methodologies",
+            "path": 196,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Methods and assumptions used to calculate data.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Briefly describe the methodology used (e.g., headcount, FTE, or another methodology?).",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Methods and assumptions used to calculate data."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 203,
+        "fields": {
+            "created_at": "2024-08-23T07:28:06.595Z",
+            "updated_at": "2024-08-23T07:28:06.595Z",
+            "name": "Workforce-Employees-Data",
+            "path": 197,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Please mention the timeframe used for data compilation.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Is the data based on the end of the reporting period, an average across the entire period, or another methodology?",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Please mention the timeframe used for data compilation."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 204,
+        "fields": {
+            "created_at": "2024-08-23T07:29:02.061Z",
+            "updated_at": "2024-08-23T07:29:02.061Z",
+            "name": "Workforce-Employees-Contextual",
+            "path": 198,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Briefly describe any factors or events relevant to understanding the reported employee data",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please provide additional details about the factors influencing the reported employee breakdown (e.g., reasons for temporary/part-time employment, regional differences).",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Briefly describe any factors or events relevant to understanding the reported employee data"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 205,
+        "fields": {
+            "created_at": "2024-08-23T07:29:59.954Z",
+            "updated_at": "2024-08-23T07:29:59.954Z",
+            "name": "Workforce-Employees-Fluctuations",
+            "path": 199,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe any significant changes in employee numbers during or between reporting periods.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Specify the nature and reason for these fluctuations (e.g., project completion, restructuring).",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe any significant changes in employee numbers during or between reporting periods."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 206,
+        "fields": {
+            "created_at": "2024-08-23T07:31:17.449Z",
+            "updated_at": "2024-08-23T07:31:17.449Z",
+            "name": "Workforce-Other Workers-Workers",
+            "path": 200,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "ui:widget": "TableWidget",
+                "ui:options": {
+                    "titles": [
+                        {
+                            "key": "TypeofWorker",
+                            "title": "Type of Worker",
+                            "tooltip": "Please select the types of workers employed or engaged by your organization during the reporting period."
+                        },
+                        {
+                            "key": "TotalnumberofWorkers",
+                            "title": "Total number of Workers",
+                            "tooltip": "For the type of worker selected, enter the total number of individuals engaged during the reporting period."
+                        },
+                        {
+                            "key": "Contractualrelationship",
+                            "title": "Contractual relationship",
+                            "tooltip": "Please specify the primary contractual relationship for the worker."
+                        },
+                        {
+                            "key": "Workperformed",
+                            "title": "Work performed",
+                            "tooltip": "Choose the primary category of work performed by the reported workers."
+                        },
+                        {
+                            "key": "Engagementapproach",
+                            "title": "Engagement approach",
+                            "tooltip": "Indicate whether the workers are directly employed by your organization or engaged through a third party."
+                        },
+                        {
+                            "key": "Thirdparty",
+                            "title": "Third party (if applicable)",
+                            "tooltip": "If workers are engaged indirectly, specify the type of third party involved (e.g., agency, subcontractor)."
+                        }
+                    ]
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "TypeofWorker": {
+                            "type": "string",
+                            "title": "Type of Worker",
+                            "enum": [
+                                "Agency worker",
+                                "Apprentice",
+                                "Contractor",
+                                "Home worker",
+                                "Intern",
+                                "Self-employed person",
+                                "Sub-contractor",
+                                "Volunteer",
+                                "Others (please specify)"
+                            ]
+                        },
+                        "TotalnumberofWorkers": {
+                            "type": "string",
+                            "title": "Total number of Workers",
+                            "texttype": "number"
+                        },
+                        "Contractualrelationship": {
+                            "type": "string",
+                            "title": "Contractual relationship",
+                            "enum": [
+                                "Full-time employee",
+                                "Independent contractor",
+                                "Paid intern",
+                                "Part-time employee",
+                                "Subcontractor",
+                                "Temporary agency worker",
+                                "Unpaid intern",
+                                "Others (please specify)"
+                            ]
+                        },
+                        "Workperformed": {
+                            "type": "string",
+                            "title": "Work performed",
+                            "enum": [
+                                "Administration",
+                                "Coding",
+                                "Consulting",
+                                "Data Analysis",
+                                "Design",
+                                "Development",
+                                "Delivery",
+                                "Finance",
+                                "Installation",
+                                "Maintenance",
+                                "Marketing",
+                                "Operations",
+                                "Research",
+                                "Sales",
+                                "Training",
+                                "Writing",
+                                "Others (please specify)"
+                            ]
+                        },
+                        "Engagementapproach": {
+                            "type": "string",
+                            "title": "Engagement approach",
+                            "enum": [
+                                "Directly",
+                                "Indirectly (through third-party)"
+                            ]
+                        },
+                        "Thirdparty": {
+                            "type": "string",
+                            "title": "Third party (if applicable)",
+                            "enum": [
+                                "Contractor",
+                                "Employment agency",
+                                "Others (please specify)"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 207,
+        "fields": {
+            "created_at": "2024-08-23T07:32:10.204Z",
+            "updated_at": "2024-08-23T07:32:10.204Z",
+            "name": "Workforce-Other Workers-Methodologies",
+            "path": 201,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Methods and assumptions used to calculate data.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Briefly describe the methodology used (e.g., headcount, FTE, or another methodology?).",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Methods and assumptions used to calculate data."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 208,
+        "fields": {
+            "created_at": "2024-08-23T07:33:17.202Z",
+            "updated_at": "2024-08-23T07:33:17.202Z",
+            "name": "Workforce-Other Workers-Fluctuations",
+            "path": 202,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe any significant changes in worker numbers during or between reporting periods.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Specify the nature and reason for these fluctuations (e.g., project completion, restructuring).",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe any significant changes in worker numbers during or between reporting periods."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 209,
+        "fields": {
+            "created_at": "2024-08-23T07:34:43.365Z",
+            "updated_at": "2024-08-23T07:34:43.365Z",
+            "name": "Compliance-Laws and Regulation-Instance",
+            "path": 203,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Did the organization have any significant instances of non-compliance with laws and regulations during the reporting period?",
+                        "ui:widget": "RadioWidget2",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the organization's sustainability report has been externally assured.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "If yes, please provide a link or reference to the external assurance reports or assurance statements",
+                        "ui:widget": "Textbox",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Is the data based on the end of the reporting period, an average across the entire period, or another methodology?",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q3": {
+                        "ui:title": "Provide the total number of instances for which fines were incurred",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please specify what has been assured and on what basis it has been assured.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "Q4": {
+                        "ui:title": "Provide the total number of instances for which non-monetary sanctions were incurred",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please specify the standard used for assurance.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2",
+                        "Q3",
+                        "Q4"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Did the organization have any significant instances of non-compliance with laws and regulations during the reporting period?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "Q3": {
+                            "type": "string",
+                            "title": "Provide the total number of instances for which fines were incurred"
+                        },
+                        "Q4": {
+                            "type": "string",
+                            "title": "Provide the total number of instances for which non-monetary sanctions were incurred"
+                        }
+                    },
+                    "dependencies": {
+                        "Q1": {
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "Q1": {
+                                            "enum": [
+                                                "Yes"
+                                            ]
+                                        },
+                                        "Q2": {
+                                            "type": "string",
+                                            "title": "If yes, Provide the total number of significant instances of non-compliance with laws and regulations during the reporting period"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 210,
+        "fields": {
+            "created_at": "2024-08-23T07:35:46.261Z",
+            "updated_at": "2024-08-23T07:35:46.261Z",
+            "name": "Compliance-Laws and Regulation-Monetary",
+            "path": 204,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Provide the total number of fines for instances of non-compliance with laws and regulations that occurred in the current reporting period",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Indicate whether the organization's sustainability report has been externally assured.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "Q2": {
+                        "ui:title": "Provide the total number of fines for instances of non-compliance with laws and regulations that occurred in previous reporting periods",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Is the data based on the end of the reporting period, an average across the entire period, or another methodology?",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Provide the total number of fines for instances of non-compliance with laws and regulations that occurred in the current reporting period"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Provide the total number of fines for instances of non-compliance with laws and regulations that occurred in previous reporting periods"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 211,
+        "fields": {
+            "created_at": "2024-08-23T07:37:07.986Z",
+            "updated_at": "2024-08-23T07:37:07.986Z",
+            "name": "Compliance-Laws and Regulation-Significant",
+            "path": 205,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the significant instances of non-compliance",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "The description of significant instances of non-compliance can include the geographic location where the instance occurred, and the matter to which the instance relates, such as a tax fraud or a spill. The organization is required to report sufficient information for information users to understand the type and the context of significant instances of non-compliance.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the significant instances of non-compliance"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 212,
+        "fields": {
+            "created_at": "2024-08-23T07:38:27.110Z",
+            "updated_at": "2024-08-23T07:38:27.110Z",
+            "name": "Compliance-Laws and Regulation-Organization",
+            "path": 206,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe how the organisation has determined significant instances of non-compliance",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Explain the process of determining significant instances of non-compliance.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe how the organisation has determined significant instances of non-compliance"
                         }
                     }
                 }

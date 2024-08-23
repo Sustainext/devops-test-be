@@ -1778,5 +1778,335 @@
             "name": "GRI-Collect-Policy-Policy Commitments-Describe",
             "slug": "gri-governance-policy_commitments-2-23-f-describe"
         }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 179,
+        "fields": {
+            "created_at": "2024-08-21T10:00:47.193Z",
+            "updated_at": "2024-08-21T10:00:47.193Z",
+            "name": "GRI-Collect-GRI Reporting info-Org Details",
+            "slug": "gri-general-org_details_2-1a-1b-1c-1d"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 180,
+        "fields": {
+            "created_at": "2024-08-21T10:04:06.445Z",
+            "updated_at": "2024-08-21T10:07:12.954Z",
+            "name": "GRI-Collect-GRI Reporting info-Entities-List",
+            "slug": "gri-general-entities-list_of_entities-2-2-a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 181,
+        "fields": {
+            "created_at": "2024-08-21T10:05:13.378Z",
+            "updated_at": "2024-08-21T10:19:24.977Z",
+            "name": "GRI-Collect-GRI Reporting info-Entities-Audited",
+            "slug": "gri-general-entities-audited-2-2-b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 182,
+        "fields": {
+            "created_at": "2024-08-21T10:07:03.640Z",
+            "updated_at": "2024-08-21T10:07:03.640Z",
+            "name": "GRI-Collect-GRI Reporting info-Entities-Multiple",
+            "slug": "gri-general-entities-multiple-2-2-c"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 183,
+        "fields": {
+            "created_at": "2024-08-21T10:15:07.555Z",
+            "updated_at": "2024-08-21T10:15:07.555Z",
+            "name": "GRI-Collect-GRI Reporting info-Report Details-Report Period-1",
+            "slug": "gri-general-report_details-reporting_period-2-3-a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 184,
+        "fields": {
+            "created_at": "2024-08-21T10:15:34.915Z",
+            "updated_at": "2024-08-21T10:15:34.915Z",
+            "name": "GRI-Collect-GRI Reporting info-Report Details-Report Period-2",
+            "slug": "gri-general-report_details-reporting_period-2-3-b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 185,
+        "fields": {
+            "created_at": "2024-08-21T10:16:29.863Z",
+            "updated_at": "2024-08-21T10:31:52.146Z",
+            "name": "GRI-Collect-GRI Reporting info-Report Details-Publication",
+            "slug": "gri-general-report_details-publication-2-3-c"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 186,
+        "fields": {
+            "created_at": "2024-08-21T10:17:19.991Z",
+            "updated_at": "2024-08-21T10:17:19.991Z",
+            "name": "GRI-Collect-GRI Reporting info-Report Details-Point",
+            "slug": "gri-general-report_details-point-2-3-d"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 187,
+        "fields": {
+            "created_at": "2024-08-22T11:34:17.395Z",
+            "updated_at": "2024-08-22T11:34:17.395Z",
+            "name": "GRI-Collect-GRI Reporting info-Restatement",
+            "slug": "gri-general-restatements-2-4-a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 188,
+        "fields": {
+            "created_at": "2024-08-22T11:37:03.714Z",
+            "updated_at": "2024-08-22T11:37:03.714Z",
+            "name": "GRI-Collect-GRI Reporting info-Assurance-Policy",
+            "slug": "gri-general-assurance-policy-2-5-a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 189,
+        "fields": {
+            "created_at": "2024-08-22T11:41:53.327Z",
+            "updated_at": "2024-08-22T11:41:53.327Z",
+            "name": "GRI-Collect-GRI Reporting info-Assurance-Highest",
+            "slug": "gri-general-assurance-highest-2-5-a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 190,
+        "fields": {
+            "created_at": "2024-08-22T11:42:23.914Z",
+            "updated_at": "2024-08-22T11:42:23.914Z",
+            "name": "GRI-Collect-GRI Reporting info-Assurance-External",
+            "slug": "gri-general-assurance-external-2-5-b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 191,
+        "fields": {
+            "created_at": "2024-08-23T06:11:19.320Z",
+            "updated_at": "2024-08-23T06:11:19.320Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Employees-Total Number-Permanent Employee",
+            "slug": "gri-general-workforce_employees-2-7-a-b-permanent_employee"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 192,
+        "fields": {
+            "created_at": "2024-08-23T06:12:48.627Z",
+            "updated_at": "2024-08-23T06:12:48.627Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Employees-Total Number-Temporary Employee",
+            "slug": "gri-general-workforce_employees-2-7-a-b-temporary_employee"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 193,
+        "fields": {
+            "created_at": "2024-08-23T06:14:07.795Z",
+            "updated_at": "2024-08-23T06:14:07.795Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Employees-Total Number-Nonguaranteed Hours Employees",
+            "slug": "gri-general-workforce_employees-2-7-a-b-nonguaranteed_hours_employees"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 194,
+        "fields": {
+            "created_at": "2024-08-23T06:15:08.948Z",
+            "updated_at": "2024-08-23T06:15:08.948Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Employees-Total Number-Full-Time Employee",
+            "slug": "gri-general-workforce_employees-2-7-a-b-full_time_employee"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 195,
+        "fields": {
+            "created_at": "2024-08-23T06:15:40.694Z",
+            "updated_at": "2024-08-23T06:15:40.694Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Employees-Total Number-Part-Time Employee",
+            "slug": "gri-general-workforce_employees-2-7-a-b-part_time_employee"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 196,
+        "fields": {
+            "created_at": "2024-08-23T06:18:06.473Z",
+            "updated_at": "2024-08-23T06:23:03.191Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Employees-Methodologies",
+            "slug": "gri-general-workforce_employees-methodologies-2-7c"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 197,
+        "fields": {
+            "created_at": "2024-08-23T06:18:36.726Z",
+            "updated_at": "2024-08-23T06:22:36.042Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Employees-Data",
+            "slug": "gri-general-workforce_employees-data-2-7c"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 198,
+        "fields": {
+            "created_at": "2024-08-23T06:21:32.194Z",
+            "updated_at": "2024-08-23T06:21:32.194Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Employees-Contextual",
+            "slug": "gri-general-workforce_employees-contextual-2-7d"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 199,
+        "fields": {
+            "created_at": "2024-08-23T06:22:16.507Z",
+            "updated_at": "2024-08-23T06:22:16.507Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Employees-Fluctuations",
+            "slug": "gri-general-workforce_employees-fluctuations-2-7e"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 200,
+        "fields": {
+            "created_at": "2024-08-23T06:38:41.921Z",
+            "updated_at": "2024-08-23T06:38:41.921Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Other Workers-Workers",
+            "slug": "gri-general-workforce_other_workers-workers-2-8-a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 201,
+        "fields": {
+            "created_at": "2024-08-23T06:39:14.551Z",
+            "updated_at": "2024-08-23T06:49:35.357Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Other Workers-Methodologies",
+            "slug": "gri-general-workforce_other_workers-methodologies-2-8b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 202,
+        "fields": {
+            "created_at": "2024-08-23T06:40:16.896Z",
+            "updated_at": "2024-08-23T06:40:16.896Z",
+            "name": "GRI-Collect-Organization Details-Workforce-Other Workers-Fluctuations",
+            "slug": "gri-general-workforce_other_workers-fluctuations-2-8c"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 203,
+        "fields": {
+            "created_at": "2024-08-23T06:47:45.702Z",
+            "updated_at": "2024-08-23T06:47:45.702Z",
+            "name": "GRI-Collect-Compliance-Laws and Regulation-Instance",
+            "slug": "gri-general-laws_and_regulation-instance-2-27-a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 204,
+        "fields": {
+            "created_at": "2024-08-23T06:50:10.480Z",
+            "updated_at": "2024-08-23T06:50:10.480Z",
+            "name": "GRI-Collect-Compliance-Laws and Regulation-Monetary",
+            "slug": "gri-general-laws_and_regulation-monetary-2-27-b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 205,
+        "fields": {
+            "created_at": "2024-08-23T06:50:46.381Z",
+            "updated_at": "2024-08-23T06:50:46.381Z",
+            "name": "GRI-Collect-Compliance-Laws and Regulation-Significant",
+            "slug": "gri-general-laws_and_regulation-significant-2-27-c"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 206,
+        "fields": {
+            "created_at": "2024-08-23T06:51:41.542Z",
+            "updated_at": "2024-08-23T06:51:41.542Z",
+            "name": "GRI-Collect-Compliance-Laws and Regulation-Organization",
+            "slug": "gri-general-laws_and_regulation-organization-2-27-d"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 207,
+        "fields": {
+            "created_at": "2024-08-23T07:12:39.790Z",
+            "updated_at": "2024-08-23T07:24:41.045Z",
+            "name": "GRI-Collect-Membership Association-Membership Association-Report",
+            "slug": "gri-general-membership_association-2-28-a-report"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 208,
+        "fields": {
+            "created_at": "2024-08-23T07:13:04.971Z",
+            "updated_at": "2024-08-23T07:13:04.971Z",
+            "name": "GRI-Collect-Stakeholder Engagement-Stakeholder Engagement-Describe",
+            "slug": "gri-general-stakeholder_engagement-2-29a-describe"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 209,
+        "fields": {
+            "created_at": "2024-08-23T07:13:21.775Z",
+            "updated_at": "2024-08-23T07:13:21.775Z",
+            "name": "GRI-Collect-Stakeholder Engagement-Stakeholder Engagement-Stakeholder",
+            "slug": "gri-general-stakeholder_engagement-2-29b-stakeholder"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 210,
+        "fields": {
+            "created_at": "2024-08-23T07:13:41.023Z",
+            "updated_at": "2024-08-23T07:13:41.023Z",
+            "name": "GRI-Collect-Collective Bargaining-Collective Bargaining-Percentage",
+            "slug": "gri-general-collective_bargaining-2-30-a-percentage"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 211,
+        "fields": {
+            "created_at": "2024-08-23T07:14:02.594Z",
+            "updated_at": "2024-08-23T07:14:02.594Z",
+            "name": "GRI-Collect-Collective Bargaining-Collective Bargaining-Employees",
+            "slug": "gri-general-collective_bargaining-2-30-b-employees"
+        }
     }
 ]
