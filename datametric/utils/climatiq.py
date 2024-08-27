@@ -189,9 +189,9 @@ class Climatiq:
                 emission_data["Unit"] = self.raw_response.data[index]["Emission"].get(
                     "Unit"
                 )
-                emission_data["Quantity2"] = (
-                    self.raw_response.data[index]["Emission"].get("Quantity2"),
-                )
+                emission_data["Quantity2"] = self.raw_response.data[index][
+                    "Emission"
+                ].get("Quantity2")
 
                 emission_data["Unit2"] = self.raw_response.data[index]["Emission"].get(
                     "Unit2"
