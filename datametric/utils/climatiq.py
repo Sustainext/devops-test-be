@@ -183,13 +183,16 @@ class Climatiq:
                 emission_data["Activity"] = self.raw_response.data[index]["Emission"][
                     "Activity"
                 ]
-                emission_data["Quantity"] = self.round_decimal_or_nulls(
-                    self.raw_response.data[index]["Emission"]["Quantity"], 5
+                emission_data["Quantity"] = self.raw_response.data[index]["Emission"][
+                    "Quantity"
+                ]
+                emission_data["Unit"] = self.raw_response.data[index]["Emission"].get(
+                    "Unit"
                 )
-                emission_data["Unit"] = self.raw_response.data[index]["Emission"].get("Unit")
-                emission_data["Quantity2"] = self.round_decimal_or_nulls(
-                    self.raw_response.data[index]["Emission"].get("Quantity2"), 5
+                emission_data["Quantity2"] = (
+                    self.raw_response.data[index]["Emission"].get("Quantity2"),
                 )
+
                 emission_data["Unit2"] = self.raw_response.data[index]["Emission"].get(
                     "Unit2"
                 )
@@ -259,8 +262,8 @@ class Climatiq:
                         emission["activity_data"]["activity_value"]
                     ),
                     "unit2": emission.get("unit2"),
-                    "quantity": emission.get("quantity"),
-                    "quantity2": emission.get("quantity2"),
+                    "quantity": self.round_decimal_or_nulls(emission.get("quantity")),
+                    "quantity2": self.round_decimal_or_nulls(emission.get("quantity2")),
                 },
             )
             emission_analyse.save()
