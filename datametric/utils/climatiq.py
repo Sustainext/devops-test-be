@@ -201,6 +201,9 @@ class Climatiq:
             emission_analyse, _ = EmissionAnalysis.objects.update_or_create(
                 raw_response=self.raw_response,
                 index=index,
+                year=self.raw_response.year,
+                month=self.raw_response.month,
+                scope=int(self.raw_response.path.slug.split("-")[-1]),
                 defaults={
                     "activity_id": emission["emission_factor"]["activity_id"],
                     "co2e_total": self.round_decimal_or_nulls(
@@ -221,7 +224,6 @@ class Climatiq:
                     "calculation_method": emission["co2e_calculation_method"],
                     "category": emission["Category"],
                     "region": emission["emission_factor"]["region"],
-                    "year": emission["emission_factor"]["year"],
                     "name": emission["emission_factor"]["name"],
                     "unit": emission["activity_data"]["activity_unit"],
                     "consumption": self.round_decimal_or_nulls(
