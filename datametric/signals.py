@@ -20,6 +20,7 @@ def process_json(json_obj, path, raw_response):
     print("path is ", path.slug)
     data_metrics: BaseManager[DataMetric] = DataMetric.objects.filter(path=path)
     for index, item in enumerate(json_obj):
+        print(item)
         if isinstance(item, dict):
             first_key, first_value = next(iter(item.items()))
             # Print the first key and value
