@@ -34,11 +34,18 @@ class Climatiq:
         for emission_data in self.raw_response.data:
             """
             Example of emission data:
-            {'Emission': {'Unit': '',
-            'Activity': 'Butane - ( EPA ) - Energy',
-            'Category': 'Stationary Combustion',
-            'Quantity': '16',
-            'Subcategory': 'Fuel'}}
+            OrderedDict([('Emission',
+               OrderedDict([('Category', 'Mobile Combustion'),
+                            ('Subcategory', 'Road Travel'),
+                            ('Activity',
+                             'Bus - (EPA) - PassengerOverDistance'),
+                            ('activity_id',
+                             'passenger_vehicle-vehicle_type_bus-fuel_source_na-distance_na-engine_size_na'),
+                            ('unit_type', 'PassengerOverDistance'),
+                            ('Quantity', '323'),
+                            ('Quantity2', '23'),
+                            ('Unit2', 'km'),
+                            ('Unit', 'passengers')]))])]
             """
             try:
                 payload.append(
@@ -170,7 +177,26 @@ class Climatiq:
                 emission_data["Category"] = self.raw_response.data[index]["Emission"][
                     "Category"
                 ]
+                emission_data["SubCategory"] = self.raw_response.data[index][
+                    "Emission"
+                ]["Subcategory"]
+                emission_data["Activity"] = self.raw_response.data[index]["Emission"][
+                    "Activity"
+                ]
+                emission_data["Quantity"] = self.raw_response.data[index]["Emission"][
+                    "Quantity"
+                ]
+                emission_data["Unit"] = self.raw_response.data[index]["Emission"].get(
+                    "Unit"
+                )
+                emission_data["Quantity2"] = (
+                    self.raw_response.data[index]["Emission"].get("Quantity2"),
+                )
 
+                emission_data["Unit2"] = self.raw_response.data[index]["Emission"].get(
+                    "Unit2"
+                )
+                logger.info(f"Emission data: {emission_data}")
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
 
@@ -193,6 +219,8 @@ class Climatiq:
     def round_decimal_or_nulls(self, value, decimal_point=3):
         if value is None:
             return None
+        elif isinstance(value, str):
+            return round(decimal.Decimal(value), decimal_point)
         else:
             return round(value, decimal_point)
 
@@ -203,7 +231,9 @@ class Climatiq:
                 index=index,
                 year=self.raw_response.year,
                 month=self.raw_response.month,
-                scope=int(self.raw_response.path.slug.split("-")[-1]),
+                scope=(
+                    "-".join(self.raw_response.path.slug.split("-")[-2:])
+                ).capitalize(),
                 defaults={
                     "activity_id": emission["emission_factor"]["activity_id"],
                     "co2e_total": self.round_decimal_or_nulls(
@@ -223,12 +253,18 @@ class Climatiq:
                     ),
                     "calculation_method": emission["co2e_calculation_method"],
                     "category": emission["Category"],
+                    "subcategory": emission["SubCategory"],
+                    "activity": emission["Activity"],
                     "region": emission["emission_factor"]["region"],
                     "name": emission["emission_factor"]["name"],
                     "unit": emission["activity_data"]["activity_unit"],
                     "consumption": self.round_decimal_or_nulls(
                         emission["activity_data"]["activity_value"]
                     ),
+                    "unit1": emission.get("Unit"),
+                    "unit2": emission.get("Unit2"),
+                    "quantity": self.round_decimal_or_nulls(emission.get("Quantity")),
+                    "quantity2": self.round_decimal_or_nulls(emission.get("Quantity2")),
                 },
             )
             emission_analyse.save()
