@@ -182,6 +182,7 @@ class EmissionAnalysis(AbstractModel):
     scope = models.CharField(max_length=10)
     name = models.CharField(max_length=300)
     unit = models.CharField(max_length=50)
+    unit1 = models.CharField(max_length=50, null=True, blank=True)
     unit2 = models.CharField(max_length=50,null=True, blank=True)
     quantity = models.DecimalField(
         max_digits=20, decimal_places=3, null=True, blank=True

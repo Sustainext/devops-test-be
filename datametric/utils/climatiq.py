@@ -261,9 +261,10 @@ class Climatiq:
                     "consumption": self.round_decimal_or_nulls(
                         emission["activity_data"]["activity_value"]
                     ),
-                    "unit2": emission.get("unit2"),
-                    "quantity": self.round_decimal_or_nulls(emission.get("quantity")),
-                    "quantity2": self.round_decimal_or_nulls(emission.get("quantity2")),
+                    "unit1": emission.get("Unit"),
+                    "unit2": emission.get("Unit2"),
+                    "quantity": self.round_decimal_or_nulls(emission.get("Quantity")),
+                    "quantity2": self.round_decimal_or_nulls(emission.get("Quantity2")),
                 },
             )
             emission_analyse.save()
