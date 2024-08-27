@@ -196,7 +196,7 @@ class Climatiq:
                 emission_data["Unit2"] = self.raw_response.data[index]["Emission"].get(
                     "Unit2"
                 )
-
+                logger.info(f"Emission data: {emission_data}")
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
 
