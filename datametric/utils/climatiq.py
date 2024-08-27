@@ -184,14 +184,14 @@ class Climatiq:
                     "Activity"
                 ]
                 emission_data["Quantity"] = self.round_decimal_or_nulls(
-                    self.raw_response.data[index]["Emission"]["Quantity"]
-                ,5)
+                    self.raw_response.data[index]["Emission"]["Quantity"], 5
+                )
                 emission_data["Unit"] = self.raw_response.data[index]["Emission"][
                     "Unit"
                 ]
-                emission_data["Quantity2"] = self.round_decimal_or_nulls(self.raw_response.data[index][
-                    "Emission"
-                ].get("Quantity2"),5)
+                emission_data["Quantity2"] = self.round_decimal_or_nulls(
+                    self.raw_response.data[index]["Emission"].get("Quantity2"), 5
+                )
                 emission_data["Unit2"] = self.raw_response.data[index]["Emission"].get(
                     "Unit2"
                 )
@@ -218,6 +218,8 @@ class Climatiq:
     def round_decimal_or_nulls(self, value, decimal_point=3):
         if value is None:
             return None
+        elif isinstance(value, str):
+            return round(decimal.Decimal(value), decimal_point)
         else:
             return round(value, decimal_point)
 
