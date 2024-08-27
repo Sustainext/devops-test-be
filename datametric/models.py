@@ -182,6 +182,13 @@ class EmissionAnalysis(AbstractModel):
     scope = models.CharField(max_length=10)
     name = models.CharField(max_length=300)
     unit = models.CharField(max_length=50)
+    unit2 = models.CharField(max_length=50)
+    quantity = models.DecimalField(
+        max_digits=20, decimal_places=3, null=True, blank=True
+    )
+    quantity2 = models.DecimalField(
+        max_digits=20, decimal_places=3, null=True, blank=True
+    )
     consumption = models.DecimalField(max_digits=20, decimal_places=3)
     raw_response = models.ForeignKey(RawResponse, on_delete=models.CASCADE)
 

@@ -34,11 +34,18 @@ class Climatiq:
         for emission_data in self.raw_response.data:
             """
             Example of emission data:
-            {'Emission': {'Unit': '',
-            'Activity': 'Butane - ( EPA ) - Energy',
-            'Category': 'Stationary Combustion',
-            'Quantity': '16',
-            'Subcategory': 'Fuel'}}
+            OrderedDict([('Emission',
+               OrderedDict([('Category', 'Mobile Combustion'),
+                            ('Subcategory', 'Road Travel'),
+                            ('Activity',
+                             'Bus - (EPA) - PassengerOverDistance'),
+                            ('activity_id',
+                             'passenger_vehicle-vehicle_type_bus-fuel_source_na-distance_na-engine_size_na'),
+                            ('unit_type', 'PassengerOverDistance'),
+                            ('Quantity', '323'),
+                            ('Quantity2', '23'),
+                            ('Unit2', 'km'),
+                            ('Unit', 'passengers')]))])]
             """
             try:
                 payload.append(
@@ -176,6 +183,18 @@ class Climatiq:
                 emission_data["Activity"] = self.raw_response.data[index]["Emission"][
                     "Activity"
                 ]
+                emission_data["Quantity"] = self.round_decimal_or_nulls(
+                    self.raw_response.data[index]["Emission"][index]["Quantity"]
+                ,5)
+                emission_data["Unit"] = self.raw_response.data[index]["Emission"][
+                    "Unit"
+                ]
+                emission_data["Quantity2"] = self.round_decimal_or_nulls(self.raw_response.data[index][
+                    "Emission"
+                ].get("Quantity2"),5)
+                emission_data["Unit2"] = self.raw_response.data[index]["Emission"].get(
+                    "Unit2"
+                )
 
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
@@ -239,6 +258,9 @@ class Climatiq:
                     "consumption": self.round_decimal_or_nulls(
                         emission["activity_data"]["activity_value"]
                     ),
+                    "unit2": emission.get("unit2"),
+                    "quantity": emission.get("quantity"),
+                    "quantity2": emission.get("quantity2"),
                 },
             )
             emission_analyse.save()
