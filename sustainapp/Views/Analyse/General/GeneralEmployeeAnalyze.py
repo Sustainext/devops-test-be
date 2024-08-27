@@ -1,12 +1,10 @@
 from datametric.models import RawResponse
-from sustainapp.models import Corporateentity, Location
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from datametric.utils.analyse import filter_by_start_end_dates
 from collections import defaultdict
 
 
