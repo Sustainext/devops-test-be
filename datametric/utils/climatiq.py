@@ -173,7 +173,9 @@ class Climatiq:
                 emission_data["SubCategory"] = self.raw_response.data[index][
                     "Emission"
                 ]["Subcategory"]
-                emission_data["Activity"] = self.raw_response.data[index]["Activity"]
+                emission_data["Activity"] = self.raw_response.data[index]["Emission"][
+                    "Activity"
+                ]
 
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
@@ -207,7 +209,9 @@ class Climatiq:
                 index=index,
                 year=self.raw_response.year,
                 month=self.raw_response.month,
-                scope=("-".join(self.raw_response.path.slug.split("-")[-2:])).capitalize(),
+                scope=(
+                    "-".join(self.raw_response.path.slug.split("-")[-2:])
+                ).capitalize(),
                 defaults={
                     "activity_id": emission["emission_factor"]["activity_id"],
                     "co2e_total": self.round_decimal_or_nulls(
