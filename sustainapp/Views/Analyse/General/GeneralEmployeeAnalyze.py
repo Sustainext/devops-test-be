@@ -118,6 +118,6 @@ class GeneralEmployeeAnalyzeView(APIView):
             rawres = self.get_general_employee_data(rw_data)
 
         final = {
-            "Employee": rawres
+            "total_number_of_employees": rawres
         }
         return Response(final, status=status.HTTP_200_OK)
