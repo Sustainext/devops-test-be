@@ -184,7 +184,7 @@ class Climatiq:
                     "Activity"
                 ]
                 emission_data["Quantity"] = self.round_decimal_or_nulls(
-                    self.raw_response.data[index]["Emission"][index]["Quantity"]
+                    self.raw_response.data[index]["Emission"]["Quantity"]
                 ,5)
                 emission_data["Unit"] = self.raw_response.data[index]["Emission"][
                     "Unit"
