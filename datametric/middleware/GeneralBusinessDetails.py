@@ -1,10 +1,7 @@
 from django.utils.deprecation import MiddlewareMixin
 from datametric.models import RawResponse,Path
 from urllib.parse import urlparse, parse_qs
-from sustainapp.models import Organization, Corporateentity,Client
-from rest_framework.response import Response
-from rest_framework import status
-from django.core.exceptions import PermissionDenied
+from sustainapp.models import Organization, Corporateentity
 from django.conf import settings
 import jwt
 
@@ -40,7 +37,11 @@ class PathSlugMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, view_args, view_kwargs):
         if request.method == 'GET' and request.path == '/datametric/get-fieldgroups':
             auth_header = request.headers.get("Authorization")
-            if auth_header:
+            query_params = parse_qs(urlparse(request.get_full_path()).query)
+            path_name = query_params.get('path_slug', [None])[0]
+            
+            if path_name == 'gri-general-business_details-organisation-2-6a':
+                if auth_header:
                     token = auth_header.split(" ")[1]
                     payload = jwt.decode(
                         token,
@@ -49,13 +50,7 @@ class PathSlugMiddleware(MiddlewareMixin):
                     )
                     client_head = payload.get("client_id")
                     user_head = payload.get("user_id")
-                    
-            query_params = parse_qs(urlparse(request.get_full_path()).query)
-            path_name = query_params.get('path_slug', [None])[0]
 
-
-            if path_name == 'gri-general-business_details-organisation-2-6a':
-                # Extract the relevant data from the request
                 organization = request.GET.get('organisation')
                 corporate = request.GET.get('corporate')
                 year = request.GET.get('year')
