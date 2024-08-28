@@ -31,15 +31,15 @@ class GeneralEmployeeAnalyzeView(APIView):
     
     def extract_employee_type(self, path_slug):
         if "permanent_employee" in path_slug:
-            return "permanent_employee"
+            return "Permanent employees"
         elif "temporary_employee" in path_slug:
-            return "temporary_employee"
+            return "Temporary employee"
         elif "nonguaranteed_hours_employees" in path_slug:
-            return "nonguaranteed_hours_employees"
+            return "Non-Guaranteed Hours Employees"
         elif "full_time_employee" in path_slug:
-            return "full_time_employee"
+            return "Full-Time Employees"
         elif "part_time_employee" in path_slug:
-            return "part_time_employee"
+            return "Part-Time Employees"
         else:
             return "unknown_employee"
     
