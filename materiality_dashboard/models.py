@@ -71,7 +71,7 @@ class MaterialTopic(AbstractModel):
     """
     Stores the material topics in accordance with their framework for the materiality assessment
     """
-
+    #? Should we add path to the material topic? Since One Material Topic can have many paths.
     name = models.CharField(max_length=255)
     framework = models.ForeignKey(Framework, on_delete=models.CASCADE)
 
@@ -81,7 +81,7 @@ class MaterialTopic(AbstractModel):
 
 class Disclosure(AbstractModel):
     """
-    Stores the disclosures in accordance with their topic for the materiality assessment
+    Stores the disclosures in accordance with their topic for the materiality assessment Eg. G301-and G301-b
     """
 
     topic = models.ForeignKey(MaterialTopic, on_delete=models.CASCADE)
@@ -167,6 +167,9 @@ class MaterialityAssessmentProcess(AbstractModel):
 
 # Impact Type Model
 class ImpactType(AbstractModel):
+    """
+    This model is used for storing the different types of impacts that can be associated with a material topic. example Environmental, Social or Governance.
+    """
     name = models.CharField(max_length=255)
 
     def __str__(self):
