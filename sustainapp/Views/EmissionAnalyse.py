@@ -8,8 +8,10 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from datametric.utils.analyse import set_locations_data
-from operator import itemgetter
+from django.db.models import Sum
+from django.db.models.functions import Cast
+from django.db.models import FloatField
+from django.db.models.fields.json import KeyTextTransform
 
 from django.db.models import Prefetch
 from rest_framework import serializers
@@ -23,23 +25,21 @@ class GetEmissionAnalysis(APIView):
         "gri-environment-emissions-301-a-scope-3": "Scope 3",
     }
 
-    def calculate_scope_contribution(self, key_name, scope_total_values):
+    def calculate_scope_contribution(self, scope_total_values):
         total_emissions = sum(scope_total_values.values())
-        scope_contributions = []
+        scope_contributions = {}
+        serial_number = 1
+
         for scope_name, scope_value in scope_total_values.items():
-            try:
-                contribution = (scope_value / total_emissions) * 100
-            except ZeroDivisionError:
-                contribution = 0
-            scope_contributions.append(
-                {
-                    key_name: scope_name,
-                    "total": scope_value,
-                    "contribution": round(contribution, 3),
-                    "Units": "tC02e",
-                }
-            )
-        scope_contributions.sort(key=itemgetter("contribution"), reverse=True)
+            contribution = (scope_value / total_emissions) * 100
+            scope_contributions[scope_name] = {
+                "serial_number": serial_number,
+                "total": scope_value,
+                "contribution": contribution,
+            }
+
+            serial_number += 1
+
         return scope_contributions
 
     def get_top_emission_by_scope(self):
@@ -71,9 +71,7 @@ class GetEmissionAnalysis(APIView):
                     emission_request["Emission"]["Category"]
                 ] += climatiq_response.get("co2e", 0)
 
-        return self.calculate_scope_contribution(
-            key_name="scope", scope_total_values=top_emission_by_scope
-        )
+        return self.calculate_scope_contribution(top_emission_by_scope)
 
     def get(self, request, format=None):
         """
@@ -103,9 +101,9 @@ class GetEmissionAnalysis(APIView):
         response_data = dict()
         response_data["top_emission_by_scope"] = self.get_top_emission_by_scope()
         response_data["top_emission_by_source"] = self.calculate_scope_contribution(
-            key_name="source", scope_total_values=self.top_emission_by_source
+            self.top_emission_by_source
         )
         response_data["top_emission_by_location"] = self.calculate_scope_contribution(
-            key_name="location", scope_total_values=self.top_emission_by_location
+            self.top_emission_by_location
         )
         return Response({"data": response_data}, status=status.HTTP_200_OK)
