@@ -2108,5 +2108,45 @@
             "name": "GRI-Collect-Collective Bargaining-Collective Bargaining-Employees",
             "slug": "gri-general-collective_bargaining-2-30-b-employees"
         }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 212,
+        "fields": {
+            "created_at": "2024-08-28T05:54:02.088Z",
+            "updated_at": "2024-08-28T05:54:02.088Z",
+            "name": "GRI-Collect-Organization Details-Business Details-Organisation",
+            "slug": "gri-general-business_details-organisation-2-6a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 213,
+        "fields": {
+            "created_at": "2024-08-28T05:57:14.554Z",
+            "updated_at": "2024-08-28T05:57:14.554Z",
+            "name": "GRI-Collect-Organization Details-Business Details-Value",
+            "slug": "gri-general-business_details-value-2-6b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 214,
+        "fields": {
+            "created_at": "2024-08-28T05:57:53.293Z",
+            "updated_at": "2024-08-28T06:06:25.123Z",
+            "name": "GRI-Collect-Organization Details-Business Details-Other",
+            "slug": "gri-general-business_details-other-2-6c"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 215,
+        "fields": {
+            "created_at": "2024-08-28T05:58:12.632Z",
+            "updated_at": "2024-08-28T05:58:12.632Z",
+            "name": "GRI-Collect-Organization Details-Business Details-Changes",
+            "slug": "gri-general-business_details-changes-2-6d"
+        }
     }
 ]

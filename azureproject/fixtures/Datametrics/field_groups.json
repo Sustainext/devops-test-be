@@ -14052,7 +14052,7 @@
         "pk": 164,
         "fields": {
             "created_at": "2024-08-13T11:39:05.414Z",
-            "updated_at": "2024-08-13T11:39:05.414Z",
+            "updated_at": "2024-08-27T06:01:37.148Z",
             "name": "Remediation-Process-Commitments",
             "path": 163,
             "meta_data": {
@@ -14061,14 +14061,14 @@
             "ui_schema": {
                 "items": {
                     "Q1": {
-                        "ui:title": "Describe organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to.",
+                        "ui:title": "Describe the organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to.",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "what are the organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to?",
+                        "ui:tooltip": "What are the organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to?",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "none"
+                        "ui:tooltipdisplay": "block"
                     },
                     "ui:order": [
                         "Q1"
@@ -14088,7 +14088,7 @@
                     "properties": {
                         "Q1": {
                             "type": "string",
-                            "title": "Describe organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to."
+                            "title": "Describe the organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to."
                         }
                     }
                 }
@@ -15621,7 +15621,7 @@
         "pk": 186,
         "fields": {
             "created_at": "2024-08-21T10:32:46.601Z",
-            "updated_at": "2024-08-21T10:32:46.601Z",
+            "updated_at": "2024-08-27T05:33:11.158Z",
             "name": "Report Details-Publication",
             "path": 185,
             "meta_data": {
@@ -15635,7 +15635,7 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Indicate whether the reporting period for the organization's financial reporting aligns with the period for its sustainability reporting.",
+                        "ui:tooltip": "Specify the publication date of the report or reported information",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
@@ -15847,7 +15847,7 @@
         "pk": 190,
         "fields": {
             "created_at": "2024-08-22T11:54:05.655Z",
-            "updated_at": "2024-08-22T11:54:05.655Z",
+            "updated_at": "2024-08-27T05:31:46.374Z",
             "name": "GRI Reporting info-Assurance-Highest",
             "path": 189,
             "meta_data": {
@@ -15856,12 +15856,12 @@
             "ui_schema": {
                 "items": {
                     "Q1": {
-                        "ui:title": "Describe the policy and practice for seeking external assurance.",
+                        "ui:title": "Please describe whether and how the highest governance body and senior executives involved in the process.",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "What are the organization's policy and practices for seeking external assurance.",
+                        "ui:tooltip": "Provide a description of whether and how the highest governance body and senior executives involved in the external assurance process.",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
@@ -15883,7 +15883,7 @@
                     "properties": {
                         "Q1": {
                             "type": "string",
-                            "title": "Please describe whether and how the highest governance body and senior executives are involved in the process."
+                            "title": "Please describe whether and how the highest governance body and senior executives involved in the process."
                         }
                     }
                 }
@@ -15895,7 +15895,7 @@
         "pk": 191,
         "fields": {
             "created_at": "2024-08-22T11:55:55.554Z",
-            "updated_at": "2024-08-22T11:55:55.555Z",
+            "updated_at": "2024-08-27T05:35:25.404Z",
             "name": "GRI Reporting info-Assurance-External",
             "path": 190,
             "meta_data": {
@@ -15920,7 +15920,7 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Indicate whether the organization's sustainability report has been externally assured.",
+                        "ui:tooltip": "Provide a link or reference to the external assurance reports or assurance statements",
                         "ui:horizontal": true,
                         "ui:hadingdisplay": "block",
                         "ui:hadingtooltip": "This section documents data corresponding to the external assurance of the sustainability report.",
@@ -15988,7 +15988,7 @@
                         },
                         "ui:tooltip": "What is the relationship between the organization and the assurance provider?",
                         "ui:horizontal": true,
-                        "ui:hadingtooltip": "This section documents data corresponding to the relationship between the organization and the assurance provider",
+                        "ui:hadingtooltip": "This section documents data corresponding to the relationship between the organization and the assurance provider.",
                         "ui:tooltipdisplay": "block",
                         "ui:hadingtooltipdisplay": "block"
                     },
@@ -16340,7 +16340,7 @@
         "pk": 196,
         "fields": {
             "created_at": "2024-08-23T07:20:01.833Z",
-            "updated_at": "2024-08-23T07:20:01.833Z",
+            "updated_at": "2024-08-27T05:43:53.742Z",
             "name": "Collective Bargaining-Collective Bargaining-Percentage",
             "path": 210,
             "meta_data": {
@@ -16354,17 +16354,17 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Specify the Number of employees covered by collective bargaining agreements. The employees covered by collective bargaining agreements are those employees to whom the organization is obligated to apply the agreement.",
+                        "ui:tooltip": "Specify the number of employees covered by collective bargaining agreements. The employees covered by collective bargaining agreements are those employees to whom the organization is obligated to apply the agreement.",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
                     "Q2": {
-                        "ui:title": "If yes, please provide a link or reference to the external assurance reports or assurance statements",
+                        "ui:title": "What is the total number of employees in the organisation (as reported under disclosure 2-7)?",
                         "ui:widget": "inputWidget",
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Total number of employees should be same as reported under the disclosure 2-7.",
+                        "ui:tooltip": "Total number of employees should be the same as reported under the disclosure 2-7.",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
@@ -16391,7 +16391,7 @@
                         },
                         "Q2": {
                             "type": "string",
-                            "title": "What is the total number of employees in the organisation (as reported under disclosure 2-7) ?"
+                            "title": "What is the total number of employees in the organisation (as reported under disclosure 2-7)?"
                         }
                     }
                 }
@@ -17139,7 +17139,7 @@
         "pk": 209,
         "fields": {
             "created_at": "2024-08-23T07:34:43.365Z",
-            "updated_at": "2024-08-23T07:34:43.365Z",
+            "updated_at": "2024-08-27T05:38:34.417Z",
             "name": "Compliance-Laws and Regulation-Instance",
             "path": 203,
             "meta_data": {
@@ -17153,19 +17153,19 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Indicate whether the organization's sustainability report has been externally assured.",
+                        "ui:tooltip": "Indicate whether the organization had any significant instances of non-compliance with laws and regulations during the reporting period.",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
                     "Q2": {
-                        "ui:title": "If yes, please provide a link or reference to the external assurance reports or assurance statements",
+                        "ui:title": "If yes, Provide the total number of significant instances of non-compliance with laws and regulations during the reporting period",
                         "ui:widget": "Textbox",
                         "ui:options": {
                             "label": false
                         },
                         "ui:tooltip": "Is the data based on the end of the reporting period, an average across the entire period, or another methodology?",
                         "ui:horizontal": true,
-                        "ui:tooltipdisplay": "block"
+                        "ui:tooltipdisplay": "none"
                     },
                     "Q3": {
                         "ui:title": "Provide the total number of instances for which fines were incurred",
@@ -17173,7 +17173,7 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Please specify what has been assured and on what basis it has been assured.",
+                        "ui:tooltip": "Please specify the total number of instances for which fines were incurred.",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "none"
                     },
@@ -17183,7 +17183,7 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Please specify the standard used for assurance.",
+                        "ui:tooltip": "Please specify the total number of instances for which non-monetary sanctions were incurred.",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "none"
                     },
@@ -17399,6 +17399,273 @@
                         "Q1": {
                             "type": "string",
                             "title": "Describe how the organisation has determined significant instances of non-compliance"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 213,
+        "fields": {
+            "created_at": "2024-08-28T06:01:27.919Z",
+            "updated_at": "2024-08-28T06:01:27.919Z",
+            "name": "Business Details-Organisation",
+            "path": 212,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Sectors": {
+                        "ui:title": "Report the sector/sectors in which the organization is active",
+                        "ui:widget": "SectorstableWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please specify the sector/sectors in which the organization is active.e.g. Sectors can be identified according to categories, such as the public or private sector; or industry-specific categories, such as the education sector or the financial sector.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Sectors"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Sectors": {
+                            "type": "string",
+                            "title": "Report the sector/sectors in which the organization is active"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 214,
+        "fields": {
+            "created_at": "2024-08-28T06:02:36.107Z",
+            "updated_at": "2024-08-28T06:02:36.107Z",
+            "name": "Business Details-Value",
+            "path": 213,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Activities",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please specify the activities carried out by the organization. While describing activities, please mention the total number of operations and explain how the organization defines \u2018operation\u2019.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q2": {
+                        "ui:title": "Products",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please describe the quantity of products provided during the reporting period (e.g., the number of products provided, net sales of products provided). Whether the organization sells products that are banned in certain markets or are the subject of stakeholder concerns or public debate, including the reason for the ban or concerns and how the organization has responded to these concerns.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q3": {
+                        "ui:title": "Services",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please describe the services that the organization offers. While describing the services, please mention the quantity of services provided during the reporting period (e.g., number of services provided, net sales of services provided). Whether the organization sells services that are banned in certain markets or are the subject of stakeholder concerns or public debate, including the reason for the ban or concerns and how the organization has responded to these concerns.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q4": {
+                        "ui:title": "Markets Served",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please describe the market served by the organization. This description could include the geographic locations where products and services are offered; the demographic or other characteristics of the markets; information on the size and relative importance of the markets (e.g., net sales, net revenues).",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q5": {
+                        "ui:title": "Supply chain",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please describe the following:<ul><li>The types of suppliers (e.g., brokers, contractors, wholesalers);</li><li>The estimated number of suppliers throughout its supply chain and in each tier (e.g., first tier, second tier);</li><li>The types of activities related to the organization\u2019s products and services carried out by its suppliers (e.g., manufacturing, providing consulting services);</li><li>The nature of its business relationships with its suppliers (e.g., long-term or short-term, contractual or non-contractual, project-based or event-based);</li><li>The sector-specific characteristics of its supply chain (e.g., labor-intensive);</li><li>The estimated monetary value of payments made to its suppliers;</li><li>The geographic location of its suppliers.</li></ul>",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "Q6": {
+                        "ui:title": "Entities downstream from the organization & their activities",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please describe the entities downstream from the organization & their activities. The description can include:<ul><li>The types of downstream entities (e.g., customers, beneficiaries);</li><li>The estimated number of downstream entities;</li><li>The types of activities related to the organization\u2019s products and services carried out by the downstream entities (e.g., manufacturing, wholesale, retail);</li><li>The nature of its business relationships with the downstream entities (e.g., long-term or short-term, contractual or non-contractual, project-based or event-based);</li><li>The geographic location of the downstream entities.</li></ul>",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1",
+                        "Q2",
+                        "Q3",
+                        "Q4",
+                        "Q5",
+                        "Q6"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Activities"
+                        },
+                        "Q2": {
+                            "type": "string",
+                            "title": "Products"
+                        },
+                        "Q3": {
+                            "type": "string",
+                            "title": "Services"
+                        },
+                        "Q4": {
+                            "type": "string",
+                            "title": "Markets Served"
+                        },
+                        "Q5": {
+                            "type": "string",
+                            "title": "Supply chain"
+                        },
+                        "Q6": {
+                            "type": "string",
+                            "title": "Entities downstream from the organization & their activities"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 215,
+        "fields": {
+            "created_at": "2024-08-28T06:03:29.516Z",
+            "updated_at": "2024-08-28T06:06:28.990Z",
+            "name": "Business Details-Other",
+            "path": 214,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Please describe other relevant business relationships",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Please provide the description of organization's other relevant business relationships. e.g. This may include relationships that the organization has with entities that are not described as part of its value chain. These may also include business partners (e.g., joint ventures) and other entities directly linked to the organization\u2019s operations, products, or services (for examples, see the note in the definition of \u2018business relationships\u2019).",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Please describe other relevant business relationships"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 216,
+        "fields": {
+            "created_at": "2024-08-28T06:05:18.002Z",
+            "updated_at": "2024-08-28T06:05:18.002Z",
+            "name": "Business Details-Changes",
+            "path": 215,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Please describe any significant changes in the information mentioned above compared to the previous reporting period",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Provide a description of significant changes in the organization\u2019s sectors, value chain, and other business relationships compared to the previous reporting period.",
+                        "ui:horizontal": true,
+                        "ui:tooltipdisplay": "block"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Please describe any significant changes in the information mentioned above compared to the previous reporting period"
                         }
                     }
                 }
