@@ -137,7 +137,7 @@ class MaterialityChangeConfirmation(AbstractModel):
 
 
 # Stakeholder Model for capturing different types of stakeholders
-class Stakeholder(AbstractModel):
+class StakeholderEngagement(AbstractModel):
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -158,7 +158,7 @@ class MaterialityAssessmentProcess(AbstractModel):
         blank=True, null=True
     )  # Text field for "Others please specify" input
     selected_stakeholders = models.ManyToManyField(
-        Stakeholder, blank=True
+        StakeholderEngagement, blank=True
     )  # Relationship to stakeholders
 
     def __str__(self):

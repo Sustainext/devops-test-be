@@ -12,7 +12,7 @@ from materiality_dashboard.models import (
     AssessmentTopicSelection,
     AssessmentDisclosureSelection,
     MaterialityChangeConfirmation,
-    Stakeholder,
+    StakeholderEngagement,
     MaterialityAssessmentProcess,
     ImpactType,
     MaterialityImpact,
@@ -69,7 +69,7 @@ class MaterialityChangeConfirmationAdmin(admin.ModelAdmin):
     list_filter = ("change_made",)
 
 
-@admin.register(Stakeholder)
+@admin.register(StakeholderEngagement)
 class StakeholderAdmin(admin.ModelAdmin):
     list_display = ("name",)
     search_fields = ("name",)
