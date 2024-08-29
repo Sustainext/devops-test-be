@@ -6,7 +6,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
 from collections import defaultdict
-
+from sustainapp.models import Corporateentity
 
 class GeneralEmployeeAnalyzeView(APIView):
 
@@ -26,6 +26,15 @@ class GeneralEmployeeAnalyzeView(APIView):
         )
         if exclude_corporate:
             rw_data = rw_data.filter(corporate__isnull=True)
+            
+        isorganization = filter_by.get("organization", None)
+        if not rw_data and isorganization:
+            corporates = Corporateentity.objects.filter(organization__id=isorganization.id)
+            rw_data = RawResponse.objects.filter(
+                corporate__in=corporates,
+                path__slug__in=path_slugs,
+                client_id=client_id,
+                year=year,)
 
         return rw_data
     
