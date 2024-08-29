@@ -4,6 +4,13 @@ from sustainapp.models import Organization, Corporateentity, Framework
 from authentication.models import Client
 
 
+ESG_CHOICES = (
+    ("environment", "Environment"),
+    ("social", "Social"),
+    ("governance", "Governance"),
+)
+
+
 # Materiality Assessment Model
 class MaterialityAssessment(AbstractModel):
     STATUS_CHOICES = [
@@ -35,9 +42,7 @@ class MaterialityAssessment(AbstractModel):
 
     # * created_by, last_updated_by
     def __str__(self):
-        return (
-            f"{self.client.name} - {self.organization.name} - {self.reporting_period}"
-        )
+        return f"{self.client.name} - {self.organization.name}"
 
     @property
     def topic_summary(self):
@@ -64,6 +69,7 @@ class MaterialTopic(AbstractModel):
 
     # ? Should we add path to the material topic? Since One Material Topic can have many paths.
     name = models.CharField(max_length=255)
+    esg_category = models.CharField(max_length=20, choices=ESG_CHOICES)
     framework = models.ForeignKey(Framework, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -160,7 +166,7 @@ class MaterialityAssessmentProcess(AbstractModel):
 # Impact Type Model
 class ImpactType(AbstractModel):
     """
-    This model is used for storing the different types of impacts that can be associated with a material topic. example Environmental, Social or Governance.
+    This model is associated with the type of Impact in Materiality Management Approach
     """
 
     name = models.CharField(max_length=255)
