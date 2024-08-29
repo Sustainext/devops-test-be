@@ -4,18 +4,6 @@ from sustainapp.models import Organization, Corporateentity, Framework
 from authentication.models import Client
 
 
-class ReportingPeriod(AbstractModel):
-    """
-    Stores the reporting period for the materiality assessment.
-    """
-
-    start_date = models.DateField()
-    end_date = models.DateField()
-
-    def __str__(self):
-        return f"{self.start_date} - {self.end_date}"
-
-
 # Materiality Assessment Model
 class MaterialityAssessment(AbstractModel):
     STATUS_CHOICES = [
@@ -35,7 +23,8 @@ class MaterialityAssessment(AbstractModel):
     corporate = models.ForeignKey(
         Corporateentity, on_delete=models.SET_NULL, null=True, blank=True
     )
-    reporting_period = models.ForeignKey(ReportingPeriod, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
     framework = models.ForeignKey(Framework, on_delete=models.CASCADE)
     approach = models.CharField(
         max_length=100, choices=APPROACH_CHOICES, null=True, blank=True
@@ -44,6 +33,7 @@ class MaterialityAssessment(AbstractModel):
         max_length=50, choices=STATUS_CHOICES, default="in_progress"
     )
 
+    # * created_by, last_updated_by
     def __str__(self):
         return (
             f"{self.client.name} - {self.organization.name} - {self.reporting_period}"
@@ -71,7 +61,8 @@ class MaterialTopic(AbstractModel):
     """
     Stores the material topics in accordance with their framework for the materiality assessment
     """
-    #? Should we add path to the material topic? Since One Material Topic can have many paths.
+
+    # ? Should we add path to the material topic? Since One Material Topic can have many paths.
     name = models.CharField(max_length=255)
     framework = models.ForeignKey(Framework, on_delete=models.CASCADE)
 
@@ -98,6 +89,7 @@ class AssessmentTopicSelection(AbstractModel):
     Each `MaterialityAssessment` can have multiple `AssessmentTopicSelection` objects, each
     representing a selected material topic for that assessment.
     """
+
     assessment = models.ForeignKey(
         MaterialityAssessment, on_delete=models.CASCADE, related_name="selected_topics"
     )
@@ -170,6 +162,7 @@ class ImpactType(AbstractModel):
     """
     This model is used for storing the different types of impacts that can be associated with a material topic. example Environmental, Social or Governance.
     """
+
     name = models.CharField(max_length=255)
 
     def __str__(self):

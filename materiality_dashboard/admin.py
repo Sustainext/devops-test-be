@@ -5,7 +5,6 @@ from django.contrib import admin
 
 from django.contrib import admin
 from materiality_dashboard.models import (
-    ReportingPeriod,
     MaterialityAssessment,
     MaterialTopic,
     Disclosure,
@@ -20,16 +19,11 @@ from materiality_dashboard.models import (
 )
 
 
-@admin.register(ReportingPeriod)
-class ReportingPeriodAdmin(admin.ModelAdmin):
-    list_display = ("start_date", "end_date")
-    search_fields = ("start_date", "end_date")
-
 
 @admin.register(MaterialityAssessment)
 class MaterialityAssessmentAdmin(admin.ModelAdmin):
-    list_display = ("client", "organization", "reporting_period", "framework", "status")
-    list_filter = ("status", "framework", "reporting_period")
+    list_display = ("client", "organization", "framework", "status")
+    list_filter = ("status", "framework")
     search_fields = ("client__name", "organization__name", "framework__name")
     readonly_fields = ("topic_summary", "disclosure_summary")
 
