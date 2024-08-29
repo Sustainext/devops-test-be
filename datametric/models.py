@@ -1,10 +1,4 @@
 from django.db import models
-from django.utils import timezone
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    BaseUserManager,
-    PermissionsMixin,
-)
 from authentication.models import CustomUser, Client
 from common.models.AbstractModel import AbstractModel
 from sustainapp.models import Location, Corporateentity, Organization
@@ -59,6 +53,9 @@ class OrderedJSONField(models.JSONField):
 
 
 class FieldGroup(AbstractModel):
+    """
+    Stores Schema and UI Schema for the frontend widgets.
+    """
     name = models.CharField(max_length=200)
     path = models.ForeignKey(
         Path, on_delete=models.CASCADE, default=None, related_name="fieldgroups"
@@ -69,6 +66,9 @@ class FieldGroup(AbstractModel):
 
 
 class RawResponse(AbstractModel):
+    """
+    Stores Response of the User on the field groups.
+    """
     data = OrderedJSONField(default=list)  # models.JSONField(default=list)
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     user = models.ForeignKey(
@@ -80,7 +80,7 @@ class RawResponse(AbstractModel):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
-    
+
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, default=None, null=True, blank=True
     )
@@ -99,6 +99,9 @@ class RawResponse(AbstractModel):
 
 
 class DataMetric(AbstractModel):
+    """
+    This model is used for storing data metrics and is used in analytics.
+    """
     name = models.CharField(max_length=200)
     label = models.CharField(max_length=400)
     description = models.CharField(max_length=1000)
