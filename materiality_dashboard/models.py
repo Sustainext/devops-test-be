@@ -4,16 +4,11 @@ from sustainapp.models import Organization, Corporateentity, Framework
 from authentication.models import Client
 
 
-class ReportingPeriod(AbstractModel):
-    """
-    Stores the reporting period for the materiality assessment.
-    """
-
-    start_date = models.DateField()
-    end_date = models.DateField()
-
-    def __str__(self):
-        return f"{self.start_date} - {self.end_date}"
+ESG_CHOICES = (
+    ("environment", "Environment"),
+    ("social", "Social"),
+    ("governance", "Governance"),
+)
 
 
 # Materiality Assessment Model
@@ -35,7 +30,8 @@ class MaterialityAssessment(AbstractModel):
     corporate = models.ForeignKey(
         Corporateentity, on_delete=models.SET_NULL, null=True, blank=True
     )
-    reporting_period = models.ForeignKey(ReportingPeriod, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
     framework = models.ForeignKey(Framework, on_delete=models.CASCADE)
     approach = models.CharField(
         max_length=100, choices=APPROACH_CHOICES, null=True, blank=True
@@ -44,10 +40,9 @@ class MaterialityAssessment(AbstractModel):
         max_length=50, choices=STATUS_CHOICES, default="in_progress"
     )
 
+    # * created_by, last_updated_by
     def __str__(self):
-        return (
-            f"{self.client.name} - {self.organization.name} - {self.reporting_period}"
-        )
+        return f"{self.client.name} - {self.organization.name}"
 
     @property
     def topic_summary(self):
@@ -72,7 +67,9 @@ class MaterialTopic(AbstractModel):
     Stores the material topics in accordance with their framework for the materiality assessment
     """
 
+    # ? Should we add path to the material topic? Since One Material Topic can have many paths.
     name = models.CharField(max_length=255)
+    esg_category = models.CharField(max_length=20, choices=ESG_CHOICES)
     framework = models.ForeignKey(Framework, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -81,7 +78,7 @@ class MaterialTopic(AbstractModel):
 
 class Disclosure(AbstractModel):
     """
-    Stores the disclosures in accordance with their topic for the materiality assessment
+    Stores the disclosures in accordance with their topic for the materiality assessment Eg. G301-and G301-b
     """
 
     topic = models.ForeignKey(MaterialTopic, on_delete=models.CASCADE)
@@ -98,6 +95,7 @@ class AssessmentTopicSelection(AbstractModel):
     Each `MaterialityAssessment` can have multiple `AssessmentTopicSelection` objects, each
     representing a selected material topic for that assessment.
     """
+
     assessment = models.ForeignKey(
         MaterialityAssessment, on_delete=models.CASCADE, related_name="selected_topics"
     )
@@ -137,7 +135,7 @@ class MaterialityChangeConfirmation(AbstractModel):
 
 
 # Stakeholder Model for capturing different types of stakeholders
-class Stakeholder(AbstractModel):
+class StakeholderEngagement(AbstractModel):
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -158,7 +156,7 @@ class MaterialityAssessmentProcess(AbstractModel):
         blank=True, null=True
     )  # Text field for "Others please specify" input
     selected_stakeholders = models.ManyToManyField(
-        Stakeholder, blank=True
+        StakeholderEngagement, blank=True
     )  # Relationship to stakeholders
 
     def __str__(self):
@@ -167,6 +165,10 @@ class MaterialityAssessmentProcess(AbstractModel):
 
 # Impact Type Model
 class ImpactType(AbstractModel):
+    """
+    This model is associated with the type of Impact in Materiality Management Approach
+    """
+
     name = models.CharField(max_length=255)
 
     def __str__(self):
