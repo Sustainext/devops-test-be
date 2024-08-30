@@ -17458,7 +17458,7 @@
         "pk": 214,
         "fields": {
             "created_at": "2024-08-28T06:02:36.107Z",
-            "updated_at": "2024-08-28T06:02:36.107Z",
+            "updated_at": "2024-08-28T10:36:27.390Z",
             "name": "Business Details-Value",
             "path": 213,
             "meta_data": {
@@ -17482,7 +17482,7 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Please describe the quantity of products provided during the reporting period (e.g., the number of products provided, net sales of products provided). Whether the organization sells products that are banned in certain markets or are the subject of stakeholder concerns or public debate, including the reason for the ban or concerns and how the organization has responded to these concerns.",
+                        "ui:tooltip": "Please describe the quantity of products provided during the reporting period (e.g., the number of products provided, net sales of products provided). whether the organization sells products that are banned in certain markets or are the subject of stakeholder concerns or public debate, including the reason for the ban or concerns and how the organization has responded to these concerns.",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
@@ -17492,7 +17492,7 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Please describe the services that the organization offers. While describing the services, please mention the quantity of services provided during the reporting period (e.g., number of services provided, net sales of services provided). Whether the organization sells services that are banned in certain markets or are the subject of stakeholder concerns or public debate, including the reason for the ban or concerns and how the organization has responded to these concerns.",
+                        "ui:tooltip": "Please describe the services that organization offers. While describing the services, please mention the quantity of services provided during the reporting period (e.g., number of services provided, net sales of services provided). Whether the organization sells services that are banned in certain markets or are the subject of stakeholder concerns or public debate, including the reason for the ban or concerns and how the organization has responded to these concerns.",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
@@ -17512,7 +17512,7 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Please describe the following:<ul><li>The types of suppliers (e.g., brokers, contractors, wholesalers);</li><li>The estimated number of suppliers throughout its supply chain and in each tier (e.g., first tier, second tier);</li><li>The types of activities related to the organization\u2019s products and services carried out by its suppliers (e.g., manufacturing, providing consulting services);</li><li>The nature of its business relationships with its suppliers (e.g., long-term or short-term, contractual or non-contractual, project-based or event-based);</li><li>The sector-specific characteristics of its supply chain (e.g., labor-intensive);</li><li>The estimated monetary value of payments made to its suppliers;</li><li>The geographic location of its suppliers.</li></ul>",
+                        "ui:tooltip": "Please describe the following:<ul> <li>\u2022 The types of suppliers (e.g., brokers, contractors, wholesalers); the estimated number of suppliers throughout its supply chain and in each tier (e.g., first tier, second tier)</li><li>\u2022 The types of activities related to the organization\u2019s products and services carried out by its suppliers (e.g., manufacturing, providing consulting services)</li><li>\u2022 The nature of its business relationships with its suppliers (e.g., long-term or short-term, contractual or non-contractual, project-based or event-based)</li><li>\u2022 The estimated monetary value of payments made to its suppliers</li><li>\u2022 The geographic location of its suppliers.</li></ul>",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
@@ -17522,7 +17522,7 @@
                         "ui:options": {
                             "label": false
                         },
-                        "ui:tooltip": "Please describe the entities downstream from the organization & their activities. The description can include:<ul><li>The types of downstream entities (e.g., customers, beneficiaries);</li><li>The estimated number of downstream entities;</li><li>The types of activities related to the organization\u2019s products and services carried out by the downstream entities (e.g., manufacturing, wholesale, retail);</li><li>The nature of its business relationships with the downstream entities (e.g., long-term or short-term, contractual or non-contractual, project-based or event-based);</li><li>The geographic location of the downstream entities.</li></ul>",
+                        "ui:tooltip": "Please describe the entities downstream from the organization & their activities. The description can include:<ul> <li>1) the types of downstream entities (e.g., customers, beneficiaries)</li><li> 2)the estimated number of downstream entities</li><li> 3) the types of activities related to the organization\u2019s products and services carried out by the downstream entities (e.g., manufacturing, wholesale, retail)</li><li> 4) the nature of its business relationships with the downstream entities (e.g., long-term or short-term, contractual or non-contractual, project-based or event-based)</li><li> 5) the geographic location of the downstream entities.</li></ul>",
                         "ui:horizontal": true,
                         "ui:tooltipdisplay": "block"
                     },
@@ -17581,7 +17581,7 @@
         "pk": 215,
         "fields": {
             "created_at": "2024-08-28T06:03:29.516Z",
-            "updated_at": "2024-08-28T06:06:28.990Z",
+            "updated_at": "2024-08-28T10:37:03.148Z",
             "name": "Business Details-Other",
             "path": 214,
             "meta_data": {
@@ -17629,7 +17629,7 @@
         "pk": 216,
         "fields": {
             "created_at": "2024-08-28T06:05:18.002Z",
-            "updated_at": "2024-08-28T06:05:18.002Z",
+            "updated_at": "2024-08-28T10:37:41.475Z",
             "name": "Business Details-Changes",
             "path": 215,
             "meta_data": {
@@ -17666,6 +17666,618 @@
                         "Q1": {
                             "type": "string",
                             "title": "Please describe any significant changes in the information mentioned above compared to the previous reporting period"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 217,
+        "fields": {
+            "created_at": "2024-08-30T05:29:41.324Z",
+            "updated_at": "2024-08-30T05:29:41.324Z",
+            "name": "Market Presence-Proportion of senior management-local community",
+            "path": 216,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Percentage of senior management at significant locations of operation that are hired from the local community.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "<p>What is the percentage of senior management at significant locations of operation that are hired from the local community?</p><p>Note: The reporting organization shall calculate this percentage using data on full-time employees.</p>",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "input",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "number",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Percentage of senior management at significant locations of operation that are hired from the local community."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 218,
+        "fields": {
+            "created_at": "2024-08-30T05:30:54.542Z",
+            "updated_at": "2024-08-30T05:30:54.542Z",
+            "name": "Market Presence-Proportion of senior management-senior management",
+            "path": 217,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "The definition used for 'senior management'",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "<p>Mention the definition used for 'senior management'.</p>",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "textarea",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "The definition used for 'senior management'"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 219,
+        "fields": {
+            "created_at": "2024-08-30T05:32:02.832Z",
+            "updated_at": "2024-08-30T05:32:02.832Z",
+            "name": "Market Presence-Proportion of senior management-local",
+            "path": 218,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "The organization's geographical definition of 'local'",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "<p>What is organization\u2019s geographical definition of \u2018local\u2019?</p>",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "textarea",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "The organization's geographical definition of 'local'"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 220,
+        "fields": {
+            "created_at": "2024-08-30T05:32:44.746Z",
+            "updated_at": "2024-08-30T05:32:44.746Z",
+            "name": "Market Presence-Proportion of senior management-operation",
+            "path": 219,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "The definition used for 'significant locations of operation'",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "<p>Mention the definition used for \u2018significant locations of operation\u2019. Significant locations of operation refer to the geographical areas where the organization has a substantial impact through its operations. </p>",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "textarea",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "The definition used for 'significant locations of operation'"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 221,
+        "fields": {
+            "created_at": "2024-08-30T05:33:53.249Z",
+            "updated_at": "2024-08-30T05:33:53.249Z",
+            "name": "Indirect Economic Impacts-Infrastructure-Describe",
+            "path": 220,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Describe the extent of development of significant infrastructure investments and services supported",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "<p>The answer should include the size, cost, and duration of each significant infrastructure investment or service supported.</p><p><strong>Infrastructure:</strong></p><ul><li>Facilities built primarily to provide a public service or good rather than a commercial purpose.</li><li>From which the organization does not seek to gain direct economic benefit.</li></ul><p><strong>Services supported:</strong></p><ul><li>Services that provide a public benefit either through direct payment of operating costs.</li><li>Or through staffing the facility or service with an organization\u2019s own employees.</li></ul>",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "textarea",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the extent of development of significant infrastructure investments and services supported"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 222,
+        "fields": {
+            "created_at": "2024-08-30T05:35:15.374Z",
+            "updated_at": "2024-08-30T05:35:15.374Z",
+            "name": "Indirect Economic Impacts-Infrastructure-Explain",
+            "path": 221,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Explain the current or expected impacts on communities and local economies, including positive and negative impacts where relevant.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "The answer should include the extent to which different communities or local economies are impacted by the organization\u2019s infrastructure investments and services supported.",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "textarea",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Explain the current or expected impacts on communities and local economies, including positive and negative impacts where relevant."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 223,
+        "fields": {
+            "created_at": "2024-08-30T05:36:50.460Z",
+            "updated_at": "2024-08-30T05:36:50.460Z",
+            "name": "Indirect Economic Impacts-Infrastructure-Whether",
+            "path": 222,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Whether these investments and services are commercial, in-kind, or pro bono engagements.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "Whether these investments and services are commercial, in-kind, or pro bono engagements.",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "input",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Describe the extent of development of significant infrastructure investments and services supported"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 224,
+        "fields": {
+            "created_at": "2024-08-30T05:37:50.669Z",
+            "updated_at": "2024-08-30T05:37:50.669Z",
+            "name": "Indirect Economic Impacts-Significant Indirect-Provide",
+            "path": 223,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Provide examples of significant identified indirect economic impacts of the organization, including positive and negative impacts.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "<p>Examples of significant indirect economic impacts, both positive and negative, can include:</p><ul><li>\u2022 Changes in the productivity of organizations, sectors, or the whole economy.</li><li>\u2022Economic development in areas of high poverty</li><li>\u2022 Economic impacts of improving or deteriorating social or environmental conditions.</li><li>\u2022 Availability of products and services for those on low incomes.</li><li>\u2022 Enhanced skills and knowledge in a professional community or in a geographic location. etc.</li></ul>",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "textarea",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Provide examples of significant identified indirect economic impacts of the organization, including positive and negative impacts."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 225,
+        "fields": {
+            "created_at": "2024-08-30T05:38:57.019Z",
+            "updated_at": "2024-08-30T05:38:57.019Z",
+            "name": "Indirect Economic Impacts-Significant Indirect-Explain",
+            "path": 224,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Explain the significance of the indirect economic impacts in the context of external benchmarks and stakeholder priorities.",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "What is the significance of the indirect economic impacts in the context of external benchmarks and stakeholder priorities, such as national and international standards, protocols, and policy agendas?",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "textarea",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Explain the significance of the indirect economic impacts in the context of external benchmarks and stakeholder priorities."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 226,
+        "fields": {
+            "created_at": "2024-08-30T05:39:56.957Z",
+            "updated_at": "2024-08-30T05:39:56.957Z",
+            "name": "Procurement Practices-Proportion of spending on local suppliers-Percentage",
+            "path": 225,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "Percentage of the procurement budget used for significant locations of operation that is spent on suppliers local to that operation (such as percentage of products and services purchased locally).",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "<p>The organization should calculate the percentages based on invoices or commitments made during the reporting period, e.g, using accruals accounting.</p>",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "positiveNumber",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "number",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "Percentage of the procurement budget used for significant locations of operation that is spent on suppliers local to that operation (such as percentage of products and services purchased locally)."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 227,
+        "fields": {
+            "created_at": "2024-08-30T05:40:48.468Z",
+            "updated_at": "2024-08-30T05:40:48.468Z",
+            "name": "Procurement Practices-Proportion of spending on local suppliers-organization",
+            "path": 226,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "The organization's geographical definition of 'local'",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "<p>Provide the organisation's geographical definition of 'local'.</p>",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "textarea",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "The organization's geographical definition of 'local'"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 228,
+        "fields": {
+            "created_at": "2024-08-30T05:41:26.837Z",
+            "updated_at": "2024-08-30T05:41:26.837Z",
+            "name": "Procurement Practices-Proportion of spending on local suppliers-definition",
+            "path": 227,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Q1": {
+                        "ui:title": "The definition used for \"significant locations of operation\"",
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:tooltip": "<p>Mention the definition used for \"significant locations of operation\". Significant locations of operation refer to the geographical areas where the organization has a substantial impact through its operations.</p>",
+                        "ui:horizontal": true,
+                        "ui:widgetType": "textarea",
+                        "ui:titledisplay": "none",
+                        "ui:inputfildtype": "text",
+                        "ui:tooltipdisplay": "none"
+                    },
+                    "ui:order": [
+                        "Q1"
+                    ],
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Q1": {
+                            "type": "string",
+                            "title": "The definition used for \"significant locations of operation\""
                         }
                     }
                 }

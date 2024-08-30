@@ -2148,5 +2148,125 @@
             "name": "GRI-Collect-Organization Details-Business Details-Changes",
             "slug": "gri-general-business_details-changes-2-6d"
         }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 216,
+        "fields": {
+            "created_at": "2024-08-30T05:12:39.049Z",
+            "updated_at": "2024-08-30T05:12:39.049Z",
+            "name": "GRI-Collect-Market Presence-Proportion of senior management-local community",
+            "slug": "gri-economic-proportion_of_senior_management-local_community-202-2a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 217,
+        "fields": {
+            "created_at": "2024-08-30T05:13:17.338Z",
+            "updated_at": "2024-08-30T05:13:17.338Z",
+            "name": "GRI-Collect-Market Presence-Proportion of senior management-senior management",
+            "slug": "gri-economic-proportion_of_senior_management-senior_management-202-2b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 218,
+        "fields": {
+            "created_at": "2024-08-30T05:13:59.967Z",
+            "updated_at": "2024-08-30T05:13:59.967Z",
+            "name": "GRI-Collect-Market Presence-Proportion of senior management-local",
+            "slug": "gri-economic-proportion_of_senior_management-local-202-2c"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 219,
+        "fields": {
+            "created_at": "2024-08-30T05:14:30.418Z",
+            "updated_at": "2024-08-30T05:14:30.418Z",
+            "name": "GRI-Collect-Market Presence-Proportion of senior management-operation",
+            "slug": "gri-economic-proportion_of_senior_management-operation-202-2d"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 220,
+        "fields": {
+            "created_at": "2024-08-30T05:16:32.955Z",
+            "updated_at": "2024-08-30T05:16:32.955Z",
+            "name": "GRI-Collect-Indirect Economic Impacts-Infrastructure-Describe",
+            "slug": "gri-economic-infrastructure-describe-203-1a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 221,
+        "fields": {
+            "created_at": "2024-08-30T05:17:03.038Z",
+            "updated_at": "2024-08-30T05:17:03.038Z",
+            "name": "GRI-Collect-Indirect Economic Impacts-Infrastructure-Explain",
+            "slug": "gri-economic-infrastructure-explain-203-1b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 222,
+        "fields": {
+            "created_at": "2024-08-30T05:17:28.183Z",
+            "updated_at": "2024-08-30T05:17:28.183Z",
+            "name": "GRI-Collect-Indirect Economic Impacts-Infrastructure-Whether",
+            "slug": "gri-economic-infrastructure-whether-203-1c"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 223,
+        "fields": {
+            "created_at": "2024-08-30T05:19:05.069Z",
+            "updated_at": "2024-08-30T05:19:05.069Z",
+            "name": "GRI-Collect-Indirect Economic Impacts-Significant Indirect-Provide",
+            "slug": "gri-economic-significant_indirect-provide-203-2a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 224,
+        "fields": {
+            "created_at": "2024-08-30T05:19:28.970Z",
+            "updated_at": "2024-08-30T05:19:28.970Z",
+            "name": "GRI-Collect-Indirect Economic Impacts-Significant Indirect-Explain",
+            "slug": "gri-economic-significant_indirect-explain-203-2b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 225,
+        "fields": {
+            "created_at": "2024-08-30T05:22:01.501Z",
+            "updated_at": "2024-08-30T05:22:01.501Z",
+            "name": "GRI-Collect-Procurement Practices-Proportion of spending on local suppliers-Percentage",
+            "slug": "gri-economic-proportion_of_spending_on_local_suppliers-percentage-204-1a"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 226,
+        "fields": {
+            "created_at": "2024-08-30T05:22:32.913Z",
+            "updated_at": "2024-08-30T05:22:32.913Z",
+            "name": "GRI-Collect-Procurement Practices-Proportion of spending on local suppliers-organization",
+            "slug": "gri-economic-proportion_of_spending_on_local_suppliers-organization-204-1b"
+        }
+    },
+    {
+        "model": "datametric.path",
+        "pk": 227,
+        "fields": {
+            "created_at": "2024-08-30T05:25:35.222Z",
+            "updated_at": "2024-08-30T05:25:35.222Z",
+            "name": "GRI-Collect-Procurement Practices-Proportion of spending on local suppliers-definition",
+            "slug": "gri-economic-proportion_of_spending_on_local_suppliers-definition-204-1c"
+        }
     }
 ]
