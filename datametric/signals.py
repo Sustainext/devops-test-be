@@ -1,11 +1,8 @@
-from django.db.models.manager import BaseManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import RawResponse, DataPoint, DataMetric, EmissionAnalysis
-from django.db.models import Q
+from datametric.models import RawResponse, DataPoint, DataMetric, EmissionAnalysis
 from django.db.models import prefetch_related_objects
 from datametric.utils.signal_utilities import (
-    create_or_update_data_points,
     process_raw_response_data,
 )
 from datametric.utils.signal_utilities import climatiq_data_creation
@@ -18,7 +15,7 @@ logger = getLogger("django.log")
 def process_json(json_obj, path, raw_response):
     print("process_json - hit")
     print("path is ", path.slug)
-    data_metrics: BaseManager[DataMetric] = DataMetric.objects.filter(path=path)
+    data_metrics = DataMetric.objects.filter(path=path)
     for index, item in enumerate(json_obj):
         print(item)
         if isinstance(item, dict):
@@ -27,8 +24,8 @@ def process_json(json_obj, path, raw_response):
             print(f"Field Group Row: {first_key}")
             print(f"First Value: {first_value}")
             """
-            This was required since emissions has different 
-            data structure in RawResponse data field when 
+            This was required since emissions has different
+            data structure in RawResponse data field when
             compared to other environment modules.
             """
             if type(first_value) in [
