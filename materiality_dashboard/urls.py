@@ -42,5 +42,15 @@ urlpatterns = [
         AssessmentDisclosureSelectionAPIView.as_view(),
         name="assessment-disclosure-selection",
     ),
+    path(
+        "assessment-disclosure-selection/<int:assessment_id>/",
+        AssessmentDisclosureSelectionAPIView.as_view(),
+        name="bulk-assessment-disclosure-selection-list",
+    ),
+    path(
+        "assessment-disclosure-selection/<int:assessment_id>/edit/",
+        AssessmentDisclosureSelectionAPIView.as_view(),
+        name="bulk-assessment-disclosure-selection-edit",
+    ),
 ]
 urlpatterns += router.urls

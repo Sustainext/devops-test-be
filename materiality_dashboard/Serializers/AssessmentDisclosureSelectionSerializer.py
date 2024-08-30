@@ -1,89 +1,94 @@
 from rest_framework import serializers
 from materiality_dashboard.models import (
     AssessmentDisclosureSelection,
-    Disclosure,
     MaterialityAssessment,
     AssessmentTopicSelection,
+    Disclosure,
 )
 
 
-class AssessmentDisclosureSelectionSerializer(serializers.Serializer):
-    """
-    Serializer for the AssessmentDisclosureSelection model.
-    """
-
-    topic_selections = serializers.PrimaryKeyRelatedField(
-        queryset=AssessmentTopicSelection.objects.all(), many=True
-    )
-    disclosures = serializers.PrimaryKeyRelatedField(
-        queryset=Disclosure.objects.all(), many=True
-    )
+class BulkAssessmentDisclosureSelectionSerializer(serializers.Serializer):
     assessment_id = serializers.IntegerField()
-
-    class Meta:
-        model = AssessmentDisclosureSelection
-        fields = ["topic_selections", "disclosure", "assessment_id"]
+    topic_disclosures = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.ListField(child=serializers.IntegerField())
+        )
+    )
 
     def validate(self, data):
-        topic_selections = data.get("topic_selections")
-        disclosures = data.get("disclosures")
         assessment_id = data.get("assessment_id")
-        if not topic_selections or not disclosures or not assessment_id:
-            raise serializers.ValidationError(
-                "Both topic_selections, disclosures and assessment_id are required."
-            )
-        # Validate the topic_selections
+        topic_disclosures = data.get("topic_disclosures")
         request = self.context.get("request")
+        # Validate the assessment_id
         try:
-            # * Getting the assessment instance
             assessment = MaterialityAssessment.objects.get(
                 id=assessment_id, client=request.user.client
             )
-            # * Getting the assessment topic selections for the assessment
-            assessment_topic_selections = AssessmentTopicSelection.objects.filter(
-                id__in=topic_selections, assessment=assessment
-            ).select_related("topic")
-            # * Getting the disclosures for the assessment disclosure selections
-            disclosures = Disclosure.objects.filter(
-                id__in=disclosures,
-                topic__in=assessment_topic_selections.values_list("topic", flat=True),
-            )
-            if assessment_topic_selections.count() != len(topic_selections):
-                raise serializers.ValidationError(
-                    "One or more topic_selections do not belong to the specified assessment."
-                )
-            if not assessment_topic_selections.exists():
-                raise serializers.ValidationError(
-                    "No topic_selections have been selected."
-                )
-            if not disclosures.exists():
-                raise serializers.ValidationError(
-                    "No disclosures have been found for the selected topics or their IDs are invalid."
-                )
         except MaterialityAssessment.DoesNotExist:
             raise serializers.ValidationError(
                 {"assessment_id": "Materiality Assessment does not exist."}
             )
 
-        # Store validated data
-        data["validated_disclosures"] = disclosures
-        data["validated_topic_selections"] = assessment_topic_selections
+        validated_data = []
+        for topic_disclosure in topic_disclosures:
+            topic_selection_ids = topic_disclosure.get("topic_selection_id")
+            disclosure_ids = topic_disclosure.get("disclosure_ids")
 
+            if len(topic_selection_ids) != 1:
+                raise serializers.ValidationError(
+                    {
+                        "topic_selection_ids": "Only one topic_selection_id is allowed in each entry."
+                    }
+                )
+
+            # Extract the single topic_selection_id
+            topic_selection_id = topic_selection_ids[0]
+            # Validate the topic selection
+            try:
+                topic_selection = AssessmentTopicSelection.objects.get(
+                    id=topic_selection_id, assessment=assessment
+                )
+            except AssessmentTopicSelection.DoesNotExist:
+                raise serializers.ValidationError(
+                    {
+                        "topic_selection_id": f"Topic selection {topic_selection_id} does not exist or does not belong to the specified assessment."
+                    }
+                )
+
+            # Validate each disclosure ID
+            validated_disclosures = []
+            disclosure = Disclosure.objects.filter(id__in=disclosure_ids)
+            # * Check if every disclosure exists
+            if len(disclosure) != len(disclosure_ids):
+                not_present_disclosure_ids = set(disclosure_ids) - set(
+                    disclosure.values_list("id", flat=True)
+                )
+                raise serializers.ValidationError(
+                    "Disclosure(s) not present: "
+                    + ", ".join(map(str, not_present_disclosure_ids))
+                )
+
+            validated_data.append(
+                {
+                    "topic_selection": topic_selection,
+                    "validated_disclosures": disclosure,
+                }
+            )
+
+        data["validated_data"] = validated_data
         return data
 
     def create(self, validated_data):
-        disclosures = validated_data["validated_disclosures"]
-        topic_selections = validated_data["validated_topic_selections"]
+        validated_data = validated_data["validated_data"]
+        created_selections = []
 
-        for selected_topic in topic_selections:
+        for item in validated_data:
+            topic_selection = item["topic_selection"]
+            disclosures = item["validated_disclosures"]
             for disclosure in disclosures:
-                if disclosure.topic == selected_topic.topic:
-                    selections = [
-                        AssessmentDisclosureSelection(
-                            topic_selection=selected_topic,
-                            disclosure=disclosure,
-                        )
-                        for disclosure in disclosures
-                    ]
-
-        return AssessmentDisclosureSelection.objects.bulk_create(selections)
+                selections = AssessmentDisclosureSelection.objects.create(
+                    topic_selection=topic_selection, disclosure=disclosure
+                )
+                created_selections.append(selections)
+                selections.save()
+        return created_selections
