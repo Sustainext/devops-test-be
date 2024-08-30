@@ -131,10 +131,11 @@ dmypy.json
 .vscode
 
 # preferences app
-/preferences/  
+/preferences/
 
 # text file
 JustATestfile.txt
 
 static/
 custom.log.*
+pyrightconfig.json

@@ -1,10 +1,4 @@
 from django.db import models
-from django.utils import timezone
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    BaseUserManager,
-    PermissionsMixin,
-)
 from authentication.models import CustomUser, Client
 from common.models.AbstractModel import AbstractModel
 from sustainapp.models import Location, Corporateentity, Organization
@@ -52,13 +46,15 @@ class OrderedJSONField(models.JSONField):
                 pass
         return value
 
-
     def db_type(self, connection):
         """Specifies the database column type as 'json' for PostgreSQL."""
         return "json"
 
 
 class FieldGroup(AbstractModel):
+    """
+    Stores Schema and UI Schema for the frontend widgets.
+    """
     name = models.CharField(max_length=200)
     path = models.ForeignKey(
         Path, on_delete=models.CASCADE, default=None, related_name="fieldgroups"
@@ -69,6 +65,9 @@ class FieldGroup(AbstractModel):
 
 
 class RawResponse(AbstractModel):
+    """
+    Stores Response of the User on the field groups.
+    """
     data = OrderedJSONField(default=list)  # models.JSONField(default=list)
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     user = models.ForeignKey(
@@ -80,7 +79,7 @@ class RawResponse(AbstractModel):
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
     )
-    
+
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, default=None, null=True, blank=True
     )
@@ -99,6 +98,9 @@ class RawResponse(AbstractModel):
 
 
 class DataMetric(AbstractModel):
+    """
+    This model is used for storing data metrics and is used in analytics.
+    """
     name = models.CharField(max_length=200)
     label = models.CharField(max_length=400)
     description = models.CharField(max_length=1000)
@@ -163,6 +165,7 @@ class DataPoint(AbstractModel):
 
 class EmissionAnalysis(AbstractModel):
     activity_id = models.CharField(max_length=200)
+    activity = models.TextField()
     index = models.PositiveIntegerField()
     co2e_total = models.DecimalField(
         max_digits=20, decimal_places=3, null=True, blank=True
@@ -175,10 +178,21 @@ class EmissionAnalysis(AbstractModel):
     ch4 = models.DecimalField(max_digits=20, decimal_places=3, null=True, blank=True)
     calculation_method = models.CharField(max_length=10)
     category = models.CharField(max_length=100)
+    subcategory = models.CharField(max_length=255)
     region = models.CharField(max_length=10)
+    month = models.IntegerField()
     year = models.IntegerField()
+    scope = models.CharField(max_length=10)
     name = models.CharField(max_length=300)
     unit = models.CharField(max_length=50)
+    unit1 = models.CharField(max_length=50, null=True, blank=True)
+    unit2 = models.CharField(max_length=50,null=True, blank=True)
+    quantity = models.DecimalField(
+        max_digits=20, decimal_places=3, null=True, blank=True
+    )
+    quantity2 = models.DecimalField(
+        max_digits=20, decimal_places=3, null=True, blank=True
+    )
     consumption = models.DecimalField(max_digits=20, decimal_places=3)
     raw_response = models.ForeignKey(RawResponse, on_delete=models.CASCADE)
 

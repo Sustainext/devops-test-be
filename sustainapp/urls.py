@@ -52,6 +52,12 @@ from sustainapp.Views.Analyse.Social.MarketingLabelingAnalyze import (
     MarketingLabelingAnalyzeView,
 )
 from sustainapp.Views.GetAllCorporates import AllCorporateList
+from sustainapp.Views.Analyse.General.GeneralEmployeeAnalyze import (
+    GeneralEmployeeAnalyzeView,
+)
+from sustainapp.Views.Analyse.General.CollectiveBargainingAnalyze import (
+    CollectiveBargainingAnalyzeView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -179,4 +185,14 @@ urlpatterns = [
         GovernanceAnalyse.as_view(),
         name="get_governance_analysis",
     ),
+    path(
+        "get_general_employee_analysis/",
+        GeneralEmployeeAnalyzeView.as_view(),
+        name="get_general_employee_analysis",
+    ),
+    path(
+        "get_general_collective_bargaining_analysis/",
+        CollectiveBargainingAnalyzeView.as_view(),
+        name="get_general_collective_bargaining_analysis",
+    )
 ]

@@ -47,6 +47,7 @@ PROJECT_APPS = [
     "authentication.apps.AuthenticationConfig",
     "datametric.apps.DatametricConfig",
     "analysis.apps.AnalysisConfig",
+    "materiality_dashboard.apps.MaterialityDashboardConfig",
 ]
 
 THIRD_PARTY = [
@@ -76,6 +77,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "sustainapp.Middleware.middleware.JWTMiddleware",
+    "datametric.middleware.GeneralBusinessDetails.PathSlugMiddleware",
 ]
 
 ROOT_URLCONF = "azureproject.urls"
