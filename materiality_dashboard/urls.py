@@ -11,6 +11,9 @@ from materiality_dashboard.Views.AssessmentTopicSelectionViewset import (
 from materiality_dashboard.Views.AssessmentDisclosureSelectionViewset import (
     AssessmentDisclosureSelectionAPIView,
 )
+from materiality_dashboard.Views.MaterialityAssessmentDashboardGetAPI import (
+    MaterialityAssessmentListAPIView,
+)
 
 router = DefaultRouter()
 router.register(
@@ -51,6 +54,11 @@ urlpatterns = [
         "assessment-disclosure-selection/<int:assessment_id>/edit/",
         AssessmentDisclosureSelectionAPIView.as_view(),
         name="bulk-assessment-disclosure-selection-edit",
+    ),
+    path(
+        "get-materiality-assessments-dashboard/",
+        MaterialityAssessmentListAPIView.as_view(),
+        name="materiality-assessment-list",
     ),
 ]
 urlpatterns += router.urls

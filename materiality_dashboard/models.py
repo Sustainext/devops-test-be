@@ -21,8 +21,8 @@ class MaterialityAssessment(AbstractModel):
     ]
 
     APPROACH_CHOICES = [
-        ("In accordance with", "In accordance with"),
-        ("With Reference to", "With Reference to"),
+        ("GRI: In accordance with", "In accordance with"),
+        ("GRI: With Reference to", "With Reference to"),
     ]
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
