@@ -8,6 +8,9 @@ from materiality_dashboard.Views.ListESGTopics import ListESGTopics
 from materiality_dashboard.Views.AssessmentTopicSelectionViewset import (
     AssessmentTopicSelectionAPIView,
 )
+from materiality_dashboard.Views.AssessmentDisclosureSelectionViewset import (
+    AssessmentDisclosureSelectionAPIView,
+)
 
 router = DefaultRouter()
 router.register(
@@ -33,6 +36,11 @@ urlpatterns = [
         "assessment-topic-selections/<int:assessment_id>/edit/",
         AssessmentTopicSelectionAPIView.as_view(),
         name="assessment-topic-selection-edit",
+    ),
+    path(
+        "assessment-disclosure-selection/",
+        AssessmentDisclosureSelectionAPIView.as_view(),
+        name="assessment-disclosure-selection",
     ),
 ]
 urlpatterns += router.urls

@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from materiality_dashboard.models import MaterialityAssessment
+from collections import defaultdict
 
 
 class AssessmentTopicSelectionAPIView(APIView):
@@ -33,14 +34,16 @@ class AssessmentTopicSelectionAPIView(APIView):
         created_selections = AssessmentTopicSelection.objects.filter(
             assessment__id=serializer.validated_data["assessment_id"]
         ).select_related("topic")
-        response_data = [
-            {
-                "id": selection.id,
-                "assessment_id": selection.assessment.id,
-                "topic_name": selection.topic.name,
-            }
-            for selection in created_selections
-        ]
+        response_data = defaultdict(list)
+
+        for selection in created_selections:
+            response_data[selection.topic.esg_category].append(
+                {
+                    "id": selection.id,
+                    "assessment_id": selection.assessment.id,
+                    "topic_name": selection.topic.name,
+                }
+            )
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     def put(self, request, assessment_id, *args, **kwargs):
@@ -70,6 +73,7 @@ class AssessmentTopicSelectionAPIView(APIView):
                 "id": selection.id,
                 "assessment_id": selection.assessment.id,
                 "topic_name": selection.topic.name,
+                "esg_category": selection.topic.esg_category,
             }
             for selection in created_selections
         ]
