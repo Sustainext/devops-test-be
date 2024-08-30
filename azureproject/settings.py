@@ -47,6 +47,7 @@ PROJECT_APPS = [
     "authentication.apps.AuthenticationConfig",
     "datametric.apps.DatametricConfig",
     "analysis.apps.AnalysisConfig",
+    "materiality_dashboard.apps.MaterialityDashboardConfig",
 ]
 
 THIRD_PARTY = [
