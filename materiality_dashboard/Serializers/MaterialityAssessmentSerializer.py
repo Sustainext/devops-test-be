@@ -17,6 +17,12 @@ class MaterialityAssessmentSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["client"]
 
+    def to_representation(self, instance: MaterialityAssessment):
+        data = super().to_representation(instance)
+        data["organisation_name"] = instance.organization.name
+        data["corporate_name"] = instance.corporate.name if instance.corporate else None
+        return data
+
 
 class MaterialityAssessmentGetSerializer(serializers.ModelSerializer):
     organization_name = serializers.CharField(source="organization.name")
