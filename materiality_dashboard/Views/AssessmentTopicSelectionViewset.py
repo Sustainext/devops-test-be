@@ -30,6 +30,13 @@ class AssessmentTopicSelectionAPIView(APIView):
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
+        if AssessmentTopicSelection.objects.filter(
+            assessment__id=serializer.validated_data["assessment_id"]
+        ).exists():
+            return Response(
+                {"error": "Assessment topic selection already exists."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer.save()
         created_selections = AssessmentTopicSelection.objects.filter(
             assessment__id=serializer.validated_data["assessment_id"]
@@ -61,6 +68,11 @@ class AssessmentTopicSelectionAPIView(APIView):
         # Validate the input data
         serializer = AssessmentTopicSelectionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        if assessment_id != serializer.validated_data["assessment_id"]:
+            return Response(
+                {"error": "Assessment ID does not match the provided ID."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         # Remove existing topic selections for this assessment
         AssessmentTopicSelection.objects.filter(assessment=assessment).delete()
         # Create new selections based on the provided topics

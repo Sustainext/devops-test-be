@@ -50,7 +50,7 @@ class MaterialityAssessmentGetSerializer(serializers.ModelSerializer):
         ]
 
     def get_environment_topics(self, obj):
-        return self._get_topics_by_category(obj, "environmental")
+        return self._get_topics_by_category(obj, "environment")
 
     def get_social_topics(self, obj):
         return self._get_topics_by_category(obj, "social")
