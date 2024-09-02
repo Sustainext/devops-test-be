@@ -13,11 +13,9 @@ from materiality_dashboard.models import (
     MaterialityChangeConfirmation,
     StakeholderEngagement,
     MaterialityAssessmentProcess,
-    ImpactType,
     MaterialityImpact,
     ManagementApproachQuestion,
 )
-
 
 
 @admin.register(MaterialityAssessment)
@@ -76,12 +74,6 @@ class MaterialityAssessmentProcessAdmin(admin.ModelAdmin):
     filter_horizontal = ("selected_stakeholders",)
 
 
-@admin.register(ImpactType)
-class ImpactTypeAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
-
-
 @admin.register(MaterialityImpact)
 class MaterialityImpactAdmin(admin.ModelAdmin):
     list_display = ("assessment", "material_topic", "impact_type")
@@ -95,5 +87,13 @@ class MaterialityImpactAdmin(admin.ModelAdmin):
 
 @admin.register(ManagementApproachQuestion)
 class ManagementApproachQuestionAdmin(admin.ModelAdmin):
-    list_display = ("assessment", "question_text")
-    search_fields = ("assessment__client__name", "question_text")
+    list_display = (
+        "assessment",
+        "negative_impact_involvement_description",
+        "stakeholder_engagement_effectiveness_description",
+    )
+    search_fields = (
+        "assessment__client__name",
+        "negative_impact_involvement_description",
+        "stakeholder_engagement_effectiveness_description",
+    )
