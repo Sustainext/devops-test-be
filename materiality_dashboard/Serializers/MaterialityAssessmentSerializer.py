@@ -63,4 +63,4 @@ class MaterialityAssessmentGetSerializer(serializers.ModelSerializer):
             assessment=obj, topic__esg_category=category
         ).select_related("topic")
         topics = [selection.topic.name for selection in topic_selections]
-        return topics if topics else "Not Selected"
+        return topics if topics else ["Not Selected"]
