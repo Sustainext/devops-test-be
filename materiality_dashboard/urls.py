@@ -34,6 +34,10 @@ from materiality_dashboard.Views.ManagementApproachQuestionAPIView import (
     ManagementApproachQuestionEditAPIView,
     ManagementApproachQuestionRetrieveAPIView,
 )
+from materiality_dashboard.Views.MaterialityAssessmentProcessAPIViews import (
+    MaterialityAssessmentProcessCreateAPIView,
+    MaterialityAssessmentProcessDetailAPIView,
+)
 
 router = DefaultRouter()
 router.register(
@@ -129,6 +133,16 @@ urlpatterns = [
         "management-approach-question/<int:assessment_id>/",
         ManagementApproachQuestionRetrieveAPIView.as_view(),
         name="management-approach-question-retrieve",
+    ),
+    path(
+        "materiality-assessment-process/create/",
+        MaterialityAssessmentProcessCreateAPIView.as_view(),
+        name="materiality-assessment-process-create",
+    ),
+    path(
+        "materiality-assessment-process/<int:assessment_id>/",
+        MaterialityAssessmentProcessDetailAPIView.as_view(),
+        name="materiality-assessment-process-detail",
     ),
 ]
 urlpatterns += router.urls
