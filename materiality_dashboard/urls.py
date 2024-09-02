@@ -14,6 +14,26 @@ from materiality_dashboard.Views.AssessmentDisclosureSelectionViewset import (
 from materiality_dashboard.Views.MaterialityAssessmentDashboardGetAPI import (
     MaterialityAssessmentListAPIView,
 )
+from materiality_dashboard.Views.MaterialityAssessmentChange import (
+    MaterialityChangeConfirmationCreateAPIView,
+    MaterialityChangeConfirmationDetailAPIView,
+)
+from materiality_dashboard.Views.StakeholderEngagementListAPIView import (
+    StakeholderEngagementListAPIView,
+)
+from materiality_dashboard.Views.SelectedMaterialTopicsAPIView import (
+    SelectedMaterialTopicsAPIView,
+)
+from materiality_dashboard.Views.MaterialityImpactAPIView import (
+    MaterialityImpactCreateAPIView,
+    MaterialityImpactEditAPIView,
+    MaterialityImpactListAPIView,
+)
+from materiality_dashboard.Views.ManagementApproachQuestionAPIView import (
+    ManagementApproachQuestionCreateAPIView,
+    ManagementApproachQuestionEditAPIView,
+    ManagementApproachQuestionRetrieveAPIView,
+)
 
 router = DefaultRouter()
 router.register(
@@ -59,6 +79,56 @@ urlpatterns = [
         "get-materiality-assessments-dashboard/",
         MaterialityAssessmentListAPIView.as_view(),
         name="materiality-assessment-list",
+    ),
+    path(
+        "materiality-change-confirmation/create/",
+        MaterialityChangeConfirmationCreateAPIView.as_view(),
+        name="materiality-change-confirmation-create",
+    ),
+    path(
+        "materiality-change-confirmation/<int:assessment_id>/",
+        MaterialityChangeConfirmationDetailAPIView.as_view(),
+        name="materiality-change-confirmation-detail",
+    ),
+    path(
+        "stakeholder-engagements/",
+        StakeholderEngagementListAPIView.as_view(),
+        name="stakeholder-engagement-list",
+    ),
+    path(
+        "selected-material-topics/<int:assessment_id>/",
+        SelectedMaterialTopicsAPIView.as_view(),
+        name="selected-material-topics",
+    ),
+    path(
+        "materiality-impact/create/",
+        MaterialityImpactCreateAPIView.as_view(),
+        name="materiality-impact-create",
+    ),
+    path(
+        "materiality-impact/<int:assessment_id>/",
+        MaterialityImpactListAPIView.as_view(),
+        name="materiality-impact-list",
+    ),
+    path(
+        "materiality-impact/<int:assessment_id>/<int:pk>/",
+        MaterialityImpactEditAPIView.as_view(),
+        name="materiality-impact-edit",
+    ),
+    path(
+        "management-approach-question/create/",
+        ManagementApproachQuestionCreateAPIView.as_view(),
+        name="management-approach-question-create",
+    ),
+    path(
+        "management-approach-question/<int:assessment_id>/edit/",
+        ManagementApproachQuestionEditAPIView.as_view(),
+        name="management-approach-question-edit",
+    ),
+    path(
+        "management-approach-question/<int:assessment_id>/",
+        ManagementApproachQuestionRetrieveAPIView.as_view(),
+        name="management-approach-question-retrieve",
     ),
 ]
 urlpatterns += router.urls

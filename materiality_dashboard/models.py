@@ -163,18 +163,6 @@ class MaterialityAssessmentProcess(AbstractModel):
         return f"{self.assessment} - Materiality Assessment Process"
 
 
-# Impact Type Model
-class ImpactType(AbstractModel):
-    """
-    This model is associated with the type of Impact in Materiality Management Approach
-    """
-
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-
 # Materiality Impact Model
 class MaterialityImpact(AbstractModel):
     assessment = models.ForeignKey(
@@ -183,7 +171,13 @@ class MaterialityImpact(AbstractModel):
         related_name="management_impacts",
     )
     material_topic = models.ForeignKey(MaterialTopic, on_delete=models.CASCADE)
-    impact_type = models.ForeignKey(ImpactType, on_delete=models.SET_NULL, null=True)
+    impact_type = models.CharField(
+        max_length=20,
+        choices=(
+            ("Positive Impact", "positive impact"),
+            ("Negative Impact", "negative impact"),
+        ),
+    )
     impact_overview = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -197,8 +191,10 @@ class ManagementApproachQuestion(AbstractModel):
         on_delete=models.CASCADE,
         related_name="management_approach_questions",
     )
-    question_text = models.TextField()
-    answer = models.TextField(blank=True, null=True)
+    negative_impact_involvement_description = models.TextField()
+    stakeholder_engagement_effectiveness_description = models.TextField(
+        blank=True, null=True
+    )
 
     def __str__(self):
-        return f"{self.assessment} - {self.question_text[:50]}"
+        return f"{self.assessment} - Management Approach Question"

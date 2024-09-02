@@ -25,7 +25,7 @@ class AssessmentDisclosureSelectionAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         response_data = {
-            "message": "AssessmentDisclosureSelection created successfully."
+            "message": "Assessment Disclosure Selection created successfully."
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
 
