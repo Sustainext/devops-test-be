@@ -85,6 +85,7 @@ class EmsissionAnalysisAdmin(admin.ModelAdmin):
         "year",
         "name",
         "raw_response",
+        "type_of",
     )
     list_filter = (
         "category",
@@ -93,6 +94,7 @@ class EmsissionAnalysisAdmin(admin.ModelAdmin):
         "raw_response__organization__name",
         "raw_response__corporate__name",
         "raw_response__client__name",
+        "type_of",
     )
 
 
