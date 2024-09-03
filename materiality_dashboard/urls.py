@@ -7,6 +7,7 @@ from materiality_dashboard.Views.MaterialityAssesmentModelViewset import (
 from materiality_dashboard.Views.ListESGTopics import ListESGTopics
 from materiality_dashboard.Views.AssessmentTopicSelectionViewset import (
     AssessmentTopicSelectionAPIView,
+    MaterialTopicsGETAPIView,
 )
 from materiality_dashboard.Views.AssessmentDisclosureSelectionViewset import (
     AssessmentDisclosureSelectionAPIView,
@@ -63,6 +64,11 @@ urlpatterns = [
         "assessment-topic-selections/<int:assessment_id>/edit/",
         AssessmentTopicSelectionAPIView.as_view(),
         name="assessment-topic-selection-edit",
+    ),
+    path(
+        "get-material-topics/<int:assessment_id>/",
+        MaterialTopicsGETAPIView.as_view(),
+        name="get-material-topics",
     ),
     path(
         "assessment-disclosure-selection/",
