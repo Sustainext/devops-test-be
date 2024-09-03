@@ -18,7 +18,7 @@ class MyModel(AbstractModel):
 
 class Path(AbstractModel):
     name = models.CharField(max_length=300)
-    slug = models.CharField(max_length=500,db_index=True)
+    slug = models.CharField(max_length=500)
 
     def __str__(self):
         return self.slug
