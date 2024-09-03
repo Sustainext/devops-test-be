@@ -127,7 +127,7 @@ class CreateOrUpdateFieldGroup(APIView):
                 #? Should we also update the user field on who has latest updated the data?
                 raw_response.save()
 
-            logger.info(f"status check")
+            logger.info("status check")
             logger.info(f"RawResponse: {raw_response}")
             logger.info(f"created: {created}")
             return Response(
