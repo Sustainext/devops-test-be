@@ -86,6 +86,7 @@ class AssessmentTopicSelectionAPIView(APIView):
         response_data = [
             {
                 "id": selection.id,
+                "topic_id": selection.topic.id,
                 "assessment_id": selection.assessment.id,
                 "topic_name": selection.topic.name,
                 "esg_category": selection.topic.esg_category,
