@@ -29,6 +29,9 @@ class ListESGTopics(APIView):
         framework_serializer = CustomFrameworkSerializer(data=request.query_params)
         framework_serializer.is_valid(raise_exception=True)
         framework = framework_serializer.validated_data["framework_id"]
-        topics = MaterialTopic.objects.filter(framework=framework)
+        esg_category = framework_serializer.validated_data["esg_category"]
+        topics = MaterialTopic.objects.filter(
+            framework=framework, esg_category=esg_category
+        )
         serializer = MaterialTopicModelSerializer(topics, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
