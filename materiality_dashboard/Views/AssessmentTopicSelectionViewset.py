@@ -96,10 +96,11 @@ class AssessmentTopicSelectionAPIView(APIView):
 
 
 class MaterialTopicsGETAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, assessment_id, *args, **kwargs):
         # Retrieve the assessment object
         try:
-            assessment = MaterialityAssessment.objects.get(id=assessment_id)
+            assessment = MaterialityAssessment.objects.get(id=assessment_id,client=self.request.user.client)
         except MaterialityAssessment.DoesNotExist:
             return Response(
                 {"error": "Materiality Assessment not found."},
