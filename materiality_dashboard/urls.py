@@ -39,6 +39,9 @@ from materiality_dashboard.Views.MaterialityAssessmentProcessAPIViews import (
     MaterialityAssessmentProcessCreateAPIView,
     MaterialityAssessmentProcessDetailAPIView,
 )
+from materiality_dashboard.Views.AssessmentDisclosureSelectionViewset import (
+    GetMaterialTopicDisclosures,
+)
 
 router = DefaultRouter()
 router.register(
@@ -69,6 +72,10 @@ urlpatterns = [
         "get-material-topics/<int:assessment_id>/",
         MaterialTopicsGETAPIView.as_view(),
         name="get-material-topics",
+    ),
+    path(
+        "get-material-topic-disclosures/<int:assessment_id>/",
+        GetMaterialTopicDisclosures.as_view(),
     ),
     path(
         "assessment-disclosure-selection/",

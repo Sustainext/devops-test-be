@@ -6,8 +6,13 @@ from materiality_dashboard.Serializers.AssessmentDisclosureSelectionSerializer i
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from materiality_dashboard.models import MaterialityAssessment
+from materiality_dashboard.models import (
+    MaterialityAssessment,
+    MaterialTopic,
+    Disclosure,
+)
 from collections import defaultdict
+from django.db.models import Prefetch
 
 
 class AssessmentDisclosureSelectionAPIView(APIView):
@@ -78,3 +83,55 @@ class AssessmentDisclosureSelectionAPIView(APIView):
 
             return Response({"status": "success"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetMaterialTopicDisclosures(APIView):
+    """
+    Get Material Topic Disclosures
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, assessment_id, format=None):
+        try:
+            # Fetch the materiality assessment for the given id
+            materiality_assessment = MaterialityAssessment.objects.get(
+                id=assessment_id, client=self.request.user.client
+            )
+        except MaterialityAssessment.DoesNotExist:
+            return Response(
+                {
+                    "error": "No materiality assessment found for the given assessment id."
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Prefetch disclosures for the selected topics efficiently
+        selected_material_topics = materiality_assessment.selected_topics.prefetch_related(
+            Prefetch(
+                "topic__disclosure_set",  # Accessing disclosures for each topic
+                to_attr="prefetched_disclosures",  # Store the result in a prefetched attribute
+            )
+        ).select_related(
+            "topic"
+        )
+
+        response_data = defaultdict(list)
+
+        # Iterate over selected material topics and use prefetched disclosures
+        for selected_material_topic in selected_material_topics:
+            response_data[selected_material_topic.topic.esg_category].append(
+                {
+                    f"{selected_material_topic.topic.name}": [
+                        {
+                            "name": disclosure.description,
+                            "disclosure_id": disclosure.id,
+                            "selected_material_topic_id": selected_material_topic.id,
+                            "material_topic_id": selected_material_topic.topic.id,
+                        }
+                        for disclosure in selected_material_topic.topic.prefetched_disclosures
+                    ]
+                }
+            )
+
+        return Response(response_data, status=status.HTTP_200_OK)
