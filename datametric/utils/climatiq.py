@@ -265,7 +265,7 @@ class Climatiq:
                     "unit2": emission.get("Unit2"),
                     "quantity": self.round_decimal_or_nulls(emission.get("Quantity")),
                     "quantity2": self.round_decimal_or_nulls(emission.get("Quantity2")),
-                    "type_of": emission["emission_factor"].get("unit_type"),
+                    "type_of": emission["Activity"].split("-")[-1].strip(),
                 },
             )
             emission_analyse.save()
