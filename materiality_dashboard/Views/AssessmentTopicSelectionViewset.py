@@ -56,6 +56,47 @@ class AssessmentTopicSelectionAPIView(APIView):
             )
         return Response(response_data, status=status.HTTP_201_CREATED)
 
+
+class MaterialTopicsGETAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, assessment_id, *args, **kwargs):
+        # Retrieve the assessment object
+        try:
+            assessment = MaterialityAssessment.objects.get(
+                id=assessment_id, client=self.request.user.client
+            )
+        except MaterialityAssessment.DoesNotExist:
+            return Response(
+                {"error": "Materiality Assessment not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Get all selected topics for this assessment
+        topic_selections = AssessmentTopicSelection.objects.filter(
+            assessment=assessment
+        )
+        material_topics = MaterialTopic.objects.filter(
+            id__in=topic_selections.values_list("topic_id", flat=True)
+        )
+
+        # Filter by esg_category if provided
+        esg_category = request.query_params.get("esg_category")
+        if esg_category:
+            material_topics = material_topics.filter(esg_category=esg_category)
+
+        # Serialize and return the data
+        serializer = MaterialTopicModelSerializer(material_topics, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AssessmentTopicSelectionUpdateAPIView(APIView):
+    """
+    Update API for Assessment Topic Selection
+    """
+
+    permission_classes = [IsAuthenticated]
+
     def put(self, request, assessment_id, *args, **kwargs):
         # Retrieve the assessment instance
         try:
@@ -94,33 +135,3 @@ class AssessmentTopicSelectionAPIView(APIView):
             for selection in created_selections
         ]
         return Response(response_data, status=status.HTTP_200_OK)
-
-
-class MaterialTopicsGETAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request, assessment_id, *args, **kwargs):
-        # Retrieve the assessment object
-        try:
-            assessment = MaterialityAssessment.objects.get(id=assessment_id,client=self.request.user.client)
-        except MaterialityAssessment.DoesNotExist:
-            return Response(
-                {"error": "Materiality Assessment not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        # Get all selected topics for this assessment
-        topic_selections = AssessmentTopicSelection.objects.filter(
-            assessment=assessment
-        )
-        material_topics = MaterialTopic.objects.filter(
-            id__in=topic_selections.values_list("topic_id", flat=True)
-        )
-
-        # Filter by esg_category if provided
-        esg_category = request.query_params.get("esg_category")
-        if esg_category:
-            material_topics = material_topics.filter(esg_category=esg_category)
-
-        # Serialize and return the data
-        serializer = MaterialTopicModelSerializer(material_topics, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -4,6 +4,7 @@ from rest_framework import status
 from materiality_dashboard.models import MaterialityImpact
 from materiality_dashboard.Serializers.MaterialityImpactSerializer import (
     MaterialityImpactSerializer,
+    MaterialityImpactBulkSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 
@@ -12,7 +13,7 @@ class MaterialityImpactCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        serializer = MaterialityImpactSerializer(data=request.data)
+        serializer = MaterialityImpactBulkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

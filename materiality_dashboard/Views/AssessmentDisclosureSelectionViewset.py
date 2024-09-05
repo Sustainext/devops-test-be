@@ -1,5 +1,8 @@
 from rest_framework.views import APIView
-from materiality_dashboard.models import AssessmentDisclosureSelection
+from materiality_dashboard.models import (
+    AssessmentDisclosureSelection,
+    AssessmentTopicSelection,
+)
 from materiality_dashboard.Serializers.AssessmentDisclosureSelectionSerializer import (
     BulkAssessmentDisclosureSelectionSerializer,
 )
@@ -15,7 +18,7 @@ from collections import defaultdict
 from django.db.models import Prefetch
 
 
-class AssessmentDisclosureSelectionAPIView(APIView):
+class AssessmentDisclosureSelectionCreate(APIView):
     """
     Disclosure Selection for Assessment
     Provides an API view for creating `AssessmentDisclosureSelection` objects.
@@ -33,56 +36,6 @@ class AssessmentDisclosureSelectionAPIView(APIView):
             "message": "Assessment Disclosure Selection created successfully."
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
-
-    def get(self, request, assessment_id, *args, **kwargs):
-        topic_selection_ids = request.query_params.getlist("topic_selection_ids")
-
-        try:
-            disclosures = AssessmentDisclosureSelection.objects.filter(
-                topic_selection__id__in=topic_selection_ids,
-                topic_selection__assessment__id=assessment_id,
-            ).select_related("topic_selection", "disclosure")
-        except AssessmentDisclosureSelection.DoesNotExist:
-            return Response(
-                {
-                    "error": "No disclosures found for the given assessment and topic selections."
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        response_data = [
-            {
-                "id": disclosure.id,
-                "topic_selection_id": disclosure.topic_selection.id,
-                "disclosure_id": disclosure.disclosure.id,
-                "disclosure_description": disclosure.disclosure.description,
-            }
-            for disclosure in disclosures
-        ]
-        return Response(response_data, status=status.HTTP_200_OK)
-
-    def put(self, request, assessment_id, *args, **kwargs):
-        serializer = BulkAssessmentDisclosureSelectionSerializer(
-            data=request.data, context={"request": request}
-        )
-        if serializer.is_valid():
-            validated_data = serializer.validated_data["validated_data"]
-            for item in validated_data:
-                topic_selection = item["topic_selection"]
-
-                # Remove existing disclosure selections for this topic selection
-                AssessmentDisclosureSelection.objects.filter(
-                    topic_selection=topic_selection
-                ).delete()
-
-                # Create new selections based on the provided disclosures
-                for disclosure in item["validated_disclosures"]:
-                    AssessmentDisclosureSelection.objects.create(
-                        topic_selection=topic_selection, disclosure=disclosure
-                    )
-
-            return Response({"status": "success"}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetMaterialTopicDisclosures(APIView):
@@ -135,3 +88,71 @@ class GetMaterialTopicDisclosures(APIView):
             )
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class AssessmentDisclosureSelectionRetrieve(APIView):
+    """
+    Disclosure Selection for Assessment
+    Provides an API view for creating `AssessmentDisclosureSelection` objects.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, assessment_id, *args, **kwargs):
+        # * Get Assessment Object
+        try:
+            assessment = MaterialityAssessment.objects.get(
+                id=assessment_id, client=self.request.user.client
+            )
+        except MaterialityAssessment.DoesNotExist:
+            return Response(
+                {"error": "Materiality Assessment not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        # * Get all topic selection IDs
+        topic_selection_ids = AssessmentTopicSelection.objects.filter(
+            assessment=assessment
+        ).values_list("id", flat=True)
+        disclosures = AssessmentDisclosureSelection.objects.filter(
+            topic_selection__id__in=topic_selection_ids
+        ).select_related("topic_selection", "disclosure")
+        response_data = [
+            {
+                "id": assessment_disclosure.id,
+                "topic_selection_id": assessment_disclosure.topic_selection.id,
+                "disclosure_id": assessment_disclosure.disclosure.id,
+                "disclosure_description": assessment_disclosure.disclosure.description,
+            }
+            for assessment_disclosure in disclosures
+        ]
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+class AssessmentDisclosureSelectionUpdate(APIView):
+    """
+    Edit Disclosure Selection for Assessment
+    Provides an API view for Editing `AssessmentDisclosureSelection` objects.
+    """
+
+    def put(self, request, assessment_id, *args, **kwargs):
+        serializer = BulkAssessmentDisclosureSelectionSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            validated_data = serializer.validated_data["validated_data"]
+            for item in validated_data:
+                topic_selection = item["topic_selection"]
+
+                # Remove existing disclosure selections for this topic selection
+                AssessmentDisclosureSelection.objects.filter(
+                    topic_selection=topic_selection
+                ).delete()
+
+                # Create new selections based on the provided disclosures
+                for disclosure in item["validated_disclosures"]:
+                    AssessmentDisclosureSelection.objects.create(
+                        topic_selection=topic_selection, disclosure=disclosure
+                    )
+
+            return Response({"status": "success"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
