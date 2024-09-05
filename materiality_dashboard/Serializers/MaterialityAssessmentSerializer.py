@@ -17,6 +17,12 @@ class MaterialityAssessmentSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["client"]
 
+    def to_representation(self, instance: MaterialityAssessment):
+        data = super().to_representation(instance)
+        data["organisation_name"] = instance.organization.name
+        data["corporate_name"] = instance.corporate.name if instance.corporate else None
+        return data
+
 
 class MaterialityAssessmentGetSerializer(serializers.ModelSerializer):
     organization_name = serializers.CharField(source="organization.name")
@@ -44,7 +50,7 @@ class MaterialityAssessmentGetSerializer(serializers.ModelSerializer):
         ]
 
     def get_environment_topics(self, obj):
-        return self._get_topics_by_category(obj, "environmental")
+        return self._get_topics_by_category(obj, "environment")
 
     def get_social_topics(self, obj):
         return self._get_topics_by_category(obj, "social")
@@ -57,4 +63,4 @@ class MaterialityAssessmentGetSerializer(serializers.ModelSerializer):
             assessment=obj, topic__esg_category=category
         ).select_related("topic")
         topics = [selection.topic.name for selection in topic_selections]
-        return topics if topics else "Not Selected"
+        return topics if topics else ["Not Selected"]

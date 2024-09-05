@@ -195,6 +195,7 @@ class EmissionAnalysis(AbstractModel):
     )
     consumption = models.DecimalField(max_digits=20, decimal_places=3)
     raw_response = models.ForeignKey(RawResponse, on_delete=models.CASCADE)
+    type_of = models.CharField(max_length=255,db_column="type",null=True,blank=True)
 
     def __str__(self) -> str:
         return self.name + str(self.id)

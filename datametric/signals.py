@@ -58,12 +58,6 @@ def process_json(json_obj, path, raw_response):
                     raw_response=raw_response,
                 )
     climatiq_data_creation(raw_response=raw_response)
-    # except KeyError as e:
-    #     print(f"KeyError: {e}")
-    # except IndexError as e:
-    #     print(f"IndexError: {e}")
-    # except Exception as e:
-    #     print(f"An unexpected error occurred: {e}")
 
 
 @receiver(post_save, sender=RawResponse)
@@ -73,8 +67,6 @@ def create_response_points(sender, instance: RawResponse, created, **kwargs):
     EmissionAnalysis.objects.filter(raw_response=instance).delete()
     # No matter, whether it is getting created or updated, this should be run.
     #! Don't save the instance again, goes to non stop recursion.
-    try:
-        process_json(instance.data, instance.path, instance)
-        create_analysis_data(instance)
-    except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}", exc_info=True)
+
+    process_json(instance.data, instance.path, instance)
+    create_analysis_data(instance)

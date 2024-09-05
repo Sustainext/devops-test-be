@@ -14,6 +14,7 @@ class CustomFrameworkSerializer(serializers.Serializer):
     framework_id = serializers.PrimaryKeyRelatedField(
         queryset=Framework.objects.all(), required=True
     )
+    esg_category = serializers.CharField(required=True, max_length=20)
 
     class Meta:
-        fields = ["framework_id"]
+        fields = ["framework_id", "esg_category"]

@@ -3,10 +3,13 @@ from materiality_dashboard.models import AssessmentTopicSelection
 from materiality_dashboard.Serializers.AssessmentTopicSelectionSerializer import (
     AssessmentTopicSelectionSerializer,
 )
+from materiality_dashboard.Serializers.MaterialTopicSerializer import (
+    MaterialTopicModelSerializer,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from materiality_dashboard.models import MaterialityAssessment
+from materiality_dashboard.models import MaterialityAssessment, MaterialTopic
 from collections import defaultdict
 
 
@@ -30,6 +33,13 @@ class AssessmentTopicSelectionAPIView(APIView):
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
+        if AssessmentTopicSelection.objects.filter(
+            assessment__id=serializer.validated_data["assessment_id"]
+        ).exists():
+            return Response(
+                {"error": "Assessment topic selection already exists."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer.save()
         created_selections = AssessmentTopicSelection.objects.filter(
             assessment__id=serializer.validated_data["assessment_id"]
@@ -46,6 +56,47 @@ class AssessmentTopicSelectionAPIView(APIView):
             )
         return Response(response_data, status=status.HTTP_201_CREATED)
 
+
+class MaterialTopicsGETAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, assessment_id, *args, **kwargs):
+        # Retrieve the assessment object
+        try:
+            assessment = MaterialityAssessment.objects.get(
+                id=assessment_id, client=self.request.user.client
+            )
+        except MaterialityAssessment.DoesNotExist:
+            return Response(
+                {"error": "Materiality Assessment not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Get all selected topics for this assessment
+        topic_selections = AssessmentTopicSelection.objects.filter(
+            assessment=assessment
+        )
+        material_topics = MaterialTopic.objects.filter(
+            id__in=topic_selections.values_list("topic_id", flat=True)
+        )
+
+        # Filter by esg_category if provided
+        esg_category = request.query_params.get("esg_category")
+        if esg_category:
+            material_topics = material_topics.filter(esg_category=esg_category)
+
+        # Serialize and return the data
+        serializer = MaterialTopicModelSerializer(material_topics, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AssessmentTopicSelectionUpdateAPIView(APIView):
+    """
+    Update API for Assessment Topic Selection
+    """
+
+    permission_classes = [IsAuthenticated]
+
     def put(self, request, assessment_id, *args, **kwargs):
         # Retrieve the assessment instance
         try:
@@ -61,6 +112,11 @@ class AssessmentTopicSelectionAPIView(APIView):
         # Validate the input data
         serializer = AssessmentTopicSelectionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        if assessment_id != serializer.validated_data["assessment_id"]:
+            return Response(
+                {"error": "Assessment ID does not match the provided ID."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         # Remove existing topic selections for this assessment
         AssessmentTopicSelection.objects.filter(assessment=assessment).delete()
         # Create new selections based on the provided topics
@@ -71,6 +127,7 @@ class AssessmentTopicSelectionAPIView(APIView):
         response_data = [
             {
                 "id": selection.id,
+                "topic_id": selection.topic.id,
                 "assessment_id": selection.assessment.id,
                 "topic_name": selection.topic.name,
                 "esg_category": selection.topic.esg_category,

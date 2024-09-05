@@ -36,9 +36,10 @@ class AssessmentTopicSelectionSerializer(serializers.Serializer):
         assessment = validated_data["assessment"]
         topics = validated_data["validated_topics"]
 
-        selections = [
-            AssessmentTopicSelection(assessment=assessment, topic=topic)
-            for topic in topics
-        ]
-
-        return AssessmentTopicSelection.objects.bulk_create(selections)
+        selections = AssessmentTopicSelection.objects.bulk_create(
+            [
+                AssessmentTopicSelection(assessment=assessment, topic=topic)
+                for topic in topics
+            ]
+        )
+        return selections
