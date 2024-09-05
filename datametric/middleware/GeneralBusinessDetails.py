@@ -113,10 +113,6 @@ class PathSlugMiddleware(MiddlewareMixin):
                         })
 
                 request.custom_data = response_data
-            # Add more conditions for other path_name cases
-            elif path_name == "another-path-slug":
-                # Store custom data in request
-                request.custom_data = {"custom_key": "custom_value"}
 
         return None
     
