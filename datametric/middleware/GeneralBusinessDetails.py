@@ -1,9 +1,11 @@
 from django.utils.deprecation import MiddlewareMixin
 from datametric.models import RawResponse,Path
 from urllib.parse import urlparse, parse_qs
-from sustainapp.models import Organization, Corporateentity
+from sustainapp.models import Organization, Corporateentity,Location
 from django.conf import settings
 import jwt
+import json
+from collections import defaultdict
 
 class PathSlugMiddleware(MiddlewareMixin):
     def get_sector_data(self, request, organization_id,corporate_id):
@@ -87,4 +89,46 @@ class PathSlugMiddleware(MiddlewareMixin):
                     None
                     # print("PathSlugMiddleware: RawResponse already exists")
 
+                # Store data in request to be used in process_response
+                request.custom_data = {'data': data}
+
+            elif path_name == "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1a-s1":
+                # Store some specific data in request to be used in response
+                organization = request.GET.get('organisation')
+                corporate = request.GET.get('corporate')
+                response_data = defaultdict(list)
+                if corporate:
+                    location = Location.objects.filter(corporateentity_id=corporate)
+                    for loc in location:
+                        response_data['location'].append({
+                            'location_id': loc.id,
+                            'location_name': loc.name
+                        })
+                elif organization:
+                    location = Location.objects.filter(corporateentity__organization_id=organization)
+                    for loc in location:
+                        response_data['location'].append({
+                            'location_id': loc.id,
+                            'location_name': loc.name
+                        })
+
+                request.custom_data = response_data
+            # Add more conditions for other path_name cases
+            elif path_name == "another-path-slug":
+                # Store custom data in request
+                request.custom_data = {"custom_key": "custom_value"}
+
         return None
+    
+    def process_response(self, request, response):
+        """
+        Modify the response for specific paths after the view is processed.
+        """
+        if hasattr(request, 'custom_data'):
+            if 'application/json' in response['Content-Type']:
+                data = json.loads(response.content)
+                # Merge custom data into the response
+                data.update(request.custom_data)
+                response.content = json.dumps(data).encode('utf-8')
+
+        return response
