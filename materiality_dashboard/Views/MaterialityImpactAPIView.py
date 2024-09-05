@@ -23,25 +23,29 @@ class MaterialityImpactCreateAPIView(APIView):
 class MaterialityImpactEditAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, assessment_id, pk):
-        try:
-            return MaterialityImpact.objects.get(
+    def get_objects(self, assessment_id):
+        if MaterialityImpact.objects.filter(
+            assessment__id=assessment_id,
+            assessment__client__id=self.request.user.client.id,
+        ).exists():
+            return MaterialityImpact.objects.filter(
                 assessment__id=assessment_id,
-                pk=pk,
                 assessment__client__id=self.request.user.client.id,
             )
-        except MaterialityImpact.DoesNotExist:
+        else:
             return None
 
-    def put(self, request, assessment_id, pk, *args, **kwargs):
-        materiality_impact = self.get_object(assessment_id, pk)
+    def put(self, request, assessment_id, *args, **kwargs):
+        materiality_impact = self.get_objects(assessment_id)
         if materiality_impact is None:
             return Response(
                 {"error": "MaterialityImpact not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = MaterialityImpactSerializer(materiality_impact, data=request.data)
+        serializer = MaterialityImpactBulkSerializer(
+            materiality_impact, data=request.data
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

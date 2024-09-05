@@ -143,7 +143,7 @@ urlpatterns = [
         name="materiality-impact-list",
     ),
     path(
-        "materiality-impact/<int:assessment_id>/<int:pk>/",
+        "materiality-impact/<int:assessment_id>/edit/",
         MaterialityImpactEditAPIView.as_view(),
         name="materiality-impact-edit",
     ),
