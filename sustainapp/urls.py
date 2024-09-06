@@ -19,7 +19,7 @@ from sustainapp.Views.GHGReport import (
     ReportListView,
     ReportPDFView,
 )
-from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
+from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate, GetLocationAsPerOrgOrCorp
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
@@ -98,6 +98,11 @@ urlpatterns = [
         "get_location_as_per_corporate/",
         GetLocationAsPerCorporate.as_view(),
         name="get_location_as_per_corporate",
+    ),
+    path(
+        "get_location_as_per_org_or_corp/",
+        GetLocationAsPerOrgOrCorp.as_view(),
+        name="get_location_as_per_org_or_corp",
     ),
     path(
         "get_material_analysis/",
