@@ -97,7 +97,7 @@ class AssessmentTopicSelectionUpdateAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def put(self, request, assessment_id, *args, **kwargs):
+    def patch(self, request, assessment_id, *args, **kwargs):
         # Retrieve the assessment instance
         try:
             assessment = MaterialityAssessment.objects.get(
@@ -109,21 +109,46 @@ class AssessmentTopicSelectionUpdateAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Validate the input data
-        serializer = AssessmentTopicSelectionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        if assessment_id != serializer.validated_data["assessment_id"]:
+        # Validate that the payload contains "topics"
+        topics = request.data.get("topics", [])
+        if not isinstance(topics, list):
             return Response(
-                {"error": "Assessment ID does not match the provided ID."},
+                {"error": "Expected 'topics' to be a list of topic IDs."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # Remove existing topic selections for this assessment
-        AssessmentTopicSelection.objects.filter(assessment=assessment).delete()
-        # Create new selections based on the provided topics
-        serializer.save()
-        created_selections = AssessmentTopicSelection.objects.filter(
+
+        # Convert the topics from the request to integers to match the database type
+        new_topic_ids = set(map(int, topics))
+
+        # Get the existing topic selections for this assessment and convert them to a set
+        existing_selections = AssessmentTopicSelection.objects.filter(assessment=assessment)
+        existing_topic_ids = set(existing_selections.values_list('topic_id', flat=True))
+
+        # Topics to add (present in the new list but not in the existing ones)
+        topics_to_add = new_topic_ids - existing_topic_ids
+
+        # Topics to remove (present in the existing list but not in the new ones)
+        topics_to_remove = existing_topic_ids - new_topic_ids
+
+        # Remove the selections that are no longer in the updated list
+        if topics_to_remove:
+            AssessmentTopicSelection.objects.filter(
+                assessment=assessment, topic_id__in=topics_to_remove
+            ).delete()
+
+        # Add new selections for the topics that were added
+        for topic_id in topics_to_add:
+            AssessmentTopicSelection.objects.create(
+                assessment=assessment,
+                topic_id=topic_id
+            )
+
+        # Query the updated selections (including newly created ones)
+        updated_selections = AssessmentTopicSelection.objects.filter(
             assessment=assessment
         ).select_related("topic")
+
+        # Prepare the response data
         response_data = [
             {
                 "id": selection.id,
@@ -132,6 +157,7 @@ class AssessmentTopicSelectionUpdateAPIView(APIView):
                 "topic_name": selection.topic.name,
                 "esg_category": selection.topic.esg_category,
             }
-            for selection in created_selections
+            for selection in updated_selections
         ]
+
         return Response(response_data, status=status.HTTP_200_OK)
