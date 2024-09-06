@@ -88,43 +88,4 @@ class PathSlugMiddleware(MiddlewareMixin):
                 else:
                     None
                     # print("PathSlugMiddleware: RawResponse already exists")
-
-                # Store data in request to be used in process_response
-                request.custom_data = {'data': data}
-
-            elif path_name == "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1a-s1":
-                # Store some specific data in request to be used in response
-                organization = request.GET.get('organisation')
-                corporate = request.GET.get('corporate')
-                response_data = defaultdict(list)
-                if corporate:
-                    location = Location.objects.filter(corporateentity_id=corporate)
-                    for loc in location:
-                        response_data['location'].append({
-                            'location_id': loc.id,
-                            'location_name': loc.name
-                        })
-                elif organization:
-                    location = Location.objects.filter(corporateentity__organization_id=organization)
-                    for loc in location:
-                        response_data['location'].append({
-                            'location_id': loc.id,
-                            'location_name': loc.name
-                        })
-
-                request.custom_data = response_data
-
         return None
-    
-    def process_response(self, request, response):
-        """
-        Modify the response for specific paths after the view is processed.
-        """
-        if hasattr(request, 'custom_data'):
-            if 'application/json' in response['Content-Type']:
-                data = json.loads(response.content)
-                # Merge custom data into the response
-                data.update(request.custom_data)
-                response.content = json.dumps(data).encode('utf-8')
-
-        return response
