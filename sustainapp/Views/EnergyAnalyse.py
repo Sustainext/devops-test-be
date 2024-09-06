@@ -438,8 +438,8 @@ class EnergyAnalyzeView(APIView):
                         + direct_total_non_renewable_gj
                         + self_generated_total_renewable_gj
                         + self_generated_total_non_renewable_gj
-                        + energy_sold_total_renewable_gj
-                        + energy_sold_total_non_renewable_gj,
+                        - energy_sold_total_renewable_gj
+                        - energy_sold_total_non_renewable_gj,
                         3,
                     ),
                     "unit": "GJ",
