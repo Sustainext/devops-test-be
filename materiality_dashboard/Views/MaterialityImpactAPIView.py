@@ -42,7 +42,7 @@ class MaterialityImpactEditAPIView(APIView):
                 {"error": "MaterialityImpact not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-
+        materiality_impact.delete()
         serializer = MaterialityImpactBulkSerializer(
             materiality_impact, data=request.data
         )

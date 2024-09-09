@@ -1,9 +1,11 @@
 from django.utils.deprecation import MiddlewareMixin
 from datametric.models import RawResponse,Path
 from urllib.parse import urlparse, parse_qs
-from sustainapp.models import Organization, Corporateentity
+from sustainapp.models import Organization, Corporateentity,Location
 from django.conf import settings
 import jwt
+import json
+from collections import defaultdict
 
 class PathSlugMiddleware(MiddlewareMixin):
     def get_sector_data(self, request, organization_id,corporate_id):
@@ -86,5 +88,4 @@ class PathSlugMiddleware(MiddlewareMixin):
                 else:
                     None
                     # print("PathSlugMiddleware: RawResponse already exists")
-
         return None
