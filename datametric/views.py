@@ -71,19 +71,7 @@ class FieldGroupListView(APIView):
             resp_data["form"] = serialized_field_groups.data
             resp_data["form_data"] = serialized_raw_responses.data
 
-            if path_instance.slug == "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1a-s1":
 
-                def get_locations(entity_id, is_corporate=True):
-                    if is_corporate:
-                        location = Location.objects.filter(corporateentity=entity_id)
-                    else :
-                        location = Location.objects.filter(corporateentity__organization_id=entity_id)
-
-                    return [ {'location_id': loc.id, 'location_name': loc.name} for loc in location]
-                if corporate:
-                    resp_data['location'] = get_locations(corporate.id)
-                elif organisation:
-                    resp_data['location'] = get_locations(organisation.id, is_corporate=False)
 
             return Response(resp_data)
         except Exception as e:
