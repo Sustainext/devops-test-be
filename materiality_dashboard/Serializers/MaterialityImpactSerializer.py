@@ -15,11 +15,21 @@ class MaterialityImpactBulkSerializer(serializers.ListSerializer):
         return MaterialityImpact.objects.bulk_create(materiality_impacts)
 
     def update(self, instances, validated_data):
-        instance_hash = {index: instance for index, instance in enumerate(instances)}
+        # Create a dictionary mapping instance IDs (or another unique field) to instances
+        instance_mapping = {instance.id: instance for instance in instances}
 
-        result = [
-            self.child.update(instance_hash[index], attrs)
-            for index, attrs in enumerate(validated_data)
-        ]
+        # Initialize a list for storing the results of the update
+        result = []
 
+        # Iterate through validated data
+        for attrs in validated_data:
+            instance_id = attrs.get('id')  # Added Unique Identifier for Keyerror 1
+
+            if instance_id in instance_mapping:
+                instance = instance_mapping.pop(instance_id)
+                result.append(self.child.update(instance, attrs))
+            else:
+                
+                result.append(self.child.create(attrs))
+        
         return result
