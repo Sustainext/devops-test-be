@@ -10,6 +10,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from datametric.utils.analyse import set_locations_data
 from operator import itemgetter
+from datametric.utils.analyse import filter_by_start_end_dates
 
 from django.db.models import Prefetch
 from rest_framework import serializers
@@ -47,12 +48,12 @@ class GetEmissionAnalysis(APIView):
         self.data_points = DataPoint.objects.filter(
             json_holder__isnull=False,
             is_calculated=True,
-            year__range=(self.start.year, self.end.year),
-            month__range=(self.start.month, self.end.month),
             path__slug__icontains="gri-collect-emissions-scope-combined",
             locale__in=self.locations,  # .values_list("name", flat=True),
             client_id=self.request.user.client.id,
-        ).select_related("raw_response")
+        ).select_related("raw_response").filter(
+            filter_by_start_end_dates(start_date=self.start, end_date=self.end)
+        )
         # * Get contribution of each path in raw_responses and sum the json_holder
         top_emission_by_scope = defaultdict(lambda: 0)
         self.top_emission_by_source = defaultdict(lambda: 0)
@@ -101,11 +102,18 @@ class GetEmissionAnalysis(APIView):
         )
         # * Get top emissions by Scope
         response_data = dict()
-        response_data["top_emission_by_scope"] = self.get_top_emission_by_scope()
-        response_data["top_emission_by_source"] = self.calculate_scope_contribution(
+        response_data["all_emission_by_scope"] = self.get_top_emission_by_scope()
+        response_data["all_emission_by_source"] = self.calculate_scope_contribution(
             key_name="source", scope_total_values=self.top_emission_by_source
         )
-        response_data["top_emission_by_location"] = self.calculate_scope_contribution(
+        response_data["all_emission_by_location"] = self.calculate_scope_contribution(
             key_name="location", scope_total_values=self.top_emission_by_location
         )
+        response_data["top_5_emisson_by_source"] = response_data["all_emission_by_source"][0:5]
+        response_data["top_5_emisson_by_location"] = response_data["all_emission_by_location"][0:5]
+        response_data["selected_org"] = self.organisation.name
+        response_data["selected_corporate"] = self.corporate.name if self.corporate else None
+        response_data["selected_location"] = self.location.name if self.location else None
+        response_data["selected_start_date"] = self.start
+        response_data["selected_end_date"] = self.end
         return Response({"data": response_data}, status=status.HTTP_200_OK)
