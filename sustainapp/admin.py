@@ -35,6 +35,7 @@ from sustainapp.models import (
     Certification,
     ZohoInfo,
     AnalysisData2,
+    TrackDashboard
 )
 
 from django.db import migrations
@@ -273,6 +274,8 @@ class ZohoInfoAdmin(admin.ModelAdmin):
     list_filter = ("client__name",)
     search_fields = ("client__name", "table_no", "table_name")
 
+class TrackDashboardAdmin(admin.ModelAdmin):
+    list_display = ["id", "client_id", "report_name"]
 
 
 
@@ -307,4 +310,5 @@ admin.site.register(Mygoal, MygoalAdmin),
 admin.site.register(TaskDashboard, TaskDashboardAdmin),
 admin.site.register(ClientTaskDashboard, ClientTaskDashboardAdmin),
 admin.site.register(ZohoInfo, ZohoInfoAdmin),
+admin.site.register(TrackDashboard, TrackDashboardAdmin),
 

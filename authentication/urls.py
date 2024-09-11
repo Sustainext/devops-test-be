@@ -15,6 +15,7 @@ from authentication.Views.CustomLoginAPI import CustomLoginView
 from rest_framework import routers
 from authentication.Views.UserProfile import UserProfileViewSet
 from authentication.Views.ChangePassword import ChangePasswordAPIView
+from authentication.Views.AzurePowerBIToken import PowerBiToken
 
 router = routers.DefaultRouter()
 router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
@@ -52,5 +53,6 @@ urlpatterns = [
         name="password_reset_confirm",
     ),
     path("change_password/", ChangePasswordAPIView.as_view(), name="change_password"),
+    path("powerbi_token/", PowerBiToken.as_view(), name="powerbi_token"),
     path("", include(router.urls)),
 ]
