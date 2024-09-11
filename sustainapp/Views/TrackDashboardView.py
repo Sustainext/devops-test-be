@@ -7,6 +7,5 @@ from rest_framework import status
 class TrackDashboardAPIView(APIView):
     def get(self, request):
         trackdashboard = TrackDashboard.objects.filter(client_id=request.user.client_id)
-        print(trackdashboard)
         serializer = TrackDashboardSerializer(trackdashboard, many=True)
         return Response(serializer.data)
