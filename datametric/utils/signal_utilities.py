@@ -81,6 +81,6 @@ def process_raw_response_data(
     raw_response: RawResponse,
 ):
     for key, value in data_point_dict.items():
-        data_metric,_ = DataMetric.objects.get_or_create(name=key,path=raw_response.path,response_type="String")
+        data_metric,_ = DataMetric.objects.get_or_create(name=key,path=raw_response.path,defaults={"response_type":"String"})
         create_or_update_data_points(data_metric, value, index, raw_response)
 

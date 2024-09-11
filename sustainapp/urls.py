@@ -10,6 +10,8 @@ from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
+from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import MarketPresenceAnalyseView
+from sustainapp.Views.Analyse.Economic.OperationsAssesedAnalyse import OperationsAssessedAnalyzeView
 from sustainapp.Views.Analyse.Governance.GovernanceAnalyse import GovernanceAnalyse
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
@@ -202,4 +204,14 @@ urlpatterns = [
         name="get_general_collective_bargaining_analysis",
     ),
     path("track_dashboards/", TrackDashboardAPIView.as_view(), name="track_dashboards"),
+    path(
+        "get_economic_market_presence/",
+        MarketPresenceAnalyseView.as_view(),
+        name="get_economic_market_presence",
+    ),
+    path(
+        "get_economic_operations_assessed/",
+        OperationsAssessedAnalyzeView.as_view(),
+        name="get_economic_operations_assessed",
+    ),
 ]
