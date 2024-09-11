@@ -58,6 +58,7 @@ from sustainapp.Views.Analyse.General.GeneralEmployeeAnalyze import (
 from sustainapp.Views.Analyse.General.CollectiveBargainingAnalyze import (
     CollectiveBargainingAnalyzeView,
 )
+from sustainapp.Views.TrackDashboardView import TrackDashboardAPIView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -199,5 +200,6 @@ urlpatterns = [
         "get_general_collective_bargaining_analysis/",
         CollectiveBargainingAnalyzeView.as_view(),
         name="get_general_collective_bargaining_analysis",
-    )
+    ),
+    path("track_dashboards/", TrackDashboardAPIView.as_view(), name="track_dashboards"),
 ]
