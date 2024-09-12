@@ -11,6 +11,7 @@ from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
 from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import MarketPresenceAnalyseView
+from sustainapp.Views.Analyse.Economic.CommunicationTraining import CommunicationTrainingAnalyzeView
 from sustainapp.Views.Analyse.Economic.OperationsAssesedAnalyse import OperationsAssessedAnalyzeView
 from sustainapp.Views.Analyse.Governance.GovernanceAnalyse import GovernanceAnalyse
 from rest_framework import routers
@@ -214,4 +215,9 @@ urlpatterns = [
         OperationsAssessedAnalyzeView.as_view(),
         name="get_economic_operations_assessed",
     ),
+    path(
+        "get_economic_communication_and_training/",
+        CommunicationTrainingAnalyzeView.as_view(),
+        name="get_economic_communication_and_training",
+    )
 ]
