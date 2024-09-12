@@ -39,6 +39,7 @@ class MaterialityAssessment(AbstractModel):
     status = models.CharField(
         max_length=50, choices=STATUS_CHOICES, default="in_progress"
     )
+    esg_selected = models.JSONField(null=True, blank=True)
 
     # * created_by, last_updated_by
     def __str__(self):
