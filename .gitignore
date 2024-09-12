@@ -139,3 +139,4 @@ JustATestfile.txt
 static/
 custom.log.*
 pyrightconfig.json
+token_cache.json
