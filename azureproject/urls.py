@@ -116,11 +116,6 @@ urlpatterns = [
     path("user_org", views.UserOrgDetails, name="UserOrgDetails"),
     path("get_org", views.get_org, name="get_org"),
     path("analyseview", views.AnalyseView, name="AnalyseView"),
-    path(
-        "api/trigger-signal/",
-        signals.send_activation_email,
-        name="send_activation_email",
-    ),
     # swagger started
     path(
         "swagger<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"
