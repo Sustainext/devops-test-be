@@ -27,7 +27,7 @@ user_log = logging.getLogger("user_logger")
 
 # Signals to send Activation mail
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def send_activation_email(sender, instance, created, **kwargs):
+def send_welcome_email(sender, instance, created, **kwargs):
 
     if created and not instance.is_superuser:
         # Generate a random password
@@ -51,7 +51,7 @@ def send_activation_email(sender, instance, created, **kwargs):
         username = instance.username
         useremail = instance.email
         first_name = instance.first_name.capitalize()
-        subject = "Account Activation"
+        subject = "Welcome to Sustainext! Activate your account"
 
         # Render HTML content from a template
         html_message = render_to_string(
@@ -66,12 +66,30 @@ def send_activation_email(sender, instance, created, **kwargs):
 
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [instance]
-        # recipient_list = ['utsav.pipersaniya@sustainext.ai']<-- For testing
+        # recipient_list = ['utsav.pipersaniya@sustainext.ai']    #<-- For testing
 
         send_mail(subject, "", from_email, recipient_list, html_message=html_message)
         LoginCounter.objects.create(user=instance).save()
         UserProfile.objects.create(user=instance).save()
 
+def send_account_activation_email(user):
+    first_name = user.first_name.capitalize()
+    """Send an email notifying the user that their password has been changed."""
+    subject = "Your Sustainext Account Is Now Activated!"
+    html_message = render_to_string('sustainapp/account_activation.html', 
+                                    {"first_name": first_name,
+                                     "EMAIL_REDIRECT": settings.EMAIL_REDIRECT,
+                                     })
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = user.email
+
+    send_mail(
+        subject,
+        "",
+        from_email,
+        [to_email],
+        html_message=html_message,
+    )
 
 @receiver(user_signed_up)
 def disable_confirmation_email(sender, request, user, **kwargs):
@@ -102,3 +120,5 @@ def check_password_change(sender, instance, created, **kwargs):
                 login_counter = instance.first_login
                 login_counter.needs_password_change = False
                 login_counter.save()
+
+                send_account_activation_email(instance)

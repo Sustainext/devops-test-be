@@ -10,6 +10,9 @@ from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
+from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import MarketPresenceAnalyseView
+from sustainapp.Views.Analyse.Economic.CommunicationTraining import CommunicationTrainingAnalyzeView
+from sustainapp.Views.Analyse.Economic.OperationsAssesedAnalyse import OperationsAssessedAnalyzeView
 from sustainapp.Views.Analyse.Governance.GovernanceAnalyse import GovernanceAnalyse
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
@@ -19,7 +22,7 @@ from sustainapp.Views.GHGReport import (
     ReportListView,
     ReportPDFView,
 )
-from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate
+from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate, GetLocationAsPerOrgOrCorp
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
@@ -58,6 +61,7 @@ from sustainapp.Views.Analyse.General.GeneralEmployeeAnalyze import (
 from sustainapp.Views.Analyse.General.CollectiveBargainingAnalyze import (
     CollectiveBargainingAnalyzeView,
 )
+from sustainapp.Views.TrackDashboardView import TrackDashboardAPIView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -98,6 +102,11 @@ urlpatterns = [
         "get_location_as_per_corporate/",
         GetLocationAsPerCorporate.as_view(),
         name="get_location_as_per_corporate",
+    ),
+    path(
+        "get_location_as_per_org_or_corp/",
+        GetLocationAsPerOrgOrCorp.as_view(),
+        name="get_location_as_per_org_or_corp",
     ),
     path(
         "get_material_analysis/",
@@ -194,5 +203,21 @@ urlpatterns = [
         "get_general_collective_bargaining_analysis/",
         CollectiveBargainingAnalyzeView.as_view(),
         name="get_general_collective_bargaining_analysis",
+    ),
+    path("track_dashboards/", TrackDashboardAPIView.as_view(), name="track_dashboards"),
+    path(
+        "get_economic_market_presence/",
+        MarketPresenceAnalyseView.as_view(),
+        name="get_economic_market_presence",
+    ),
+    path(
+        "get_economic_operations_assessed/",
+        OperationsAssessedAnalyzeView.as_view(),
+        name="get_economic_operations_assessed",
+    ),
+    path(
+        "get_economic_communication_and_training/",
+        CommunicationTrainingAnalyzeView.as_view(),
+        name="get_economic_communication_and_training",
     )
 ]

@@ -70,6 +70,9 @@ class FieldGroupListView(APIView):
             resp_data = {}
             resp_data["form"] = serialized_field_groups.data
             resp_data["form_data"] = serialized_raw_responses.data
+
+
+
             return Response(resp_data)
         except Exception as e:
             return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)

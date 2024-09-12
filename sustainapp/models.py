@@ -1029,3 +1029,20 @@ class ZohoInfo(AbstractModel):
 
     def __str__(self) -> str:
         return self.client_name + " " + self.table_name
+    
+class TrackDashboard(AbstractModel):
+    REPORT_CHOICES = [
+    ('emission', 'Emission'),
+    ('energy', 'Energy'),
+    ('waste', 'Waste'),
+    ('employment', 'Employment'),
+    ('ohs', 'Occupational Health and Safety (OHS)'),
+    ('diversity_inclusion', 'Diversity & Inclusion'),
+    ('community_development', 'Community Development'),
+]
+    client = models.ForeignKey(
+        Client, on_delete=models.CASCADE, related_name="track_dashboard"
+    )
+    report_name = models.CharField(max_length=1024,choices=REPORT_CHOICES)
+    report_id = models.CharField(max_length=255)
+    group_id = models.CharField(max_length=255)
