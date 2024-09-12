@@ -14,6 +14,7 @@ class MaterialityAssessmentSerializer(serializers.ModelSerializer):
             "framework",
             "approach",
             "status",
+            "esg_selected"
         ]
         read_only_fields = ["client"]
 
@@ -50,17 +51,24 @@ class MaterialityAssessmentGetSerializer(serializers.ModelSerializer):
         ]
 
     def get_environment_topics(self, obj):
-        return self._get_topics_by_category(obj, "environment")
+        return self._get_topics_by_category(obj, "environment", "environmentChecked")
 
     def get_social_topics(self, obj):
-        return self._get_topics_by_category(obj, "social")
+        return self._get_topics_by_category(obj, "social", "socialChecked")
 
     def get_governance_topics(self, obj):
-        return self._get_topics_by_category(obj, "governance")
+        return self._get_topics_by_category(obj, "governance", "governanceChecked")
 
-    def _get_topics_by_category(self, obj, category):
+    def _get_topics_by_category(self, obj, category, esg_check_key):
+        esg_selected = obj.esg_selected
+
+        if esg_selected is None or not esg_selected.get(esg_check_key, False):
+            return ["Not Applicable"]
+
         topic_selections = AssessmentTopicSelection.objects.filter(
             assessment=obj, topic__esg_category=category
         ).select_related("topic")
         topics = [selection.topic.name for selection in topic_selections]
+
+
         return topics if topics else ["Not Selected"]
