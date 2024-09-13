@@ -192,7 +192,7 @@ class ManagementApproachQuestion(AbstractModel):
         on_delete=models.CASCADE,
         related_name="management_approach_questions",
     )
-    negative_impact_involvement_description = models.TextField()
+    negative_impact_involvement_description = models.TextField(blank=True, null=True)
     stakeholder_engagement_effectiveness_description = models.TextField(
         blank=True, null=True
     )
