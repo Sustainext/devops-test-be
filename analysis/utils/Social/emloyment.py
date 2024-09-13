@@ -8,7 +8,7 @@ from common.utils.value_types import get_integer
 EMPLOYMENT_TYPE_MAPPING = {
     "permanent_emp": "permanent employee",
     "temp_emp": "temporary employee",
-    "nongauranteed": "non-guaranteed-employee",
+    "nonguaranteed": "non-guaranteed-employee",
     "fulltime": "full-time employee",
     "parttime": "part-time employee",
 }
