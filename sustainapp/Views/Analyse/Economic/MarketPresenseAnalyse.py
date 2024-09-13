@@ -72,7 +72,7 @@ class MarketPresenceAnalyseView(APIView):
                 ).first()
             
                 if raw_resp_1a and raw_resp_1c :
-                    corp_res.append(self.format_data(raw_resp_1a, float(raw_resp_1c.data[0]["Currency"].split(" ")[0])))
+                    corp_res.extend(self.format_data(raw_resp_1a, float(raw_resp_1c.data[0]["Currency"].split(" ")[0])))
             
             return corp_res
 
