@@ -24,7 +24,7 @@ class CommunicationTrainingAnalyzeView(APIView):
                     append_res["loc"] = obj["Region Name"]
                     append_res["total_communicated"] = obj["Total number of governance body members that the organization's anti-corruption policies and procedures have been communicated to"]
                     append_res["total_region"] = obj["Total number of governance body members in that region."]
-                    append_res["percentage"] = (float(append_res["total_communicated"])/float(append_res["total_region"])) * 100
+                    append_res["percentage"] = (float(append_res["total_communicated"])/float(append_res["total_region"])) * 100 if float(append_res["total_region"]) !=0 else 0
                     res.append(append_res)
                 except Exception as e:
                     logger.error(f"Error in Analyze Economic > Anti Corruption> CommunicationTraining : {e}")
@@ -54,25 +54,29 @@ class CommunicationTrainingAnalyzeView(APIView):
                     res_corps.extend(format_data(self, raw_resp.data[0]["Q1"]))
             return res_corps
             
-        
-        q1_lst =  raw_resp_205_2a.data[0]["Q1"]
-
-        return format_data(self, q1_lst)
+        if raw_resp_205_2a :
+            q1_lst =  raw_resp_205_2a.data[0]["Q1"]
+            return format_data(self, q1_lst)
+        else : return []
          
     def process_205_2b_2c_2d(self, path, filter_by):  
 
         def format_data_2b_2c_2d(self, raw_dict):
-            
+            cleaned_dict = {} 
             for key,value in raw_dict.items():
-                append_res = defaultdict(list)
+                
                 if value :
-                    for item in value :
-                        try : 
-                            item['percentage'] = (float(item["Totalnumberemployees"])/float(item["Totalemployeeinthisregion"]))*100
-                        except Exception as e:
-                            logger.error(f"Error in Analyze Economic > Anti Corruption> CommunicationTraining : {e}")
-                            continue
-            return raw_dict
+                    filtered_items = [item for item in value if item["Totalemployeeinthisregion"] and item["Totalnumberemployees"]]
+ 
+                    if filtered_items:
+                        cleaned_dict[key] = filtered_items
+                        for item in cleaned_dict[key] :
+                            try : 
+                                item['percentage'] = (float(item["Totalnumberemployees"])/float(item["Totalemployeeinthisregion"]))*100 if float(item["Totalemployeeinthisregion"]) !=0 else 0
+                            except Exception as e:
+                                logger.error(f"Error in Analyze Economic > Anti Corruption> CommunicationTraining : {e}")
+                                continue
+            return cleaned_dict
         
         raw_resp_205_2b_2c_2d = RawResponse.objects.filter(
             **filter_by,
@@ -85,7 +89,7 @@ class CommunicationTrainingAnalyzeView(APIView):
             logger.error(
                 f"Economic/CommunicationTrainingAnalyzeView : There is no data for the organization {self.org} and the path {path} and the year {self.year}, So proceeding to check for its Corporates")
             corps_of_org = Corporateentity.objects.filter(organization=self.org)
-            res_corps = []
+            res_corps = {}
             for corp in corps_of_org:
                 raw_resp = RawResponse.objects.filter(
                     organization__id=self.org.id,
@@ -95,10 +99,11 @@ class CommunicationTrainingAnalyzeView(APIView):
                     year=self.year,
                 ).first()
                 if raw_resp:
-                    res_corps.extend(format_data_2b_2c_2d(self, raw_resp.data[0]["Q1"]))
-            return res_corps
+                    res_corps.update(format_data_2b_2c_2d(self, raw_resp.data[0]["Q1"]))
+            return res_corps if res_corps else []
         if raw_resp_205_2b_2c_2d:
             return format_data_2b_2c_2d(self, raw_resp_205_2b_2c_2d.data[0]["Q1"])
+        else : return []
 
 
     def get (self, request):
