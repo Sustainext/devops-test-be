@@ -15,10 +15,14 @@ class MarketPresenceAnalyseView(APIView):
         #What if they don't add the values in male and female
         res =[]
         for obj in raw_resp_1a.data[0]["Q4"]:
-            obj["Male"] = float(obj["Male"])/currency
-            obj["Female"] = float(obj["Female"])/currency
-            obj["Non-binary"] = float(obj["Non-binary"])/currency
-            res.append(obj)
+            try : 
+                obj["Male"] = float(obj["Male"])/currency
+                obj["Female"] = float(obj["Female"])/currency
+                obj["Non-binary"] = float(obj["Non-binary"])/currency
+                res.append(obj)
+            except Exception as e:
+                logger.error(f"Analyze Economic Market Precesnse error : {e}")
+                continue
         
         return res
 
@@ -68,7 +72,7 @@ class MarketPresenceAnalyseView(APIView):
                 ).first()
             
                 if raw_resp_1a and raw_resp_1c :
-                    corp_res.append(self.format_data(raw_resp_1a, float(raw_resp_1c.data[0]["Currency"].split(" ")[0])))
+                    corp_res.extend(self.format_data(raw_resp_1a, float(raw_resp_1c.data[0]["Currency"].split(" ")[0])))
             
             return corp_res
 
