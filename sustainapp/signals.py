@@ -118,7 +118,9 @@ def check_password_change(sender, instance, created, **kwargs):
             # Now we update the LoginCounter if it exists
             if hasattr(instance, "first_login"):
                 login_counter = instance.first_login
-                login_counter.needs_password_change = False
-                login_counter.save()
 
-                send_account_activation_email(instance)
+                if login_counter.needs_password_change:
+                    login_counter.needs_password_change = False
+                    login_counter.save()
+
+                    send_account_activation_email(instance)
