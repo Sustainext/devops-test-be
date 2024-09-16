@@ -1,7 +1,7 @@
 import msal
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from azureproject.settings import AZURE_POWERBI_USERNAME, AZURE_POWERBI_PASSWORD, AZURE_POWERBI_APP_ID, AZURE_POWERBI_TENANT_ID
+from django.conf import settings
 
 
 # Optional: File cache (if you want to cache to disk)
@@ -10,10 +10,10 @@ import json
 
 class PowerBiToken(APIView):
     def get(self, request, *args, **kwargs):
-        username = AZURE_POWERBI_USERNAME
-        password = AZURE_POWERBI_PASSWORD
-        app_id = AZURE_POWERBI_APP_ID
-        tenant_id = AZURE_POWERBI_TENANT_ID
+        username = settings.AZURE_POWERBI_USERNAME
+        password = settings.AZURE_POWERBI_PASSWORD
+        app_id = settings.AZURE_POWERBI_APP_ID
+        tenant_id = settings.AZURE_POWERBI_TENANT_ID
 
         authority_url = f'https://login.microsoftonline.com/{tenant_id}'
         scopes = ['https://analysis.windows.net/powerbi/api/.default']
