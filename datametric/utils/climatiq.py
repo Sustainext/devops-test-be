@@ -157,7 +157,9 @@ class Climatiq:
             if response.status_code == 400:
                 self.log_error_climatiq_api(response_data=response_data)
             else:
-                self.log_in_part_emission_error(response_data=response_data,payload=payload)
+                self.log_in_part_emission_error(
+                    response_data=response_data, payload=payload
+                )
                 cleaned_response_data = self.clean_response_data(
                     response_data=response_data
                 )
@@ -203,16 +205,16 @@ class Climatiq:
         Logs the error response from the climatiq api.
         """
         error_message = f"Error with emission: {response_data} \n"
-        raise APIException(error_message)
+        logger.error(error_message)
 
-    def log_in_part_emission_error(self, response_data,payload=None):
+    def log_in_part_emission_error(self, response_data, payload=None):
         """
         Logs the error response from the climatiq api.
         """
-        for index,emission_data in enumerate(response_data["results"]):
+        for index, emission_data in enumerate(response_data["results"]):
             if "error" in emission_data:
                 error_message = f"Error with emission: {emission_data} with data {payload[index]} \n"
-                raise APIException(error_message)
+                logger.error(error_message)
 
     def round_decimal_or_nulls(self, value, decimal_point=3):
         if value is None:
