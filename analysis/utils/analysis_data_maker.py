@@ -44,6 +44,10 @@ from analysis.utils.Environment.updating_emission_data import updating_emission_
 from analysis.utils.Water.water_from_all_areas_analysis import (
     create_data_for_water_from_all_areas_analysis,
 )
+from  analysis.utils.Water.water_from_stress_areas import (
+    create_data_for_water_from_stress_areas,
+    create_data_for_water_discharge_from_stress_areas,
+)
 from datametric.models import RawResponse
 
 
@@ -71,3 +75,5 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_energy_intensity_analysis(raw_response=raw_response)
     updating_emission_data(raw_response=raw_response)
     create_data_for_water_from_all_areas_analysis(raw_response=raw_response)
+    create_data_for_water_from_stress_areas(raw_response=raw_response)
+    create_data_for_water_discharge_from_stress_areas(raw_response=raw_response)
