@@ -9,7 +9,7 @@ import decimal
 from django.template.defaultfilters import slugify
 from rest_framework.exceptions import APIException
 
-logger = logging.getLogger("custom_logger")
+logger = logging.getLogger("django")
 
 
 class Climatiq:
