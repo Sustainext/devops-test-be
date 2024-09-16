@@ -62,6 +62,7 @@ from sustainapp.Views.Analyse.General.CollectiveBargainingAnalyze import (
     CollectiveBargainingAnalyzeView,
 )
 from sustainapp.Views.TrackDashboardView import TrackDashboardAPIView
+from sustainapp.Views.Analyse.SupplierEnvironment.SupplierEnvironment import SupplierEnvAnlayzeView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -219,5 +220,10 @@ urlpatterns = [
         "get_economic_communication_and_training/",
         CommunicationTrainingAnalyzeView.as_view(),
         name="get_economic_communication_and_training",
+    ),
+    path(
+        "get_analyze_supplier_assesment/",
+        SupplierEnvAnlayzeView.as_view(),
+        name="get_analyze_supplier_assesment",
     )
 ]

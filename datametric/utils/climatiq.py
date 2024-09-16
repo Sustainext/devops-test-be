@@ -7,8 +7,9 @@ import json
 from datametric.data_types import ARRAY_OF_OBJECTS
 import decimal
 from django.template.defaultfilters import slugify
+from rest_framework.exceptions import APIException
 
-logger = logging.getLogger("custom_logger")
+logger = logging.getLogger("django")
 
 
 class Climatiq:
@@ -47,30 +48,27 @@ class Climatiq:
                             ('Unit2', 'km'),
                             ('Unit', 'passengers')]))])]
             """
-            try:
-                payload.append(
-                    self.construct_emission_req(
-                        activity_id=emission_data["Emission"]["activity_id"],
-                        unit_type=emission_data["Emission"]["unit_type"],
-                        value1=float(emission_data["Emission"]["Quantity"]),
-                        unit1=emission_data["Emission"]["Unit"],
-                        unit2=emission_data["Emission"].get("Unit2"),
-                        value2=(
-                            float(emission_data["Emission"].get("Quantity2"))
-                            if emission_data["Emission"].get("Quantity2") is not None
-                            else None
-                        ),
-                    )
+            payload.append(
+                self.construct_emission_req(
+                    activity_id=emission_data["Emission"]["activity_id"],
+                    unit_type=emission_data["Emission"]["unit_type"],
+                    value1=float(emission_data["Emission"]["Quantity"]),
+                    unit1=emission_data["Emission"]["Unit"],
+                    unit2=emission_data["Emission"].get("Unit2"),
+                    value2=(
+                        float(emission_data["Emission"].get("Quantity2"))
+                        if emission_data["Emission"].get("Quantity2") is not None
+                        else None
+                    ),
                 )
-            except Exception as e:
-                logger.error(f"Error with emission payload: {emission_data} \n {e}")
+            )
         return payload
 
     def construct_emission_req(
         self, activity_id, unit_type, value1, unit1, value2=None, unit2=None
     ):
         emission_req = {
-            "emission_factor": {"activity_id": activity_id, "data_version": "^8"},
+            "emission_factor": {"activity_id": activity_id, "data_version": "^16"},
             "parameters": {},
         }
 
@@ -159,7 +157,9 @@ class Climatiq:
             if response.status_code == 400:
                 self.log_error_climatiq_api(response_data=response_data)
             else:
-                self.log_in_part_emission_error(response_data=response_data)
+                self.log_in_part_emission_error(
+                    response_data=response_data, payload=payload
+                )
                 cleaned_response_data = self.clean_response_data(
                     response_data=response_data
                 )
@@ -207,13 +207,13 @@ class Climatiq:
         error_message = f"Error with emission: {response_data} \n"
         logger.error(error_message)
 
-    def log_in_part_emission_error(self, response_data):
+    def log_in_part_emission_error(self, response_data, payload=None):
         """
         Logs the error response from the climatiq api.
         """
-        for emission_data in response_data["results"]:
+        for index, emission_data in enumerate(response_data["results"]):
             if "error" in emission_data:
-                error_message = f"Error with emission: {emission_data} \n"
+                error_message = f"Error with emission: {emission_data} with data {payload[index]} \n"
                 logger.error(error_message)
 
     def round_decimal_or_nulls(self, value, decimal_point=3):
