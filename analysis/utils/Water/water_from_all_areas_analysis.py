@@ -1,4 +1,4 @@
-from analysis.models.Water.WaterFromAllAreas import WaterFromAllAreas
+from analysis.models.Water.WaterFromAllAreas import WaterFromAllAreas,ThirdPartyWaterDischargeFromAllAreas
 from common.utils.value_types import get_integer
 from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
@@ -49,3 +49,41 @@ def create_data_for_water_from_all_areas_analysis(raw_response: RawResponse):
         water_from_all_areas_object.total_water_discharge = converted_discharge
         water_from_all_areas_object.water_unit = "Megalitre"
         water_from_all_areas_object.save()
+
+
+def create_data_for_water_discharge_from_third_party(raw_response: RawResponse):
+    if (
+        raw_response.path.slug
+        != "gri-environment-water-303-4a-third_party"
+    ):
+        return
+
+    for index, local_data in enumerate(raw_response.data):
+        organisation = (
+            raw_response.organization
+            if get_organisation(raw_response.locale) is None
+            else get_organisation(raw_response.locale)
+        )
+        corporate = (
+            raw_response.corporate
+            if get_corporate(raw_response.locale) is None
+            else get_corporate(raw_response.locale)
+        )
+        location = raw_response.locale
+        water_discharge_from_third_party_object,_ = ThirdPartyWaterDischargeFromAllAreas.objects.update_or_create(
+            raw_response=raw_response,
+            month=raw_response.month,
+            year=raw_response.year,
+            organisation=organisation,
+            corporate=corporate,
+            location=location,
+            index=index,
+            defaults={
+                "third_party_discharge": local_data["Discharge"],
+                "water_unit": local_data["Unit"],
+                "quantity": get_integer(local_data["Volume"]),
+            },
+        )
+        water_discharge_from_third_party_object.quantity = water_discharge_from_third_party_object.convert_to_megalitres('quantity')
+        water_discharge_from_third_party_object.water_unit = "Megalitre"
+        water_discharge_from_third_party_object.save()

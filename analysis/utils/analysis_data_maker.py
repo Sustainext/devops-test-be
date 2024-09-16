@@ -43,10 +43,14 @@ from analysis.utils.Energy.energy_consumed_outside_org import (
 from analysis.utils.Environment.updating_emission_data import updating_emission_data
 from analysis.utils.Water.water_from_all_areas_analysis import (
     create_data_for_water_from_all_areas_analysis,
+    create_data_for_water_discharge_from_third_party,
 )
 from  analysis.utils.Water.water_from_stress_areas import (
     create_data_for_water_from_stress_areas,
     create_data_for_water_discharge_from_stress_areas,
+)
+from analysis.utils.Water.change_in_water_storage import (
+    create_data_for_change_in_water_storage,
 )
 from datametric.models import RawResponse
 
@@ -77,3 +81,5 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_water_from_all_areas_analysis(raw_response=raw_response)
     create_data_for_water_from_stress_areas(raw_response=raw_response)
     create_data_for_water_discharge_from_stress_areas(raw_response=raw_response)
+    create_data_for_water_discharge_from_third_party(raw_response=raw_response)
+    create_data_for_change_in_water_storage(raw_response=raw_response)

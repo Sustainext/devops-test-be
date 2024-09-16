@@ -15,3 +15,4 @@ from .Waste.WasteDirectedToDisposal import WasteDirectedToDisposal
 from .Energy.Energy import *
 from .Water.WaterFromAllAreas import WaterFromAllAreas
 from .Water.WaterFromStressAreas import WaterFromStressAreas
+from .Water.ChangeInWaterStorage import ChangeInWaterStorage
