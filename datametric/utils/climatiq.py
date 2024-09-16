@@ -68,7 +68,7 @@ class Climatiq:
         self, activity_id, unit_type, value1, unit1, value2=None, unit2=None
     ):
         emission_req = {
-            "emission_factor": {"activity_id": activity_id, "data_version": "^8"},
+            "emission_factor": {"activity_id": activity_id, "data_version": "^16"},
             "parameters": {},
         }
 
