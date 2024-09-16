@@ -13,3 +13,4 @@ from .Waste.WasteGenerated import WasteGenerated
 from .Waste.WasteDivertedFromDisposal import WasteDivertedFromDisposal
 from .Waste.WasteDirectedToDisposal import WasteDirectedToDisposal
 from .Energy.Energy import *
+from .Water.WaterFromAllAreas import WaterFromAllAreas

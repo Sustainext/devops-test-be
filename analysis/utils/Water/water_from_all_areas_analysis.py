@@ -1,0 +1,51 @@
+from analysis.models.Water.WaterFromAllAreas import WaterFromAllAreas
+from common.utils.value_types import get_integer
+from common.utils.getting_parameters_for_orgs_corps import (
+    get_corporate,
+    get_organisation,
+)
+from datametric.models import RawResponse
+from common.enums.WaterEnums import WaterUnitChoices
+
+def create_data_for_water_from_all_areas_analysis(raw_response: RawResponse):
+    if (
+        raw_response.path.slug
+        != "gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas"
+    ):
+        return
+    
+    for index, local_data in enumerate(raw_response.data):
+        organisation = (
+            raw_response.organization
+            if get_organisation(raw_response.locale) is None
+            else get_organisation(raw_response.locale)
+        )
+        corporate = (
+            raw_response.corporate
+            if get_corporate(raw_response.locale) is None
+            else get_corporate(raw_response.locale)
+        )
+        location = raw_response.locale
+        water_from_all_areas_object,_ = WaterFromAllAreas.objects.update_or_create(
+            raw_response=raw_response,
+            month=raw_response.month,
+            year=raw_response.year,
+            organisation=organisation,
+            corporate=corporate,
+            location=location,
+            index=index,
+            defaults={
+                "source": local_data["Source"],
+                "water_type": local_data["Watertype"],
+                "water_unit": local_data["Unit"],
+                "business_operation": local_data["Businessoperations"],
+                "total_water_withdrawal": get_integer(local_data["withdrawal"]),
+                "total_water_discharge": get_integer(local_data["discharge"]),
+            },
+        )
+        converted_withdrawal = water_from_all_areas_object.convert_to_megalitres('total_water_withdrawal')
+        converted_discharge = water_from_all_areas_object.convert_to_megalitres('total_water_discharge')
+        water_from_all_areas_object.total_water_withdrawal = converted_withdrawal
+        water_from_all_areas_object.total_water_discharge = converted_discharge
+        water_from_all_areas_object.water_unit = "Megalitre"
+        water_from_all_areas_object.save()
