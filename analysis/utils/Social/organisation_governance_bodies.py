@@ -30,6 +30,8 @@ def get_gender(local_data):
 
 
 def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
+    if raw_response.path.slug != "gri-social-diversity_of_board-405-1a-number_of_individuals" or raw_response.path.slug != "gri-social-diversity_of_board-405-1b-number_of_employee":
+        return
     if (
         raw_response.path.slug
         == "gri-social-diversity_of_board-405-1a-number_of_individuals"
