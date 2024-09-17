@@ -15,6 +15,8 @@ from authentication.models import CustomUser, Client
 from rest_framework.permissions import IsAuthenticated
 from sustainapp.models import Organization, Corporateentity, Location
 from logging import getLogger
+import traceback
+import sys
 
 logger = getLogger("file")
 
@@ -149,9 +151,29 @@ class CreateOrUpdateFieldGroup(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            logger.info(f"An unexpected error occurred: {e}")
+            exc_type, exc_value, exc_tb = sys.exc_info()
+            filename = exc_tb.tb_frame.f_code.co_filename
+            line_number = exc_tb.tb_lineno
+            stack_trace = traceback.format_exc()
+
+            # Log detailed information about the error
+            logger.error(
+                f"An unexpected error occurred in {filename} at line {line_number}: {e}",
+                exc_info=True
+            )
+            logger.debug(f"Exception type: {exc_type.__name__}")
+            logger.debug(f"Stack trace: {stack_trace}")
+
+            # Return the error response with more context
             return Response(
-                {"message": f"An unexpected error occurred: {e}"},
+                {
+                    "message": "An unexpected error occurred.",
+                    "error": str(e),
+                    "file": filename,
+                    "line": line_number,
+                    "exception_type": exc_type.__name__,
+                    "stack_trace": stack_trace,
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
