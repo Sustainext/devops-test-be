@@ -1039,6 +1039,7 @@ class TrackDashboard(AbstractModel):
     ('ohs', 'Occupational Health and Safety (OHS)'),
     ('diversity_inclusion', 'Diversity & Inclusion'),
     ('community_development', 'Community Development'),
+    ('water_and_effluents','Water & Effluents')
 ]
     client = models.ForeignKey(
         Client, on_delete=models.CASCADE, related_name="track_dashboard"
