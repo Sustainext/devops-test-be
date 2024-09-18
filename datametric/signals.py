@@ -19,45 +19,61 @@ def process_json(json_obj, path, raw_response):
     for index, item in enumerate(json_obj):
         print(item)
         if isinstance(item, dict):
-            first_key, first_value = next(iter(item.items()))
-            # Print the first key and value
-            print(f"Field Group Row: {first_key}")
-            print(f"First Value: {first_value}")
-            """
-            This was required since emissions has different
-            data structure in RawResponse data field when
-            compared to other environment modules.
-            """
-            if type(first_value) in [
-                int,
-                str,
-                bool,
-            ]:
+            try:
+                first_key, first_value = next(iter(item.items()))
+                # Print the first key and value
+                print(f"Field Group Row: {first_key}")
+                print(f"First Value: {first_value}")
+                """
+                This was required since emissions has different
+                data structure in RawResponse data field when
+                compared to other environment modules.
+                """
+                if type(first_value) in [
+                    int,
+                    str,
+                    bool,
+                ]:
 
-                process_raw_response_data(
-                    data_point_dict=item,
-                    data_metrics=data_metrics,
-                    index=index,
-                    raw_response=raw_response,
+                    process_raw_response_data(
+                        data_point_dict=item,
+                        data_metrics=data_metrics,
+                        index=index,
+                        raw_response=raw_response,
+                    )
+                elif isinstance(first_value, list):
+                    for data_point in first_value:
+                        if isinstance(data_point, dict):
+                            process_raw_response_data(
+                                data_point_dict=data_point,
+                                data_metrics=data_metrics,
+                                index=index,
+                                raw_response=raw_response,
+                            )
+                    return None
+                else:
+                    process_raw_response_data(
+                        data_point_dict=first_value,
+                        data_metrics=data_metrics,
+                        index=index,
+                        raw_response=raw_response,
+                    )
+            except StopIteration:
+                logger.error(
+                    f"Warning: Empty dictionary encountered at index {index} and path {path}.So skipping."
                 )
-            elif isinstance(first_value, list):
-                for data_point in first_value:
-                    if isinstance(data_point, dict):
-                        process_raw_response_data(
-                            data_point_dict=data_point,
-                            data_metrics=data_metrics,
-                            index=index,
-                            raw_response=raw_response,
-                        )
-                return None
-            else:
-                process_raw_response_data(
-                    data_point_dict=first_value,
-                    data_metrics=data_metrics,
-                    index=index,
-                    raw_response=raw_response,
-                )
-    climatiq_data_creation(raw_response=raw_response)
+                continue
+        else:
+            logger.error(
+                f"Warning:The item must be a Dictionary to proceed with the signals. Invalid data type encountered at index {index} and path {path}.So skipping."
+            )
+            continue
+    if raw_response.data != [{}]:
+        climatiq_data_creation(raw_response=raw_response)
+    else:
+        logger.error(
+            "Signals.py file, when checked for rawresponse.data it has No data added."
+        )
 
 
 @receiver(post_save, sender=RawResponse)
