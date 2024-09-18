@@ -20,6 +20,7 @@ class ScopeCategoriesAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
         self.CLIMATIQ_AUTH_TOKEN = os.getenv("CLIMATIQ_AUTH_TOKEN", "")
         self.permission_classes = [IsAuthenticated]
         self.URL = os.getenv("CLIMATIQ_BASE_URL", "") + "search"
