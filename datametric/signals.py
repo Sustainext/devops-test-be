@@ -68,7 +68,6 @@ def process_json(json_obj, path, raw_response):
                 f"Warning:The item must be a Dictionary to proceed with the signals. Invalid data type encountered at index {index} and path {path}.So skipping."
             )
             continue
-    print(f"raw_response.data is {raw_response.data}")
     if raw_response.data != [{}]:
         climatiq_data_creation(raw_response=raw_response)
     else:
