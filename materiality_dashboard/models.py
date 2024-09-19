@@ -100,7 +100,7 @@ class AssessmentTopicSelection(AbstractModel):
     assessment = models.ForeignKey(
         MaterialityAssessment, on_delete=models.CASCADE, related_name="selected_topics"
     )
-    topic = models.ForeignKey(MaterialTopic, on_delete=models.CASCADE)
+    topic = models.ForeignKey(MaterialTopic, on_delete=models.PROTECT)
 
     def __str__(self):
         return f"{self.assessment} - {self.topic}"
@@ -113,7 +113,7 @@ class AssessmentDisclosureSelection(AbstractModel):
         on_delete=models.CASCADE,
         related_name="selected_disclosures",
     )
-    disclosure = models.ForeignKey(Disclosure, on_delete=models.CASCADE)
+    disclosure = models.ForeignKey(Disclosure, on_delete=models.PROTECT)
 
     def __str__(self):
         return f"{self.topic_selection} - {self.disclosure}"

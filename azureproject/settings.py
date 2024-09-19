@@ -204,7 +204,7 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 CLIMATIQ_BASE_URL = os.environ.get("CLIMATIQ_BASE_URL")
-
+ADMIN_MAIL = os.environ.get("ADMIN_MAIL").split(",")
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
