@@ -254,6 +254,7 @@ class Climatiq:
                     "-".join(self.raw_response.path.slug.split("-")[-2:])
                 ).capitalize(),
                 defaults={
+                    "emission_id": emission["emission_factor"]["id"],
                     "activity_id": emission["emission_factor"]["activity_id"],
                     "co2e_total": self.round_decimal_or_nulls(
                         emission["co2e"], 3
