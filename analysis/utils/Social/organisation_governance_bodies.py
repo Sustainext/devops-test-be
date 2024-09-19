@@ -30,8 +30,14 @@ def get_gender(local_data):
 
 
 def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
-    if raw_response.path.slug != "gri-social-diversity_of_board-405-1a-number_of_individuals" or raw_response.path.slug != "gri-social-diversity_of_board-405-1b-number_of_employee":
+    if not (
+        raw_response.path.slug
+        == "gri-social-diversity_of_board-405-1a-number_of_individuals"
+        or raw_response.path.slug
+        == "gri-social-diversity_of_board-405-1b-number_of_employee"
+    ):
         return
+
     if (
         raw_response.path.slug
         == "gri-social-diversity_of_board-405-1a-number_of_individuals"
@@ -41,10 +47,12 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
         raw_response.path.slug
         == "gri-social-diversity_of_board-405-1b-number_of_employee"
     ):
-        table_name = "Number of employee per employee category"
+        table_name = "Number of employees per employee category"
+
     for index, local_data in enumerate(raw_response.data):
         age_group_and_value = get_age_group_and_value(local_data)
         gender_group_and_value = get_gender(local_data)
+
         for age_group, age_group_value in age_group_and_value.items():
             for gender, gender_value in gender_group_and_value.items():
                 defaults = {
@@ -65,9 +73,9 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                     location=raw_response.locale,
                     organisation=raw_response.organization,
                     corporate=raw_response.corporate,
-                    defaults=defaults,
                     index=index,
                     age_group=age_group,
                     table_name=table_name,
                     gender=Gender.objects.get(gender=gender),
+                    defaults=defaults,
                 )[0].save()
