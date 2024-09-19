@@ -47,8 +47,8 @@ class CustomLoginView(LoginView):
 
         data = {
             "token_type": "bearer",
-            "access_token": str(access_token),
-            "refresh_token": str(refresh),
+            "access": str(access_token),
+            "refresh": str(refresh),
             "access_exp": access_token['exp'],  # Unix timestamp
             "access_exp_readable": access_exp_readable,  # Human-readable
             "refresh_exp": refresh['exp'],  # Unix timestamp
