@@ -16,6 +16,7 @@ from rest_framework import routers
 from authentication.Views.UserProfile import UserProfileViewSet
 from authentication.Views.ChangePassword import ChangePasswordAPIView
 from authentication.Views.AzurePowerBIToken import PowerBiToken
+from authentication.Views.CustomLogoutAPI import CustomLogoutView
 
 router = routers.DefaultRouter()
 router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
@@ -23,7 +24,7 @@ urlpatterns = [
     path("register/", RegisterView.as_view(), name="rest_register"),
     # path("login/", LoginView.as_view(), name="rest_login"),
     path("login/", CustomLoginView.as_view(), name="rest_login"),
-    path("logout/", LogoutView.as_view(), name="rest_logout"),
+    path("logout/", CustomLogoutView.as_view(), name="rest_logout"),
     path("user/", UserDetailsView.as_view(), name="rest_user_details"),
     path("register/verify-email/", VerifyEmailView.as_view(), name="rest_verify_email"),
     path(
