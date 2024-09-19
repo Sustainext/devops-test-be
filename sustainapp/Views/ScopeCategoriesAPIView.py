@@ -20,6 +20,7 @@ class ScopeCategoriesAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
         self.CLIMATIQ_AUTH_TOKEN = os.getenv("CLIMATIQ_AUTH_TOKEN", "")
         self.permission_classes = [IsAuthenticated]
         self.URL = os.getenv("CLIMATIQ_BASE_URL", "") + "search"
@@ -151,7 +152,7 @@ class ScopeCategoriesAPIView(APIView):
             "region": region + "*",
             "year": int(year),
             "category": sub_category,
-            "data_version": "^8",
+            "data_version": "^16",
             "results_per_page": 500,
         }
         self.sends_and_set_response_condition()
@@ -161,7 +162,7 @@ class ScopeCategoriesAPIView(APIView):
         self.sends_and_set_response_condition()
         if self.satisfied_condition:
             return self.send_response()
-        for i in range(year, 2019, -1):
+        for i in range(year, 2018, -1):
             self.params["year"] = i
             self.sends_and_set_response_condition()
             if self.satisfied_condition:
