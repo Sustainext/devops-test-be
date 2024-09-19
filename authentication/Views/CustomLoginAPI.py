@@ -29,6 +29,7 @@ class CustomLoginView(LoginView):
             access_token_lifetime = timedelta(seconds=30)
         else:
             refresh.set_exp()
+            access_token_lifetime = timedelta(days=1)
 
         refresh["client_id"] = user.client.id
         access_token = refresh.access_token
