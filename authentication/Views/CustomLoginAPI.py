@@ -26,7 +26,7 @@ class CustomLoginView(LoginView):
 
         if remember_me:
             refresh.set_exp(lifetime=timedelta(seconds=60))
-            access_token.set_exp(lifetime=timedelta(seconds=60))
+            access_token_lifetime = timedelta(seconds=30)
         else:
             refresh.set_exp()
 
@@ -35,6 +35,7 @@ class CustomLoginView(LoginView):
         access_token["client_id"] = user.client.id
 
         needs_password_reset = 1 if user.first_login.needs_password_change else 0
+        access_token.set_exp(lifetime=access_token_lifetime)
 
         access_exp_readable = datetime.utcfromtimestamp(access_token["exp"]).strftime(
             "%Y-%m-%d %H:%M:%S"
