@@ -14,7 +14,11 @@ import os
 
 class ScopeCategoriesAPIView(APIView):
     """
-    * Make the response structure as it is in climatiq.
+        * Make the response structure as it is in climatiq.
+    Main call : Selected Region , selected year ( if response.last_page > 1 ) then fetch for all pages
+    wildcard call : If not enough results -> region = *
+    If not enough results ( main + wildcard ) -> fetch from current-1 year to 2019 (region = selected region )
+    custom call : source , year and category from customMappings
     """
 
     permission_classes = [IsAuthenticated]
