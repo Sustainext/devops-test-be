@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from esg_report.models import ESGReport
 from rest_framework.serializers import ValidationError
 from rest_framework.exceptions import NotFound
+from datametric.serializers import RawResponseSerializer
 
 
 class GetStakeholderEngagementView(APIView):
@@ -19,9 +20,13 @@ class GetStakeholderEngagementView(APIView):
             raise ValidationError("Give Report ID is not valid")
         try:
             raw_response_data = RawResponse.objects.filter(
-                client=self.request.user.client, year=esg_report.end_date.year
-            ).get(path__slug=slug)
-            return Response(raw_response_data.data, status=status.HTTP_200_OK)
+                client=self.request.user.client,
+                year__range=(esg_report.start_date.year, esg_report.end_date.year),
+            ).filter(path__slug=slug)
+            raw_response_serializer = RawResponseSerializer(
+                raw_response_data, many=True
+            )
+            return Response(raw_response_serializer.data, status=status.HTTP_200_OK)
         except RawResponse.DoesNotExist:
             raise NotFound([])
 
@@ -37,9 +42,9 @@ class GetApproachToStakeholderEngagementView(APIView):
             raise ValidationError("Give Report ID is not valid")
         try:
             raw_response_data = RawResponse.objects.filter(
-                client=self.request.user.client, year=esg_report.end_date.year
+                client=self.request.user.client,
+                year__range=(esg_report.start_date.year, esg_report.end_date.year),
             ).get(path__slug=slug)
             return Response(raw_response_data.data, status=status.HTTP_200_OK)
         except RawResponse.DoesNotExist:
             raise NotFound([])
-

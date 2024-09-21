@@ -6,6 +6,13 @@ from esg_report.Views.ESGReportViewset import (
     ESGReportIntroductionPOSTAPIView,
     ESGReportIntroductionPUTAPIView,
 )
+from esg_report.Views.GetStakeholderEngagements import (
+    GetApproachToStakeholderEngagementView,
+    GetStakeholderEngagementView,
+)
+from esg_report.Views.GetAboutTheCompanyOperationsInfo import (
+    GetAboutTheCompanyOperationsInfoView,
+)
 
 router = DefaultRouter()
 
@@ -30,5 +37,21 @@ urlpatterns = [
         ESGReportIntroductionPUTAPIView.as_view(),
         name="esg_report_introduction_put",
     ),
+    path(
+        "get_stakeholder_engagement/<int:report_id>/",
+        GetStakeholderEngagementView.as_view(),
+        name="get_stakeholder_engagement",
+    ),
+    path(
+        "get_approach_to_stakeholder_engagement/<int:report_id>/",
+        GetApproachToStakeholderEngagementView.as_view(),
+        name="get_approach_to_stakeholder_engagement",
+    ),
+    path(
+        "get_about_the_company_operations_info/<int:report_id>/",
+        GetAboutTheCompanyOperationsInfoView.as_view(),
+        name="get_about_the_company_operations_info",
+    ),
+    
 ]
 urlpatterns += router.urls
