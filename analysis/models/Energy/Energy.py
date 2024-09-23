@@ -5,6 +5,7 @@ from datametric.models import RawResponse
 from common.models.AbstractModel import AbstractModel
 from common.models.AbstactAnalysisModel import AbstractAnalysisModel
 from logging import getLogger
+from authentication.models import Client
 
 logger = getLogger("error.log")
 
@@ -25,6 +26,9 @@ class BasicDataForEnergy(AbstractModel):
     )
     unit = models.CharField(max_length=8, null=True, blank=True)
     index = models.PositiveIntegerField(null=True, blank=True)
+    client = models.ForeignKey(
+        Client, on_delete=models.CASCADE, null=True
+    )
 
     class Meta:
         abstract = True

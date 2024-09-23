@@ -19,6 +19,7 @@ def ill_health_report_analysis(raw_response: RawResponse):
             organisation=raw_response.locale.corporateentity.organization,
             corporate=raw_response.locale.corporateentity,
             location=raw_response.locale,
+            client=raw_response.client,
             index=index,
             defaults={
                 "employee_category": local_data["employeeCategory"],
