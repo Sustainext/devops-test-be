@@ -171,6 +171,7 @@ class DataPoint(AbstractModel):
 
 
 class EmissionAnalysis(AbstractModel):
+    emission_id = models.UUIDField(null=True, blank=True)
     activity_id = models.CharField(max_length=200)
     activity = models.TextField()
     index = models.PositiveIntegerField()

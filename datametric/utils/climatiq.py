@@ -7,7 +7,9 @@ import json
 from datametric.data_types import ARRAY_OF_OBJECTS
 import decimal
 from django.template.defaultfilters import slugify
+from django.core.mail import EmailMessage
 from rest_framework.exceptions import APIException
+from django.conf import settings
 
 logger = logging.getLogger("django")
 
@@ -26,6 +28,23 @@ class Climatiq:
         self.locale = raw_response.locale
         self.month = raw_response.month
         self.year = raw_response.year
+
+    def send_error_email(self, error_message):
+        """
+        Sends an error email using Django's email system.
+        """
+        subject = "Climatiq API Error"
+        message = f"An error occurred in the Climatiq API:\n\n{error_message}"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = settings.ADMIN_MAIL
+
+        try:
+            EmailMessage(subject, message, from_email, recipient_list).send()
+            logger.info("Error email sent successfully")
+
+            logger.info("Error email sent successfully")
+        except Exception as e:
+            logger.error(f"Failed to send error email: {str(e)}")
 
     def payload_preparation_for_climatiq_api(self):
         """
@@ -205,7 +224,7 @@ class Climatiq:
         Logs the error response from the climatiq api.
         """
         error_message = f"Error with emission: {response_data} \n"
-        logger.error(error_message)
+        self.send_error_email(error_message)
 
     def log_in_part_emission_error(self, response_data, payload=None):
         """
@@ -214,7 +233,7 @@ class Climatiq:
         for index, emission_data in enumerate(response_data["results"]):
             if "error" in emission_data:
                 error_message = f"Error with emission: {emission_data} with data {payload[index]} \n"
-                logger.error(error_message)
+                self.send_error_email(error_message)
 
     def round_decimal_or_nulls(self, value, decimal_point=3):
         if value is None:
@@ -235,6 +254,7 @@ class Climatiq:
                     "-".join(self.raw_response.path.slug.split("-")[-2:])
                 ).capitalize(),
                 defaults={
+                    "emission_id": emission["emission_factor"]["id"],
                     "activity_id": emission["emission_factor"]["activity_id"],
                     "co2e_total": self.round_decimal_or_nulls(
                         emission["co2e"], 3
