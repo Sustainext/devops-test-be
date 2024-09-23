@@ -5,7 +5,6 @@ import datetime
 
 
 class ScopeCategoriesSerializer(serializers.Serializer):
-    category = serializers.CharField(max_length=50)
     sub_category = serializers.CharField(max_length=500)
     year = serializers.IntegerField(
         max_value=datetime.datetime.now().year, min_value=2019
