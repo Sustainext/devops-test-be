@@ -25,8 +25,8 @@ class CustomLoginView(LoginView):
         refresh = RefreshToken.for_user(user)
 
         if remember_me:
-            refresh.set_exp(lifetime=timedelta(seconds=60))
-            access_token_lifetime = timedelta(seconds=30)
+            refresh.set_exp(lifetime=timedelta(days=30))
+            access_token_lifetime = timedelta(hours=1)
         else:
             refresh.set_exp()
             access_token_lifetime = timedelta(days=1)
@@ -38,10 +38,10 @@ class CustomLoginView(LoginView):
         needs_password_reset = 1 if user.first_login.needs_password_change else 0
         access_token.set_exp(lifetime=access_token_lifetime)
 
-        access_exp_readable = datetime.utcfromtimestamp(access_token["exp"]).strftime(
+        access_exp_readable = datetime.fromtimestamp(access_token["exp"]).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
-        refresh_exp_readable = datetime.utcfromtimestamp(refresh["exp"]).strftime(
+        refresh_exp_readable = datetime.fromtimestamp(refresh["exp"]).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
 
@@ -49,13 +49,10 @@ class CustomLoginView(LoginView):
             "token_type": "bearer",
             "access": str(access_token),
             "refresh": str(refresh),
-            "access_exp": access_token['exp'],  # Unix timestamp
-            "access_exp_readable": access_exp_readable,  # Human-readable
-            "refresh_exp": refresh['exp'],  # Unix timestamp
-            "refresh_exp_readable": refresh_exp_readable,  # Human-readable
-            "claims": {
-                "client_id": access_token["client_id"],
-            },
+            "access_exp": access_token["exp"],
+            "access_exp_readable": access_exp_readable,
+            "refresh_exp": refresh["exp"],
+            "refresh_exp_readable": refresh_exp_readable,
         }
 
         response = Response(
@@ -66,19 +63,19 @@ class CustomLoginView(LoginView):
         response.set_cookie(
             key="access_token",
             value=str(access_token),
-            httponly=True,  # Prevent JavaScript access to the cookie
-            secure=True,  # Ensure the cookie is only sent over HTTPS
-            expires=access_token["exp"],  # Set expiration time
-            samesite="Lax",  # Adjust according to your needs (Lax/Strict/None)
+            httponly=True,
+            secure=True,
+            expires=access_token["exp"],
+            samesite="Lax",
         )
 
         response.set_cookie(
             key="refresh_token",
             value=str(refresh),
-            httponly=True,  # Prevent JavaScript access
-            secure=True,  # Ensure the cookie is only sent over HTTPS
-            expires=refresh["exp"],  # Set expiration time
-            samesite="Lax",  # Adjust based on your application's needs
+            httponly=True,
+            secure=True,
+            expires=refresh["exp"],
+            samesite="Lax",
         )
 
         return response

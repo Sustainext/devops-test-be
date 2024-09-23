@@ -101,6 +101,7 @@ def parental_leave_analysis(raw_response: RawResponse):
                     month=raw_response.month,
                     year=raw_response.year,
                     location=raw_response.locale,
+                    client=raw_response.client,
                     organisation=raw_response.locale.corporateentity.organization,
                     corporate=raw_response.locale.corporateentity,
                     gender=Gender.objects.get(gender=gender),

@@ -73,6 +73,7 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                     location=raw_response.locale,
                     organisation=raw_response.organization,
                     corporate=raw_response.corporate,
+                    client=raw_response.client,
                     index=index,
                     age_group=age_group,
                     table_name=table_name,

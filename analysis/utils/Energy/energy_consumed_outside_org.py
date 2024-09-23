@@ -25,6 +25,7 @@ def create_data_for_energy_consumed_outsid_org_analysis(raw_response: RawRespons
             organization=organization,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             raw_response=raw_response,
             defaults={
