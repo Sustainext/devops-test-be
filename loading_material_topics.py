@@ -226,6 +226,15 @@ material_topics = {
 }
 
 
-for topic in material_topics:
-    for topic_name, topic_code in material_topics[topic]:
-        MaterialTopic.objects.create(topic_name=topic_name, identifier=topic_code)
+{
+    "Packaging Material": "EnvPackagingMaterial",
+    "Agriculture": "EnvAgriculture",
+    "Aquaculture": "EnvAquaculture",
+    "Child Labor": "SocChildLabour",
+    "Product Safety & Quality": "SocProductSafetyQuality",
+    "Access to Health Care": "SocHealthCare",
+    "Diversity & equal oppportunity": "SocDiversityEqualOpp",
+    "Non-discrimination": "SocNonDiscrimination",
+    "Policy": "GovPolicy",
+    "Governance": "GovGovernance",
+}
