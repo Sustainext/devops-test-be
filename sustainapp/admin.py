@@ -275,7 +275,7 @@ class ZohoInfoAdmin(admin.ModelAdmin):
     search_fields = ("client__name", "table_no", "table_name")
 
 class TrackDashboardAdmin(admin.ModelAdmin):
-    list_display = ["id", "client_id", "report_name"]
+    list_display = ["id", "table_name", "report_name"]
 
 
 

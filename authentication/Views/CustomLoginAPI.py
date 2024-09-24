@@ -14,7 +14,11 @@ class CustomLoginView(LoginView):
     """Over-riding the Default Login View"""
 
     def get_response(self):
-        """Customizing token response format with claims and token_type"""
+        """Customizing token response format with claims and token_type
+        Remember me parameter for making longer validity token, so that we can save it on storage/cookie
+        long_validity_request parameter for devs only
+        Added client uuid for frontend access"""
+
         user = self.user
 
         remember_me = self.request.data.get("remember_me", False)
@@ -25,15 +29,23 @@ class CustomLoginView(LoginView):
         refresh = RefreshToken.for_user(user)
 
         if remember_me:
+            """Increasing Token validity time for remember me option"""
             refresh.set_exp(lifetime=timedelta(days=30))
             access_token_lifetime = timedelta(hours=1)
         else:
             refresh.set_exp()
             access_token_lifetime = timedelta(days=1)
 
+        long_validity_request = self.request.data.get("long_validity_request")
+
+        if long_validity_request :
+            """Tokens for longer validity So that Devs can use it on postman"""
+            access_token_lifetime = timedelta(days=30)
+
         refresh["client_id"] = user.client.id
         access_token = refresh.access_token
         access_token["client_id"] = user.client.id
+        client_key = user.client.uuid
 
         needs_password_reset = 1 if user.first_login.needs_password_change else 0
         access_token.set_exp(lifetime=access_token_lifetime)
@@ -56,7 +68,7 @@ class CustomLoginView(LoginView):
         }
 
         response = Response(
-            {"key": data, "needs_password_reset": needs_password_reset}, status=200
+            {"key": data, "needs_password_reset": needs_password_reset,"client_key":client_key}, status=200
         )
 
         # Set access and refresh tokens in cookies
