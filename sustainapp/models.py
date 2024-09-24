@@ -1041,9 +1041,7 @@ class TrackDashboard(AbstractModel):
     ('community_development', 'Community Development'),
     ('water_and_effluents','Water & Effluents')
 ]
-    client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="track_dashboard"
-    )
+    table_name = models.CharField(max_length=255,default='')
     report_name = models.CharField(max_length=1024,choices=REPORT_CHOICES)
     report_id = models.CharField(max_length=255)
     group_id = models.CharField(max_length=255)
