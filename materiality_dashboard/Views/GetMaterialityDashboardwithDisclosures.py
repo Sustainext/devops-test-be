@@ -80,7 +80,7 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             disclosure_identifier = disclosure.identifier
 
             # Get all related path slugs for the disclosure
-            slugs = [path.slug for path in disclosure.path_set.all()]
+            slugs = [path.slug for path in disclosure.paths.all()]
 
             # Initialize topic in the response structure if not present
             topic_dict = response_data[esg_category].setdefault(
