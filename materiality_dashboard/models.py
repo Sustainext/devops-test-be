@@ -94,7 +94,7 @@ class Disclosure(AbstractModel):
         return f"{self.topic.name} - {self.description[:50]}"
 
     class Meta:
-        unique_together = ["identifier", "description"]
+        unique_together = ["identifier", "description","topic"]
 
 
 class AssessmentTopicSelection(AbstractModel):
