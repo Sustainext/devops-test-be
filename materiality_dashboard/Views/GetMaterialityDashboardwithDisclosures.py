@@ -1,11 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from collections import defaultdict
 from materiality_dashboard.models import (
     MaterialityAssessment,
     AssessmentDisclosureSelection,
-    MaterialTopic,
     Disclosure,
 )
 from materiality_dashboard.Serializers.VerifyOrganisationAndCorporateSerializer import (
@@ -46,71 +44,55 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                 status=400,
             )
 
-        # Fetch selected disclosures with related data to minimize queries
+        # Fetch all disclosures (both material and non-material) in a single query
+        all_disclosures = (
+            Disclosure.objects.filter(topic__framework=materiality_dashboard.framework)
+            .select_related("topic")  # Fetch related topic in one query
+            .prefetch_related("paths")  # Fetch related paths in one query
+        )
+
+        # Fetch selected disclosures with related data
         selected_disclosures = (
             AssessmentDisclosureSelection.objects.filter(
                 topic_selection__assessment=materiality_dashboard
             )
             .select_related(
-                "topic_selection__topic",  # For accessing topic details
-                "disclosure",  # For accessing disclosure details
+                "topic_selection__topic",  # Access topic details
+                "disclosure",  # Access disclosure details
             )
-            .prefetch_related(
-                "disclosure__path_set",  # For accessing related paths
-            )
+            .prefetch_related("disclosure__paths")  # Prefetch paths for disclosures
+        )
+
+        # Create a set of selected topic IDs for quick lookup
+        selected_topic_ids = set(
+            selected_disclosure.topic_selection.topic.id
+            for selected_disclosure in selected_disclosures
         )
 
         # Initialize the response data structure
         response_data = {"environment": {}, "social": {}, "governance": {}}
-        selected_material_topics = []
-        # Process the disclosures in a single loop
-        for selected_disclosure in selected_disclosures:
-            topic_selection = selected_disclosure.topic_selection
-            topic = topic_selection.topic
-            disclosure = selected_disclosure.disclosure
-            selected_material_topics.append(topic.id)
+
+        # Combine selected and non-selected disclosures in one loop
+        for disclosure in all_disclosures:
+            topic = disclosure.topic
             esg_category = topic.esg_category
             topic_identifier = topic.identifier
             disclosure_identifier = disclosure.identifier
 
-            # Get all related path slugs
-            slugs = [path.slug for path in disclosure.path_set.all().only("slug")]
+            # Get all related path slugs for the disclosure
+            slugs = [path.slug for path in disclosure.path_set.all()]
 
+            # Initialize topic in the response structure if not present
             topic_dict = response_data[esg_category].setdefault(
                 topic_identifier,
                 {
                     "disclosures": [],  # List to hold the disclosures
-                    "is_material_topic": True,
+                    "is_material_topic": topic.id
+                    in selected_topic_ids,  # Check if material
                 },
             )
 
             # Append the disclosure data
             topic_dict["disclosures"].append({disclosure_identifier: slugs})
 
-        disclosures = (
-            Disclosure.objects.filter(topic__framework=materiality_dashboard.framework)
-            .exclude(topic__id__in=selected_material_topics)
-            .prefetch_related("path_set")
-        )
-
-        for disclosure_object in disclosures:
-            topic = disclosure_object.topic
-            disclosure = disclosure_object
-            esg_category = topic.esg_category
-            topic_identifier = topic.identifier
-            disclosure_identifier = disclosure.identifier
-
-            # Get all related path slugs
-            slugs = [path.slug for path in disclosure.path_set.all().only("slug")]
-
-            topic_dict = response_data[esg_category].setdefault(
-                topic_identifier,
-                {
-                    "disclosures": [],  # List to hold the disclosures
-                    "is_material_topic": False,
-                },
-            )
-
-            # Append the disclosure data
-            topic_dict["disclosures"].append({disclosure_identifier: slugs})
         return Response(response_data)
