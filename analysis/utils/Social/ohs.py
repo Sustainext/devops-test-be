@@ -18,6 +18,7 @@ def ohs_employee_worker_data(raw_response: RawResponse):
                 organisation=raw_response.locale.corporateentity.organization,
                 corporate=raw_response.locale.corporateentity,
                 location=raw_response.locale,
+                client=raw_response.client,
                 category=category,
                 defaults={
                     "number_of_employees": get_integer(
@@ -48,6 +49,7 @@ def ohs_the_number_of_injuries(raw_response: RawResponse):
             organisation=raw_response.locale.corporateentity.organization,
             corporate=raw_response.locale.corporateentity,
             location=raw_response.locale,
+            client=raw_response.client,
             table_name=table_name,
             defaults={
                 "employee_category": local_data["employeeCategory"],

@@ -15,6 +15,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
-        token["client_id"] = user.client_id
-
+        if user.client:
+            token["client_id"] = user.client.id
+        else:
+            token["client_id"] = None
         return token

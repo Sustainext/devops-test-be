@@ -25,6 +25,7 @@ def create_data_for_reduction_in_energy_consumption(raw_response: RawResponse):
             organization=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             raw_response=raw_response,
             defaults={

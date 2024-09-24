@@ -30,6 +30,7 @@ def create_data_for_waste_generated_analysis(raw_response: RawResponse):
             organisation=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             defaults={
                 "waste_type": local_data["WasteType"],
