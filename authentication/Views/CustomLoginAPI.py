@@ -31,9 +31,15 @@ class CustomLoginView(LoginView):
             refresh.set_exp()
             access_token_lifetime = timedelta(days=1)
 
+        long_validity_request = self.request.data.get("long_validity_request")
+
+        if long_validity_request :
+            access_token_lifetime = timedelta(days=30)
+
         refresh["client_id"] = user.client.id
         access_token = refresh.access_token
         access_token["client_id"] = user.client.id
+        client_key = user.client.uuid
 
         needs_password_reset = 1 if user.first_login.needs_password_change else 0
         access_token.set_exp(lifetime=access_token_lifetime)
@@ -56,7 +62,7 @@ class CustomLoginView(LoginView):
         }
 
         response = Response(
-            {"key": data, "needs_password_reset": needs_password_reset}, status=200
+            {"key": data, "needs_password_reset": needs_password_reset,"client_key":client_key}, status=200
         )
 
         # Set access and refresh tokens in cookies
