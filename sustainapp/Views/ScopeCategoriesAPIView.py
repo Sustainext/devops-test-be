@@ -71,7 +71,7 @@ class ScopeCategoriesAPIView(APIView):
                     "activity_id": data["activity_id"],
                     "id": data["id"],
                     "name": data["name"],
-                    "custom_string": f"{data["name"]} - {data["source"]} - {data["unit_type"]} - {data["region"]} - {data["year"]} - {data["source_lca_activity"]}",
+                    "custom_string": f"{data['name']} - {data['source']} - {data['unit_type']} - {data['region']} - {data['year']} - {data['source_lca_activity']}",
                     "unit_type": data["unit_type"],
                 }
                 for data in self.response_data["results"]
