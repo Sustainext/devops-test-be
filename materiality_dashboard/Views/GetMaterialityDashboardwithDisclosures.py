@@ -68,8 +68,8 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             disclosure = selected_disclosure.disclosure
 
             esg_category = topic.esg_category
-            topic_name = topic.name
-            disclosure_description = disclosure.description
+            topic_name = topic.identifier
+            disclosure_identifier = disclosure.identifier
 
             # Get all related path slugs
             slugs = [path.slug for path in disclosure.path_set.all().only("slug")]
@@ -78,6 +78,6 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             topic_dict = response_data[esg_category].setdefault(topic_name, [])
 
             # Append the disclosure data
-            topic_dict.append({disclosure_description: slugs})
+            topic_dict.append({disclosure_identifier: slugs})
 
         return Response(response_data)
