@@ -40,6 +40,7 @@ def create_data_for_water_from_stress_areas(raw_response: RawResponse):
                     organisation=organisation,
                     corporate=corporate,
                     location=location,
+                    client=raw_response.client,
                     index=index,
                     defaults={
                         "source": form_data["Source"],
@@ -98,6 +99,7 @@ def create_data_for_water_discharge_from_stress_areas(raw_response: RawResponse)
                 organisation=organisation,
                 corporate=corporate,
                 location=location,
+                client=raw_response.client,
                 index=index,
                 defaults={
                     "source": local_data["Source"],

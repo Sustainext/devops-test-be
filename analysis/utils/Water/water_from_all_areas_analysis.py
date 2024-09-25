@@ -33,6 +33,7 @@ def create_data_for_water_from_all_areas_analysis(raw_response: RawResponse):
             organisation=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             defaults={
                 "source": local_data["Source"],
@@ -77,6 +78,7 @@ def create_data_for_water_discharge_from_third_party(raw_response: RawResponse):
             organisation=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             defaults={
                 "third_party_discharge": local_data["Discharge"],

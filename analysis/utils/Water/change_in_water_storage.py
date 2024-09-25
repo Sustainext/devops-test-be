@@ -38,6 +38,7 @@ def create_data_for_change_in_water_storage(raw_response: RawResponse):
                     organisation=organisation,
                     corporate=corporate,
                     location=location,
+                    client=raw_response.client,
                     index=index,
                     defaults={
                         "unit": form_data["Unit"],

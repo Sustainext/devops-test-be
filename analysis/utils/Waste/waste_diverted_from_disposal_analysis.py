@@ -34,6 +34,7 @@ def create_data_for_waste_diverted_from_disposal_analysis(raw_response: RawRespo
                 organisation=organisation,
                 corporate=corporate,
                 location=location,
+                client=raw_response.client,
                 index=index,
                 defaults={
                     "waste_type": local_data["WasteType"],

@@ -119,6 +119,7 @@ def create_data_for_energy_sold(raw_response: RawResponse):
             organization=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             raw_response=raw_response,
             defaults={
