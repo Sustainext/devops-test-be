@@ -64,6 +64,19 @@ class ScopeCategoriesAPIView(APIView):
         # * Sort the response_data by access_type field
         self.response_data["results"].sort(key=lambda x: x["access_type"])
 
+    def check_and_change_response_as_per_data_analyst(self):
+        if self.for_data_scientist:
+            self.response_data["results"] = [
+                {
+                    "activity_id": data["activity_id"],
+                    "id": data["id"],
+                    "name": data["name"],
+                    "activity": f"{data['name']} - {data['source']} - {data['unit_type']} - {data['region']} - {data['year']} - {data['source_lca_activity']}",
+                    "unit_type": data["unit_type"],
+                }
+                for data in self.response_data["results"]
+            ]
+
     def set_response_condition(self):
         private_access_type = sum(
             1
@@ -134,6 +147,7 @@ class ScopeCategoriesAPIView(APIView):
         Returns the response data as per the business needs.
         """
         self.sorting_by_private_access_type()
+        self.check_and_change_response_as_per_data_analyst()
         return Response(self.response_data, status=status.HTTP_200_OK)
 
     def get(self, request, format=None):
@@ -148,6 +162,7 @@ class ScopeCategoriesAPIView(APIView):
             if serializer.validated_data["region"] != None
             else ""
         )
+        self.for_data_scientist = serializer.validated_data["for_data_scientist"]
         self.headers = {
             "Authorization": f"Bearer {self.CLIMATIQ_AUTH_TOKEN}",
             "Content-type": "application/json",

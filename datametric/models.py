@@ -19,9 +19,14 @@ class MyModel(AbstractModel):
 
 class Path(AbstractModel):
     name = models.CharField(max_length=300)
-    slug = models.CharField(max_length=500)
+    slug = models.CharField(max_length=500, db_index=True, unique=True)
     disclosure = models.ForeignKey(
-        Disclosure, on_delete=models.SET_NULL, default=None, null=True, blank=True
+        Disclosure,
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        blank=True,
+        related_name="paths",
     )
 
     def __str__(self):

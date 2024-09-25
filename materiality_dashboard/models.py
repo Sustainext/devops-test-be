@@ -70,11 +70,15 @@ class MaterialTopic(AbstractModel):
 
     # ? Should we add path to the material topic? Since One Material Topic can have many paths.
     name = models.CharField(max_length=255)
+    identifier = models.CharField(max_length=255, null=True, blank=True)
     esg_category = models.CharField(max_length=20, choices=ESG_CHOICES)
     framework = models.ForeignKey(Framework, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        unique_together = ["identifier", "framework"]
 
 
 class Disclosure(AbstractModel):
@@ -82,11 +86,15 @@ class Disclosure(AbstractModel):
     Stores the disclosures in accordance with their topic for the materiality assessment Eg. G301-and G301-b
     """
 
+    identifier = models.CharField(max_length=255, null=True, blank=True)
     topic = models.ForeignKey(MaterialTopic, on_delete=models.CASCADE)
     description = models.TextField()
 
     def __str__(self):
         return f"{self.topic.name} - {self.description[:50]}"
+
+    class Meta:
+        unique_together = ["identifier", "description","topic"]
 
 
 class AssessmentTopicSelection(AbstractModel):
