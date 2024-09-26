@@ -75,7 +75,13 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             if topic_id not in material_disclosure_map:
                 material_disclosure_map[topic_id] = []
 
-            material_disclosure_map[topic_id].append({disclosure_identifier: slugs})
+            material_disclosure_map[topic_id].append(
+                {
+                    "disclosure_id": disclosure_identifier,
+                    "slugs": slugs,
+                    "is_material_topic": True,  # Mark as material since it's a selected disclosure
+                }
+            )
 
         # Fetch all disclosures (including both material and non-material) in one go
         all_disclosures = (
@@ -114,10 +120,27 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                 },
             )
 
-            # Append the disclosure data from both material and non-material disclosures
+            # Append the disclosure data
             if topic.id in material_disclosure_map:
-                topic_dict["disclosures"].extend(material_disclosure_map[topic.id])
+                # If the topic is already in the material_disclosure_map, add those disclosures
+                for material_disclosure in material_disclosure_map[topic.id]:
+                    topic_dict["disclosures"].append(
+                        {
+                            material_disclosure["disclosure_id"]: material_disclosure[
+                                "slugs"
+                            ],
+                            "is_material_topic": material_disclosure[
+                                "is_material_topic"
+                            ],  # Material flag for selected disclosures
+                        }
+                    )
             else:
-                topic_dict["disclosures"].append({disclosure_identifier: slugs})
+                # Non-material disclosure
+                topic_dict["disclosures"].append(
+                    {
+                        disclosure_identifier: slugs,
+                        "is_material_topic": False,  # Mark as non-material
+                    }
+                )
 
         return Response(response_data)

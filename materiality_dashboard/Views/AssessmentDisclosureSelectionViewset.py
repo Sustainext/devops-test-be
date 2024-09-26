@@ -81,6 +81,8 @@ class GetMaterialTopicDisclosures(APIView):
                             "disclosure_id": disclosure.id,
                             "selected_material_topic_id": selected_material_topic.id,
                             "material_topic_id": selected_material_topic.topic.id,
+                            "can_edit": disclosure.category
+                            != "topic_management_dislcosure",
                         }
                         for disclosure in selected_material_topic.topic.prefetched_disclosures
                     ]
@@ -122,6 +124,8 @@ class AssessmentDisclosureSelectionRetrieve(APIView):
                 "topic_selection_id": assessment_disclosure.topic_selection.id,
                 "disclosure_id": assessment_disclosure.disclosure.id,
                 "disclosure_description": assessment_disclosure.disclosure.description,
+                "can_edit": assessment_disclosure.disclosure.category
+                != "topic_management_dislcosure",
             }
             for assessment_disclosure in disclosures
         ]
