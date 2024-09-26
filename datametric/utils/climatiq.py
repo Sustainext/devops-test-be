@@ -281,7 +281,7 @@ class Climatiq:
                     "calculation_method": emission["co2e_calculation_method"],
                     "category": emission["Category"],
                     "subcategory": emission["SubCategory"],
-                    "activity": f"{emission["Activity"].replace("(","").replace(")","")} - {emission["emission_factor"]["region"]} - {emission["emission_factor"]["year"]} - {emission["emission_factor"]["source_lca_activity"]}",
+                    "activity": f'{emission["Activity"].replace("(","").replace(")","")} - {emission["emission_factor"]["region"]} - {emission["emission_factor"]["year"]} - {emission["emission_factor"]["source_lca_activity"]}',
                     "region": emission["emission_factor"]["region"],
                     "name": emission["emission_factor"]["name"],
                     "unit": emission["activity_data"]["activity_unit"],
