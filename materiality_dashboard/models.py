@@ -89,12 +89,22 @@ class Disclosure(AbstractModel):
     identifier = models.CharField(max_length=255, null=True, blank=True)
     topic = models.ForeignKey(MaterialTopic, on_delete=models.CASCADE)
     description = models.TextField()
+    category = models.CharField(
+        choices=(
+            ("topic_disclosure", "Topic Dislcosure"),
+            ("topic_management_dislcosure", "Topic Management Dislcosure"),
+        ),
+        max_length=255,
+        null=True,
+        blank=True,
+        default=None,
+    )
 
     def __str__(self):
         return f"{self.topic.name} - {self.description[:50]}"
 
     class Meta:
-        unique_together = ["identifier", "description","topic"]
+        unique_together = ["identifier", "description", "topic"]
 
 
 class AssessmentTopicSelection(AbstractModel):
