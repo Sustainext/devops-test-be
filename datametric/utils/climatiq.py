@@ -232,7 +232,14 @@ class Climatiq:
         """
         for index, emission_data in enumerate(response_data["results"]):
             if "error" in emission_data:
-                error_message = f"Error with emission: {emission_data} with data {payload[index]} \n"
+                details = {
+                    "user":self.raw_response.user.username,
+                    "raw_response_id":self.raw_response.id,
+                    "scope": self.raw_response.path.slug,
+                    #* Get the complete folder path.
+                    "instance": os.path.abspath(__file__)
+                }
+                error_message = f"Error with emission: {emission_data} with data {payload[index]} \n Details for Debugging: {details}"
                 self.send_error_email(error_message)
 
     def round_decimal_or_nulls(self, value, decimal_point=3):
