@@ -4,10 +4,6 @@ from django.db import models
 
 OPERATION_CHOICES = (
     ("Social impact assessments", "social_impact_assessments"),
-    (
-        "Mention the number of operations that include the use of social impact assessments, including gender impact assessments, based on participatory processes.",
-        "mention_the_number_of_operations_that_include_the_use_of_social_impact_assessments,_including_gender_impact_assessments,_based_on_participatory_processes.",
-    ),
     ("Environmental impact assessments", "environmental_impact_assessments"),
     ("Public disclosure", "public_disclosure"),
     ("Community development programs", "community_development_programs"),
