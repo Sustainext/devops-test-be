@@ -64,6 +64,7 @@ def create_data(raw_response: RawResponse, table_name, model):
                 employment_type=get_employment_type(raw_response.path.slug),
                 gender=get_gender(index),
                 employmee_table_name=table_name,
+                client=raw_response.client,
                 index=index,
                 defaults=defaults,
             )[0].save()
