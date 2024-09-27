@@ -156,7 +156,7 @@ class ScopeCategoriesAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         sub_category = serializer.validated_data["sub_category"]
         year = serializer.validated_data["year"]
-        year = year
+        year = 2023 if year >= 2024 else year
         region = (
             serializer.validated_data["region"]
             if serializer.validated_data["region"] != None
