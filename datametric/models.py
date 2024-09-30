@@ -2,6 +2,7 @@ from django.db import models
 from authentication.models import CustomUser, Client
 from common.models.AbstractModel import AbstractModel
 from sustainapp.models import Location, Corporateentity, Organization
+from materiality_dashboard.models import Disclosure
 from django.core.validators import MaxValueValidator, MinValueValidator
 from .data_types import DATA_TYPE_CHOICES
 import collections
@@ -18,7 +19,15 @@ class MyModel(AbstractModel):
 
 class Path(AbstractModel):
     name = models.CharField(max_length=300)
-    slug = models.CharField(max_length=500)
+    slug = models.CharField(max_length=500, db_index=True, unique=True)
+    disclosure = models.ForeignKey(
+        Disclosure,
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        blank=True,
+        related_name="paths",
+    )
 
     def __str__(self):
         return self.slug
@@ -55,6 +64,7 @@ class FieldGroup(AbstractModel):
     """
     Stores Schema and UI Schema for the frontend widgets.
     """
+
     name = models.CharField(max_length=200)
     path = models.ForeignKey(
         Path, on_delete=models.CASCADE, default=None, related_name="fieldgroups"
@@ -68,6 +78,7 @@ class RawResponse(AbstractModel):
     """
     Stores Response of the User on the field groups.
     """
+
     data = OrderedJSONField(default=list)  # models.JSONField(default=list)
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     user = models.ForeignKey(
@@ -101,6 +112,7 @@ class DataMetric(AbstractModel):
     """
     This model is used for storing data metrics and is used in analytics.
     """
+
     name = models.CharField(max_length=200)
     label = models.CharField(max_length=400)
     description = models.CharField(max_length=1000)
@@ -164,6 +176,7 @@ class DataPoint(AbstractModel):
 
 
 class EmissionAnalysis(AbstractModel):
+    emission_id = models.UUIDField(null=True, blank=True)
     activity_id = models.CharField(max_length=200)
     activity = models.TextField()
     index = models.PositiveIntegerField()
@@ -186,7 +199,7 @@ class EmissionAnalysis(AbstractModel):
     name = models.CharField(max_length=300)
     unit = models.CharField(max_length=50)
     unit1 = models.CharField(max_length=50, null=True, blank=True)
-    unit2 = models.CharField(max_length=50,null=True, blank=True)
+    unit2 = models.CharField(max_length=50, null=True, blank=True)
     quantity = models.DecimalField(
         max_digits=20, decimal_places=3, null=True, blank=True
     )
@@ -195,7 +208,7 @@ class EmissionAnalysis(AbstractModel):
     )
     consumption = models.DecimalField(max_digits=20, decimal_places=3)
     raw_response = models.ForeignKey(RawResponse, on_delete=models.CASCADE)
-    type_of = models.CharField(max_length=255,db_column="type",null=True,blank=True)
+    type_of = models.CharField(max_length=255, db_column="type", null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name + str(self.id)

@@ -27,6 +27,7 @@ def create_data_for_community_development_number_of_operations(
             month=raw_response.month,
             year=raw_response.year,
             location=raw_response.locale,
+            client=raw_response.client,
             organisation=(
                 raw_response.organization
                 if get_organisation(raw_response.locale) is None

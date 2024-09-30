@@ -1,0 +1,100 @@
+﻿,Environment,,,,
+Material Identifier,Material Topic,GRI disclosure,Identifier,GRI with Reference To,Framework Identifier
+EnvGhgEmission,GHG Emissions," 305-1 Direct (Scope 1) GHG emissions 
+",EnvGhgEmission305-1,GRIWRT,GRIWRT-EnvGhgEmission305-1
+,,305-2 Energy indirect (Scope 2) GHG emissions ,EnvGhgEmission305-2,GRIWRT,GRIWRT-EnvGhgEmission305-2
+,,305-3 Other indirect (Scope 3) GHG emissions ,EnvGhgEmission305-3,GRIWRT,GRIWRT-EnvGhgEmission305-3
+,,305-4 GHG emissions intensity ,EnvGhgEmission305-4,GRIWRT,GRIWRT-EnvGhgEmission305-4
+,, 305-5 Reduction of GHG emissions,EnvGhgEmission305-5,GRIWRT,GRIWRT-EnvGhgEmission305-5
+EnvBioDiversityLandUse,Biodiversity & land use,"304-1 Operational sites owned, leased, managed in, or adjacent to, protected areas and areas of high biodiversity value outside protected areas",EnvBioDiversityLandUse304-1,GRIWRT,GRIWRT-EnvBioDiversityLandUse304-1
+,,"304-2 Significant impacts of activities, products and services on biodiversity",EnvBioDiversityLandUse304-2,GRIWRT,GRIWRT-EnvBioDiversityLandUse304-2
+,,304-3 Habitats protected or restored,EnvBioDiversityLandUse304-3,GRIWRT,GRIWRT-EnvBioDiversityLandUse304-3
+,,304-4 IUCN Red List species and national conservation list species with habitats in areas affected by operations,EnvBioDiversityLandUse304-4,GRIWRT,GRIWRT-EnvBioDiversityLandUse304-4
+EnvAirQuality,Air Quality,305-6 Emissions of ozone-depleting substances (ODS),EnvAirQuality305-6,GRIWRT,GRIWRT-EnvAirQuality305-6
+,,"305-7 Nitrogen oxides (NOx), sulfur oxides (SOx), and other significant air emissions",EnvAirQuality305-7,GRIWRT,GRIWRT-EnvAirQuality305-7
+EnvWaterEffluent,Water & effluent,303-1 Interactions with water as a shared resource,EnvWaterEffluent303-1,GRIWRT,GRIWRT-EnvWaterEffluent303-1
+,,303-2 Management of water discharge-related impacts,EnvWaterEffluent303-2,GRIWRT,GRIWRT-EnvWaterEffluent303-2
+,,303-3 Water withdrawal,EnvWaterEffluent303-3,GRIWRT,GRIWRT-EnvWaterEffluent303-3
+,,303-4 Water discharge,EnvWaterEffluent303-4,GRIWRT,GRIWRT-EnvWaterEffluent303-4
+,,303-5 Water consumption,EnvWaterEffluent303-5,GRIWRT,GRIWRT-EnvWaterEffluent303-5
+EnvRawMaterialSourcing,Raw Material Sourcing ,301-1 Materials used by weight or volume,EnvRawMaterialSourcing301-1,GRIWRT,GRIWRT-EnvRawMaterialSourcing301-1
+,,301-2 Recycled input materials used,EnvRawMaterialSourcing301-2,GRIWRT,GRIWRT-EnvRawMaterialSourcing301-2
+EnvWasteManagement,Waste Management ,306-1 Waste generation and significant waste-related impacts,EnvWasteManagement306-1,GRIWRT,GRIWRT-EnvWasteManagement306-1
+,,306-2 Management of significant waste-related impacts,EnvWasteManagement306-2,GRIWRT,GRIWRT-EnvWasteManagement306-2
+,,306-3 Waste generated,EnvWasteManagement306-3,GRIWRT,GRIWRT-EnvWasteManagement306-3
+,,306-4 Waste diverted from disposal,EnvWasteManagement306-4,GRIWRT,GRIWRT-EnvWasteManagement306-4
+,,306-5 Waste directed to disposal,EnvWasteManagement306-5,GRIWRT,GRIWRT-EnvWasteManagement306-5
+EnvEnergy,Energy ,302-1 Energy consumption within the organization,EnvEnergy302-1,GRIWRT,GRIWRT-EnvEnergy302-1
+,,302-2 Energy consumption outside of the organization,EnvEnergy302-2,GRIWRT,GRIWRT-EnvEnergy302-2
+,,302-3 Energy intensity,EnvEnergy302-3,GRIWRT,GRIWRT-EnvEnergy302-3
+,,302-4 Reduction of energy consumption,EnvEnergy302-4,GRIWRT,GRIWRT-EnvEnergy302-4
+,,302-5 Reductions in energy requirements of products and services,EnvEnergy302-5,GRIWRT,GRIWRT-EnvEnergy302-5
+EnvPackagingMaterial,Packaging Material,301-3 Reclaimed products and their packaging materials,EnvPkgMaterial301-3,GRIWRT,GRIWRT-EnvPkgMaterial301-3
+EnvSupplyChainSustainability,Supply chain sustainability,308-1 New suppliers that were screened using environmental criteria,EnvSupplyChain308-1,GRIWRT,GRIWRT-EnvSupplyChain308-1
+,,308-2 Negative environmental impacts in the supply chain and actions taken,EnvSupplyChain308-2,GRIWRT,GRIWRT-EnvSupplyChain308-2
+EnvFossilFuel,Fossil Fuel,"GRI 11: Oil and Gas Sector 2021
+",EnvFossilFuelGri11,GRIWRT,GRIWRT-EnvFossilFuelGri11
+,,GRI 12: Coal Sector 2022,EnvFossilFuelGri12,GRIWRT,GRIWRT-EnvFossilFuelGri12
+EnvAgriculture,Agriculture,"GRI 13: Agriculture, Aquaculture and Fishing Sectors 2022",EnvAgriGri13,GRIWRT,GRIWRT-EnvAgriGri13
+EnvAquaculture,Aquaculture,,EnvAquaGri13,GRIWRT,GRIWRT-EnvAquaGri13
+,,,,,
+,,,,,
+,Social,,,,
+Material Identifier,Material Topic,GRI disclosure,Identifier,,
+SocHealthSafety,Occupational Health &  Safety,403-1 Occupational health and safety management system,SocHealthSafety403-1,GRIWRT,GRIWRT-SocHealthSafety403-1
+,,"403-2 Hazard identification, risk assessment, and incident investigation",SocHealthSafety403-2,GRIWRT,GRIWRT-SocHealthSafety403-2
+,,"403-4 Worker participation, consultation, and communication on occupational health and safety",SocHealthSafety403-4,GRIWRT,GRIWRT-SocHealthSafety403-4
+,,403-5 Worker training on occupational health and safety,SocHealthSafety403-5,GRIWRT,GRIWRT-SocHealthSafety403-5
+,,403-6 Promotion of worker health,SocHealthSafety403-6,GRIWRT,GRIWRT-SocHealthSafety403-6
+,,403-7 Prevention and mitigation of occupational health and safety impacts directly linked by business relationships,SocHealthSafety403-7,GRIWRT,GRIWRT-SocHealthSafety403-7
+,,403-8 Workers covered by an occupational health and safety management system,SocHealthSafety403-8,GRIWRT,GRIWRT-SocHealthSafety403-8
+,,403-9 Work-related injuries,SocHealthSafety403-9,GRIWRT,GRIWRT-SocHealthSafety403-9
+,,403-10 Work-related ill health,SocHealthSafety403-10,GRIWRT,GRIWRT-SocHealthSafety403-10
+SocCommunityRelation,Community Relations,411-1 Incidents of violations involving rights of indigenous peoples,SocCommunityRelation411-1,GRIWRT,GRIWRT-SocCommunityRelation411-1
+,,"413-1 Operations with local community engagement, impact assessments, and development programs",SocCommunityRelation413-1,GRIWRT,GRIWRT-SocCommunityRelation413-1
+,,413-2 Operations with significant actual and potential negative impacts on local communities,SocCommunityRelation413-2,GRIWRT,GRIWRT-SocCommunityRelation413-2
+SocLabourManagement,Labor Management,402-1 Minimum notice periods regarding operational changes,SocLabourManagement402-1,GRIWRT,GRIWRT-SocLabourManagement402-1
+,,407-1 Operations and suppliers in which the right to freedom of association and collective bargaining may be at risk,SocLabourManagement407-1,GRIWRT,GRIWRT-SocLabourManagement407-1
+,,409-1 Operations and suppliers at significant risk for incidents of forced or compulsory labor,SocLabourManagement409-1,GRIWRT,GRIWRT-SocLabourManagement409-1
+SocChildLabour,Child Labor,408-1 Operations and suppliers at significant risk for incidents of child labor,SocChildLabour408-1,GRIWRT,GRIWRT-SocChildLabour408-1
+SocEmployment, Employment ,401-1 New employee hires and employee turnover,SocEmployment401-1,GRIWRT,GRIWRT-SocEmployment401-1
+,,401-2 Benefits provided to full-time employees that are not provided to temporary or part-time employees,SocEmployment401-2,GRIWRT,GRIWRT-SocEmployment401-2
+,,401-3 Parental leave,SocEmployment401-3,GRIWRT,GRIWRT-SocEmployment401-3
+SocHumanCapitalDevelopment,Human Capital Development,404-1 Average hours of training per year per employee,SocHumanCapitalDevelopment404-1,GRIWRT,GRIWRT-SocHumanCapitalDevelopment404-1
+,,404-2 Programs for upgrading employee skills and transition assistance programs,SocHumanCapitalDevelopment404-2,GRIWRT,GRIWRT-SocHumanCapitalDevelopment404-2
+,,404-3 Percentage of employees receiving regular performance and career development reviews,SocHumanCapitalDevelopment404-3,GRIWRT,GRIWRT-SocHumanCapitalDevelopment404-3
+,,410-1 Security personnel trained in human rights policies or procedures,SocHumanCapitalDevelopment410-1,GRIWRT,GRIWRT-SocHumanCapitalDevelopment410-1
+SocPrivacyDataSecurity,Privacy & Data Security,418-1 Substantiated complaints concerning breaches of customer privacy and losses of customer data,SocPrivacyDataSecurity418-1,GRIWRT,GRIWRT-SocPrivacyDataSecurity418-1
+,Product Safety & Quality,416-1 Assessment of the health and safety impacts of product and service categories,SocProductSafetyQuality416-1,GRIWRT,GRIWRT-SocProductSafetyQuality416-1
+,,416-2 Incidents of non-compliance concerning the health and safety impacts of products and services,SocProductSafetyQuality416-2,GRIWRT,GRIWRT-SocProductSafetyQuality416-2
+SocMarketingLabeling,Marketing and Labeling,417-1 Requirements for product and service information and labeling,SocMarketingLabeling417-1,GRIWRT,GRIWRT-SocMarketingLabeling417-1
+,,417-2 Incidents of non-compliance concerning product and service information and labeling,SocMarketingLabeling417-2,GRIWRT,GRIWRT-SocMarketingLabeling417-2
+,,417-3 Incidents of non-compliance concerning marketing communications,SocMarketingLabeling417-3,GRIWRT,GRIWRT-SocMarketingLabeling417-3
+SocPayEquality,Pay equality,405-2 Ratio of basic salary and remuneration of women to men,SocPayEquality405-2,GRIWRT,GRIWRT-SocPayEquality405-2
+,,202-1 Ratios of standard entry level wage by gender compared to local minimum wage,SocPayEquality202-1,GRIWRT,GRIWRT-SocPayEquality202-1
+SocHealthCare,Access to Health Care,403-3 Occupational health services,SocHealthCare403-3,GRIWRT,GRIWRT-SocHealthCare403-3
+SocSupplyChainLabour,Supply Chain Labor Standards,414-1 New suppliers that were screened using social criteria,SocSupplyChainLabour414-1,GRIWRT,GRIWRT-SocSupplyChainLabour414-1
+,,414-2 Negative social impacts in the supply chain and actions taken,SocSupplyChainLabour414-2,GRIWRT,GRIWRT-SocSupplyChainLabour414-2
+,,204-1 Proportion of spending on local suppliers,SocSupplyChainLabour204-1,GRIWRT,GRIWRT-SocSupplyChainLabour204-1
+SocDiversityEqualOpp,Diversity & equal oppportunity,405-1 Diversity of governance bodies and employees,SocDiversityEqualOpp405-1,GRIWRT,GRIWRT-SocDiversityEqualOpp405-1
+SocNonDiscrimination, Non-discrimination ,406-1 Incidents of discrimination and corrective actions taken,SocNonDiscrimination406-1,GRIWRT,GRIWRT-SocNonDiscrimination406-1
+,,,,,
+,,,,,
+,Governance,,,,
+,Material Topic,GRI disclosure,,,
+GovGovernance,Governance,202-2 Proportion of senior management hired from the local community,GovGovernance202-2,GRIWRT,GRIWRT-GovGovernance202-2
+GovPolicy,Policy,415-1 Political contributions,GovPolicy415-1,GRIWRT,GRIWRT-GovPolicy415-1
+GovEconomicImpact,Economic impacts,203-1 Infrastructure investments and services supported,GovEconomicImpact203-1,GRIWRT,GRIWRT-GovEconomicImpact203-1
+,,203-2 Significant indirect economic impacts,GovEconomicImpact203-2,GRIWRT,GRIWRT-GovEconomicImpact203-2
+GovEconomicPerformance,Economic performance,201-1 Direct economic value generated and distributed,GovEconomicPerformance201-1,GRIWRT,GRIWRT-GovEconomicPerformance201-1
+,,201-2 Financial implications and other risks and opportunities due to climate change,GovEconomicPerformance201-2,GRIWRT,GRIWRT-GovEconomicPerformance201-2
+,,201-3 Defined benefit plan obligations and other retirement plans,GovEconomicPerformance201-3,GRIWRT,GRIWRT-GovEconomicPerformance201-3
+,,201-4 Financial assistance received from government,GovEconomicPerformance201-4,GRIWRT,GRIWRT-GovEconomicPerformance201-4
+GovCorruption,Corruption,205-1 Operations assessed for risks related to corruption,GovCorruption205-1,GRIWRT,GRIWRT-GovCorruption205-1
+,,205-2 Communication and training about anti-corruption policies and procedures,GovCorruption205-2,GRIWRT,GRIWRT-GovCorruption205-2
+,,205-3 Confirmed incidents of corruption and actions taken,GovCorruption205-3,GRIWRT,GRIWRT-GovCorruption205-3
+,,"206-1 Legal actions for anti-competitive behavior, anti-trust, and monopoly practices",GovCorruption206-1,GRIWRT,GRIWRT-GovCorruption206-1
+GovTaxTransparency,Tax Transparency,207-1 Approach to tax,GovTaxTransparency207-1,GRIWRT,GRIWRT-GovTaxTransparency207-1
+,,"207-2 Tax governance, control, and risk management",GovTaxTransparency207-2,GRIWRT,GRIWRT-GovTaxTransparency207-2
+,,207-3 Stakeholder engagement and management of concerns related to tax,GovTaxTransparency207-3,GRIWRT,GRIWRT-GovTaxTransparency207-3
+,,207-4 Country-by-country reporting,GovTaxTransparency207-4,GRIWRT,GRIWRT-GovTaxTransparency207-4

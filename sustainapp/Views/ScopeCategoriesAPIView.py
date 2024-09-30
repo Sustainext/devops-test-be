@@ -14,12 +14,17 @@ import os
 
 class ScopeCategoriesAPIView(APIView):
     """
-    * Make the response structure as it is in climatiq.
+        * Make the response structure as it is in climatiq.
+    Main call : Selected Region , selected year ( if response.last_page > 1 ) then fetch for all pages
+    wildcard call : If not enough results -> region = *
+    If not enough results ( main + wildcard ) -> fetch from current-1 year to 2019 (region = selected region )
+    custom call : source , year and category from customMappings
     """
 
     permission_classes = [IsAuthenticated]
 
     def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
         self.CLIMATIQ_AUTH_TOKEN = os.getenv("CLIMATIQ_AUTH_TOKEN", "")
         self.permission_classes = [IsAuthenticated]
         self.URL = os.getenv("CLIMATIQ_BASE_URL", "") + "search"
@@ -58,6 +63,19 @@ class ScopeCategoriesAPIView(APIView):
         """
         # * Sort the response_data by access_type field
         self.response_data["results"].sort(key=lambda x: x["access_type"])
+
+    def check_and_change_response_as_per_data_analyst(self):
+        if self.for_data_scientist:
+            self.response_data["results"] = [
+                {
+                    "activity_id": data["activity_id"],
+                    "id": data["id"],
+                    "name": data["name"],
+                    "activity": f"{data['name']} - {data['source']} - {data['unit_type']} - {data['region']} - {data['year']} - {data['source_lca_activity']}",
+                    "unit_type": data["unit_type"],
+                }
+                for data in self.response_data["results"]
+            ]
 
     def set_response_condition(self):
         private_access_type = sum(
@@ -129,6 +147,7 @@ class ScopeCategoriesAPIView(APIView):
         Returns the response data as per the business needs.
         """
         self.sorting_by_private_access_type()
+        self.check_and_change_response_as_per_data_analyst()
         return Response(self.response_data, status=status.HTTP_200_OK)
 
     def get(self, request, format=None):
@@ -137,12 +156,13 @@ class ScopeCategoriesAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         sub_category = serializer.validated_data["sub_category"]
         year = serializer.validated_data["year"]
-        year = 2023 if year >= 2024 else year
+        year = year
         region = (
             serializer.validated_data["region"]
             if serializer.validated_data["region"] != None
             else ""
         )
+        self.for_data_scientist = serializer.validated_data["for_data_scientist"]
         self.headers = {
             "Authorization": f"Bearer {self.CLIMATIQ_AUTH_TOKEN}",
             "Content-type": "application/json",
@@ -151,7 +171,7 @@ class ScopeCategoriesAPIView(APIView):
             "region": region + "*",
             "year": int(year),
             "category": sub_category,
-            "data_version": "^8",
+            "data_version": "^16",
             "results_per_page": 500,
         }
         self.sends_and_set_response_condition()
@@ -161,7 +181,7 @@ class ScopeCategoriesAPIView(APIView):
         self.sends_and_set_response_condition()
         if self.satisfied_condition:
             return self.send_response()
-        for i in range(year, 2019, -1):
+        for i in range(year, 2018, -1):
             self.params["year"] = i
             self.sends_and_set_response_condition()
             if self.satisfied_condition:

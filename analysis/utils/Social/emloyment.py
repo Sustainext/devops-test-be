@@ -64,6 +64,7 @@ def create_data(raw_response: RawResponse, table_name, model):
                 employment_type=get_employment_type(raw_response.path.slug),
                 gender=get_gender(index),
                 employmee_table_name=table_name,
+                client=raw_response.client,
                 index=index,
                 defaults=defaults,
             )[0].save()
@@ -101,6 +102,7 @@ def parental_leave_analysis(raw_response: RawResponse):
                     month=raw_response.month,
                     year=raw_response.year,
                     location=raw_response.locale,
+                    client=raw_response.client,
                     organisation=raw_response.locale.corporateentity.organization,
                     corporate=raw_response.locale.corporateentity,
                     gender=Gender.objects.get(gender=gender),

@@ -570,6 +570,7 @@ class GHGReportView(generics.CreateAPIView):
                     "country_name": serializer.data.get("organization_country"),
                     "organization_name": serializer.data.get("organization_name"),
                     "message": analysis_data.data["message"],
+                    "report_type": serializer.validated_data["report_type"],
                 },
                 status=analysis_data.status_code,
             )

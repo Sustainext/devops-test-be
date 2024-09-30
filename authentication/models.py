@@ -7,12 +7,14 @@ from django.contrib.auth.models import (
 from django.utils.translation import gettext_lazy as _
 from common.models.AbstractModel import AbstractModel
 from authentication.Managers.CustomUserManager import CustomUserManager
+from uuid import uuid4
 
 
 # Create your models here.
 class Client(AbstractModel):
     name = models.CharField(max_length=256, unique=True)
     customer = models.BooleanField(default=False)
+    uuid = models.UUIDField(unique=True, default=uuid4, editable=False)
 
     def __str__(self):
         return self.name
@@ -68,6 +70,7 @@ class UserProfile(AbstractModel):
         upload_to="profile_pictures/", null=True, blank=True
     )
 
+
 class LoginCounter(AbstractModel):
     """
     Stores the number of times user logs in
@@ -77,4 +80,4 @@ class LoginCounter(AbstractModel):
         CustomUser, on_delete=models.CASCADE, related_name="first_login"
     )
     login_counter = models.IntegerField(default=-1)
-    needs_password_change = models.BooleanField(default=True,null=True, blank=True)
+    needs_password_change = models.BooleanField(default=True, null=True, blank=True)

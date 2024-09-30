@@ -67,7 +67,7 @@ class EmploymentAnalyzeView(APIView):
     new_employee_hire_path_slugs = [
         "gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp",
         "gri-social-employee_hires-401-1a-new_emp_hire-temp_emp",
-        "gri-social-employee_hires-401-1a-new_emp_hire-nongauranteed",
+        "gri-social-employee_hires-401-1a-new_emp_hire-nonguaranteed",
         "gri-social-employee_hires-401-1a-new_emp_hire-fulltime",
         "gri-social-employee_hires-401-1a-new_emp_hire-parttime",
     ]

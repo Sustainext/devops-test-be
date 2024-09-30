@@ -37,6 +37,7 @@ def create_data_for_governance_bodies_details(raw_response: RawResponse):
                 month=raw_response.month,
                 year=raw_response.year,
                 location=raw_response.locale,
+                client=raw_response.client,
                 table_name=table_name,
                 organisation=(
                     raw_response.organization
