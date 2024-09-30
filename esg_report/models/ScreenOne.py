@@ -1,4 +1,4 @@
-from esg_report.models.ESGReport import ESGReport
+from sustainapp.models import Report
 from common.models.AbstractModel import AbstractModel
 from django.db import models
 
@@ -14,7 +14,7 @@ class CeoMessage(AbstractModel):
     """
 
     esg_report = models.OneToOneField(
-        ESGReport, on_delete=models.CASCADE, related_name="ceo_message"
+        Report, on_delete=models.CASCADE, related_name="ceo_message"
     )
     message = models.TextField()
     message_image = models.ImageField(upload_to="esg_report/ceo_message/")
@@ -23,4 +23,3 @@ class CeoMessage(AbstractModel):
 
     def __str__(self):
         return f"CEO Message for {self.esg_report.organization.name} ({self.esg_report.framework.name})"
-
