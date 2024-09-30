@@ -112,23 +112,39 @@ class AssessmentDisclosureSelectionRetrieve(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
         # * Get all topic selection IDs
-        topic_selection_ids = AssessmentTopicSelection.objects.filter(
+        topic_selections = AssessmentTopicSelection.objects.filter(
             assessment=assessment
-        ).values_list("id", flat=True)
-        disclosures = AssessmentDisclosureSelection.objects.filter(
+        )
+        # * Get all topic_management_dislcosure disclosures from all topics
+        topic_selection_ids = topic_selections.values_list("id", flat=True)
+        disclosures = Disclosure.objects.filter(
+            category="topic_management_dislcosure",
+            topic__id__in=topic_selections.values_list("topic_id", flat=True),
+        )
+        disclosures_list = disclosures.values_list("id", flat=True)
+        selected_disclosures = AssessmentDisclosureSelection.objects.filter(
             topic_selection__id__in=topic_selection_ids
         ).select_related("topic_selection", "disclosure")
         response_data = [
             {
-                "id": assessment_disclosure.id,
                 "topic_selection_id": assessment_disclosure.topic_selection.id,
                 "disclosure_id": assessment_disclosure.disclosure.id,
                 "disclosure_description": assessment_disclosure.disclosure.description,
                 "can_edit": assessment_disclosure.disclosure.category
                 != "topic_management_dislcosure",
             }
-            for assessment_disclosure in disclosures
+            for assessment_disclosure in selected_disclosures
+            if assessment_disclosure.disclosure.id not in disclosures_list
         ]
+        for disclosure in disclosures:
+            response_data.append(
+                {
+                    "topic_selection_id": None,
+                    "disclosure_id": disclosure.id,
+                    "disclosure_description": disclosure.description,
+                    "can_edit": False,
+                }
+            )
         return Response(response_data, status=status.HTTP_200_OK)
 
 
@@ -143,20 +159,23 @@ class AssessmentDisclosureSelectionUpdate(APIView):
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
+            # Using bulk delete and create to optimize DB operations
             validated_data = serializer.validated_data["validated_data"]
-            for item in validated_data:
-                topic_selection = item["topic_selection"]
+            topic_selection_ids = [item["topic_selection"] for item in validated_data]
 
-                # Remove existing disclosure selections for this topic selection
-                AssessmentDisclosureSelection.objects.filter(
-                    topic_selection=topic_selection
-                ).delete()
+            # Bulk delete old disclosures
+            AssessmentDisclosureSelection.objects.filter(
+                topic_selection__in=topic_selection_ids
+            ).delete()
 
-                # Create new selections based on the provided disclosures
-                for disclosure in item["validated_disclosures"]:
-                    AssessmentDisclosureSelection.objects.create(
-                        topic_selection=topic_selection, disclosure=disclosure
-                    )
-
+            # Bulk create new disclosures
+            new_disclosure_selections = [
+                AssessmentDisclosureSelection(
+                    topic_selection=item["topic_selection"], disclosure=disclosure
+                )
+                for item in validated_data
+                for disclosure in item["validated_disclosures"]
+            ]
+            AssessmentDisclosureSelection.objects.bulk_create(new_disclosure_selections)
             return Response({"status": "success"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
