@@ -30,6 +30,8 @@ class ScreenTwo(APIView):
                 "gri-general-entities-list_of_entities-2-2-a",
                 "gri-general-business_details-organisation-2-6a",
                 "gri-general-business_details-value-2-6b",
+                "gri-general-business_details-other-2-6c",
+                "gri-general-business_details-changes-2-6d",
             ]
             raw_responses = RawResponse.objects.filter(
                 client=self.request.user.client
@@ -66,9 +68,19 @@ class ScreenTwo(APIView):
                 "year"
             )
             response_data["2-6-b"] = raw_response_value_chain.data
+
+            raw_response_relevant_business = raw_responses.filter(
+                path__slug=slugs[4]
+            ).latest("year")
+            response_data["2-6-c"] = raw_response_relevant_business.data[0]["Q1"]
+
+            raw_response_change_information = raw_responses.filter(
+                path__slug=slugs[5]
+            ).latest("year")
+            response_data["2-6-d"] = raw_response_change_information.data[0]["Q1"]
             return Response(response_data, status=status.HTTP_200_OK)
 
-        except Exception as e:
+        except Report.DoesNotExist as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, report_id, format=None):
