@@ -10,7 +10,7 @@ from datametric.models import RawResponse
 def create_data_for_waste_generated_analysis(raw_response: RawResponse):
     if raw_response.path.slug != "gri-environment-waste-306-3a-3b-waste_generated":
         return
-
+    WasteGenerated.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organisation = (
             raw_response.organization

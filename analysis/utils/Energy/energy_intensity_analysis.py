@@ -14,7 +14,7 @@ def create_data_for_energy_intensity_analysis(raw_response: RawResponse):
         != "gri-environment-energy-302-3a-3b-3c-3d-energy_intensity"
     ):
         return
-
+    EnergyIntensity.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organization = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)

@@ -22,6 +22,9 @@ def create_data_for_governance_bodies_details(raw_response: RawResponse):
         table_name = "ratio_of_remuneration_of_women_to_men"
     else:
         return
+    GovernanceBodyDetails.objects.filter(
+        raw_response=raw_response, table_name=table_name
+    ).delete()
     for index, entry in enumerate(raw_response.data):
         # Assuming 'male', 'female', and 'nonBinary' correspond to existing Gender entries
         genders = {

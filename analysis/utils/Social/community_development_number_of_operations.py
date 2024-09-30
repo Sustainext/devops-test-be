@@ -21,6 +21,9 @@ def create_data_for_community_development_number_of_operations(
         != "gri-social-community_engagement-413-1a-number_of_operations"
     ):
         return
+    CommunityDevelopmentNumberOfOperation.objects.filter(
+        raw_response=raw_response
+    ).delete()
     for index, entry in enumerate(raw_response.data):
         CommunityDevelopmentNumberOfOperation.objects.update_or_create(
             raw_response=raw_response,

@@ -16,7 +16,7 @@ from common.utils.energy_unit_converter import convert_to_gj
 def create_data_for_direct_purchased_energy(raw_response: RawResponse):
     if raw_response.path.slug != "gri-environment-energy-302-1a-1b-direct_purchased":
         return
-    
+    DirectPurchasedEnergy.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organisation = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)
@@ -47,7 +47,7 @@ def create_data_for_direct_purchased_energy(raw_response: RawResponse):
 def create_data_for_consumed_energy(raw_response: RawResponse):
     if raw_response.path.slug != "gri-environment-energy-302-1c-1e-consumed_fuel":
         return
-
+    ConsumedEnergy.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organisation = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)
@@ -78,7 +78,7 @@ def create_data_for_consumed_energy(raw_response: RawResponse):
 def create_data_for_self_genereted(raw_response: RawResponse):
     if raw_response.path.slug != "gri-environment-energy-302-1-self_generated":
         return
-
+    SelfGeneratedEnergy.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organisation = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)
@@ -113,6 +113,7 @@ def create_data_for_energy_sold(raw_response: RawResponse):
         organisation = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)
         location = raw_response.locale
+        EnergySold.objects.filter(raw_response=raw_response).delete()
         EnergySold.objects.update_or_create(
             month=raw_response.month,
             year=raw_response.year,

@@ -16,7 +16,7 @@ def create_data_for_water_from_stress_areas(raw_response: RawResponse):
         != "gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress"
     ):
         return
-
+    WaterFromStressAreas.objects.filter(raw_response=raw_response).delete()
     for response_item in raw_response.data:
         form_data_list = response_item.get("formData", [])
 
@@ -78,7 +78,7 @@ def create_data_for_water_discharge_from_stress_areas(raw_response: RawResponse)
         != "gri-environment-water-303-3b-water_withdrawal_areas_water_stress"
     ):
         return
-
+    WaterDischargeFromStressAreas.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organisation = (
             raw_response.organization

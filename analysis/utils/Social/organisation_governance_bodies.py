@@ -48,7 +48,9 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
         == "gri-social-diversity_of_board-405-1b-number_of_employee"
     ):
         table_name = "Number of employees per employee category"
-
+    OrganisationGovernanceBodies.objects.filter(
+        raw_response=raw_response, table_name=table_name
+    ).delete()
     for index, local_data in enumerate(raw_response.data):
         age_group_and_value = get_age_group_and_value(local_data)
         gender_group_and_value = get_gender(local_data)
