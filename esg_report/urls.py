@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 from esg_report.Views.ScreenOne import ScreenOneView
 from esg_report.Views.ScreenTwo import ScreenTwo
+from esg_report.Views.ScreenThree import ScreenThreeView
 
 router = DefaultRouter()
 
@@ -15,6 +16,11 @@ urlpatterns = [
         "screen_two/<int:report_id>/",
         ScreenTwo.as_view(),
         name="screen_two",
+    ),
+    path(
+        "screen_three/<int:report_id>/",
+        ScreenThreeView.as_view(),
+        name="screen_three",
     ),
 ]
 urlpatterns += router.urls

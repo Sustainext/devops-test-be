@@ -13,7 +13,7 @@ class AboutTheCompanyAndOperations(AbstractModel):
     about_the_company_image = models.FileField(
         upload_to="esg_report/about_the_company/", blank=True, null=True
     )
-    company_operations = models.TextField()
+    business_relations = models.TextField()
     entities_included = models.TextField()
     entities_included_image = models.FileField(
         upload_to="esg_report/entities_included/", blank=True, null=True
