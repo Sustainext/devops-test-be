@@ -114,37 +114,36 @@ class AssessmentDisclosureSelectionRetrieve(APIView):
         # * Get all topic selection IDs
         topic_selections = AssessmentTopicSelection.objects.filter(
             assessment=assessment
-        )
+        ).select_related("topic")
         # * Get all topic_management_dislcosure disclosures from all topics
         topic_selection_ids = topic_selections.values_list("id", flat=True)
-        disclosures = Disclosure.objects.filter(
-            category="topic_management_dislcosure",
-            topic__id__in=topic_selections.values_list("topic_id", flat=True),
-        )
-        disclosures_list = disclosures.values_list("id", flat=True)
         selected_disclosures = AssessmentDisclosureSelection.objects.filter(
             topic_selection__id__in=topic_selection_ids
         ).select_related("topic_selection", "disclosure")
-        response_data = [
-            {
-                "topic_selection_id": assessment_disclosure.topic_selection.id,
-                "disclosure_id": assessment_disclosure.disclosure.id,
-                "disclosure_description": assessment_disclosure.disclosure.description,
-                "can_edit": assessment_disclosure.disclosure.category
-                != "topic_management_dislcosure",
-            }
-            for assessment_disclosure in selected_disclosures
-            if assessment_disclosure.disclosure.id not in disclosures_list
-        ]
-        for disclosure in disclosures:
+        response_data = []
+        for assessment_disclosure in selected_disclosures:
             response_data.append(
                 {
-                    "topic_selection_id": None,
-                    "disclosure_id": disclosure.id,
-                    "disclosure_description": disclosure.description,
-                    "can_edit": False,
+                    "topic_selection_id": assessment_disclosure.topic_selection.id,
+                    "disclosure_id": assessment_disclosure.disclosure.id,
+                    "disclosure_description": assessment_disclosure.disclosure.description,
+                    "can_edit": assessment_disclosure.disclosure.category
+                    != "topic_management_dislcosure",
                 }
             )
+        #* Requirement by the frontend.
+        for topic_selection in topic_selections:
+            for disclosure in topic_selection.topic.disclosure_set.filter(
+                category="topic_management_dislcosure"
+            ):
+                response_data.append(
+                    {
+                        "topic_selection_id": topic_selection.id,
+                        "disclosure_id": disclosure.id,
+                        "disclosure_description": disclosure.description,
+                        "can_edit": False,
+                    }
+                )
         return Response(response_data, status=status.HTTP_200_OK)
 
 
