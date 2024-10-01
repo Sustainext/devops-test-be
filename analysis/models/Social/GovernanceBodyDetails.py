@@ -38,6 +38,7 @@ class GovernanceBodyDetails(AbstractAnalysisModel, AbstractModel):
     index = models.PositiveIntegerField(
         help_text="Index of the data",
     )
+    currency = models.CharField(max_length=10, help_text="Currency")
 
     def total_employees(self):
         return self.male_count + self.female_count + self.non_binary_count
