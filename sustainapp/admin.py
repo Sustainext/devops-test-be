@@ -35,7 +35,7 @@ from sustainapp.models import (
     Certification,
     ZohoInfo,
     AnalysisData2,
-    TrackDashboard
+    TrackDashboard,
 )
 
 from django.db import migrations
@@ -43,8 +43,10 @@ from django.db import migrations
 
 # Email push notification
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from authentication.Mixins.ClientAdminMixin import ClientFilterAdminMixin
+from django.contrib.contenttypes.models import ContentType
 
 # from django.db.migrations.recorder import MigrationRecorder
 
@@ -59,7 +61,7 @@ class User_clientAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "client"]
 
 
-class OrganizationAdmin(admin.ModelAdmin):
+class OrganizationAdmin(ClientFilterAdminMixin, admin.ModelAdmin):
     list_display = [
         "id",
         "name",
@@ -258,7 +260,27 @@ class UserExtendedAdmin(UserAdmin):
     list_filter = ("client",)
     search_fields = ("username", "email", "client")
     ordering = ("username",)
-    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("client",)}),)
+
+    # Modify the fieldsets
+    fieldsets = UserAdmin.fieldsets + (
+        (
+            None,
+            {"fields": ("client",)},  # Add 'client' in a separate fieldset
+        ),
+    )
+
+    # Modify the existing Permissions fieldset to include 'is_client_admin'
+    fieldsets = list(UserAdmin.fieldsets)  # Convert to a list so it can be modified
+    for idx, fieldset in enumerate(fieldsets):
+        if fieldset[0] == "Permissions":
+            fieldsets[idx] = (
+                fieldset[0],
+                {
+                    "fields": fieldset[1]["fields"]
+                    + ("is_client_admin",)  # Add is_client_admin under Permissions
+                },
+            )
+    fieldsets = tuple(fieldsets)
 
 
 class ReportAdmin(admin.ModelAdmin):
@@ -274,9 +296,9 @@ class ZohoInfoAdmin(admin.ModelAdmin):
     list_filter = ("client__name",)
     search_fields = ("client__name", "table_no", "table_name")
 
+
 class TrackDashboardAdmin(admin.ModelAdmin):
     list_display = ["id", "table_name", "report_name"]
-
 
 
 UserExtendedModel = apps.get_model(settings.AUTH_USER_MODEL)
@@ -311,4 +333,3 @@ admin.site.register(TaskDashboard, TaskDashboardAdmin),
 admin.site.register(ClientTaskDashboard, ClientTaskDashboardAdmin),
 admin.site.register(ZohoInfo, ZohoInfoAdmin),
 admin.site.register(TrackDashboard, TrackDashboardAdmin),
-

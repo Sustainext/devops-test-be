@@ -50,6 +50,7 @@ class CustomUser(AbstractUser):
         related_query_name="userext",
     )
     objects = CustomUserManager()
+    is_client_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
