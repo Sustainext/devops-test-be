@@ -9,6 +9,8 @@ from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
+from sustainapp.Views.EmissionTask import EmissionTask
+from sustainapp.Views.AssignedEmissionTask import AssignedEmissionTask
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
 from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import MarketPresenceAnalyseView
 from sustainapp.Views.Analyse.Economic.CommunicationTraining import CommunicationTrainingAnalyzeView
@@ -80,6 +82,12 @@ urlpatterns = [
     ),
     path("user_client/", UserClientViewset.as_view(), name="user_client"),
     path("user_all_task/", UserTaskDashboardView.as_view(), name="user_all_task"),
+    path("get_approved_task/", EmissionTask.as_view(), name="emission_task"),
+    path(
+        "get_assigned_by_task/",
+        AssignedEmissionTask.as_view(),
+        name="assigned_emission_task",
+    ),
     path("get_location/", LocationListAPIView.as_view(), name="get_location"),
     path(
         "get_emission_analysis/",
@@ -225,5 +233,5 @@ urlpatterns = [
         "get_analyze_supplier_assesment/",
         SupplierEnvAnlayzeView.as_view(),
         name="get_analyze_supplier_assesment",
-    )
+    ),
 ]

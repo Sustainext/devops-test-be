@@ -11,7 +11,14 @@ CustomUser = apps.get_model(settings.AUTH_USER_MODEL)
 class ClientTaskDashboardSerializer(serializers.ModelSerializer):
     assign_to_email = serializers.CharField(source="assigned_to.email", required=False)
     assign_to_user_name = serializers.CharField(
-        source="assigned_to.first_name", required=False
+        source="assigned_to.first_name", required=False, read_only=True
+    )
+
+    assign_by_email = serializers.CharField(
+        source="assigned_by.email", required=False, read_only=True
+    )
+    assign_by_user_name = serializers.CharField(
+        source="assigned_by.first_name", required=False, read_only=True
     )
 
     class Meta:
@@ -32,7 +39,7 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
             ValidationError: If the `assigned_to` user does not exist or if the `assigned_to` and `assigned_by` users do not belong to the same client.
         """
         assigned_to_user_payload = self.initial_data.get("assigned_to")
-        assigned_by_user_payload = self.initial_data.get("assigned_by")
+        assigned_by_user_payload = self.context["request"].user.id
         try:
             assigned_to_user_client = CustomUser.objects.get(
                 id=assigned_to_user_payload
@@ -51,9 +58,11 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
 
 
 class TaskDashboardCustomSerializer(serializers.ModelSerializer):
-    assign_to_email = serializers.CharField(source="assigned_to.email", required=False)
+    assign_to_email = serializers.CharField(
+        source="assigned_to.email", required=False, read_only=True
+    )
     assign_to_user_name = serializers.CharField(
-        source="assigned_to.first_name", required=False
+        source="assigned_to.first_name", required=False, read_only=True
     )
 
     class Meta:
