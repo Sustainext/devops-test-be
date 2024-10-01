@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from esg_report.Serializer.CeoMessageSerializer import CeoMessageSerializer
+from sustainapp.models import Report
 
 
 class ScreenOneView(APIView):
@@ -23,8 +24,8 @@ class ScreenOneView(APIView):
         This API is used to update the CEO message for an ESG Report.
         """
         try:
-            esg_report = ESGReport.objects.get(id=esg_report_id)
-        except ESGReport.DoesNotExist:
+            esg_report = Report.objects.get(id=esg_report_id)
+        except Report.DoesNotExist:
             return Response(
                 {"error": "ESG Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -37,7 +38,7 @@ class ScreenOneView(APIView):
         signature = serializer.validated_data["signature"]
         signature_image = serializer.validated_data["signature_image"]
         ceo_message, _ = CeoMessage.objects.update_or_create(
-            esg_report=esg_report,
+            report=esg_report,
             defaults={
                 "message": message,
                 "message_image": message_image,
