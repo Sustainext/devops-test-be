@@ -20,7 +20,7 @@ class ScreenTwo(APIView):
                 report=report
             )
             serializer = AboutTheCompanyAndOperationsSerializer(
-                about_the_company_and_operations
+                about_the_company_and_operations, context={"request": request}
             )
             about_the_company_and_operations_data = serializer.data
             response_data = about_the_company_and_operations_data
@@ -86,7 +86,9 @@ class ScreenTwo(APIView):
     def put(self, request, report_id, format=None):
         try:
             report = Report.objects.get(id=report_id)
-            serializer = AboutTheCompanyAndOperationsSerializer(data=request.data)
+            serializer = AboutTheCompanyAndOperationsSerializer(
+                data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
                 AboutTheCompanyAndOperations.objects.filter(report=report).delete()
                 serializer.save(report=report)

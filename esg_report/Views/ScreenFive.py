@@ -1,19 +1,19 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from esg_report.models.ScreenThree import MissionVisionValues
+from esg_report.models.ScreenFive import AwardAndRecognition
 from sustainapp.models import Report
-from esg_report.Serializer.MissionVisionValuesSerializer import (
-    MissionVisionValuesSerializer,
+from esg_report.Serializer.AwardsAndRecognitionSerializer import (
+    AwardsAndRecognitionSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 
 
-class ScreenThreeView(APIView):
+class ScreenFiveAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, report_id, format=None):
+    def get(self, request, report_id):
         try:
             report = Report.objects.get(id=report_id)
         except Report.DoesNotExist:
@@ -21,18 +21,16 @@ class ScreenThreeView(APIView):
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
         try:
-            mission_vision_values = report.mission_vision_values
-        except (MissionVisionValues.DoesNotExist, ObjectDoesNotExist):
+            award_and_recognition: AwardAndRecognition = report.award_recognition
+            serializer = AwardsAndRecognitionSerializer(award_and_recognition)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
             return Response(
-                {"error": "Mission Vision Values not found"},
+                {"error": "Award and recognition not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        serializer = MissionVisionValuesSerializer(
-            mission_vision_values, context={"request": request}
-        )
-        return Response(serializer.data)
 
-    def put(self, request, report_id, format=None):
+    def put(self, request, report_id):
         try:
             report = Report.objects.get(id=report_id)
         except Report.DoesNotExist:
@@ -40,14 +38,14 @@ class ScreenThreeView(APIView):
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
         try:
-            mission_vision_values = report.mission_vision_values
-            mission_vision_values.delete()
-        except (MissionVisionValues.DoesNotExist, ObjectDoesNotExist):
-            # * If the MissionVisionValues object doesn't exist, create a new one
+            award_and_recognition: AwardAndRecognition = report.award_recognition
+            award_and_recognition.delete()
+        except ObjectDoesNotExist:
+            # * Condition where object does not exist, hence API will create a new one
             pass
-        serializer = MissionVisionValuesSerializer(
+        serializer = AwardsAndRecognitionSerializer(
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
