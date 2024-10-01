@@ -13,7 +13,7 @@ class CeoMessage(AbstractModel):
     signature_image
     """
 
-    esg_report = models.OneToOneField(
+    report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="ceo_message"
     )
     message = models.TextField()
