@@ -962,6 +962,7 @@ class AnalysisData2(models.Model):
 
     objects = ClientFiltering()
 
+from authentication.models import CustomUser, Client
 
 class ClientTaskDashboard(AbstractModel):
     task_name = models.CharField(max_length=1024)
@@ -972,10 +973,10 @@ class ClientTaskDashboard(AbstractModel):
         validators=[validate_future_date],
     )
     assigned_to = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="task"
+        CustomUser, on_delete=models.CASCADE, related_name="task"
     )
     assigned_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name="subordinates_task",
     )
@@ -1003,16 +1004,16 @@ class ClientTaskDashboard(AbstractModel):
     file = models.FileField(upload_to="documents/", null=True, blank=True)
     filename = models.CharField(max_length=1024, null=True, blank=True)
     file_uploaded_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name="fileuploadedby",
         null=True,
         blank=True,
     )
     file_modified_at = models.DateTimeField(null=True, blank=True)
-    activity = models.JSONField(null=True, blank=True)
+    activity = models.CharField(max_length=2048, null=True, blank=True)
+    region = models.CharField(max_length=1024, null=True, blank=True)
     objects = ClientFiltering()
-
 
 
 class ZohoInfo(AbstractModel):
@@ -1029,7 +1030,7 @@ class ZohoInfo(AbstractModel):
 
     def __str__(self) -> str:
         return self.client_name + " " + self.table_name
-    
+
 class TrackDashboard(AbstractModel):
     REPORT_CHOICES = [
     ('emission', 'Emission'),

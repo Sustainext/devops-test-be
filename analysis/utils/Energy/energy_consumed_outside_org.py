@@ -14,7 +14,7 @@ def create_data_for_energy_consumed_outsid_org_analysis(raw_response: RawRespons
         != "gri-environment-energy-302-2a-energy_consumption_outside_organization"
     ):
         return
-
+    EnergyConsumedOutsideOrg.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organization = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)
@@ -39,4 +39,3 @@ def create_data_for_energy_consumed_outsid_org_analysis(raw_response: RawRespons
                 ),
             },
         )[0].save()
-

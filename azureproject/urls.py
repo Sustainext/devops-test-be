@@ -141,6 +141,7 @@ urlpatterns = [
     ),
     path("datametric/", include("datametric.urls")),
     path("materiality_dashboard/", include("materiality_dashboard.urls")),
+    path("esg_report/", include("esg_report.urls")),
     path("refresh_token/", TokenRefreshView.as_view(), name="refresh_token"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEVELOPMENT_MODE:

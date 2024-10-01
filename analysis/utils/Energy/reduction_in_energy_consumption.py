@@ -14,7 +14,7 @@ def create_data_for_reduction_in_energy_consumption(raw_response: RawResponse):
         != "gri-environment-energy-302-4a-4b-reduction_of_energy_consumption"
     ):
         return
-
+    ReductionEnergyConsumption.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organisation = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)

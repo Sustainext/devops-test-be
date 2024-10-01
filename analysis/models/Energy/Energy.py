@@ -19,16 +19,14 @@ class BasicDataForEnergy(AbstractModel):
     month = models.CharField(max_length=8)
     raw_response = models.ForeignKey(RawResponse, on_delete=models.CASCADE)
     quantiy_gj = models.DecimalField(
-        max_digits=12, decimal_places=5, null=True, blank=True
+        max_digits=24, decimal_places=5, null=True, blank=True
     )
     quantity = models.DecimalField(
-        max_digits=12, decimal_places=5, null=True, blank=True
+        max_digits=24, decimal_places=5, null=True, blank=True
     )
     unit = models.CharField(max_length=8, null=True, blank=True)
     index = models.PositiveIntegerField(null=True, blank=True)
-    client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, null=True
-    )
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True)
 
     class Meta:
         abstract = True
@@ -36,7 +34,7 @@ class BasicDataForEnergy(AbstractModel):
     def convert_to_gj(self, quantity, unit):
         conversion_factors = {
             "Joules": 1e-9,
-            "KJ": 1e-3,
+            "KJ": 1e-6,
             "Wh": 0.0000036,
             "KWh": 0.0036,
             "GJ": 1,

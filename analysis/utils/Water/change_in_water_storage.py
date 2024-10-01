@@ -7,14 +7,10 @@ from common.utils.getting_parameters_for_orgs_corps import (
 from datametric.models import RawResponse
 
 
-
 def create_data_for_change_in_water_storage(raw_response: RawResponse):
-    if (
-        raw_response.path.slug
-        != "gri-environment-water-303-5c-change_in_water_storage"
-    ):
+    if raw_response.path.slug != "gri-environment-water-303-5c-change_in_water_storage":
         return
-
+    ChangeInWaterStorage.objects.filter(raw_response=raw_response).delete()
     for response_item in raw_response.data:
         form_data_list = response_item.get("formData", [])
 
@@ -48,15 +44,25 @@ def create_data_for_change_in_water_storage(raw_response: RawResponse):
                         "total_water_storage_at_beginning": get_integer(
                             form_data["Reporting2"]
                         ),
-                        "change_in_water_storage": get_integer(
-                            form_data["Reporting3"]
-                        ),
+                        "change_in_water_storage": get_integer(form_data["Reporting3"]),
                     },
                 )
             )
-            change_in_water_storage_object.total_water_storage_at_end = change_in_water_storage_object.convert_to_megalitres("total_water_storage_at_end")
-            change_in_water_storage_object.total_water_storage_at_beginning = change_in_water_storage_object.convert_to_megalitres("total_water_storage_at_beginning")
-            change_in_water_storage_object.change_in_water_storage = change_in_water_storage_object.convert_to_megalitres("change_in_water_storage")
+            change_in_water_storage_object.total_water_storage_at_end = (
+                change_in_water_storage_object.convert_to_megalitres(
+                    "total_water_storage_at_end"
+                )
+            )
+            change_in_water_storage_object.total_water_storage_at_beginning = (
+                change_in_water_storage_object.convert_to_megalitres(
+                    "total_water_storage_at_beginning"
+                )
+            )
+            change_in_water_storage_object.change_in_water_storage = (
+                change_in_water_storage_object.convert_to_megalitres(
+                    "change_in_water_storage"
+                )
+            )
 
             change_in_water_storage_object.unit = "Megalitre"
             change_in_water_storage_object.save()

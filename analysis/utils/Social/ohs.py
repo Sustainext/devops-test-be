@@ -9,6 +9,7 @@ from datametric.models import RawResponse
 
 def ohs_employee_worker_data(raw_response: RawResponse):
     if "gri-social-ohs-403-8a-number_of_employees" == raw_response.path.slug:
+        EmployeeWorkerData.objects.filter(raw_response=raw_response).delete()
         for index, employee_type_data in enumerate(raw_response.data):
             category = CATEGORY_CHOICES[index][0]
             EmployeeWorkerData.objects.update_or_create(
@@ -41,6 +42,9 @@ def ohs_the_number_of_injuries(raw_response: RawResponse):
         table_name = INJURIES_FOR_WHOM_CHOICES[1][0]
     else:
         return
+    InjuryReport.objects.filter(
+        raw_response=raw_response, table_name=table_name
+    ).delete()
     for local_data in raw_response.data:
         InjuryReport.objects.update_or_create(
             raw_response=raw_response,

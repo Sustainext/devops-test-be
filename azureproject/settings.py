@@ -48,6 +48,7 @@ PROJECT_APPS = [
     "datametric.apps.DatametricConfig",
     "analysis.apps.AnalysisConfig",
     "materiality_dashboard.apps.MaterialityDashboardConfig",
+    "esg_report.apps.EsgReportConfig",
 ]
 
 THIRD_PARTY = [

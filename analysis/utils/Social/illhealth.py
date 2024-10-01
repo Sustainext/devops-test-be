@@ -10,6 +10,9 @@ def ill_health_report_analysis(raw_response: RawResponse):
         table_name = "non_employees"
     else:
         return
+    IllHealthReport.objects.filter(
+        raw_response=raw_response, table_name=table_name
+    ).delete()
     for index, local_data in enumerate(raw_response.data):
         IllHealthReport.objects.update_or_create(
             raw_response=raw_response,

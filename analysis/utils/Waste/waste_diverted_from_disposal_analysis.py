@@ -13,7 +13,7 @@ def create_data_for_waste_diverted_from_disposal_analysis(raw_response: RawRespo
         != "gri-environment-waste-306-4b-4c-4d-waste_diverted_from_disposal"
     ):
         return
-
+    WasteDivertedFromDisposal.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organisation = (
             raw_response.organization

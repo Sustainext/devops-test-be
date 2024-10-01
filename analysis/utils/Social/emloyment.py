@@ -84,6 +84,7 @@ def employment_analysis(raw_response: RawResponse):
 
     for table_name, (slug_prefix, model) in path_slugs.items():
         if raw_response.path.slug.startswith(slug_prefix):
+            model.objects.filter(raw_response=raw_response).delete()
             create_data(raw_response, table_name, model)
             break
 
@@ -93,7 +94,7 @@ def parental_leave_analysis(raw_response: RawResponse):
         "gri-social-parental_leave-401-3a-3b-3c-3d-parental_leave"
         == raw_response.path.slug
     ):
-
+        ParentalLeave.objects.filter(raw_response=raw_response).delete()
         for index, category_data in enumerate(raw_response.data):
             category_data.pop("total")
             for gender, value in category_data.items():
