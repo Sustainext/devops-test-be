@@ -75,12 +75,12 @@ class OrganizationAdmin(ClientFilterAdminMixin, admin.ModelAdmin):
     list_filter = ("client",)
 
 
-class CorporateentityAdmin(admin.ModelAdmin):
+class CorporateentityAdmin(ClientFilterAdminMixin, admin.ModelAdmin):
     list_display = ["id", "name", "sector", "organization", "client"]
     list_filter = ("organization", "client")
 
 
-class LocationAdmin(admin.ModelAdmin):
+class LocationAdmin(ClientFilterAdminMixin, admin.ModelAdmin):
     list_display = [
         "id",
         "name",

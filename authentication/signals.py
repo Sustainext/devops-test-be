@@ -2,7 +2,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from sustainapp.models import Organization  # Update with your actual User model
+from sustainapp.models import (
+    Organization,
+    Corporateentity,
+    Location,
+)  # Update with your actual User model
 from authentication.models import CustomUser, Client
 
 
@@ -18,9 +22,6 @@ def assign_or_remove_permissions(sender, instance, created, **kwargs):
     post_save.disconnect(
         assign_or_remove_permissions, sender=CustomUser
     )  # <--Terminate the signal to avoid recursion
-    print(
-        f"Signal triggered for user: {instance.username}, is_client_admin: {instance.is_client_admin}"
-    )
     try:
         # Check if the user is a client admin
         if instance.is_client_admin:
@@ -41,16 +42,30 @@ def assign_client_admin_permissions(user):
 
     # Get the content type
     organization_content_type = ContentType.objects.get_for_model(Organization)
+    corporate_content_type = ContentType.objects.get_for_model(Corporateentity)
+    location_content_type = ContentType.objects.get_for_model(Location)
     # TODO: Add more models and permissions as needed
 
     # Permissions to be assigned to client admins
     permissions = Permission.objects.filter(
-        content_type=organization_content_type,
+        content_type__in=[
+            organization_content_type,
+            corporate_content_type,
+            location_content_type,
+        ],
         codename__in=[
             "view_organization",
             "add_organization",
             "change_organization",
             "delete_organization",
+            "add_corporateentity",
+            "change_corporateentity",
+            "delete_corporateentity",
+            "view_corporateentity",
+            "view_location",
+            "add_location",
+            "change_location",
+            "delete_location",
         ],
     )
 
@@ -69,11 +84,12 @@ def remove_client_admin_permissions(user):
         codename__in=[
             "view_organization",
             "add_organization",
-            "change_organization",
+            "change_organization",  # <-- No need filter here
             "delete_organization",
         ],
     )
-    user.user_permissions.remove(*permissions)
+    # user.user_permissions.remove(*permissions)
+    user.user_permissions.clear()
     user.save()
 
     # Optionally, remove the `is_staff` status if the user is no longer a client admin

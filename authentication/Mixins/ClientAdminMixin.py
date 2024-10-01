@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import AnonymousUser
+from authentication.models import Client
 
 
 class ClientFilterAdminMixin(admin.ModelAdmin):
@@ -25,3 +26,18 @@ class ClientFilterAdminMixin(admin.ModelAdmin):
 
         # Allow client admins and superusers to access the module
         return request.user.is_superuser or request.user.is_client_admin
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+
+        # Check if the logged-in user is a client admin
+        if request.user.is_client_admin:
+            # Filter the client field to only show the client's own data
+            if "client" in form.base_fields:
+                form.base_fields["client"].queryset = Client.objects.filter(
+                    id=request.user.client_id
+                )
+                form.base_fields["client"].initial = request.user.client_id
+                form.base_fields["client"].disabled = True
+
+        return form
