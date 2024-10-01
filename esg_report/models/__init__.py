@@ -3,3 +3,6 @@ from .ScreenOne import CeoMessage
 from .ScreenTwo import AboutTheCompanyAndOperations
 from .ScreenThree import MissionVisionValues
 from .ScreenFour import SustainabilityRoadmap
+from .ScreenFive import AwardAndRecognition
+from .ScreenSix import StakeholderEngagement
+from .ScreenSeven import AboutTheReport
