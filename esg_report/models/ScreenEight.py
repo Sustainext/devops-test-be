@@ -4,7 +4,7 @@ from common.models.AbstractModel import AbstractModel
 
 
 class MaterialityStatement(AbstractModel):
-    report = models.ForeignKey(
+    report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="materiality_statement"
     )
     statement = models.TextField()
