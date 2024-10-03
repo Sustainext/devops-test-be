@@ -33,23 +33,13 @@ class ScreenOneView(APIView):
 
         serializer = CeoMessageSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        message = serializer.validated_data["message"]
-        message_image = serializer.validated_data["message_image"]
-        ceo_name = serializer.validated_data["ceo_name"]
-        company_name = serializer.validated_data["company_name"]
-        ceo_message, _ = CeoMessage.objects.update_or_create(
-            report=esg_report,
-            defaults={
-                "message": message,
-                "message_image": message_image,
-                "ceo_name": ceo_name,
-                "company_name": company_name,
-            },
-        )
-        ceo_message.save()
-        return Response(
-            CeoMessageSerializer(ceo_message).data, status=status.HTTP_200_OK
-        )
+        try:
+            ceo_message = CeoMessage.objects.get(report=esg_report)
+            ceo_message.delete()
+        except CeoMessage.DoesNotExist:
+            pass
+        serializer.save(report=esg_report)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request, esg_report_id, format=None):
         """
