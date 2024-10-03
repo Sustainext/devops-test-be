@@ -255,7 +255,7 @@ class IdentifyingInformationAdmin(admin.ModelAdmin):
     list_filter = ("client", "user")
 
 
-class UserExtendedAdmin(UserAdmin):
+class UserExtendedAdmin(ClientFilterAdminMixin, UserAdmin):
     list_display = ["username", "client"]
     list_filter = ("client",)
     search_fields = ("username", "email", "client")

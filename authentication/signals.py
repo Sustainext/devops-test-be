@@ -44,6 +44,7 @@ def assign_client_admin_permissions(user):
     organization_content_type = ContentType.objects.get_for_model(Organization)
     corporate_content_type = ContentType.objects.get_for_model(Corporateentity)
     location_content_type = ContentType.objects.get_for_model(Location)
+    user_content_type = ContentType.objects.get_for_model(CustomUser)
     # TODO: Add more models and permissions as needed
 
     # Permissions to be assigned to client admins
@@ -52,6 +53,7 @@ def assign_client_admin_permissions(user):
             organization_content_type,
             corporate_content_type,
             location_content_type,
+            user_content_type,
         ],
         codename__in=[
             "view_organization",
@@ -66,6 +68,10 @@ def assign_client_admin_permissions(user):
             "add_location",
             "change_location",
             "delete_location",
+            "add_customuser",
+            "change_customuser",
+            "delete_customuser",
+            "view_customuser",
         ],
     )
 
