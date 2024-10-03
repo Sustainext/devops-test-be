@@ -39,7 +39,7 @@ class ScreenOneView(APIView):
 
         except CeoMessage.DoesNotExist:
             return Response(
-                {},
+                None,
                 status=status.HTTP_200_OK,  # * As per feedback of frontend team, we are returning 200 OK
             )
         serializer.is_valid(raise_exception=True)
@@ -60,7 +60,7 @@ class ScreenOneView(APIView):
             ceo_message = CeoMessage.objects.get(report=report)
         except CeoMessage.DoesNotExist:
             return Response(
-                {},
+                None,
                 status=status.HTTP_200_OK,
             )
         return Response(
