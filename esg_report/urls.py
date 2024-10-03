@@ -6,6 +6,8 @@ from esg_report.Views.ScreenThree import ScreenThreeView
 from esg_report.Views.ScreenFour import ScreenFourAPIView
 from esg_report.Views.ScreenFive import ScreenFiveAPIView
 from esg_report.Views.ScreenSix import ScreenSixAPIView
+from esg_report.Views.ScreenEight import ScreenEightAPIView
+from esg_report.Views.ScreenNine import ScreenNineView
 
 router = DefaultRouter()
 
@@ -40,6 +42,6 @@ urlpatterns = [
         ScreenSixAPIView.as_view(),
         name="screen_six",
     ),
-    
+    path("screen_nine/<int:report_id>/", ScreenNineView.as_view(), name="screen_nine"),
 ]
 urlpatterns += router.urls

@@ -1,20 +1,16 @@
+from esg_report.models.ScreenEight import MaterialityStatement
 from rest_framework import serializers
-from esg_report.models.ScreenOne import CeoMessage
 from common.Serializer.Fields.ClientFilteredPrimaryKeyRelatedField import (
     ClientFilteredPrimaryKeyRelatedField,
 )
 from sustainapp.models import Report
 
 
-class CeoMessageSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the CEO Message model
-    """
-
+class MaterialityStatementSerializer(serializers.ModelSerializer):
     report = ClientFilteredPrimaryKeyRelatedField(
         queryset=Report.objects.all(), required=False
     )
 
     class Meta:
-        model = CeoMessage
+        model = MaterialityStatement
         fields = "__all__"
