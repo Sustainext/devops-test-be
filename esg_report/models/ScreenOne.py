@@ -16,12 +16,8 @@ class CeoMessage(AbstractModel):
         Report, on_delete=models.CASCADE, related_name="ceo_message"
     )
     message = models.TextField()
-    message_image = models.ImageField(
-        upload_to="esg_report/ceo_message/", null=True, blank=True
-    )
-    signature_image = models.ImageField(
-        upload_to="esg_report/signature_image/", null=True, blank=True
-    )
+    message_image = models.TextField(null=True, blank=True)
+    signature_image = models.TextField(null=True, blank=True)
     ceo_name = models.TextField()
     company_name = models.TextField()
 

@@ -45,7 +45,9 @@ class ScreenTwo(APIView):
             )
 
             # Fetch raw responses and update the response data
-            raw_response_org_details = get_latest_raw_response(slugs["org_details"])
+            raw_response_org_details = get_latest_raw_response(
+                raw_responses=raw_responses, slug=slugs["org_details"]
+            )
             if raw_response_org_details:
                 response_data["2-1"] = {
                     "legal_name": raw_response_org_details.data[0]["Q1"]["text"],
@@ -63,7 +65,9 @@ class ScreenTwo(APIView):
             else:
                 response_data["2-1"] = None
 
-            raw_response_entities = get_latest_raw_response(slugs["entities"])
+            raw_response_entities = get_latest_raw_response(
+                raw_responses, slugs["entities"]
+            )
             if raw_response_entities:
                 response_data["2-2-a"] = [
                     entity["Q1"] for entity in raw_response_entities.data
@@ -71,27 +75,33 @@ class ScreenTwo(APIView):
             else:
                 response_data["2-2-a"] = None
 
-            raw_response_sectors = get_latest_raw_response(slugs["sectors"])
+            raw_response_sectors = get_latest_raw_response(
+                raw_responses=raw_responses, slug=slugs["sectors"]
+            )
             if raw_response_sectors:
                 response_data["2-6-a"] = raw_response_sectors.data
             else:
                 response_data["2-6-a"] = None
 
-            raw_response_value_chain = get_latest_raw_response(slugs["value_chain"])
+            raw_response_value_chain = get_latest_raw_response(
+                raw_responses=raw_responses, slug=slugs["value_chain"]
+            )
             if raw_response_value_chain:
                 response_data["2-6-b"] = raw_response_value_chain.data
             else:
                 response_data["2-6-b"] = None
 
             raw_response_relevant_business = get_latest_raw_response(
-                slugs["relevant_business"]
+                raw_responses=raw_responses, slug=slugs["relevant_business"]
             )
             if raw_response_relevant_business:
                 response_data["2-6-c"] = raw_response_relevant_business.data[0]["Q1"]
             else:
                 response_data["2-6-c"] = None
 
-            raw_response_change_information = get_latest_raw_response(slugs["changes"])
+            raw_response_change_information = get_latest_raw_response(
+                raw_responses=raw_responses, slug=slugs["changes"]
+            )
             if raw_response_change_information:
                 response_data["2-6-d"] = raw_response_change_information.data[0]["Q1"]
             else:
