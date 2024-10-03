@@ -58,7 +58,13 @@ class ScreenOneView(APIView):
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        ceo_message = CeoMessage.objects.get(report=report)
+        try:
+            ceo_message = CeoMessage.objects.get(report=report)
+        except CeoMessage.DoesNotExist:
+            return Response(
+                {"error": "CEO Message Does Not Exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         return Response(
             CeoMessageSerializer(ceo_message).data, status=status.HTTP_200_OK
         )
