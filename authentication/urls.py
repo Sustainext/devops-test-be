@@ -17,6 +17,7 @@ from authentication.Views.UserProfile import UserProfileViewSet
 from authentication.Views.ChangePassword import ChangePasswordAPIView
 from authentication.Views.AzurePowerBIToken import PowerBiToken
 from authentication.Views.CustomLogoutAPI import CustomLogoutView
+from authentication.Views.TestigAuthentication import TestAuthentication
 
 router = routers.DefaultRouter()
 router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
@@ -55,5 +56,6 @@ urlpatterns = [
     ),
     path("change_password/", ChangePasswordAPIView.as_view(), name="change_password"),
     path("powerbi_token/", PowerBiToken.as_view(), name="powerbi_token"),
+    path("test_authentication/", TestAuthentication.as_view(), name="test_authentication"),
     path("", include(router.urls)),
 ]

@@ -74,20 +74,6 @@ def assign_client_admin_permissions(user):
 
 
 def remove_client_admin_permissions(user):
-    # Get the content type for the models
-    organization_content_type = ContentType.objects.get_for_model(Organization)
-    client_content_type = ContentType.objects.get_for_model(Client)
-
-    # Permissions to be removed, This should be same as permission added on assign_client_admin_permissions
-    permissions = Permission.objects.filter(
-        content_type__in=[organization_content_type, client_content_type],
-        codename__in=[
-            "view_organization",
-            "add_organization",
-            "change_organization",  # <-- No need filter here
-            "delete_organization",
-        ],
-    )
     # user.user_permissions.remove(*permissions)
     user.user_permissions.clear()
     user.save()
