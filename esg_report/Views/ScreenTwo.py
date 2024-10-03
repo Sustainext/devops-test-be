@@ -113,8 +113,8 @@ class ScreenTwo(APIView):
             )
         except AboutTheCompanyAndOperations.DoesNotExist as e:
             return Response(
-                {"error": "AboutTheCompanyAndOperations does not exist"},
-                status=status.HTTP_404_NOT_FOUND,
+                None,
+                status=status.HTTP_200_OK,
             )
 
     def put(self, request, report_id, format=None):
