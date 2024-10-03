@@ -1,7 +1,7 @@
 from analysis.models.Social.OrganisationGovernanceBodies import (
     OrganisationGovernanceBodies,
 )
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from common.enums.Social import AGE_GROUP_CHOICES
 from analysis.models.Social.Gender import Gender
 from datametric.models import RawResponse
@@ -60,10 +60,10 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                 defaults = {
                     "age_group_value": age_group_value,
                     "gender_value": gender_value,
-                    "minority_group_count": get_integer(
+                    "minority_group_count": get_float(
                         local_data.get("minorityGroup", 0)
                     ),
-                    "vulnerable_communities_count": get_integer(
+                    "vulnerable_communities_count": get_float(
                         local_data.get("vulnerableCommunities", 0)
                     ),
                     "employee_category": local_data["category"],

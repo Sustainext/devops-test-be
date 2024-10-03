@@ -3,7 +3,7 @@ from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,
 )
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from datametric.models import RawResponse
 from common.utils.energy_unit_converter import convert_to_gj
 
@@ -31,13 +31,13 @@ def create_data_for_reduction_in_energy_consumption(raw_response: RawResponse):
             defaults={
                 "type_of_intervention": local_data["Typeofintervention"],
                 "energy_type_reduced": local_data["Energytypereduced"],
-                "base_year": get_integer(local_data["Baseyear"]),
+                "base_year": get_float(local_data["Baseyear"]),
                 "energy_reduction": local_data["Energyreductionis"],
                 "methodology_used": local_data["Methodologyused"],
-                "quantity": get_integer(local_data["Quantitysavedduetointervention"]),
+                "quantity": get_float(local_data["Quantitysavedduetointervention"]),
                 "unit": local_data["Unit"],
                 "quantiy_gj": convert_to_gj(
-                    quantity=get_integer(local_data["Quantitysavedduetointervention"]),
+                    quantity=get_float(local_data["Quantitysavedduetointervention"]),
                     unit=local_data["Unit"],
                 ),
             },

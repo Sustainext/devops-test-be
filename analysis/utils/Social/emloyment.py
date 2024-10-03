@@ -3,7 +3,7 @@ from analysis.models.Social.EmployeeTurnOver import EmploymentTurnover
 from analysis.models.Social.EmploymentHires import EmploymentHires
 from analysis.models.Social.Gender import Gender
 from analysis.models.Social.ParentalLeave import ParentalLeave, EMPLOYEE_CATEGORIES
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 
 EMPLOYMENT_TYPE_MAPPING = {
     "permanent_emp": "permanent employee",
@@ -26,7 +26,7 @@ def get_employment_type(slug):
 
 def get_age_group_and_value(data):
     return {
-        AGE_GROUP_MAPPING[key]: get_integer(value)
+        AGE_GROUP_MAPPING[key]: get_float(value)
         for key, value in data.items()
         if key not in ["total", "beginning", "end"]
     }
@@ -44,12 +44,10 @@ def create_data(raw_response: RawResponse, table_name, model):
             if model == EmploymentTurnover:
                 defaults.update(
                     {
-                        "employee_turnover_beginning": get_integer(
+                        "employee_turnover_beginning": get_float(
                             local_data.get("beginning", 0)
                         ),
-                        "employee_turnover_ending": get_integer(
-                            local_data.get("end", 0)
-                        ),
+                        "employee_turnover_ending": get_float(local_data.get("end", 0)),
                     }
                 )
 
@@ -108,5 +106,5 @@ def parental_leave_analysis(raw_response: RawResponse):
                     corporate=raw_response.locale.corporateentity,
                     gender=Gender.objects.get(gender=gender),
                     employee_category=EMPLOYEE_CATEGORIES[index][0],
-                    defaults={"value": get_integer(value)},
+                    defaults={"value": get_float(value)},
                 )[0].save()

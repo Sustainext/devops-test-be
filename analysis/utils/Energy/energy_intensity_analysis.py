@@ -3,7 +3,7 @@ from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,
 )
-from common.utils.value_types import get_integer, get_decimal
+from common.utils.value_types import get_float, get_decimal
 from datametric.models import RawResponse
 from common.utils.energy_unit_converter import convert_to_gj
 
