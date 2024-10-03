@@ -39,10 +39,8 @@ class ScreenOneView(APIView):
 
         except CeoMessage.DoesNotExist:
             return Response(
-                {
-                    "message": "CEO Message Does Not Exist",
-                },
-                status=status.HTTP_200_OK, #* As per feedback of frontend team, we are returning 200 OK
+                {},
+                status=status.HTTP_200_OK,  # * As per feedback of frontend team, we are returning 200 OK
             )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=esg_report)
@@ -62,7 +60,7 @@ class ScreenOneView(APIView):
             ceo_message = CeoMessage.objects.get(report=report)
         except CeoMessage.DoesNotExist:
             return Response(
-                {"error": "CEO Message Does Not Exist"},
+                {},
                 status=status.HTTP_200_OK,
             )
         return Response(
