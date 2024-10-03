@@ -35,15 +35,15 @@ class ScreenOneView(APIView):
         serializer.is_valid(raise_exception=True)
         message = serializer.validated_data["message"]
         message_image = serializer.validated_data["message_image"]
-        signature = serializer.validated_data["signature"]
-        signature_image = serializer.validated_data["signature_image"]
+        ceo_name = serializer.validated_data["ceo_name"]
+        company_name = serializer.validated_data["company_name"]
         ceo_message, _ = CeoMessage.objects.update_or_create(
             report=esg_report,
             defaults={
                 "message": message,
                 "message_image": message_image,
-                "signature": signature,
-                "signature_image": signature_image,
+                "ceo_name": ceo_name,
+                "company_name": company_name,
             },
         )
         ceo_message.save()
