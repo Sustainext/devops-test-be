@@ -42,7 +42,7 @@ class ScreenOneView(APIView):
                 {
                     "message": "CEO Message Does Not Exist",
                 },
-                status=status.HTTP_404_NOT_FOUND,
+                status=status.HTTP_200_OK, #* As per feedback of frontend team, we are returning 200 OK
             )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=esg_report)
@@ -56,14 +56,14 @@ class ScreenOneView(APIView):
             report = Report.objects.get(id=esg_report_id)
         except Report.DoesNotExist:
             return Response(
-                {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Report not found"}, status=status.HTTP_400_BAD_REQUEST
             )
         try:
             ceo_message = CeoMessage.objects.get(report=report)
         except CeoMessage.DoesNotExist:
             return Response(
                 {"error": "CEO Message Does Not Exist"},
-                status=status.HTTP_404_NOT_FOUND,
+                status=status.HTTP_200_OK,
             )
         return Response(
             CeoMessageSerializer(ceo_message).data, status=status.HTTP_200_OK
