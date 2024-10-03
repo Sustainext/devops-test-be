@@ -1,0 +1,16 @@
+from django.db import models
+from sustainapp.models import Report
+from common.models.AbstractModel import AbstractModel
+
+
+class ScreenNine(AbstractModel):
+    report = models.OneToOneField(
+        Report, on_delete=models.CASCADE, related_name="screen_nine"
+    )
+    statement = models.TextField()
+    board_gov_statement = models.TextField()
+    remuneration_policies = models.TextField()
+    policy_not_public_reason = models.TextField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.report.name} - Screen Nine Statements"

@@ -163,6 +163,7 @@ class StakeholderEngagement(AbstractModel):
 
 # Materiality Assessment Process Model
 class MaterialityAssessmentProcess(AbstractModel):
+    # TODO: Convert this into a one to one relationship
     assessment = models.ForeignKey(
         MaterialityAssessment,
         on_delete=models.CASCADE,
@@ -205,6 +206,7 @@ class MaterialityImpact(AbstractModel):
 
 # Management Approach Question Model
 class ManagementApproachQuestion(AbstractModel):
+    # TODO: Convert this into a one to one relationship
     assessment = models.ForeignKey(
         MaterialityAssessment,
         on_delete=models.CASCADE,

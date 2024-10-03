@@ -56,12 +56,12 @@ class ScreenOneView(APIView):
         This API is used to get the CEO message for an ESG Report.
         """
         try:
-            esg_report = ESGReport.objects.get(id=esg_report_id)
-        except ESGReport.DoesNotExist:
+            report = Report.objects.get(id=esg_report_id)
+        except Report.DoesNotExist:
             return Response(
-                {"error": "ESG Report not found"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        ceo_message = CeoMessage.objects.get(esg_report=esg_report)
+        ceo_message = CeoMessage.objects.get(report=report)
         return Response(
             CeoMessageSerializer(ceo_message).data, status=status.HTTP_200_OK
         )
