@@ -27,6 +27,7 @@ def create_data_for_direct_purchased_energy(raw_response: RawResponse):
             organization=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             raw_response=raw_response,
             defaults={
@@ -58,6 +59,7 @@ def create_data_for_consumed_energy(raw_response: RawResponse):
             organization=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             raw_response=raw_response,
             defaults={
@@ -89,6 +91,7 @@ def create_data_for_self_genereted(raw_response: RawResponse):
             organization=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             raw_response=raw_response,
             defaults={
@@ -108,12 +111,11 @@ def create_data_for_self_genereted(raw_response: RawResponse):
 def create_data_for_energy_sold(raw_response: RawResponse):
     if raw_response.path.slug != "gri-environment-energy-302-1d-energy_sold":
         return
-
+    EnergySold.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organisation = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)
         location = raw_response.locale
-        EnergySold.objects.filter(raw_response=raw_response).delete()
         EnergySold.objects.update_or_create(
             month=raw_response.month,
             year=raw_response.year,
