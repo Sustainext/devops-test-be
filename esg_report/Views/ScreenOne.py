@@ -10,6 +10,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from esg_report.Serializer.CeoMessageSerializer import CeoMessageSerializer
 from sustainapp.models import Report
+from rest_framework import status
 
 
 class ScreenOneView(APIView):
@@ -32,12 +33,18 @@ class ScreenOneView(APIView):
         # * This put method will either create or update the CEO message for an ESG Report.
 
         serializer = CeoMessageSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
         try:
             ceo_message = CeoMessage.objects.get(report=esg_report)
-            ceo_message.delete()
+            serializer = CeoMessageSerializer(ceo_message, request.data)
+
         except CeoMessage.DoesNotExist:
-            pass
+            return Response(
+                {
+                    "message": "CEO Message Does Not Exist",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer.is_valid(raise_exception=True)
         serializer.save(report=esg_report)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
