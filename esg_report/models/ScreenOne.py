@@ -19,6 +19,9 @@ class CeoMessage(AbstractModel):
     message_image = models.ImageField(
         upload_to="esg_report/ceo_message/", null=True, blank=True
     )
+    signature_image = models.ImageField(
+        upload_to="esg_report/signature_image/", null=True, blank=True
+    )
     ceo_name = models.TextField()
     company_name = models.TextField()
 
