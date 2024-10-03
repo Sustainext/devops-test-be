@@ -17,7 +17,7 @@ class CeoMessage(AbstractModel):
     )
     message = models.TextField()
     message_image = models.TextField(null=True, blank=True)
-    signature_image = models.ImageField(null=True, blank=True)
+    signature_image = models.TextField(null=True, blank=True)
     ceo_name = models.TextField()
     company_name = models.TextField()
 

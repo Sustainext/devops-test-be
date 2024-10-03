@@ -38,10 +38,7 @@ class ScreenOneView(APIView):
             serializer = CeoMessageSerializer(ceo_message, request.data)
 
         except CeoMessage.DoesNotExist:
-            return Response(
-                None,
-                status=status.HTTP_200_OK,  # * As per feedback of frontend team, we are returning 200 OK
-            )
+            pass
         serializer.is_valid(raise_exception=True)
         serializer.save(report=esg_report)
         return Response(serializer.data, status=status.HTTP_200_OK)
