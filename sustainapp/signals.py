@@ -30,6 +30,7 @@ user_log = logging.getLogger("user_logger")
 def send_welcome_email(sender, instance, created, **kwargs):
 
     if created and not instance.is_superuser:
+        user_profile_exists = hasattr(instance, "user_profile")
         # Generate a random password
         password = "".join(random.choices(string.ascii_letters + string.digits, k=12))
 
@@ -70,16 +71,21 @@ def send_welcome_email(sender, instance, created, **kwargs):
 
         send_mail(subject, "", from_email, recipient_list, html_message=html_message)
         LoginCounter.objects.create(user=instance).save()
-        UserProfile.objects.create(user=instance).save()
+        if not user_profile_exists:
+            UserProfile.objects.create(user=instance).save()
+
 
 def send_account_activation_email(user):
     first_name = user.first_name.capitalize()
     """Send an email notifying the user that their password has been changed."""
     subject = "Your Sustainext Account Is Now Activated!"
-    html_message = render_to_string('sustainapp/account_activation.html', 
-                                    {"first_name": first_name,
-                                     "EMAIL_REDIRECT": settings.EMAIL_REDIRECT,
-                                     })
+    html_message = render_to_string(
+        "sustainapp/account_activation.html",
+        {
+            "first_name": first_name,
+            "EMAIL_REDIRECT": settings.EMAIL_REDIRECT,
+        },
+    )
     from_email = settings.DEFAULT_FROM_EMAIL
     to_email = user.email
 
@@ -90,6 +96,7 @@ def send_account_activation_email(user):
         [to_email],
         html_message=html_message,
     )
+
 
 @receiver(user_signed_up)
 def disable_confirmation_email(sender, request, user, **kwargs):

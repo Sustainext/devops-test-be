@@ -47,6 +47,9 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from authentication.Mixins.ClientAdminMixin import ClientFilterAdminMixin
 from django.contrib.contenttypes.models import ContentType
+from authentication.Views.CustomUserCreationForm import CustomUserCreationForm
+from authentication.models import CustomUser, UserProfile
+from authentication.admin import UserProfileInline
 
 # from django.db.migrations.recorder import MigrationRecorder
 
@@ -256,31 +259,118 @@ class IdentifyingInformationAdmin(admin.ModelAdmin):
 
 
 class UserExtendedAdmin(ClientFilterAdminMixin, UserAdmin):
-    list_display = ["username", "client"]
-    list_filter = ("client",)
+    add_form = CustomUserCreationForm  # Custom form for adding users
+
+    # The default form for editing users remains unchanged (default UserAdmin behavior)
+    list_display = ["username", "email", "client"]
     search_fields = ("username", "email", "client")
     ordering = ("username",)
 
-    # Modify the fieldsets
-    fieldsets = UserAdmin.fieldsets + (
-        (
-            None,
-            {"fields": ("client",)},  # Add 'client' in a separate fieldset
-        ),
-    )
+    # The default fieldsets (for editing users)
+    fieldsets = list(
+        UserAdmin.fieldsets
+    )  # Convert fieldsets to a list for modification
+
+    # Add 'client' to a separate fieldset
+    fieldsets.append((None, {"fields": ("client", "admin", "roles")}))
 
     # Modify the existing Permissions fieldset to include 'is_client_admin'
-    fieldsets = list(UserAdmin.fieldsets)  # Convert to a list so it can be modified
     for idx, fieldset in enumerate(fieldsets):
         if fieldset[0] == "Permissions":
             fieldsets[idx] = (
                 fieldset[0],
                 {
                     "fields": fieldset[1]["fields"]
-                    + ("is_client_admin",)  # Add is_client_admin under Permissions
+                    + ("is_client_admin",)  # Add is_client_admin field
                 },
             )
+
+    # Convert fieldsets back to a tuple (Django expects fieldsets to be tuples)
     fieldsets = tuple(fieldsets)
+
+    # Custom fieldsets for the Add User form only
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "username",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "admin",
+                    "password1",
+                    "password2",
+                ),
+            },
+        ),
+    )
+    inlines = [
+        UserProfileInline,
+    ]
+
+    def get_fieldsets(self, request, obj=None):
+        """
+        Returns different fieldsets depending on whether we're adding or editing a user.
+        """
+        if not obj:  # If adding a new user (obj is None)
+            return self.add_fieldsets  # Return the custom fieldsets for adding a user
+
+        # If editing a user, return the fieldsets for editing
+        fieldsets = list(super().get_fieldsets(request, obj))
+
+        # Remove whole permission fieldset if the user is not a superuser
+        if not request.user.is_superuser:
+            fieldsets = [
+                fieldset for fieldset in fieldsets if fieldset[0] != "Permissions"
+            ]
+
+        return fieldsets
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Return the correct form for adding or editing a user.
+        """
+        # Custom form for adding users
+        if obj is None:  # If we're adding a new user (obj is None)
+            form = self.add_form
+        else:
+            form = super().get_form(request, obj, **kwargs)
+
+        if obj and obj.admin:
+            if "roles" in form.base_fields:
+                form.base_fields["roles"].disabled = True
+
+        if request.user.is_superuser:
+            return form
+
+        # If the logged-in user is a client admin, restrict the client field
+        if request.user.is_client_admin:
+            # Filter the client field to only show the client's own data
+            if "client" in form.base_fields:
+                form.base_fields["client"].queryset = Client.objects.filter(
+                    id=request.user.client_id
+                )
+                form.base_fields["client"].initial = request.user.client_id
+                form.base_fields["client"].disabled = True
+
+        return form
+
+    def save_model(self, request, obj, form, change):
+        """
+        Override save_model to set the 'roles' field based on the 'admin' checkbox.
+        """
+        if obj.admin:
+            obj.roles = "admin"  # Set role to admin if admin is checked
+
+        # If the logged-in user is not a superuser, prevent them from changing the admin field
+        if not (request.user.is_superuser or request.user.is_client_admin):
+            obj.admin = form.initial.get(
+                "admin", obj.admin
+            )  # Restore the initial state of the admin field
+
+        super().save_model(request, obj, form, change)
 
 
 class ReportAdmin(admin.ModelAdmin):

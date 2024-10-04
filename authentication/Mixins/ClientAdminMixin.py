@@ -12,6 +12,9 @@ class ClientFilterAdminMixin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
 
+        if request.user.is_superuser:
+            return qs
+
         # Check if the user is authenticated and is a client admin
         if not isinstance(request.user, AnonymousUser) and request.user.is_client_admin:
             return qs.filter(client=request.user.client)
@@ -30,7 +33,11 @@ class ClientFilterAdminMixin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
 
-        # Check if the logged-in user is a client admin
+        # Prioritize superuser permissions over client admin
+        if request.user.is_superuser:
+            return form  # Superusers get the full form with no restrictions
+
+        # If the logged-in user is a client admin but not a superuser, restrict the client field
         if request.user.is_client_admin:
             # Filter the client field to only show the client's own data
             if "client" in form.base_fields:

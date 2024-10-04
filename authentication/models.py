@@ -21,6 +21,11 @@ class Client(AbstractModel):
 
 
 class CustomUser(AbstractUser):
+    roles_choices = (
+        ("admin", "Admin"),
+        ("manager", "Manager"),
+        ("employee", "Employee"),
+    )
 
     client = models.ForeignKey(
         Client,
@@ -51,6 +56,8 @@ class CustomUser(AbstractUser):
     )
     objects = CustomUserManager()
     is_client_admin = models.BooleanField(default=False)
+    admin = models.BooleanField(default=False)
+    roles = models.CharField(max_length=20, choices=roles_choices, default="employee")
 
     def __str__(self):
         return self.username
