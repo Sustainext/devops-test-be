@@ -15,11 +15,11 @@ class CeoMessage(AbstractModel):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="ceo_message"
     )
-    message = models.TextField()
+    message = models.TextField(null=True, blank=True)
     message_image = models.TextField(null=True, blank=True)
     signature_image = models.TextField(null=True, blank=True)
-    ceo_name = models.TextField()
-    company_name = models.TextField()
+    ceo_name = models.TextField(null=True, blank=True)
+    company_name = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"CEO Message for {self.report.organization.name}"
