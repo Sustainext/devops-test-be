@@ -317,6 +317,7 @@ class ScreenNineView(APIView):
         return data
 
     def get_2_21_a(self):
+        #TODO: Sum of annual total compensation ratio 
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[23])
             .order_by("year")

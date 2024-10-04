@@ -19,6 +19,8 @@ class CeoMessage(AbstractModel):
     message_image = models.TextField(null=True, blank=True)
     signature_image = models.TextField(null=True, blank=True)
     ceo_name = models.TextField(null=True, blank=True)
+    signature_image_name = models.TextField(null=True, blank=True)
+    message_image_name = models.TextField(null=True, blank=True)
     company_name = models.TextField(null=True, blank=True)
 
     def __str__(self):
