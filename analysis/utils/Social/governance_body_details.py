@@ -1,5 +1,5 @@
 from analysis.models.Social.GovernanceBodyDetails import GovernanceBodyDetails
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from datametric.models import RawResponse
 from analysis.models.Social.GovernanceBodyDetails import GovernanceBodyDetails
 from analysis.models.Social.Gender import Gender

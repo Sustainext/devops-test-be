@@ -9,7 +9,7 @@ from common.utils.getting_parameters_for_orgs_corps import (
     get_organisation,
 )
 from datametric.models import RawResponse
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from common.utils.energy_unit_converter import convert_to_gj
 
 
@@ -27,6 +27,7 @@ def create_data_for_direct_purchased_energy(raw_response: RawResponse):
             organization=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             raw_response=raw_response,
             defaults={
@@ -34,10 +35,10 @@ def create_data_for_direct_purchased_energy(raw_response: RawResponse):
                 "source": local_data["Source"],
                 "purpose": local_data["Purpose"],
                 "renewability": local_data["Renewable"],
-                "quantity": get_integer(local_data["Quantity"]),
+                "quantity": get_float(local_data["Quantity"]),
                 "unit": local_data["Unit"],
                 "quantiy_gj": convert_to_gj(
-                    quantity=get_integer(local_data["Quantity"]),
+                    quantity=get_float(local_data["Quantity"]),
                     unit=local_data["Unit"],
                 ),
             },
@@ -58,6 +59,7 @@ def create_data_for_consumed_energy(raw_response: RawResponse):
             organization=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             raw_response=raw_response,
             defaults={
@@ -65,10 +67,10 @@ def create_data_for_consumed_energy(raw_response: RawResponse):
                 "source": local_data["Source"],
                 "purpose": local_data["Purpose"],
                 "renewability": local_data["Renewable"],
-                "quantity": get_integer(local_data["Quantity"]),
+                "quantity": get_float(local_data["Quantity"]),
                 "unit": local_data["Unit"],
                 "quantiy_gj": convert_to_gj(
-                    quantity=get_integer(local_data["Quantity"]),
+                    quantity=get_float(local_data["Quantity"]),
                     unit=local_data["Unit"],
                 ),
             },
@@ -89,16 +91,17 @@ def create_data_for_self_genereted(raw_response: RawResponse):
             organization=organisation,
             corporate=corporate,
             location=location,
+            client=raw_response.client,
             index=index,
             raw_response=raw_response,
             defaults={
                 "energy_type": local_data["EnergyType"],
                 "source": local_data["Source"],
                 "renewability": local_data["Renewable"],
-                "quantity": get_integer(local_data["Quantity"]),
+                "quantity": get_float(local_data["Quantity"]),
                 "unit": local_data["Unit"],
                 "quantiy_gj": convert_to_gj(
-                    quantity=get_integer(local_data["Quantity"]),
+                    quantity=get_float(local_data["Quantity"]),
                     unit=local_data["Unit"],
                 ),
             },
@@ -108,12 +111,11 @@ def create_data_for_self_genereted(raw_response: RawResponse):
 def create_data_for_energy_sold(raw_response: RawResponse):
     if raw_response.path.slug != "gri-environment-energy-302-1d-energy_sold":
         return
-
+    EnergySold.objects.filter(raw_response=raw_response).delete()
     for index, local_data in enumerate(raw_response.data):
         organisation = get_organisation(raw_response.locale)
         corporate = get_corporate(raw_response.locale)
         location = raw_response.locale
-        EnergySold.objects.filter(raw_response=raw_response).delete()
         EnergySold.objects.update_or_create(
             month=raw_response.month,
             year=raw_response.year,
@@ -129,10 +131,10 @@ def create_data_for_energy_sold(raw_response: RawResponse):
                 "type_of_entity": local_data["Typeofentity"],
                 "name_of_entity": local_data["Nameofentity"],
                 "renewability": local_data["Renewable"],
-                "quantity": get_integer(local_data["Quantity"]),
+                "quantity": get_float(local_data["Quantity"]),
                 "unit": local_data["Unit"],
                 "quantiy_gj": convert_to_gj(
-                    quantity=get_integer(local_data["Quantity"]),
+                    quantity=get_float(local_data["Quantity"]),
                     unit=local_data["Unit"],
                 ),
             },

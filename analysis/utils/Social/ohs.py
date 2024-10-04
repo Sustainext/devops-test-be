@@ -3,7 +3,7 @@ from analysis.models.Social.OHSEmployeeWorkerData import (
     CATEGORY_CHOICES,
 )
 from analysis.models.Social.InjuryReport import InjuryReport, INJURIES_FOR_WHOM_CHOICES
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from datametric.models import RawResponse
 
 
@@ -22,13 +22,13 @@ def ohs_employee_worker_data(raw_response: RawResponse):
                 client=raw_response.client,
                 category=category,
                 defaults={
-                    "number_of_employees": get_integer(
+                    "number_of_employees": get_float(
                         employee_type_data["coveredbythesystem"]
                     ),
-                    "number_of_workers_not_employees": get_integer(
+                    "number_of_workers_not_employees": get_float(
                         employee_type_data["externalparty"]
                     ),
-                    "total_number_of_employees": get_integer(
+                    "total_number_of_employees": get_float(
                         employee_type_data["internallyaudited"]
                     ),
                 },
@@ -57,10 +57,10 @@ def ohs_the_number_of_injuries(raw_response: RawResponse):
             table_name=table_name,
             defaults={
                 "employee_category": local_data["employeeCategory"],
-                "fatalities": get_integer(local_data["fatalities"]),
-                "high_consequence_injuries": get_integer(local_data["highconsequence"]),
-                "recordable_injuries": get_integer(local_data["recordable"]),
+                "fatalities": get_float(local_data["fatalities"]),
+                "high_consequence_injuries": get_float(local_data["highconsequence"]),
+                "recordable_injuries": get_float(local_data["recordable"]),
                 "injury_types": local_data["maintypes"],
-                "hours_worked": get_integer(local_data["numberofhoursworked"]),
+                "hours_worked": get_float(local_data["numberofhoursworked"]),
             },
         )[0].save()
