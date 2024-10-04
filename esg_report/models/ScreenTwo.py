@@ -9,19 +9,11 @@ class AboutTheCompanyAndOperations(AbstractModel):
         on_delete=models.CASCADE,
         related_name="about_the_company_and_operations",
     )
-    about_the_company = models.TextField()
-    about_the_company_image = models.FileField(
-        upload_to="esg_report/about_the_company/", blank=True, null=True
-    )
-    business_relations = models.TextField()
-    entities_included = models.TextField()
-    entities_included_image = models.FileField(
-        upload_to="esg_report/entities_included/", blank=True, null=True
-    )
-    supply_chain_description = models.TextField()
-    supply_chain_image = models.FileField(
-        upload_to="esg_report/supply_chain/", blank=True, null=True
-    )
+    about_the_company = models.TextField(null=True, blank=True)
+
+    business_relations = models.TextField(null=True, blank=True)
+    entities_included = models.TextField(null=True, blank=True)
+    supply_chain_description = models.TextField(null=True, blank=True)
 
     def __str__(self) -> str:
-        return f"About the Company and Operations - {self.report.report_name}"
+        return f"About the Company and Operations - {self.report.name}"
