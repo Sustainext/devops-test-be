@@ -3,7 +3,7 @@ from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,
 )
-from common.utils.value_types import get_integer, get_decimal
+from common.utils.value_types import get_float, get_decimal, get_float
 from datametric.models import RawResponse
 from common.utils.energy_unit_converter import convert_to_gj
 
@@ -31,10 +31,10 @@ def create_data_for_energy_consumed_outsid_org_analysis(raw_response: RawRespons
             defaults={
                 "energy_type": local_data["EnergyType"],
                 "purpose": local_data["Purpose"],
-                "quantity": get_integer(local_data["Quantity"]),
+                "quantity": get_float(local_data["Quantity"]),
                 "unit": local_data["Unit"],
                 "quantiy_gj": convert_to_gj(
-                    quantity=get_integer(local_data["Quantity"]),
+                    quantity=get_float(local_data["Quantity"]),
                     unit=local_data["Unit"],
                 ),
             },

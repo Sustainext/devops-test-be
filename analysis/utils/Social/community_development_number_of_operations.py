@@ -6,7 +6,7 @@ from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,
 )
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from datametric.models import RawResponse
 
 
@@ -44,7 +44,7 @@ def create_data_for_community_development_number_of_operations(
             index=index,
             defaults={
                 "name_of_operation": OPERATION_CHOICES[index][0],
-                "local_community_operations_count": get_integer(entry["operations"]),
-                "total_operations_count": get_integer(entry["totaloperations"]),
+                "local_community_operations_count": get_float(entry["operations"]),
+                "total_operations_count": get_float(entry["totaloperations"]),
             },
         )[0].save()

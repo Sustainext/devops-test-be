@@ -1,5 +1,5 @@
 from analysis.models.Water.ChangeInWaterStorage import ChangeInWaterStorage
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,
@@ -38,13 +38,13 @@ def create_data_for_change_in_water_storage(raw_response: RawResponse):
                     index=index,
                     defaults={
                         "unit": form_data["Unit"],
-                        "total_water_storage_at_end": get_integer(
+                        "total_water_storage_at_end": get_float(
                             form_data["Reporting1"]
                         ),
-                        "total_water_storage_at_beginning": get_integer(
+                        "total_water_storage_at_beginning": get_float(
                             form_data["Reporting2"]
                         ),
-                        "change_in_water_storage": get_integer(form_data["Reporting3"]),
+                        "change_in_water_storage": get_float(form_data["Reporting3"]),
                     },
                 )
             )

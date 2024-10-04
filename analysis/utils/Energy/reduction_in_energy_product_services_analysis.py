@@ -4,7 +4,7 @@ from common.utils.getting_parameters_for_orgs_corps import (
     get_organisation,
 )
 from common.utils.energy_unit_converter import convert_to_gj
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from datametric.models import RawResponse
 
 
@@ -30,12 +30,12 @@ def create_data_for_reduction_in_energy_product_services(raw_response: RawRespon
             raw_response=raw_response,
             defaults={
                 "product": local_data["ProductServices"],
-                "base_year": get_integer(local_data["Baseyear"]),
-                "quantity": get_integer(local_data["Quantity"]),
+                "base_year": get_float(local_data["Baseyear"]),
+                "quantity": get_float(local_data["Quantity"]),
                 "quantiy_gj": convert_to_gj(
-                    quantity=get_integer(local_data["Quantity"]),
+                    quantity=get_float(local_data["Quantity"]),
                     unit=local_data["Unit"],
                 ),
-                "unit": "GJ",
+                "unit": local_data["Unit"],
             },
         )[0].save()

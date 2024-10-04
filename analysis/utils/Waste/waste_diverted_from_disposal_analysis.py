@@ -1,5 +1,5 @@
 from analysis.models.Waste.WasteDivertedFromDisposal import WasteDivertedFromDisposal
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,
@@ -39,12 +39,15 @@ def create_data_for_waste_diverted_from_disposal_analysis(raw_response: RawRespo
                 defaults={
                     "waste_type": local_data["WasteType"],
                     "category": local_data["Wastecategory"],
-                    "waste_diverted": get_integer(local_data["Wastediverted"]),
+                    "recovery_option": local_data["RecoveryOperations"],
+                    "waste_diverted": get_float(local_data["Wastediverted"]),
                     "waste_unit": local_data["Unit"],
                     "site": local_data["Site"],
                 },
             )
         )
-        waste_diverted_from_disposal.convert_to_kilograms()
+        waste_diverted_from_disposal.waste_diverted = (
+            waste_diverted_from_disposal.convert_to_kilograms()
+        )
         waste_diverted_from_disposal.waste_unit = "Kgs"
         waste_diverted_from_disposal.save()

@@ -1,4 +1,4 @@
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,
@@ -35,7 +35,7 @@ def create_data_for_waste_generated_analysis(raw_response: RawResponse):
             defaults={
                 "waste_type": local_data["WasteType"],
                 "category": local_data["Wastecategory"],
-                "waste_generated": get_integer(local_data["Wastegenerated"]),
+                "waste_generated": get_float(local_data["Wastegenerated"]),
                 "waste_unit": local_data["Unit"],
             },
         )

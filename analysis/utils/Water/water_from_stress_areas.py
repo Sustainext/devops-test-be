@@ -2,7 +2,7 @@ from analysis.models.Water.WaterFromStressAreas import (
     WaterFromStressAreas,
     WaterDischargeFromStressAreas,
 )
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,
@@ -49,12 +49,10 @@ def create_data_for_water_from_stress_areas(raw_response: RawResponse):
                         "business_operation": form_data["Businessoperations"],
                         "name_of_water_stress_area": form_data["waterstress"],
                         "pin_code": form_data["Pincode"],
-                        "total_water_withdrawal": get_integer(
+                        "total_water_withdrawal": get_float(
                             form_data["Waterwithdrawal"]
                         ),
-                        "total_water_discharge": get_integer(
-                            form_data["Waterdischarge"]
-                        ),
+                        "total_water_discharge": get_float(form_data["Waterdischarge"]),
                     },
                 )
             )
@@ -105,7 +103,7 @@ def create_data_for_water_discharge_from_stress_areas(raw_response: RawResponse)
                     "source": local_data["Source"],
                     "withdraw_from_third_party": local_data["Discharge"],
                     "unit": local_data["Unit"],
-                    "quantity": get_integer(local_data["Quantity"]),
+                    "quantity": get_float(local_data["Quantity"]),
                 },
             )
         )
