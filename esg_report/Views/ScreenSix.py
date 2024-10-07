@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.models.ScreenSix import StakeholderEngagement
+from materiality_dashboard.models import MaterialityAssessment
 from esg_report.Serializer.StakeholderEngagementSerializer import (
     StakeholderEngagementSerializer,
 )
@@ -36,21 +37,31 @@ class ScreenSixAPIView(APIView):
                 RawResponse.objects.filter(path__slug__in=slugs)
                 .filter(year__range=(report.start_date.year, report.end_date.year))
                 .filter(client=self.request.user.client)
-            )
+            ).order_by("-year")
             response_data = serializer.data
-            response_data["engagement_with_stakeholders"] = [
-                i[0]
-                for i in raw_responses.filter(path__slug=slugs[0]).values_list(
-                    "data", flat=True
-                )
-            ]
+            response_data["engagement_with_stakeholders"] = (
+                raw_responses.filter(path__slug=slugs[0]).first().data
+                if raw_responses.filter(path__slug=slugs[0]).exists()
+                else None
+            )
             response_data["approach_to_stakeholder_engagement"] = [
                 i[0]
                 for i in raw_responses.filter(path__slug=slugs[1]).values_list(
                     "data", flat=True
                 )
             ]
-            # TODO: Add Stakeholder Feedback
+            # TODO: Modify the Stakeholder Feedback after materiality assessment selection logic is done
+            materiality_assessment = MaterialityAssessment.objects.filter(
+                start_date__gte=report.start_date,
+                end_date__lte=report.end_date,
+                client=report.client,
+            ).first()
+            try:
+                response_data["stakeholder_feedback"] = (
+                    materiality_assessment.management_approach_questions.stakeholder_engagement_effectiveness_description
+                )
+            except ObjectDoesNotExist:
+                response_data["stakeholder_feedback"] = None
             return Response(response_data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response(
