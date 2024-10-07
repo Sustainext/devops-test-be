@@ -27,10 +27,12 @@ class ScreenSevenAPIView(APIView):
             serializer = AboutTheReportSerializer(about_the_report)
             response_data = serializer.data
         except ObjectDoesNotExist:
-            return Response(
-                {"error": "About The Report not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            response_data = {
+                "report": report.id,
+                "description": None,
+                "framework_description": None,
+                "external_assurance": None,
+            }
         slugs = [
             "gri-general-report_details-reporting_period-2-3-a",
             "gri-general-report_details-point-2-3-d",

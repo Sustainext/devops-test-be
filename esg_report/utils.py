@@ -22,3 +22,48 @@ def get_materiality_dashboard(report: Report):
 
     Case 2 (if x>b) - Validation needs to be shown that no material topics have been selected for the chosen dates. User cannot proceed without selecting material topics.
     """
+    ...
+    x, y = report.start_date, report.end_date
+    current_materiality = (
+        MaterialityAssessment.objects.filter(client=report.client)
+        .order_by("-created_at")
+        .first()
+    )
+    a, b = current_materiality.start_date, current_materiality.end_date
+    previous_materiality = (
+        MaterialityAssessment.objects.filter(client=report.client)
+        .filter(id__gt=current_materiality.id)
+        .order_by("-created_at")
+        .first()
+    )
+
+    if x < a and y < b:
+        if (
+            previous_materiality
+            and previous_materiality.start_date <= x <= previous_materiality.end_date
+            and previous_materiality.start_date <= y <= previous_materiality.end_date
+        ):
+            # Case 1: Previous materiality exists within the date range
+            return previous_materiality
+        else:
+            # Case 2: No previous materiality exists
+            raise ValidationError(
+                "No material topics have been selected for the chosen dates. User cannot proceed."
+            )
+
+    elif (x < a and y > b) or (x > a and y < b):
+        # Use material topics from the current materiality assessment
+        return current_materiality
+
+    elif x > a and y > b:
+        if x < b:
+            # Case 1: Use the most recent material topics with a message
+            return current_materiality
+        else:
+            # Case 2: Validation failure due to no topics selected
+            raise ValidationError(
+                "No material topics have been selected for the chosen dates. User cannot proceed."
+            )
+
+    else:
+        return "No valid condition matched."

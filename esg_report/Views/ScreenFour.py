@@ -24,8 +24,8 @@ class ScreenFourAPIView(APIView):
             sustainability_roadmap = report.sustainability_roadmap
         except (SustainabilityRoadmap.DoesNotExist, ObjectDoesNotExist):
             return Response(
-                {"error": "Sustainability Roadmap not found"},
-                status=status.HTTP_404_NOT_FOUND,
+                None,
+                status=status.HTTP_200_OK,
             )
         serializer = SustainabilityRoadmapSerializer(sustainability_roadmap)
         return Response(serializer.data, status=status.HTTP_200_OK)

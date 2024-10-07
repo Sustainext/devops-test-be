@@ -8,9 +8,7 @@ class SustainabilityRoadmap(AbstractModel):
         Report, on_delete=models.CASCADE, related_name="sustainability_roadmap"
     )
     description = models.TextField(blank=True, null=True)
-    file = models.FileField(
-        upload_to="esg_report/sustainability_roadmap/", blank=True, null=True
-    )
+    file = models.TextField(blank=True, null=True)
 
     def __str__(self) -> str:
         return self.report.name + " - Sustainability Roadmap"

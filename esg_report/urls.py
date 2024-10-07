@@ -6,6 +6,7 @@ from esg_report.Views.ScreenThree import ScreenThreeView
 from esg_report.Views.ScreenFour import ScreenFourAPIView
 from esg_report.Views.ScreenFive import ScreenFiveAPIView
 from esg_report.Views.ScreenSix import ScreenSixAPIView
+from esg_report.Views.ScreenSeven import ScreenSevenAPIView
 from esg_report.Views.ScreenEight import ScreenEightAPIView
 from esg_report.Views.ScreenNine import ScreenNineView
 
@@ -41,6 +42,16 @@ urlpatterns = [
         "screen_six/<int:report_id>/",
         ScreenSixAPIView.as_view(),
         name="screen_six",
+    ),
+    path(
+        "screen_seven/<int:report_id>/",
+        ScreenSevenAPIView.as_view(),
+        name="screen_seven",
+    ),
+    path(
+        "screen_eight/<int:report_id>/",
+        ScreenEightAPIView.as_view(),
+        name="screen_eight",
     ),
     path("screen_nine/<int:report_id>/", ScreenNineView.as_view(), name="screen_nine"),
 ]

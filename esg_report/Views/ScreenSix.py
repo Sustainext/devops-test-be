@@ -1,17 +1,19 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from rest_framework.permissions import IsAuthenticated
+from django.core.exceptions import ObjectDoesNotExist
 from esg_report.models.ScreenSix import StakeholderEngagement
-from sustainapp.models import Report
-from datametric.models import RawResponse
 from esg_report.Serializer.StakeholderEngagementSerializer import (
     StakeholderEngagementSerializer,
 )
-from rest_framework.permissions import IsAuthenticated
-from django.core.exceptions import ObjectDoesNotExist
+from sustainapp.models import Report
+from datametric.models import RawResponse
 
 
 class ScreenSixAPIView(APIView):
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, report_id):

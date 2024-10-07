@@ -54,8 +54,8 @@ class ScreenEightAPIView(APIView):
             response_data = serializer.data
         except ObjectDoesNotExist:
             return Response(
-                {"error": "Materiality Statement not found"},
-                status=status.HTTP_404_NOT_FOUND,
+                None,
+                status=status.HTTP_200_OK,
             )
         materiality_assessment: MaterialityAssessment = get_materiality_dashboard(
             report
