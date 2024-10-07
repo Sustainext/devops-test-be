@@ -28,8 +28,8 @@ class ScreenSevenAPIView(APIView):
             response_data = serializer.data
         except ObjectDoesNotExist:
             return Response(
-                {"error": "About The Report not found"},
-                status=status.HTTP_404_NOT_FOUND,
+                None,
+                status=status.HTTP_200_OK,
             )
         slugs = [
             "gri-general-report_details-reporting_period-2-3-a",

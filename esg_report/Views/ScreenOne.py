@@ -1,26 +1,21 @@
-"""
-This file contains GET, PUT API for creating, updating, and getting CEO message
-"""
-
-from esg_report.models.ScreenOne import CeoMessage
-from esg_report.models.ESGReport import ESGReport
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from esg_report.Serializer.CeoMessageSerializer import CeoMessageSerializer
+from esg_report.models.ScreenOne import CeoMessage
 from sustainapp.models import Report
-from rest_framework import status
 
 
 class ScreenOneView(APIView):
     """
-    This API is used to get and update the CEO message that is the whole screen one for an ESG Report.
+    This API is used to get and update the CEO message 
+    that is the whole screen one for an ESG Report.
     """
 
     permission_classes = [IsAuthenticated]
 
-    def put(self, request, esg_report_id, format=None):
+    def put(self, request, esg_report_id):
         """
         This API is used to update the CEO message for an ESG Report.
         """
@@ -43,7 +38,7 @@ class ScreenOneView(APIView):
         serializer.save(report=esg_report)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def get(self, request, esg_report_id, format=None):
+    def get(self, request, esg_report_id):
         """
         This API is used to get the CEO message for an ESG Report.
         """
