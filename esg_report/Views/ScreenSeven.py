@@ -94,9 +94,9 @@ class ScreenSevenAPIView(APIView):
             # * If the About The Report does not exist, create a new one
             pass
 
-            serializer = AboutTheReportSerializer(
-                data=request.data, context={"request": request}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save(report=report)
-            return Response(serializer.data)
+        serializer = AboutTheReportSerializer(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(report=report)
+        return Response(serializer.data)
