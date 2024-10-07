@@ -62,13 +62,13 @@ class ScreenSixAPIView(APIView):
                     .first()
                     .stakeholder_engagement_effectiveness_description
                 )
-            except ObjectDoesNotExist:
+            except (ObjectDoesNotExist, AttributeError):
                 response_data["stakeholder_feedback"] = None
             return Response(response_data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response(
-                {"error": "Stakeholder engagement not found"},
-                status=status.HTTP_404_NOT_FOUND,
+                None,
+                status=status.HTTP_200_OK,
             )
 
     def put(self, request, report_id, format=None):
