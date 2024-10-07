@@ -48,6 +48,11 @@ urlpatterns = [
         ScreenSevenAPIView.as_view(),
         name="screen_seven",
     ),
+    path(
+        "screen_eight/<int:report_id>/",
+        ScreenEightAPIView.as_view(),
+        name="screen_eight",
+    ),
     path("screen_nine/<int:report_id>/", ScreenNineView.as_view(), name="screen_nine"),
 ]
 urlpatterns += router.urls
