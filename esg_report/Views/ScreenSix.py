@@ -39,11 +39,18 @@ class ScreenSixAPIView(APIView):
                 .filter(client=self.request.user.client)
             ).order_by("-year")
             response_data = serializer.data
-            response_data["engagement_with_stakeholders"] = (
-                raw_responses.filter(path__slug=slugs[0]).first().data
-                if raw_responses.filter(path__slug=slugs[0]).exists()
-                else None
-            )
+            if raw_responses.filter(path__slug=slugs[0]).exists():
+                response_data.update(
+                    raw_responses.filter(path__slug=slugs[0]).first().data[0]
+                )
+            else:
+                response_data.update(
+                    {
+                        "Organisationengages": None,
+                        "Stakeholdersidentified": None,
+                        "Stakeholderengagement": None,
+                    }
+                )
             response_data["approach_to_stakeholder_engagement"] = [
                 i[0]
                 for i in raw_responses.filter(path__slug=slugs[1]).values_list(
