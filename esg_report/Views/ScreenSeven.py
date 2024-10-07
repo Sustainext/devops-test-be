@@ -47,34 +47,34 @@ class ScreenSevenAPIView(APIView):
             .filter(client=self.request.user.client)
         )
         response_data["2-3-a"] = (
-            raw_responses.filter(path__slug=slugs[0]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[0]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[0]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[0]).order_by("year").first() is not None
             else None
         )
         response_data["2-3d"] = (
-            raw_responses.filter(path__slug=slugs[1]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[1]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[1]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[1]).order_by("year").first() is not None
             else None
         )
         response_data["2-4-a"] = (
-            raw_responses.filter(path__slug=slugs[2]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[2]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[2]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[2]).order_by("year").first() is not None
             else None
         )
         response_data["2-5-a"] = {}
         response_data["2-5-a"]["assurance-policy"] = (
-            raw_responses.filter(path__slug=slugs[3]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[3]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[3]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[3]).order_by("year").first() is not None
             else None
         )
         response_data["2-5-a"]["assurance-highest"] = (
-            raw_responses.filter(path__slug=slugs[4]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[4]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[4]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[4]).order_by("year").first() is not None
             else None
         )
         response_data["2-5-b"] = (
-            raw_responses.filter(path__slug=slugs[5]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[5]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[5]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[5]).order_by("year").first() is not None
             else None
         )
 
