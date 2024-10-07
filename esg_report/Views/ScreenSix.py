@@ -58,7 +58,9 @@ class ScreenSixAPIView(APIView):
             ).first()
             try:
                 response_data["stakeholder_feedback"] = (
-                    materiality_assessment.management_approach_questions.stakeholder_engagement_effectiveness_description
+                    materiality_assessment.management_approach_questions.all()
+                    .first()
+                    .stakeholder_engagement_effectiveness_description
                 )
             except ObjectDoesNotExist:
                 response_data["stakeholder_feedback"] = None
