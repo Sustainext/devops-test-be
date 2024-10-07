@@ -50,6 +50,7 @@ from django.contrib.contenttypes.models import ContentType
 from authentication.Views.CustomUserCreationForm import CustomUserCreationForm
 from authentication.models import CustomUser, UserProfile
 from authentication.admin import UserProfileInline
+from authentication.AdminSite.ClientAdmin import client_admin_site
 
 # from django.db.migrations.recorder import MigrationRecorder
 
@@ -423,3 +424,9 @@ admin.site.register(TaskDashboard, TaskDashboardAdmin),
 admin.site.register(ClientTaskDashboard, ClientTaskDashboardAdmin),
 admin.site.register(ZohoInfo, ZohoInfoAdmin),
 admin.site.register(TrackDashboard, TrackDashboardAdmin),
+
+# Clinet_admin site register
+client_admin_site.register(UserExtendedModel, UserExtendedAdmin),
+client_admin_site.register(Organization, OrganizationAdmin),
+client_admin_site.register(Corporateentity, CorporateentityAdmin),
+client_admin_site.register(Location, LocationAdmin),

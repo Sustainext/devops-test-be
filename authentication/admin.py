@@ -1,5 +1,6 @@
 from django.contrib import admin
 from authentication.models import UserProfile, LoginCounter
+from authentication.AdminSite.ClientAdmin import client_admin_site
 
 
 # Register your models here.
@@ -21,3 +22,4 @@ class LoginCounterAdmin(admin.ModelAdmin):
 
 admin.site.register(UserProfile, UserProfileAdmin),
 admin.site.register(LoginCounter, LoginCounterAdmin),
+client_admin_site.register(UserProfile, UserProfileAdmin),

@@ -37,7 +37,7 @@ def assign_or_remove_permissions(sender, instance, created, **kwargs):
 def assign_client_admin_permissions(user):
     # Check if the user is already staff
     if not user.is_staff:
-        user.is_staff = True  # Set is_staff to True because to access the admin site, is_staff must be True
+        # user.is_staff = True  # Set is_staff to True because to access the admin site, is_staff must be True
         user.save()
 
     # Get the content type
