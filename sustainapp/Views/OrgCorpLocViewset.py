@@ -22,7 +22,7 @@ class CorporateListView(APIView):
             # Split the org_ids (comma-separated string) into a list
             org_ids_list = org_ids.split(",")
             corporates = Corporateentity.objects.filter(
-                organization_id__in=org_ids_list
+                client=request.user.client, organization_id__in=org_ids_list
             )
             serializer = CorporateSerializer(corporates, many=True)
             return Response(serializer.data)
@@ -42,7 +42,9 @@ class LocationListView(APIView):
         if corp_ids:
             # Split the corporate_ids (comma-separated string) into a list
             corp_ids_list = corp_ids.split(",")
-            locations = Location.objects.filter(corporateentity_id__in=corp_ids_list)
+            locations = Location.objects.filter(
+                client=request.user.client, corporateentity_id__in=corp_ids_list
+            )
             serializer = LocationSerializer(locations, many=True)
             return Response(serializer.data)
         else:
