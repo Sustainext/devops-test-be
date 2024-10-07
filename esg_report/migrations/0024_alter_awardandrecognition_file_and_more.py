@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='awardandrecognition',
             name='file',
-            field=models.TimeField(blank=True, null=True),
+            field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
             model_name='missionvisionvalues',
