@@ -2,6 +2,9 @@
 
 from django.db import migrations, models
 
+def delete_description_data(apps, schema_editor):
+    StakeholderEngagement = apps.get_model('esg_report', 'StakeholderEngagement')
+    StakeholderEngagement.objects.all().update(description=None)
 
 class Migration(migrations.Migration):
 
@@ -10,6 +13,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(delete_description_data),
         migrations.AlterField(
             model_name='stakeholderengagement',
             name='description',
