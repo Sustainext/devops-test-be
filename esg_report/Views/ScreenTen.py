@@ -187,7 +187,7 @@ class ScreenTenAPIView(APIView):
             response_data["approach_for_sustainability"] = None
             response_data["sustainability_goals"] = None
             response_data["approach_to_supply_chain_sustainability"] = None
-
+        self.set_raw_responses()
         materiality_assessment = get_materiality_assessment(self.report)
         management_approach_question: ManagementApproachQuestion | None = (
             ManagementApproachQuestion.objects.filter(
