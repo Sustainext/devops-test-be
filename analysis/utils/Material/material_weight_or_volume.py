@@ -65,7 +65,6 @@ def create_data_for_non_renewable_materials(raw_response: RawResponse):
                     },
                 )
             )
-            print("Saved NonRenewableMaterials object:", non_renewable_materials_object)
             non_renewable_materials_object.unit = non_renewable_materials_object.unit
             non_renewable_materials_object.save()
         else:
