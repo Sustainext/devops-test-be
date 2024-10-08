@@ -10,6 +10,7 @@ from esg_report.Serializer.ScreenTenSerializer import ScreenTenSerializer
 from sustainapp.models import Report
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 
 
 class ScreenTenAPIView(APIView):
@@ -21,6 +22,7 @@ class ScreenTenAPIView(APIView):
             1: "gri-economic-proportion_of_spending_on_local_suppliers-percentage-204-1a",
             2: "gri-economic-proportion_of_spending_on_local_suppliers-organization-204-1b",
             3: "gri-economic-proportion_of_spending_on_local_suppliers-definition-204-1c",
+            4: "gri-social-supplier_screened-414-1a-number_of_new_suppliers",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -45,55 +47,80 @@ class ScreenTenAPIView(APIView):
         response_data.update(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def set_raw_responses(self):
+        self.raw_responses = RawResponse.objects.filter(
+            year__range=(self.report.start_date.year, self.report.end_date.year)
+        ).filter(client=self.request.user.client)
+
+        if self.report.organization or self.report.corporate:
+            self.raw_responses = self.raw_responses.filter(
+                Q(organization=self.report.organization)
+                | Q(corporate=self.report.corporate)
+                | Q(locale__in=self.report.corporate.location.all())
+            )
+
     def get_204_1abc_using_datapoint(self) -> dict[str, Any]:
         # * Get datapoint
-        datapoint = DataPoint.objects.filter(path__slug=self.slugs[0]).filter(
-            client_id=self.report.client.id
-        ).filter(year__range=(self.report.start_date.year, self.report.end_date.year))
-        
+        datapoint = (
+            (
+                DataPoint.objects.filter(path__slug=self.slugs[0])
+                .filter(client_id=self.report.client.id)
+                .filter(
+                    year__range=(self.report.start_date.year, self.report.end_date.year)
+                )
+            )
+            .order_by("-year")
+            .first()
+        )
+        # TODO: Complete the method.
 
     def get_204_1abc(self) -> dict[str, Any]:
         response_data = {}
         # * 204-1a
-        raw_responses = (
-            RawResponse.objects.filter(path__slug=self.slugs[1])
-            .filter(
-                year__range=(self.report.start_date.year, self.report.end_date.year)
-            )
-            .filter(client=self.request.user.client)
-        ).order_by("-year")
+        raw_responses = (self.raw_responses.filter(path__slug=self.slugs[1])).order_by(
+            "-year"
+        )
         if raw_responses.exists():
             response_data["204-1a"] = raw_responses.first().data[0]["Q1"]
         else:
             response_data["204-1a"] = None
 
         # * 204-1b
-        raw_responses = (
-            RawResponse.objects.filter(path__slug=self.slugs[2])
-            .filter(
-                year__range=(self.report.start_date.year, self.report.end_date.year)
-            )
-            .filter(client=self.request.user.client)
-        ).order_by("-year")
+        raw_responses = (self.raw_responses.filter(path__slug=self.slugs[2])).order_by(
+            "-year"
+        )
         if raw_responses.exists():
             response_data["204-1b"] = raw_responses.first().data[0]["Q1"]
         else:
             response_data["204-1b"] = None
 
         # * 204-1c
-        raw_responses = (
-            RawResponse.objects.filter(path__slug=self.slugs[2])
-            .filter(
-                year__range=(self.report.start_date.year, self.report.end_date.year)
-            )
-            .filter(client=self.request.user.client)
-        ).order_by("-year")
+        raw_responses = (self.raw_responses.filter(path__slug=self.slugs[2])).order_by(
+            "-year"
+        )
         if raw_responses.exists():
             response_data["204-1b"] = raw_responses.first().data[0]["Q1"]
         else:
             response_data["204-1b"] = None
 
         return response_data
+
+    def get_404_1abc(self) -> dict[str, Any]:
+        response_data = {}
+        # * 414-1a
+        raw_responses = (self.raw_responses.filter(path__slug=self.slugs[3])).order_by(
+            "-year"
+        )
+        response_data["414-1a"] = {}
+        if raw_responses.exists():
+            response_data["414-1a"][
+                "number_of_new_suppliers_that_were_screened_using_social_criteria"
+            ] = raw_responses.first().data[0]["Q1"]
+            response_data["414-1a"][
+                "total_number_of_suppliers"
+            ] = raw_responses.first().data[0]["Q2"]
+        
+        
 
     def get(self, request, report_id: int) -> Response:
         try:
