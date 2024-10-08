@@ -15,6 +15,7 @@ class Client(AbstractModel):
     name = models.CharField(max_length=256, unique=True)
     customer = models.BooleanField(default=False)
     uuid = models.UUIDField(unique=True, default=uuid4, editable=False)
+    sub_domain = models.CharField(max_length=256, unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.name
