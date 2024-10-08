@@ -20,3 +20,4 @@ def get_float(value):
         return float(value)
     except (ValueError, TypeError):
         return 0
+
