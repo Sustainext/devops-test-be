@@ -10,9 +10,21 @@ def get_latest_raw_response(raw_responses, slug):
     return raw_responses.filter(path__slug=slug).order_by("-year").first()
 
 
-def get_materiality_assessment(
-    report: Report, materiality_assessment: MaterialityAssessment
-):
+def get_materiality_assessment(report: Report):
+    """
+    The duration is to be calculated by the report.
+    So Imagine there are two materiality dashboards m and n
+    m = (start_date,end_date)=(1st January 2022, 31st December 2022)
+    n = (start_date,end_date) = (1st January 2023, 31st December 2023)
+    Now Imagine there are two reports r1 and r2
+    r1 = (start_date, end_date) = (1st November 2022, 1st June 2023)
+    r2 = (start_date, end_date) = (1st June 2022, 31st January 2023)
+    r1 will use materiality dashboard n r2 will use materiality dashboard m
+    Because the report period lies more in the period of n materiality dashboard.
+    """
+    materiality_assessment = MaterialityAssessment.objects.filter(
+        client=report.client,
+    )
     start_date = report.start_date
     end_date = report.end_date
 

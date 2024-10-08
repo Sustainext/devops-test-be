@@ -11,6 +11,7 @@ from esg_report.Serializer.StakeholderEngagementSerializer import (
 )
 from sustainapp.models import Report
 from datametric.models import RawResponse
+from esg_report.utils import get_materiality_assessment
 
 
 class ScreenSixAPIView(APIView):
@@ -57,12 +58,8 @@ class ScreenSixAPIView(APIView):
                     "data", flat=True
                 )
             ]
-            # TODO: Modify the Stakeholder Feedback after materiality assessment selection logic is done
-            materiality_assessment = MaterialityAssessment.objects.filter(
-                start_date__gte=report.start_date,
-                end_date__lte=report.end_date,
-                client=report.client,
-            ).first()
+            # TODO: Change the getting stakeholder_feedback from materiality assessment ones relationship converts to OneToOne Field
+            materiality_assessment = get_materiality_assessment(report)
             try:
                 response_data["stakeholder_feedback"] = (
                     materiality_assessment.management_approach_questions.all()
@@ -85,6 +82,7 @@ class ScreenSixAPIView(APIView):
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
+        response_data = {}
         try:
             stakeholder_engagement: StakeholderEngagement = (
                 report.stakeholder_engagement
@@ -92,10 +90,12 @@ class ScreenSixAPIView(APIView):
             stakeholder_engagement.delete()
         except ObjectDoesNotExist:
             # * Condition when API has to be behave like POST
-            pass
+            response_data["description"] = None
+
         serializer = StakeholderEngagementSerializer(
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response_data.update(serializer.data)
+        return Response(response_data, status=status.HTTP_200_OK)
