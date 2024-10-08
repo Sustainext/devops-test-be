@@ -45,12 +45,21 @@ from analysis.utils.Water.water_from_all_areas_analysis import (
     create_data_for_water_from_all_areas_analysis,
     create_data_for_water_discharge_from_third_party,
 )
-from  analysis.utils.Water.water_from_stress_areas import (
+from analysis.utils.Water.water_from_stress_areas import (
     create_data_for_water_from_stress_areas,
     create_data_for_water_discharge_from_stress_areas,
 )
 from analysis.utils.Water.change_in_water_storage import (
     create_data_for_change_in_water_storage,
+)
+from analysis.utils.Material.material_weight_or_volume import (
+    create_data_for_non_renewable_materials,
+)
+from analysis.utils.Material.recycled_input_materials import (
+    create_data_for_recycled_input_materials,
+)
+from analysis.utils.Material.reclaimed_materials import (
+    create_data_for_reclaimed_materials,
 )
 from datametric.models import RawResponse
 
@@ -83,3 +92,6 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_water_discharge_from_stress_areas(raw_response=raw_response)
     create_data_for_water_discharge_from_third_party(raw_response=raw_response)
     create_data_for_change_in_water_storage(raw_response=raw_response)
+    create_data_for_non_renewable_materials(raw_response=raw_response)
+    create_data_for_recycled_input_materials(raw_response=raw_response)
+    create_data_for_reclaimed_materials(raw_response=raw_response)
