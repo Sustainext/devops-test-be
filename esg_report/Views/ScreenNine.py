@@ -8,6 +8,7 @@ from esg_report.Serializer.ScreenNineSerializer import ScreenNineSerializer
 from sustainapp.models import Report
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 
 
 class ScreenNineView(APIView):
@@ -64,9 +65,16 @@ class ScreenNineView(APIView):
         }
 
     def set_raw_responses(self):
-        self.raw_responses = RawResponse.objects.filter(
-            path__slug__in=list(self.slugs.values())
-        ).filter(client=self.report.client)
+        self.raw_responses = (
+            RawResponse.objects.filter(path__slug__in=list(self.slugs.values()))
+            .filter(client=self.report.client)
+            .filter(Q(organization=self.report.organization))
+        )
+        if self.report.corporate:
+            self.raw_responses = self.raw_responses.filter(
+                Q(corporate=self.report.corporate)
+                | Q(locale__in=self.report.corporate.locations.all())
+            )
 
     def get_2_9_a(self):
         raw_response = (
@@ -74,7 +82,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        return raw_response.data[0]["Q1"] if raw_response is not None else None
+        return raw_response.data[0].get("Q1") if raw_response is not None else None
 
     def get_2_9_b(self):
         raw_response = (
@@ -82,7 +90,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         if data is None:
             return data
         else:
@@ -106,7 +114,11 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"]["Q1"] if raw_response is not None else None
+        data = (
+            raw_response.data[0].get("Q1").get("Q1")
+            if raw_response is not None
+            else None
+        )
         return data
 
     def get_2_10_b(self):
@@ -116,7 +128,7 @@ class ScreenNineView(APIView):
                 .order_by("-year")
                 .first()
             )
-            data = raw_response.data[0]["Q1"] if raw_response is not None else None
+            data = raw_response.data[0].get("Q1") if raw_response is not None else None
             return data
 
         def get_2_10_b_governance_body_nomination_criteria():
@@ -156,7 +168,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_202_2b(self):
@@ -165,7 +177,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_202_2c(self):
@@ -174,7 +186,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_202_2d(self):
@@ -183,7 +195,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_12_a(self):
@@ -210,7 +222,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_14_a_and_b(self):
@@ -224,7 +236,7 @@ class ScreenNineView(APIView):
         if not response_data:
             return response_data
 
-        data["highest_body_approves_report"] = response_data["Q1"]
+        data["highest_body_approves_report"] = response_data.get("Q1")
         data["reason_for_yes"] = response_data["Q2"]
         data["reason_for_no"] = response_data["Q3"]
         return data
@@ -239,7 +251,7 @@ class ScreenNineView(APIView):
         if not raw_response_data:
             return raw_response_data
         data = {
-            "governance_body_responsibility_delegation": raw_response_data["Q1"],
+            "governance_body_responsibility_delegation": raw_response_data.get("Q1"),
             "has_appointed_executive_for_impact_management": raw_response_data["Q2"],
             "reason_for_has_appointed_executive_for_impact_management": raw_response_data[
                 "Q3"
@@ -257,7 +269,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_16_a(self):
@@ -270,7 +282,9 @@ class ScreenNineView(APIView):
         if not response_data:
             return response_data
         data = {}
-        data["critical_concerns_communicated_to_governance_body"] = response_data["Q1"]
+        data["critical_concerns_communicated_to_governance_body"] = response_data.get(
+            "Q1"
+        )
         data["critical_concerns_communication_description"] = response_data["Q2"]
         return data
 
@@ -284,7 +298,7 @@ class ScreenNineView(APIView):
         if not raw_response_data:
             return raw_response_data
         data = {}
-        data["total_critical_concerns_reported"] = raw_response_data["Q1"]
+        data["total_critical_concerns_reported"] = raw_response_data.get("Q1")
         data["nature_of_critical_concerns_reported"] = raw_response_data["Q2"]
         return data
 
@@ -294,7 +308,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_18_b(self):
@@ -317,7 +331,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_19_a(self):
@@ -330,7 +344,7 @@ class ScreenNineView(APIView):
         if not raw_response_data:
             return raw_response_data
         data = {}
-        data["remuneration_policy_fixed_and_variable_pay"] = raw_response_data["Q1"]
+        data["remuneration_policy_fixed_and_variable_pay"] = raw_response_data.get("Q1")
         data["remuneration_policy_sign_on_bonuses"] = raw_response_data["Q2"]
         data["remuneration_policy_termination_payments"] = raw_response_data["Q3"]
         data["remuneration_policy_clawbacks"] = raw_response_data["Q4"]
@@ -363,7 +377,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_22_a(self):
@@ -372,7 +386,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_28_a(self):
@@ -387,7 +401,9 @@ class ScreenNineView(APIView):
                 self.raw_responses.filter(path__slug=slug).order_by("-year").first()
             )
             key = f"2_25_{chr(97 + i - 27)}"  # This will generate keys 2_25_a, 2_25_b, etc.
-            data[key] = raw_response.data[0]["Q1"] if raw_response is not None else None
+            data[key] = (
+                raw_response.data[0].get("Q1") if raw_response is not None else None
+            )
         return data
 
     def get_2_26_a(self):
@@ -400,7 +416,7 @@ class ScreenNineView(APIView):
         if not raw_response_data:
             return raw_response_data
         data = {}
-        data["responsible_business_conduct_advice"] = raw_response_data["Q1"]
+        data["responsible_business_conduct_advice"] = raw_response_data.get("Q1")
         data["business_conduct_concerns"] = raw_response_data["Q2"]
         return data
 
@@ -414,7 +430,7 @@ class ScreenNineView(APIView):
         if not raw_response_data:
             return raw_response_data
         data = {}
-        data["significant_non_compliance_occurred"] = raw_response_data["Q1"]
+        data["significant_non_compliance_occurred"] = raw_response_data.get("Q1")
         data["total_significant_non_compliance_instances"] = raw_response_data["Q2"]
         data["total_fines_incurred_instances"] = raw_response_data.get("Q3")
         data["total_non_monetary_sanctions_instances"] = raw_response_data.get("Q4")
@@ -431,7 +447,7 @@ class ScreenNineView(APIView):
         if not raw_response_data:
             return raw_response_data
         data = {}
-        data["total_fines_incurred_instances"] = raw_response_data["Q1"]
+        data["total_fines_incurred_instances"] = raw_response_data.get("Q1")
         data["total_fines_incurred_instances_previous_periods"] = raw_response_data[
             "Q2"
         ]
@@ -443,7 +459,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_27_d(self):
@@ -452,7 +468,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_3_c_d_e_in_material_topics(self):
@@ -469,7 +485,7 @@ class ScreenNineView(APIView):
         if not raw_response_data:
             return raw_response_data
         data = {}
-        data["legal_actions_anti_competitive_behavior"] = raw_response_data["Q1"]
+        data["legal_actions_anti_competitive_behavior"] = raw_response_data.get("Q1")
         data["number_legal_actions_anti_competitive_behavior"] = {}
         data["number_legal_actions_anti_competitive_behavior"]["pending"] = (
             raw_response_data["Q2"]
@@ -486,7 +502,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_201_3b(self):
@@ -499,7 +515,7 @@ class ScreenNineView(APIView):
         if not raw_response_data:
             return raw_response_data
         data = {}
-        data["liabilities_coverage_extent"] = raw_response_data["Q1"]
+        data["liabilities_coverage_extent"] = raw_response_data.get("Q1")
         data["liabilities_estimate_basis"] = raw_response_data["Q2"]
         data["liabilities_estimate_date_details"] = raw_response_data["Q3"]
         return data
@@ -514,7 +530,9 @@ class ScreenNineView(APIView):
         if not raw_response_data:
             return raw_response_data
         data = {}
-        data["strategy_for_full_pension_liabilities_coverage"] = raw_response_data["Q1"]
+        data["strategy_for_full_pension_liabilities_coverage"] = raw_response_data.get(
+            "Q1"
+        )
         data["timescale_for_full_pension_liabilities_coverage"] = raw_response_data[
             "Q2"
         ]
@@ -526,7 +544,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_201_3e(self):
@@ -535,7 +553,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_15_a(self):
@@ -544,7 +562,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0]["Q1"] if raw_response is not None else None
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
         return data
 
     def get_2_15_b(self):
@@ -603,9 +621,9 @@ class ScreenNineView(APIView):
         try:
             screen_nine = self.report.screen_nine
             serializer = ScreenNineSerializer(screen_nine)
+            response_data.update(serializer.data)
         except ObjectDoesNotExist:
             pass
-        response_data.update(serializer.data)
         self.set_raw_responses()
         response_data["2_9_a"] = self.get_2_9_a()
         response_data["2_9_b"] = self.get_2_9_b()
