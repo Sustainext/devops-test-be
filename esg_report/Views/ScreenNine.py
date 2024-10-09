@@ -935,7 +935,7 @@ class ScreenNineView(APIView):
         response_data["2_15_b"] = self.get_2_15_b()
         response_data["2_20_a"] = self.get_2_20_a()
         response_data["2_20_b"] = self.get_2_20_b()
-        response_data["206_b"] = self.get_206_b()
+        response_data["206_1b"] = self.get_206_b()
         response_data["2_23_f"] = self.get_2_23_f()
         response_data["2_23_e"] = self.get_2_23_e()
         response_data["2_23_d"] = self.get_2_23_d()
