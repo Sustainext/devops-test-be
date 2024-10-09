@@ -70,13 +70,17 @@ class ScreenNineView(APIView):
 
     def get_2_9_a(self):
         raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[0]).order_by("year").first()
+            self.raw_responses.filter(path__slug=self.slugs[0])
+            .order_by("-year")
+            .first()
         )
         return raw_response.data[0]["Q1"] if raw_response is not None else None
 
     def get_2_9_b(self):
         raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[1]).order_by("year").first()
+            self.raw_responses.filter(path__slug=self.slugs[1])
+            .order_by("-year")
+            .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
         if data is None:
@@ -89,14 +93,18 @@ class ScreenNineView(APIView):
 
     def get_2_9_c(self):
         raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[2]).order_by("year").first()
+            self.raw_responses.filter(path__slug=self.slugs[2])
+            .order_by("-year")
+            .first()
         )
         data = raw_response.data[0] if raw_response is not None else None
         return data
 
     def get_2_10_a(self):
         raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[3]).order_by("year").first()
+            self.raw_responses.filter(path__slug=self.slugs[3])
+            .order_by("-year")
+            .first()
         )
         data = raw_response.data[0]["Q1"]["Q1"] if raw_response is not None else None
         return data
@@ -105,7 +113,7 @@ class ScreenNineView(APIView):
         def get_2_10_b_criteria():
             raw_response = (
                 self.raw_responses.filter(path__slug=self.slugs[4])
-                .order_by("year")
+                .order_by("-year")
                 .first()
             )
             data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -114,7 +122,7 @@ class ScreenNineView(APIView):
         def get_2_10_b_governance_body_nomination_criteria():
             raw_response = (
                 self.raw_responses.filter(path__slug=self.slugs[5])
-                .order_by("year")
+                .order_by("-year")
                 .first()
             )
             data = raw_response.data if raw_response is not None else None
@@ -129,7 +137,9 @@ class ScreenNineView(APIView):
 
     def get_2_11_b(self):
         raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[6]).order_by("year").first()
+            self.raw_responses.filter(path__slug=self.slugs[6])
+            .order_by("-year")
+            .first()
         )
         data = raw_response.data[0].get("Q3") if raw_response is not None else None
         # * A list is being sent back because "Q3" is optional.
@@ -137,21 +147,27 @@ class ScreenNineView(APIView):
 
     def get_202_2a(self):
         raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[7]).order_by("year").first()
+            self.raw_responses.filter(path__slug=self.slugs[7])
+            .order_by("-year")
+            .first()
         )
         data = raw_response.data[0] if raw_response is not None else None
         return data
 
     def get_202_2b(self):
         raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[8]).order_by("year").first()
+            self.raw_responses.filter(path__slug=self.slugs[8])
+            .order_by("-year")
+            .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
         return data
 
     def get_202_2c(self):
         raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[9]).order_by("year").first()
+            self.raw_responses.filter(path__slug=self.slugs[9])
+            .order_by("-year")
+            .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
         return data
@@ -159,7 +175,7 @@ class ScreenNineView(APIView):
     def get_202_2d(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[10])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -168,7 +184,7 @@ class ScreenNineView(APIView):
     def get_2_12_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[11])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0] if raw_response is not None else None
@@ -177,7 +193,7 @@ class ScreenNineView(APIView):
     def get_2_12_b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[12])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0] if raw_response is not None else None
@@ -186,7 +202,7 @@ class ScreenNineView(APIView):
     def get_2_17_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[13])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -196,7 +212,7 @@ class ScreenNineView(APIView):
         data = {}
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[14])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         response_data = raw_response.data[0] if raw_response is not None else None
@@ -211,7 +227,7 @@ class ScreenNineView(APIView):
     def get_2_13_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[15])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
@@ -233,7 +249,7 @@ class ScreenNineView(APIView):
     def get_2_13_b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[16])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -242,7 +258,7 @@ class ScreenNineView(APIView):
     def get_2_16_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[17])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         response_data = raw_response.data[0] if raw_response is not None else None
@@ -256,7 +272,7 @@ class ScreenNineView(APIView):
     def get_2_16_b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[18])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
@@ -270,7 +286,7 @@ class ScreenNineView(APIView):
     def get_2_18_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[19])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -279,7 +295,7 @@ class ScreenNineView(APIView):
     def get_2_18_b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[20])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         response_data = raw_response.data[0] if raw_response is not None else None
@@ -293,7 +309,7 @@ class ScreenNineView(APIView):
     def get_2_18_c(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[21])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -302,7 +318,7 @@ class ScreenNineView(APIView):
     def get_2_19_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[22])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
@@ -317,10 +333,10 @@ class ScreenNineView(APIView):
         return data
 
     def get_2_21_a(self):
-        #TODO: Sum of annual total compensation ratio 
+        # TODO: Sum of annual total compensation ratio
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[23])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         # TODO: Verify the logic to be used for multiple locations.
@@ -330,7 +346,7 @@ class ScreenNineView(APIView):
     def get_2_21_b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[24])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0] if raw_response is not None else None
@@ -339,7 +355,7 @@ class ScreenNineView(APIView):
     def get_2_21_c(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[25])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -348,7 +364,7 @@ class ScreenNineView(APIView):
     def get_2_22_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[26])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -363,7 +379,7 @@ class ScreenNineView(APIView):
         for i in range(27, 32):
             slug = self.slugs[i]
             raw_response = (
-                self.raw_responses.filter(path__slug=slug).order_by("year").first()
+                self.raw_responses.filter(path__slug=slug).order_by("-year").first()
             )
             key = f"2_25_{chr(97 + i - 27)}"  # This will generate keys 2_25_a, 2_25_b, etc.
             data[key] = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -372,7 +388,7 @@ class ScreenNineView(APIView):
     def get_2_26_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[32])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
@@ -386,7 +402,7 @@ class ScreenNineView(APIView):
     def get_2_27_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[33])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
@@ -403,7 +419,7 @@ class ScreenNineView(APIView):
     def get_2_27_b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[34])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
@@ -419,7 +435,7 @@ class ScreenNineView(APIView):
     def get_2_27_c(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[35])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -428,7 +444,7 @@ class ScreenNineView(APIView):
     def get_2_27_d(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[36])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -441,7 +457,7 @@ class ScreenNineView(APIView):
     def get_206_1a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[37])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
@@ -462,7 +478,7 @@ class ScreenNineView(APIView):
     def get_201_3a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[38])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -471,7 +487,7 @@ class ScreenNineView(APIView):
     def get_201_3b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[39])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
@@ -486,7 +502,7 @@ class ScreenNineView(APIView):
     def get_201_3c(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[40])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
@@ -502,7 +518,7 @@ class ScreenNineView(APIView):
     def get_201_3d(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[41])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -511,7 +527,7 @@ class ScreenNineView(APIView):
     def get_201_3e(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[42])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -520,7 +536,7 @@ class ScreenNineView(APIView):
     def get_2_15_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[43])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         data = raw_response.data[0]["Q1"] if raw_response is not None else None
@@ -529,7 +545,7 @@ class ScreenNineView(APIView):
     def get_2_15_b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[44])
-            .order_by("year")
+            .order_by("-year")
             .first()
         )
         raw_response_data = raw_response.data if raw_response is not None else None

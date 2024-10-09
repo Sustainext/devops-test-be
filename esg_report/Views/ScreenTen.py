@@ -187,7 +187,7 @@ class ScreenTenAPIView(APIView):
             response_data["approach_for_sustainability"] = None
             response_data["sustainability_goals"] = None
             response_data["approach_to_supply_chain_sustainability"] = None
-
+        self.set_raw_responses()
         materiality_assessment = get_materiality_assessment(self.report)
         management_approach_question: ManagementApproachQuestion | None = (
             ManagementApproachQuestion.objects.filter(
@@ -210,10 +210,10 @@ class ScreenTenAPIView(APIView):
                 "stakeholder_engagement_effectiveness_description"
             ] = None
 
-        response_data.update(self.get_204_1abc(self.report))
+        response_data.update(self.get_204_1abc())
         response_data["308-2-a"] = None
         response_data["308-2-b"] = None
         response_data["308-2-c"] = None
-        response_data.update(self.get_404_2abc(self.report))
+        response_data.update(self.get_404_2abc())
 
         return Response(response_data, status=status.HTTP_200_OK)
