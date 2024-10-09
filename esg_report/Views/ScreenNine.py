@@ -204,7 +204,7 @@ class ScreenNineView(APIView):
             }
             return data
 
-    def get_2_206_b(self):
+    def get_206_b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[54])
             .order_by("-year")
@@ -935,21 +935,20 @@ class ScreenNineView(APIView):
         response_data["2_15_b"] = self.get_2_15_b()
         response_data["2_20_a"] = self.get_2_20_a()
         response_data["2_20_b"] = self.get_2_20_b()
-        response_data["2_206_b"] = self.get_2_206_b()
+        response_data["206_b"] = self.get_206_b()
         response_data["2_23_f"] = self.get_2_23_f()
         response_data["2_23_e"] = self.get_2_23_e()
         response_data["2_23_d"] = self.get_2_23_d()
         response_data["2_23_c"] = self.get_2_23_c()
         response_data["2_23_b"] = self.get_2_23_b()
         response_data["2_23_a"] = self.get_2_23_a()
-        response_data["get_2_202_1d"] = self.get_2_202_1d()
-        response_data["get_2_202_1c"] = self.get_2_202_1c()
-        response_data["get_2_202_1b"] = self.get_2_202_1b()
-        response_data["get_2_202_1a"] = self.get_2_202_1a()
-        response_data["get_2_206_b"] = self.get_2_206_b()
-        response_data["get_2_23_f"] = self.get_2_23_f()
-        response_data["get_2_23_e"] = self.get_2_23_e()
-        response_data["get_2_23_d"] = self.get_2_23_d()
-        response_data["get_2_23_c"] = self.get_2_23_c()
-        response_data["get_2_23_b"] = self.get_2_23_b()
+        response_data["2_202_1d"] = self.get_2_202_1d()
+        response_data["2_202_1c"] = self.get_2_202_1c()
+        response_data["2_202_1b"] = self.get_2_202_1b()
+        response_data["2_202_1a"] = self.get_2_202_1a()
+        response_data["2_23_f"] = self.get_2_23_f()
+        response_data["2_23_e"] = self.get_2_23_e()
+        response_data["2_23_d"] = self.get_2_23_d()
+        response_data["2_23_c"] = self.get_2_23_c()
+        response_data["2_23_b"] = self.get_2_23_b()
         return Response(response_data, status=status.HTTP_200_OK)
