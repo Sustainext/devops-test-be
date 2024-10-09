@@ -150,13 +150,16 @@ class ScreenNineView(APIView):
             .first()
         )
         local_response_data = raw_response.data[0] if raw_response is not None else None
+        d = {}
         if not local_response_data:
             return local_response_data
         else:
             if local_response_data.get("Q2") == "No":
-                return "No"
+                d["is_chair_of_highest_governance"] = "No"
             else:
-                return local_response_data.get("Q3")
+                d["is_chair_of_highest_governance"] = local_response_data.get("Q3")
+                d["table"] = local_response_data["Q3"][0]
+        return d
 
     def get_202_2a(self):
         raw_response = (
@@ -386,7 +389,6 @@ class ScreenNineView(APIView):
         return data
 
     def get_2_28_a(self):
-        # TODO: Finish this function to return the correct data
         raw_response = (
             (self.raw_responses.filter(path__slug=self.slugs[45]))
             .order_by("-year")
