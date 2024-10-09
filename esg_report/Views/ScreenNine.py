@@ -599,14 +599,13 @@ class ScreenNineView(APIView):
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
+        response_data = {}
         try:
             screen_nine = self.report.screen_nine
             serializer = ScreenNineSerializer(screen_nine)
         except ObjectDoesNotExist:
-            return Response(
-                {"error": "ScreenNine not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-        response_data = serializer.data
+            pass
+        response_data.update(serializer.data)
         self.set_raw_responses()
         response_data["2_9_a"] = self.get_2_9_a()
         response_data["2_9_b"] = self.get_2_9_b()
