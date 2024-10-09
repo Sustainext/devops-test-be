@@ -65,7 +65,17 @@ def create_data_for_non_renewable_materials(raw_response: RawResponse):
                     },
                 )
             )
-            non_renewable_materials_object.unit = non_renewable_materials_object.unit
+            base_unit = non_renewable_materials_object.get_base_unit(
+                non_renewable_materials_object.unit
+            )
+            non_renewable_materials_object.quantity = (
+                non_renewable_materials_object.convert(
+                    value=non_renewable_materials_object.quantity,
+                    from_unit=non_renewable_materials_object.unit,
+                    to_unit=base_unit,
+                )
+            )
+            non_renewable_materials_object.unit = base_unit
             non_renewable_materials_object.save()
         else:
             renewable_materials_object, _ = RenewableMaterials.objects.update_or_create(
@@ -86,12 +96,13 @@ def create_data_for_non_renewable_materials(raw_response: RawResponse):
                     "data_source": response_item["Datasource"],
                 },
             )
-            renewable_materials_object.unit = renewable_materials_object.unit
+            base_unit = renewable_materials_object.get_base_unit(
+                renewable_materials_object.unit
+            )
+            renewable_materials_object.quantity = renewable_materials_object.convert(
+                value=renewable_materials_object.quantity,
+                from_unit=renewable_materials_object.unit,
+                to_unit=base_unit,
+            )
+            renewable_materials_object.unit = base_unit
             renewable_materials_object.save()
-
-        # non_renewable_materials_object.quantity = (
-        #     non_renewable_materials_object.convert(
-        #         value=non_renewable_materials_object.quantity,
-        #         from_unit=non_renewable_materials_object.unit,
-        #     )
-        # )
