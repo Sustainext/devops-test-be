@@ -59,7 +59,10 @@ class ScreenTenAPIView(APIView):
             self.raw_responses = self.raw_responses.filter(
                 Q(organization=self.report.organization)
                 | Q(corporate=self.report.corporate)
-                | Q(locale__in=self.report.corporate.location.all())
+            )
+        if self.report.corporate:
+            self.raw_responses = self.raw_responses.filter(
+                Q(locale__in=self.report.corporate.location.all())
             )
 
     def get_204_1abc_using_datapoint(self) -> dict[str, Any]:

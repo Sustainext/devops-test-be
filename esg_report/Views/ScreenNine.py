@@ -63,6 +63,15 @@ class ScreenNineView(APIView):
             43: "gri-governance-conflict_of_interest-2-15-a-highest",
             44: "gri-governance-conflict_of_interest-2-15-b-report",
             45: "gri-general-membership_association-2-28-a-report",
+            46: "gri-governance-determine-remuneration-2-20-a-process",
+            47: "gri-governance-determine-remuneration-2-22-b-results",
+            48: "gri-governance-policy_commitments-2-23-a-business_conduct",
+            49: "gri-governance-policy_commitments-2-23-b-human_rights",
+            50: "gri-governance-policy_commitments-2-23-c-links",
+            51: "gri-governance-policy_commitments-2-23-c-leave",
+            52: "gri-governance-policy_commitments-2-23-e-report",
+            53: "gri-governance-policy_commitments-2-23-f-describe",
+            54: "gri-economic-anti_competitive_behavior-206-1b-judgements",
         }
 
     def set_raw_responses(self):
@@ -71,6 +80,106 @@ class ScreenNineView(APIView):
             .filter(client=self.report.client)
             .filter(Q(organization=self.report.organization))
         )
+
+    def get_2_206_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[54])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data if raw_response is not None else None
+        return data
+
+    def get_2_23_f(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[53])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = (
+            raw_response.data[0]["Q1"] if raw_response is not None else None
+        )
+        return raw_response_data
+
+    def get_2_23_e(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[52])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = (
+            raw_response.data[0]["Q1"] if raw_response is not None else None
+        )
+        return raw_response_data
+
+    def get_2_23_d(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[51])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data if raw_response is not None else None
+        return raw_response_data
+
+    def get_2_23_c(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[50])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        else:
+            data = {
+                "are_the_organizations_policy_commitments_publicly_available": raw_response_data[
+                    0
+                ][
+                    "Q1"
+                ],
+                "please_provide_links_to_the_policy_commitments": raw_response_data[0][
+                    "Q2"
+                ],
+                "please_provide_links_to_the_policy_commitments": raw_response_data[0][
+                    "Q3"
+                ],
+            }
+            return data
+
+    def get_2_23_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[49])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        else:
+            data = {
+                "the_internationally_recognized_human_rights_that_the_commitment_covers": raw_response_data[
+                    0
+                ][
+                    "Disclosed"
+                ],
+                "the_categories_of_stakeholders_including_at_risk_or_vulnerable_groups_that_the_organization_gives_particular_attention_to_in_the_commitment": raw_response_data[
+                    1
+                ][
+                    "Disclosed"
+                ],
+                "other1": raw_response_data[2]["Disclosed"],
+                "other2": raw_response_data[3]["Disclosed"],
+            }
+            return data
+
+    def get_2_23_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[48])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data if raw_response is not None else None
+        return data
 
     def get_2_9_a(self):
         raw_response = (
@@ -598,6 +707,31 @@ class ScreenNineView(APIView):
         }
         return data
 
+    def get_2_20_a(self):
+        local_raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[46])
+            .order_by("-year")
+            .first()
+        )
+        local_data = local_raw_response.data if local_raw_response is not None else None
+        if not local_data:
+            return local_data
+        return local_data[0]
+
+    def get_2_20_b(self):
+        local_raw_response = (
+            RawResponse.objects.filter(
+                path__slug=self.slugs[47]
+            )  # * This is the correct path.
+            .order_by("-year")
+            .first()
+        )
+        local_data = local_raw_response.data if local_raw_response is not None else None
+        if not local_data:
+            return local_data
+        else:
+            return local_data[0]["Q1"]
+
     def put(self, request, report_id):
         try:
             self.report = Report.objects.get(id=report_id)
@@ -676,4 +810,13 @@ class ScreenNineView(APIView):
         response_data["201_3e"] = self.get_201_3e()
         response_data["2_15_a"] = self.get_2_15_a()
         response_data["2_15_b"] = self.get_2_15_b()
+        response_data["2_20_a"] = self.get_2_20_a()
+        response_data["2_20_b"] = self.get_2_20_b()
+        response_data["2_206_b"] = self.get_2_206_b()
+        response_data["2_23_f"] = self.get_2_23_f()
+        response_data["2_23_e"] = self.get_2_23_e()
+        response_data["2_23_d"] = self.get_2_23_d()
+        response_data["2_23_c"] = self.get_2_23_c()
+        response_data["2_23_b"] = self.get_2_23_b()
+        response_data["2_23_a"] = self.get_2_23_a()
         return Response(response_data, status=status.HTTP_200_OK)
