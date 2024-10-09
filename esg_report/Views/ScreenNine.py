@@ -141,9 +141,14 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0].get("Q3") if raw_response is not None else None
-        # * A list is being sent back because "Q3" is optional.
-        return data
+        local_response_data = raw_response.data[0] if raw_response is not None else None
+        if not local_response_data:
+            return local_response_data
+        else:
+            if local_response_data.get("Q2") == "No":
+                return "No"
+            else:
+                return local_response_data.get("Q3")
 
     def get_202_2a(self):
         raw_response = (
