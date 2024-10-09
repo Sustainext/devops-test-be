@@ -70,12 +70,6 @@ class ScreenNineView(APIView):
             .filter(client=self.report.client)
             .filter(Q(organization=self.report.organization))
         )
-        if self.report.corporate:
-            self.raw_responses = self.raw_responses.filter(
-                Q(corporate=self.report.corporate)
-                | Q(locale__in=self.report.corporate.locations.all())
-            )
-
     def get_2_9_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[0])
