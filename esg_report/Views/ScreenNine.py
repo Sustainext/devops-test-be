@@ -62,6 +62,7 @@ class ScreenNineView(APIView):
             42: "gri-economic-defined_benefit_plan-mention-201-3e",
             43: "gri-governance-conflict_of_interest-2-15-a-highest",
             44: "gri-governance-conflict_of_interest-2-15-b-report",
+            45: "gri-general-membership_association-2-28-a-report",
         }
 
     def set_raw_responses(self):
@@ -70,6 +71,7 @@ class ScreenNineView(APIView):
             .filter(client=self.report.client)
             .filter(Q(organization=self.report.organization))
         )
+
     def get_2_9_a(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[0])
@@ -385,7 +387,16 @@ class ScreenNineView(APIView):
 
     def get_2_28_a(self):
         # TODO: Finish this function to return the correct data
-        return None
+        raw_response = (
+            (self.raw_responses.filter(path__slug=self.slugs[45]))
+            .order_by("-year")
+            .first()
+        )
+        local_data = raw_response.data if raw_response is not None else None
+        if not local_data:
+            return local_data
+        else:
+            return local_data[0]["MembershipAssociations"]["MembershipAssociations"]
 
     def get_2_25_data(self):
         data = {}
