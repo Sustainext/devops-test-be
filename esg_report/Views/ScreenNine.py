@@ -80,10 +80,18 @@ class ScreenNineView(APIView):
 
     def set_raw_responses(self):
         self.raw_responses = (
-            RawResponse.objects.filter(path__slug__in=list(self.slugs.values()))
-            .filter(client=self.report.client)
-            .filter(Q(organization=self.report.organization))
+            (
+                RawResponse.objects.filter(client=self.report.client).filter(
+                    year__range=(self.report.start_date.year, self.report.end_date.year)
+                )
+            )
+            .filter(Q(organization=self.report.organization) | Q(organization=None))
+            .filter(Q(corporate=self.report.corporate) | Q(corporate=None))
         )
+        if self.report.corporate:
+            self.raw_responses = self.raw_responses.filter(
+                Q(corporate=self.report.corporate) | Q(corporate=None)
+            )
 
     def get_2_202_1d(self):
         raw_response = (
