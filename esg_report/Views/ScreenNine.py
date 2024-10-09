@@ -72,6 +72,10 @@ class ScreenNineView(APIView):
             52: "gri-governance-policy_commitments-2-23-e-report",
             53: "gri-governance-policy_commitments-2-23-f-describe",
             54: "gri-economic-anti_competitive_behavior-206-1b-judgements",
+            55: "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1a-s1",
+            56: "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1b-s2",
+            57: "gri-economic-ratios_of_standard_entry-202-1c-location",
+            58: "gri-economic-ratios_of_standard_entry-202-1d-definition",
         }
 
     def set_raw_responses(self):
@@ -80,6 +84,117 @@ class ScreenNineView(APIView):
             .filter(client=self.report.client)
             .filter(Q(organization=self.report.organization))
         )
+
+    def get_2_202_1d(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[58])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = (
+            raw_response.data[0]["Q1"] if raw_response is not None else None
+        )
+        return raw_response_data
+
+    def get_2_202_1c(self):
+        """
+        [
+                {
+                        "Currency": "100 USD",
+                        "Locationofoperation": {
+                                "currencyValue": "",
+                                "locations": [
+                                        {
+                                                "id": 1,
+                                                "value": "Rajendra Nagar"
+                                        }
+                                ],
+                                "radioValue": "Yes",
+                                "wages": {}
+                        }
+                }
+        ]
+        """
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[57])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        return raw_response_data
+
+    def get_2_202_1b(self):
+        """
+        [
+                        {
+                                "Q1": "Yes",
+                                "Q2": "Yes",
+                                "Q3": "Something"
+                        }
+        ]
+        """
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[56])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        else:
+            data = {
+                "does_your_organisation_subject_to_minimum_wage_rules": raw_response_data.get(
+                    "Q1"
+                ),
+                "are_a_significant_proportion_of_other_workers_excluding_employees_performing_the_organizations_activities_compensated_based_on_wages_subject_to_minimum_wage_rules": raw_response_data.get(
+                    "Q2"
+                ),
+                "describe_the_actions_taken_to_determine_whether_these_workers_are_paid_above_the_minimum_wage": raw_response_data.get(
+                    "Q3"
+                ),
+            }
+            return data
+
+    def get_2_202_1a(self):
+        """
+        [
+            {
+                "Q1": "Yes",
+                "Q2": "Yes",
+                "Q3": "USD",
+                "Q4": [
+                    {
+                        "Female": "101",
+                        "Location": "Rajendra Nagar",
+                        "Male": "100",
+                        "Non-binary": "102"
+                    }
+                ]
+            }
+            ]
+        """
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[55])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        else:
+            data = {
+                "does_your_organisation_subject_to_minimum_wage_rules": raw_response_data.get(
+                    "Q1"
+                ),
+                "are_a_significant_proportion_of_employees_compensated_based_on_wages_subject_to_minimum_wage_rules": raw_response_data.get(
+                    "Q2"
+                ),
+                "currency": raw_response_data.get("Q3"),
+                "if_yes_then_specify_the_relevant_entry_level_wage_by_gender_at_significant_locations_of_operation_to_the_minimum_wage": raw_response_data.get(
+                    "Q4"
+                ),
+            }
+            return data
 
     def get_2_206_b(self):
         raw_response = (
@@ -819,4 +934,14 @@ class ScreenNineView(APIView):
         response_data["2_23_c"] = self.get_2_23_c()
         response_data["2_23_b"] = self.get_2_23_b()
         response_data["2_23_a"] = self.get_2_23_a()
+        response_data["get_2_202_1d"] = self.get_2_202_1d()
+        response_data["get_2_202_1c"] = self.get_2_202_1c()
+        response_data["get_2_202_1b"] = self.get_2_202_1b()
+        response_data["get_2_202_1a"] = self.get_2_202_1a()
+        response_data["get_2_206_b"] = self.get_2_206_b()
+        response_data["get_2_23_f"] = self.get_2_23_f()
+        response_data["get_2_23_e"] = self.get_2_23_e()
+        response_data["get_2_23_d"] = self.get_2_23_d()
+        response_data["get_2_23_c"] = self.get_2_23_c()
+        response_data["get_2_23_b"] = self.get_2_23_b()
         return Response(response_data, status=status.HTTP_200_OK)
