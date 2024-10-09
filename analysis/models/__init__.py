@@ -19,3 +19,5 @@ from .Water.ChangeInWaterStorage import ChangeInWaterStorage
 from .Material.MaterialUsedByWeightOrVolume import NonRenewableMaterials
 from .Material.RecycledInputMaterials import RecycledInputMaterials
 from .Material.ReclaimedMaterials import ReclaimedMaterials
+from .Governance.Compensation import Compensation
+from .Governance.CompensationIncrease import CompensationIncrease
