@@ -151,7 +151,7 @@ class ScreenNineView(APIView):
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0] if raw_response is not None else None
+        data = raw_response.data[0]["Q1"] if raw_response is not None else None
         return data
 
     def get_202_2b(self):
