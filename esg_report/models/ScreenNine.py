@@ -7,9 +7,9 @@ class ScreenNine(AbstractModel):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="screen_nine"
     )
-    statement = models.TextField()
-    board_gov_statement = models.TextField()
-    remuneration_policies = models.TextField()
+    statement = models.TextField(null=True,blank=True)
+    board_gov_statement = models.TextField(null=True, blank=True)
+    remuneration_policies = models.TextField(null=True, blank=True)
     policy_not_public_reason = models.TextField(blank=True, null=True)
 
     def __str__(self) -> str:
