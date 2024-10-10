@@ -8,6 +8,7 @@ from esg_report.utils import (
     get_materiality_assessment,
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
+    get_maximum_months_year,
 )
 from esg_report.Serializer.ScreenElevenSerializer import ScreenElevenSerializer
 from sustainapp.models import Report
@@ -83,7 +84,7 @@ class ScreenElevenAPIView(APIView):
         local_response_data["201-1a"] = {}
         local_response_data["201-1a"]["currency"] = local_data.get("Q1")
         local_response_data["201-1a"]["revenues"] = local_data.get("Q2")
-        local_response_data["201-1a"]["economic_value_distributed"] = local_data.get(
+        local_response_data["201-1a"]["economic_value_distributed_1"] = local_data.get(
             "Q3"
         )
         local_response_data["201-1a"]["operating_costs"] = local_data.get("Q4")
@@ -99,7 +100,7 @@ class ScreenElevenAPIView(APIView):
         local_response_data["201-1a"]["direct_economic_value_generated"] = (
             local_data.get("Q10")
         )
-        local_response_data["201-1a"]["economic_value_distributed"] = local_data.get(
+        local_response_data["201-1a"]["economic_value_distributed_2"] = local_data.get(
             "Q11"
         )
         return local_response_data["201-1a"]
@@ -226,7 +227,7 @@ class ScreenElevenAPIView(APIView):
             try:
                 response_data[name_mapping[data_metric.name]] = local_data_points.get(
                     data_metric=data_metric
-                )
+                ).value
             except DataPoint.DoesNotExist:
                 response_data[name_mapping[data_metric.name]] = None
         return response_data
@@ -283,10 +284,40 @@ class ScreenElevenAPIView(APIView):
         return local_data_points.value if local_data_points else None
 
     def get_207_2a(self):
-        local_data_points = (
-            self.data_points.filter(path__slug=self.slugs[14]).order_by("-year").first()
+        local_data_points = self.data_points.filter(path__slug=self.slugs[14]).order_by(
+            "-year"
         )
-        name_mapping = {}
+        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[14])
+        response_data = {}
+        for data_metric in local_data_metrics:
+            try:
+                response_data[data_metric.name] = local_data_points.get(
+                    data_metric=data_metric
+                ).value
+            except DataPoint.DoesNotExist:
+                response_data[data_metric.name] = None
+        return response_data
+
+    def get_207_2b(self):
+        local_data_points = (
+            self.data_points.filter(path__slug=self.slugs[15]).order_by("-year").first()
+        )
+        return local_data_points.value if local_data_points else None
+
+    def get_207_2c(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[16]).order_by(
+            "-year"
+        )
+        response_data = {}
+        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[16])
+        for data_metric in local_data_metrics:
+            try:
+                response_data[data_metric.name] = local_data_points.get(
+                    data_metric=data_metric
+                ).value
+            except DataPoint.DoesNotExist:
+                response_data[data_metric.name] = None
+        return response_data
 
     def get_3_3cde(self):
         return None
@@ -299,6 +330,7 @@ class ScreenElevenAPIView(APIView):
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
         response_data = {}
+        response_data["year"] = get_maximum_months_year(self.report)
         self.set_data_points()
         self.set_raw_responses()
         try:
