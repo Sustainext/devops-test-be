@@ -8,9 +8,7 @@ class AwardAndRecognition(AbstractModel):
         Report, on_delete=models.CASCADE, related_name="award_recognition"
     )
     description = models.TextField(blank=True, null=True)
-    file = models.FileField(
-        upload_to="esg_report/award_recognition/", blank=True, null=True
-    )
+    file = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"Award and Recognition for {self.report.name}"

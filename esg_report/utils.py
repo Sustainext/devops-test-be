@@ -1,24 +1,45 @@
 from sustainapp.models import Report
 from materiality_dashboard.models import MaterialityAssessment
 from rest_framework.exceptions import ValidationError
+from django.db.models import Q, F, ExpressionWrapper, DurationField
+from datetime import timedelta
+from django.db.models.functions import Greatest, Least
+from django.core.exceptions import ValidationError
 
 
 def get_latest_raw_response(raw_responses, slug):
     return raw_responses.filter(path__slug=slug).order_by("-year").first()
 
 
-def get_materiality_dashboard(report: Report):
-    """
-    x < a,  y < b :
-    Case 1 - [Previous Materiality Exists] Use the material topics from m₁ OR the previous materiality assessment done within the dates where 'x' and 'y' fall.
-    Case 2 - [Previous Materiality does not exist] Validation needs to be shown that no material topics have been selected for the chosen dates. User cannot proceed without selecting material topics.
+def get_materiality_assessment(report):
+    materiality_assessment = MaterialityAssessment.objects.filter(client=report.client)
+    start_date = report.start_date
+    end_date = report.end_date
 
-    x < a,  y > b : Use the material topics from m₂.
+    # Check if the report falls within any materiality assessment period
+    within_assessment = materiality_assessment.filter(
+        start_date__lte=end_date, end_date__gte=start_date
+    ).order_by("-end_date")
 
-    x > a,  y < b : Use the material topics from m₂.
+    if within_assessment.exists():
+        return within_assessment.first()
+    else:
+        # Calculate the overlap duration in days for each materiality assessment
+        materiality_assessment = (
+            materiality_assessment.annotate(
+                overlap_start=Greatest(F("start_date"), start_date),
+                overlap_end=Least(F("end_date"), end_date),
+            )
+            .annotate(
+                overlap_duration=ExpressionWrapper(
+                    F("overlap_end") - F("overlap_start"), output_field=DurationField()
+                )
+            )
+            .filter(overlap_duration__gt=timedelta(days=0))
+            .order_by("-overlap_duration", "-end_date")
+        )
 
-    x > a,  y > b :
-    Case 1 (if x<b) -  Use the material topics from m₂, show message that "Start and end date chosen for the report fall outside the dates applicable to the current Materiality Assessment. Proceed with the most recent material topics?"
-
-    Case 2 (if x>b) - Validation needs to be shown that no material topics have been selected for the chosen dates. User cannot proceed without selecting material topics.
-    """
+        if materiality_assessment.exists():
+            return materiality_assessment.first()
+        else:
+            raise ValidationError("Materiality Assessment not found")

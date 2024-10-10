@@ -26,8 +26,8 @@ class ScreenFiveAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response(
-                {"error": "Award and recognition not found"},
-                status=status.HTTP_404_NOT_FOUND,
+                None,
+                status=status.HTTP_200_OK,
             )
 
     def put(self, request, report_id):

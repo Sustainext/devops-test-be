@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from sustainapp.models import Report
 from datametric.models import RawResponse
-from esg_report.utils import get_latest_raw_response, get_materiality_dashboard
+from esg_report.utils import get_materiality_assessment
 from materiality_dashboard.models import MaterialityAssessment
 from materiality_dashboard.Serializers.MaterialityImpactSerializer import (
     MaterialityImpactSerializer,
@@ -26,6 +26,7 @@ class ScreenEightAPIView(APIView):
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
+        response_data = {}
         try:
             materiality_statement: MaterialityStatement = report.materiality_statement
             materiality_statement.delete()
@@ -37,6 +38,7 @@ class ScreenEightAPIView(APIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
+        response_data.update(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, report_id, format=None):
@@ -46,18 +48,17 @@ class ScreenEightAPIView(APIView):
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
+        response_data = {}
         try:
             materiality_statement: MaterialityStatement = report.materiality_statement
             serializer = MaterialityStatementSerializer(
                 materiality_statement, context={"request": request}
             )
-            response_data = serializer.data
+            response_data.update(serializer.data)
         except ObjectDoesNotExist:
-            return Response(
-                {"error": "Materiality Statement not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        materiality_assessment: MaterialityAssessment = get_materiality_dashboard(
+            response_data["statement"] = None
+
+        materiality_assessment: MaterialityAssessment = get_materiality_assessment(
             report
         )
         # TODO: Add list of materiality topics
@@ -126,4 +127,4 @@ class ScreenEightAPIView(APIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)

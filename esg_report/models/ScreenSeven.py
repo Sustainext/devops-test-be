@@ -8,6 +8,8 @@ class AboutTheReport(AbstractModel):
         Report, on_delete=models.CASCADE, related_name="about_the_report"
     )
     description = models.TextField(null=True, blank=True)
+    framework_description = models.TextField(null=True, blank=True)
+    external_assurance = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name = "About The Report"

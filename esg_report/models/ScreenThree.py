@@ -8,7 +8,7 @@ class MissionVisionValues(AbstractModel):
         Report, on_delete=models.CASCADE, related_name="mission_vision_values"
     )
     mission = models.TextField(blank=True, null=True)
-    mission_image = models.ImageField(blank=True, null=True)
+    mission_image = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.report.name + " - " + self.mission

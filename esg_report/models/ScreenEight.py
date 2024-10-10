@@ -7,7 +7,7 @@ class MaterialityStatement(AbstractModel):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="materiality_statement"
     )
-    statement = models.TextField()
+    statement = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Materiality Statements"

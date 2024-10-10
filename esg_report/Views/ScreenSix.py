@@ -1,17 +1,21 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from rest_framework.permissions import IsAuthenticated
+from django.core.exceptions import ObjectDoesNotExist
 from esg_report.models.ScreenSix import StakeholderEngagement
-from sustainapp.models import Report
-from datametric.models import RawResponse
+from materiality_dashboard.models import MaterialityAssessment
 from esg_report.Serializer.StakeholderEngagementSerializer import (
     StakeholderEngagementSerializer,
 )
-from rest_framework.permissions import IsAuthenticated
-from django.core.exceptions import ObjectDoesNotExist
+from sustainapp.models import Report
+from datametric.models import RawResponse
+from esg_report.utils import get_materiality_assessment
 
 
 class ScreenSixAPIView(APIView):
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, report_id):
@@ -34,26 +38,41 @@ class ScreenSixAPIView(APIView):
                 RawResponse.objects.filter(path__slug__in=slugs)
                 .filter(year__range=(report.start_date.year, report.end_date.year))
                 .filter(client=self.request.user.client)
-            )
+            ).order_by("-year")
             response_data = serializer.data
-            response_data["engagement_with_stakeholders"] = [
-                i[0]
-                for i in raw_responses.filter(path__slug=slugs[0]).values_list(
-                    "data", flat=True
+            if raw_responses.filter(path__slug=slugs[0]).exists():
+                response_data.update(
+                    raw_responses.filter(path__slug=slugs[0]).first().data[0]
                 )
-            ]
+            else:
+                response_data.update(
+                    {
+                        "Organisationengages": None,
+                        "Stakeholdersidentified": None,
+                        "Stakeholderengagement": None,
+                    }
+                )
             response_data["approach_to_stakeholder_engagement"] = [
                 i[0]
                 for i in raw_responses.filter(path__slug=slugs[1]).values_list(
                     "data", flat=True
                 )
             ]
-            # TODO: Add Stakeholder Feedback
+            # TODO: Change the getting stakeholder_feedback from materiality assessment ones relationship converts to OneToOne Field
+            materiality_assessment = get_materiality_assessment(report)
+            try:
+                response_data["stakeholder_feedback"] = (
+                    materiality_assessment.management_approach_questions.all()
+                    .first()
+                    .stakeholder_engagement_effectiveness_description
+                )
+            except (ObjectDoesNotExist, AttributeError):
+                response_data["stakeholder_feedback"] = None
             return Response(response_data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response(
-                {"error": "Stakeholder engagement not found"},
-                status=status.HTTP_404_NOT_FOUND,
+                None,
+                status=status.HTTP_200_OK,
             )
 
     def put(self, request, report_id, format=None):
@@ -63,6 +82,7 @@ class ScreenSixAPIView(APIView):
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
+        response_data = {}
         try:
             stakeholder_engagement: StakeholderEngagement = (
                 report.stakeholder_engagement
@@ -70,10 +90,12 @@ class ScreenSixAPIView(APIView):
             stakeholder_engagement.delete()
         except ObjectDoesNotExist:
             # * Condition when API has to be behave like POST
-            pass
+            response_data["description"] = None
+
         serializer = StakeholderEngagementSerializer(
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response_data.update(serializer.data)
+        return Response(response_data, status=status.HTTP_200_OK)

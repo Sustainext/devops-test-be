@@ -27,10 +27,12 @@ class ScreenSevenAPIView(APIView):
             serializer = AboutTheReportSerializer(about_the_report)
             response_data = serializer.data
         except ObjectDoesNotExist:
-            return Response(
-                {"error": "About The Report not found"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            response_data = {
+                "report": report.id,
+                "description": None,
+                "framework_description": None,
+                "external_assurance": None,
+            }
         slugs = [
             "gri-general-report_details-reporting_period-2-3-a",
             "gri-general-report_details-point-2-3-d",
@@ -45,34 +47,34 @@ class ScreenSevenAPIView(APIView):
             .filter(client=self.request.user.client)
         )
         response_data["2-3-a"] = (
-            raw_responses.filter(path__slug=slugs[0]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[0]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[0]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[0]).order_by("year").first() is not None
             else None
         )
         response_data["2-3d"] = (
-            raw_responses.filter(path__slug=slugs[1]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[1]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[1]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[1]).order_by("year").first() is not None
             else None
         )
         response_data["2-4-a"] = (
-            raw_responses.filter(path__slug=slugs[2]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[2]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[2]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[2]).order_by("year").first() is not None
             else None
         )
         response_data["2-5-a"] = {}
         response_data["2-5-a"]["assurance-policy"] = (
-            raw_responses.filter(path__slug=slugs[3]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[3]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[3]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[3]).order_by("year").first() is not None
             else None
         )
         response_data["2-5-a"]["assurance-highest"] = (
-            raw_responses.filter(path__slug=slugs[4]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[4]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[4]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[4]).order_by("year").first() is not None
             else None
         )
         response_data["2-5-b"] = (
-            raw_responses.filter(path__slug=slugs[5]).latest("year").data[0]
-            if raw_responses.filter(path__slug=slugs[5]).latest("year") is not None
+            raw_responses.filter(path__slug=slugs[5]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[5]).order_by("year").first() is not None
             else None
         )
 
@@ -92,9 +94,9 @@ class ScreenSevenAPIView(APIView):
             # * If the About The Report does not exist, create a new one
             pass
 
-            serializer = AboutTheReportSerializer(
-                data=request.data, context={"request": request}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save(report=report)
-            return Response(serializer.data)
+        serializer = AboutTheReportSerializer(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(report=report)
+        return Response(serializer.data)
