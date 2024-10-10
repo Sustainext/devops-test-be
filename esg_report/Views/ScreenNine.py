@@ -9,6 +9,10 @@ from sustainapp.models import Report
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
+from common.utils.value_types import get_decimal
+from sustainapp.utils import (
+    get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation,
+)
 
 
 class ScreenNineView(APIView):
@@ -76,6 +80,8 @@ class ScreenNineView(APIView):
             56: "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1b-s2",
             57: "gri-economic-ratios_of_standard_entry-202-1c-location",
             58: "gri-economic-ratios_of_standard_entry-202-1d-definition",
+            59: "gri-governance-compensation_ratio-2-21-a-annual",
+            60: "gri-governance-compensation_ratio-2-21-b-percentage",
         }
 
     def set_raw_responses(self):
@@ -389,7 +395,7 @@ class ScreenNineView(APIView):
             if local_response_data.get("Q2") == "No":
                 d["is_chair_of_highest_governance"] = "No"
             else:
-                d["is_chair_of_highest_governance"] = local_response_data.get("Q3")
+                d["is_chair_of_highest_governance"] = local_response_data.get("Q2")
                 d["table"] = local_response_data["Q3"][0]
         return d
 
@@ -592,6 +598,16 @@ class ScreenNineView(APIView):
         # TODO: Verify the logic to be used for multiple locations.
         data = raw_response.data[0] if raw_response is not None else None
         return data
+
+    def get_2_21_a_analyse_governance(self):
+        ...
+        local_slugs = {
+            0: self.slugs[59],
+            1: self.slugs[60],
+        }
+        return get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation(
+            raw_response=self.raw_responses, slugs=local_slugs
+        )
 
     def get_2_21_b(self):
         raw_response = (
@@ -912,6 +928,9 @@ class ScreenNineView(APIView):
         response_data["2_18_c"] = self.get_2_18_c()
         response_data["2_19_a"] = self.get_2_19_a()
         response_data["2_21_a"] = self.get_2_21_a()
+        response_data["2_21_a_analyse_governance"] = (
+            self.get_2_21_a_analyse_governance()
+        )
         response_data["2_21_b"] = self.get_2_21_b()
         response_data["2_21_c"] = self.get_2_21_c()
         response_data["2_22_a"] = self.get_2_22_a()

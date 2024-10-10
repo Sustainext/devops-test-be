@@ -39,7 +39,7 @@ class ScreenEightAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         response_data.update(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request, report_id, format=None):
         try:

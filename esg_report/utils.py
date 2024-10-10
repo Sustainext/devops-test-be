@@ -1,4 +1,5 @@
 from sustainapp.models import Report
+from datametric.models import RawResponse, DataMetric, DataPoint
 from materiality_dashboard.models import MaterialityAssessment
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q, F, ExpressionWrapper, DurationField
@@ -9,6 +10,59 @@ from django.core.exceptions import ValidationError
 
 def get_latest_raw_response(raw_responses, slug):
     return raw_responses.filter(path__slug=slug).order_by("-year").first()
+
+
+def get_raw_responses_as_per_report(report: Report):
+    """
+    Get RawResponses as per report.
+
+    Situation in RawResponses.
+    1. If corporate is given, then organization would also be given.
+    2. If corporate is not given, then organization will be given.
+    3. If corporate and organization are not given, then locale will be given.
+    Now Create a filter for each of this.
+    and then combine them.
+    """
+    raw_responses = RawResponse.objects.filter(client=report.client)
+    if report.corporate:
+        raw_responses = raw_responses.filter(
+            Q(corporate=report.corporate)
+            | Q(corporate=None)
+            | Q(organization=report.organization)
+            | Q(organization=None)
+        )
+        raw_responses = raw_responses.filter(
+            Q(locale__in=report.corporate.location.all()) | Q(locale=None)
+        )
+        return raw_responses
+    elif report.organization:
+        raw_responses = raw_responses.filter(
+            Q(organization=report.organization) | Q(organization=None)
+        )
+    return raw_responses
+
+
+def get_data_points_as_per_report(report: Report):
+    """
+    Get DataPoints as per report.
+    """
+    data_points = DataPoint.objects.filter(client_id=report.client.id)
+    if report.corporate:
+        data_points = data_points.filter(
+            Q(corporate=report.corporate)
+            | Q(corporate=None)
+            | Q(organization=report.organization)
+            | Q(organization=None)
+        )
+        data_points = data_points.filter(
+            Q(locale__in=report.corporate.location.all()) | Q(locale=None)
+        )
+        return data_points
+    elif report.organization:
+        data_points = data_points.filter(
+            Q(organization=report.organization) | Q(organization=None)
+        )
+    return data_points
 
 
 def get_materiality_assessment(report):
@@ -43,3 +97,31 @@ def get_materiality_assessment(report):
             return materiality_assessment.first()
         else:
             raise ValidationError("Materiality Assessment not found")
+
+
+def get_maximum_months_year(report: Report):
+    # Extracting start_date and end_date
+    start_date = report.start_date
+    end_date = report.end_date
+
+    # Getting the years for start_date and end_date
+    start_year = start_date.year
+    end_year = end_date.year
+
+    # If both dates are in the same year
+    if start_year == end_year:
+        return start_year
+
+    # Months in the start year
+    months_start_year = 12 - start_date.month + 1
+
+    # Months in the end year
+    months_end_year = end_date.month
+
+    # Determine which year has the maximum months
+    if months_start_year > months_end_year:
+        return start_year
+    elif months_start_year == months_end_year:
+        return end_date.year
+    else:
+        return end_year
