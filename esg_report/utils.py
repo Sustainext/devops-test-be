@@ -110,7 +110,7 @@ def get_maximum_months_year(report: Report):
 
     # If both dates are in the same year
     if start_year == end_year:
-        return start_year, (end_date.month - start_date.month + 1)
+        return start_year
 
     # Months in the start year
     months_start_year = 12 - start_date.month + 1
@@ -120,8 +120,8 @@ def get_maximum_months_year(report: Report):
 
     # Determine which year has the maximum months
     if months_start_year > months_end_year:
-        return start_year, months_start_year
+        return start_year
     elif months_start_year == months_end_year:
-        return end_date.year, months_end_year
+        return end_date.year
     else:
-        return end_year, months_end_year
+        return end_year
