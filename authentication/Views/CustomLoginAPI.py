@@ -13,6 +13,13 @@ from datetime import timedelta, datetime
 class CustomLoginView(LoginView):
     """Over-riding the Default Login View"""
 
+    def post(self, request, *args, **kwargs):
+        # Normalize the email to lowercase
+        request.data["username"] = request.data.get("username", "").lower()
+
+        # Now proceed with the normal login process
+        return super().post(request, *args, **kwargs)
+
     def get_response(self):
         """Customizing token response format with claims and token_type
         Remember me parameter for making longer validity token, so that we can save it on storage/cookie
