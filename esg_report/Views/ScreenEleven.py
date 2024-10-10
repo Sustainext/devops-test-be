@@ -102,7 +102,7 @@ class ScreenElevenAPIView(APIView):
         local_response_data["201-1a"]["economic_value_distributed"] = local_data.get(
             "Q11"
         )
-        return local_response_data
+        return local_response_data["201-1a"]
 
     def get_201_4ab(self):
         local_raw_responses = (
