@@ -59,7 +59,7 @@ class ScreenElevenAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         response_data.update(serializer.data)
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(response_data, status=status.HTTP_200_OK)
 
     def set_data_points(self):
         self.data_points = get_data_points_as_per_report(self.report)
@@ -278,6 +278,8 @@ class ScreenElevenAPIView(APIView):
             .first()
         )
         return local_data_points.value if local_data_points else None
+    
+
 
     def get(self, request, report_id):
         try:
