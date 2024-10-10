@@ -37,6 +37,9 @@ class ScreenElevenAPIView(APIView):
             11: "gri-economic-country_by_country_reporting-207-4a-please",
             12: "gri-economic-country_by_country_reporting-207-4b-for",
             13: "gri-economic-country_by_country_reporting-207-4c-disclosure",
+            14: "gri-economic-tax_governance_control_and_risk_management-207-2a-provide",
+            15: "gri-economic-tax_governance_control_and_risk_management-207-2b-description",
+            16: "gri-economic-tax_governance_control_and_risk_management-207-2c-has",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -67,7 +70,7 @@ class ScreenElevenAPIView(APIView):
     def set_raw_responses(self):
         self.raw_responses = get_raw_responses_as_per_report(self.report)
 
-    def get_201ab(self):
+    def get_201_a_b(self):
         local_raw_responses = (
             self.raw_responses.filter(path__slug=self.slugs[0])
             .order_by("-year")
@@ -270,16 +273,21 @@ class ScreenElevenAPIView(APIView):
             for key, value in table_dictionary.items():
                 response_data[name_mapping[key]] = value
         return response_data
-    
+
     def get_207_4c(self):
         local_data_points = (
-            self.data_points.filter(path__slug=self.slugs[13])
-            .order_by("-year")
-            .first()
+            self.data_points.filter(path__slug=self.slugs[13]).order_by("-year").first()
         )
         return local_data_points.value if local_data_points else None
-    
 
+    def get_207_2a(self):
+        local_data_points = (
+            self.data_points.filter(path__slug=self.slugs[14]).order_by("-year").first()
+        )
+        name_mapping = {}
+
+    def get_3_3cde(self):
+        return None
 
     def get(self, request, report_id):
         try:
@@ -302,7 +310,7 @@ class ScreenElevenAPIView(APIView):
                     "financial_assistance_from_government": None,
                 }
             )
-        response_data["201_ab"] = self.get_201ab()
+        response_data["201_a_b"] = self.get_201_a_b()
         response_data["201_4ab"] = self.get_201_4ab()
         response_data["203_1a"] = self.get_203_1a()
         response_data["203_1b"] = self.get_203_1b()
@@ -314,5 +322,7 @@ class ScreenElevenAPIView(APIView):
         response_data["207_4a"] = self.get_207_4a()
         response_data["207_4b"] = self.get_207_4b()
         response_data["207_4c"] = self.get_207_4c()
+        response_data["207_2a"] = self.get_207_2a()
+        response_data["3_3cde"] = self.get_3_3cde()
 
         return Response(response_data, status=status.HTTP_200_OK)

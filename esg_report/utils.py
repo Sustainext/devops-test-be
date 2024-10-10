@@ -97,3 +97,31 @@ def get_materiality_assessment(report):
             return materiality_assessment.first()
         else:
             raise ValidationError("Materiality Assessment not found")
+
+
+def get_maximum_months_year(report: Report):
+    # Extracting start_date and end_date
+    start_date = report.start_date
+    end_date = report.end_date
+
+    # Getting the years for start_date and end_date
+    start_year = start_date.year
+    end_year = end_date.year
+
+    # If both dates are in the same year
+    if start_year == end_year:
+        return start_year, (end_date.month - start_date.month + 1)
+
+    # Months in the start year
+    months_start_year = 12 - start_date.month + 1
+
+    # Months in the end year
+    months_end_year = end_date.month
+
+    # Determine which year has the maximum months
+    if months_start_year > months_end_year:
+        return start_year, months_start_year
+    elif months_start_year == months_end_year:
+        return end_date.year, months_end_year
+    else:
+        return end_year, months_end_year
