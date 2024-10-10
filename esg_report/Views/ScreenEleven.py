@@ -253,6 +253,8 @@ class ScreenElevenAPIView(APIView):
             .first()
         )
         local_data = local_raw_response.data[0] if local_raw_response else None
+        if not local_data:
+            return local_data
         name_mapping = {
             "Taxjurisdictioncol1": "tax_jurisdiction",
             "Taxjurisdictioncol2": "names_of_resident_entities",
