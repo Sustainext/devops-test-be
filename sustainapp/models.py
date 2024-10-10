@@ -904,7 +904,7 @@ class Report(models.Model):
     STATUS_CHOICES = [(0, "Deactivate"), (1, "Activate")]
 
     status = models.IntegerField(choices=STATUS_CHOICES)
-    investment_corporates = models.JSONField(blank=True, null=True) 
+    investment_corporates = models.JSONField(blank=True, null=True)
 
     def clean(self):
         if self.corporate and self.organization:
@@ -962,7 +962,9 @@ class AnalysisData2(models.Model):
 
     objects = ClientFiltering()
 
+
 from authentication.models import CustomUser, Client
+
 
 class ClientTaskDashboard(AbstractModel):
     task_name = models.CharField(max_length=1024)
@@ -1031,18 +1033,20 @@ class ZohoInfo(AbstractModel):
     def __str__(self) -> str:
         return self.client_name + " " + self.table_name
 
+
 class TrackDashboard(AbstractModel):
     REPORT_CHOICES = [
-    ('emission', 'Emission'),
-    ('energy', 'Energy'),
-    ('waste', 'Waste'),
-    ('employment', 'Employment'),
-    ('ohs', 'Occupational Health and Safety (OHS)'),
-    ('diversity_inclusion', 'Diversity & Inclusion'),
-    ('community_development', 'Community Development'),
-    ('water_and_effluents','Water & Effluents')
-]
-    table_name = models.CharField(max_length=255,default='')
-    report_name = models.CharField(max_length=1024,choices=REPORT_CHOICES)
+        ("emission", "Emission"),
+        ("energy", "Energy"),
+        ("waste", "Waste"),
+        ("employment", "Employment"),
+        ("ohs", "Occupational Health and Safety (OHS)"),
+        ("diversity_inclusion", "Diversity & Inclusion"),
+        ("community_development", "Community Development"),
+        ("water_and_effluents", "Water & Effluents"),
+        ("governance", "Governance"),
+    ]
+    table_name = models.CharField(max_length=255, default="")
+    report_name = models.CharField(max_length=1024, choices=REPORT_CHOICES)
     report_id = models.CharField(max_length=255)
     group_id = models.CharField(max_length=255)

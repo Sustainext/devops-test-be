@@ -8,6 +8,9 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from datametric.utils.analyse import get_raw_response_filters
 from common.utils.value_types import get_decimal
+from sustainapp.utils import (
+    get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation,
+)
 
 
 class GovernanceAnalyse(APIView):
@@ -37,35 +40,12 @@ class GovernanceAnalyse(APIView):
             .order_by("-year", "-month")
         )
 
-    def get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation(
+    def get_analyse_data(
         self,
     ):
-        annual_raw_response = self.raw_response.only("data").filter(
-            path__slug=self.slugs[0]
+        return get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation(
+            raw_response=self.raw_response, slugs=self.slugs
         )
-        contextual_raw_response = self.raw_response.only("data").filter(
-            path__slug=self.slugs[1]
-        )
-
-        local_annual_response = []
-        for raw_response in annual_raw_response:
-            local_annual_response.extend(raw_response.data)
-        local_contextual_response = []
-        for raw_response in contextual_raw_response:
-            local_contextual_response.extend(raw_response.data)
-        local_response_data = []
-        for annual, contextual in zip(local_annual_response, local_contextual_response):
-            local_response_data.append(
-                {
-                    "ratio_of_annual_total_compensation": get_decimal(
-                        get_decimal(annual["Q1"]) / get_decimal(annual["Q2"])
-                    ),
-                    "ratio_of_percentage_increase_in_annual_total_compensation": get_decimal(
-                        get_decimal(contextual["Q1"]) / get_decimal(contextual["Q2"])
-                    ),
-                }
-            )
-        return local_response_data
 
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
@@ -77,6 +57,6 @@ class GovernanceAnalyse(APIView):
         self.end = serializer.validated_data["end"]
         self.set_raw_responses()
         response_data = {
-            "compensation_ratio_annual_total_and_increase": self.get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation()
+            "compensation_ratio_annual_total_and_increase": self.get_analyse_data()
         }
         return Response(response_data, status=status.HTTP_200_OK)

@@ -48,7 +48,7 @@ class ScreenTenAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         response_data.update(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def set_raw_responses(self):
         self.raw_responses = RawResponse.objects.filter(
@@ -59,7 +59,10 @@ class ScreenTenAPIView(APIView):
             self.raw_responses = self.raw_responses.filter(
                 Q(organization=self.report.organization)
                 | Q(corporate=self.report.corporate)
-                | Q(locale__in=self.report.corporate.location.all())
+            )
+        if self.report.corporate:
+            self.raw_responses = self.raw_responses.filter(
+                Q(locale__in=self.report.corporate.location.all())
             )
 
     def get_204_1abc_using_datapoint(self) -> dict[str, Any]:

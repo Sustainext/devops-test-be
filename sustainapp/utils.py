@@ -52,6 +52,7 @@ from django.conf import settings
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+from common.utils.value_types import get_decimal
 
 logger = logging.getLogger(__name__)
 
@@ -753,3 +754,31 @@ def add_page_break_if_needed(document):
 def cell_transparent(table_name):
     for cell in table_name.columns[0].cells:
         set_cell_border(cell, border_color="#FFFFFF", border_width=0)
+
+def get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation(raw_response,slugs:dict):
+    annual_raw_response = raw_response.only("data").filter(
+            path__slug=slugs[0]
+        )
+    contextual_raw_response = raw_response.only("data").filter(
+        path__slug=slugs[1]
+    )
+
+    local_annual_response = []
+    for raw_response in annual_raw_response:
+        local_annual_response.extend(raw_response.data)
+    local_contextual_response = []
+    for raw_response in contextual_raw_response:
+        local_contextual_response.extend(raw_response.data)
+    local_response_data = []
+    for annual, contextual in zip(local_annual_response, local_contextual_response):
+        local_response_data.append(
+            {
+                "ratio_of_annual_total_compensation": get_decimal(
+                    get_decimal(annual["Q1"]) / get_decimal(annual["Q2"])
+                ),
+                "ratio_of_percentage_increase_in_annual_total_compensation": get_decimal(
+                    get_decimal(contextual["Q1"]) / get_decimal(contextual["Q2"])
+                ),
+            }
+        )
+    return local_response_data

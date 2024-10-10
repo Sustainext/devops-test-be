@@ -61,6 +61,8 @@ from analysis.utils.Material.recycled_input_materials import (
 from analysis.utils.Material.reclaimed_materials import (
     create_data_for_reclaimed_materials,
 )
+from analysis.utils.Governance.compensation import fill_data_inside_compensation
+from analysis.utils.Governance.compensation_increase import fill_data_inside_compensation_increase
 from datametric.models import RawResponse
 
 
@@ -95,3 +97,5 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_non_renewable_materials(raw_response=raw_response)
     create_data_for_recycled_input_materials(raw_response=raw_response)
     create_data_for_reclaimed_materials(raw_response=raw_response)
+    fill_data_inside_compensation(raw_response=raw_response)
+    fill_data_inside_compensation_increase(raw_response=raw_response)
