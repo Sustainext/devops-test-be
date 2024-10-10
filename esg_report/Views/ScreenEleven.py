@@ -70,7 +70,7 @@ class ScreenElevenAPIView(APIView):
     def set_raw_responses(self):
         self.raw_responses = get_raw_responses_as_per_report(self.report)
 
-    def get_201_a_b(self):
+    def get_201_1ab(self):
         local_raw_responses = (
             self.raw_responses.filter(path__slug=self.slugs[0])
             .order_by("-year")
@@ -310,7 +310,7 @@ class ScreenElevenAPIView(APIView):
                     "financial_assistance_from_government": None,
                 }
             )
-        response_data["201_a_b"] = self.get_201_a_b()
+        response_data["201_1ab"] = self.get_201_1ab()
         response_data["201_4ab"] = self.get_201_4ab()
         response_data["203_1a"] = self.get_203_1a()
         response_data["203_1b"] = self.get_203_1b()
