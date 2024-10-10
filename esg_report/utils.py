@@ -1,4 +1,5 @@
 from sustainapp.models import Report
+from datametric.models import RawResponse, DataMetric, DataPoint
 from materiality_dashboard.models import MaterialityAssessment
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q, F, ExpressionWrapper, DurationField
@@ -9,6 +10,59 @@ from django.core.exceptions import ValidationError
 
 def get_latest_raw_response(raw_responses, slug):
     return raw_responses.filter(path__slug=slug).order_by("-year").first()
+
+
+def get_raw_responses_as_per_report(report: Report):
+    """
+    Get RawResponses as per report.
+
+    Situation in RawResponses.
+    1. If corporate is given, then organization would also be given.
+    2. If corporate is not given, then organization will be given.
+    3. If corporate and organization are not given, then locale will be given.
+    Now Create a filter for each of this.
+    and then combine them.
+    """
+    raw_responses = RawResponse.objects.filter(client=report.client)
+    if report.corporate:
+        raw_responses = raw_responses.filter(
+            Q(corporate=report.corporate)
+            | Q(corporate=None)
+            | Q(organization=report.organization)
+            | Q(organization=None)
+        )
+        raw_responses = raw_responses.filter(
+            Q(locale__in=report.corporate.location.all()) | Q(locale=None)
+        )
+        return raw_responses
+    elif report.organization:
+        raw_responses = raw_responses.filter(
+            Q(organization=report.organization) | Q(organization=None)
+        )
+    return raw_responses
+
+
+def get_data_points_as_per_report(report: Report):
+    """
+    Get DataPoints as per report.
+    """
+    data_points = DataPoint.objects.filter(client_id=report.client.id)
+    if report.corporate:
+        data_points = data_points.filter(
+            Q(corporate=report.corporate)
+            | Q(corporate=None)
+            | Q(organization=report.organization)
+            | Q(organization=None)
+        )
+        data_points = data_points.filter(
+            Q(locale__in=report.corporate.location.all()) | Q(locale=None)
+        )
+        return data_points
+    elif report.organization:
+        data_points = data_points.filter(
+            Q(organization=report.organization) | Q(organization=None)
+        )
+    return data_points
 
 
 def get_materiality_assessment(report):
