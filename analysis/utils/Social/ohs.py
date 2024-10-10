@@ -45,7 +45,7 @@ def ohs_the_number_of_injuries(raw_response: RawResponse):
     InjuryReport.objects.filter(
         raw_response=raw_response, table_name=table_name
     ).delete()
-    for local_data in raw_response.data:
+    for index, local_data in enumerate(raw_response.data):
         InjuryReport.objects.update_or_create(
             raw_response=raw_response,
             month=raw_response.month,
@@ -55,6 +55,7 @@ def ohs_the_number_of_injuries(raw_response: RawResponse):
             location=raw_response.locale,
             client=raw_response.client,
             table_name=table_name,
+            index=index,
             defaults={
                 "employee_category": local_data["employeeCategory"],
                 "fatalities": get_float(local_data["fatalities"]),
