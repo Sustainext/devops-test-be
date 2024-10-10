@@ -15,7 +15,7 @@ INJURIES_FOR_WHOM_CHOICES = (
 )
 
 
-class InjuryReport(AbstractModel,AbstractAnalysisModel):
+class InjuryReport(AbstractModel, AbstractAnalysisModel):
     table_name = models.CharField(max_length=120, choices=INJURIES_FOR_WHOM_CHOICES)
     employee_category = models.CharField(
         max_length=500,
@@ -32,6 +32,7 @@ class InjuryReport(AbstractModel,AbstractAnalysisModel):
     )
     injury_types = models.TextField(help_text="Main types of work-related injury")
     hours_worked = models.PositiveIntegerField(help_text="Number of hours worked")
+    index = models.PositiveIntegerField()
 
     def __str__(self):
         return f"{self.employee_category} - Injuries Report"
