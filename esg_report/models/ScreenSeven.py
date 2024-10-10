@@ -1,9 +1,10 @@
 from django.db import models
 from common.models.AbstractModel import AbstractModel
+from common.models.HistoricalModel import HistoricalModelMixin
 from sustainapp.models import Report
 
 
-class AboutTheReport(AbstractModel):
+class AboutTheReport(AbstractModel, HistoricalModelMixin):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="about_the_report"
     )

@@ -1,9 +1,10 @@
 from django.db import models
 from sustainapp.models import Report
 from common.models.AbstractModel import AbstractModel
+from common.models.HistoricalModel import HistoricalModelMixin
 
 
-class MaterialityStatement(AbstractModel):
+class MaterialityStatement(AbstractModel, HistoricalModelMixin):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="materiality_statement"
     )

@@ -1,9 +1,10 @@
 from django.db import models
 from common.models.AbstractModel import AbstractModel
+from common.models.HistoricalModel import HistoricalModelMixin
 from sustainapp.models import Report
 
 
-class SustainabilityRoadmap(AbstractModel):
+class SustainabilityRoadmap(AbstractModel, HistoricalModelMixin):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="sustainability_roadmap"
     )

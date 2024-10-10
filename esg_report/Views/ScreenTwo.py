@@ -123,16 +123,23 @@ class ScreenTwo(APIView):
     def put(self, request, report_id, format=None):
         try:
             report = Report.objects.get(id=report_id)
-            serializer = AboutTheCompanyAndOperationsSerializer(
-                data=request.data, context={"request": request}
-            )
-            if serializer.is_valid():
-                AboutTheCompanyAndOperations.objects.filter(report=report).delete()
-                serializer.save(report=report)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Report.DoesNotExist as e:
             return Response(
                 {"Report Does Not Exist for the given parameter": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        try:
+            about_the_company_and_operations = AboutTheCompanyAndOperations.objects.get(
+                report=report
+            )
+            serializer = AboutTheCompanyAndOperationsSerializer(
+                about_the_company_and_operations, data=request.data
+            )
+        except AboutTheCompanyAndOperations.DoesNotExist as e:
+            serializer = AboutTheCompanyAndOperationsSerializer(
+                data=request.data, context={"request": request}
+            )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(report=report)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        

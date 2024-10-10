@@ -41,6 +41,16 @@ class ScreenElevenAPIView(APIView):
             14: "gri-economic-tax_governance_control_and_risk_management-207-2a-provide",
             15: "gri-economic-tax_governance_control_and_risk_management-207-2b-description",
             16: "gri-economic-tax_governance_control_and_risk_management-207-2c-has",
+            17: "gri-economic-stakeholder_engagement-207-3a",
+            18: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3a-s1",
+            19: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3b-s2",
+            20: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3c-s3",
+            21: "gri-economic-operations_assessed_for_risks_related_to_corruption-205-1a-total",
+            22: "gri-economic-anti_corruption-comm_and_training-205-2a-governance_body_members",
+            23: "gri-economic-anti_corruption-comm_and_training-205-2b-employees",
+            24: "gri-economic-anti_corruption-comm_and_training-205-2c-business",
+            25: "gri-economic-anti_corruption-comm_and_training-205-2d-training",
+            26: "gri-economic-anti_corruption-comm_and_training-205-2e-policies",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -322,7 +332,176 @@ class ScreenElevenAPIView(APIView):
     def get_3_3cde(self):
         return None
 
-    
+    def get_207_3a(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[17]).order_by(
+            "-year"
+        )
+        response_data = {}
+        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[17])
+        for data_metric in local_data_metrics:
+            try:
+                response_data[data_metric.name] = local_data_points.get(
+                    data_metric=data_metric
+                ).value
+            except DataPoint.DoesNotExist:
+                response_data[data_metric.name] = None
+        return response_data
+
+    def get_205_3a(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[18]).order_by(
+            "-year"
+        )
+        response_data = {}
+        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[18])
+        for data_metric in local_data_metrics:
+            try:
+                response_data[data_metric.name] = local_data_points.get(
+                    data_metric=data_metric
+                ).value
+            except DataPoint.DoesNotExist:
+                response_data[data_metric.name] = None
+        return response_data
+
+    def get_205_3b(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[19]).order_by(
+            "-year"
+        )
+        response_data = {}
+        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[19])
+        for data_metric in local_data_metrics:
+            try:
+                response_data[data_metric.name] = local_data_points.get(
+                    data_metric=data_metric
+                ).value
+            except DataPoint.DoesNotExist:
+                response_data[data_metric.name] = None
+        return response_data
+
+    def get_205_3c(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[20]).order_by(
+            "-year"
+        )
+        response_data = {}
+        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[20])
+        for data_metric in local_data_metrics:
+            try:
+                response_data[data_metric.name] = local_data_points.get(
+                    data_metric=data_metric
+                ).value
+            except DataPoint.DoesNotExist:
+                response_data[data_metric.name] = None
+        return response_data
+
+    def get_205_1a(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[21]).order_by(
+            "-year"
+        )
+        response_data = {}
+        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[21])
+        for data_metric in local_data_metrics:
+            try:
+                response_data[data_metric.name] = local_data_points.get(
+                    data_metric=data_metric
+                ).value
+            except DataPoint.DoesNotExist:
+                response_data[data_metric.name] = None
+        return response_data
+
+    def get_205_2a(self):
+        """
+        Note: Data Metrics are messed up, hence using raw response to get proper data.
+        """
+        local_raw_responses = (
+            self.raw_responses.filter(path__slug=self.slugs[22])
+            .order_by("-year")
+            .first()
+        )
+
+        local_data = (
+            local_raw_responses.data[0]["Q1"][0] if local_raw_responses else None
+        )
+        return local_data
+
+    def get_205_2b(self):
+        """
+        Note: Data Metrics are messed up, everytime a new location is given, it makes that a datametric, hence using raw response to get proper data.
+        """
+        local_raw_responses = (
+            self.raw_responses.filter(path__slug=self.slugs[23])
+            .order_by("-year")
+            .first()
+        )
+        local_data = (
+            list(local_raw_responses.data[0]["Q1"].values())[0]
+            if local_raw_responses
+            else None
+        )
+        return local_data
+
+    def get_205_2c(self):
+        """
+        Note: Data Metrics are messed up, everytime a new location is given, it makes that a datametric, hence using raw response to get proper data.
+        """
+        local_raw_responses = (
+            self.raw_responses.filter(path__slug=self.slugs[24])
+            .order_by("-year")
+            .first()
+        )
+        local_data = (
+            list(local_raw_responses.data[0]["Q1"].values())[0]
+            if local_raw_responses
+            else None
+        )
+        return local_data
+
+    def get_205_2d(self):
+        """
+        Note: Data Metrics are messed up, everytime a new location is given, it makes that a datametric, hence using raw response to get proper data.
+        """
+        local_raw_responses = (
+            self.raw_responses.filter(path__slug=self.slugs[25])
+            .order_by("-year")
+            .first()
+        )
+        local_data = (
+            list(local_raw_responses.data[0]["Q1"][0].values())[0]
+            if local_raw_responses
+            else None
+        )
+        return local_data
+
+    def get_205_2e(self):
+        """
+        Note: Data Metrics are messed up, everytime a new location is given, it makes that a datametric, hence using raw response to get proper data.
+        """
+        local_raw_responses = (
+            self.raw_responses.filter(path__slug=self.slugs[26])
+            .order_by("-year")
+            .first()
+        )
+        local_data = (
+            list(local_raw_responses.data[0]["Q1"].values())[0]
+            if local_raw_responses
+            else None
+        )
+        return local_data
+
+    def get_415_1a(self):
+        self.slugs[28] = "gri-social-political_involvement-415-1-financial"
+        local_data_points = self.data_points.filter(path__slug=self.slugs[28]).order_by(
+            "-year"
+        )
+        response_data = {}
+        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[28])
+        for data_metric in local_data_metrics:
+            try:
+                response_data[data_metric.name] = local_data_points.get(
+                    data_metric=data_metric
+                ).value
+            except DataPoint.DoesNotExist:
+                response_data[data_metric.name] = None
+        return response_data
+
     def get(self, request, report_id):
         try:
             self.report = Report.objects.get(id=report_id)
@@ -358,6 +537,20 @@ class ScreenElevenAPIView(APIView):
         response_data["207_4b"] = self.get_207_4b()
         response_data["207_4c"] = self.get_207_4c()
         response_data["207_2a"] = self.get_207_2a()
+        response_data["207_2b"] = self.get_207_2b()
         response_data["3_3cde"] = self.get_3_3cde()
+        response_data["207_2c"] = self.get_207_2c()
+        response_data["207_3a"] = self.get_207_3a()
+        response_data["205_3a"] = self.get_205_3a()
+        response_data["205_3b"] = self.get_205_3b()
+        response_data["205_3c"] = self.get_205_3c()
+        response_data["205_1a"] = self.get_205_1a()
+        response_data["205_2a"] = self.get_205_2a()
+        response_data["205_2b"] = self.get_205_2b()
+        response_data["205_2c"] = self.get_205_2c()
+        response_data["205_2d"] = self.get_205_2d()
+        response_data["205_2e"] = self.get_205_2e()
+        response_data["415_1a"] = self.get_415_1a()
+        response_data["3_3cde_social"] = self.get_3_3cde()
 
         return Response(response_data, status=status.HTTP_200_OK)

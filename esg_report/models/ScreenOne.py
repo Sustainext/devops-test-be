@@ -1,9 +1,10 @@
 from sustainapp.models import Report
 from common.models.AbstractModel import AbstractModel
+from common.models.HistoricalModel import HistoricalModelMixin
 from django.db import models
 
 
-class CeoMessage(AbstractModel):
+class CeoMessage(AbstractModel, HistoricalModelMixin):
     """
     This model stores the CEO message for an ESG Report.
     It contains fields such as:
