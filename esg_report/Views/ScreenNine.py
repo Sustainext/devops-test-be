@@ -389,7 +389,7 @@ class ScreenNineView(APIView):
             if local_response_data.get("Q2") == "No":
                 d["is_chair_of_highest_governance"] = "No"
             else:
-                d["is_chair_of_highest_governance"] = local_response_data.get("Q3")
+                d["is_chair_of_highest_governance"] = local_response_data.get("Q2")
                 d["table"] = local_response_data["Q3"][0]
         return d
 
