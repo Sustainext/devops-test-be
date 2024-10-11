@@ -8,6 +8,10 @@ from datametric.models import RawResponse, DataMetric, DataPoint
 from esg_report.utils import get_materiality_assessment
 from esg_report.Serializer.ScreenTenSerializer import ScreenTenSerializer
 from sustainapp.models import Report
+from sustainapp.Utilities.supplier_environment_analyse import (
+    new_suppliers,
+    calculate_percentage,
+)
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
