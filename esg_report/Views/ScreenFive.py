@@ -39,13 +39,13 @@ class ScreenFiveAPIView(APIView):
             )
         try:
             award_and_recognition: AwardAndRecognition = report.award_recognition
-            award_and_recognition.delete()
+            serializer = AwardsAndRecognitionSerializer(
+                award_and_recognition, data=request.data
+            )
         except ObjectDoesNotExist:
-            # * Condition where object does not exist, hence API will create a new one
-            pass
-        serializer = AwardsAndRecognitionSerializer(
-            data=request.data, context={"request": request}
-        )
+            serializer = AwardsAndRecognitionSerializer(
+                data=request.data, context={"request": request}
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         return Response(serializer.data, status=status.HTTP_200_OK)

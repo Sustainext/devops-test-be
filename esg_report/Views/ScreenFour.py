@@ -39,13 +39,14 @@ class ScreenFourAPIView(APIView):
             )
         try:
             sustainability_roadmap = report.sustainability_roadmap
-            sustainability_roadmap.delete()
+            serializer = SustainabilityRoadmapSerializer(
+                sustainability_roadmap, data=request.data
+            )
         except (SustainabilityRoadmap.DoesNotExist, ObjectDoesNotExist):
-            # * If the sustainability roadmap does not exist, create a new one
-            pass
-        serializer = SustainabilityRoadmapSerializer(
-            data=request.data, context={"request": request}
-        )
+            serializer = SustainabilityRoadmapSerializer(
+                data=request.data, context={"request": request}
+            )
+
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         return Response(serializer.data, status=status.HTTP_200_OK)

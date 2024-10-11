@@ -12,6 +12,44 @@ def get_latest_raw_response(raw_responses, slug):
     return raw_responses.filter(path__slug=slug).order_by("-year").first()
 
 
+def get_maximum_months_year(report: Report):
+    """
+    Get the maximum months year from the given report's start and end dates.
+    This function determines the year that has the maximum number of months between the report's start and end dates. If both dates are in the same year, it returns that year. Otherwise, it calculates the number of months in the start and end years and returns the year with the maximum number of months.
+
+    Args:
+        report (Report): The report object containing the start and end dates.
+
+    Returns:
+        int: The year with the maximum number of months between the report's start and end dates.
+    """
+    # Extracting start_date and end_date
+    start_date = report.start_date
+    end_date = report.end_date
+
+    # Getting the years for start_date and end_date
+    start_year = start_date.year
+    end_year = end_date.year
+
+    # If both dates are in the same year
+    if start_year == end_year:
+        return start_year
+
+    # Months in the start year
+    months_start_year = 12 - start_date.month + 1
+
+    # Months in the end year
+    months_end_year = end_date.month
+
+    # Determine which year has the maximum months
+    if months_start_year > months_end_year:
+        return start_year
+    elif months_start_year == months_end_year:
+        return end_date.year
+    else:
+        return end_year
+
+
 def get_raw_responses_as_per_report(report: Report):
     """
     Get RawResponses as per report.
@@ -39,7 +77,7 @@ def get_raw_responses_as_per_report(report: Report):
         raw_responses = raw_responses.filter(
             Q(organization=report.organization) | Q(organization=None)
         )
-    return raw_responses
+    return raw_responses.filter(year=get_maximum_months_year(report))
 
 
 def get_data_points_as_per_report(report: Report):
@@ -62,7 +100,7 @@ def get_data_points_as_per_report(report: Report):
         data_points = data_points.filter(
             Q(organization=report.organization) | Q(organization=None)
         )
-    return data_points
+    return data_points.filter(year=get_maximum_months_year(report))
 
 
 def get_materiality_assessment(report):
@@ -97,31 +135,3 @@ def get_materiality_assessment(report):
             return materiality_assessment.first()
         else:
             raise ValidationError("Materiality Assessment not found")
-
-
-def get_maximum_months_year(report: Report):
-    # Extracting start_date and end_date
-    start_date = report.start_date
-    end_date = report.end_date
-
-    # Getting the years for start_date and end_date
-    start_year = start_date.year
-    end_year = end_date.year
-
-    # If both dates are in the same year
-    if start_year == end_year:
-        return start_year
-
-    # Months in the start year
-    months_start_year = 12 - start_date.month + 1
-
-    # Months in the end year
-    months_end_year = end_date.month
-
-    # Determine which year has the maximum months
-    if months_start_year > months_end_year:
-        return start_year
-    elif months_start_year == months_end_year:
-        return end_date.year
-    else:
-        return end_year
