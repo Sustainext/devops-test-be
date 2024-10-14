@@ -514,9 +514,6 @@ class WaterAnalyse(APIView):
         location_names = self.raw_responses.values_list(
             "locale__name", flat=True
         ).distinct()
-        # location_names = self.raw_responses.values_list(
-        #     "location", flat=True
-        # ).distinct()
         data = []
         for location in location_names:
             local_raw_responses = (

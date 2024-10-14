@@ -167,3 +167,43 @@ def collect_data_by_raw_response_and_index(data_points):
 
     # Convert the defaultdict values into a list of dictionaries (the collected data)
     return list(raw_response_index_map.values())
+
+
+def collect_data_and_differentiate_by_location(data_points):
+    # Create a dictionary where the key is raw_response and the value is another dictionary
+    # which maps index to a dictionary of data_metric and value pairs
+    raw_response_index_map = defaultdict(dict)
+    location_map = defaultdict(list)
+
+    # Iterate over the list of data points
+    for dp in data_points:
+        raw_response = dp.raw_response.id
+        index = dp.index
+        data_metric = dp.data_metric.name
+        value = dp.value
+        location = dp.locale.name
+        month = dp.month
+        raw_response_index_map[(raw_response, index, location)][data_metric] = value
+
+    # Group the data by location
+    for (
+        raw_response,
+        index,
+        location,
+    ), data_metric_value_map in raw_response_index_map.items():
+        location_map[location].append(data_metric_value_map)
+
+    # Convert location_map to a list of dictionaries
+    grouped_data_by_location = [
+        {location: values} for location, values in location_map.items()
+    ]
+
+    return grouped_data_by_location
+
+
+# * A method that filters the data points based on the slug and data_point queryset given in parameter and then calls collect_data_by_raw_response_and_index method
+def get_data_by_raw_response_and_index(data_points, slug):
+    data_points = data_points.filter(
+        path__slug=slug,
+    )
+    return collect_data_and_differentiate_by_location(data_points)

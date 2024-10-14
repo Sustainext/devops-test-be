@@ -13,6 +13,8 @@ from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     collect_data_by_raw_response_and_index,
+    collect_data_and_differentiate_by_location,
+    get_data_by_raw_response_and_index,
 )
 from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
@@ -60,13 +62,32 @@ class ScreenTwelveAPIView(APIView):
             5: "gri-environment-materials-301-2a-recycled_input_materials",
             6: "gri-environment-materials-301-3a-3b-reclaimed_products",
             7: "gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas",
+            8: "gri-environment-energy-302-1a-1b-direct_purchased",
+            9: "gri-environment-energy-302-1c-1e-consumed_fuel",
+            10: "gri-environment-energy-302-1-self_generated",
+            11: "gri-environment-energy-302-1d-energy_sold",
+            12: "gri-environment-energy-302-1f-smac",
+            13: "gri-environment-energy-302-1g-conversion_factor",
+            14: "gri-environment-energy-302-2a-energy_consumption_outside_organization",
+            15: "gri-environment-energy-302-2b-smac",
+            16: "gri-environment-energy-302-2c-conversion_factor",
+            17: "gri-environment-energy-302-3a-3b-3c-3d-energy_intensity",
+            18: "gri-environment-energy-302-4a-4b-reduction_of_energy_consumption",
+            19: "gri-environment-energy-302-4c-base_year_or_baseline",
+            20: "gri-environment-energy-302-4d-smac",
+            21: "gri-environment-energy-302-5a-5b-reduction_in_energy_in_products_and_servies",
+            22: "gri-environment-energy-302-5b-base_year_or_baseline",
+            23: "gri-environment-energy-302-5c-smac",
+            24: "gri-environment-waste-306-1-significant_waste",
+            25: "gri-environment-waste-306-3a-3b-waste_generated",
+            26: "gri-environment-waste-306-3b-contextual_info",
+            27: "gri-environment-waste-306-2-management_of_significant_waste",
+            28: "gri-environment-waste-306-5a-5b-5c-5d-5e-waste_diverted_to_disposal",
+            29: "gri-environment-waste-306-5e-contextual_info",
+            30: "gri-environment-waste-306-4b-4c-4d-waste_diverted_from_disposal",
+            31: "gri-environment-waste-306-4e-contextual_info",
         }
 
-    def get_303_3a_3b_3c_3d(self):
-        local_data_points = self.data_points.filter(path__slug=self.slugs[7]).order_by(
-            "index"
-        )
-        return collect_data_by_raw_response_and_index(data_points=local_data_points)
     def get_301_3a_3b(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[6]).order_by(
             "index"
@@ -189,4 +210,85 @@ class ScreenTwelveAPIView(APIView):
         )
         response_data["301_2a"] = self.get_301_2a()
         response_data["301_3a_3b"] = self.get_301_3a_3b()
+        response_data.update(
+            {
+                "306_5e": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[29]
+                ),
+                "306_5a_5b_5c_5d_5e": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[28]
+                ),
+                "306_2": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[27]
+                ),
+                "306_3b": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[26]
+                ),
+                "306_3a_3b": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[25]
+                ),
+                "306_1ab": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[24]
+                ),
+                "302_5c": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[23]
+                ),
+                "302_5b": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[22]
+                ),
+                "302_5a_5b": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[21]
+                ),
+                "302_4d": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[20]
+                ),
+                "302_4c": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[19]
+                ),
+                "302_4a_4b": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[18]
+                ),
+                "302_3a_3b_3c_3d": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[17]
+                ),
+                "302_2c": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[16]
+                ),
+                "302_2b": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[15]
+                ),
+                "302_2a": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[14]
+                ),
+                "302_1g": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[13]
+                ),
+                "302_1f": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[12]
+                ),
+                "302_1d": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[11]
+                ),
+                "302_1": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[10]
+                ),
+                "302_1c_1e": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[9]
+                ),
+                "302_1a_1b": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[8]
+                ),
+                "303_3a_3b_3c_3d": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[7]
+                ),
+                "306_4b_4c": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[30]
+                ),
+                "306_4e": get_data_by_raw_response_and_index(
+                    data_points=self.data_points, slug=self.slugs[31]
+                ),
+                "306_3": None,  # TODO: Add logic over here when clarified in figma.
+                
+            }
+        )
         return Response(response_data, status=status.HTTP_200_OK)
