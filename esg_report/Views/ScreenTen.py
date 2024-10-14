@@ -326,7 +326,7 @@ class ScreenTenAPIView(APIView):
         response_data["308-2-b"] = None
         response_data["308-2-c"] = None
         response_data.update(self.get_404_2abc())
-        response_data["308_2e_analyse"] = self.get_308_2de_analyse()
+        response_data.update(self.get_308_2de_analyse())
         response_data["308_2e_collect"] = self.get_308_2e_collect()
         response_data["414_1a_collect"] = self.get_414_1a_collect()
         response_data["414_1a_analyse"] = self.get_414_1a_analyse()
