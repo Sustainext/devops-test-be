@@ -8,6 +8,9 @@ from django.utils.translation import gettext_lazy as _
 from common.models.AbstractModel import AbstractModel
 from authentication.Managers.CustomUserManager import CustomUserManager
 from uuid import uuid4
+from django.utils.text import slugify
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -16,24 +19,76 @@ class Client(AbstractModel):
     customer = models.BooleanField(default=False)
     uuid = models.UUIDField(unique=True, default=uuid4, editable=False)
     sub_domain = models.CharField(max_length=256, unique=True, null=True, blank=True)
+    okta_url = models.CharField(max_length=900, unique=True, null=True, blank=True)
+    okta_key = models.CharField(max_length=900, unique=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
+    @classmethod
+    def get_default_client(cls):
+        default_client, _ = cls.objects.get_or_create(
+            name="Sustainext Platform",
+            defaults={
+                'customer': False,
+                'sub_domain': 'admin',
+            }
+        )
+        return default_client
+
+
+@receiver(post_migrate)
+def create_default_client(sender, **kwargs):
+    Client.get_default_client()
+
+
+
+class CustomPermission(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    slug = models.SlugField(unique=True, blank=True)  # Add the slug field
+
+    def save(self, *args, **kwargs):
+        # Automatically create the slug based on the name if it's not already set
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+
 
     def __str__(self):
         return self.name
 
 
+class CustomRole(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    view_permissions = models.ManyToManyField(CustomPermission)
+
+    def __str__(self):
+        return self.name
+    
+    @classmethod
+    def get_default_role(cls):
+        return cls.objects.get_or_create(name="SystemAdmin")[0]
+
+
+
 class CustomUser(AbstractUser):
     roles_choices = (
-        ("admin", "Admin"),
+        ("system_admin", "System Admin"),
+        ("client_admin", "Client Admin"),
         ("manager", "Manager"),
         ("employee", "Employee"),
     )
 
     client = models.ForeignKey(
         Client,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_DEFAULT,
         related_name="custom_userclient",
         null=True,
         blank=True,
+        default=Client.get_default_client
     )
 
     # Fix for the reverse accessor clash
@@ -59,6 +114,20 @@ class CustomUser(AbstractUser):
     is_client_admin = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
     roles = models.CharField(max_length=20, choices=roles_choices, default="employee")
+    custom_role = models.ForeignKey(
+        'CustomRole',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    @property
+    def default_role(self):
+        if self.custom_role is None:
+            default_role, _ = CustomRole.objects.get_or_create(name="SystemAdmin")
+            self.custom_role = default_role
+            self.save()
+        return self.custom_role
 
     def __str__(self):
         return self.username

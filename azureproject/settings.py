@@ -198,7 +198,9 @@ ACCOUNT_ADAPTER = "sustainapp.adapters.CustomAccountAdapter"
 
 
 # SMTP settings
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+#EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+ 
 EMAIL_HOST = "smtp.office365.com"
 
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "False") == "True"
@@ -321,3 +323,4 @@ AZURE_POWERBI_USERNAME = os.environ.get("AZURE_POWERBI_USERNAME")
 AZURE_POWERBI_PASSWORD = os.environ.get("AZURE_POWERBI_PASSWORD")
 AZURE_POWERBI_APP_ID = os.environ.get("AZURE_POWERBI_APP_ID")
 AZURE_POWERBI_TENANT_ID = os.environ.get("AZURE_POWERBI_TENANT_ID")
+ 

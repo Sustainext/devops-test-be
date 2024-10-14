@@ -36,9 +36,11 @@ from sustainapp.models import (
     ZohoInfo,
     AnalysisData2,
     TrackDashboard,
+    CustomUser
 )
 
 from django.db import migrations
+from django.db.models import Q
 
 
 # Email push notification
@@ -50,7 +52,7 @@ from django.contrib.contenttypes.models import ContentType
 from authentication.Views.CustomUserCreationForm import CustomUserCreationForm
 from authentication.models import CustomUser, UserProfile
 from authentication.admin import UserProfileInline
-from authentication.AdminSite.ClientAdmin import client_admin_site
+from authentication.AdminSite.ClientAdmin import client_admin_site,ClientAdmin
 
 # from django.db.migrations.recorder import MigrationRecorder
 
@@ -248,7 +250,46 @@ class ClientTaskDashboardAdmin(admin.ModelAdmin):
 #         }),
 #     )
 
+class CustomUserAdmin(UserAdmin):
+    print('customUserAdmin is hit here')
+    model = CustomUser
+    list_display = ['username', 'email', 'roles', 'client', 'custom_role', 'is_staff']
+    list_filter = ('client', 'roles')
+    fieldsets = UserAdmin.fieldsets + (
+        ('Custom Fields', {'fields': ('roles', 'custom_role', 'is_client_admin', 'admin', 'client')}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('Custom Fields', {'fields': ('roles', 'custom_role', 'is_client_admin', 'admin', 'client')}),
+    )
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "client":
+            kwargs["initial"] = Client.get_default_client()
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        elif request.user.is_staff and request.user.client:
+            return qs.filter(client=request.user.client)
+        return qs.none()
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if not request.user.is_superuser:
+            if 'client' in form.base_fields:
+                form.base_fields['client'].queryset = Client.objects.filter(id=request.user.client.id)
+            if 'client' in form.base_fields:
+                form.base_fields['client'].initial = request.user.client
+                form.base_fields['client'].disabled = True
+        return form
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            obj.client = request.user.client
+        super().save_model(request, obj, form, change)
+    
 class AnnualReportAdmin(admin.ModelAdmin):
     list_display = ["client", "user"]
     list_filter = ("client", "user")
@@ -397,7 +438,7 @@ UserExtendedModel = apps.get_model(settings.AUTH_USER_MODEL)
 admin.site.register(Regulation, RegulationAdmin),
 admin.site.register(Report, ReportAdmin),
 admin.site.register(AnalysisData2, AnalysisReportDataAdmin),
-admin.site.register(UserExtendedModel, UserExtendedAdmin),
+# admin.site.register(UserExtendedModel, UserExtendedAdmin),
 admin.site.register(Batch, BatchAdmin),
 admin.site.register(Client, ClientAdmin),
 admin.site.register(User_client, User_clientAdmin),
@@ -426,7 +467,11 @@ admin.site.register(ZohoInfo, ZohoInfoAdmin),
 admin.site.register(TrackDashboard, TrackDashboardAdmin),
 
 # Clinet_admin site register
-client_admin_site.register(UserExtendedModel, UserExtendedAdmin),
+client_admin_site.register(CustomUser,CustomUserAdmin ),
 client_admin_site.register(Organization, OrganizationAdmin),
 client_admin_site.register(Corporateentity, CorporateentityAdmin),
 client_admin_site.register(Location, LocationAdmin),
+# client_admin_site.register(Client, ClientAdmin),
+
+# client_admin_site.register(Client,ClientAdmin)
+
