@@ -9,12 +9,23 @@ from esg_report.utils import (
     get_materiality_assessment,
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
+    get_maximum_months_year,
+    collect_data_by_raw_response_and_index,
 )
 from esg_report.Serializer.ScreenTenSerializer import ScreenTenSerializer
 from sustainapp.models import Report
 from sustainapp.Utilities.supplier_environment_analyse import (
     new_suppliers,
     calculate_percentage,
+)
+from sustainapp.Utilities.supplier_social_assessment_analyse import (
+    get_social_data,
+    get_pos_data,
+    get_data,
+    filter_non_zero_values,
+)
+from sustainapp.Serializers.CheckAnalysisViewSerializer import (
+    CheckAnalysisViewSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
@@ -38,6 +49,9 @@ class ScreenTenAPIView(APIView):
             9: "gri-supplier_environmental_assessment-negative_environmental-308-2d",
             10: "gri-supplier_environmental_assessment-negative_environmental-308-2e",
             11: "gri-economic-proportion_of_spending_on_local_suppliers-percentage-204-1a",
+            12: "gri-supplier_environmental_assessment-negative_environmental-308-2e",
+            13: "gri-social-supplier_screened-414-1a-number_of_new_suppliers",
+            14: "gri-social-impacts_and_actions-414-2b-number_of_suppliers",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -68,23 +82,92 @@ class ScreenTenAPIView(APIView):
     def set_data_points(self):
         self.data_points = get_data_points_as_per_report(report=self.report)
 
+    def get_414_2b_collect(self):
+        local_data_points = self.data_points.filter(
+            path__slug=self.slugs[14]
+        ).select_related("data_metric")
+        return collect_data_by_raw_response_and_index(local_data_points)
+
+    def get_414_1a_collect(self):
+        local_data_points = self.data_points.filter(
+            path__slug=self.slugs[13]
+        ).select_related("data_metric")
+        response_data = {}
+        for dp in local_data_points:
+            response_data[dp.data_metric.name] = dp.value
+        return response_data
+
+    def get_414_1a_analyse(self):
+        year = get_maximum_months_year(self.report)
+        dp, pos = {}, {}
+        filter_by = {}
+
+        if self.report.corporate:
+            filter_by["corporate"] = self.report.corporate
+        elif self.report.organization:
+            filter_by["organization"] = self.report.organization
+
+        if filter_by:
+            dp_data, pos_data = get_data(
+                year=get_maximum_months_year(self.report),
+                client_id=self.report.user.client.id,
+                filter_by=filter_by,
+            )
+            dp = get_social_data(dp_data)
+            pos = get_pos_data(pos_data)
+
+        final = {
+            "new_suppliers_that_were_screened_using_social_criteria": filter_non_zero_values(
+                dp
+            ),
+            "negative_social_impacts_in_the_supply_chain_and_actions_taken": filter_non_zero_values(
+                pos
+            ),
+        }
+        return final
+
+    def get_308_2e_collect(self):
+        local_data_points = self.data_points.filter(
+            path__slug=self.slugs[12]
+        ).select_related("data_metric")
+        response_data = {}
+        for dp in local_data_points:
+            response_data[dp.data_metric.name] = dp.value
+        return response_data
+
     def get_308_2de_analyse(self):
+        year = get_maximum_months_year(self.report)
         self.client_id = self.request.user.client.id
         filter_by = {}
         filter_by["organization__id"] = self.report.organization.id
-        if self.report.corporate.id is not None:
+        if self.report.corporate is not None:
             filter_by["corporate__id"] = self.report.corporate.id
         else:
             filter_by["corporate__id"] = None
         supplier_env_data = {}
-        supplier_env_data["gri_308_1a"] = new_suppliers(self.slugs[8], filter_by)
+        supplier_env_data["gri_308_1a"] = new_suppliers(
+            org=self.report.organization,
+            corp=self.report.corporate,
+            client_id=self.report.user.client.id,
+            year=year,
+            path=self.slugs[8],
+            filter_by=filter_by,
+        )
         supplier_env_data["gri_308_2d"] = new_suppliers(
-            self.slugs[9],
-            filter_by,
+            org=self.report.organization,
+            corp=self.report.corporate,
+            client_id=self.report.user.client.id,
+            year=year,
+            path=self.slugs[9],
+            filter_by=filter_by,
         )
         supplier_env_data["gri_308_2e"] = new_suppliers(
-            self.slugs[10],
-            filter_by,
+            org=self.report.organization,
+            corp=self.report.corporate,
+            client_id=self.report.user.client.id,
+            year=year,
+            path=self.slugs[10],
+            filter_by=filter_by,
         )
         return supplier_env_data
 
@@ -103,8 +186,6 @@ class ScreenTenAPIView(APIView):
                     data_point.locale.name
                 ] = data_point.value
         return response_data
-    
-    
 
     def get_204_1abc(self) -> dict[str, Any]:
         response_data = {}
@@ -163,7 +244,7 @@ class ScreenTenAPIView(APIView):
         raw_responses = (self.raw_responses.filter(path__slug=self.slugs[5])).order_by(
             "-year"
         )
-        local_data = raw_responses.first().data[0]
+        local_data = raw_responses.first().data[0] if raw_responses.exists() else {}
         response_data["414-2a"] = {}
         if raw_responses.exists():
             response_data["414-2a"]["total_suppliers_terminated_negative_impact"] = (
@@ -225,7 +306,7 @@ class ScreenTenAPIView(APIView):
             ).first()
         )
         response_data["3-3cde"] = {}
-        if not management_approach_question:
+        if management_approach_question:
             response_data["3-3cde"][
                 "negative_impact_involvement_description"
             ] = management_approach_question.negative_impact_involvement_description
@@ -246,5 +327,9 @@ class ScreenTenAPIView(APIView):
         response_data["308-2-c"] = None
         response_data.update(self.get_404_2abc())
         response_data["308_2e_analyse"] = self.get_308_2de_analyse()
+        response_data["308_2e_collect"] = self.get_308_2e_collect()
+        response_data["414_1a_collect"] = self.get_414_1a_collect()
+        response_data["414_1a_analyse"] = self.get_414_1a_analyse()
+        response_data["414_2b_collect"] = self.get_414_2b_collect()
 
         return Response(response_data, status=status.HTTP_200_OK)

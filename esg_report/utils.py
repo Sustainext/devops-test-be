@@ -72,7 +72,6 @@ def get_raw_responses_as_per_report(report: Report):
         raw_responses = raw_responses.filter(
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
         )
-        return raw_responses
     elif report.organization:
         raw_responses = raw_responses.filter(
             Q(organization=report.organization)
@@ -98,12 +97,18 @@ def get_data_points_as_per_report(report: Report):
         data_points = data_points.filter(
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
         )
-        return data_points
     elif report.organization:
         data_points = data_points.filter(
             Q(organization=report.organization)
             | Q(organization=None)
-            | Q(corporate__in=report.organization.corporatenetityorg.all()) | Q(corporate=None)
+            | Q(corporate__in=report.organization.corporatenetityorg.all())
+            | Q(corporate=None)
+            | Q(
+                locale__id__in=report.organization.corporatenetityorg.all().values_list(
+                    "location", flat=True
+                )
+            )
+            | Q(locale=None)
         )
     return data_points.filter(year=get_maximum_months_year(report))
 
@@ -140,3 +145,25 @@ def get_materiality_assessment(report):
             return materiality_assessment.first()
         else:
             raise ValidationError("Materiality Assessment not found")
+
+
+from collections import defaultdict
+
+
+def collect_data_by_raw_response_and_index(data_points):
+    # Create a dictionary where the key is raw_response and the value is another dictionary
+    # which maps index to a dictionary of data_metric and value pairs
+    raw_response_index_map = defaultdict(dict)
+
+    # Iterate over the list of data points
+    for dp in data_points:
+        raw_response = dp.raw_response.id
+        index = dp.index
+        data_metric = dp.data_metric.name
+        value = dp.value
+
+        # Directly store the data_metric and value for the combination of raw_response and index
+        raw_response_index_map[(raw_response, index)][data_metric] = value
+
+    # Convert the defaultdict values into a list of dictionaries (the collected data)
+    return list(raw_response_index_map.values())

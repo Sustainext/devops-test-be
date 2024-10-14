@@ -12,6 +12,7 @@ from esg_report.utils import (
     get_materiality_assessment,
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
+    collect_data_by_raw_response_and_index,
 )
 from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
@@ -55,21 +56,40 @@ class ScreenTwelveAPIView(APIView):
             1: "gri-environment-emissions-301-a-scope-2",
             2: "gri-environment-emissions-301-a-scope-3",
             3: "gri-environment-materials-301-1a-non_renewable_materials",
+            4: "gri-environment-materials-301-1a-renewable_materials",
+            5: "gri-environment-materials-301-2a-recycled_input_materials",
+            6: "gri-environment-materials-301-3a-3b-reclaimed_products",
+            7: "gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas",
         }
+
+    def get_303_3a_3b_3c_3d(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[7]).order_by(
+            "index"
+        )
+        return collect_data_by_raw_response_and_index(data_points=local_data_points)
+    def get_301_3a_3b(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[6]).order_by(
+            "index"
+        )
+        return collect_data_by_raw_response_and_index(data_points=local_data_points)
+
+    def get_301_2a(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[5]).order_by(
+            "index"
+        )
+        return collect_data_by_raw_response_and_index(data_points=local_data_points)
+
+    def get_301_1a_renewable_materials(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[4]).order_by(
+            "index"
+        )
+        return collect_data_by_raw_response_and_index(data_points=local_data_points)
 
     def get_301_1a_non_renewable_materials(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[3]).order_by(
             "index"
         )
-        response_data = defaultdict(dict)
-        response_data = {
-            index: dict() for index in local_data_points.values_list("index", flat=True)
-        }
-        for data_point in local_data_points:
-            response_data[data_point.index][
-                data_point.data_metric.name
-            ] = data_point.value
-        return list(response_data.values())
+        return collect_data_by_raw_response_and_index(data_points=local_data_points)
 
     def get_301_123_collect(self):
         slugs = [self.slugs[0], self.slugs[1], self.slugs[2]]
@@ -86,6 +106,7 @@ class ScreenTwelveAPIView(APIView):
         locations = set_locations_data(
             organisation=self.report.organization,
             corporate=self.report.corporate,
+            location=None,
         )
         top_emission_by_scope, top_emission_by_source, top_emission_by_location = (
             get_top_emission_by_scope(
@@ -163,6 +184,9 @@ class ScreenTwelveAPIView(APIView):
         response_data["301_1a_non_renewable_materials"] = (
             self.get_301_1a_non_renewable_materials()
         )
-        
-
+        response_data["301_1a_renewable_materials"] = (
+            self.get_301_1a_renewable_materials()
+        )
+        response_data["301_2a"] = self.get_301_2a()
+        response_data["301_3a_3b"] = self.get_301_3a_3b()
         return Response(response_data, status=status.HTTP_200_OK)
