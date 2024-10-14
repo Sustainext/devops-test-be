@@ -11,6 +11,7 @@ from uuid import uuid4
 from django.utils.text import slugify
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
+from django.db import connection
 
 
 # Create your models here.
@@ -24,15 +25,17 @@ class Client(AbstractModel):
 
     def __str__(self):
         return self.name
-    
+
     @classmethod
     def get_default_client(cls):
+        if not cls._meta.db_table in connection.introspection.table_names():
+            return None
         default_client, _ = cls.objects.get_or_create(
             name="Sustainext Platform",
             defaults={
-                'customer': False,
-                'sub_domain': 'admin',
-            }
+                "customer": False,
+                "sub_domain": "admin",
+            },
         )
         return default_client
 
@@ -40,7 +43,6 @@ class Client(AbstractModel):
 @receiver(post_migrate)
 def create_default_client(sender, **kwargs):
     Client.get_default_client()
-
 
 
 class CustomPermission(models.Model):
@@ -54,8 +56,6 @@ class CustomPermission(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-
-
     def __str__(self):
         return self.name
 
@@ -67,11 +67,10 @@ class CustomRole(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     @classmethod
     def get_default_role(cls):
         return cls.objects.get_or_create(name="SystemAdmin")[0]
-
 
 
 class CustomUser(AbstractUser):
@@ -88,7 +87,7 @@ class CustomUser(AbstractUser):
         related_name="custom_userclient",
         null=True,
         blank=True,
-        default=Client.get_default_client
+        default=Client.get_default_client,
     )
 
     # Fix for the reverse accessor clash
@@ -115,7 +114,7 @@ class CustomUser(AbstractUser):
     admin = models.BooleanField(default=False)
     roles = models.CharField(max_length=20, choices=roles_choices, default="employee")
     custom_role = models.ForeignKey(
-        'CustomRole',
+        "CustomRole",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
