@@ -355,7 +355,7 @@
                 </div>
                 <div class="logo">
                     {% if org_logo %}
-                    <img src="{{org_logo}}" alt="Valenta Logo">
+                    <img src="{{org_logo.url}}" alt="Valenta Logo">
                     {% endif %}
                 </div>
 
@@ -388,49 +388,45 @@
         <!-- Table Section -->
         <div class="section"></div>
         <h3 class="table-allcorp">Table 1: GHG emissions by Scopes {{organization_name}}</h3>
-        {% with combined_scopes|dictsort:"scope_name" as sorted_scopes %}
         <table>
             <tr class="table-header">
                 <th>SCOPE</th>
                 <th>TOTAL EMISSIONS (tCO2e)</th>
                 <th>% OF TOTAL</th>
             </tr>
-            {% for scope in sorted_scopes %}
+            {% for scope in combined_scopes %}
             <tr>
                 <td>{{ scope.scope_name }}</td>
-                <td>{{ scope.total_co2e|floatformat:2 }} {{scope.co2e_unit}}</td>
+                <td>{{ scope.total_co2e|floatformat:2 }}</td>
                 <td>{{ scope.combined_percentage|floatformat:2 }}%</td>
             </tr>
             {% endfor %}
         </table>
-        {% endwith %}
         <!-- <h3>Table 1: GHG emissions by scope</h3> -->
         {% for company_data in data %}
 
         <!-- <h2>{{ company_data.corporate_name }}</h2> -->
         <h3>Table 1.{{ forloop.counter }}: GHG emissions by scope for Corporate {{ company_data.corporate_name }} </h3>
-        {% with company_data.scopes|dictsort:"scope_name" as sorted_scopes %}
         <table>
             <tr class="table-header">
                 <th>SCOPE</th>
                 <th>EMISSIONS (tCO2e)</th>
                 <th>% OF TOTAL</th>
             </tr>
-            {% for scope in sorted_scopes %}
+            {% for scope in company_data.scopes %}
             <tr>
                 <td>{{ scope.scope_name }}</td>
-                <td>{{ scope.total_co2e|floatformat:2 }} {{scope.co2e_unit}}</td>
-                <td>{{ scope.contribution_scope|floatformat:2 }}%</td>
+                <td>{{ scope.total_co2e }}</td>
+                <td>{{ scope.contribution_scope }}%</td>
             </tr>
             {% endfor %}
         </table>
-        {% endwith %}
     </div>
     {% endfor %}
     {% else %}
     <div class="section-introduction"></div>
     <h6 class="loop-table">EXECUTIVE SUMMARY</h6>
-    <p class="loop-table">This report details the Greenhouse Gas Emissions (GHG) accounting for the organization
+    <p class="loop-table">This report details the Greenhouse Gas Emissions (GHG) accounting for the corporate
         {{organization_name}}.
         The total
         GHG emissions for the reporting period {{start_date|date:"d-M-Y"}} to {{end_date|date:"d-M-Y"}} were found
@@ -452,7 +448,7 @@
             {% for scope in company_data.scopes %}
             <tr>
                 <td>{{ scope.scope_name }}</td>
-                <td>{{ scope.total_co2e }} {{scope.co2e_unit}}</td>
+                <td>{{ scope.total_co2e }}</td>
                 <td>{{ scope.contribution_scope }}%</td>
             </tr>
             {% endfor %}
@@ -466,7 +462,7 @@
     <div class="section section-introduction">
         <h6>INTRODUCTION</h6>
         <h5>About The Report</h5>
-        <p>{{organization_name}}'s GHG emissions inventory for the period {{start_date|date:"d-M-Y"}} to
+        <p>{{organization_name|capfirst }}'s GHG emissions inventory for the period {{start_date|date:"d-M-Y"}} to
             {{end_date|date:"d-M-Y"}} are presented in this Carbon
             Accounting
             Report. It covers {{organization_name}} operations across {{country}} and is presented in
@@ -586,7 +582,7 @@
             <h5>Organizational boundaries</h5>
             <p>According to the GHG Protocol — Corporate Standard, the reporting company must set the scope and boundary
                 for calculation of emissions by deciding the approach to consolidate GHG emissions.
-                {{organization_name}} adopts
+                {{organization_name|capfirst}} adopts
                 the
                 {% if organizational_boundries %}
                 {{organizational_boundries}}
@@ -631,7 +627,8 @@
             followed by gathering accurate activity data. Selection of nationally or internationally accepted emission
             factors is a crucial step and these are available through DEFRA, IPCC and National GHG Inventories for the
             calculation of GHG emissions.</p>
-        <p>{{organization_name}} {{end_date|date:"Y"}} GHG inventory is based on the activity data and the use of
+        <p>{{organization_name|capfirst}} {{end_date|date:"Y"}} GHG inventory is based on the activity data and the use
+            of
             appropriate emission
             factors to arrive at a total emission value or carbon footprint.</p>
 
@@ -687,15 +684,13 @@
                 <th>YEAR</th>
             </tr>
             {% for report in data %}
-            {% for source in report.sources %}
-            {% if source.category_name != "Investment" %}
+            {% for source in report.sources%}
             <tr>
-                <td>{{ source.category_name|safe }} - {{ source.activity_name|split_string:"-"|first }}</td>
-                <td>{{ source.co2e_unit }} CO<sub>2</sub>e / {{ source.activity_data.activity_unit }}</td>
-                <td>{{ source.source }}</td>
-                <td>{{ source.year }}</td>
+                <td>{{source.category_name|safe}} - {{source.activity_name|split_string:"-"|first}} </td>
+                <td>{{source.co2e_unit }}CO<sub>2</sub>e / {{source.activity_data.activity_unit}}</td>
+                <td>{{source.source }}</td>
+                <td>{{source.year }}</td>
             </tr>
-            {% endif %}
             {% endfor %}
             {% endfor %}
             <!-- Add more rows as needed -->
@@ -733,7 +728,7 @@
             </tr>
             {% for report in data %}
             {% for source in report.sources %}
-            {% if source.scope_name == "Scope-1" %}
+            {% if source.scope_name == 1 %}
             <tr>
 
                 <td style="width: 50%;">{{source.source_name}}-{{source.category_name}} </td>
@@ -747,7 +742,7 @@
             <!-- Add more rows as needed -->
         </table>
         <p>The total Scope 1 emissions from {{organization_name}} were {% for scope in combined_scopes %}
-            {% if scope.scope_name == "Scope-1" %}
+            {% if scope.scope_name == "scope 1" %}
             {{scope.total_co2e|floatformat:2}}
             {% endif %}
             {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
@@ -780,7 +775,7 @@
             </tr>
             {% for report in data %}
             {% for source in report.sources %}
-            {% if source.scope_name == "Scope-2" %}
+            {% if source.scope_name == 2 %}
             <tr>
 
                 <td style="width: 50%;">{{source.source_name}}-{{source.category_name}} </td>
@@ -794,7 +789,7 @@
             <!-- Add more rows as needed -->
         </table>
         <p>The total Scope 2 emissions from {{organization_name}} were {% for scope in combined_scopes %}
-            {% if scope.scope_name == "Scope-2" %}
+            {% if scope.scope_name == "scope 2" %}
             {{scope.total_co2e|floatformat:2}}
             {% endif %}
             {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
@@ -828,7 +823,7 @@
 
             {% for report in data %}
             {% for source in report.sources %}
-            {% if source.scope_name == "Scope-3" %}
+            {% if source.scope_name == 3 %}
             <tr>
                 <td style="width: 50%;">{{ source.source_name }}-{{ source.category_name }} </td>
                 <td>{{ source.activity_data.activity_value }} {{ source.activity_data.activity_unit }}</td>
@@ -842,7 +837,7 @@
             <!-- Add more rows as needed -->
         </table>
         <p>The total Scope 3 emissions from {{organization_name}} were {% for scope in combined_scopes %}
-            {% if scope.scope_name == "Scope-3" %}
+            {% if scope.scope_name == "scope 3" %}
             {{scope.total_co2e|floatformat:2}}
             {% endif %}
             {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
@@ -868,7 +863,8 @@
     <!-- Results Section -->
     <div class="section">
         <h6 class="keep-with-next">RESULTS</h6>
-        <p class="keep-with-next">{{organization_name}}’s total emissions for the period {{start_date|date:"d-M-Y"}} to
+        <p class="keep-with-next">{{organization_name|capfirst}}’s total emissions for the period
+            {{start_date|date:"d-M-Y"}} to
             {{end_date|date:"d-M-Y"}}
             were
             {{total_co2e_combined|floatformat:2}} tCO2e.</p>
@@ -883,7 +879,7 @@
             {% for scope in combined_scopes %}
             <tr>
                 <td>{{ scope.scope_name }}</td>
-                <td>{{ scope.total_co2e|floatformat:2 }} {{scope.co2e_unit}}</td>
+                <td>{{ scope.total_co2e|floatformat:2 }}</td>
                 <td>{{ scope.combined_percentage|floatformat:2 }}%</td>
             </tr>
             {% endfor %}
