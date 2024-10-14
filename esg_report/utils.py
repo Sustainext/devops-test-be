@@ -75,7 +75,10 @@ def get_raw_responses_as_per_report(report: Report):
         return raw_responses
     elif report.organization:
         raw_responses = raw_responses.filter(
-            Q(organization=report.organization) | Q(organization=None)
+            Q(organization=report.organization)
+            | Q(organization=None)
+            | Q(corporate__in=report.organization.corporatenetityorg.all())
+            | Q(corporate=None)
         )
     return raw_responses.filter(year=get_maximum_months_year(report))
 
@@ -98,7 +101,9 @@ def get_data_points_as_per_report(report: Report):
         return data_points
     elif report.organization:
         data_points = data_points.filter(
-            Q(organization=report.organization) | Q(organization=None)
+            Q(organization=report.organization)
+            | Q(organization=None)
+            | Q(corporate__in=report.organization.corporatenetityorg.all()) | Q(corporate=None)
         )
     return data_points.filter(year=get_maximum_months_year(report))
 

@@ -5,9 +5,17 @@ from rest_framework import status
 from esg_report.models.ScreenTen import ScreenTen
 from materiality_dashboard.models import ManagementApproachQuestion
 from datametric.models import RawResponse, DataMetric, DataPoint
-from esg_report.utils import get_materiality_assessment
+from esg_report.utils import (
+    get_materiality_assessment,
+    get_raw_responses_as_per_report,
+    get_data_points_as_per_report,
+)
 from esg_report.Serializer.ScreenTenSerializer import ScreenTenSerializer
 from sustainapp.models import Report
+from sustainapp.Utilities.supplier_environment_analyse import (
+    new_suppliers,
+    calculate_percentage,
+)
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
@@ -26,6 +34,10 @@ class ScreenTenAPIView(APIView):
             5: "gri-social-impacts_and_actions-414-2a-2d-2e-negative_social_impacts",
             6: "gri-social-impacts_and_actions-414-2b-number_of_suppliers",
             7: "gri-social-impacts_and_actions-414-2c-significant_actual",
+            8: "gri-supplier_environmental_assessment-new_suppliers-308-1a",
+            9: "gri-supplier_environmental_assessment-negative_environmental-308-2d",
+            10: "gri-supplier_environmental_assessment-negative_environmental-308-2e",
+            11: "gri-economic-proportion_of_spending_on_local_suppliers-percentage-204-1a",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -51,34 +63,48 @@ class ScreenTenAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def set_raw_responses(self):
-        self.raw_responses = RawResponse.objects.filter(
-            year__range=(self.report.start_date.year, self.report.end_date.year)
-        ).filter(client=self.request.user.client)
+        self.raw_responses = get_raw_responses_as_per_report(report=self.report)
 
-        if self.report.organization or self.report.corporate:
-            self.raw_responses = self.raw_responses.filter(
-                Q(organization=self.report.organization)
-                | Q(corporate=self.report.corporate)
-            )
-        if self.report.corporate:
-            self.raw_responses = self.raw_responses.filter(
-                Q(locale__in=self.report.corporate.location.all())
-            )
+    def set_data_points(self):
+        self.data_points = get_data_points_as_per_report(report=self.report)
+
+    def get_308_2de_analyse(self):
+        self.client_id = self.request.user.client.id
+        filter_by = {}
+        filter_by["organization__id"] = self.report.organization.id
+        if self.report.corporate.id is not None:
+            filter_by["corporate__id"] = self.report.corporate.id
+        else:
+            filter_by["corporate__id"] = None
+        supplier_env_data = {}
+        supplier_env_data["gri_308_1a"] = new_suppliers(self.slugs[8], filter_by)
+        supplier_env_data["gri_308_2d"] = new_suppliers(
+            self.slugs[9],
+            filter_by,
+        )
+        supplier_env_data["gri_308_2e"] = new_suppliers(
+            self.slugs[10],
+            filter_by,
+        )
+        return supplier_env_data
 
     def get_204_1abc_using_datapoint(self) -> dict[str, Any]:
-        # * Get datapoint
-        datapoint = (
-            (
-                DataPoint.objects.filter(path__slug=self.slugs[0])
-                .filter(client_id=self.report.client.id)
-                .filter(
-                    year__range=(self.report.start_date.year, self.report.end_date.year)
-                )
-            )
-            .order_by("-year")
-            .first()
-        )
-        # TODO: Complete the method.
+        """
+        Gives data for multiple locations.
+        """
+        slug = self.slugs[11]
+        data_points = self.data_points.filter(path__slug=slug).order_by("-year")
+        data_metrics = DataMetric.objects.filter(path__slug=slug)
+        response_data = {}
+        for data_metric in data_metrics:
+            response_data[data_metric.name] = {}
+            for data_point in data_points:
+                response_data[data_metric.name][
+                    data_point.locale.name
+                ] = data_point.value
+        return response_data
+    
+    
 
     def get_204_1abc(self) -> dict[str, Any]:
         response_data = {}
@@ -191,6 +217,7 @@ class ScreenTenAPIView(APIView):
             response_data["sustainability_goals"] = None
             response_data["approach_to_supply_chain_sustainability"] = None
         self.set_raw_responses()
+        self.set_data_points()
         materiality_assessment = get_materiality_assessment(self.report)
         management_approach_question: ManagementApproachQuestion | None = (
             ManagementApproachQuestion.objects.filter(
@@ -218,5 +245,6 @@ class ScreenTenAPIView(APIView):
         response_data["308-2-b"] = None
         response_data["308-2-c"] = None
         response_data.update(self.get_404_2abc())
+        response_data["308_2e_analyse"] = self.get_308_2de_analyse()
 
         return Response(response_data, status=status.HTTP_200_OK)
