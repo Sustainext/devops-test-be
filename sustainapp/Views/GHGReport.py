@@ -619,6 +619,11 @@ class GHGReportView(generics.CreateAPIView):
                 investment_corporates,
             )
 
+        if report_by == "Organization":
+            common_name = organization.name
+        else:
+            common_name = corporate_id.name
+
         if isinstance(analysis_data, Response):
             status_check = analysis_data.status_code
             if status_check in [204, 404, 400, 500]:
@@ -629,7 +634,8 @@ class GHGReportView(generics.CreateAPIView):
                     "start_date": serializer.data.get("start_date"),
                     "end_date": serializer.data.get("end_date"),
                     "country_name": serializer.data.get("organization_country"),
-                    "organization_name": serializer.data.get("organization_name"),
+                    "organization_name": common_name,
+                    "report_by": report_by,
                     "message": analysis_data.data["message"],
                     "report_type": serializer.validated_data["report_type"],
                 },
