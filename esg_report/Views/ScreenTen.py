@@ -82,6 +82,7 @@ class ScreenTenAPIView(APIView):
     def set_data_points(self):
         self.data_points = get_data_points_as_per_report(report=self.report)
 
+
     def get_414_2b_collect(self):
         local_data_points = self.data_points.filter(
             path__slug=self.slugs[14]
@@ -208,13 +209,13 @@ class ScreenTenAPIView(APIView):
             response_data["204-1b"] = None
 
         # * 204-1c
-        raw_responses = (self.raw_responses.filter(path__slug=self.slugs[2])).order_by(
+        raw_responses = (self.raw_responses.filter(path__slug=self.slugs[3])).order_by(
             "-year"
         )
         if raw_responses.exists():
-            response_data["204-1b"] = raw_responses.first().data[0]["Q1"]
+            response_data["204-1c"] = raw_responses.first().data[0]["Q1"]
         else:
-            response_data["204-1b"] = None
+            response_data["204-1c"] = None
 
         return response_data
 
