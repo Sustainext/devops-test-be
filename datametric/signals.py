@@ -50,7 +50,6 @@ def process_json(json_obj, path, raw_response):
                                 index=index,
                                 raw_response=raw_response,
                             )
-                    return None
                 else:
                     process_raw_response_data(
                         data_point_dict=first_value,
