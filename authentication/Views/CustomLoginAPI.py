@@ -13,9 +13,16 @@ from datetime import timedelta, datetime
 class CustomLoginView(LoginView):
     """Over-riding the Default Login View"""
 
+
     def post(self, request, *args, **kwargs):
+        # Make a mutable copy of request.data
+        data = request.data.copy()
+
         # Normalize the email to lowercase
-        request.data["username"] = request.data.get("username", "").lower()
+        data["username"] = data.get("username", "").lower()
+
+        # Replace the original request data with the modified copy
+        request._mutable_data = data
 
         # Now proceed with the normal login process
         return super().post(request, *args, **kwargs)

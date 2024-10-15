@@ -35,10 +35,10 @@ class ScreenTwo(APIView):
         except AboutTheCompanyAndOperations.DoesNotExist as e:
             response_data = {
                 "report": report.id,
-                "about_the_company":"",
-                "business_relations":"",
-                "entities_included":"",
-                "supply_chain_description":""
+                "about_the_company": "",
+                "business_relations": "",
+                "entities_included": "",
+                "supply_chain_description": "",
             }
 
         # Define slugs for GRI questions
@@ -62,18 +62,22 @@ class ScreenTwo(APIView):
             raw_responses=raw_responses, slug=slugs["org_details"]
         )
         if raw_response_org_details:
-            response_data["2-1"] = {
-                "legal_name": raw_response_org_details.data[0]["Q1"]["text"],
-                "nature_of_ownership_and_legal_form": raw_response_org_details.data[0][
-                    "Q2"
-                ]["text"],
-                "location_of_headquarters": raw_response_org_details.data[0]["Q3"][
-                    "text"
-                ],
-                "countries_of_operation": [
-                    i["text"] for i in raw_response_org_details.data[0]["Q4"]["rows"]
-                ],
-            }
+            try:
+                response_data["2-1"] = {
+                    "legal_name": raw_response_org_details.data[0]["Q1"]["text"],
+                    "nature_of_ownership_and_legal_form": raw_response_org_details.data[
+                        0
+                    ]["Q2"]["text"],
+                    "location_of_headquarters": raw_response_org_details.data[0]["Q3"][
+                        "text"
+                    ],
+                    "countries_of_operation": [
+                        i["text"]
+                        for i in raw_response_org_details.data[0]["Q4"]["rows"]
+                    ],
+                }
+            except KeyError:
+                response_data["2-1"] = None
         else:
             response_data["2-1"] = None
 
@@ -123,16 +127,22 @@ class ScreenTwo(APIView):
     def put(self, request, report_id, format=None):
         try:
             report = Report.objects.get(id=report_id)
-            serializer = AboutTheCompanyAndOperationsSerializer(
-                data=request.data, context={"request": request}
-            )
-            if serializer.is_valid():
-                AboutTheCompanyAndOperations.objects.filter(report=report).delete()
-                serializer.save(report=report)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Report.DoesNotExist as e:
             return Response(
                 {"Report Does Not Exist for the given parameter": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        try:
+            about_the_company_and_operations = AboutTheCompanyAndOperations.objects.get(
+                report=report
+            )
+            serializer = AboutTheCompanyAndOperationsSerializer(
+                about_the_company_and_operations, data=request.data
+            )
+        except AboutTheCompanyAndOperations.DoesNotExist as e:
+            serializer = AboutTheCompanyAndOperationsSerializer(
+                data=request.data, context={"request": request}
+            )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(report=report)
+        return Response(serializer.data, status=status.HTTP_200_OK)

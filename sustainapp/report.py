@@ -598,12 +598,18 @@ def generate_pdf_data(pk):
     # Use the extracted Location_data to generate the dynamic chart
     location_donut_chart_html = generate_and_cache_donut_chart_location(location_data)
 
+    organization_name = report.organization.name
+    if report.report_by == "Organization":
+        organization_name = organization_name
+    else:
+        organization_name = report.corporate.name
+
     context = {
         "object_list": report,
         "org_logo": report.org_logo.path if report.org_logo else None,
         "report_type": report.report_type,
         "report_by": report.report_by,
-        "organization_name": report.organization.name,
+        "organization_name": organization_name,
         "country": country_name,
         "about_the_organization": report.about_the_organization,
         "roles_and_responsibilities": report.roles_and_responsibilities,

@@ -41,13 +41,13 @@ class ScreenThreeView(APIView):
             )
         try:
             mission_vision_values = report.mission_vision_values
-            mission_vision_values.delete()
+            serializer = MissionVisionValuesSerializer(
+                mission_vision_values, data=request.data
+            )
         except (MissionVisionValues.DoesNotExist, ObjectDoesNotExist):
-            # * If the MissionVisionValues object doesn't exist, create a new one
-            pass
-        serializer = MissionVisionValuesSerializer(
-            data=request.data, context={"request": request}
-        )
+            serializer = MissionVisionValuesSerializer(
+                data=request.data, context={"request": request}
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         return Response(serializer.data)

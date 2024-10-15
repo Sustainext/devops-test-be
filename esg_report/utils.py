@@ -12,6 +12,44 @@ def get_latest_raw_response(raw_responses, slug):
     return raw_responses.filter(path__slug=slug).order_by("-year").first()
 
 
+def get_maximum_months_year(report: Report):
+    """
+    Get the maximum months year from the given report's start and end dates.
+    This function determines the year that has the maximum number of months between the report's start and end dates. If both dates are in the same year, it returns that year. Otherwise, it calculates the number of months in the start and end years and returns the year with the maximum number of months.
+
+    Args:
+        report (Report): The report object containing the start and end dates.
+
+    Returns:
+        int: The year with the maximum number of months between the report's start and end dates.
+    """
+    # Extracting start_date and end_date
+    start_date = report.start_date
+    end_date = report.end_date
+
+    # Getting the years for start_date and end_date
+    start_year = start_date.year
+    end_year = end_date.year
+
+    # If both dates are in the same year
+    if start_year == end_year:
+        return start_year
+
+    # Months in the start year
+    months_start_year = 12 - start_date.month + 1
+
+    # Months in the end year
+    months_end_year = end_date.month
+
+    # Determine which year has the maximum months
+    if months_start_year > months_end_year:
+        return start_year
+    elif months_start_year == months_end_year:
+        return end_date.year
+    else:
+        return end_year
+
+
 def get_raw_responses_as_per_report(report: Report):
     """
     Get RawResponses as per report.
@@ -34,12 +72,14 @@ def get_raw_responses_as_per_report(report: Report):
         raw_responses = raw_responses.filter(
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
         )
-        return raw_responses
     elif report.organization:
         raw_responses = raw_responses.filter(
-            Q(organization=report.organization) | Q(organization=None)
+            Q(organization=report.organization)
+            | Q(organization=None)
+            | Q(corporate__in=report.organization.corporatenetityorg.all())
+            | Q(corporate=None)
         )
-    return raw_responses
+    return raw_responses.filter(year=get_maximum_months_year(report))
 
 
 def get_data_points_as_per_report(report: Report):
@@ -57,12 +97,20 @@ def get_data_points_as_per_report(report: Report):
         data_points = data_points.filter(
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
         )
-        return data_points
     elif report.organization:
         data_points = data_points.filter(
-            Q(organization=report.organization) | Q(organization=None)
+            Q(organization=report.organization)
+            | Q(organization=None)
+            | Q(corporate__in=report.organization.corporatenetityorg.all())
+            | Q(corporate=None)
+            | Q(
+                locale__id__in=report.organization.corporatenetityorg.all().values_list(
+                    "location", flat=True
+                )
+            )
+            | Q(locale=None)
         )
-    return data_points
+    return data_points.filter(year=get_maximum_months_year(report))
 
 
 def get_materiality_assessment(report):
@@ -99,29 +147,63 @@ def get_materiality_assessment(report):
             raise ValidationError("Materiality Assessment not found")
 
 
-def get_maximum_months_year(report: Report):
-    # Extracting start_date and end_date
-    start_date = report.start_date
-    end_date = report.end_date
+from collections import defaultdict
 
-    # Getting the years for start_date and end_date
-    start_year = start_date.year
-    end_year = end_date.year
 
-    # If both dates are in the same year
-    if start_year == end_year:
-        return start_year
+def collect_data_by_raw_response_and_index(data_points):
+    # Create a dictionary where the key is raw_response and the value is another dictionary
+    # which maps index to a dictionary of data_metric and value pairs
+    raw_response_index_map = defaultdict(dict)
 
-    # Months in the start year
-    months_start_year = 12 - start_date.month + 1
+    # Iterate over the list of data points
+    for dp in data_points:
+        raw_response = dp.raw_response.id
+        index = dp.index
+        data_metric = dp.data_metric.name
+        value = dp.value
 
-    # Months in the end year
-    months_end_year = end_date.month
+        # Directly store the data_metric and value for the combination of raw_response and index
+        raw_response_index_map[(raw_response, index)][data_metric] = value
 
-    # Determine which year has the maximum months
-    if months_start_year > months_end_year:
-        return start_year
-    elif months_start_year == months_end_year:
-        return end_date.year
-    else:
-        return end_year
+    # Convert the defaultdict values into a list of dictionaries (the collected data)
+    return list(raw_response_index_map.values())
+
+
+def collect_data_and_differentiate_by_location(data_points):
+    # Create a dictionary where the key is raw_response and the value is another dictionary
+    # which maps index to a dictionary of data_metric and value pairs
+    raw_response_index_map = defaultdict(dict)
+    location_map = defaultdict(list)
+
+    # Iterate over the list of data points
+    for dp in data_points:
+        raw_response = dp.raw_response.id
+        index = dp.index
+        data_metric = dp.data_metric.name
+        value = dp.value
+        location = dp.locale.name
+        month = dp.month
+        raw_response_index_map[(raw_response, index, location)][data_metric] = value
+
+    # Group the data by location
+    for (
+        raw_response,
+        index,
+        location,
+    ), data_metric_value_map in raw_response_index_map.items():
+        location_map[location].append(data_metric_value_map)
+
+    # Convert location_map to a list of dictionaries
+    grouped_data_by_location = [
+        {location: values} for location, values in location_map.items()
+    ]
+
+    return grouped_data_by_location
+
+
+# * A method that filters the data points based on the slug and data_point queryset given in parameter and then calls collect_data_by_raw_response_and_index method
+def get_data_by_raw_response_and_index(data_points, slug):
+    data_points = data_points.filter(
+        path__slug=slug,
+    )
+    return collect_data_and_differentiate_by_location(data_points)

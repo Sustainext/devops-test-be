@@ -87,14 +87,12 @@ class ScreenSixAPIView(APIView):
             stakeholder_engagement: StakeholderEngagement = (
                 report.stakeholder_engagement
             )
-            stakeholder_engagement.delete()
+            serializer = StakeholderEngagementSerializer(
+                stakeholder_engagement, data=request.data
+            )
         except ObjectDoesNotExist:
-            # * Condition when API has to be behave like POST
-            response_data["description"] = None
+            serializer = StakeholderEngagementSerializer(data=request.data)
 
-        serializer = StakeholderEngagementSerializer(
-            data=request.data, context={"request": request}
-        )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         response_data.update(serializer.data)
