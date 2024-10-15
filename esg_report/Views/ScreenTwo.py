@@ -35,10 +35,10 @@ class ScreenTwo(APIView):
         except AboutTheCompanyAndOperations.DoesNotExist as e:
             response_data = {
                 "report": report.id,
-                "about_the_company":"",
-                "business_relations":"",
-                "entities_included":"",
-                "supply_chain_description":""
+                "about_the_company": "",
+                "business_relations": "",
+                "entities_included": "",
+                "supply_chain_description": "",
             }
 
         # Define slugs for GRI questions
@@ -62,18 +62,22 @@ class ScreenTwo(APIView):
             raw_responses=raw_responses, slug=slugs["org_details"]
         )
         if raw_response_org_details:
-            response_data["2-1"] = {
-                "legal_name": raw_response_org_details.data[0]["Q1"]["text"],
-                "nature_of_ownership_and_legal_form": raw_response_org_details.data[0][
-                    "Q2"
-                ]["text"],
-                "location_of_headquarters": raw_response_org_details.data[0]["Q3"][
-                    "text"
-                ],
-                "countries_of_operation": [
-                    i["text"] for i in raw_response_org_details.data[0]["Q4"]["rows"]
-                ],
-            }
+            try:
+                response_data["2-1"] = {
+                    "legal_name": raw_response_org_details.data[0]["Q1"]["text"],
+                    "nature_of_ownership_and_legal_form": raw_response_org_details.data[
+                        0
+                    ]["Q2"]["text"],
+                    "location_of_headquarters": raw_response_org_details.data[0]["Q3"][
+                        "text"
+                    ],
+                    "countries_of_operation": [
+                        i["text"]
+                        for i in raw_response_org_details.data[0]["Q4"]["rows"]
+                    ],
+                }
+            except KeyError:
+                response_data["2-1"] = None
         else:
             response_data["2-1"] = None
 
@@ -142,4 +146,3 @@ class ScreenTwo(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        
