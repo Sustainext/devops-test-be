@@ -21,3 +21,6 @@ from .Material.RecycledInputMaterials import RecycledInputMaterials
 from .Material.ReclaimedMaterials import ReclaimedMaterials
 from .Governance.Compensation import Compensation
 from .Governance.CompensationIncrease import CompensationIncrease
+from .General.CollectiveBargaining import GeneralCollectiveBargaining
+from .General.WorkForceEmp import GeneralTotalEmployees
+from .General.WorkForceOtherWorkers import GeneralWorkersNotEmp

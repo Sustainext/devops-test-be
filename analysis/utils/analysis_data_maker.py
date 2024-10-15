@@ -64,7 +64,15 @@ from analysis.utils.Material.reclaimed_materials import (
 from analysis.utils.Governance.compensation import fill_data_inside_compensation
 from analysis.utils.Governance.compensation_increase import fill_data_inside_compensation_increase
 from datametric.models import RawResponse
-
+from analysis.utils.General.CollectiveBargainingAnalyze import (
+    create_data_for_general_collective_bargaining,
+)
+from analysis.utils.General.WorkForceEmpAnalyze import (
+    total_number_employees_analysis,
+)
+from analysis.utils.General.WorkForceOtherWorkersAnalyze import (
+    workforce_other_workers_analysis,
+)
 
 def create_analysis_data(raw_response: RawResponse):
     employment_analysis(raw_response=raw_response)
@@ -99,3 +107,6 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_reclaimed_materials(raw_response=raw_response)
     fill_data_inside_compensation(raw_response=raw_response)
     fill_data_inside_compensation_increase(raw_response=raw_response)
+    create_data_for_general_collective_bargaining(raw_response=raw_response)
+    total_number_employees_analysis(raw_response=raw_response)
+    workforce_other_workers_analysis(raw_response=raw_response)
