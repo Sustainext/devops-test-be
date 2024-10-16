@@ -562,13 +562,13 @@ class ScreenElevenAPIView(APIView):
         response_data["economic_analyse"][
             "operations_assessed_analyze"
         ] = self.get_operations_assessed_analyze()
-        response_data["205_3a_s1"] = collect_data_by_raw_response_and_index(
+        response_data["205_3a"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[28])
         )
-        response_data["205-3b-s2"] = collect_data_by_raw_response_and_index(
+        response_data["205_3b"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[29])
         )
-        response_data["205-3c-s3"] = collect_data_by_raw_response_and_index(
+        response_data["205_3c"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[30])
         )
 
