@@ -203,10 +203,10 @@ class ScreenTwelveAPIView(APIView):
         response_data["305_4abc"] = self.get_305_4abc()
         response_data["305_5abc"] = self.get_305_5abc()
         response_data["301_1a_non_renewable_materials"] = (
-            self.get_301_1a_non_renewable_materials()
+            self.get_301_1a_non_renewable_materials() #TODO: Make data from analyze
         )
         response_data["301_1a_renewable_materials"] = (
-            self.get_301_1a_renewable_materials()
+            self.get_301_1a_renewable_materials() #TODO: Make data from analyze
         )
         response_data["301_2a"] = self.get_301_2a()
         response_data["301_3a_3b"] = self.get_301_3a_3b()

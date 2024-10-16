@@ -9,6 +9,8 @@ from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     get_maximum_months_year,
+    collect_data_by_raw_response_and_index,
+    collect_data_and_differentiate_by_location,
 )
 from esg_report.Serializer.ScreenElevenSerializer import ScreenElevenSerializer
 from sustainapp.models import Report
@@ -393,19 +395,9 @@ class ScreenElevenAPIView(APIView):
         return response_data
 
     def get_205_1a(self):
-        local_data_points = self.data_points.filter(path__slug=self.slugs[21]).order_by(
-            "-year"
+        collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[21])
         )
-        response_data = {}
-        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[21])
-        for data_metric in local_data_metrics:
-            try:
-                response_data[data_metric.name] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[data_metric.name] = None
-        return response_data
 
     def get_205_2a(self):
         """
