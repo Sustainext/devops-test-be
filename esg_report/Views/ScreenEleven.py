@@ -64,6 +64,9 @@ class ScreenElevenAPIView(APIView):
             25: "gri-economic-anti_corruption-comm_and_training-205-2d-training",
             26: "gri-economic-anti_corruption-comm_and_training-205-2e-policies",
             27: "gri-economic-financial_implications-201-2a-calculate",
+            28: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3a-s1",
+            29: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3b-s2",
+            30: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3c-s3",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -559,5 +562,14 @@ class ScreenElevenAPIView(APIView):
         response_data["economic_analyse"][
             "operations_assessed_analyze"
         ] = self.get_operations_assessed_analyze()
+        response_data["205_3a_s1"] = collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[28])
+        )
+        response_data["205-3b-s2"] = collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[29])
+        )
+        response_data["205-3c-s3"] = collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[30])
+        )
 
         return Response(response_data, status=status.HTTP_200_OK)
