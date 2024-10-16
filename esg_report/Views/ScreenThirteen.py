@@ -129,7 +129,6 @@ class ScreenThirteenView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        print(response)
         return response
 
     def put(self, request, report_id, format=None):
