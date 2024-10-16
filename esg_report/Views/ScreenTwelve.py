@@ -10,6 +10,7 @@ from collections import defaultdict
 from datametric.models import RawResponse
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
+from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from esg_report.utils import (
     get_materiality_assessment,
     get_raw_responses_as_per_report,
@@ -91,6 +92,25 @@ class ScreenTwelveAPIView(APIView):
             31: "gri-environment-waste-306-4e-contextual_info",
             32: "gri-environment-water-303-1b-1c-1d-interaction_with_water",
         }
+
+    def get_energy_analyse(self):
+        response = forward_request_with_jwt(
+            view_class=EnergyAnalyzeView,
+            original_request=self.request,
+            url="/sustainapp/get_energy_analysis/",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
 
     def get_water_analyse(self):
         response = forward_request_with_jwt(
@@ -335,6 +355,7 @@ class ScreenTwelveAPIView(APIView):
                 ),
                 "material_analyse": self.get_301_analyse(),
                 "water_analyse": self.get_water_analyse(),
+                "energy_analyse": self.get_energy_analyse(),
             }
         )
         return Response(response_data, status=status.HTTP_200_OK)
