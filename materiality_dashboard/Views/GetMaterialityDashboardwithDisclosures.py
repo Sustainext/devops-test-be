@@ -30,7 +30,6 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             query_params = {
                 "client": client,
                 "organization": organization,
-                "status": "in_progress",
             }
             if corporate:
                 query_params["corporate"] = corporate
