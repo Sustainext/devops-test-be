@@ -11,10 +11,20 @@ from esg_report.utils import (
     get_maximum_months_year,
     collect_data_by_raw_response_and_index,
     collect_data_and_differentiate_by_location,
+    forward_request_with_jwt,
 )
 from esg_report.Serializer.ScreenElevenSerializer import ScreenElevenSerializer
 from sustainapp.models import Report
 from rest_framework.permissions import IsAuthenticated
+from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
+    CommunicationTrainingAnalyzeView,
+)
+from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import (
+    MarketPresenceAnalyseView,
+)
+from sustainapp.Views.Analyse.Economic.OperationsAssesedAnalyse import (
+    OperationsAssessedAnalyzeView,
+)
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 
@@ -83,6 +93,70 @@ class ScreenElevenAPIView(APIView):
 
     def set_raw_responses(self):
         self.raw_responses = get_raw_responses_as_per_report(self.report)
+
+    """
+    CommunicationTrainingAnalyzeView
+    MarketPresenceAnalyseView
+    OperationsAssessedAnalyzeView
+
+    """
+
+    def get_communication_training_analyze(self):
+        response = forward_request_with_jwt(
+            view_class=CommunicationTrainingAnalyzeView,
+            original_request=self.request,
+            url="sustainapp/get_economic_communication_and_training/",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
+
+    def get_market_presence_analyze(self):
+        response = forward_request_with_jwt(
+            view_class=MarketPresenceAnalyseView,
+            original_request=self.request,
+            url="sustainapp/get_economic_market_presence/",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
+
+    def get_operations_assessed_analyze(self):
+        response = forward_request_with_jwt(
+            view_class=OperationsAssessedAnalyzeView,
+            original_request=self.request,
+            url="sustainapp/get_economic_operations_assessed/",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
 
     def get_201_1ab(self):
         local_raw_responses = (
@@ -475,5 +549,15 @@ class ScreenElevenAPIView(APIView):
                 self.data_points.filter(path__slug=self.slugs[27])
             )
         )
+        response_data["economic_analyse"] = {}
+        response_data["economic_analyse"][
+            "communication_training_analyze"
+        ] = self.get_communication_training_analyze()
+        response_data["economic_analyse"][
+            "market_presence_analyze"
+        ] = self.get_market_presence_analyze()
+        response_data["economic_analyse"][
+            "operations_assessed_analyze"
+        ] = self.get_operations_assessed_analyze()
 
         return Response(response_data, status=status.HTTP_200_OK)

@@ -10,6 +10,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.request import Request
 from rest_framework.response import Response
 from django.http import HttpRequest
+from django.urls import reverse, resolve
 
 
 def get_latest_raw_response(raw_responses, slug):
@@ -240,3 +241,11 @@ def forward_request_with_jwt(view_class, original_request, url, query_params):
     temp = view(internal_request)
     # Step 5: Return the response from the internal view
     return temp
+
+
+def calling_analyse_view_with_params(view_name, params, request):
+    """
+    Calls another internal API view with the JWT token from the original request.
+    """
+    url = reverse("get_waste_analysis")
+    
