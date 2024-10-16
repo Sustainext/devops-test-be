@@ -91,7 +91,7 @@ class ScreenTwelveAPIView(APIView):
             32: "gri-environment-water-303-1b-1c-1d-interaction_with_water",
         }
 
-    def get_301_2a_analyse(self):
+    def get_301_analyse(self):
         response = forward_request_with_jwt(
             view_class=GetMaterialAnalysis,
             original_request=self.request,
@@ -312,7 +312,7 @@ class ScreenTwelveAPIView(APIView):
                 "303-1b-1c-1d": get_data_by_raw_response_and_index(
                     data_points=self.data_points, slug=self.slugs[32]
                 ),
-                "301_2a_analyse": self.get_301_2a_analyse(),
+                "material_analyse": self.get_301_analyse(),
             }
         )
         return Response(response_data, status=status.HTTP_200_OK)
