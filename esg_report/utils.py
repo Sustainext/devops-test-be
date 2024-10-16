@@ -11,6 +11,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from django.http import HttpRequest
 
+
 def get_latest_raw_response(raw_responses, slug):
     return raw_responses.filter(path__slug=slug).order_by("-year").first()
 
@@ -67,21 +68,13 @@ def get_raw_responses_as_per_report(report: Report):
     raw_responses = RawResponse.objects.filter(client=report.client)
     if report.corporate:
         raw_responses = raw_responses.filter(
-            Q(corporate=report.corporate)
-            | Q(corporate=None)
-            | Q(organization=report.organization)
-            | Q(organization=None)
+            Q(corporate=report.corporate) | Q(organization=report.organization)
         )
         raw_responses = raw_responses.filter(
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
         )
     elif report.organization:
-        raw_responses = raw_responses.filter(
-            Q(organization=report.organization)
-            | Q(organization=None)
-            | Q(corporate__in=report.organization.corporatenetityorg.all())
-            | Q(corporate=None)
-        )
+        raw_responses = raw_responses.filter(Q(organization=report.organization))
     return raw_responses.filter(year=get_maximum_months_year(report))
 
 
@@ -92,27 +85,13 @@ def get_data_points_as_per_report(report: Report):
     data_points = DataPoint.objects.filter(client_id=report.client.id)
     if report.corporate:
         data_points = data_points.filter(
-            Q(corporate=report.corporate)
-            | Q(corporate=None)
-            | Q(organization=report.organization)
-            | Q(organization=None)
+            Q(corporate=report.corporate) | Q(organization=report.organization)
         )
         data_points = data_points.filter(
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
         )
     elif report.organization:
-        data_points = data_points.filter(
-            Q(organization=report.organization)
-            | Q(organization=None)
-            | Q(corporate__in=report.organization.corporatenetityorg.all())
-            | Q(corporate=None)
-            | Q(
-                locale__id__in=report.organization.corporatenetityorg.all().values_list(
-                    "location", flat=True
-                )
-            )
-            | Q(locale=None)
-        )
+        data_points = data_points.filter(Q(organization=report.organization))
     return data_points.filter(year=get_maximum_months_year(report))
 
 
@@ -210,6 +189,7 @@ def get_data_by_raw_response_and_index(data_points, slug):
         path__slug=slug,
     )
     return collect_data_and_differentiate_by_location(data_points)
+
 
 def forward_request_with_jwt(view_class, original_request, url, query_params):
     """
