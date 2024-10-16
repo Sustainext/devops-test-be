@@ -258,9 +258,10 @@ class ScreenElevenAPIView(APIView):
         response_data = {
             "currency": local_data.get("Q1"),
         }
-        for table_dictionary in local_data.get("Q2"):
+        for index, table_dictionary in enumerate(local_data.get("Q2")):
+            response_data[index] = {}
             for key, value in table_dictionary.items():
-                response_data[name_mapping[key]] = value
+                response_data[index][name_mapping[key]] = value
         return response_data
 
     def get_207_4c(self):
@@ -474,6 +475,5 @@ class ScreenElevenAPIView(APIView):
                 self.data_points.filter(path__slug=self.slugs[27])
             )
         )
-        
 
         return Response(response_data, status=status.HTTP_200_OK)
