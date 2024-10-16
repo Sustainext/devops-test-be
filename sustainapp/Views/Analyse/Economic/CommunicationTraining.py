@@ -10,26 +10,45 @@ from collections import defaultdict
 
 logger = getLogger("error.log")
 
+
 class CommunicationTrainingAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
-
 
     def process_205_2a_2d(self, path, filter_by):
 
         def format_data(self, lst):
             res = []
             for obj in lst:
-                try :
+                try:
                     append_res = defaultdict(str)
-                    append_res["loc"] = obj["Region Name"]
-                    append_res["total_communicated"] = obj["Total number of governance body members that the organization's anti-corruption policies and procedures have been communicated to"]
-                    append_res["total_region"] = obj["Total number of governance body members in that region."]
-                    append_res["percentage"] = (float(append_res["total_communicated"])/float(append_res["total_region"])) * 100 if float(append_res["total_region"]) !=0 else 0
+                    try:
+                        append_res["loc"] = obj["Region Name"]
+                    except KeyError:
+                        append_res["loc"] = obj["Location Name"]
+                    append_res["total_communicated"] = obj[
+                        "Total number of governance body members that the organization's anti-corruption policies and procedures have been communicated to"
+                    ]
+                    append_res["total_region"] = obj[
+                        "Total number of governance body members in that region."
+                    ]
+                    append_res["percentage"] = (
+                        (
+                            float(append_res["total_communicated"])
+                            / float(append_res["total_region"])
+                        )
+                        * 100
+                        if float(append_res["total_region"]) != 0
+                        else 0
+                    )
                     res.append(append_res)
                 except Exception as e:
-                    logger.error(f"Error in Analyze Economic > Anti Corruption> CommunicationTraining : {e}")
+                    logger.error(
+                        f"Error in Analyze Economic > Anti Corruption> CommunicationTraining : {e}",
+                        exc_info=True,
+                    )
                     continue
             return res
+
         raw_resp_205_2a = RawResponse.objects.filter(
             **filter_by,
             path__slug=path,
@@ -39,7 +58,8 @@ class CommunicationTrainingAnalyzeView(APIView):
 
         if not raw_resp_205_2a and self.corp is None:
             logger.error(
-                f"Economic/CommunicationTrainingAnalyzeView : There is no data for the organization {self.org} and the path {path} and the year {self.year}, So proceeding to check for its Corporates")
+                f"Economic/CommunicationTrainingAnalyzeView : There is no data for the organization {self.org} and the path {path} and the year {self.year}, So proceeding to check for its Corporates"
+            )
             corps_of_org = Corporateentity.objects.filter(organization=self.org)
             res_corps = []
             for corp in corps_of_org:
@@ -53,41 +73,58 @@ class CommunicationTrainingAnalyzeView(APIView):
                 if raw_resp:
                     res_corps.extend(format_data(self, raw_resp.data[0]["Q1"]))
             return res_corps
-            
-        if raw_resp_205_2a :
-            q1_lst =  raw_resp_205_2a.data[0]["Q1"]
+
+        if raw_resp_205_2a:
+            q1_lst = raw_resp_205_2a.data[0]["Q1"]
             return format_data(self, q1_lst)
-        else : return []
-         
-    def process_205_2b_2c_2d(self, path, filter_by):  
+        else:
+            return []
+
+    def process_205_2b_2c_2d(self, path, filter_by):
 
         def format_data_2b_2c_2d(self, raw_dict):
-            cleaned_dict = {} 
-            for key,value in raw_dict.items():
-                
-                if value :
-                    filtered_items = [item for item in value if item["Totalemployeeinthisregion"] and item["Totalnumberemployees"]]
- 
+            cleaned_dict = {}
+            for key, value in raw_dict.items():
+
+                if value:
+                    filtered_items = [
+                        item
+                        for item in value
+                        if item["Totalemployeeinthisregion"]
+                        and item["Totalnumberemployees"]
+                    ]
+
                     if filtered_items:
                         cleaned_dict[key] = filtered_items
-                        for item in cleaned_dict[key] :
-                            try : 
-                                item['percentage'] = (float(item["Totalnumberemployees"])/float(item["Totalemployeeinthisregion"]))*100 if float(item["Totalemployeeinthisregion"]) !=0 else 0
+                        for item in cleaned_dict[key]:
+                            try:
+                                item["percentage"] = (
+                                    (
+                                        float(item["Totalnumberemployees"])
+                                        / float(item["Totalemployeeinthisregion"])
+                                    )
+                                    * 100
+                                    if float(item["Totalemployeeinthisregion"]) != 0
+                                    else 0
+                                )
                             except Exception as e:
-                                logger.error(f"Error in Analyze Economic > Anti Corruption> CommunicationTraining : {e}")
+                                logger.error(
+                                    f"Error in Analyze Economic > Anti Corruption> CommunicationTraining : {e}"
+                                )
                                 continue
             return cleaned_dict
-        
+
         raw_resp_205_2b_2c_2d = RawResponse.objects.filter(
             **filter_by,
             path__slug=path,
             client_id=self.client_id,
             year=self.year,
         ).first()
-        
+
         if not raw_resp_205_2b_2c_2d and self.corp is None:
             logger.error(
-                f"Economic/CommunicationTrainingAnalyzeView : There is no data for the organization {self.org} and the path {path} and the year {self.year}, So proceeding to check for its Corporates")
+                f"Economic/CommunicationTrainingAnalyzeView : There is no data for the organization {self.org} and the path {path} and the year {self.year}, So proceeding to check for its Corporates"
+            )
             corps_of_org = Corporateentity.objects.filter(organization=self.org)
             res_corps = {}
             for corp in corps_of_org:
@@ -103,10 +140,10 @@ class CommunicationTrainingAnalyzeView(APIView):
             return res_corps if res_corps else []
         if raw_resp_205_2b_2c_2d:
             return format_data_2b_2c_2d(self, raw_resp_205_2b_2c_2d.data[0]["Q1"])
-        else : return []
+        else:
+            return []
 
-
-    def get (self, request):
+    def get(self, request):
         serialized_data = CheckOrgCoprDateSerializer(data=request.query_params)
         serialized_data.is_valid(raise_exception=True)
 
@@ -139,20 +176,25 @@ class CommunicationTrainingAnalyzeView(APIView):
                 filter_by["corporate__id"] = None
 
             data = defaultdict(list)
-            data['analyze_205_2a'] = self.process_205_2a_2d(
-                "gri-economic-anti_corruption-comm_and_training-205-2a-governance_body_members", filter_by
+            data["analyze_205_2a"] = self.process_205_2a_2d(
+                "gri-economic-anti_corruption-comm_and_training-205-2a-governance_body_members",
+                filter_by,
             )
-            data['analyze_205_2d'] = self.process_205_2a_2d(
-                "gri-economic-anti_corruption-comm_and_training-205-2d-training", filter_by
+            data["analyze_205_2d"] = self.process_205_2a_2d(
+                "gri-economic-anti_corruption-comm_and_training-205-2d-training",
+                filter_by,
             )
-            data['analyze_205_2b'] = self.process_205_2b_2c_2d(
-                "gri-economic-anti_corruption-comm_and_training-205-2b-employees", filter_by,
+            data["analyze_205_2b"] = self.process_205_2b_2c_2d(
+                "gri-economic-anti_corruption-comm_and_training-205-2b-employees",
+                filter_by,
             )
-            data['analyze_205_2e'] = self.process_205_2b_2c_2d(
-                "gri-economic-anti_corruption-comm_and_training-205-2e-policies", filter_by
+            data["analyze_205_2e"] = self.process_205_2b_2c_2d(
+                "gri-economic-anti_corruption-comm_and_training-205-2e-policies",
+                filter_by,
             )
             data["analyze_205_2c"] = self.process_205_2b_2c_2d(
-                "gri-economic-anti_corruption-comm_and_training-205-2c-business", filter_by
+                "gri-economic-anti_corruption-comm_and_training-205-2c-business",
+                filter_by,
             )
 
             return Response(
