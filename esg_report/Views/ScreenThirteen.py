@@ -96,7 +96,7 @@ class ScreenThirteenView(APIView):
     def get_403(self):
         response = forward_request_with_jwt(
             view_class=IllnessAnalysisView,
-            forward_request_with_jwt=self.request,
+            original_request=self.request,
             url="/sustainapp/get_ohs_analysis/",
             query_params={
                 "organisation": f"{self.report.organization.id}",
@@ -129,7 +129,7 @@ class ScreenThirteenView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response
+        return response.data
 
     def put(self, request, report_id, format=None):
         try:
@@ -238,7 +238,7 @@ class ScreenThirteenView(APIView):
             )
         )
         response_data["405-1a-number_of_individuals"] = (
-            collect_data_and_differentiate_by_location(
+            collect_data_by_raw_response_and_index(
                 data_points=self.data_points.filter(path__slug=self.slugs[15])
             )
         )

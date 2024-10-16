@@ -167,10 +167,11 @@ def collect_data_by_raw_response_and_index(data_points):
 
 
 def collect_data_and_differentiate_by_location(data_points):
-    # Create a dictionary where the key is raw_response and the value is another dictionary
-    # which maps index to a dictionary of data_metric and value pairs
+    # Dictionary to store data grouped by raw_response and index (ignoring location for grouping)
     raw_response_index_map = defaultdict(dict)
-    location_map = defaultdict(list)
+
+    # Set to store unique locations
+    unique_locations = set()
 
     # Iterate over the list of data points
     for dp in data_points:
@@ -178,24 +179,21 @@ def collect_data_and_differentiate_by_location(data_points):
         index = dp.index
         data_metric = dp.data_metric.name
         value = dp.value
-        location = dp.locale.name
-        month = dp.month
-        raw_response_index_map[(raw_response, index, location)][data_metric] = value
+        location = dp.locale.name  # Assuming locale represents location name
 
-    # Group the data by location
-    for (
-        raw_response,
-        index,
-        location,
-    ), data_metric_value_map in raw_response_index_map.items():
-        location_map[location].append(data_metric_value_map)
+        # Store the data_metric and its value for the current raw_response and index
+        raw_response_index_map[(raw_response, index)][data_metric] = value
 
-    # Convert location_map to a list of dictionaries
-    grouped_data_by_location = [
-        {location: values} for location, values in location_map.items()
-    ]
+        # Collect unique locations
+        unique_locations.add(location)
 
-    return grouped_data_by_location
+    # Convert raw_response_index_map to a list of dictionaries (ignoring location for grouping)
+    grouped_data = list(raw_response_index_map.values())
+
+    # Return the grouped data and the list of unique locations
+    response_data = {"data": grouped_data, "locations": list(unique_locations)}
+
+    return response_data
 
 
 # * A method that filters the data points based on the slug and data_point queryset given in parameter and then calls collect_data_by_raw_response_and_index method
