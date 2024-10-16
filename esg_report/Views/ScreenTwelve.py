@@ -109,7 +109,7 @@ class ScreenTwelveAPIView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response
+        return response.data
 
     def get_301_analyse(self):
         response = forward_request_with_jwt(
@@ -128,6 +128,7 @@ class ScreenTwelveAPIView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
+        return response.data
 
     def get_301_3a_3b(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[6]).order_by(
