@@ -74,7 +74,14 @@ def get_raw_responses_as_per_report(report: Report):
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
         )
     elif report.organization:
-        raw_responses = raw_responses.filter(Q(organization=report.organization))
+        raw_responses = raw_responses.filter(
+            Q(organization=report.organization)
+            | Q(
+                locale__in=report.organization.corporatenetityorg.all().values_list(
+                    "location", flat=True
+                )
+            )
+        )
     return raw_responses.filter(year=get_maximum_months_year(report))
 
 
@@ -91,7 +98,15 @@ def get_data_points_as_per_report(report: Report):
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
         )
     elif report.organization:
-        data_points = data_points.filter(Q(organization=report.organization))
+        data_points = data_points.filter(
+            Q(organization=report.organization)
+            | Q(
+                locale__in=report.organization.corporatenetityorg.all().values_list(
+                    "location", flat=True
+                )
+            )
+        )
+
     return data_points.filter(year=get_maximum_months_year(report))
 
 
