@@ -216,25 +216,7 @@ class ScreenElevenAPIView(APIView):
         local_data_points = self.data_points.filter(path__slug=self.slugs[10]).order_by(
             "-year"
         )
-        response_data = {}
-        name_mapping = {
-            "Q1": "does_your_organisation_have_a_tax_strategy",
-            "Q2": "provide_a_link_to_the_tax_strategy_if_it_is_publicly_available",
-            "Q3": "mention_the_governance_body_or_executive-level_position_within_the_organization_that_formally_reviews_and_approves_the_tax_strategy",
-            "Q4": "mention_the_frequency_the_tax_strategy_review",
-            "Q5": "tax_compliance_approach",
-            "Q6": "tax_approach_link_to_business_and_sustainability",
-        }
-        print(collect_data_by_raw_response_and_index(local_data_points))
-        local_datametrics = DataMetric.objects.filter(path__slug=self.slugs[10])
-        for data_metric in local_datametrics:
-            try:
-                response_data[name_mapping[data_metric.name]] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[name_mapping[data_metric.name]] = None
-        return response_data
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_207_4a(self):
         """
