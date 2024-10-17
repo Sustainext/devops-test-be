@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Sustainext</title>
+    <style>
+        /* Add your inline CSS styles here */
+    </style>
+</head>
+
+<body>
+    <p>Hi {{ first_name }},</p>
+    <p>Your task {{ task_name }} was due on {{ deadline|date:"d-M-Y" }}, and it is overdue by {{ days_overdue }}
+        {% if days_overdue == 1 %} day. {% else %} days. {% endif %} </p>
+    <p><a href="{{platform_link}}">Click here</a> to view the task details.</p>
+    <p>Thank you for using Sustainext.ai</p>
+    <p style="margin-top: 20px; margin-bottom: 20; padding-bottom: 0;">Best regards,<br>Sustainext,</p>
+    <img src="https://sustainextstorage1.blob.core.windows.net/static/images/signature.png" alt="Sustainext" width="307"
+        height="118">
+    <div>
+        <a href="https://sustainext.ai/">Website</a> | <a
+            href="https://www.linkedin.com/company/sustainext/">Linkedin</a>
+    </div>
+
+</html>

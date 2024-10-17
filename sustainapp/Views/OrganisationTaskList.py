@@ -28,19 +28,23 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        completed_statuses = [1, 3]
+        completed_statuses = ["approved", "completed"]
         # Organize your tasks based on some attributes
         tasks = {
             "upcoming": queryset.filter(
-                task_status__in=[0, 4], assigned_to=request.user
+                task_status__in=["in_progress", "reject"], assigned_to=request.user
             ).exclude(deadline__lt=timezone.now()),
             "overdue": queryset.filter(
-                task_status=0, assigned_to=request.user, deadline__lt=timezone.now()
+                task_status="in_progress",
+                assigned_to=request.user,
+                deadline__lt=timezone.now(),
             ),
             "completed": queryset.filter(
                 task_status__in=completed_statuses, assigned_to=request.user
             ),
-            "for_review": queryset.filter(task_status=2, assigned_by=request.user),
+            "for_review": queryset.filter(
+                task_status="under_review", assigned_by=request.user
+            ),
         }
 
         # Serialize data with custom context for each task category
