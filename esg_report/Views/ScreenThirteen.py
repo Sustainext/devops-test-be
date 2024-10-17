@@ -13,7 +13,12 @@ from esg_report.utils import (
     collect_data_by_raw_response_and_index,
     collect_data_and_differentiate_by_location,
     get_data_by_raw_response_and_index,
+    forward_request_with_jwt,
 )
+from rest_framework.test import APIRequestFactory
+from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
+from sustainapp.Views.Analyse.Social.TrainingAnalyse import TrainingSocial
+from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 
 
 class ScreenThirteenView(APIView):
@@ -28,7 +33,103 @@ class ScreenThirteenView(APIView):
             4: "gri-general-workforce_employees-data-2-7c",
             5: "gri-general-workforce_employees-contextual-2-7d",
             6: "gri-general-workforce_employees-fluctuations-2-7e",
+            7: "gri-social-parental_leave-401-3a-3b-3c-3d-parental_leave",
+            8: "gri-social-human_rights-409-1b-measures_taken",
+            9: "gri-social-human_rights-409-1a-operations_forced_labor",
+            10: "gri-social-human_rights-409-1a-suppliers_forced_labor",
+            11: "gri-social-human_rights-408-1a-1b-operations_risk_child_labour",
+            12: "gri-social-human_rights-408-1a-1b-operations_young_worker_exposed",
+            13: "gri-social-human_rights-408-1a-1b-supplier_risk_child_labor",
+            14: "gri-social-human_rights-408-1a-1b-supplier_young_worker_exposed",
+            15: "gri-social-diversity_of_board-405-1a-number_of_individuals",
+            16: "gri-social-diversity_of_board-405-1b-number_of_employee",
+            17: "gri-social-salary_ratio-405-2a-number_of_individuals",
+            18: "gri-social-salary_ratio-405-2a-ratio_of_remuneration",
+            19: "gri-social-training_hours-404-1a-number_of_hours",
+            20: "gri-social-human_rights-410-1a-security_personnel",
+            21: "gri-social-ohs-403-1a-ohs_management_system",
+            22: "gri-social-ohs-403-1b-scope_of_workers",
+            23: "gri-social-ohs-403-3a-ohs_functions",
+            24: "gri-social-ohs-403-4a-ohs_system_1",
+            25: "gri-social-ohs-403-4a-ohs_system_2",
+            26: "gri-social-ohs-403-4d-formal_joint",
+            27: "gri-social-ohs-403-6a-access_non_occupational",
+            28: "gri-social-ohs-403-6a-scope_of_access",
+            29: "gri-social-ohs-403-6a-voluntary_health",
+            30: "gri-social-ohs-403-6a-health_risk",
+            31: "gri-social-ohs-403-6b-workers_access",
+            32: "gri-social-ohs-403-7a-negative_occupational",
+            33: "gri-social-ohs-403-7a-hazards_risks",
+            34: "gri-social-ohs-403-2a-process_for_hazard",
+            35: "gri-social-ohs-403-2b-quality_assurance",
         }
+
+    def get_403_2a_process_for_hazard(self):
+        local_raw_responses = self.raw_responses.filter(path__slug=self.slugs[34])
+
+    def get_401_ab_social(self):
+        response = forward_request_with_jwt(
+            view_class=EmploymentAnalyzeView,
+            original_request=self.request,
+            url="/sustainapp/get_employment_analysis",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
+
+    def get_403_2a(self):
+        local_raw_responses = self.raw_responses.filter(
+            path__slug=self.slugs[34]
+        ).first()
+        if local_raw_responses is not None:
+            return local_raw_responses.data[0]
+
+    def get_403(self):
+        response = forward_request_with_jwt(
+            view_class=IllnessAnalysisView,
+            original_request=self.request,
+            url="/sustainapp/get_ohs_analysis/",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
+
+    def get_404_social(self):
+        response = forward_request_with_jwt(
+            view_class=TrainingSocial,
+            original_request=self.request,
+            url="/sustainapp/get_training_social_analysis/",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
 
     def put(self, request, report_id, format=None):
         try:
@@ -96,6 +197,152 @@ class ScreenThirteenView(APIView):
         response_data["2_7_e_fluctuations"] = collect_data_by_raw_response_and_index(
             data_points=self.data_points.filter(path__slug=self.slugs[6])
         )
-        
+        response_data["401_social_analyse"] = self.get_401_ab_social()
+        response_data["401_3a_3b_3c_3d_parental_leave"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[7])
+            )
+        )
+        response_data["404_social_analyse"] = self.get_404_social()
+        response_data["409-1b"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[8])
+        )
+        response_data["409-1a_operations_forced_labor"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[9])
+            )
+        )
+        response_data["409-1a_suppliers_forced_labor"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[10])
+            )
+        )
+        response_data["408-1a-1b-operations_risk_child_labour"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[11])
+            )
+        )
+        response_data["408-1a-1b-operations_young_worker_exposed"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[12])
+            )
+        )
+        response_data["408-1a-1b-supplier_risk_child_labor"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[13])
+            )
+        )
+        response_data["408-1a-1b-supplier_young_worker_exposed"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[14])
+            )
+        )
+        response_data["405-1a-number_of_individuals"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[15])
+            )
+        )
+        response_data["405-1b-number_of_individuals"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[16])
+            )
+        )
+        response_data[
+            "405-2a-number_of_individuals"
+        ] = (  # TODO: Data Point is not coming properly
+            self.raw_responses.filter(path__slug=self.slugs[17]).first().data
+            if self.raw_responses.filter(path__slug=self.slugs[17]).exists()
+            else None
+        )
+        response_data["405-2a-ratio_of_remuneration"] = (
+            self.raw_responses.filter(path__slug=self.slugs[18]).first().data
+            if self.raw_responses.filter(path__slug=self.slugs[18]).exists()
+            else None
+        )
+        response_data["404-1a-number_of_hours"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[19])
+            )
+        )
+        response_data["410-1a-security_personnel"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[20])
+            )
+        )
+        response_data["403-1a-ohs_management_system"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[21])
+            )
+        )
+        response_data["403-1b-scope_of_workers"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[22])
+            )
+        )
+
+        response_data["403-3a-ohs_functions"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[23])
+            )
+        )
+        response_data["403-4a-ohs_system_1"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[24])
+            )
+        )
+        response_data["403-4a-ohs_system_2"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[25])
+            )
+        )
+        response_data["403-4d-formal_joint"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[26])
+            )
+        )
+
+        response_data["403-6a-access_non_occupational"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[27])
+            )
+        )
+        response_data["403-6a-scope_of_access"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[28])
+            )
+        )
+        response_data["403-6a-voluntary_health"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[29])
+            )
+        )
+        response_data["403-6a-health_risk"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[30])
+            )
+        )
+
+        response_data["403-6b-workers_access"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[31])
+            )
+        )
+        response_data["403-7a-negative_occupational"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[32])
+            )
+        )
+        response_data["403-7a-hazards_risks"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[33])
+            )
+        )
+        response_data["403-2a-process_for_hazard"] = self.get_403_2a()
+        response_data["403-2b-quality_assurance"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[35])
+            )
+        )
+        response_data["get_403_analyse"] = self.get_403()
 
         return Response(response_data, status=status.HTTP_200_OK)

@@ -80,6 +80,8 @@ class MaterialTopic(AbstractModel):
     class Meta:
         unique_together = ["identifier", "framework"]
 
+#TODO: add a model for indicator and sub indicators, Materiality Framework, (name )
+
 
 class Disclosure(AbstractModel):
     """

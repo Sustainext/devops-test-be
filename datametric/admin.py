@@ -11,6 +11,7 @@ from .models import (
 from common.Mixins.ExportCsvMixin import ExportCsvMixin
 from datametric.utils.CustomFieldGroupForm import FieldGroupAdminForm
 
+
 class MyModelAdmin(admin.ModelAdmin):
     list_display = ("name", "description", "created_at")
 
@@ -41,6 +42,8 @@ admin.site.register(Path, PathAdmin)
 class FieldGroupAdmin(admin.ModelAdmin):
     form = FieldGroupAdminForm
     list_display = ("id", "name", "path", "meta_data", "ui_schema", "schema")
+    # * Add search functionality for path__slug field
+    search_fields = ["path__slug"]
 
 
 admin.site.register(FieldGroup, FieldGroupAdmin)

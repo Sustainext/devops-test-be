@@ -9,10 +9,22 @@ from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     get_maximum_months_year,
+    collect_data_by_raw_response_and_index,
+    collect_data_and_differentiate_by_location,
+    forward_request_with_jwt,
 )
 from esg_report.Serializer.ScreenElevenSerializer import ScreenElevenSerializer
 from sustainapp.models import Report
 from rest_framework.permissions import IsAuthenticated
+from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
+    CommunicationTrainingAnalyzeView,
+)
+from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import (
+    MarketPresenceAnalyseView,
+)
+from sustainapp.Views.Analyse.Economic.OperationsAssesedAnalyse import (
+    OperationsAssessedAnalyzeView,
+)
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 
@@ -51,6 +63,11 @@ class ScreenElevenAPIView(APIView):
             24: "gri-economic-anti_corruption-comm_and_training-205-2c-business",
             25: "gri-economic-anti_corruption-comm_and_training-205-2d-training",
             26: "gri-economic-anti_corruption-comm_and_training-205-2e-policies",
+            27: "gri-economic-financial_implications-201-2a-calculate",
+            28: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3a-s1",
+            29: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3b-s2",
+            30: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3c-s3",
+            31: "gri-economic-public_legal_cases-205-3d",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -80,6 +97,70 @@ class ScreenElevenAPIView(APIView):
 
     def set_raw_responses(self):
         self.raw_responses = get_raw_responses_as_per_report(self.report)
+
+    """
+    CommunicationTrainingAnalyzeView
+    MarketPresenceAnalyseView
+    OperationsAssessedAnalyzeView
+
+    """
+
+    def get_communication_training_analyze(self):
+        response = forward_request_with_jwt(
+            view_class=CommunicationTrainingAnalyzeView,
+            original_request=self.request,
+            url="sustainapp/get_economic_communication_and_training/",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
+
+    def get_market_presence_analyze(self):
+        response = forward_request_with_jwt(
+            view_class=MarketPresenceAnalyseView,
+            original_request=self.request,
+            url="sustainapp/get_economic_market_presence/",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
+
+    def get_operations_assessed_analyze(self):
+        response = forward_request_with_jwt(
+            view_class=OperationsAssessedAnalyzeView,
+            original_request=self.request,
+            url="sustainapp/get_economic_operations_assessed/",
+            query_params={
+                "organisation": f"{self.report.organization.id}",
+                "corporate": (
+                    self.report.corporate.id
+                    if self.report.corporate is not None
+                    else ""
+                ),  # Empty string as per your URL
+                "location": "",  # Empty string
+                "start": self.report.start_date.strftime("%Y-%m-%d"),
+                "end": self.report.end_date.strftime("%Y-%m-%d"),
+            },
+        )
+        return response.data
 
     def get_201_1ab(self):
         local_raw_responses = (
@@ -143,34 +224,24 @@ class ScreenElevenAPIView(APIView):
         return local_response_data
 
     def get_203_1a(self):
-        local_data_points = (
-            self.data_points.filter(path__slug=self.slugs[2]).order_by("-year").first()
-        )
-        return local_data_points.value if local_data_points else None
+        local_data_points = self.data_points.filter(path__slug=self.slugs[2])
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_203_1b(self):
-        local_data_points = (
-            self.data_points.filter(path__slug=self.slugs[3]).order_by("-year").first()
-        )
-        return local_data_points.value if local_data_points else None
+        local_data_points = self.data_points.filter(path__slug=self.slugs[3])
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_203_1c(self):
-        local_data_points = (
-            self.data_points.filter(path__slug=self.slugs[4]).order_by("-year").first()
-        )
-        return local_data_points.value if local_data_points else None
+        local_data_points = self.data_points.filter(path__slug=self.slugs[4])
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_203_2a(self):
-        local_data_points = (
-            self.data_points.filter(path__slug=self.slugs[5]).order_by("-year").first()
-        )
-        return local_data_points.value if local_data_points else None
+        local_data_points = self.data_points.filter(path__slug=self.slugs[5])
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_203_2b(self):
-        local_data_points = (
-            self.data_points.filter(path__slug=self.slugs[6]).order_by("-year").first()
-        )
-        return local_data_points.value if local_data_points else None
+        local_data_points = self.data_points.filter(path__slug=self.slugs[6])
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_201_2a1(self):
         # * Note: There's no data point for this question, hence using raw response
@@ -223,24 +294,7 @@ class ScreenElevenAPIView(APIView):
         local_data_points = self.data_points.filter(path__slug=self.slugs[10]).order_by(
             "-year"
         )
-        response_data = {}
-        name_mapping = {
-            "Q1": "does_your_organisation_have_a_tax_strategy",
-            "Q2": "provide_a_link_to_the_tax_strategy_if_it_is_publicly_available",
-            "Q3": "mention_the_governance_body_or_executive-level_position_within_the_organization_that_formally_reviews_and_approves_the_tax_strategy",
-            "Q4": "mention_the_frequency_the_tax_strategy_review",
-            "Q5": "tax_compliance_approach",
-            "Q6": "tax_approach_link_to_business_and_sustainability",
-        }
-        local_datametrics = DataMetric.objects.filter(path__slug=self.slugs[10])
-        for data_metric in local_datametrics:
-            try:
-                response_data[name_mapping[data_metric.name]] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[name_mapping[data_metric.name]] = None
-        return response_data
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_207_4a(self):
         """
@@ -282,37 +336,25 @@ class ScreenElevenAPIView(APIView):
         response_data = {
             "currency": local_data.get("Q1"),
         }
-        for table_dictionary in local_data.get("Q2"):
+        for index, table_dictionary in enumerate(local_data.get("Q2")):
+            response_data[index] = {}
             for key, value in table_dictionary.items():
-                response_data[name_mapping[key]] = value
+                response_data[index][name_mapping[key]] = value
         return response_data
 
     def get_207_4c(self):
-        local_data_points = (
-            self.data_points.filter(path__slug=self.slugs[13]).order_by("-year").first()
-        )
-        return local_data_points.value if local_data_points else None
+        local_data_points = self.data_points.filter(path__slug=self.slugs[13])
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_207_2a(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[14]).order_by(
             "-year"
         )
-        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[14])
-        response_data = {}
-        for data_metric in local_data_metrics:
-            try:
-                response_data[data_metric.name] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[data_metric.name] = None
-        return response_data
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_207_2b(self):
-        local_data_points = (
-            self.data_points.filter(path__slug=self.slugs[15]).order_by("-year").first()
-        )
-        return local_data_points.value if local_data_points else None
+        local_data_points = self.data_points.filter(path__slug=self.slugs[15])
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_207_2c(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[16]).order_by(
@@ -351,61 +393,24 @@ class ScreenElevenAPIView(APIView):
         local_data_points = self.data_points.filter(path__slug=self.slugs[18]).order_by(
             "-year"
         )
-        response_data = {}
-        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[18])
-        for data_metric in local_data_metrics:
-            try:
-                response_data[data_metric.name] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[data_metric.name] = None
-        return response_data
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_205_3b(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[19]).order_by(
             "-year"
         )
-        response_data = {}
-        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[19])
-        for data_metric in local_data_metrics:
-            try:
-                response_data[data_metric.name] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[data_metric.name] = None
-        return response_data
+        collect_data_by_raw_response_and_index(local_data_points)
 
     def get_205_3c(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[20]).order_by(
             "-year"
         )
-        response_data = {}
-        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[20])
-        for data_metric in local_data_metrics:
-            try:
-                response_data[data_metric.name] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[data_metric.name] = None
-        return response_data
+        collect_data_by_raw_response_and_index(local_data_points)
 
     def get_205_1a(self):
-        local_data_points = self.data_points.filter(path__slug=self.slugs[21]).order_by(
-            "-year"
+        collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[21])
         )
-        response_data = {}
-        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[21])
-        for data_metric in local_data_metrics:
-            try:
-                response_data[data_metric.name] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[data_metric.name] = None
-        return response_data
 
     def get_205_2a(self):
         """
@@ -491,16 +496,13 @@ class ScreenElevenAPIView(APIView):
         local_data_points = self.data_points.filter(path__slug=self.slugs[28]).order_by(
             "-year"
         )
-        response_data = {}
-        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[28])
-        for data_metric in local_data_metrics:
-            try:
-                response_data[data_metric.name] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[data_metric.name] = None
-        return response_data
+        return collect_data_by_raw_response_and_index(local_data_points)
+
+    def get_205_3d(self):
+        slug = self.slugs[31]
+        return collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=slug)
+        )
 
     def get(self, request, report_id):
         try:
@@ -541,9 +543,18 @@ class ScreenElevenAPIView(APIView):
         response_data["3_3cde"] = self.get_3_3cde()
         response_data["207_2c"] = self.get_207_2c()
         response_data["207_3a"] = self.get_207_3a()
-        response_data["205_3a"] = self.get_205_3a()
-        response_data["205_3b"] = self.get_205_3b()
-        response_data["205_3c"] = self.get_205_3c()
+        response_data["205_3a_anti_corruption"] = self.get_205_3a()
+        response_data["205_3b_anti_corruption"] = (
+            collect_data_by_raw_response_and_index(
+                self.data_points.filter(path__slug=self.slugs[29])
+            )
+        )
+        response_data["205_3c_anti_corruption"] = (
+            collect_data_by_raw_response_and_index(
+                self.data_points.filter(path__slug=self.slugs[30])
+            )
+        )
+        response_data["205_3d_anti_corruption"] = self.get_205_3d()
         response_data["205_1a"] = self.get_205_1a()
         response_data["205_2a"] = self.get_205_2a()
         response_data["205_2b"] = self.get_205_2b()
@@ -552,5 +563,23 @@ class ScreenElevenAPIView(APIView):
         response_data["205_2e"] = self.get_205_2e()
         response_data["415_1a"] = self.get_415_1a()
         response_data["3_3cde_social"] = self.get_3_3cde()
+        response_data["financial_implications-201-2a"] = (
+            collect_data_by_raw_response_and_index(
+                self.data_points.filter(path__slug=self.slugs[27])
+            )
+        )
+        response_data["economic_analyse"] = {}
+        response_data["economic_analyse"][
+            "communication_training_analyze"
+        ] = self.get_communication_training_analyze()
+        response_data["economic_analyse"][
+            "market_presence_analyze"
+        ] = self.get_market_presence_analyze()
+        response_data["economic_analyse"][
+            "operations_assessed_analyze"
+        ] = self.get_operations_assessed_analyze()
+        response_data["205_3a"] = collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[28])
+        )
 
         return Response(response_data, status=status.HTTP_200_OK)

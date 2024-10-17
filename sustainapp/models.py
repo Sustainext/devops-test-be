@@ -985,26 +985,28 @@ class ClientTaskDashboard(AbstractModel):
     roles = models.IntegerField(null=True, blank=True)
 
     STATUS_CHOICES = [
-        (0, "in_progress"),
-        (1, "approved"),
-        (2, "under_review"),
-        (3, "completed"),
-        (4, "reject"),
+        ("in_progress", "in_progress"),
+        ("approved", "approved"),
+        ("under_review", "under_review"),
+        ("completed", "completed"),
+        ("reject", "reject"),
     ]
-    task_status = models.IntegerField(choices=STATUS_CHOICES, default=0)
+    task_status = models.CharField(
+        max_length=64, choices=STATUS_CHOICES, default="in_progress"
+    )
     location = models.CharField(max_length=1024, null=True, blank=True)
     category = models.CharField(max_length=1024, null=True, blank=True)
     subcategory = models.CharField(max_length=1024, null=True, blank=True)
     scope = models.CharField(max_length=1024, null=True, blank=True)
     month = models.CharField(max_length=1024, null=True, blank=True)
     year = models.PositiveIntegerField(null=True, blank=True)
-    factor_id = models.CharField(max_length=2048, null=True, blank=True)
+    activity_id = models.CharField(max_length=2048, null=True, blank=True)
     value1 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     value2 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     unit1 = models.CharField(max_length=1024, null=True, blank=True)
     unit2 = models.CharField(max_length=1024, null=True, blank=True)
-    file = models.FileField(upload_to="documents/", null=True, blank=True)
-    filename = models.CharField(max_length=1024, null=True, blank=True)
+    unit_type = models.CharField(max_length=1024, null=True, blank=True)
+    file_data = models.JSONField(null=True, blank=True)
     file_uploaded_by = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
@@ -1012,7 +1014,6 @@ class ClientTaskDashboard(AbstractModel):
         null=True,
         blank=True,
     )
-    file_modified_at = models.DateTimeField(null=True, blank=True)
     activity = models.CharField(max_length=2048, null=True, blank=True)
     region = models.CharField(max_length=1024, null=True, blank=True)
     objects = ClientFiltering()
@@ -1045,8 +1046,10 @@ class TrackDashboard(AbstractModel):
         ("community_development", "Community Development"),
         ("water_and_effluents", "Water & Effluents"),
         ("governance", "Governance"),
+        ("materials", "Materials"),
+        ("economic", "Economic"),
+        ("general", "General"),
     ]
-    table_name = models.CharField(max_length=255, default="")
     report_name = models.CharField(max_length=1024, choices=REPORT_CHOICES)
     report_id = models.CharField(max_length=255)
     group_id = models.CharField(max_length=255)

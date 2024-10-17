@@ -30,12 +30,14 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             query_params = {
                 "client": client,
                 "organization": organization,
-                "status": "in_progress",
+                "approach": "GRI: In accordance with",
             }
             if corporate:
                 query_params["corporate"] = corporate
 
-            materiality_dashboard = MaterialityAssessment.objects.get(**query_params)
+            materiality_dashboard = MaterialityAssessment.objects.filter(
+                **query_params
+            ).latest("id")
         except MaterialityAssessment.DoesNotExist:
             return Response(
                 {

@@ -6,6 +6,11 @@ from django.db.models import Q, F, ExpressionWrapper, DurationField
 from datetime import timedelta
 from django.db.models.functions import Greatest, Least
 from django.core.exceptions import ValidationError
+from rest_framework.test import APIRequestFactory
+from rest_framework.request import Request
+from rest_framework.response import Response
+from django.http import HttpRequest
+from django.urls import reverse, resolve
 
 
 def get_latest_raw_response(raw_responses, slug):
@@ -64,10 +69,7 @@ def get_raw_responses_as_per_report(report: Report):
     raw_responses = RawResponse.objects.filter(client=report.client)
     if report.corporate:
         raw_responses = raw_responses.filter(
-            Q(corporate=report.corporate)
-            | Q(corporate=None)
-            | Q(organization=report.organization)
-            | Q(organization=None)
+            Q(corporate=report.corporate) | Q(organization=report.organization)
         )
         raw_responses = raw_responses.filter(
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
@@ -75,9 +77,11 @@ def get_raw_responses_as_per_report(report: Report):
     elif report.organization:
         raw_responses = raw_responses.filter(
             Q(organization=report.organization)
-            | Q(organization=None)
-            | Q(corporate__in=report.organization.corporatenetityorg.all())
-            | Q(corporate=None)
+            | Q(
+                locale__in=report.organization.corporatenetityorg.all().values_list(
+                    "location", flat=True
+                )
+            )
         )
     return raw_responses.filter(year=get_maximum_months_year(report))
 
@@ -89,10 +93,7 @@ def get_data_points_as_per_report(report: Report):
     data_points = DataPoint.objects.filter(client_id=report.client.id)
     if report.corporate:
         data_points = data_points.filter(
-            Q(corporate=report.corporate)
-            | Q(corporate=None)
-            | Q(organization=report.organization)
-            | Q(organization=None)
+            Q(corporate=report.corporate) | Q(organization=report.organization)
         )
         data_points = data_points.filter(
             Q(locale__in=report.corporate.location.all()) | Q(locale=None)
@@ -100,16 +101,13 @@ def get_data_points_as_per_report(report: Report):
     elif report.organization:
         data_points = data_points.filter(
             Q(organization=report.organization)
-            | Q(organization=None)
-            | Q(corporate__in=report.organization.corporatenetityorg.all())
-            | Q(corporate=None)
             | Q(
-                locale__id__in=report.organization.corporatenetityorg.all().values_list(
+                locale__in=report.organization.corporatenetityorg.all().values_list(
                     "location", flat=True
                 )
             )
-            | Q(locale=None)
         )
+
     return data_points.filter(year=get_maximum_months_year(report))
 
 
@@ -170,10 +168,11 @@ def collect_data_by_raw_response_and_index(data_points):
 
 
 def collect_data_and_differentiate_by_location(data_points):
-    # Create a dictionary where the key is raw_response and the value is another dictionary
-    # which maps index to a dictionary of data_metric and value pairs
+    # Dictionary to store data grouped by raw_response and index (ignoring location for grouping)
     raw_response_index_map = defaultdict(dict)
-    location_map = defaultdict(list)
+
+    # Set to store unique locations
+    unique_locations = set()
 
     # Iterate over the list of data points
     for dp in data_points:
@@ -181,24 +180,21 @@ def collect_data_and_differentiate_by_location(data_points):
         index = dp.index
         data_metric = dp.data_metric.name
         value = dp.value
-        location = dp.locale.name
-        month = dp.month
-        raw_response_index_map[(raw_response, index, location)][data_metric] = value
+        location = dp.locale.name  # Assuming locale represents location name
 
-    # Group the data by location
-    for (
-        raw_response,
-        index,
-        location,
-    ), data_metric_value_map in raw_response_index_map.items():
-        location_map[location].append(data_metric_value_map)
+        # Store the data_metric and its value for the current raw_response and index
+        raw_response_index_map[(raw_response, index)][data_metric] = value
 
-    # Convert location_map to a list of dictionaries
-    grouped_data_by_location = [
-        {location: values} for location, values in location_map.items()
-    ]
+        # Collect unique locations
+        unique_locations.add(location)
 
-    return grouped_data_by_location
+    # Convert raw_response_index_map to a list of dictionaries (ignoring location for grouping)
+    grouped_data = list(raw_response_index_map.values())
+
+    # Return the grouped data and the list of unique locations
+    response_data = {"data": grouped_data, "locations": list(unique_locations)}
+
+    return response_data
 
 
 # * A method that filters the data points based on the slug and data_point queryset given in parameter and then calls collect_data_by_raw_response_and_index method
@@ -207,3 +203,49 @@ def get_data_by_raw_response_and_index(data_points, slug):
         path__slug=slug,
     )
     return collect_data_and_differentiate_by_location(data_points)
+
+
+def forward_request_with_jwt(view_class, original_request, url, query_params):
+    """
+    Calls another internal API view with the JWT token from the original request.
+
+    Args:
+        view_class: The class-based view to be called.
+        original_request: The original request object (HttpRequest).
+        url: The URL of the internal API.
+        query_params: Dictionary of query parameters to be passed to the internal API.
+
+    Returns:
+        Response: The response from the called internal API.
+    """
+    # Step 1: Extract the Authorization header from the original request
+    auth_header = original_request.headers.get("Authorization", None)
+
+    if not auth_header:
+        return ValidationError(
+            {"detail": "Authentication credentials were not provided."}, status=401
+        )
+
+    # Step 2: Create an APIRequestFactory instance to simulate the internal request
+    factory = APIRequestFactory()
+
+    # Step 3: Generate a GET request with query parameters and the Authorization header
+    internal_request = factory.get(
+        url,
+        query_params,
+        HTTP_AUTHORIZATION=auth_header,  # Pass the token from the original request
+    )
+
+    # Step 4: Call the class-based view's `as_view` method with the internal request
+    view = view_class.as_view()
+    temp = view(internal_request)
+    # Step 5: Return the response from the internal view
+    return temp
+
+
+def calling_analyse_view_with_params(view_name, params, request):
+    """
+    Calls another internal API view with the JWT token from the original request.
+    """
+    url = reverse("get_waste_analysis")
+    
