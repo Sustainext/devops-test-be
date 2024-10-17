@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.apps import apps
 from django.conf import settings
+from sustainapp.signals import task_status_changed
 
 # Extracting the User Model
 CustomUser = apps.get_model(settings.AUTH_USER_MODEL)
@@ -69,6 +70,18 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
                 )
 
         return value
+
+    def update(self, instance, validated_data):
+        comments = self.context["request"].data.get(
+            "comments", ""
+        )  # Assuming comments are sent in the request
+        instance = super().update(instance, validated_data)
+
+        # Emit the custom signal after the instance is saved
+        task_status_changed.send(
+            sender=instance.__class__, instance=instance, comments=comments
+        )
+        return instance
 
 
 class TaskDashboardCustomSerializer(serializers.ModelSerializer):
