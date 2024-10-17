@@ -67,6 +67,7 @@ class ScreenElevenAPIView(APIView):
             28: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3a-s1",
             29: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3b-s2",
             30: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3c-s3",
+            31: "gri-economic-public_legal_cases-205-3d",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -497,6 +498,12 @@ class ScreenElevenAPIView(APIView):
         )
         return collect_data_by_raw_response_and_index(local_data_points)
 
+    def get_205_3d(self):
+        slug = self.slugs[31]
+        return collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=slug)
+        )
+
     def get(self, request, report_id):
         try:
             self.report = Report.objects.get(id=report_id)
@@ -536,9 +543,18 @@ class ScreenElevenAPIView(APIView):
         response_data["3_3cde"] = self.get_3_3cde()
         response_data["207_2c"] = self.get_207_2c()
         response_data["207_3a"] = self.get_207_3a()
-        response_data["205_3a"] = self.get_205_3a()
-        response_data["205_3b"] = self.get_205_3b()
-        response_data["205_3c"] = self.get_205_3c()
+        response_data["205_3a_anti_corruption"] = self.get_205_3a()
+        response_data["205_3b_anti_corruption"] = (
+            collect_data_by_raw_response_and_index(
+                self.data_points.filter(path__slug=self.slugs[29])
+            )
+        )
+        response_data["205_3c_anti_corruption"] = (
+            collect_data_by_raw_response_and_index(
+                self.data_points.filter(path__slug=self.slugs[30])
+            )
+        )
+        response_data["205_3d_anti_corruption"] = self.get_205_3d()
         response_data["205_1a"] = self.get_205_1a()
         response_data["205_2a"] = self.get_205_2a()
         response_data["205_2b"] = self.get_205_2b()
@@ -564,12 +580,6 @@ class ScreenElevenAPIView(APIView):
         ] = self.get_operations_assessed_analyze()
         response_data["205_3a"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[28])
-        )
-        response_data["205_3b"] = collect_data_by_raw_response_and_index(
-            self.data_points.filter(path__slug=self.slugs[29])
-        )
-        response_data["205_3c"] = collect_data_by_raw_response_and_index(
-            self.data_points.filter(path__slug=self.slugs[30])
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
