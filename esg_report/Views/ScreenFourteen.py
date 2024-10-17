@@ -32,14 +32,14 @@ class ScreenFourteenAPIView(APIView):
 
     def put(self, request, report_id: int) -> Response:
         try:
-            report = Report.objects.get(id=report_id)
+            self.report = Report.objects.get(id=report_id)
         except Report.DoesNotExist:
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
         response_data: dict[str, Any] = {}
         try:
-            screen_fourteen: ScreenFourteen = report.screen_fourteen
+            screen_fourteen: ScreenFourteen = self.report.screen_fourteen
             serializer = ScreenFourteenSerializer(
                 screen_fourteen, data=request.data, context={"request": request}
             )
@@ -48,7 +48,7 @@ class ScreenFourteenAPIView(APIView):
                 data=request.data, context={"request": request}
             )
         serializer.is_valid(raise_exception=True)
-        serializer.save(report=report)
+        serializer.save(report=self.report)
         response_data.update(serializer.data)
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -67,14 +67,14 @@ class ScreenFourteenAPIView(APIView):
 
     def get(self, request, report_id: int) -> Response:
         try:
-            report = Report.objects.get(id=report_id)
+            self.report = Report.objects.get(id=report_id)
         except Report.DoesNotExist:
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
         response_data: dict[str, Any] = {}
         try:
-            screen_fourteen: ScreenFourteen = report.screen_fourteen
+            screen_fourteen: ScreenFourteen = self.report.screen_fourteen
             serializer = ScreenFourteenSerializer(
                 screen_fourteen, context={"request": request}
             )
