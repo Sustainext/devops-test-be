@@ -13,6 +13,8 @@ from sustainapp.Serializers.TaskdashboardRetriveSerializer import (
     ClientTaskDashboardSerializer,
 )
 from rest_framework.exceptions import ValidationError
+from sustainapp.signals import send_task_assigned_email
+from django.core.cache import cache
 
 
 class OrganisationTaskDashboardView(viewsets.ModelViewSet):
@@ -79,6 +81,18 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
 
         # Bulk create the tasks
         ClientTaskDashboard.objects.bulk_create(tasks_to_create)
+        # Manually trigger the post-save-like logic for each created task
+        for task in tasks_to_create:
+            # Retrieve the task with its newly assigned ID
+            task = ClientTaskDashboard.objects.get(pk=task.pk)
+
+            # Cache the task status, if needed
+            cache_key_task_status = f"original_task_status_{task.pk}"
+            cache.set(cache_key_task_status, task.task_status, timeout=60)
+
+            # Manually trigger the email sending logic
+            send_task_assigned_email(None, task, created=True)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
