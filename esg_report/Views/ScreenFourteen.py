@@ -87,10 +87,14 @@ class ScreenFourteenAPIView(APIView):
                     if field.name not in ["id", "report"]
                 }
             )
+        self.set_data_points()
+        self.set_raw_responses()
         response_data["413_2a"] = collect_data_and_differentiate_by_location(
             self.data_points.filter(path__slug=self.slugs[0])
         )
         response_data["413_1a_analyse"] = self.get_413_1a()
-        response_data["3_3cde"] = None #TODO: Complete when materiality assessment screen is ready.
+        response_data["3_3cde"] = (
+            None  # TODO: Complete when materiality assessment screen is ready.
+        )
 
         return Response(response_data, status=status.HTTP_200_OK)
