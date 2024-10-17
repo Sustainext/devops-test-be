@@ -12,6 +12,7 @@ from sustainapp.Serializers.TaskdashboardRetriveSerializer import (
     TaskDashboardCustomSerializer,
     ClientTaskDashboardSerializer,
 )
+from rest_framework.exceptions import ValidationError
 
 
 class OrganisationTaskDashboardView(viewsets.ModelViewSet):
@@ -51,6 +52,30 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
         }
 
         return Response(serialized_data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        """Custom Create method to handle bulk Task creation"""
+
+        if isinstance(request.data, list):
+            task_data = request.data
+        else:
+            task_data = [request.data]
+
+        tasks_to_create = []
+        serializer = self.get_serializer(data=task_data, many=True)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+
+        # After validation, prepare the task objects to be created
+        for validated_data in serializer.validated_data:
+            tasks_to_create.append(ClientTaskDashboard(**validated_data))
+
+        # Bulk create the tasks
+        ClientTaskDashboard.objects.bulk_create(tasks_to_create)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class UserTaskDashboardView(ListAPIView):
