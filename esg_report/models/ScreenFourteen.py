@@ -11,19 +11,25 @@ class ScreenFourteen(AbstractModel, HistoricalModelMixin):
     )
     community_engagement = models.TextField(
         verbose_name="Community Engagement Statement",
-        help_text="Add a statement about the company’s community engagement.",
+        help_text="Add a statement about the company's community engagement.",
+        null=True,
+        blank=True,
     )
 
     # Field to store the impact assessment statement
     impact_assessment = models.TextField(
         verbose_name="Impact Assessment",
-        help_text="Add a statement about the company’s impact assessment.",
+        help_text="Add a statement about the company's impact assessment.",
+        null=True,
+        blank=True,
     )
 
     # Field to store the company's CSR policies statement
     csr_policies = models.TextField(
         verbose_name="Corporate Social Responsibility Policies",
-        help_text="Add a statement about the company’s Corporate Social Responsibility policies.",
+        help_text="Add a statement about the company's Corporate Social Responsibility policies.",
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
