@@ -544,8 +544,16 @@ class ScreenElevenAPIView(APIView):
         response_data["207_2c"] = self.get_207_2c()
         response_data["207_3a"] = self.get_207_3a()
         response_data["205_3a_anti_corruption"] = self.get_205_3a()
-        response_data["205_3b_anti_corruption"] = self.get_205_3b()
-        response_data["205_3c_anti_corruption"] = self.get_205_3c()
+        response_data["205_3b_anti_corruption"] = (
+            collect_data_by_raw_response_and_index(
+                self.data_points.filter(path__slug=self.slugs[29])
+            )
+        )
+        response_data["205_3c_anti_corruption"] = (
+            collect_data_by_raw_response_and_index(
+                self.data_points.filter(path__slug=self.slugs[30])
+            )
+        )
         response_data["205_3d_anti_corruption"] = self.get_205_3d()
         response_data["205_1a"] = self.get_205_1a()
         response_data["205_2a"] = self.get_205_2a()
@@ -572,12 +580,6 @@ class ScreenElevenAPIView(APIView):
         ] = self.get_operations_assessed_analyze()
         response_data["205_3a"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[28])
-        )
-        response_data["205_3b"] = collect_data_by_raw_response_and_index(
-            self.data_points.filter(path__slug=self.slugs[29])
-        )
-        response_data["205_3c"] = collect_data_by_raw_response_and_index(
-            self.data_points.filter(path__slug=self.slugs[30])
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
