@@ -1,5 +1,4 @@
 from esg_report.models.ScreenFourteen import ScreenFourteen
-from esg_report.Serializer.ScreenFourteenSerializer import ScreenFourteenSerializer
 from common.Serializer.Fields.ClientFilteredPrimaryKeyRelatedField import (
     ClientFilteredPrimaryKeyRelatedField,
 )
