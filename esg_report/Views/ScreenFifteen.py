@@ -74,7 +74,8 @@ class ScreenFifteenAPIView(APIView):
             response_data.update(serializer.data)
         except ObjectDoesNotExist:
             response_data.update()
-
+        self.set_data_points()
+        self.set_raw_responses()
         response_data["416_1a"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[0]),
         )
