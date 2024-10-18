@@ -1,9 +1,17 @@
 from django.db import models
 from common.models.AbstractModel import AbstractModel
 from common.models.HistoricalModel import HistoricalModelMixin
+from sustainapp.models import Report
 
 
 class ScreenFifteenModel(AbstractModel, HistoricalModelMixin):
+    """
+    This model represents the screen fifteen of the ESG report.
+    """
+
+    report = models.OneToOneField(
+        Report, on_delete=models.CASCADE, related_name="screen_fifteen"
+    )
     commitment_statement = models.TextField(
         verbose_name="Company's Commitment to Products and Services",
         help_text="Add a statement about the company's commitment to products and services.",
