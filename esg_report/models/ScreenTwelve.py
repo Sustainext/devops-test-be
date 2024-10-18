@@ -110,6 +110,16 @@ class ScreenTwelve(AbstractModel, HistoricalModelMixin):
         null=True,
         help_text="Statement about company's commitment to protect and maintain air quality",
     )
+    biogenic_c02_emissions = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Statement about company's biogenic CO2 emissions",
+    )
+    biogenic_c02_emissions_305_3c = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Statement about company's biogenic CO2 emissions 305 3c",
+    )
 
     class Meta:
         verbose_name = "Screen Twelve"
