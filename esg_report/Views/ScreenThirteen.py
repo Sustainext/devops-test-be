@@ -91,7 +91,7 @@ class ScreenThirteenView(APIView):
         local_raw_responses = self.raw_responses.filter(path__slug=self.slugs[34])
 
     def get_401_ab_social(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=EmploymentAnalyzeView,
             original_request=self.request,
             url="/sustainapp/get_employment_analysis",
@@ -107,7 +107,7 @@ class ScreenThirteenView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_403_2a(self):
         local_raw_responses = self.raw_responses.filter(
@@ -117,7 +117,7 @@ class ScreenThirteenView(APIView):
             return local_raw_responses.data[0]
 
     def get_403(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=IllnessAnalysisView,
             original_request=self.request,
             url="/sustainapp/get_ohs_analysis/",
@@ -133,10 +133,10 @@ class ScreenThirteenView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_404_social(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=TrainingSocial,
             original_request=self.request,
             url="/sustainapp/get_training_social_analysis/",
@@ -152,7 +152,7 @@ class ScreenThirteenView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def put(self, request, report_id, format=None):
         try:
