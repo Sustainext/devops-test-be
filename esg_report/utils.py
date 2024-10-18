@@ -11,6 +11,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from django.http import HttpRequest
 from django.urls import reverse, resolve
+import logging
+
+logger = logging.getLogger("error.log")
 
 
 def get_latest_raw_response(raw_responses, slug):
@@ -206,46 +209,91 @@ def get_data_by_raw_response_and_index(data_points, slug):
 
 
 def forward_request_with_jwt(view_class, original_request, url, query_params):
-    """
-    Calls another internal API view with the JWT token from the original request.
+    try:
+        """
+        Calls another internal API view with the JWT token from the original request.
 
-    Args:
-        view_class: The class-based view to be called.
-        original_request: The original request object (HttpRequest).
-        url: The URL of the internal API.
-        query_params: Dictionary of query parameters to be passed to the internal API.
+        Args:
+            view_class: The class-based view to be called.
+            original_request: The original request object (HttpRequest).
+            url: The URL of the internal API.
+            query_params: Dictionary of query parameters to be passed to the internal API.
 
-    Returns:
-        Response: The response from the called internal API.
-    """
-    # Step 1: Extract the Authorization header from the original request
-    auth_header = original_request.headers.get("Authorization", None)
+        Returns:
+            Response: The response from the called internal API.
+        """
+        # Step 1: Extract the Authorization header from the original request
+        auth_header = original_request.headers.get("Authorization", None)
 
-    if not auth_header:
-        return ValidationError(
-            {"detail": "Authentication credentials were not provided."}, status=401
+        if not auth_header:
+            return ValidationError(
+                {"detail": "Authentication credentials were not provided."}, status=401
+            )
+
+        # Step 2: Create an APIRequestFactory instance to simulate the internal request
+        factory = APIRequestFactory()
+
+        # Step 3: Generate a GET request with query parameters and the Authorization header
+        internal_request = factory.get(
+            url,
+            query_params,
+            HTTP_AUTHORIZATION=auth_header,  # Pass the token from the original request
         )
 
-    # Step 2: Create an APIRequestFactory instance to simulate the internal request
-    factory = APIRequestFactory()
-
-    # Step 3: Generate a GET request with query parameters and the Authorization header
-    internal_request = factory.get(
-        url,
-        query_params,
-        HTTP_AUTHORIZATION=auth_header,  # Pass the token from the original request
-    )
-
-    # Step 4: Call the class-based view's `as_view` method with the internal request
-    view = view_class.as_view()
-    temp = view(internal_request)
-    # Step 5: Return the response from the internal view
-    return temp
+        # Step 4: Call the class-based view's `as_view` method with the internal request
+        view = view_class.as_view()
+        temp = view(internal_request)
+        # Step 5: Return the response from the internal view
+        return temp.data
+    except Exception as e:
+        return None
 
 
-def calling_analyse_view_with_params(view_name, params, request):
+def calling_analyse_view_with_params(view_url, request, report):
     """
     Calls another internal API view with the JWT token from the original request.
     """
-    url = reverse("get_waste_analysis")
-    
+    try:
+        # Step 1: Resolve the view
+        resolved_view = resolve(reverse(view_url))
+        view = resolved_view.func.view_class
+
+        # Step 2: Prepare query parameters
+        query_params = {
+            "organisation": f"{report.organization.id}",
+            "corporate": report.corporate.id if report.corporate is not None else "",
+            "location": "",  # Empty string
+            "start": report.start_date.strftime("%Y-%m-%d"),
+            "end": report.end_date.strftime("%Y-%m-%d"),
+        }
+
+        # Step 3: Extract the JWT token from the original request
+        auth_header = request.headers.get("Authorization", None)
+        if not auth_header:
+            raise ValidationError(
+                {"detail": "Authentication credentials were not provided."}, code=401
+            )
+
+        # Step 4: Create an APIRequestFactory instance to simulate the internal request
+        factory = APIRequestFactory()
+        internal_request = factory.get(
+            reverse(view_url),
+            query_params,
+            HTTP_AUTHORIZATION=auth_header,  # Pass the token from the original request
+        )
+
+        # Step 5: Call the class-based view's `as_view` method with the internal request
+        view_instance = view.as_view()
+        response = view_instance(internal_request)
+
+        # Step 6: Check the response status and return data
+        if response.status_code == 200:
+            return response.data
+        else:
+            return {"detail": f"Error calling {view_url}: {response.status_code}"}
+
+    except ValidationError as e:
+        return {"detail": str(e)}
+    except Exception as e:
+        logger.error(f"An error occurred: {str(e)}", exec_info=True)
+        return {"detail": f"An error occurred: {str(e)}"}

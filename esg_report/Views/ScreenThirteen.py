@@ -14,6 +14,7 @@ from esg_report.utils import (
     collect_data_and_differentiate_by_location,
     get_data_by_raw_response_and_index,
     forward_request_with_jwt,
+    calling_analyse_view_with_params,
 )
 from rest_framework.test import APIRequestFactory
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
@@ -62,13 +63,35 @@ class ScreenThirteenView(APIView):
             33: "gri-social-ohs-403-7a-hazards_risks",
             34: "gri-social-ohs-403-2a-process_for_hazard",
             35: "gri-social-ohs-403-2b-quality_assurance",
+            36: "gri-social-ohs-403-2c-worker_right",
+            37: "gri-social-ohs-403-2d-work_related_incident",
+            38: "gri-social-ohs-403-9a-number_of_injuries_emp",
+            39: "gri-social-ohs-403-9b-number_of_injuries_workers",
+            40: "gri-social-ohs-403-9c-9d-work_related_hazards",
+            41: "gri-social-ohs-403-9e-number_of_hours",
+            42: "gri-social-ohs-403-9f-workers_excluded",
+            43: "gri-social-ohs-403-9g-sma",
+            44: "gri-social-ohs-403-10c-work_related_hazards",
+            45: "gri-social-ohs-403-10d-workers_excluded",
+            46: "gri-social-ohs-403-10e-sma",
+            47: "gri-social-ohs-403-5a-ohs_training",
+            48: "gri-social-ohs-403-8b-workers_excluded",
+            49: "gri-social-ohs-403-8c-sma",
+            50: "gri-social-notice_period-402-1a-collective_bargaining",
+            51: "gri-social-collective_bargaining-407-1a-operations",
+            52: "gri-social-collective_bargaining-407-1a-suppliers",
+            53: "gri-social-incidents_of_discrimination-406-1a-incidents_of_discrimination",
+            54: "gri-social-incidents_of_discrimination-406-1b-status",
+            55: "gri-social-collective_bargaining-407-1b-measures",
+            56: "gri-social-indigenous_people-411-1a-incidents",
+            57: "gri-social-indigenous_people-411-1b-status",
         }
 
     def get_403_2a_process_for_hazard(self):
         local_raw_responses = self.raw_responses.filter(path__slug=self.slugs[34])
 
     def get_401_ab_social(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=EmploymentAnalyzeView,
             original_request=self.request,
             url="/sustainapp/get_employment_analysis",
@@ -84,7 +107,7 @@ class ScreenThirteenView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_403_2a(self):
         local_raw_responses = self.raw_responses.filter(
@@ -94,7 +117,7 @@ class ScreenThirteenView(APIView):
             return local_raw_responses.data[0]
 
     def get_403(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=IllnessAnalysisView,
             original_request=self.request,
             url="/sustainapp/get_ohs_analysis/",
@@ -110,10 +133,10 @@ class ScreenThirteenView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_404_social(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=TrainingSocial,
             original_request=self.request,
             url="/sustainapp/get_training_social_analysis/",
@@ -129,7 +152,7 @@ class ScreenThirteenView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def put(self, request, report_id, format=None):
         try:
@@ -144,8 +167,8 @@ class ScreenThirteenView(APIView):
         except ScreenThirteen.DoesNotExist:
             serializer = ScreenThirteenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer.save(report=self.report)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def set_data_points(self):
         self.data_points = get_data_points_as_per_report(self.report)
@@ -337,12 +360,98 @@ class ScreenThirteenView(APIView):
                 data_points=self.data_points.filter(path__slug=self.slugs[33])
             )
         )
-        response_data["403-2a-process_for_hazard"] = self.get_403_2a()
+        response_data["403-2a-process_for_hazard"] = (
+            self.get_403_2a()
+        )  # TODO: Redo it with data points after data metrics get fixed.
         response_data["403-2b-quality_assurance"] = (
             collect_data_and_differentiate_by_location(
                 data_points=self.data_points.filter(path__slug=self.slugs[35])
             )
         )
+        response_data["403-2c-worker_right"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[36])
+            )
+        )
+        response_data["403-2d"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[37])
+        )
+
         response_data["get_403_analyse"] = self.get_403()
+        response_data["403_9a"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[38])
+        )
+        response_data["403_9b"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[39])
+        )
+        response_data["403_9c_9d"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[40])
+        )
+        response_data["403_9e"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[41])
+        )
+        response_data["403_9f"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[42])
+        )
+        response_data["403_9g"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[43])
+        )
+        response_data["403-10c"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[43])
+        )
+        response_data["403-10d"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[45])
+        )
+        response_data["403-10e"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[46])
+        )
+        response_data["403-5a"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[47])
+        )
+        response_data["403-8b"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[48])
+        )
+        response_data["403-8c"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[49])
+        )
+        response_data["402-1b"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[50])
+        )
+        response_data["407-1a-operations"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[51])
+        )
+        response_data["407-1a-suppliers"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[52])
+        )
+        response_data["2_30_a"] = calling_analyse_view_with_params(
+            view_url="get_general_collective_bargaining_analysis",
+            report=self.report,
+            request=self.request,
+        )
+        response_data["407_1_analyse"] = calling_analyse_view_with_params(
+            view_url="get_collective_bargaining_analysis",
+            report=self.report,
+            request=self.request,
+        )
+        response_data["406_1_analyse"] = calling_analyse_view_with_params(
+            view_url="get_non_discrimination_analysis",
+            report=self.report,
+            request=self.request,
+        )
+        response_data["406_1a"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[53])
+        )
+        response_data["406_1b"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[54])
+        )
+        response_data["407_1b"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[55])
+        )
+        response_data["411_1a"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[56])
+        )
+        response_data["411_1b"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[57])
+        )
 
         return Response(response_data, status=status.HTTP_200_OK)

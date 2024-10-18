@@ -106,7 +106,7 @@ class ScreenElevenAPIView(APIView):
     """
 
     def get_communication_training_analyze(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=CommunicationTrainingAnalyzeView,
             original_request=self.request,
             url="sustainapp/get_economic_communication_and_training/",
@@ -122,10 +122,10 @@ class ScreenElevenAPIView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_market_presence_analyze(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=MarketPresenceAnalyseView,
             original_request=self.request,
             url="sustainapp/get_economic_market_presence/",
@@ -141,10 +141,10 @@ class ScreenElevenAPIView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_operations_assessed_analyze(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=OperationsAssessedAnalyzeView,
             original_request=self.request,
             url="sustainapp/get_economic_operations_assessed/",
@@ -160,7 +160,7 @@ class ScreenElevenAPIView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_201_1ab(self):
         local_raw_responses = (
