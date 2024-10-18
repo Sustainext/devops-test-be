@@ -9,40 +9,10 @@ from common.models.AbstractModel import AbstractModel
 from authentication.Managers.CustomUserManager import CustomUserManager
 from uuid import uuid4
 from django.utils.text import slugify
-from django.db.models.signals import post_migrate
-from django.dispatch import receiver
-from django.db import connection
-
-
+from sustainapp.models import Client,Userorg,Corporateentity,Location,Organization
 # Create your models here.
-class Client(AbstractModel):
-    name = models.CharField(max_length=256, unique=True)
-    customer = models.BooleanField(default=False)
-    uuid = models.UUIDField(unique=True, default=uuid4, editable=False)
-    sub_domain = models.CharField(max_length=256, unique=True, null=True, blank=True)
-    okta_url = models.CharField(max_length=900, unique=True, null=True, blank=True)
-    okta_key = models.CharField(max_length=900, unique=True, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-    @classmethod
-    def get_default_client(cls):
-        if not cls._meta.db_table in connection.introspection.table_names():
-            return None
-        default_client, _ = cls.objects.get_or_create(
-            name="Sustainext Platform",
-            defaults={
-                "customer": False,
-                "sub_domain": "admin",
-            },
-        )
-        return default_client
 
 
-@receiver(post_migrate)
-def create_default_client(sender, **kwargs):
-    Client.get_default_client()
 
 
 class CustomPermission(models.Model):
@@ -88,6 +58,7 @@ class CustomUser(AbstractUser):
         null=True,
         blank=True,
         default=Client.get_default_client,
+        
     )
 
     # Fix for the reverse accessor clash
@@ -119,7 +90,21 @@ class CustomUser(AbstractUser):
         null=True,
         blank=True,
     )
-
+    first_name = models.CharField(_("first name"), max_length=150, blank=True)
+    last_name = models.CharField(_("last name"), max_length=150, blank=True)
+    phone_number = models.CharField(_("phone number"), max_length=20, blank=True)
+    job_title = models.CharField(_("job title"), max_length=100, blank=True)
+    department = models.CharField(_("department"), max_length=100, blank=True)
+    work_email = models.CharField(_("department"), max_length=200, blank=True)
+    collect = models.BooleanField(default=True)
+    analyse = models.BooleanField(default=True)
+    report = models.BooleanField(default=True)
+    optimise = models.BooleanField(default=True)
+    track = models.BooleanField(default=True)
+    orgs = models.ManyToManyField(Organization, related_name='organizations')
+    corps = models.ManyToManyField(Corporateentity,related_name='corporates')
+    locs = models.ManyToManyField(Location, related_name='locations')
+    
     @property
     def default_role(self):
         if self.custom_role is None:

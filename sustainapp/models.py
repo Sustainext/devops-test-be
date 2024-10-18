@@ -12,7 +12,6 @@ from django.conf import settings
 
 import re
 from common.models.AbstractModel import AbstractModel
-from authentication.models import Client
 from common.Validators.validate_future_date import validate_future_date
 from sustainapp.Validators.IsPositiveInteger import validate_positive_integer
 from sustainapp.Validators.LocationValidators import (
@@ -21,6 +20,10 @@ from sustainapp.Validators.LocationValidators import (
 )
 from sustainapp.Managers.ClientFiltering import ClientFiltering
 from functools import cached_property
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
+from django.db import connection
+from uuid import uuid4
 
 # Create your models here.
 
@@ -29,6 +32,33 @@ def validate_non_empty(value):
     """Validator for non empty fields"""
     if len(value) == 0:
         raise ValidationError("Field Cannot be empty")
+
+
+class Client(AbstractModel):
+    name = models.CharField(max_length=256, unique=True)
+    customer = models.BooleanField(default=False)
+    uuid = models.UUIDField(unique=True, default=uuid4, editable=False)
+    sub_domain = models.CharField(max_length=256, unique=True, null=True, blank=True)
+    okta_url = models.CharField(max_length=900, unique=True, null=True, blank=True)
+    okta_key = models.CharField(max_length=900, unique=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def get_default_client(cls):
+        if not cls._meta.db_table in connection.introspection.table_names():
+            return None
+        default_client, _ = cls.objects.get_or_create(
+            name="Sustainext Platform",
+            defaults={
+                "customer": False,
+                "sub_domain": "admin",
+            },
+        )
+        return default_client.id
+
+
 
 
 # * Preferences App
@@ -143,7 +173,7 @@ class User_client(AbstractModel):
         related_name="user_userclient",
     )
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="client_userclient"
+        Client, on_delete=models.CASCADE, related_name="client_userclient",default=Client.get_default_client
     )
 
     objects = ClientFiltering()
@@ -151,7 +181,7 @@ class User_client(AbstractModel):
 
 class Organization(models.Model):
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="client_Org"
+        Client, on_delete=models.CASCADE, related_name="client_Org",default=Client.get_default_client
     )
     name = models.CharField(max_length=256)
     type_corporate_entity = models.CharField(max_length=256, null=True, blank=True)
@@ -220,7 +250,7 @@ class Organization(models.Model):
 
 class Userorg(models.Model):
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="client_User_Org"
+        Client, on_delete=models.CASCADE, related_name="client_User_Org",default=Client.get_default_client
     )
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -310,7 +340,7 @@ class Corporateentity(models.Model):
     )
 
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="corporatenetityclient"
+        Client, on_delete=models.CASCADE, related_name="corporatenetityclient",default=Client.get_default_client
     )
     name = models.CharField(max_length=256)
     corporatetype = models.CharField(max_length=256, null=True, blank=True)
@@ -397,7 +427,7 @@ class Location(models.Model):
         ("Headquarter  Location", "Headquarter  Location"),
     )
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="locationclient"
+        Client, on_delete=models.CASCADE, related_name="locationclient",default=Client.get_default_client
     )
     name = models.CharField(max_length=256)
     phone = models.CharField(max_length=256, null=True, blank=True)
@@ -522,7 +552,7 @@ class Batch(models.Model):
     """Overall Batch nos- Each Batch record for 1 month data"""
 
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="batchclient"
+        Client, on_delete=models.CASCADE, related_name="batchclient",default=Client.get_default_client
     )
     location = models.ForeignKey(
         Location, on_delete=models.CASCADE, related_name="batch_location"
@@ -571,7 +601,7 @@ class RowDataBatch(models.Model):
     """For combination of scope and number is unique in each batch.Row_number to be sent from frontend .."""
 
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="RowDataBatchclient"
+        Client, on_delete=models.CASCADE, related_name="RowDataBatchclient",default=Client.get_default_client
     )
     scope = models.PositiveIntegerField(null=True, blank=True)
     row_number = models.PositiveIntegerField()
@@ -632,7 +662,7 @@ class RowDataBatch(models.Model):
 
 class Task(models.Model):
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="Taskclient"
+        Client, on_delete=models.CASCADE, related_name="Taskclient",default=Client.get_default_client
     )
     name = models.CharField(max_length=256)
     row_data_batch = models.ForeignKey(
@@ -661,7 +691,7 @@ class Mygoal(models.Model):
     """Creating a relation for My Goals in SustainextHQ/Dashboard"""
 
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="Mygoalclient"
+        Client, on_delete=models.CASCADE, related_name="Mygoalclient",default=Client.get_default_client
     )
     title = models.CharField(max_length=1024)
     deadline = models.DateField(
@@ -708,6 +738,7 @@ class TaskDashboard(models.Model):
         related_name="TaskDashboard_client",
         null=True,
         blank=True,
+        default=Client.get_default_client
     )
     objects = ClientFiltering()
 
@@ -726,7 +757,7 @@ class TaskDashboard(models.Model):
 
 class Bussinessrelationship(models.Model):
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="Bussinessrelationship_client"
+        Client, on_delete=models.CASCADE, related_name="Bussinessrelationship_client",default=Client.get_default_client
     )
     partnerships = models.CharField(max_length=256)
     organization = models.ForeignKey(
@@ -745,7 +776,7 @@ class Bussinessrelationship(models.Model):
 
 class Bussinessactivity(models.Model):
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="Bussinessactivityclient"
+        Client, on_delete=models.CASCADE, related_name="Bussinessactivityclient",default=Client.get_default_client
     )
     activity_name = models.CharField(max_length=256)
     service = models.CharField(max_length=256)
@@ -772,7 +803,7 @@ class Bussinessactivity(models.Model):
 
 class Companyactivities(models.Model):
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="Companyactivitiesclient"
+        Client, on_delete=models.CASCADE, related_name="Companyactivitiesclient",default=Client.get_default_client
     )
     name = models.CharField(max_length=256)
     bussiness_relationship = models.ForeignKey(
@@ -807,7 +838,7 @@ sub_group_choices = (
 class Stakeholdergroup(models.Model):
     internal_choices = (("Internal", "Internal"), ("External", "External"))
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="Stakeholdergroupclient"
+        Client, on_delete=models.CASCADE, related_name="Stakeholdergroupclient",default=Client.get_default_client
     )
     name = models.CharField(max_length=256)
     type = models.CharField(max_length=256, choices=internal_choices)
@@ -830,7 +861,7 @@ class Stakeholdergroup(models.Model):
 
 class Stakeholder(models.Model):
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="Stakeholderclient"
+        Client, on_delete=models.CASCADE, related_name="Stakeholderclient",default=Client.get_default_client
     )
     email = models.EmailField()
     name = models.CharField(max_length=256)
@@ -861,7 +892,7 @@ def get_upload_path(instance, filename):
 
 class Report(models.Model):
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="client_reports"
+        Client, on_delete=models.CASCADE, related_name="client_reports",default=Client.get_default_client
     )
     name = models.CharField(max_length=256, null=True, blank=True)
     report_type = models.CharField(max_length=256, null=True, blank=True)
@@ -952,7 +983,7 @@ class Report(models.Model):
 
 class AnalysisData2(models.Model):
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, related_name="AnalysisData2client"
+        Client, on_delete=models.CASCADE, related_name="AnalysisData2client",default=Client.get_default_client
     )
     report_id = models.CharField(max_length=255, unique=True)
     data = models.JSONField(default=dict)
