@@ -167,7 +167,7 @@ class ScreenThirteenView(APIView):
         except ScreenThirteen.DoesNotExist:
             serializer = ScreenThirteenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(report=self.report)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def set_data_points(self):
