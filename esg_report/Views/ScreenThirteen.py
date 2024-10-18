@@ -168,7 +168,7 @@ class ScreenThirteenView(APIView):
             serializer = ScreenThirteenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(report=self.report)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def set_data_points(self):
         self.data_points = get_data_points_as_per_report(self.report)
