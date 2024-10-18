@@ -4,6 +4,10 @@ from analysis.models.Social.EmploymentHires import EmploymentHires
 from analysis.models.Social.Gender import Gender
 from analysis.models.Social.ParentalLeave import ParentalLeave, EMPLOYEE_CATEGORIES
 from common.utils.value_types import get_float
+from common.utils.getting_parameters_for_orgs_corps import (
+    get_corporate,
+    get_organisation,
+)
 
 EMPLOYMENT_TYPE_MAPPING = {
     "permanent_emp": "permanent employee",
@@ -39,6 +43,16 @@ def get_gender(index):
 def create_data(raw_response: RawResponse, table_name, model):
     for index, local_data in enumerate(raw_response.data):
         age_group_and_value = get_age_group_and_value(local_data)
+        organisation = (
+            raw_response.organization
+            if get_organisation(raw_response.locale) is None
+            else get_organisation(raw_response.locale)
+        )
+        corporate = (
+            raw_response.corporate
+            if get_corporate(raw_response.locale) is None
+            else get_corporate(raw_response.locale)
+        )
         for age_group, value in age_group_and_value.items():
             defaults = {"value": value}
             if model == EmploymentTurnover:
@@ -55,8 +69,8 @@ def create_data(raw_response: RawResponse, table_name, model):
                 month=raw_response.month,
                 year=raw_response.year,
                 location=raw_response.locale,
-                organisation=raw_response.locale.corporateentity.organization,
-                corporate=raw_response.locale.corporateentity,
+                organisation=organisation,
+                corporate=corporate,
                 age_group=age_group,
                 raw_response=raw_response,
                 employment_type=get_employment_type(raw_response.path.slug),
