@@ -80,7 +80,30 @@ class MaterialTopic(AbstractModel):
     class Meta:
         unique_together = ["identifier", "framework"]
 
-#TODO: add a model for indicator and sub indicators, Materiality Framework, (name )
+
+# TODO: add a model for indicator and sub indicators, Materiality Framework, (name )
+class Indicator(AbstractModel):
+    """
+    Stores the indicators in accordance with their topic for the materiality assessment Eg. G301-and G301-b
+    """
+
+    name = models.CharField(max_length=255)
+    identifer = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class SubIndicator(AbstractModel):
+    """
+    Stores the sub indicators in accordance with their indicator for the materiality assessment Eg. G301-and G301-b
+    """
+
+    name = models.CharField(max_length=255)
+    identifer = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Disclosure(AbstractModel):
