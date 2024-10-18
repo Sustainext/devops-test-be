@@ -132,7 +132,7 @@ class ScreenThirteen(AbstractModel, HistoricalModelMixin):
         null=True,
     )
 
-    dynamic_question_answer = models.TextField(
+    parental_leaves = models.TextField(
         verbose_name="Dynamic Question Answer",
         help_text="This field stores the answer to a dynamic question provided as input",
         blank=True,
