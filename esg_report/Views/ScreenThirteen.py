@@ -62,6 +62,8 @@ class ScreenThirteenView(APIView):
             33: "gri-social-ohs-403-7a-hazards_risks",
             34: "gri-social-ohs-403-2a-process_for_hazard",
             35: "gri-social-ohs-403-2b-quality_assurance",
+            36: "gri-social-ohs-403-2c-worker_right",
+            37: "gri-social-ohs-403-2d-work_related_incident",
         }
 
     def get_403_2a_process_for_hazard(self):
@@ -337,12 +339,18 @@ class ScreenThirteenView(APIView):
                 data_points=self.data_points.filter(path__slug=self.slugs[33])
             )
         )
-        response_data["403-2a-process_for_hazard"] = self.get_403_2a()
+        response_data["403-2a-process_for_hazard"] = self.get_403_2a() #TODO: Redo it with data points after data metrics get fixed.
         response_data["403-2b-quality_assurance"] = (
             collect_data_and_differentiate_by_location(
                 data_points=self.data_points.filter(path__slug=self.slugs[35])
             )
         )
+        response_data["403-2c-worker_right"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[36])
+            )
+        )
+
         response_data["get_403_analyse"] = self.get_403()
 
         return Response(response_data, status=status.HTTP_200_OK)
