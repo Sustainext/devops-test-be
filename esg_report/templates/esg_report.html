@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table of Contents</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        h3 {
+            font-size: 12px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul ul {
+            padding-left: 20px;
+        }
+
+        ul ul ul {
+            padding-left: 40px;
+            padding-top: 0px;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .message-from-ceo h2 {
+            font-size: 10px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    {% include "esg_contents.html" %}
+    <div class="page-break"></div>
+    {% include "message_from_ceo.html" %}
+    <div class="page-break"></div>
+    {% include "about_the_company.html" %}
+    <div class="page-break"></div>
+    {% include "mission_vision_values.html" %}
+    <!-- <div class="page-break"></div> Removing page-break for now, later need to add this again  -->
+    {% include "sustainability_roadmap.html" %}
+    <!-- <div class="page-break"></div> Removing page-break for now, later need to add this again  -->
+    {% include "award_and_recognization.html" %}
+    <div class="page-break"></div>
+    {% include "stakeholder_engagement.html" %}
+    <div class="page-break"></div>
+    {% include "about_the_report.html" %}
+    <div class="page-break"></div>
+    {% include "materiality.html" %}
+    <div class="page-break"></div>
+    {% include "corporate_governance.html" %}
+    <div class="page-break"></div>
+    {% include "sustainability_journey.html" %}
+</body>
+
+
+</html>
