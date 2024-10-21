@@ -10,7 +10,9 @@ CustomUser = apps.get_model(settings.AUTH_USER_MODEL)
 
 
 class ClientTaskDashboardSerializer(serializers.ModelSerializer):
-    assign_to_email = serializers.CharField(source="assigned_to.email", required=False)
+    assign_to_email = serializers.CharField(
+        source="assigned_to.email", required=False, read_only=True
+    )
     assign_to_user_name = serializers.CharField(
         source="assigned_to.first_name", required=False, read_only=True
     )
