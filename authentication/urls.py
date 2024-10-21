@@ -18,9 +18,16 @@ from authentication.Views.ChangePassword import ChangePasswordAPIView
 from authentication.Views.AzurePowerBIToken import PowerBiToken
 from authentication.Views.CustomLogoutAPI import CustomLogoutView
 from authentication.Views.TestigAuthentication import TestAuthentication
-from authentication.Views.CustomUser import CreateCustomUserView, CheckUserExistsView, ClientUsersListView
+from authentication.Views.CustomUser import (
+    CreateCustomUserView,
+    CheckUserExistsView,
+    ClientUsersListView,
+)
+from authentication.Views.ManageUser import ManageUserViewSet
+
 router = routers.DefaultRouter()
 router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
+router.register(r"manage_user", ManageUserViewSet, basename="ManageUser")
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="rest_register"),
     # path("login/", LoginView.as_view(), name="rest_login"),
@@ -56,10 +63,15 @@ urlpatterns = [
     ),
     path("change_password/", ChangePasswordAPIView.as_view(), name="change_password"),
     path("powerbi_token/", PowerBiToken.as_view(), name="powerbi_token"),
-    path("test_authentication/", TestAuthentication.as_view(), name="test_authentication"),
-
-    path('create-customuser/',CreateCustomUserView.as_view(), name='create-custom-user-webview'),
-    path('check-user-exists/', CheckUserExistsView.as_view(),name="check-user-exists"),
-    path('client-users/',ClientUsersListView.as_view(), name='client-users'),
+    path(
+        "test_authentication/", TestAuthentication.as_view(), name="test_authentication"
+    ),
+    path(
+        "create-customuser/",
+        CreateCustomUserView.as_view(),
+        name="create-custom-user-webview",
+    ),
+    path("check-user-exists/", CheckUserExistsView.as_view(), name="check-user-exists"),
+    path("client-users/", ClientUsersListView.as_view(), name="client-users"),
     path("", include(router.urls)),
 ]
