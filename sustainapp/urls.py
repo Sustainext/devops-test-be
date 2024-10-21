@@ -12,9 +12,15 @@ from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.EmissionTask import EmissionTask
 from sustainapp.Views.AssignedEmissionTask import AssignedEmissionTask
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
-from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import MarketPresenceAnalyseView
-from sustainapp.Views.Analyse.Economic.CommunicationTraining import CommunicationTrainingAnalyzeView
-from sustainapp.Views.Analyse.Economic.OperationsAssesedAnalyse import OperationsAssessedAnalyzeView
+from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import (
+    MarketPresenceAnalyseView,
+)
+from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
+    CommunicationTrainingAnalyzeView,
+)
+from sustainapp.Views.Analyse.Economic.OperationsAssesedAnalyse import (
+    OperationsAssessedAnalyzeView,
+)
 from sustainapp.Views.Analyse.Governance.GovernanceAnalyse import GovernanceAnalyse
 from rest_framework import routers
 from sustainapp.Views.GHGReport import (
@@ -24,7 +30,10 @@ from sustainapp.Views.GHGReport import (
     ReportListView,
     ReportPDFView,
 )
-from sustainapp.Views.GetLocationAsPerCorporate import GetLocationAsPerCorporate, GetLocationAsPerOrgOrCorp
+from sustainapp.Views.GetLocationAsPerCorporate import (
+    GetLocationAsPerCorporate,
+    GetLocationAsPerOrgOrCorp,
+)
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
@@ -64,7 +73,10 @@ from sustainapp.Views.Analyse.General.CollectiveBargainingAnalyze import (
     CollectiveBargainingAnalyzeView,
 )
 from sustainapp.Views.TrackDashboardView import TrackDashboardAPIView
-from sustainapp.Views.Analyse.SupplierEnvironment.SupplierEnvironment import SupplierEnvAnlayzeView
+from sustainapp.Views.Analyse.SupplierEnvironment.SupplierEnvironment import (
+    SupplierEnvAnlayzeView,
+)
+from sustainapp.Views.OrgCorpLocViewset import CorporateListView, LocationListView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -234,4 +246,6 @@ urlpatterns = [
         SupplierEnvAnlayzeView.as_view(),
         name="get_analyze_supplier_assesment",
     ),
+    path("roles/corporates/", CorporateListView.as_view(), name="corporates-list"),
+    path("roles/locations/", LocationListView.as_view(), name="locations-list"),
 ]
