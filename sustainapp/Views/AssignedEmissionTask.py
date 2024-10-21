@@ -52,7 +52,7 @@ class AssignedEmissionTask(APIView):
                 {
                     "id": task["id"],
                     "Emission": {
-                        "assigned_to": task["assign_to_user_registered_username"],
+                        "assigned_to": task["assigned_to"],
                         "Category": task["category"],
                         "Subcategory": task["subcategory"],
                         "Activity": task["activity"],
