@@ -6,7 +6,7 @@ from sustainapp.models import (
     Organization,
     Corporateentity,
     Location,
-)  # Update with your actual User model
+)
 from authentication.models import CustomUser, Client
 
 
