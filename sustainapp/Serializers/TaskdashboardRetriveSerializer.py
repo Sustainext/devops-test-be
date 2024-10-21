@@ -16,9 +16,6 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
     assign_to_user_name = serializers.CharField(
         source="assigned_to.first_name", required=False, read_only=True
     )
-    assign_to_user_registered_username = serializers.CharField(
-        source="assigned_to.username", required=False, read_only=True
-    )
 
     assign_by_email = serializers.CharField(
         source="assigned_by.email", required=False, read_only=True
