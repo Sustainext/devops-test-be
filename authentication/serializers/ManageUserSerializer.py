@@ -43,6 +43,7 @@ class ManageUserSerializer(serializers.ModelSerializer):
             "job_title",
             "department",
             "work_email",
+            "permissions_checkbox",
             "collect",
             "analyse",
             "report",
