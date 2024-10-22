@@ -9,10 +9,9 @@ from common.models.AbstractModel import AbstractModel
 from authentication.Managers.CustomUserManager import CustomUserManager
 from uuid import uuid4
 from django.utils.text import slugify
-from sustainapp.models import Client,Userorg,Corporateentity,Location,Organization
+from sustainapp.models import Client, Userorg, Corporateentity, Location, Organization
+
 # Create your models here.
-
-
 
 
 class CustomPermission(models.Model):
@@ -58,7 +57,6 @@ class CustomUser(AbstractUser):
         null=True,
         blank=True,
         default=Client.get_default_client,
-        
     )
 
     # Fix for the reverse accessor clash
@@ -98,13 +96,14 @@ class CustomUser(AbstractUser):
     work_email = models.CharField(_("department"), max_length=200, blank=True)
     collect = models.BooleanField(default=True)
     analyse = models.BooleanField(default=True)
-    report = models.BooleanField(default=True)
-    optimise = models.BooleanField(default=True)
-    track = models.BooleanField(default=True)
-    orgs = models.ManyToManyField(Organization, related_name='organizations')
-    corps = models.ManyToManyField(Corporateentity,related_name='corporates')
-    locs = models.ManyToManyField(Location, related_name='locations')
-    
+    report = models.BooleanField(default=False)
+    optimise = models.BooleanField(default=False)
+    track = models.BooleanField(default=False)
+    permissions_checkbox = models.BooleanField(default=False)
+    orgs = models.ManyToManyField(Organization, related_name="organizations")
+    corps = models.ManyToManyField(Corporateentity, related_name="corporates")
+    locs = models.ManyToManyField(Location, related_name="locations")
+
     @property
     def default_role(self):
         if self.custom_role is None:
