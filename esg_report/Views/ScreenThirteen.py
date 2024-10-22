@@ -85,6 +85,7 @@ class ScreenThirteenView(APIView):
             55: "gri-social-collective_bargaining-407-1b-measures",
             56: "gri-social-indigenous_people-411-1a-incidents",
             57: "gri-social-indigenous_people-411-1b-status",
+            58: "gri-social-human_rights-408-1c-measures_taken",
         }
 
     def get_403_2a_process_for_hazard(self):
@@ -438,6 +439,11 @@ class ScreenThirteenView(APIView):
             report=self.report,
             request=self.request,
         )
+        response_data["408_1a_1b_analyse"] = calling_analyse_view_with_params(
+            view_url="get_child_labor_analysis",
+            report=self.report,
+            request=self.request,
+        )
         response_data["406_1a"] = collect_data_and_differentiate_by_location(
             data_points=self.data_points.filter(path__slug=self.slugs[53])
         )
@@ -452,6 +458,11 @@ class ScreenThirteenView(APIView):
         )
         response_data["411_1b"] = collect_data_and_differentiate_by_location(
             data_points=self.data_points.filter(path__slug=self.slugs[57])
+        )
+        response_data["408-1c-measures_taken"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[58])
+            )
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
