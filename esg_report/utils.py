@@ -340,3 +340,55 @@ def getting_all_general_sections(report: Report):
     Retrieves all general sections for a given report.
     """
     data_points = get_data_points_as_per_report(report=report)
+
+
+{
+    "Org Details": ["gri-general-org_details_2-1a-1b-1c-1d"],
+    "Entities": [
+        "gri-general-entities-list_of_entities-2-2-a",
+        "gri-general-entities-audited-2-2-b",
+        "gri-general-entities-multiple-2-2-c",
+    ],
+    "Report Details": [
+        "gri-general-report_details-reporting_period-2-3-a",
+        "gri-general-report_details-reporting_period-2-3-b",
+        "gri-general-report_details-publication-2-3-c",
+        "gri-general-report_details-point-2-3-d",
+    ],
+    "Restatement": ["gri-general-restatements-2-4-a"],
+    "Assurance": [
+        "gri-general-assurance-policy-2-5-a",
+        "gri-general-assurance-highest-2-5-a",
+        "gri-general-assurance-external-2-5-b",
+    ],
+    "Business Details": [
+        "gri-general-business_details-organisation-2-6a",
+        "gri-general-business_details-value-2-6b",
+        "gri-general-business_details-other-2-6c",
+        "gri-general-business_details-changes-2-6d",
+    ],
+    "Workforce-Employees": [
+        "gri-general-workforce_employees-2-7-a-b-permanent_employee",
+        "gri-general-workforce_employees-methodologies-2-7c",
+        "gri-general-workforce_employees-data-2-7c",
+        "gri-general-workforce_employees-contextual-2-7d",
+        "gri-general-workforce_employees-fluctuations-2-7e",
+    ],
+    "Workforce-Other Workers": [
+        "gri-general-workforce_other_workers-workers-2-8-a",
+        "gri-general-workforce_other_workers-methodologies-2-8b",
+        "gri-general-workforce_other_workers-fluctuations-2-8c",
+    ],
+    "Laws and Regulation": [
+        "gri-general-laws_and_regulation-instance-2-27-a",
+        "gri-general-laws_and_regulation-monetary-2-27-b",
+        "gri-general-laws_and_regulation-significant-2-27-c",
+        "gri-general-laws_and_regulation-organization-2-27-d",
+    ],
+    "Membership & Association": ["gri-general-membership_association-2-28-a-report"],
+    "Stakeholder Engagement": ["gri-general-stakeholder_engagement-2-29a-describe"],
+    "Collective Bargaining Agreements": [
+        "gri-general-collective_bargaining-2-30-a-percentage",
+        "gri-general-collective_bargaining-2-30-b-employees",
+    ],
+}
