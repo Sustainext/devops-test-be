@@ -297,3 +297,46 @@ def calling_analyse_view_with_params(view_url, request, report):
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}", exec_info=True)
         return {"detail": f"An error occurred: {str(e)}"}
+
+
+def creating_material_topic_and_disclosure():
+    material_topic_and_disclosure = {
+        "GRI Reporting info": [
+            "Org Details",
+            "Entities",
+            "Report Details",
+            "Restatement",
+            "Assurance",
+        ],
+        "Organization Details": [
+            "Business Details",
+            "Workforce-Employees",
+            "Workforce-Other Workers",
+        ],
+        "Compliance": ["Laws and Regulation"],
+        "Membership & Association": ["Membership & Association"],
+        "Stakeholder Engagement": ["Stakeholder Engagement"],
+        "Collective Bargaining Agreements": ["Collective Bargaining Agreements"],
+    }
+    from materiality_dashboard.models import MaterialTopic, Disclosure
+    from sustainapp.models import Framework
+
+    f = Framework.objects.get(name="GRI: In Accordance With")
+    for material_topic, disclosure in material_topic_and_disclosure.items():
+        material_topic_obj, created = MaterialTopic.objects.get_or_create(
+            name=material_topic,
+            framework=f,
+            esg_category="general",
+        )
+        material_topic_obj.save()
+        for dis in disclosure:
+            Disclosure.objects.get_or_create(topic=material_topic_obj, description=dis)[
+                0
+            ].save()
+
+
+def getting_all_general_sections(report: Report):
+    """
+    Retrieves all general sections for a given report.
+    """
+    data_points = get_data_points_as_per_report(report=report)
