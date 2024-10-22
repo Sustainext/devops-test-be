@@ -21,10 +21,25 @@ class CreateCustomUserView(APIView):
         if serializer.is_valid():
             user = serializer.save()
 
+            # Set additional fields
             user.is_client_admin = False
             user.admin = False
+
+            # Validate and set roles: only "manager" or "employee" are allowed
+            allowed_roles = ["manager", "employee"]
             user.roles = mutable_data.get("roles", "employee")
+            if user.roles not in allowed_roles:
+                user.roles = "employee"
+
             user.save()
+            # Add a new email address to user.emailaddress_set
+            email_address = user.emailaddress_set.create(
+                email=mutable_data.get(
+                    "email"
+                ),  # Assuming 'email' is in the request data
+                primary=True,  # Set the email as the primary email
+                verified=True,  # Initially set as unverified
+            )
 
             return Response(
                 {"message": "User Created Successfully"}, status=status.HTTP_201_CREATED
