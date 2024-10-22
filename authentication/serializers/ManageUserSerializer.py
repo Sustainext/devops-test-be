@@ -38,6 +38,7 @@ class ManageUserSerializer(serializers.ModelSerializer):
             "roles",
             "first_name",
             "last_name",
+            "date_joined",
             "phone_number",
             "job_title",
             "department",
