@@ -9,34 +9,55 @@ from django.contrib.auth import get_user_model
 
 CustomUser = get_user_model()
 
+
 class CustomUserSerializer(serializers.ModelSerializer):
-    org_list = serializers.ListField(child=serializers.IntegerField(), write_only=True)
-    corp_list = serializers.ListField(child=serializers.IntegerField(), write_only=True)
-    loc_list = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+    orgs = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+    corps = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+    locs = serializers.ListField(child=serializers.IntegerField(), write_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'job_title', 'department', 'work_email', 'client', 'org_list', 'corp_list', 'loc_list', 'collect', 'analyse', 'report', 'optimise', 'track']
+        fields = [
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "job_title",
+            "department",
+            "work_email",
+            "client",
+            "orgs",
+            "corps",
+            "locs",
+            "collect",
+            "analyse",
+            "report",
+            "optimise",
+            "track",
+        ]
         extra_kwargs = {
-            'client': {'read_only': True},
-            'username': {'required': True},
-            'email': {'required': True},
-            'first_name': {'required': True},
-            'last_name': {'required': True},
-            'phone_number': {'required': True},
-            'job_title': {'required': True},
-            'department': {'required': True},
-            'work_email': {'required': True},
-            'collect': {'required': True},
-            'analyse': {'required': True},
-            'report': {'required': True},
-            'optimise': {'required': True},
-            'track': {'required': True},
+            "client": {"read_only": True},
+            "username": {"required": True},
+            "email": {"required": True},
+            "first_name": {"required": True},
+            "last_name": {"required": True},
+            "phone_number": {"required": True},
+            "job_title": {"required": True},
+            "department": {"required": True},
+            "work_email": {"required": True},
+            "collect": {"required": True},
+            "analyse": {"required": True},
+            "report": {"required": True},
+            "optimise": {"required": True},
+            "track": {"required": True},
         }
 
     def validate_username(self, value):
         if CustomUser.objects.filter(username=value).exists():
-            raise serializers.ValidationError("A user with this username already exists.")
+            raise serializers.ValidationError(
+                "A user with this username already exists."
+            )
         return value
 
     def validate_email(self, value):
@@ -45,15 +66,15 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        if data.get('email') != data.get('work_email'):
+        if data.get("email") != data.get("work_email"):
             raise serializers.ValidationError("Email and work email must be the same.")
         return data
 
     @transaction.atomic
     def create(self, validated_data):
-        org_list = validated_data.pop('org_list', [])
-        corp_list = validated_data.pop('corp_list', [])
-        loc_list = validated_data.pop('loc_list', [])
+        org_list = validated_data.pop("orgs", [])
+        corp_list = validated_data.pop("corps", [])
+        loc_list = validated_data.pop("locs", [])
 
         try:
             # Create a new user instance
@@ -72,8 +93,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret['org_list'] = list(instance.orgs.values_list('id', flat=True))
-        ret['corp_list'] = list(instance.corps.values_list('id', flat=True))
-        ret['loc_list'] = list(instance.locs.values_list('id', flat=True))
+        ret["orgs"] = list(instance.orgs.values_list("id", flat=True))
+        ret["corps"] = list(instance.corps.values_list("id", flat=True))
+        ret["locs"] = list(instance.locs.values_list("id", flat=True))
         return ret
-

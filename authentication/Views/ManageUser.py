@@ -3,9 +3,11 @@ from rest_framework import viewsets
 from authentication.models import CustomUser
 from rest_framework.response import Response
 from rest_framework import status
+from authentication.Permissions.IsAdmin import IsAdmin
 
 
 class ManageUserViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdmin]
     serializer_class = ManageUserSerializer
 
     def get_queryset(self):
