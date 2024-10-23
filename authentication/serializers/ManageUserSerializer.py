@@ -35,6 +35,7 @@ class ManageUserSerializer(serializers.ModelSerializer):
     locs = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Location.objects.all()
     )
+    custom_role = serializers.CharField(source="custom_role.name", required=False)
 
     class Meta:
         model = CustomUser
@@ -43,6 +44,8 @@ class ManageUserSerializer(serializers.ModelSerializer):
             "email",
             "is_active",
             "roles",
+            "custom_role",
+            "admin",
             "first_name",
             "last_name",
             "date_joined",

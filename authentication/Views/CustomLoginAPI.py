@@ -67,6 +67,8 @@ class CustomLoginView(LoginView):
             "refresh_exp_readable": refresh_exp_readable,
         }
         roles = user.roles
+        custom_role = user.custom_role.name if user.custom_role else None
+        admin = user.admin
         permissions = {
             "collect": user.collect,
             "analyse": user.analyse,
@@ -81,6 +83,8 @@ class CustomLoginView(LoginView):
                 "needs_password_reset": needs_password_reset,
                 "client_key": client_key,
                 "role": roles,
+                "custom_role": custom_role,
+                "admin": admin,
                 "permissions": permissions,
             },
             status=200,
