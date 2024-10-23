@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from authentication.models import CustomUser
+from authentication.models import CustomUser, CustomRole
 from sustainapp.models import Organization, Corporateentity, Location
 
 
@@ -35,7 +35,11 @@ class ManageUserSerializer(serializers.ModelSerializer):
     locs = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Location.objects.all()
     )
-    custom_role = serializers.CharField(source="custom_role.name", required=False)
+
+    # Make custom_role writable by allowing it to be updated via name
+    custom_role = serializers.SlugRelatedField(
+        slug_field="name", queryset=CustomRole.objects.all(), required=False
+    )
 
     class Meta:
         model = CustomUser
@@ -86,6 +90,7 @@ class ManageUserSerializer(serializers.ModelSerializer):
         orgs = validated_data.pop("orgs", None)
         corps = validated_data.pop("corps", None)
         locs = validated_data.pop("locs", None)
+        custom_role = validated_data.pop("custom_role", None)
 
         # Update other fields
         instance = super().update(instance, validated_data)
@@ -97,5 +102,12 @@ class ManageUserSerializer(serializers.ModelSerializer):
             instance.corps.set(corps)
         if locs is not None:
             instance.locs.set(locs)
+
+        # Update the custom_role if provided
+        if custom_role is not None:
+            instance.custom_role = custom_role
+
+        # Save the instance after updating
+        instance.save()
 
         return instance
