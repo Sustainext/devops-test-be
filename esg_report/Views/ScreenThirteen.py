@@ -594,7 +594,7 @@ class ScreenThirteenView(APIView):
                 data_points=self.data_points.filter(path__slug=self.slugs[76])
             )
         )
-        response_data["405-1b_analyse"] = (
+        response_data["405-2a_analyse"] = (
             calling_analyse_view_with_params_for_same_year(
                 view_url="get_diversity_inclusion_analysis",
                 report=self.report,
