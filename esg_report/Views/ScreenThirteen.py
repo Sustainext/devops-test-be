@@ -99,9 +99,14 @@ class ScreenThirteenView(APIView):
             68: "gri-social-employee_hires-401-1a-emp_turnover-parttime",
             69: "gri-social-benefits-401-2a-benefits_provided",
             70: "gri-social-benefits-401-2b-significant_loc",
-            71: "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1b-s2",  #
+            71: "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1b-s2",
             72: "gri-economic-ratios_of_standard_entry-202-1c-location",
             73: "gri-economic-ratios_of_standard_entry-202-1d-definition",
+            74: "gri-social-human_rights-410-1b-training_requirements",
+            75: "gri-social-skill_upgrade-403-9c-9d-programs",
+            76: "gri-social-salary_ratio-405-2b-significant_locations",
+            77: "gri-general-collective_bargaining-2-30-a-percentage",  #
+            78: "gri-general-collective_bargaining-2-30-b-employees",
         }
 
     def get_403_2a_process_for_hazard(self):
@@ -556,6 +561,65 @@ class ScreenThirteenView(APIView):
         )
         response_data["408_1a_408_1b_analyse"] = calling_analyse_view_with_params(
             view_url="get_child_labor_analysis",
+            report=self.report,
+            request=self.request,
+        )
+        response_data["405_1a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_diversity_inclusion_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["410-1b-training_requirements"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[74])
+            )
+        )
+        response_data["404_1a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_training_social_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["404_2a_2b_collect"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[75])
+        )
+        response_data["405-2b-significant_locations"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[76])
+            )
+        )
+        response_data["405-1b_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_diversity_inclusion_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["2_30_a"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[77])
+        )
+        response_data["2_30_b"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[78])
+        )
+        response_data["2_30_a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_general_collective_bargaining_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["2_7a_2_7b_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_general_employee_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["409_1a_analyse"] = calling_analyse_view_with_params(
+            view_url="get_forced_labor_analysis",
             report=self.report,
             request=self.request,
         )
