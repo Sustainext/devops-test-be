@@ -73,6 +73,13 @@ from analysis.utils.General.WorkForceEmpAnalyze import (
 from analysis.utils.General.WorkForceOtherWorkersAnalyze import (
     workforce_other_workers_analysis,
 )
+from analysis.utils.Economic.CommunicationAndTrainingAnalyze import (
+    create_data_for_economic_total_body_members,
+    create_data_for_economic_total_body_members_region,
+)
+from analysis.utils.Economic.MarketPresenceAnalyze import (
+    create_data_for_economic_standard_wages,
+)
 
 def create_analysis_data(raw_response: RawResponse):
     employment_analysis(raw_response=raw_response)
@@ -110,3 +117,6 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_general_collective_bargaining(raw_response=raw_response)
     total_number_employees_analysis(raw_response=raw_response)
     workforce_other_workers_analysis(raw_response=raw_response)
+    create_data_for_economic_total_body_members(raw_response=raw_response)
+    create_data_for_economic_total_body_members_region(raw_response=raw_response)
+    create_data_for_economic_standard_wages(raw_response=raw_response)
