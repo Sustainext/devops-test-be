@@ -105,8 +105,11 @@ class ScreenThirteenView(APIView):
             74: "gri-social-human_rights-410-1b-training_requirements",
             75: "gri-social-skill_upgrade-403-9c-9d-programs",
             76: "gri-social-salary_ratio-405-2b-significant_locations",
-            77: "gri-general-collective_bargaining-2-30-a-percentage",  #
+            77: "gri-general-collective_bargaining-2-30-a-percentage",
             78: "gri-general-collective_bargaining-2-30-b-employees",
+            79: "gri-general-workforce_other_workers-workers-2-8-a",  #
+            80: "gri-general-workforce_other_workers-methodologies-2-8b",
+            81: "gri-general-workforce_other_workers-fluctuations-2-8c",
         }
 
     def get_403_2a_process_for_hazard(self):
@@ -622,6 +625,15 @@ class ScreenThirteenView(APIView):
             view_url="get_forced_labor_analysis",
             report=self.report,
             request=self.request,
+        )
+        response_data["2_8_a"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[79])
+        )
+        response_data["2_8_b"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[80])
+        )
+        response_data["2_8_c"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[81])
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
