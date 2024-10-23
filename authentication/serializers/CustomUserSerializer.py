@@ -35,6 +35,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "work_email",
             "client",
             "custom_role",
+            "permissions_checkbox",
             "orgs",
             "corps",
             "locs",
