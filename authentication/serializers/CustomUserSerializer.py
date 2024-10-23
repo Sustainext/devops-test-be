@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from authentication.models import CustomRole
 
 CustomUser = get_user_model()
 
@@ -14,6 +15,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
     orgs = serializers.ListField(child=serializers.IntegerField(), write_only=True)
     corps = serializers.ListField(child=serializers.IntegerField(), write_only=True)
     locs = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+    custom_role = serializers.SlugRelatedField(
+        slug_field="name",
+        queryset=CustomRole.objects.all(),
+        write_only=True,
+        required=True,
+    )
 
     class Meta:
         model = CustomUser
@@ -27,6 +34,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "department",
             "work_email",
             "client",
+            "custom_role",
             "orgs",
             "corps",
             "locs",
