@@ -102,7 +102,7 @@ class ScreenFifteenAPIView(APIView):
         response_data["417_2b"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[6]),
         )
-        response_data["417_1a_analysis"] = calling_analyse_view_with_params(
+        response_data["417_1b_analysis"] = calling_analyse_view_with_params(
             view_url="get_marketing_and_labeling_analysis",
             request=self.request,
             report=self.report,

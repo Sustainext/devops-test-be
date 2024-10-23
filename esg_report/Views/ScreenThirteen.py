@@ -15,6 +15,7 @@ from esg_report.utils import (
     get_data_by_raw_response_and_index,
     forward_request_with_jwt,
     calling_analyse_view_with_params,
+    calling_analyse_view_with_params_for_same_year,
 )
 from rest_framework.test import APIRequestFactory
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
@@ -85,6 +86,30 @@ class ScreenThirteenView(APIView):
             55: "gri-social-collective_bargaining-407-1b-measures",
             56: "gri-social-indigenous_people-411-1a-incidents",
             57: "gri-social-indigenous_people-411-1b-status",
+            58: "gri-social-human_rights-408-1c-measures_taken",
+            59: "gri-social-employee_hires-401-1a-new_emp_hire-permanent_emp",
+            60: "gri-social-employee_hires-401-1a-new_emp_hire-temp_emp",
+            61: "gri-social-employee_hires-401-1a-new_emp_hire-nonguaranteed",
+            62: "gri-social-employee_hires-401-1a-new_emp_hire-fulltime",
+            63: "gri-social-employee_hires-401-1a-new_emp_hire-parttime",
+            64: "gri-social-employee_hires-401-1a-emp_turnover-permanent_emp",
+            65: "gri-social-employee_hires-401-1a-emp_turnover-temp_emp",
+            66: "gri-social-employee_hires-401-1a-emp_turnover-nonguaranteed",
+            67: "gri-social-employee_hires-401-1a-emp_turnover-fulltime",
+            68: "gri-social-employee_hires-401-1a-emp_turnover-parttime",
+            69: "gri-social-benefits-401-2a-benefits_provided",
+            70: "gri-social-benefits-401-2b-significant_loc",
+            71: "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1b-s2",
+            72: "gri-economic-ratios_of_standard_entry-202-1c-location",
+            73: "gri-economic-ratios_of_standard_entry-202-1d-definition",
+            74: "gri-social-human_rights-410-1b-training_requirements",
+            75: "gri-social-skill_upgrade-403-9c-9d-programs",
+            76: "gri-social-salary_ratio-405-2b-significant_locations",
+            77: "gri-general-collective_bargaining-2-30-a-percentage",
+            78: "gri-general-collective_bargaining-2-30-b-employees",
+            79: "gri-general-workforce_other_workers-workers-2-8-a",  #
+            80: "gri-general-workforce_other_workers-methodologies-2-8b",
+            81: "gri-general-workforce_other_workers-fluctuations-2-8c",
         }
 
     def get_403_2a_process_for_hazard(self):
@@ -438,6 +463,11 @@ class ScreenThirteenView(APIView):
             report=self.report,
             request=self.request,
         )
+        response_data["408_1a_1b_analyse"] = calling_analyse_view_with_params(
+            view_url="get_child_labor_analysis",
+            report=self.report,
+            request=self.request,
+        )
         response_data["406_1a"] = collect_data_and_differentiate_by_location(
             data_points=self.data_points.filter(path__slug=self.slugs[53])
         )
@@ -452,6 +482,158 @@ class ScreenThirteenView(APIView):
         )
         response_data["411_1b"] = collect_data_and_differentiate_by_location(
             data_points=self.data_points.filter(path__slug=self.slugs[57])
+        )
+        response_data["408-1c-measures_taken"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[58])
+            )
+        )
+        response_data["401-1a"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[59])
+        )
+        response_data["401-1a-new_emp_hire-temp_emp"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[60])
+            )
+        )
+        response_data["401-1a-new_emp_hire-nonguaranteed"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[61])
+            )
+        )
+        response_data["401-1a-new_emp_hire-fulltime"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[62])
+            )
+        )
+        response_data["401-1a-new_emp_hire-parttime"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[63])
+            )
+        )
+        response_data["401-1a-emp_turnover-permanent_emp"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[64])
+            )
+        )
+        response_data["401-1a-emp_turnover-temp_emp"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[65])
+            )
+        )
+        response_data["401-1a-emp_turnover-nonguaranteed"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[66])
+            )
+        )
+        response_data["401-1a-emp_turnover-fulltime"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[67])
+            )
+        )
+        response_data["401-1a-emp_turnover-parttime"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=self.data_points.filter(path__slug=self.slugs[68])
+            )
+        )
+        response_data["401-2a-benefits_provided"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[69])
+            )
+        )
+        response_data["401-2b-significant_loc"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[70])
+            )
+        )
+        response_data["202_1b"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[71])
+        )
+        response_data["202_1c"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[72])
+        )
+        response_data["202_1d"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[73])
+        )
+        response_data["202_1a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_economic_market_presence",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["408_1a_408_1b_analyse"] = calling_analyse_view_with_params(
+            view_url="get_child_labor_analysis",
+            report=self.report,
+            request=self.request,
+        )
+        response_data["405_1a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_diversity_inclusion_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["410-1b-training_requirements"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[74])
+            )
+        )
+        response_data["404_1a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_training_social_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["404_2a_2b_collect"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[75])
+        )
+        response_data["405-2b-significant_locations"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[76])
+            )
+        )
+        response_data["405-2a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_diversity_inclusion_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["2_30_a"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[77])
+        )
+        response_data["2_30_b"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[78])
+        )
+        response_data["2_30_a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_general_collective_bargaining_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["2_7a_2_7b_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_general_employee_analysis",
+                report=self.report,
+                request=self.request,
+            )
+        )
+        response_data["409_1a_analyse"] = calling_analyse_view_with_params(
+            view_url="get_forced_labor_analysis",
+            report=self.report,
+            request=self.request,
+        )
+        response_data["2_8_a"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[79])
+        )
+        response_data["2_8_b"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[80])
+        )
+        response_data["2_8_c"] = collect_data_by_raw_response_and_index(
+            data_points=self.data_points.filter(path__slug=self.slugs[81])
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
