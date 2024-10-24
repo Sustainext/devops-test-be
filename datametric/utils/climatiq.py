@@ -46,42 +46,81 @@ class Climatiq:
         except Exception as e:
             logger.error(f"Failed to send error email: {str(e)}")
 
+    def neglect_missing_row(self, data_to_process):
+        """
+        Neglects the missing row in the data.
+        """
+        processed_data = []
+        required_fields = [
+            "Category",
+            "Subcategory",
+            "Activity",
+            "activity_id",
+            "unit_type",
+            "Unit",
+            "Quantity",
+        ]
+        for emission_data in data_to_process:
+            row_type = emission_data["Emission"].get("rowtype")
+
+            # if a row is assigned we can neglect calculating the emission for it
+            if not row_type or row_type in ["defalut", "approved", "calculated"]:
+                emission = emission_data["Emission"]
+
+                if any(not emission.get(field) for field in required_fields):
+                    continue
+
+                if (emission.get("Quantity2") and not emission.get("Unit2")) or (
+                    not emission.get("Quantity2") and emission.get("Unit2")
+                ):
+                    continue
+
+                processed_data.append(emission_data)
+        return processed_data
+
     def payload_preparation_for_climatiq_api(self):
         """
         Prepares the payload for the climatiq api.
         """
         payload = []
-        for emission_data in self.raw_response.data:
-            """
-            Example of emission data:
-            OrderedDict([('Emission',
-               OrderedDict([('Category', 'Mobile Combustion'),
-                            ('Subcategory', 'Road Travel'),
-                            ('Activity',
-                             'Bus - (EPA) - PassengerOverDistance'),
-                            ('activity_id',
-                             'passenger_vehicle-vehicle_type_bus-fuel_source_na-distance_na-engine_size_na'),
-                            ('unit_type', 'PassengerOverDistance'),
-                            ('Quantity', '323'),
-                            ('Quantity2', '23'),
-                            ('Unit2', 'km'),
-                            ('Unit', 'passengers')]))])]
-            """
-            payload.append(
-                self.construct_emission_req(
-                    activity_id=emission_data["Emission"]["activity_id"],
-                    unit_type=emission_data["Emission"]["unit_type"],
-                    value1=float(emission_data["Emission"]["Quantity"]),
-                    unit1=emission_data["Emission"]["Unit"],
-                    unit2=emission_data["Emission"].get("Unit2"),
-                    value2=(
-                        float(emission_data["Emission"].get("Quantity2"))
-                        if emission_data["Emission"].get("Quantity2") is not None
-                        else None
-                    ),
+
+        data_to_process = self.raw_response.data
+        processed_data = self.neglect_missing_row(data_to_process)
+
+        if processed_data != []:
+            for emission_data in processed_data:
+                """
+                Example of emission data:
+                OrderedDict([('Emission',
+                OrderedDict([('Category', 'Mobile Combustion'),
+                                ('Subcategory', 'Road Travel'),
+                                ('Activity',
+                                'Bus - (EPA) - PassengerOverDistance'),
+                                ('activity_id',
+                                'passenger_vehicle-vehicle_type_bus-fuel_source_na-distance_na-engine_size_na'),
+                                ('unit_type', 'PassengerOverDistance'),
+                                ('Quantity', '323'),
+                                ('Quantity2', '23'),
+                                ('Unit2', 'km'),
+                                ('Unit', 'passengers')]))])]
+                """
+                payload.append(
+                    self.construct_emission_req(
+                        activity_id=emission_data["Emission"]["activity_id"],
+                        unit_type=emission_data["Emission"]["unit_type"],
+                        value1=float(emission_data["Emission"]["Quantity"]),
+                        unit1=emission_data["Emission"]["Unit"],
+                        unit2=emission_data["Emission"].get("Unit2"),
+                        value2=(
+                            float(emission_data["Emission"].get("Quantity2"))
+                            if emission_data["Emission"].get("Quantity2") is not None
+                            else None
+                        ),
+                    )
                 )
-            )
-        return payload
+            return payload
+        else:
+            return []
 
     def construct_emission_req(
         self, activity_id, unit_type, value1, unit1, value2=None, unit2=None
@@ -191,28 +230,29 @@ class Climatiq:
         Cleans the response data from the climatiq api.
         """
         cleaned_response_data = []
+        self.refined_raw_resp = self.neglect_missing_row(self.raw_response.data)
         for index, emission_data in enumerate(response_data["results"]):
             if "error" not in emission_data.keys():
-                emission_data["Category"] = self.raw_response.data[index]["Emission"][
+                emission_data["Category"] = self.refined_raw_resp[index]["Emission"][
                     "Category"
                 ]
-                emission_data["SubCategory"] = self.raw_response.data[index][
-                    "Emission"
-                ]["Subcategory"]
-                emission_data["Activity"] = self.raw_response.data[index]["Emission"][
+                emission_data["SubCategory"] = self.refined_raw_resp[index]["Emission"][
+                    "Subcategory"
+                ]
+                emission_data["Activity"] = self.refined_raw_resp[index]["Emission"][
                     "Activity"
                 ]
-                emission_data["Quantity"] = self.raw_response.data[index]["Emission"][
+                emission_data["Quantity"] = self.refined_raw_resp[index]["Emission"][
                     "Quantity"
                 ]
-                emission_data["Unit"] = self.raw_response.data[index]["Emission"].get(
+                emission_data["Unit"] = self.refined_raw_resp[index]["Emission"].get(
                     "Unit"
                 )
-                emission_data["Quantity2"] = self.raw_response.data[index][
+                emission_data["Quantity2"] = self.refined_raw_resp[index][
                     "Emission"
                 ].get("Quantity2")
 
-                emission_data["Unit2"] = self.raw_response.data[index]["Emission"].get(
+                emission_data["Unit2"] = self.refined_raw_resp[index]["Emission"].get(
                     "Unit2"
                 )
                 logger.info(f"Emission data: {emission_data}")
