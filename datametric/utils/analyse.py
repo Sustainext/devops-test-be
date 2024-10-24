@@ -60,7 +60,7 @@ def filter_by_start_end_dates(start_date, end_date):
     q_objects = Q()
 
     for year, month in year_month_combinations:
-        q_objects |= Q(year=year, month=month)
+        q_objects |= Q(year=year, month=month) | Q(year=year, month=None)
 
     return q_objects
 
