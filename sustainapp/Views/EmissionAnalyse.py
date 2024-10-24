@@ -50,7 +50,7 @@ class GetEmissionAnalysis(APIView):
         top_emission_by_scope, top_emission_by_source, top_emission_by_location = (
             get_top_emission_by_scope(
                 locations=locations,
-                request=request,
+                user=self.request.user,
                 start=start,
                 end=end,
                 path_slug=self.path_slug,

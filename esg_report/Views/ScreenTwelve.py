@@ -95,7 +95,7 @@ class ScreenTwelveAPIView(APIView):
         }
 
     def get_energy_analyse(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=EnergyAnalyzeView,
             original_request=self.request,
             url="/sustainapp/get_energy_analysis/",
@@ -111,10 +111,10 @@ class ScreenTwelveAPIView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_waste_analyse(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=GetWasteAnalysis,
             original_request=self.request,
             url="/sustainapp/get_waste_analysis/",
@@ -130,10 +130,10 @@ class ScreenTwelveAPIView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_water_analyse(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=WaterAnalyse,
             original_request=self.request,
             url="/sustainapp/get_water_analysis/",
@@ -149,10 +149,10 @@ class ScreenTwelveAPIView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_301_analyse(self):
-        response = forward_request_with_jwt(
+        data = forward_request_with_jwt(
             view_class=GetMaterialAnalysis,
             original_request=self.request,
             url="/sustainapp/get_material_analysis",
@@ -168,7 +168,7 @@ class ScreenTwelveAPIView(APIView):
                 "end": self.report.end_date.strftime("%Y-%m-%d"),
             },
         )
-        return response.data
+        return data
 
     def get_301_3a_3b(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[6]).order_by(

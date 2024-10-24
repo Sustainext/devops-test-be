@@ -54,4 +54,24 @@ def create_data_for_recycled_input_materials(raw_response: RawResponse):
                 },
             )
         )
+        base_unit = recycled_input_materials_object.get_base_unit(
+            recycled_input_materials_object.unit_material_recycled
+        )
+        base_unit2 = recycled_input_materials_object.get_base_unit(
+            recycled_input_materials_object.unit_input_material_used
+        )
+        recycled_input_materials_object.amount_of_material_recycled = (
+            recycled_input_materials_object.convert(
+                value=recycled_input_materials_object.amount_of_material_recycled,
+                from_unit=recycled_input_materials_object.unit_material_recycled,
+                to_unit=base_unit,
+            )
+        )
+        recycled_input_materials_object.amount_of_recycled_input_material_used = recycled_input_materials_object.convert(
+            value=recycled_input_materials_object.amount_of_recycled_input_material_used,
+            from_unit=recycled_input_materials_object.unit_input_material_used,
+            to_unit=base_unit2,
+        )
+        recycled_input_materials_object.unit_material_recycled = base_unit
+        recycled_input_materials_object.unit_input_material_used = base_unit2
         recycled_input_materials_object.save()

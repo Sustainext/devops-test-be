@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from sustainapp.models import ClientTaskDashboard
+from sustainapp.models import ClientTaskDashboard, Location
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_200_OK
 from sustainapp.Serializers.TaskdashboardRetriveSerializer import (
@@ -37,7 +37,7 @@ class AssignedEmissionTask(APIView):
         # 4 = emission task calculated
 
         filters = {
-            "location": self.request.query_params.get("location"),
+            "location_id": self.request.query_params.get("location"),
             "year": self.request.query_params.get("year"),
             "month": self.request.query_params.get("month"),
         }
@@ -52,6 +52,7 @@ class AssignedEmissionTask(APIView):
                 {
                     "id": task["id"],
                     "Emission": {
+                        "assigned_to": task["assigned_to"],
                         "Category": task["category"],
                         "Subcategory": task["subcategory"],
                         "Activity": task["activity"],
@@ -69,19 +70,30 @@ class AssignedEmissionTask(APIView):
                             if task["value2"] is not None
                             else None
                         ),
-                        "file": {
-                            "name": "",
-                            "url": "",
-                            "type": "",
-                            "size": None,
-                            "uploadDateTime": "",
-                        },
+                        "file": (
+                            {
+                                "name": "",
+                                "url": "",
+                                "type": "",
+                                "size": None,
+                                "uploadDateTime": "",
+                            }
+                            if not task["file_data"]
+                            else task["file_data"]
+                        ),
                     },
                 }
             )
         response_data.update(
             {
                 "location": data[0]["location"] if data else "",
+                "location_name": (
+                    Location.objects.get(
+                        id=self.request.query_params.get("location")
+                    ).name
+                    if data
+                    else ""
+                ),
                 "year": data[0]["year"] if data else "",
                 "month": data[0]["month"] if data else "",
             }
