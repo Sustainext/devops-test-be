@@ -51,7 +51,7 @@ class CustomLoginView(LoginView):
 
         long_validity_request = self.request.data.get("long_validity_request")
 
-        if long_validity_request :
+        if long_validity_request:
             """Tokens for longer validity So that Devs can use it on postman"""
             access_token_lifetime = timedelta(days=30)
 
@@ -79,9 +79,28 @@ class CustomLoginView(LoginView):
             "refresh_exp": refresh["exp"],
             "refresh_exp_readable": refresh_exp_readable,
         }
+        roles = user.roles
+        custom_role = user.custom_role.name if user.custom_role else None
+        admin = user.admin
+        permissions = {
+            "collect": user.collect,
+            "analyse": user.analyse,
+            "report": user.report,
+            "optimise": user.optimise,
+            "track": user.track,
+        }
 
         response = Response(
-            {"key": data, "needs_password_reset": needs_password_reset,"client_key":client_key}, status=200
+            {
+                "key": data,
+                "needs_password_reset": needs_password_reset,
+                "client_key": client_key,
+                "role": roles,
+                "custom_role": custom_role,
+                "admin": admin,
+                "permissions": permissions,
+            },
+            status=200,
         )
 
         # Set access and refresh tokens in cookies

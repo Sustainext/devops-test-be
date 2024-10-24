@@ -11,7 +11,7 @@ class AbstractAnalysisModel(models.Model):
     corporate = models.ForeignKey(Corporateentity, on_delete=models.CASCADE, null=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
     raw_response = models.ForeignKey(RawResponse, on_delete=models.CASCADE, null=True)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True,default=Client.get_default_client)
 
     class Meta:
         abstract = True
