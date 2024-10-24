@@ -20,8 +20,8 @@ class CustomLoginView(LoginView):
         # Normalize the email to lowercase
         data["username"] = data.get("username", "").lower()
 
-        # Replace the original request data with the modified copy
-        request.data.update(data)
+        # Pass the modified data to the serializer manually instead of modifying request.data
+        self.request._data = data  # Replace the request's data in a safe way
 
         # Now proceed with the normal login process
         return super().post(request, *args, **kwargs)

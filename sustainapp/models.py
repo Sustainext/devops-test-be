@@ -994,7 +994,9 @@ class ClientTaskDashboard(AbstractModel):
     task_status = models.CharField(
         max_length=64, choices=STATUS_CHOICES, default="in_progress"
     )
-    location = models.CharField(max_length=1024, null=True, blank=True)
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, null=True, blank=True
+    )
     category = models.CharField(max_length=1024, null=True, blank=True)
     subcategory = models.CharField(max_length=1024, null=True, blank=True)
     scope = models.CharField(max_length=1024, null=True, blank=True)

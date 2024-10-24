@@ -1,0 +1,196 @@
+<!-- occupational_health_safety.html -->
+
+<h2>13.6. Occupational Health and Safety</h2>
+
+<h4>13.6.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
+<hr>
+<p>[Details on how the organization manages Occupational Health and Safety, including strategies, policies, and
+    initiatives to ensure a safe working environment.]</p>
+
+<h4>13.6.2. OHS Management System (GRI 403-1-a, b)</h4>
+<p>Our Occupational Health and Safety (OHS) management system is designed to prevent workplace injuries and illnesses.
+    It includes policies, procedures, and practices that ensure a safe working environment.</p>
+
+<h4>13.6.3. Occupational Health Services (GRI 403-3-a)</h4>
+<p>We provide access to occupational health services that support the physical and mental well-being of our employees.
+    This includes medical check-ups, health screenings, and counseling services.</p>
+
+<h4>13.6.4. Worker Participation, Consultation, and Communication on OHS (GRI 403-4-a, b)</h4>
+<p>We engage our workers in OHS through participation, consultation, and communication. This ensures that their insights
+    and concerns are considered in our safety practices.</p>
+
+<h5>Formal Joint Management-Worker Health and Safety Committees</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Committee Name</th>
+            <th>Responsibilities</th>
+            <th>Meeting Frequency</th>
+            <th>Decision-Making Authority</th>
+            <th>Exclusions (if any) & Reason</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for committee in ohs_committees %}
+        <tr>
+            <td>{{ committee.name }}</td>
+            <td>{{ committee.responsibilities }}</td>
+            <td>{{ committee.meeting_frequency }}</td>
+            <td>{{ committee.decision_making_authority }}</td>
+            <td>{{ committee.exclusions }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.6.5. Promotion of Worker Health (GRI 403-6-a, b)</h4>
+<p>Our health promotion programs encourage healthy lifestyles and proactive health management among our employees.</p>
+
+<h4>13.6.6. Prevention and Mitigation of OHS Impacts (GRI 403-7-a)</h4>
+<p>We proactively identify and mitigate OHS risks through regular risk assessments, safety audits, and incident
+    investigations.</p>
+
+<h4>13.6.7. Hazard, Risk Identification and Investigation (GRI 403-2-a, b, c, d)</h4>
+<p>We conduct thorough hazard and risk assessments to identify potential workplace dangers and implement measures to
+    mitigate them.</p>
+
+<h5>Routine Hazard Identification and Risk Assessment</h5>
+<ul>
+    <li>Routine hazard identification and risk assessment: {{ hazard_assessment.routine }}</li>
+    <li>Non-routine hazard identification and risk assessment: {{ hazard_assessment.non_routine }}</li>
+    <li>Hierarchy of controls: {{ hazard_assessment.controls }}</li>
+    <li>Legal basis: {{ hazard_assessment.legal_basis }}</li>
+    <li>Standards/Guidelines: {{ hazard_assessment.standards }}</li>
+    <li>Legal requirements: {{ hazard_assessment.legal_requirements }}</li>
+    <li>Vulnerable workers: {{ hazard_assessment.vulnerable_workers }}</li>
+    <li>Process Quality Assurance: {{ hazard_assessment.quality_assurance }}</li>
+    <li>Personal competency assurance: {{ hazard_assessment.competency_assurance }}</li>
+    <li>Results utilization and improvement: {{ hazard_assessment.improvement }}</li>
+</ul>
+
+<h5>Work-Related Incident Investigation</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Description of Incident</th>
+            <th>Reporting Personnel</th>
+            <th>Investigation Team</th>
+            <th>Investigation Methods</th>
+            <th>Corrective Actions</th>
+            <th>System Improvement</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for incident in incidents %}
+        <tr>
+            <td>{{ incident.description }}</td>
+            <td>{{ incident.reporting_personnel }}</td>
+            <td>{{ incident.investigation_team }}</td>
+            <td>{{ incident.investigation_methods }}</td>
+            <td>{{ incident.corrective_actions }}</td>
+            <td>{{ incident.system_improvement }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.6.8. Work-Related Ill-Health & Injuries (GRI 403-9-a, b, c, d, e, f, g, 403-10-a, b, c, d, e)</h4>
+<p>We track and report work-related ill-health and injuries, using this data to continuously improve our OHS practices.
+</p>
+
+<h5>Rate of Injuries (For All Employees)</h5>
+<ul>
+    <li>Rate of fatalities as a result of work-related injury: {{ injury_rates.employee_fatalities }}</li>
+    <li>Rate of high-consequence work-related injuries (excluding fatalities): {{ injury_rates.high_consequence_injuries
+        }}</li>
+    <li>Rate of recordable work-related injuries: {{ injury_rates.recordable_injuries }}</li>
+</ul>
+
+<h5>Rate of Injuries (For Non-Employees but whose Work is Controlled by the Organization)</h5>
+<ul>
+    <li>Rate of fatalities as a result of work-related injury: {{ injury_rates.non_employee_fatalities }}</li>
+    <li>Rate of high-consequence work-related injuries (excluding fatalities): {{
+        injury_rates.non_employee_high_consequence_injuries }}</li>
+    <li>Rate of recordable work-related injuries: {{ injury_rates.non_employee_recordable_injuries }}</li>
+</ul>
+
+<h5>Ill-Health Data</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Employee Category</th>
+            <th>Number of Fatalities (Work-Related Ill-Health)</th>
+            <th>Number of Cases (Recordable Work-Related Ill-Health)</th>
+            <th>Main Types of Work-Related Ill-Health</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ill_health in employee_ill_health %}
+        <tr>
+            <td>{{ ill_health.category }}</td>
+            <td>{{ ill_health.fatalities }}</td>
+            <td>{{ ill_health.recordable_cases }}</td>
+            <td>{{ ill_health.main_types }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.6.9. Safety Training (GRI 403-5-a)</h4>
+<p>Safety training is a cornerstone of our OHS program. We provide regular training sessions to ensure that all
+    employees are aware of safety protocols and procedures.</p>
+
+<h5>Occupational Health and Safety Training</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Training Category</th>
+            <th>Generic Training</th>
+            <th>Specific Work-Related Hazards</th>
+            <th>Hazardous Activities</th>
+            <th>Hazardous Situations</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for training in safety_training %}
+        <tr>
+            <td>{{ training.category }}</td>
+            <td>{{ training.generic }}</td>
+            <td>{{ training.work_related_hazards }}</td>
+            <td>{{ training.hazardous_activities }}</td>
+            <td>{{ training.hazardous_situations }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.6.10. Workers Covered by OHS Management System (GRI 403-8-a, b, c)</h4>
+<p>We ensure that all workers, including contractors and temporary workers, are covered by our OHS management system.
+</p>
+
+<h5>Percentage of Workers Covered</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Percentage of Employees</th>
+            <th>Percentage of Non-Employees</th>
+            <th>Internally Audited</th>
+            <th>Audited/Certified by an External Party</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for worker_coverage in ohs_coverage %}
+        <tr>
+            <td>{{ worker_coverage.category }}</td>
+            <td>{{ worker_coverage.percentage_employees }}</td>
+            <td>{{ worker_coverage.percentage_non_employees }}</td>
+            <td>{{ worker_coverage.internally_audited }}</td>
+            <td>{{ worker_coverage.externally_audited }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><em>Note: This data can also be represented using graphical charts or other visual tools to illustrate the rates and
+        percentages for injuries, ill-health, training, and worker coverage.</em></p>

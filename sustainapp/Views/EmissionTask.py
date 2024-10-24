@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from sustainapp.models import ClientTaskDashboard, User_client, RowDataBatch
+from sustainapp.models import ClientTaskDashboard, Location
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 from rest_framework.status import HTTP_200_OK
@@ -34,7 +34,7 @@ class EmissionTask(APIView):
         # 3 = task created from my task
         # 4 = emission task calculated
         filter_by = {
-            "location": self.request.query_params.get("location"),
+            "location_id": self.request.query_params.get("location"),
             "year": self.request.query_params.get("year"),
             "month": self.request.query_params.get("month"),
         }
@@ -51,6 +51,7 @@ class EmissionTask(APIView):
                     {
                         "id": task["id"],
                         "Emission": {
+                            "assigned_to": task["assigned_to"],
                             "Category": task["category"],
                             "Subcategory": task["subcategory"],
                             "Activity": task["activity"],
@@ -68,17 +69,28 @@ class EmissionTask(APIView):
                                 if task["value2"] is not None
                                 else None
                             ),
-                            "file": {
-                                "name": "",
-                                "url": "",
-                                "type": "",
-                                "size": None,
-                                "uploadDateTime": "",
-                            },
+                            "file": (
+                                {
+                                    "name": "",
+                                    "url": "",
+                                    "type": "",
+                                    "size": None,
+                                    "uploadDateTime": "",
+                                }
+                                if not task["file_data"]
+                                else task["file_data"]
+                            ),
                         },
                     }
                 )
                 response_data["location"] = task["location"]
+                response_data["location_name"] = (
+                    Location.objects.get(
+                        id=self.request.query_params.get("location")
+                    ).name
+                    if task["location"]
+                    else ""
+                )
                 response_data["year"] = task["year"]
                 response_data["month"] = task["month"]
             return Response(response_data, status=HTTP_200_OK)

@@ -1,0 +1,266 @@
+<!-- water_management.html -->
+
+<h2>12.3. Water (303-1-a, b, c, d)</h2>
+
+<ul>
+    <li><strong>Interaction with water as a shared resource:</strong> [Details]</li>
+    <li><strong>Water-related impacts:</strong> [Details]</li>
+    <li><strong>Water-related goals and targets:</strong> [Details]</li>
+</ul>
+
+<h4>12.3.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
+<hr>
+
+<h4>12.3.2. Water Withdrawal (GRI 303-3 a, b, c, d)</h4>
+<p>We track and report our water withdrawal to ensure sustainable use of water resources. Our initiatives aim to reduce
+    water withdrawal through process improvements and water-saving technologies.</p>
+
+<h5>Total Fresh Water Withdrawal by Business Operation</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Business Operation</th>
+            <th>Contribution %</th>
+            <th>Total Water Withdrawal</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for operation in business_operations_water_withdrawal %}
+        <tr>
+            <td>{{ operation.name }}</td>
+            <td>{{ operation.contribution_percentage }}%</td>
+            <td>{{ operation.total_water_withdrawal }}</td>
+            <td>Megalitre</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Total Water Withdrawal</strong></td>
+            <td><strong>{{ total_water_withdrawal }}</strong></td>
+            <td>Megalitre</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Total Fresh Water Withdrawal by Source (From Water Stress Areas)</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Source</th>
+            <th>Name of Water Stress Area</th>
+            <th>Water Type</th>
+            <th>Contribution %</th>
+            <th>Total Water Withdrawal</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for source in water_sources %}
+        <tr>
+            <td>{{ source.source }}</td>
+            <td>{{ source.water_stress_area }}</td>
+            <td>{{ source.water_type }}</td>
+            <td>{{ source.contribution_percentage }}%</td>
+            <td>{{ source.total_water_withdrawal }}</td>
+            <td>Megalitre</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="4"><strong>Total Water Withdrawal from Water Stress Areas</strong></td>
+            <td><strong>{{ total_water_stress_withdrawal }}</strong></td>
+            <td>Megalitre</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Total Fresh Water Withdrawal by Location/Country</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Location/Country</th>
+            <th>Contribution %</th>
+            <th>Total Water Withdrawal</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for location in water_withdrawal_by_location %}
+        <tr>
+            <td>{{ location.name }}</td>
+            <td>{{ location.contribution_percentage }}%</td>
+            <td>{{ location.total_water_withdrawal }}</td>
+            <td>Megalitre</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Total Water Withdrawal</strong></td>
+            <td><strong>{{ total_water_withdrawal_location }}</strong></td>
+            <td>Megalitre</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>12.3.3. Water Discharge & Management of Associated Impacts (GRI 303-4)</h4>
+<p>We manage water discharge to minimize its impact on local ecosystems. This includes treating wastewater to meet
+    regulatory standards and monitoring the quality of discharged water.</p>
+
+<h5>Total Water Discharge by Location</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Location/Country</th>
+            <th>Contribution %</th>
+            <th>Total Water Discharge</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for location in water_discharge_by_location %}
+        <tr>
+            <td>{{ location.name }}</td>
+            <td>{{ location.contribution_percentage }}%</td>
+            <td>{{ location.total_water_discharge }}</td>
+            <td>Megalitre</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Total Water Discharge</strong></td>
+            <td><strong>{{ total_water_discharge_location }}</strong></td>
+            <td>Megalitre</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Total Water Discharge by Source and Type of Water</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Source</th>
+            <th>Type of Water</th>
+            <th>Contribution %</th>
+            <th>Total Water Discharge</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for discharge in water_discharge_by_source %}
+        <tr>
+            <td>{{ discharge.source }}</td>
+            <td>{{ discharge.water_type }}</td>
+            <td>{{ discharge.contribution_percentage }}%</td>
+            <td>{{ discharge.total_water_discharge }}</td>
+            <td>Megalitre</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3"><strong>Total Water Discharge</strong></td>
+            <td><strong>{{ total_water_discharge_source }}</strong></td>
+            <td>Megalitre</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>12.3.4. Water Consumption</h4>
+<p>Our goal is to reduce water consumption through efficient water use and recycling practices. We implement
+    water-saving measures and invest in technologies that support sustainable water management.</p>
+
+<h5>Total Water Consumption</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Total Water Consumption</th>
+            <th>Water Consumption from Areas with Water Stress</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ total_water_consumption }}</td>
+            <td>{{ water_consumption_stress_areas }}</td>
+            <td>Megalitre</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Total Water Consumption by Business Operation</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Business Operation</th>
+            <th>Contribution %</th>
+            <th>Total Water Consumption</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for operation in water_consumption_by_operation %}
+        <tr>
+            <td>{{ operation.name }}</td>
+            <td>{{ operation.contribution_percentage }}%</td>
+            <td>{{ operation.total_water_consumption }}</td>
+            <td>Megalitre</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Total Water Consumption</strong></td>
+            <td><strong>{{ total_water_consumption_operations }}</strong></td>
+            <td>Megalitre</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Total Water Consumption by Location</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Location/Country</th>
+            <th>Contribution %</th>
+            <th>Total Water Consumption</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for location in water_consumption_by_location %}
+        <tr>
+            <td>{{ location.name }}</td>
+            <td>{{ location.contribution_percentage }}%</td>
+            <td>{{ location.total_water_consumption }}</td>
+            <td>Megalitre</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Total Water Consumption</strong></td>
+            <td><strong>{{ total_water_consumption_location }}</strong></td>
+            <td>Megalitre</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Total Water Consumption by Source</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Source</th>
+            <th>Water Type</th>
+            <th>Contribution %</th>
+            <th>Total Water Consumption</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for source in water_consumption_by_source %}
+        <tr>
+            <td>{{ source.source }}</td>
+            <td>{{ source.water_type }}</td>
+            <td>{{ source.contribution_percentage }}%</td>
+            <td>{{ source.total_water_consumption }}</td>
+            <td>Megalitre</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3"><strong>Total Water Consumption</strong></td>
+            <td><strong>{{ total_water_consumption_source }}</strong></td>
+            <td>Megalitre</td>
+        </tr>
+    </tbody>
+</table>

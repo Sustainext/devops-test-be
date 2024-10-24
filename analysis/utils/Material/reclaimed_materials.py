@@ -53,4 +53,26 @@ def create_data_for_reclaimed_materials(raw_response: RawResponse):
                 "data_collection_method": form_data["Datacollectionmethod"],
             },
         )
+        base_unit = reclaimed_materials_object.get_base_unit(
+            reclaimed_materials_object.product_sold_unit
+        )
+        base_unit2 = reclaimed_materials_object.get_base_unit(
+            reclaimed_materials_object.recycled_material_used_unit
+        )
+        reclaimed_materials_object.amount_of_product_sold = (
+            reclaimed_materials_object.convert(
+                value=reclaimed_materials_object.amount_of_product_sold,
+                from_unit=reclaimed_materials_object.product_sold_unit,
+                to_unit=base_unit,
+            )
+        )
+        reclaimed_materials_object.amount_of_recycled_material_used = (
+            reclaimed_materials_object.convert(
+                value=reclaimed_materials_object.amount_of_recycled_material_used,
+                from_unit=reclaimed_materials_object.recycled_material_used_unit,
+                to_unit=base_unit2,
+            )
+        )
+        reclaimed_materials_object.product_sold_unit = base_unit
+        reclaimed_materials_object.recycled_material_used_unit = base_unit2
         reclaimed_materials_object.save()
