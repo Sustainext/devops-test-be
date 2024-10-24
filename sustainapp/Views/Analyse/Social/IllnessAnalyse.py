@@ -36,6 +36,7 @@ class IllnessAnalysisView(APIView):
             .exclude(json_data=Value("[]"))
             .only("data")
         )
+        print(self.raw_responses)
 
     def get_formal_joint_management(self):
         slug = "gri-social-ohs-403-4d-formal_joint"

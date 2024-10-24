@@ -1,0 +1,85 @@
+<!-- labour_management.html -->
+
+<h2>13.2. Labour Management (GRI 409-1-b)</h2>
+
+<h4>13.2.1. Management of Material Topics (GRI 3-3-c, d, e)</h4>
+<hr>
+<p>[Details on the management of labor-related material topics, including policies, initiatives, and strategies to
+    ensure fair labor practices, working conditions, and engagement with non-employee workers.]</p>
+
+<h4>13.2.2. Workers Who Are Not Employees (GRI 2-8-a, b, c)</h4>
+<p>We ensure that all workers, including those who are not direct employees, are treated fairly and have access to safe
+    working conditions. This includes contractors, temporary workers, and subcontractors.</p>
+
+<h5>Types of Workers</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Type of Worker</th>
+            <th>Total Number of Workers</th>
+            <th>Contractual Relationship</th>
+            <th>Work Performed</th>
+            <th>Engagement Approach</th>
+            <th>Third Party (if applicable)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for worker in non_employee_workers %}
+        <tr>
+            <td>{{ worker.worker_type }}</td>
+            <td>{{ worker.total_number }}</td>
+            <td>{{ worker.contractual_relationship }}</td>
+            <td>{{ worker.work_performed }}</td>
+            <td>{{ worker.engagement_approach }}</td>
+            <td>{{ worker.third_party }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.2.3. Forced or Compulsory Labour (GRI 409-1-a)</h4>
+<p>We are committed to eradicating forced or compulsory labor from our operations and supply chain. We conduct regular
+    audits and assessments to ensure compliance with our labor standards.</p>
+
+<h5>Operations at Significant Risk for Forced or Compulsory Labour</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Operation</th>
+            <th>Type of Operation</th>
+            <th>Countries or Geographic Areas</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for operation in forced_labour_operations %}
+        <tr>
+            <td>{{ operation.operation_name }}</td>
+            <td>{{ operation.operation_type }}</td>
+            <td>{{ operation.geographic_area }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h5>Suppliers at Significant Risk for Forced or Compulsory Labour</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Supplier</th>
+            <th>Type of Supplier</th>
+            <th>Countries or Geographic Areas</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for supplier in forced_labour_suppliers %}
+        <tr>
+            <td>{{ supplier.supplier_name }}</td>
+            <td>{{ supplier.supplier_type }}</td>
+            <td>{{ supplier.geographic_area }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><em>Note: Graphics or visual data representations (e.g., charts, maps) can be included to illustrate the risks and
+        management strategies related to forced or compulsory labor.</em></p>

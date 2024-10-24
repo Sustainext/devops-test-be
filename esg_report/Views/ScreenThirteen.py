@@ -107,9 +107,12 @@ class ScreenThirteenView(APIView):
             76: "gri-social-salary_ratio-405-2b-significant_locations",
             77: "gri-general-collective_bargaining-2-30-a-percentage",
             78: "gri-general-collective_bargaining-2-30-b-employees",
-            79: "gri-general-workforce_other_workers-workers-2-8-a",  #
+            79: "gri-general-workforce_other_workers-workers-2-8-a",
             80: "gri-general-workforce_other_workers-methodologies-2-8b",
             81: "gri-general-workforce_other_workers-fluctuations-2-8c",
+            82: "gri-social-ohs-403-8a-number_of_employees",
+            83: "gri-social-notice_period-402-1a-minimum",  #
+            84: "gri-social-notice_period-402-1a-collective_bargaining",
         }
 
     def get_403_2a_process_for_hazard(self):
@@ -343,10 +346,8 @@ class ScreenThirteenView(APIView):
                 data_points=self.data_points.filter(path__slug=self.slugs[25])
             )
         )
-        response_data["403-4d-formal_joint"] = (
-            collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[26])
-            )
+        response_data["403-4b"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[26])
         )
 
         response_data["403-6a-access_non_occupational"] = (
@@ -439,7 +440,7 @@ class ScreenThirteenView(APIView):
         response_data["403-8c"] = collect_data_and_differentiate_by_location(
             data_points=self.data_points.filter(path__slug=self.slugs[49])
         )
-        response_data["402-1b"] = collect_data_and_differentiate_by_location(
+        response_data["402-1a_collective_bargainging_agreements"] = collect_data_and_differentiate_by_location(
             data_points=self.data_points.filter(path__slug=self.slugs[50])
         )
         response_data["407-1a-operations"] = collect_data_by_raw_response_and_index(
@@ -634,6 +635,14 @@ class ScreenThirteenView(APIView):
         )
         response_data["2_8_c"] = collect_data_by_raw_response_and_index(
             data_points=self.data_points.filter(path__slug=self.slugs[81])
+        )
+        response_data["403-8a"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[82])
+        )
+        response_data["402_1a_minimum_number_of_weeks"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[83])
+            )
         )
 
         return Response(response_data, status=status.HTTP_200_OK)

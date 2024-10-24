@@ -1,0 +1,60 @@
+<!-- incidents_violation_discrimination.html -->
+
+<h2>13.8. Incidents of Violation/Discrimination (406-1-a, b)</h2>
+
+<p><em>Note for developers: A tailored version of the 406-1-b data is required here.</em></p>
+<p>We are committed to respecting the rights of indigenous people and addressing any incidents of violations promptly
+    and effectively. Our policies and practices aim to foster a respectful and inclusive environment for all.</p>
+
+<h5>Incidents of Discrimination</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Type of Incident</th>
+            <th>Total Number of Incidents of Discrimination</th>
+            <th>Description of Incident</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for incident in discrimination_incidents %}
+        <tr>
+            <td>{{ incident.type }}</td>
+            <td>{{ incident.total }}</td>
+            <td>{{ incident.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.8.1. Management of Material Topic (GRI 3-3-c, 3-3-d, 3-3-e)</h4>
+<hr>
+<p>[Details on how the organization manages incidents of discrimination and violations, including policies, procedures,
+    and strategies to address and prevent these incidents from occurring in the future.]</p>
+
+<h4>13.8.2. Incidents of Violation of Rights of Indigenous People (GRI 411-1-a, b)</h4>
+<p>At [Company Name], we are dedicated to supporting our people, ensuring their well-being, and promoting a positive and
+    inclusive workplace culture. We believe that our commitment to our employees is key to our long-term success and
+    sustainability.</p>
+
+<h5>Incidents of Violation of Rights of Indigenous People</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Type of Incident</th>
+            <th>Total Number of Incidents</th>
+            <th>Description of Incident</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for indigenous_incident in indigenous_rights_violations %}
+        <tr>
+            <td>{{ indigenous_incident.type }}</td>
+            <td>{{ indigenous_incident.total }}</td>
+            <td>{{ indigenous_incident.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><em>Note: This data can also be represented graphically to show the number of incidents of discrimination and
+        violation of rights of indigenous people, along with the type of incidents.</em></p>

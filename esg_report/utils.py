@@ -346,5 +346,5 @@ def calling_analyse_view_with_params_for_same_year(view_url, request, report):
     except ValidationError as e:
         return {"detail": str(e)}
     except Exception as e:
-        logger.error(f"An error occurred: {str(e)}", exec_info=True)
+        logger.warning(f"An error occurred: {str(e)}", exc_info=True)
         return {"detail": f"An error occurred: {str(e)}"}
