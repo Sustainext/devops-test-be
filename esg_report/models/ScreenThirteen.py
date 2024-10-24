@@ -138,6 +138,18 @@ class ScreenThirteen(AbstractModel, HistoricalModelMixin):
         blank=True,
         null=True,
     )
+    security_personnel_internal_training = models.TextField(
+        verbose_name="Percentage of Security Personnel Who Have Received Formal Training in the Organisation",
+        help_text="Percentage of security personnel who have received formal training in the organisation",
+        blank=True,
+        null=True,
+    )
+    security_personnel_external_training = models.TextField(
+        verbose_name="Percentage of Security Personnel Who Have Received Formal Training from Third-Party Organisation",
+        help_text="Percentage of security personnel who have received formal training from third-party organisation",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         db_table = "screen_thirteen"
