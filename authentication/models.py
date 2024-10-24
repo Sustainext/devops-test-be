@@ -9,7 +9,7 @@ from common.models.AbstractModel import AbstractModel
 from authentication.Managers.CustomUserManager import CustomUserManager
 from uuid import uuid4
 from django.utils.text import slugify
-from sustainapp.models import Client, Userorg, Corporateentity, Location, Organization
+from django.db import connection
 
 # Create your models here.
 
@@ -40,6 +40,31 @@ class CustomRole(models.Model):
     @classmethod
     def get_default_role(cls):
         return cls.objects.get_or_create(name="SystemAdmin")[0]
+
+
+class Client(AbstractModel):
+    name = models.CharField(max_length=256, unique=True)
+    customer = models.BooleanField(default=False)
+    uuid = models.UUIDField(unique=True, default=uuid4, editable=False)
+    sub_domain = models.CharField(max_length=256, unique=True, null=True, blank=True)
+    okta_url = models.CharField(max_length=900, unique=True, null=True, blank=True)
+    okta_key = models.CharField(max_length=900, unique=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def get_default_client(cls):
+        if not cls._meta.db_table in connection.introspection.table_names():
+            return None
+        default_client, _ = cls.objects.get_or_create(
+            name="Sustainext Platform",
+            defaults={
+                "customer": False,
+                "sub_domain": "admin",
+            },
+        )
+        return default_client.id
 
 
 class CustomUser(AbstractUser):
@@ -100,9 +125,9 @@ class CustomUser(AbstractUser):
     optimise = models.BooleanField(default=False)
     track = models.BooleanField(default=False)
     permissions_checkbox = models.BooleanField(default=False)
-    orgs = models.ManyToManyField(Organization, related_name="organizations")
-    corps = models.ManyToManyField(Corporateentity, related_name="corporates")
-    locs = models.ManyToManyField(Location, related_name="locations")
+    orgs = models.ManyToManyField("sustainapp.Organization", related_name="organizations")
+    corps = models.ManyToManyField("sustainapp.Corporateentity", related_name="corporates")
+    locs = models.ManyToManyField("sustainapp.Location", related_name="locations")
 
     @property
     def default_role(self):
