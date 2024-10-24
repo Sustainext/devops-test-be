@@ -6,28 +6,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('esg_report', '0043_historicalscreenthirteen_percentage_of_security_personnel_who_have_received_formal_training_from_thi'),
+        (
+            "esg_report",
+            "0043_historicalscreenthirteen_percentage_of_security_personnel_who_have_received_formal_training_from_thi",
+        ),
     ]
 
-    operations = [
-        migrations.RenameField(
-            model_name='historicalscreenthirteen',
-            old_name='percentage_of_security_personnel_who_have_received_formal_training_from_third_party_organisation',
-            new_name='security_personnel_external_training',
-        ),
-        migrations.RenameField(
-            model_name='historicalscreenthirteen',
-            old_name='percentage_of_security_personnel_who_have_received_formal_training_in_the_organisation',
-            new_name='security_personnel_internal_training',
-        ),
-        migrations.RenameField(
-            model_name='screenthirteen',
-            old_name='percentage_of_security_personnel_who_have_received_formal_training_from_third_party_organisation',
-            new_name='security_personnel_external_training',
-        ),
-        migrations.RenameField(
-            model_name='screenthirteen',
-            old_name='percentage_of_security_personnel_who_have_received_formal_training_in_the_organisation',
-            new_name='security_personnel_internal_training',
-        ),
-    ]
+    operations = []
