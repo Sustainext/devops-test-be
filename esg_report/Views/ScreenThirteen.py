@@ -110,6 +110,7 @@ class ScreenThirteenView(APIView):
             79: "gri-general-workforce_other_workers-workers-2-8-a",  #
             80: "gri-general-workforce_other_workers-methodologies-2-8b",
             81: "gri-general-workforce_other_workers-fluctuations-2-8c",
+            82: "gri-social-ohs-403-8a-number_of_employees",
         }
 
     def get_403_2a_process_for_hazard(self):
@@ -343,10 +344,8 @@ class ScreenThirteenView(APIView):
                 data_points=self.data_points.filter(path__slug=self.slugs[25])
             )
         )
-        response_data["403-4d-formal_joint"] = (
-            collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[26])
-            )
+        response_data["403-4b"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[26])
         )
 
         response_data["403-6a-access_non_occupational"] = (
@@ -634,6 +633,9 @@ class ScreenThirteenView(APIView):
         )
         response_data["2_8_c"] = collect_data_by_raw_response_and_index(
             data_points=self.data_points.filter(path__slug=self.slugs[81])
+        )
+        response_data["403-8a"] = collect_data_and_differentiate_by_location(
+            data_points=self.data_points.filter(path__slug=self.slugs[82])
         )
 
         return Response(response_data, status=status.HTTP_200_OK)
