@@ -64,7 +64,7 @@ class Climatiq:
             row_type = emission_data["Emission"].get("rowtype")
 
             # if a row is assigned we can neglect calculating the emission for it
-            if not row_type or row_type in ["defalut", "approved", "calculated"]:
+            if not row_type or row_type in ["default", "approved", "calculated"]:
                 emission = emission_data["Emission"]
 
                 if any(not emission.get(field) for field in required_fields):
