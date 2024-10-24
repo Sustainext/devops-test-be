@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from sustainapp.models import ClientTaskDashboard
+from sustainapp.models import ClientTaskDashboard, Location
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_200_OK
 from sustainapp.Serializers.TaskdashboardRetriveSerializer import (
@@ -20,7 +20,7 @@ class AssignedEmissionTask(APIView):
             .exclude(
                 roles__in=[3, 4]
             )  # Confirm with the team -> 3 completed, 4 -> the task is calculated
-            .filter(task_status__in=[0, 4])
+            .filter(task_status__in=["in_progress", "reject"])
         )
 
         # STATUS_CHOICES
@@ -37,12 +37,12 @@ class AssignedEmissionTask(APIView):
         # 4 = emission task calculated
 
         filters = {
-            "location": self.request.query_params.get("location"),
+            "location_id": self.request.query_params.get("location"),
             "year": self.request.query_params.get("year"),
             "month": self.request.query_params.get("month"),
         }
 
-        return queryset.filter(**{k: v for k, v in filters.items() if v})
+        return queryset.filter(**filters)
 
     def prepare_data(self, data):
         response_data = {str(i): [] for i in range(1, 4)}
@@ -51,56 +51,49 @@ class AssignedEmissionTask(APIView):
             response_data[scope].append(
                 {
                     "id": task["id"],
-                    "task_rowdatabatch": [],
-                    "subCategory": task["subcategory"],
-                    "category": task["category"],
-                    "modifiedTime": None,
-                    "unit": [task["unit1"], task["unit2"] or ""],
-                    "unitType": "",
-                    "fileName": task["filename"] or "no filename found",
-                    "assignTo": task["assign_to_email"],
-                    "scope": int(task["scope"]),
-                    "sector": task["category"],
-                    "value1": (
-                        float(task["value1"]) if task["value1"] is not None else None
-                    ),
-                    "unit_type": None,
-                    "unit1": task["unit1"],
-                    "value2": (
-                        float(task["value2"]) if task["value2"] is not None else None
-                    ),
-                    "unit2": task["unit2"] or "",
-                    "file": task["file"],
-                    "filename": task["filename"] or "no filename found",
-                    "assign_to": task["assign_to_email"],
-                    "file_modified_at": task["file_modified_at"],
-                    "emmissionfactorid": task["factor_id"],
-                    "year": str(task["year"]),
-                    "region": task["region"],
-                    "source_lca_activity": None,
-                    "data_quality_flags": [],
-                    "constituent_gases": {
-                        "ch4": 0.0,
-                        "co2": 0.0,
-                        "n2o": 0.0,
-                        "co2e_other": None,
-                        "co2e_total": 0.0,
+                    "Emission": {
+                        "assigned_to": task["assigned_to"],
+                        "Category": task["category"],
+                        "Subcategory": task["subcategory"],
+                        "Activity": task["activity"],
+                        "activity_id": "",
+                        "unit_type": None,
+                        "Unit": task["unit1"],
+                        "Quantity": (
+                            float(task["value1"])
+                            if task["value1"] is not None
+                            else None
+                        ),
+                        "Unit2": task["unit2"],
+                        "Quantity2": (
+                            float(task["value2"])
+                            if task["value2"] is not None
+                            else None
+                        ),
+                        "file": (
+                            {
+                                "name": "",
+                                "url": "",
+                                "type": "",
+                                "size": None,
+                                "uploadDateTime": "",
+                            }
+                            if not task["file_data"]
+                            else task["file_data"]
+                        ),
                     },
-                    "audit_trail": None,
-                    "activity_data": {
-                        "activity_unit": None,
-                        "activity_value": 0.0,
-                    },
-                    "batch": 0,
-                    "uploadedBy": "",
-                    "selectedActivity": task["activity"],
-                    "activities": "",
-                    "activity_name": task["activity"],
                 }
             )
         response_data.update(
             {
                 "location": data[0]["location"] if data else "",
+                "location_name": (
+                    Location.objects.get(
+                        id=self.request.query_params.get("location")
+                    ).name
+                    if data
+                    else ""
+                ),
                 "year": data[0]["year"] if data else "",
                 "month": data[0]["month"] if data else "",
             }

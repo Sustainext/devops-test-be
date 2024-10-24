@@ -1,5 +1,5 @@
 from analysis.models.Social.GovernanceBodyDetails import GovernanceBodyDetails
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from datametric.models import RawResponse
 from analysis.models.Social.GovernanceBodyDetails import GovernanceBodyDetails
 from analysis.models.Social.Gender import Gender
@@ -25,7 +25,7 @@ def create_data_for_governance_bodies_details(raw_response: RawResponse):
     GovernanceBodyDetails.objects.filter(
         raw_response=raw_response, table_name=table_name
     ).delete()
-    for index, entry in enumerate(raw_response.data):
+    for index, entry in enumerate(raw_response.data[0]["Q2"]):
         # Assuming 'male', 'female', and 'nonBinary' correspond to existing Gender entries
         genders = {
             "male": entry["male"],
@@ -54,6 +54,7 @@ def create_data_for_governance_bodies_details(raw_response: RawResponse):
                 ),
                 gender=gender,
                 index=index,
+                currency=raw_response.data[0]["Q1"],
                 defaults={
                     "employee_category": entry["category"],
                     "gender_count": count,

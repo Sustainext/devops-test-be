@@ -1,10 +1,16 @@
 from rest_framework import serializers
 from materiality_dashboard.models import MaterialityImpact
 
+
 class MaterialityImpactSerializer(serializers.ModelSerializer):
     class Meta:
         model = MaterialityImpact
         fields = "__all__"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["material_topic_name"] = instance.material_topic.name
+        return data
 
 
 class MaterialityImpactBulkSerializer(serializers.ListSerializer):
@@ -23,13 +29,13 @@ class MaterialityImpactBulkSerializer(serializers.ListSerializer):
 
         # Iterate through validated data
         for attrs in validated_data:
-            instance_id = attrs.get('id')  # Added Unique Identifier for Keyerror 1
+            instance_id = attrs.get("id")  # Added Unique Identifier for Keyerror 1
 
             if instance_id in instance_mapping:
                 instance = instance_mapping.pop(instance_id)
                 result.append(self.child.update(instance, attrs))
             else:
-                
+
                 result.append(self.child.create(attrs))
-        
+
         return result

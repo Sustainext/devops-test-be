@@ -2,7 +2,7 @@ from analysis.models.Water.WaterFromAllAreas import (
     WaterFromAllAreas,
     ThirdPartyWaterDischargeFromAllAreas,
 )
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from common.utils.getting_parameters_for_orgs_corps import (
     get_corporate,
     get_organisation,
@@ -44,8 +44,8 @@ def create_data_for_water_from_all_areas_analysis(raw_response: RawResponse):
                 "water_type": local_data["Watertype"],
                 "water_unit": local_data["Unit"],
                 "business_operation": local_data["Businessoperations"],
-                "total_water_withdrawal": get_integer(local_data["withdrawal"]),
-                "total_water_discharge": get_integer(local_data["discharge"]),
+                "total_water_withdrawal": get_float(local_data["withdrawal"]),
+                "total_water_discharge": get_float(local_data["discharge"]),
             },
         )
         converted_withdrawal = water_from_all_areas_object.convert_to_megalitres(
@@ -91,7 +91,7 @@ def create_data_for_water_discharge_from_third_party(raw_response: RawResponse):
                 defaults={
                     "third_party_discharge": local_data["Discharge"],
                     "water_unit": local_data["Unit"],
-                    "quantity": get_integer(local_data["Volume"]),
+                    "quantity": get_float(local_data["Volume"]),
                 },
             )
         )

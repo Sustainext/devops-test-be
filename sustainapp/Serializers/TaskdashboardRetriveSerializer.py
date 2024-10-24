@@ -3,13 +3,16 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.apps import apps
 from django.conf import settings
+from sustainapp.signals import task_status_changed
 
 # Extracting the User Model
 CustomUser = apps.get_model(settings.AUTH_USER_MODEL)
 
 
 class ClientTaskDashboardSerializer(serializers.ModelSerializer):
-    assign_to_email = serializers.CharField(source="assigned_to.email", required=False)
+    assign_to_email = serializers.CharField(
+        source="assigned_to.email", required=False, read_only=True
+    )
     assign_to_user_name = serializers.CharField(
         source="assigned_to.first_name", required=False, read_only=True
     )
@@ -27,34 +30,60 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
 
     def validate_assigned_to(self, value):
         """
-        Validates the `assigned_to` field in the `ClientTaskDashboardSerializer`. Ensures that the `assigned_to` and `assigned_by` users belong to the same client. Raises a `ValidationError` if the `assigned_to` user does not exist or if the users do not belong to the same client.
-
-        Args:
-            value (int): The ID of the user assigned to the task.
-
-        Returns:
-            int: The validated `assigned_to` user ID.
-
-        Raises:
-            ValidationError: If the `assigned_to` user does not exist or if the `assigned_to` and `assigned_by` users do not belong to the same client.
+        Validates the `assigned_to` field in the `ClientTaskDashboardSerializer`.
+        Ensures that the `assigned_to` and `assigned_by` users belong to the same client.
+        Raises a `ValidationError` if the `assigned_to` user does not exist or
+        if the users do not belong to the same client.
         """
-        assigned_to_user_payload = self.initial_data.get("assigned_to")
-        assigned_by_user_payload = self.context["request"].user.id
-        try:
-            assigned_to_user_client = CustomUser.objects.get(
-                id=assigned_to_user_payload
-            )
-            assigned_by_user_client = CustomUser.objects.get(
-                id=assigned_by_user_payload
-            )
-        except CustomUser.DoesNotExist:
-            raise ValidationError("Assigned to user does not exist")
+        if isinstance(self.initial_data, list):
+            # If we are processing a bulk request
+            for task_data in self.initial_data:
+                assigned_to_user_payload = task_data.get("assigned_to")
+                assigned_by_user_payload = self.context["request"].user.id
 
-        if assigned_to_user_client.client_id != assigned_by_user_client.client_id:
-            raise ValidationError(
-                "The assigned_to and assigned_by users must belong to the same client"
-            )
+                try:
+                    assigned_to_user = CustomUser.objects.get(
+                        id=assigned_to_user_payload
+                    )
+                    assigned_by_user = CustomUser.objects.get(
+                        id=assigned_by_user_payload
+                    )
+                except CustomUser.DoesNotExist:
+                    raise ValidationError("Assigned to user does not exist")
+
+                if assigned_to_user.client_id != assigned_by_user.client_id:
+                    raise ValidationError(
+                        "The assigned_to and assigned_by users must belong to the same client"
+                    )
+        else:
+            # Handle the case for a single task
+            assigned_to_user_payload = self.initial_data.get("assigned_to")
+            assigned_by_user_payload = self.context["request"].user.id
+
+            try:
+                assigned_to_user = CustomUser.objects.get(id=assigned_to_user_payload)
+                assigned_by_user = CustomUser.objects.get(id=assigned_by_user_payload)
+            except CustomUser.DoesNotExist:
+                raise ValidationError("Assigned to user does not exist")
+
+            if assigned_to_user.client_id != assigned_by_user.client_id:
+                raise ValidationError(
+                    "The assigned_to and assigned_by users must belong to the same client"
+                )
+
         return value
+
+    def update(self, instance, validated_data):
+        comments = self.context["request"].data.get(
+            "comments", ""
+        )  # Assuming comments are sent in the request
+        instance = super().update(instance, validated_data)
+
+        # Emit the custom signal after the instance is saved
+        task_status_changed.send(
+            sender=instance.__class__, instance=instance, comments=comments
+        )
+        return instance
 
 
 class TaskDashboardCustomSerializer(serializers.ModelSerializer):

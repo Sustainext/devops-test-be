@@ -3,7 +3,11 @@ from analysis.models.Social.EmployeeTurnOver import EmploymentTurnover
 from analysis.models.Social.EmploymentHires import EmploymentHires
 from analysis.models.Social.Gender import Gender
 from analysis.models.Social.ParentalLeave import ParentalLeave, EMPLOYEE_CATEGORIES
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
+from common.utils.getting_parameters_for_orgs_corps import (
+    get_corporate,
+    get_organisation,
+)
 
 EMPLOYMENT_TYPE_MAPPING = {
     "permanent_emp": "permanent employee",
@@ -26,7 +30,7 @@ def get_employment_type(slug):
 
 def get_age_group_and_value(data):
     return {
-        AGE_GROUP_MAPPING[key]: get_integer(value)
+        AGE_GROUP_MAPPING[key]: get_float(value)
         for key, value in data.items()
         if key not in ["total", "beginning", "end"]
     }
@@ -39,17 +43,25 @@ def get_gender(index):
 def create_data(raw_response: RawResponse, table_name, model):
     for index, local_data in enumerate(raw_response.data):
         age_group_and_value = get_age_group_and_value(local_data)
+        organisation = (
+            raw_response.organization
+            if get_organisation(raw_response.locale) is None
+            else get_organisation(raw_response.locale)
+        )
+        corporate = (
+            raw_response.corporate
+            if get_corporate(raw_response.locale) is None
+            else get_corporate(raw_response.locale)
+        )
         for age_group, value in age_group_and_value.items():
             defaults = {"value": value}
             if model == EmploymentTurnover:
                 defaults.update(
                     {
-                        "employee_turnover_beginning": get_integer(
+                        "employee_turnover_beginning": get_float(
                             local_data.get("beginning", 0)
                         ),
-                        "employee_turnover_ending": get_integer(
-                            local_data.get("end", 0)
-                        ),
+                        "employee_turnover_ending": get_float(local_data.get("end", 0)),
                     }
                 )
 
@@ -57,8 +69,8 @@ def create_data(raw_response: RawResponse, table_name, model):
                 month=raw_response.month,
                 year=raw_response.year,
                 location=raw_response.locale,
-                organisation=raw_response.locale.corporateentity.organization,
-                corporate=raw_response.locale.corporateentity,
+                organisation=organisation,
+                corporate=corporate,
                 age_group=age_group,
                 raw_response=raw_response,
                 employment_type=get_employment_type(raw_response.path.slug),
@@ -96,6 +108,16 @@ def parental_leave_analysis(raw_response: RawResponse):
     ):
         ParentalLeave.objects.filter(raw_response=raw_response).delete()
         for index, category_data in enumerate(raw_response.data):
+            organisation = (
+                raw_response.organization
+                if get_organisation(raw_response.locale) is None
+                else get_organisation(raw_response.locale)
+            )
+            corporate = (
+                raw_response.corporate
+                if get_corporate(raw_response.locale) is None
+                else get_corporate(raw_response.locale)
+            )
             category_data.pop("total")
             for gender, value in category_data.items():
                 ParentalLeave.objects.update_or_create(
@@ -104,9 +126,9 @@ def parental_leave_analysis(raw_response: RawResponse):
                     year=raw_response.year,
                     location=raw_response.locale,
                     client=raw_response.client,
-                    organisation=raw_response.locale.corporateentity.organization,
-                    corporate=raw_response.locale.corporateentity,
+                    organisation=organisation,
+                    corporate=corporate,
                     gender=Gender.objects.get(gender=gender),
                     employee_category=EMPLOYEE_CATEGORIES[index][0],
-                    defaults={"value": get_integer(value)},
+                    defaults={"value": get_float(value)},
                 )[0].save()

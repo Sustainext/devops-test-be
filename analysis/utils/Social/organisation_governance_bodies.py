@@ -1,10 +1,14 @@
 from analysis.models.Social.OrganisationGovernanceBodies import (
     OrganisationGovernanceBodies,
 )
-from common.utils.value_types import get_integer
+from common.utils.value_types import get_float
 from common.enums.Social import AGE_GROUP_CHOICES
 from analysis.models.Social.Gender import Gender
 from datametric.models import RawResponse
+from common.utils.getting_parameters_for_orgs_corps import (
+    get_corporate,
+    get_organisation,
+)
 
 AGE_GROUP_MAPPING = {
     "lessThan30": "less than 30 years old",
@@ -52,6 +56,16 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
         raw_response=raw_response, table_name=table_name
     ).delete()
     for index, local_data in enumerate(raw_response.data):
+        organisation = (
+            raw_response.organization
+            if get_organisation(raw_response.locale) is None
+            else get_organisation(raw_response.locale)
+        )
+        corporate = (
+            raw_response.corporate
+            if get_corporate(raw_response.locale) is None
+            else get_corporate(raw_response.locale)
+        )
         age_group_and_value = get_age_group_and_value(local_data)
         gender_group_and_value = get_gender(local_data)
 
@@ -60,10 +74,10 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                 defaults = {
                     "age_group_value": age_group_value,
                     "gender_value": gender_value,
-                    "minority_group_count": get_integer(
+                    "minority_group_count": get_float(
                         local_data.get("minorityGroup", 0)
                     ),
-                    "vulnerable_communities_count": get_integer(
+                    "vulnerable_communities_count": get_float(
                         local_data.get("vulnerableCommunities", 0)
                     ),
                     "employee_category": local_data["category"],
@@ -73,8 +87,8 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                     month=raw_response.month,
                     year=raw_response.year,
                     location=raw_response.locale,
-                    organisation=raw_response.organization,
-                    corporate=raw_response.corporate,
+                    organisation=organisation,
+                    corporate=corporate,
                     client=raw_response.client,
                     index=index,
                     age_group=age_group,

@@ -24,6 +24,7 @@ class WasteDivertedFromDisposal(AbstractAnalysisModel, AbstractModel):
     index = models.PositiveIntegerField()
     category = models.CharField(max_length=200, choices=WASTE_CATEGORY_CHOICES)
     site = models.CharField(max_length=100, blank=True, null=True)
+
     def convert_to_kilograms(self):
         conversion_factors = {
             MeasurementUnit.GRAMS: 0.001,  # 1 gram = 0.001 kg

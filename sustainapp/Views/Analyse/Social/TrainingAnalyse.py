@@ -172,6 +172,8 @@ class TrainingSocial(APIView):
         self,
     ):
         local_raw_response = self.raw_responses.filter(path__slug=self.slugs[1]).first()
+        if not local_raw_response:
+            return []
         data = local_raw_response.data
 
         response_data = []
@@ -193,6 +195,8 @@ class TrainingSocial(APIView):
         self,
     ):
         local_raw_response = self.raw_responses.filter(path__slug=self.slugs[1]).first()
+        if not local_raw_response:
+            return []
         data = local_raw_response.data
 
         total_employees = sum(int(item["totalEmployees"]) for item in data)

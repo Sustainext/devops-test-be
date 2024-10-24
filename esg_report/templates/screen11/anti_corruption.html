@@ -1,0 +1,164 @@
+<!-- anti_corruption.html -->
+
+<h2>11.5. Anti-Corruption</h2>
+
+<h3>11.5.1. Management of Material Topic (GRI 3-3-c, d, e)</h3>
+<p>[Details on management of material topics related to anti-corruption]</p>
+
+<h3>11.5.2. Operations Assessed for Risks Related to Anti-Corruption (GRI 205-1-a, b)</h3>
+
+<p>Operations assessed for risks related to corruption:</p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Total Number of Operations Assessed</th>
+            <th>Total Number of Operations</th>
+            <th>Percentage of Operations Assessed for Risks Related to Corruption</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ total_operations_assessed }}</td>
+            <td>{{ total_operations }}</td>
+            <td>{{ percentage_operations_assessed }}%</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>11.5.3. Incidents of Anti-Corruption (GRI 205-3-a, b, c)</h3>
+<p>In <strong>{{ year }}</strong>, we recorded <strong>{{ corruption_incidents }}</strong> incidents of corruption. Each
+    incident was thoroughly investigated, and appropriate actions were taken, including disciplinary measures and
+    process improvements to prevent future occurrences.</p>
+
+<h3>11.5.4. Training on Anti-Corruption (GRI 205-2-a, b, c, d, e)</h3>
+
+<h4>Governance Body Members</h4>
+<p>Total number and percentage of governance body members that the organization’s anti-corruption policies and
+    procedures have been communicated to, by region:</p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Region</th>
+            <th>Total Number of Governance Body Members Communicated</th>
+            <th>Total Number of Governance Body Members</th>
+            <th>Percentage Communicated</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for region in governance_body_members %}
+        <tr>
+            <td>{{ region.name }}</td>
+            <td>{{ region.total_communicated }}</td>
+            <td>{{ region.total_members }}</td>
+            <td>{{ region.percentage_communicated }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>Employees</h4>
+<p>Total number and percentage of employees that the organization’s anti-corruption policies and procedures have been
+    communicated to, broken down by employee category and region:</p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Location</th>
+            <th>Employee Category</th>
+            <th>Total Number of Employees Communicated</th>
+            <th>Total Number of Employees</th>
+            <th>Percentage Communicated</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for location in employee_communication %}
+        <tr>
+            <td>{{ location.name }}</td>
+            <td>{{ location.employee_category }}</td>
+            <td>{{ location.total_communicated }}</td>
+            <td>{{ location.total_employees }}</td>
+            <td>{{ location.percentage_communicated }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>Business Partners</h4>
+<p>Total number and percentage of business partners that the organization’s anti-corruption policies and procedures have
+    been communicated to, broken down by type of business partner and region:</p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Location</th>
+            <th>Type of Business Partner</th>
+            <th>Total Number Communicated</th>
+            <th>Total Number of Business Partners</th>
+            <th>Percentage Communicated</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for partner in business_partner_communication %}
+        <tr>
+            <td>{{ partner.location }}</td>
+            <td>{{ partner.partner_type }}</td>
+            <td>{{ partner.total_communicated }}</td>
+            <td>{{ partner.total_partners }}</td>
+            <td>{{ partner.percentage_communicated }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>Governance Body Members - Training</h4>
+<p>Total number and percentage of governance body members that have received training on anti-corruption, broken down by
+    region:</p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Location</th>
+            <th>Total Number of Governance Body Members Trained</th>
+            <th>Total Number of Governance Body Members</th>
+            <th>Percentage Trained</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for location in governance_body_training %}
+        <tr>
+            <td>{{ location.name }}</td>
+            <td>{{ location.total_trained }}</td>
+            <td>{{ location.total_members }}</td>
+            <td>{{ location.percentage_trained }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>Employees - Training</h4>
+<p>Total number and percentage of employees that have received training on anti-corruption, broken down by region:</p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Location</th>
+            <th>Employee Category</th>
+            <th>Total Number of Employees Trained</th>
+            <th>Total Number of Employees</th>
+            <th>Percentage Trained</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for location in employee_training %}
+        <tr>
+            <td>{{ location.name }}</td>
+            <td>{{ location.employee_category }}</td>
+            <td>{{ location.total_trained }}</td>
+            <td>{{ location.total_employees }}</td>
+            <td>{{ location.percentage_trained }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

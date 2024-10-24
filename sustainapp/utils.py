@@ -40,7 +40,7 @@ from azure.storage.blob import BlobServiceClient
 from django.core.files.storage import default_storage
 import os
 import io
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, HttpResponse
 from html.parser import HTMLParser
 from htmldocx import HtmlToDocx
 import logging
@@ -52,6 +52,7 @@ from django.conf import settings
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+from common.utils.value_types import get_decimal
 
 logger = logging.getLogger(__name__)
 
@@ -484,13 +485,18 @@ def generate_report_data(pk, request):
         if report.excluded_sources is not None
         else None
     )
+    organization_name = report.organization.name
+    if report.report_by == "Organization":
+        organization_name = organization_name
+    else:
+        organization_name = report.corporate.name
 
     context = {
         "object_list": report,
         "org_logo": report.org_logo,
         "report_by": report.report_by,
         "report_type": report.report_type,
-        "organization_name": report.organization.name,
+        "organization_name": organization_name,
         "country": country_name,
         "about_the_organization": about_the_organization,
         "bool_about_the_organization": bool(about_the_organization),
@@ -695,8 +701,11 @@ def word_docx_report(pk: int):
     file_name = f"{context['object_list'].name}.docx"
     document_object.save(output_model_bytes_object)
     output_model_bytes_object.seek(0)
-    response = StreamingHttpResponse(
-        streaming_content=output_model_bytes_object,
+    document_content = (
+        output_model_bytes_object.read()
+    )  # <-- To convert to bytes and send as single response
+    response = HttpResponse(
+        content=document_content,
         content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     )
 
@@ -753,3 +762,30 @@ def add_page_break_if_needed(document):
 def cell_transparent(table_name):
     for cell in table_name.columns[0].cells:
         set_cell_border(cell, border_color="#FFFFFF", border_width=0)
+
+
+def get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation(
+    raw_response, slugs: dict
+):
+    annual_raw_response = raw_response.only("data").filter(path__slug=slugs[0])
+    contextual_raw_response = raw_response.only("data").filter(path__slug=slugs[1])
+
+    local_annual_response = []
+    for raw_response in annual_raw_response:
+        local_annual_response.extend(raw_response.data)
+    local_contextual_response = []
+    for raw_response in contextual_raw_response:
+        local_contextual_response.extend(raw_response.data)
+    local_response_data = []
+    for annual, contextual in zip(local_annual_response, local_contextual_response):
+        local_response_data.append(
+            {
+                "ratio_of_annual_total_compensation": get_decimal(
+                    get_decimal(annual["Q1"]) / get_decimal(annual["Q2"])
+                ),
+                "ratio_of_percentage_increase_in_annual_total_compensation": get_decimal(
+                    get_decimal(contextual["Q1"]) / get_decimal(contextual["Q2"])
+                ),
+            }
+        )
+    return local_response_data

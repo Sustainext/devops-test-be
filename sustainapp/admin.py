@@ -432,6 +432,8 @@ class ZohoInfoAdmin(admin.ModelAdmin):
 class TrackDashboardAdmin(admin.ModelAdmin):
     list_display = ["id", "table_name", "report_name"]
 
+class TrackDashboardAdmin(admin.ModelAdmin):
+    list_display = ["id", "report_name"]
 
 UserExtendedModel = apps.get_model(settings.AUTH_USER_MODEL)
 

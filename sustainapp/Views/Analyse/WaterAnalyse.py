@@ -1,17 +1,3 @@
-"""
-The WaterAnalyse class is an API view that provides functionality for analyzing water-related data.
-
-The class has several methods that process and aggregate water data from various sources, including:
-- Total water consumption in all areas and water stress areas
-- Water consumption by business operation, location, source, and water type
-- Water withdrawal from third parties
-- Change in water storage
-
-The class uses various helper methods to convert units, group and process the data, and calculate totals and percentages.
-
-The get() method is the main entry point for the API, which takes query parameters to filter the data and returns a comprehensive response with various water-related metrics and statistics.
-"""
-
 from datametric.models import RawResponse
 from rest_framework.views import APIView
 from rest_framework import status
@@ -29,6 +15,19 @@ import datetime
 
 
 class WaterAnalyse(APIView):
+    """
+    The WaterAnalyse class is an API view that provides functionality for analyzing water-related data.
+
+    The class has several methods that process and aggregate water data from various sources, including:
+    - Total water consumption in all areas and water stress areas
+    - Water consumption by business operation, location, source, and water type
+    - Water withdrawal from third parties
+    - Change in water storage
+
+    The class uses various helper methods to convert units, group and process the data, and calculate totals and percentages.
+
+    The get() method is the main entry point for the API, which takes query parameters to filter the data and returns a comprehensive response with various water-related metrics and statistics.
+    """
     permission_classes = [IsAuthenticated]
     CONVERSION_FACTORS = {
         "litre": 1e-6,
@@ -514,9 +513,6 @@ class WaterAnalyse(APIView):
         location_names = self.raw_responses.values_list(
             "locale__name", flat=True
         ).distinct()
-        # location_names = self.raw_responses.values_list(
-        #     "location", flat=True
-        # ).distinct()
         data = []
         for location in location_names:
             local_raw_responses = (

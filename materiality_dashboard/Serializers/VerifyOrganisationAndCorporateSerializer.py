@@ -4,10 +4,10 @@ from rest_framework import serializers
 
 class VerifyOrganisationAndCorporateSerializer(serializers.Serializer):
     organization = serializers.PrimaryKeyRelatedField(
-        queryset=Organization.objects.none()
+        queryset=Organization.objects.all()
     )
     corporate = serializers.PrimaryKeyRelatedField(
-        queryset=Corporateentity.objects.none(), required=False
+        queryset=Corporateentity.objects.all(), required=False
     )
 
     def __init__(self, *args, **kwargs):

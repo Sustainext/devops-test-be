@@ -1,0 +1,87 @@
+<!-- training_education.html -->
+
+<h2>13.5. Training & Education (404-1-a, 410-1-a, b, 404-2-a, b)</h2>
+
+<h4>13.5.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
+<hr>
+<p>[Details on the management of training and education, including strategies to promote employee development, skill
+    enhancement, and career transition support programs.]</p>
+
+<h4>13.5.2. Programs for Upgrading Employee Skills and Transition Assistance Programs</h4>
+<p>We invest in continuous learning and development opportunities for our employees. Our programs include skills
+    training, leadership development, and transition assistance for those moving to new roles or retiring.</p>
+
+<p><em>Note for developers: A tailored version of the 404-1-a, 410-1-a, 404-2-a, b data is required here.</em></p>
+
+<h5>Average Training Hours</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Average Training Hours</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Per Employee</td>
+            <td>{{ average_training_hours.per_employee }}</td>
+        </tr>
+        <tr>
+            <td>Per Female Employee</td>
+            <td>{{ average_training_hours.per_female_employee }}</td>
+        </tr>
+        <tr>
+            <td>Per Male Employee</td>
+            <td>{{ average_training_hours.per_male_employee }}</td>
+        </tr>
+        <tr>
+            <td>Per Non-Binary Employee</td>
+            <td>{{ average_training_hours.per_nonbinary_employee }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Average Training Hours by Employee Category</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Employee Category</th>
+            <th>Average Training Hours (Male)</th>
+            <th>Average Training Hours (Female)</th>
+            <th>Average Training Hours (Non-Binary)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category in training_hours_by_category %}
+        <tr>
+            <td>{{ category.name }}</td>
+            <td>{{ category.male_hours }}</td>
+            <td>{{ category.female_hours }}</td>
+            <td>{{ category.nonbinary_hours }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h5>Percentage of Security Personnel Receiving Formal Training</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Training Type</th>
+            <th>Percentage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Formal Training within the Organisation</td>
+            <td>{{ security_training.org_training_percentage }}%</td>
+        </tr>
+        <tr>
+            <td>Formal Training from Third-Party Organisation</td>
+            <td>{{ security_training.third_party_training_percentage }}%</td>
+        </tr>
+    </tbody>
+</table>
+
+<p><em>Note: This data can be represented using visual aids, such as charts, to display training hours and training
+        percentages.</em></p>

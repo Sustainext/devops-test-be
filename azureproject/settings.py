@@ -48,6 +48,7 @@ PROJECT_APPS = [
     "datametric.apps.DatametricConfig",
     "analysis.apps.AnalysisConfig",
     "materiality_dashboard.apps.MaterialityDashboardConfig",
+    "esg_report.apps.EsgReportConfig",
 ]
 
 THIRD_PARTY = [
@@ -60,6 +61,7 @@ THIRD_PARTY = [
     "allauth.socialaccount",
     "dj_rest_auth",
     "dj_rest_auth.registration",
+    "simple_history",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY
@@ -76,6 +78,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
     "sustainapp.Middleware.middleware.JWTMiddleware",
     "datametric.middleware.GeneralBusinessDetails.PathSlugMiddleware",
 ]
