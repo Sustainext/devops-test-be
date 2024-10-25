@@ -10,6 +10,7 @@ from django.template.defaultfilters import slugify
 from django.core.mail import EmailMessage
 from rest_framework.exceptions import APIException
 from django.conf import settings
+from sustainapp.models import ClientTaskDashboard
 
 logger = logging.getLogger("django")
 
@@ -60,8 +61,10 @@ class Climatiq:
             "Unit",
             "Quantity",
         ]
-        for emission_data in data_to_process:
-            row_type = emission_data["Emission"].get("rowtype")
+        # mapping the indexes to the emission from raw response
+        self.index_mapping_to_emissons = {}
+        for index, emission_data in enumerate(data_to_process):
+            row_type = emission_data["Emission"].get("rowType")
 
             # if a row is assigned we can neglect calculating the emission for it
             if not row_type or row_type in ["default", "approved", "calculated"]:
@@ -74,7 +77,7 @@ class Climatiq:
                     not emission.get("Quantity2") and emission.get("Unit2")
                 ):
                     continue
-
+                self.index_mapping_to_emissons.update({index: emission_data})
                 processed_data.append(emission_data)
         return processed_data
 
@@ -113,7 +116,8 @@ class Climatiq:
                         unit2=emission_data["Emission"].get("Unit2"),
                         value2=(
                             float(emission_data["Emission"].get("Quantity2"))
-                            if emission_data["Emission"].get("Quantity2") is not None
+                            if emission_data["Emission"].get("Quantity2")
+                            not in [None, ""]
                             else None
                         ),
                     )
@@ -223,7 +227,46 @@ class Climatiq:
                 )
                 all_response_data.extend(cleaned_response_data)
 
+        # Update raw_response.data rowType based on calculated responses
+        self.update_row_type_in_raw_response(all_response_data)
+
         return all_response_data
+
+    def update_row_type_in_raw_response(self, response_data):
+        """
+        Updates rowType to 'calculated' in raw_response.data for successfully calculated emissions.
+        """
+        for emission_data in response_data:
+            for idx, object_emission in self.index_mapping_to_emissons.items():
+                # Check for equality across specified fields to identify a matching item
+                emission = object_emission.get("Emission", {})
+                if (
+                    emission.get("Category") == emission_data.get("Category")
+                    and emission.get("Subcategory") == emission_data.get("SubCategory")
+                    and emission.get("Activity") == emission_data.get("Activity")
+                    and emission.get("activity_id")
+                    == emission_data.get("emission_factor").get("activity_id")
+                    and emission.get("Quantity") == emission_data.get("Quantity")
+                    and emission.get("Unit") == emission_data.get("Unit")
+                ):
+                    # Update rowType to 'calculated' and break out of the loop once matched
+                    # emission["rowType"] = "calculated"
+                    self.raw_response.data[idx]["Emission"]["rowType"] = "calculated"
+                    if object_emission.get("id"):
+                        ctd = ClientTaskDashboard.objects.get(
+                            id=object_emission.get("id")
+                        )
+                        ctd.roles = 4
+                        ctd.task_status = "completed"
+                        ctd.save()
+                    del self.index_mapping_to_emissons[idx]
+                    break  # Stop after finding the first match for efficiency
+
+        RawResponse.objects.filter(id=self.raw_response.id).update(
+            data=self.raw_response.data
+        )
+        # Save the modified raw_response
+        # self.raw_response.save()
 
     def clean_response_data(self, response_data):
         """
