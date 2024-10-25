@@ -93,6 +93,7 @@ class ScreenTwelveAPIView(APIView):
             31: "gri-environment-waste-306-4e-contextual_info",
             32: "gri-environment-water-303-1b-1c-1d-interaction_with_water",
             33: "gri-environment-water-303-2a-profile_receiving_waterbody",
+            34: "gri-environment-water-303-2a-management_water_discharge",
         }
 
     def get_energy_analyse(self):
@@ -378,8 +379,11 @@ class ScreenTwelveAPIView(APIView):
                 "water_analyse": self.get_water_analyse(),
                 "energy_analyse": self.get_energy_analyse(),
                 "waste_analyse": self.get_waste_analyse(),
-                "302_2a": collect_data_and_differentiate_by_location(
+                "303-2a-profile_receiving_waterbody": collect_data_and_differentiate_by_location(
                     data_points=self.data_points, slug=self.slugs[33]
+                ),
+                "303-2a-management_water_discharge": collect_data_and_differentiate_by_location(
+                    data_points=self.data_points, slug=self.slugs[34]
                 ),
             }
         )
