@@ -1,7 +1,7 @@
 from sustainapp.models import Report
 from datametric.models import RawResponse, DataMetric, DataPoint
 from materiality_dashboard.models import MaterialityAssessment
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.db.models import Q, F, ExpressionWrapper, DurationField
 from datetime import timedelta
 from django.db.models.functions import Greatest, Least
@@ -365,7 +365,7 @@ def create_validation_method_for_report_creation(report: Report):
         data_points = get_data_points_as_per_report(report=report)
         for disclosure, path_slug in gri_report_info_disclosures_and_paths:
             if not data_points.filter(path__slug=path_slug).exists():
-                raise ValidationError(
+                raise DRFValidationError(
                     {
                         "detail": f"Data for disclosure {disclosure} does not exist for the report."
                     }
