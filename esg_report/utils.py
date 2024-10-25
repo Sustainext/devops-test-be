@@ -350,7 +350,7 @@ def create_validation_method_for_report_creation(report: Report):
     """
     Creates a validation method for report creation.
     """
-    if report.report_type == "GRI: In Accordance With":
+    if report.report_type == "GRI Report: In accordance With":
         general_material_topics = [
             "Org Details",
             "Entities",
