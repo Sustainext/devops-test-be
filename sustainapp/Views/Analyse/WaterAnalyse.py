@@ -28,6 +28,7 @@ class WaterAnalyse(APIView):
 
     The get() method is the main entry point for the API, which takes query parameters to filter the data and returns a comprehensive response with various water-related metrics and statistics.
     """
+
     permission_classes = [IsAuthenticated]
     CONVERSION_FACTORS = {
         "litre": 1e-6,
@@ -157,7 +158,14 @@ class WaterAnalyse(APIView):
                 }
             )
             result.append(group_dict)
-
+        # * Get total consumed total
+        total_consumed = sum(entry["total_consumed"] for entry in result)
+        result.append(
+            {
+                "Total": total_consumed,
+                "Units": "KiloLitre",
+            }
+        )
         return result
 
     def process_third_party_water_data(
@@ -448,7 +456,8 @@ class WaterAnalyse(APIView):
                         "consumption_contribution": consumption_contribution,
                     }
                 )
-
+        total_consumption = sum(entry["total_consumption"] for entry in result)
+        result.append({"Total": total_consumption, "Unit": "KiloLitre"})
         return result
 
     def process_water_data_by_location(self, data):
@@ -517,8 +526,8 @@ class WaterAnalyse(APIView):
         for location in location_names:
             local_raw_responses = (
                 self.raw_responses.filter(locale__name=location)
-                # self.raw_responses.filter(location=location)
-                .filter(path__slug=self.all_areas_slug).only("data", "locale__name")
+                .filter(path__slug=self.all_areas_slug)
+                .only("data", "locale__name")
             )
             for raw_response in local_raw_responses:
                 data.append({location: raw_response.data})
@@ -554,9 +563,25 @@ class WaterAnalyse(APIView):
                     ),
                 }
             )
+        # * Get total water_consumption_from_areas_with_water_stress
+        total_water_consumption_from_areas_with_water_stress = sum(
+            [
+                data["water_consumption_from_areas_with_water_stress"]
+                for data in return_data
+            ]
+        )
+        return_data.append(
+            {
+                "Total": total_water_consumption_from_areas_with_water_stress,
+                "Unit": "KiloLitre",
+            }
+        )
         return return_data
 
     def get_water_consumption_in_all_areas_and_stress_areas(self):
+        """
+        This method returns the water consumption in all areas and stress areas.
+        """
         raw_responses = self.raw_responses.filter(path__slug=self.all_areas_slug)
         all_areas_data = []
         for raw_response in raw_responses:
