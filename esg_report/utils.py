@@ -365,6 +365,7 @@ def create_validation_method_for_report_creation(report: Report):
         data_points = get_data_points_as_per_report(report=report)
         for disclosure, path_slug in gri_report_info_disclosures_and_paths:
             if not data_points.filter(path__slug=path_slug).exists():
+                report.delete()
                 raise DRFValidationError(
                     {
                         "detail": f"Data for disclosure {disclosure} does not exist for the report."
