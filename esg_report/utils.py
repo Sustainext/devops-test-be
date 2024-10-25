@@ -184,7 +184,9 @@ def collect_data_and_differentiate_by_location(data_points):
         index = dp.index
         data_metric = dp.data_metric.name
         value = dp.value
-        location = dp.locale.name  # Assuming locale represents location name
+        location = (
+            dp.locale.name if dp.locale else None
+        )  # Assuming locale represents location name
 
         # Store the data_metric and its value for the current raw_response and index
         raw_response_index_map[(raw_response, index)][data_metric] = value
