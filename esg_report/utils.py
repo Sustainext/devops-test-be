@@ -11,6 +11,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from django.http import HttpRequest
 from django.urls import reverse, resolve
+from common.enums.GeneralTopicDisclosuresAndPaths import GENERAL_DISCLOSURES_AND_PATHS
 import datetime
 import logging
 
@@ -302,6 +303,73 @@ def calling_analyse_view_with_params(view_url, request, report):
         return {"detail": f"An error occurred: {str(e)}"}
 
 
+def creating_material_topic_and_disclosure():
+    material_topic_and_disclosure = {
+        "GRI Reporting info": [
+            "Org Details",
+            "Entities",
+            "Report Details",
+            "Restatement",
+            "Assurance",
+        ],
+        "Organization Details": [
+            "Business Details",
+            "Workforce-Employees",
+            "Workforce-Other Workers",
+        ],
+        "Compliance": ["Laws and Regulation"],
+        "Membership & Association": ["Membership & Association"],
+        "Stakeholder Engagement": ["Stakeholder Engagement"],
+        "Collective Bargaining Agreements": ["Collective Bargaining Agreements"],
+    }
+    from materiality_dashboard.models import MaterialTopic, Disclosure
+    from sustainapp.models import Framework
+
+    f = Framework.objects.get(name="GRI: In Accordance With")
+    for material_topic, disclosure in material_topic_and_disclosure.items():
+        material_topic_obj, created = MaterialTopic.objects.get_or_create(
+            name=material_topic,
+            framework=f,
+            esg_category="general",
+        )
+        material_topic_obj.save()
+        for dis in disclosure:
+            Disclosure.objects.get_or_create(topic=material_topic_obj, description=dis)[
+                0
+            ].save()
+
+
+def getting_all_general_sections(report: Report):
+    """
+    Retrieves all general sections for a given report.
+    """
+    data_points = get_data_points_as_per_report(report=report)
+
+
+def create_validation_method_for_report_creation(report: Report):
+    """
+    Creates a validation method for report creation.
+    """
+    if report.report_type == "GRI: In Accordance With":
+        general_material_topics = [
+            "Org Details",
+            "Entities",
+            "Report Details",
+            "Restatement",
+            "Assurance",
+        ]
+        gri_report_info_disclosures_and_paths = []
+        for topic in general_material_topics:
+            for dislcosure_tuple in GENERAL_DISCLOSURES_AND_PATHS[topic]:
+                gri_report_info_disclosures_and_paths.append(dislcosure_tuple)
+        data_points = get_data_points_as_per_report(report=report)
+        for disclosure, path_slug in gri_report_info_disclosures_and_paths:
+            if not data_points.filter(path__slug=path_slug).exists():
+                raise ValidationError(
+                    {
+                        "detail": f"Data for disclosure {disclosure} does not exist for the report."
+                    }
+                )
 def calling_analyse_view_with_params_for_same_year(view_url, request, report):
     """
     Calls another internal API view with the JWT token from the original request.
