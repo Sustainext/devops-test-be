@@ -1,12 +1,13 @@
-from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import get_template
 from django.views import View
 from sustainapp.models import Report
-from django.conf import settings
 import time
 from xhtml2pdf import pisa
+from esg_report.services.screen_one_service import CeoMessageService
+from esg_report.models.ScreenOne import CeoMessage
+from django.forms import model_to_dict
 
 
 class ESGReportPDFView(View):
@@ -16,18 +17,20 @@ class ESGReportPDFView(View):
         pk = self.kwargs.get("pk")
         try:
             # Retrieve the report object
-            report = get_object_or_404(Report, pk=pk)
+            report = CeoMessageService.get_report_by_id(pk)
         except Report.DoesNotExist:
             return HttpResponse(f"No report found with ID={pk}", status=404)
         except Exception as e:
-            print(f"Error retrieving report: {e}")
             return HttpResponse(
                 "An unexpected error occurred while retrieving the report.", status=500
             )
+        ceo_message = CeoMessageService.get_ceo_message_by_report(report)
+        dict_ceo_message = model_to_dict(ceo_message)
 
         # Prepare the context for rendering the PDF template
         context = {
             "report": report,
+            "ceo_message": dict_ceo_message,
             "pk": pk,
         }
 
@@ -37,7 +40,6 @@ class ESGReportPDFView(View):
             template = get_template(template_path)
             html = template.render(context, request)
         except Exception as e:
-            print(f"Error rendering template: {e}")
             return HttpResponse("Error rendering the PDF template.", status=500)
 
         response = HttpResponse(content_type="application/pdf")
@@ -63,7 +65,6 @@ class ESGReportPDFView(View):
             return response
 
         except Exception as e:
-            print(f"Error generating PDF: {e}")
             return HttpResponse(
                 "Unexpected error occurred while generating the PDF.", status=500
             )
