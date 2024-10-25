@@ -574,7 +574,7 @@ class GHGReportView(generics.CreateAPIView):
         new_report = serializer.save(
             status=status, client_id=client_id, user_id=user_id
         )
-
+        
         report_id = new_report.id
         start_date = serializer.validated_data.get("start_date")
         end_date = serializer.validated_data.get("end_date")
