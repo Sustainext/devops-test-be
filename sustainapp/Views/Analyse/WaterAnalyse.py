@@ -563,19 +563,6 @@ class WaterAnalyse(APIView):
                     ),
                 }
             )
-        # * Get total water_consumption_from_areas_with_water_stress
-        total_water_consumption_from_areas_with_water_stress = sum(
-            [
-                data["water_consumption_from_areas_with_water_stress"]
-                for data in return_data
-            ]
-        )
-        return_data.append(
-            {
-                "Total": total_water_consumption_from_areas_with_water_stress,
-                "Unit": "KiloLitre",
-            }
-        )
         return return_data
 
     def get_water_consumption_in_all_areas_and_stress_areas(self):
