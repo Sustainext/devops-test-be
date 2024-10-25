@@ -108,6 +108,16 @@ def parental_leave_analysis(raw_response: RawResponse):
     ):
         ParentalLeave.objects.filter(raw_response=raw_response).delete()
         for index, category_data in enumerate(raw_response.data):
+            organisation = (
+                raw_response.organization
+                if get_organisation(raw_response.locale) is None
+                else get_organisation(raw_response.locale)
+            )
+            corporate = (
+                raw_response.corporate
+                if get_corporate(raw_response.locale) is None
+                else get_corporate(raw_response.locale)
+            )
             category_data.pop("total")
             for gender, value in category_data.items():
                 ParentalLeave.objects.update_or_create(
@@ -116,8 +126,8 @@ def parental_leave_analysis(raw_response: RawResponse):
                     year=raw_response.year,
                     location=raw_response.locale,
                     client=raw_response.client,
-                    organisation=raw_response.locale.corporateentity.organization,
-                    corporate=raw_response.locale.corporateentity,
+                    organisation=organisation,
+                    corporate=corporate,
                     gender=Gender.objects.get(gender=gender),
                     employee_category=EMPLOYEE_CATEGORIES[index][0],
                     defaults={"value": get_float(value)},

@@ -1,0 +1,59 @@
+<!-- tax_performance.html -->
+
+<h2>11.4. Tax</h2>
+
+<p>Our tax strategy is designed to support <strong>[Company Name]</strong>'s business objectives while ensuring we meet
+    our legal and ethical obligations.
+    We are committed to transparency in tax reporting and compliance across all jurisdictions in which we operate.</p>
+
+<h3>11.4.1. Management of Material Topic (GRI 3-3-c, d, e)</h3>
+<p>[Details on the management of material topics related to tax]</p>
+
+<h3>11.4.2. Approach to Tax (GRI 207-1-a -i, ii, iii, iv, 207-4- a, b, c)</h3>
+<p>Our approach to tax is aligned with our commitment to compliance, transparency, and the sustainable creation of
+    value. The following tax jurisdictions are included in our consolidated financial statements:</p>
+
+<h4>Tax Jurisdictions and Key Details</h4>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Tax Jurisdiction</th>
+            <th>Names of Resident Entities</th>
+            <th>Primary Activities</th>
+            <th>Number of Employees</th>
+            <th>Revenue from Third Party Sales</th>
+            <th>Revenue from Intragroup Transactions</th>
+            <th>Profit/Loss Before Tax</th>
+            <th>Tangible Assets</th>
+            <th>Corporate Income Tax Paid (Cash Basis)</th>
+            <th>Corporate Income Tax Accrued</th>
+            <th>Reasons for Difference in Tax Due</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for jurisdiction in jurisdictions %}
+        <tr>
+            <td>{{ jurisdiction.name }}</td>
+            <td>{{ jurisdiction.resident_entities }}</td>
+            <td>{{ jurisdiction.primary_activities }}</td>
+            <td>{{ jurisdiction.num_employees }}</td>
+            <td>{{ jurisdiction.revenue_third_party_sales }}</td>
+            <td>{{ jurisdiction.revenue_intragroup }}</td>
+            <td>{{ jurisdiction.profit_loss }}</td>
+            <td>{{ jurisdiction.tangible_assets }}</td>
+            <td>{{ jurisdiction.tax_paid_cash_basis }}</td>
+            <td>{{ jurisdiction.tax_accrued }}</td>
+            <td>{{ jurisdiction.reasons_for_difference }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>11.4.3. Tax Governance and Risk Management (GRI 207-2-a, b, c)</h3>
+<p>We have implemented comprehensive tax governance frameworks to manage tax risks and ensure compliance. Our tax
+    governance mechanisms include regular audits, risk assessments, and transparent reporting.</p>
+
+<h3>11.4.4. Stakeholder Engagement and Management of Concerns Related to Tax (GRI 207-3-a)</h3>
+<p>We maintain an open dialogue with stakeholders regarding our tax strategy and practices. By engaging with
+    stakeholders, we ensure that concerns are addressed, and we provide detailed reports on our tax contributions and
+    policies.</p>

@@ -1,0 +1,185 @@
+<!-- emission.html -->
+
+<h2>12. Environment</h2>
+
+<p>At <strong>[Company Name]</strong>, we recognize our responsibility to minimize the environmental impact of our
+    operations and to contribute positively to the health of our planet. Our environmental strategy is focused on
+    reducing emissions, managing materials responsibly, conserving water, optimizing energy use, reducing waste,
+    protecting biodiversity, and improving air quality.</p>
+
+<h3>12.1. Emissions</h3>
+
+<p>(Here, graphic can be added to present emission reductions or total GHG emissions)</p>
+<p>We manage our emissions through a comprehensive strategy that includes setting reduction targets, implementing
+    energy-efficient technologies, and monitoring our progress.</p>
+
+<h4>12.1.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
+<hr>
+
+<h4>12.1.2. Scope 1 GHG Emissions (GRI 305-1-a, b, c, d, e, f, g)</h4>
+<p>Scope 1 emissions are direct greenhouse gas (GHG) emissions from our operations, such as fuel combustion on-site. We
+    measure and report these emissions annually, striving to reduce them through process optimization and cleaner
+    technologies.</p>
+<p><em>Note: Biogenic CO2 emission screen is not yet integrated into the platform.</em></p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Source</th>
+            <th>Total Emissions</th>
+            <th>Unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Combustion</td>
+            <td>Grass/Straw</td>
+            <td>{{ combustion_grass_straw_emissions }}</td>
+            <td>tCO2e</td>
+        </tr>
+        <tr>
+            <td>Biodegradation</td>
+            <td>Wood Chips</td>
+            <td>{{ biodegradation_wood_chips_emissions }}</td>
+            <td>tCO2e</td>
+        </tr>
+        <tr>
+            <td>Combustion</td>
+            <td>Wood Chips</td>
+            <td>{{ combustion_wood_chips_emissions }}</td>
+            <td>tCO2e</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>Total</strong></td>
+            <td><strong>{{ total_scope1_emissions }}</strong></td>
+            <td>tCO2e</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>12.1.3. Scope 2 GHG Emissions (GRI 305-2-a, b, c, d, e, f, g)</h4>
+<p>Scope 2 emissions are indirect GHG emissions from the consumption of purchased electricity, heat, or steam. We aim to
+    reduce Scope 2 emissions by increasing our use of renewable energy and improving energy efficiency.</p>
+
+<h4>12.1.4. Scope 3 GHG Emissions (GRI 305-3-a, b, c, d, e, f, g)</h4>
+<p>Scope 3 emissions include all other indirect emissions in our value chain, such as those from suppliers and product
+    use. We collaborate with suppliers to reduce these emissions and support initiatives that encourage sustainable
+    practices throughout our supply chain.</p>
+
+<h5>Top Emissions by Source</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Source</th>
+            <th>% Contribution</th>
+            <th>Total Emissions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>Business Travel</td>
+            <td>{{ business_travel_percentage }}%</td>
+            <td>{{ business_travel_emissions }}</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Grid Electricity</td>
+            <td>{{ grid_electricity_percentage }}%</td>
+            <td>{{ grid_electricity_emissions }}</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Refrigerant R32</td>
+            <td>{{ refrigerant_r32_percentage }}%</td>
+            <td>{{ refrigerant_r32_emissions }}</td>
+        </tr>
+        <!-- Add more sources as needed -->
+    </tbody>
+</table>
+
+<h5>Top Emissions by Location</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Location</th>
+            <th>% Contribution</th>
+            <th>Total Emissions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>Location C</td>
+            <td>{{ location_c_percentage }}%</td>
+            <td>{{ location_c_emissions }}</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Location Y</td>
+            <td>{{ location_y_percentage }}%</td>
+            <td>{{ location_y_emissions }}</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Location A</td>
+            <td>{{ location_a_percentage }}%</td>
+            <td>{{ location_a_emissions }}</td>
+        </tr>
+        <!-- Add more locations as needed -->
+    </tbody>
+</table>
+
+<h5>Emissions by Scope</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Scope</th>
+            <th>% Contribution</th>
+            <th>Total Emissions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>Scope 2</td>
+            <td>51%</td>
+            <td>{{ scope2_emissions }}</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Scope 3</td>
+            <td>38%</td>
+            <td>{{ scope3_emissions }}</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Scope 1</td>
+            <td>11%</td>
+            <td>{{ scope1_emissions }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h4>12.1.5. GHG Emission Intensity (GRI 305-4-a, b, c, d)</h4>
+<p>We track GHG emission intensity to understand our emissions in relation to our business growth and efficiency
+    improvements.</p>
+<p><em>Note: GHG emission intensity screen is not yet integrated into the platform.</em></p>
+
+<h4>12.1.6. Reduction in GHG Emissions (GRI 305-5-a, b, c, d, e)</h4>
+<p>Our efforts to reduce GHG emissions include investing in energy-efficient equipment, optimizing production processes,
+    and sourcing renewable energy. We set ambitious reduction targets and report our progress annually.</p>
+<p>(Initiatives taken by an organization to reduce emissions can be represented with graphics)</p>
+
+<hr>
+
+<h4>12.1.7. Ozone Depleting Substances (GRI 305-6-a, b, c, d)</h4>
+<p>We are committed to eliminating the use of ozone-depleting substances (ODS) in our operations. We track and report
+    our use of ODS and have implemented measures to phase out their use in line with international agreements.</p>
+<p>(Data on ODS can be represented in graphical form, e.g., bar graphs, pie charts, etc.)</p>

@@ -1,0 +1,209 @@
+<!-- energy_management.html -->
+
+<h2>12.4. Energy</h2>
+
+<h4>12.4.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
+<hr>
+
+<h4>12.4.2. Energy Consumption Within the Organization (GRI 302-1-a, b, c, d, e, f, g)</h4>
+<p>We monitor and report our energy consumption within our operations, implementing energy-saving measures and
+    optimizing our processes to reduce usage.</p>
+
+<h5>Fuel Consumption within the Organization from Renewable Sources</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Energy Type</th>
+            <th>Source</th>
+            <th>Energy Consumption</th>
+            <th>Units</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for energy in renewable_energy_consumption %}
+        <tr>
+            <td>{{ energy.type }}</td>
+            <td>{{ energy.source }}</td>
+            <td>{{ energy.consumption }}</td>
+            <td>GJ</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Total Energy Consumption</strong></td>
+            <td><strong>{{ total_renewable_energy_consumption }}</strong></td>
+            <td>GJ</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Fuel Consumption within the Organization from Non-Renewable Sources</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Energy Type</th>
+            <th>Source</th>
+            <th>Energy Consumption</th>
+            <th>Units</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for energy in non_renewable_energy_consumption %}
+        <tr>
+            <td>{{ energy.type }}</td>
+            <td>{{ energy.source }}</td>
+            <td>{{ energy.consumption }}</td>
+            <td>GJ</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Total Energy Consumption</strong></td>
+            <td><strong>{{ total_non_renewable_energy_consumption }}</strong></td>
+            <td>GJ</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Total Energy Consumption within the Organization</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Type of Energy Consumption</th>
+            <th>Consumption</th>
+            <th>Units</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for consumption in total_energy_consumption %}
+        <tr>
+            <td>{{ consumption.type }}</td>
+            <td>{{ consumption.consumption }}</td>
+            <td>GJ</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Total Energy Consumption within the Organization</strong></td>
+            <td><strong>{{ total_energy_consumption_within_org }}</strong></td>
+            <td>GJ</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h4>12.4.3. Energy Consumption Outside of the Organization (GRI 302-2-a, b, c)</h4>
+<p>We also consider energy consumption outside our direct operations, such as in our supply chain and product use. We
+    work with suppliers and customers to promote energy efficiency throughout our value chain.</p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Energy Type</th>
+            <th>Purpose</th>
+            <th>Consumption</th>
+            <th>Units</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for energy in energy_consumption_outside %}
+        <tr>
+            <td>{{ energy.type }}</td>
+            <td>{{ energy.purpose }}</td>
+            <td>{{ energy.consumption }}</td>
+            <td>GJ</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Total Energy Consumption Outside the Organization</strong></td>
+            <td><strong>{{ total_energy_consumption_outside_org }}</strong></td>
+            <td>GJ</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h4>12.4.4. Energy Intensity (GRI 302-3-a, b, c, d)</h4>
+<p>Energy intensity measures our energy consumption relative to our production output. By tracking this metric, we can
+    assess our energy efficiency and identify opportunities for improvement.</p>
+
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Energy Intensity</th>
+            <th>Energy Quantity</th>
+            <th>Organization Metric</th>
+            <th>Energy Intensity Units</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for intensity in energy_intensity %}
+        <tr>
+            <td>{{ intensity.energy_quantity }}</td>
+            <td>{{ intensity.metric }}</td>
+            <td>{{ intensity.intensity }}</td>
+            <td>{{ intensity.unit }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<h4>12.4.5. Reduction in Energy Consumption (GRI 302-4-a, b, c, d, 302-5-a, b, c)</h4>
+<p>We set targets for reducing energy consumption and implement various initiatives, such as upgrading equipment,
+    improving insulation, and optimizing processes to achieve these goals.</p>
+
+<h5>Reduction of Energy Consumption</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Type of Intervention</th>
+            <th>Energy Type</th>
+            <th>Energy Reduction</th>
+            <th>Base Year</th>
+            <th>Methodology</th>
+            <th>Quantity</th>
+            <th>Units</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reduction in energy_reductions %}
+        <tr>
+            <td>{{ reduction.intervention_type }}</td>
+            <td>{{ reduction.energy_type }}</td>
+            <td>{{ reduction.reduction }}</td>
+            <td>{{ reduction.base_year }}</td>
+            <td>{{ reduction.methodology }}</td>
+            <td>{{ reduction.quantity }}</td>
+            <td>GJ</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h5>Reduction in Energy Requirements of Products and Services</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Name of Product/Service</th>
+            <th>Reduction in Energy Consumption (kWh)</th>
+            <th>Reduction in Energy Consumption (GJ)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in energy_requirements_reduction %}
+        <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.reduction_kwh }}</td>
+            <td>{{ product.reduction_gj }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td><strong>Total Reduction</strong></td>
+            <td><strong>{{ total_reduction_kwh }}</strong></td>
+            <td><strong>{{ total_reduction_gj }}</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>

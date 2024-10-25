@@ -1,0 +1,117 @@
+<!-- diversity_inclusion.html -->
+
+<h2>13.4. Diversity, Inclusion (GRI 405-2-b)</h2>
+
+<h4>13.4.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
+<hr>
+<p>[Details on how the organization manages diversity and inclusion, including initiatives, policies, and programs to
+    foster an inclusive environment and promote diversity in the workplace.]</p>
+
+<h4>13.4.2. Diversity of Governance Bodies and Employees (GRI 405-1-a, b)</h4>
+<p>We believe in the power of diversity and strive to create an inclusive workplace. Our commitment to diversity is
+    reflected in the composition of our governance bodies and workforce.</p>
+
+<h5>Diversity Representation in Governance Bodies</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Gender</th>
+            <th>Age Group</th>
+            <th>Diversity Groups</th>
+            <th>Vulnerable Groups</th>
+            <th>Type of Vulnerable Group (No. of Individuals)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Male</td>
+            <td>{{ governance_bodies.male.age_group }}</td>
+            <td>{{ governance_bodies.male.diversity_group }}</td>
+            <td>{{ governance_bodies.male.vulnerable_group }}</td>
+            <td>{{ governance_bodies.male.vulnerable_group_type }}</td>
+        </tr>
+        <tr>
+            <td>Female</td>
+            <td>{{ governance_bodies.female.age_group }}</td>
+            <td>{{ governance_bodies.female.diversity_group }}</td>
+            <td>{{ governance_bodies.female.vulnerable_group }}</td>
+            <td>{{ governance_bodies.female.vulnerable_group_type }}</td>
+        </tr>
+        <tr>
+            <td>Non-Binary</td>
+            <td>{{ governance_bodies.nonbinary.age_group }}</td>
+            <td>{{ governance_bodies.nonbinary.diversity_group }}</td>
+            <td>{{ governance_bodies.nonbinary.vulnerable_group }}</td>
+            <td>{{ governance_bodies.nonbinary.vulnerable_group_type }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h5>Diversity of Employees by Category</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Employee Category</th>
+            <th>Gender</th>
+            <th>Age Group</th>
+            <th>Diversity Groups</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee in employee_diversity %}
+        <tr>
+            <td>{{ employee.category }}</td>
+            <td>{{ employee.gender }}</td>
+            <td>{{ employee.age_group }}</td>
+            <td>{{ employee.diversity_group }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.4.3. Remuneration (GRI 405-2-a)</h4>
+<p>We ensure equitable remuneration practices across our organization. Our compensation policies are designed to
+    eliminate pay disparities and promote fairness.</p>
+
+<h5>Ratio of Basic Salary of Women to Men</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Employee Category</th>
+            <th>Gender</th>
+            <th>Significant Location of Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for salary in salary_ratio %}
+        <tr>
+            <td>{{ salary.category }}</td>
+            <td>{{ salary.gender }}</td>
+            <td>{{ salary.location }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h5>Ratio of Remuneration of Women to Men</h5>
+<table border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Employee Category</th>
+            <th>Gender</th>
+            <th>Significant Location of Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for remuneration in remuneration_ratio %}
+        <tr>
+            <td>{{ remuneration.category }}</td>
+            <td>{{ remuneration.gender }}</td>
+            <td>{{ remuneration.location }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><em>Note: This section's data can also be represented using graphics or visual charts to illustrate gender and
+        diversity representation in governance bodies and workforce, as well as remuneration data.</em></p>
