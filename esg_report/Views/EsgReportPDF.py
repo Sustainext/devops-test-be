@@ -6,13 +6,15 @@ from sustainapp.models import Report
 import time
 from xhtml2pdf import pisa
 from esg_report.services.screen_one_service import CeoMessageService
-from esg_report.models.ScreenOne import CeoMessage
+from esg_report.services.screen_two_service import AboutTheCompanyAndOperationsService
 from django.forms import model_to_dict
+from authentication.models import CustomUser
 
 
 class ESGReportPDFView(View):
     def get(self, request, *args, **kwargs):
         start_time = time.time()
+        user = CustomUser.objects.get(id=1)
 
         pk = self.kwargs.get("pk")
         try:
@@ -26,11 +28,13 @@ class ESGReportPDFView(View):
             )
         ceo_message = CeoMessageService.get_ceo_message_by_report(report)
         dict_ceo_message = model_to_dict(ceo_message)
-
+        about_the_company_service = AboutTheCompanyAndOperationsService(pk, user)
+        about_the_company = about_the_company_service.get_complete_report_data()
         # Prepare the context for rendering the PDF template
         context = {
             "report": report,
-            "ceo_message": dict_ceo_message,
+            # "ceo_message": dict_ceo_message,
+            "about_the_company": about_the_company,
             "pk": pk,
         }
 
@@ -40,6 +44,7 @@ class ESGReportPDFView(View):
             template = get_template(template_path)
             html = template.render(context, request)
         except Exception as e:
+            print(f"Error rendering the PDF template: {e}")
             return HttpResponse("Error rendering the PDF template.", status=500)
 
         response = HttpResponse(content_type="application/pdf")
