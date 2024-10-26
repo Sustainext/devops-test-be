@@ -187,7 +187,7 @@ def OrgPreference(request):
             return JsonResponse(
                 {"error": "Organization not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        org_data = Organization.objects.filter(id=org.id).first()
+        org_data = org.first()
         if org_data:
             # Fetching related data for organization
             sdgs = []
