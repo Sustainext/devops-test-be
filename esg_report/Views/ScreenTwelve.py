@@ -380,10 +380,10 @@ class ScreenTwelveAPIView(APIView):
                 "energy_analyse": self.get_energy_analyse(),
                 "waste_analyse": self.get_waste_analyse(),
                 "303-2a-profile_receiving_waterbody": collect_data_and_differentiate_by_location(
-                    data_points=self.data_points, slug=self.slugs[33]
+                    data_points=self.data_points.filter(path__slug=self.slugs[33])
                 ),
                 "303-2a-management_water_discharge": collect_data_and_differentiate_by_location(
-                    data_points=self.data_points, slug=self.slugs[34]
+                    data_points=self.data_points.filter(path__slug=self.slugs[34])
                 ),
             }
         )
