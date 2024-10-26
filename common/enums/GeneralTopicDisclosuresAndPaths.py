@@ -1,12 +1,12 @@
 GENERAL_DISCLOSURES_AND_PATHS = {
     "Org Details": {
-        "indicator": "2-1",
+        "indicator": "GRI 2-1",
         "subindicators": [
             ("Organizational Details", "gri-general-org_details_2-1a-1b-1c-1d")
         ],
     },
     "Entities": {
-        "indicator": "2-2",
+        "indicator": "GRI 2-2",
         "subindicators": [
             ("List of entities", "gri-general-entities-list_of_entities-2-2-a"),
             (
@@ -17,7 +17,7 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
     },
     "Report Details": {
-        "indicator": "2-3",
+        "indicator": "GRI 2-3",
         "subindicators": [
             (
                 "Reporting period and frequency",
@@ -32,13 +32,13 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
     },
     "Restatement": {
-        "indicator": "2-4",
+        "indicator": "GRI 2-4",
         "subindicators": [
             ("Restatements of Information", "gri-general-restatements-2-4-a")
         ],
     },
     "Assurance": {
-        "indicator": "2-5",
+        "indicator": "GRI 2-5",
         "subindicators": [
             (
                 "Policy and practice: External assurance",
@@ -55,7 +55,7 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
     },
     "Business Details": {
-        "indicator": "2-6",
+        "indicator": "GRI 2-6",
         "subindicators": [
             (
                 "Organisation's sector/sectors",
@@ -70,7 +70,7 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
     },
     "Workforce-Employees": {
-        "indicator": "2-7",
+        "indicator": "GRI 2-7",
         "subindicators": [
             (
                 "Total number of employees - permanent employees",
@@ -108,7 +108,7 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
     },
     "Workforce-Other Workers": {
-        "indicator": "2-8",
+        "indicator": "GRI 2-8",
         "subindicators": [
             (
                 "Workers who are not Employees",
@@ -125,7 +125,7 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
     },
     "Laws and Regulation": {
-        "indicator": "2-27",
+        "indicator": "GRI 2-27",
         "subindicators": [
             (
                 "Instance of non-compliance",
@@ -146,7 +146,7 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
     },
     "Membership & Association": {
-        "indicator": "2-28",
+        "indicator": "GRI 2-28",
         "subindicators": [
             (
                 "Report industry associations, other membership associations, and national or international advocacy organizations in which it participates in a significant role",
@@ -155,7 +155,7 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
     },
     "Stakeholder Engagement": {
-        "indicator": "2-29",
+        "indicator": "GRI 2-29",
         "subindicators": [
             (
                 "Describe the organisation's approach to engaging with stakeholders, including:",
@@ -168,7 +168,7 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
     },
     "Collective Bargaining Agreements": {
-        "indicator": "2-30",
+        "indicator": "GRI 2-30",
         "subindicators": [
             (
                 "Percentage of total employees covered by collective bargaining agreements",
