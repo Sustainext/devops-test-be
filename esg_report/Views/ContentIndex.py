@@ -8,7 +8,16 @@ from materiality_dashboard.models import (
     Disclosure,
 )
 from esg_report.models.StatementOfUse import StatementOfUseModel
+from esg_report.models.ContentIndexRequirementOmissionReason import (
+    ContentIndexRequirementOmissionReason,
+)
+from esg_report.Serializer.ContentIndexRequirementOmissionReasonsSerializer import (
+    ContentIndexRequirementOmissionReasonsSerializer,
+)
 from esg_report.Serializer.StatementOfUseSerializer import StatementOfUseSerializer
+from esg_report.Serializer.ContentIndexDataValidationSerializer import (
+    DataListSerializer,
+)
 from datametric.models import Path
 from sustainapp.models import Report
 from esg_report.utils import generate_disclosure_status
@@ -27,6 +36,17 @@ class GetContentIndex(APIView):
         return Response(
             generate_disclosure_status(self.report), status=status.HTTP_200_OK
         )
+
+    def put(self, request, report_id: int, format=None):
+        try:
+            self.report = Report.objects.get(id=report_id)
+        except Report.DoesNotExist:
+            return Response(
+                {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = DataListSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response("Ok", status=status.HTTP_200_OK)
 
 
 class StatementOfUseAPI(APIView):

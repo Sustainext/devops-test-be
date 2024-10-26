@@ -107,5 +107,6 @@ urlpatterns = [
         StatementOfUseAPI.as_view(),
         name="statement_of_use",
     ),
+
 ]
 urlpatterns += router.urls
