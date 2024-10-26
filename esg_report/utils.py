@@ -429,7 +429,7 @@ def get_which_general_disclosure_is_empty(report: Report):
 
     empty_sub_indicators = []
     for disclosure, indicator in general_disclosures_and_paths.items():
-        for sub_indicator in indicator:
-            if not data_points.filter(path__slug=sub_indicator[1]).exists():
-                empty_sub_indicators.append(sub_indicator)
+        for sub_indicator_and_path in indicator:
+            if not data_points.filter(path__slug=sub_indicator_and_path[1]).exists():
+                empty_sub_indicators.append(sub_indicator_and_path)
     return empty_sub_indicators
