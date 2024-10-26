@@ -303,7 +303,7 @@ def UpdatePreference(request):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        org = user_org.organization
+        org = user_org.organization.first()
 
         queryset_model = MODEL_MAP.get(preference)
         if not queryset_model:
