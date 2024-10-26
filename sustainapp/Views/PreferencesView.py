@@ -105,7 +105,7 @@ def TypeOfPreference(request):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        org = user_org.organization
+        org = user_org.organization.first()
 
         if preference == "sdg":
             linked_prefrerence = org.sdg.all()
