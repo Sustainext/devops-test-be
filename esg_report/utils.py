@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from rest_framework.test import APIRequestFactory
 from django.urls import reverse, resolve
 from common.enums.GeneralTopicDisclosuresAndPaths import GENERAL_DISCLOSURES_AND_PATHS
+import random
 import datetime
 import logging
 
@@ -433,3 +434,42 @@ def get_which_general_disclosure_is_empty(report: Report):
             if not data_points.filter(path__slug=sub_indicator_and_path[1]).exists():
                 empty_sub_indicators.append(sub_indicator_and_path)
     return empty_sub_indicators
+
+
+def generate_disclosure_status(report: Report):
+    result = []
+    data_points = get_data_points_as_per_report(report=report)
+    for section_title, data in GENERAL_DISCLOSURES_AND_PATHS.items():
+        indicator = data["indicator"]
+        subindicators = data["subindicators"]
+        # Collect all slugs from subindicators
+        slugs = []
+        subindicator_titles = []
+        for sub in subindicators:
+            if isinstance(sub, tuple):
+                # It's a tuple: (title, slug)
+                subindicator_titles.append(sub[0])
+                slug = sub[1]
+                slugs.append(slug)
+            elif isinstance(sub, str):
+                # It's a slug without a title
+                slugs.append(sub)
+            else:
+                continue  # Skip if it's neither a tuple nor a string
+        # Check if any slug has data
+        is_filled = all(
+            DataPoint.objects.filter(path__slug=slug).exists() for slug in slugs
+        )
+        # Generate random page number
+        page_number = f"Page {random.randint(1, 100)}"
+        # Append the dictionary to the result list
+        result.append(
+            {
+                "key": indicator,
+                "title": section_title,
+                "page_number": page_number,
+                "gri_sector_no": None,
+                "is_filled": is_filled,
+            }
+        )
+    return result
