@@ -11,6 +11,7 @@ from esg_report.services.screen_three_service import MissionVisionValuesService
 from esg_report.services.screen_four_service import SustainabilityRoadmapService
 from esg_report.services.screen_five_service import AwardsAndRecognitionService
 from esg_report.services.screen_six_service import StakeholderEngagementService
+from esg_report.services.screen_seven_service import AboutTheReportService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
 
@@ -48,7 +49,8 @@ class ESGReportPDFView(View):
                 pk, user
             )
         )
-        # print(stakeholder_engagement)
+        about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
+        print(about_the_report)
         # Prepare the context for rendering the PDF template
         context = {
             "report": report,
@@ -58,6 +60,7 @@ class ESGReportPDFView(View):
             # "sustainability_roadmap": sustainability_roadmap,
             # "awards_and_recognition": awards_and_recognition,
             # "stakeholder_engagement": stakeholder_engagement,
+            "about_the_report": about_the_report,
             "pk": pk,
         }
 
