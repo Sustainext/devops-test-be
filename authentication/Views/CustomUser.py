@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from authentication.serializers.CustomUserSerializer import CustomUserSerializer
 from authentication.serializers.CustomUserListSerializer import CustomUserListSerializer
+from sustainapp.models import Userorg, Organization
 
 CustomUser = get_user_model()
 
@@ -15,6 +16,7 @@ class CreateCustomUserView(APIView):
     def post(self, request):
         mutable_data = request.data.copy()
         mutable_data["client"] = request.user.client.id
+        organization_ids = mutable_data.get("orgs", [])
 
         serializer = CustomUserSerializer(data=mutable_data)
 
@@ -40,6 +42,18 @@ class CreateCustomUserView(APIView):
                 primary=True,  # Set the email as the primary email
                 verified=True,  # Initially set as unverified
             )
+            if organization_ids:
+                # Create or retrieve Userorg instance
+                userorg, created = Userorg.objects.get_or_create(
+                    user=user, client=user.client
+                )
+
+                # Fetch organizations based on provided IDs
+                organizations = Organization.objects.filter(id__in=organization_ids)
+
+                # Link organizations to the Userorg instance
+                userorg.organization.set(organizations)
+                userorg.save()
 
             return Response(
                 {"message": "User Created Successfully"}, status=status.HTTP_201_CREATED

@@ -556,7 +556,7 @@ class CorporateViewset(viewsets.ModelViewSet):
     def list(self, request):
         organization_id = request.query_params.get("organization_id")
         if organization_id:
-            corporate_entities = Corporateentity.objects.filter(
+            corporate_entities = request.user.corps.filter(
                 organization_id=organization_id
             )
             if corporate_entities.exists():
@@ -711,7 +711,7 @@ def corporategetonly(request):
 @permission_classes([IsAuthenticated])
 def orggetonly(request):
     try:
-        org = Organization.objects.filter(client_id=request.client)
+        org = request.user.orgs.all()
         org_data = OrganizationOnlySerializer(org, many=True).data
         return Response(org_data)
     except Exception as e:
