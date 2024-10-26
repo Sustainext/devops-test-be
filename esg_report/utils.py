@@ -468,7 +468,7 @@ def generate_disclosure_status(report: Report):
                 "is_filled": is_filled,
                 "omission": [
                     {
-                        "req_omitted": None,
+                        "req_omitted": f"{subindicators} {section_title}",
                         "reason": None,
                         "explanation": None,
                     }
