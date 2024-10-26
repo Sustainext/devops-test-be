@@ -469,7 +469,7 @@ def generate_disclosure_status(report: Report):
                 "omission": [
                     {
                         "req_omitted": (
-                            f"{subindicators}"
+                            f"{indicator}"
                             if not is_filled
                             else None
                         ),
