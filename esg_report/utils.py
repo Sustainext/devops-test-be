@@ -359,12 +359,12 @@ def create_validation_method_for_report_creation(report: Report):
             "Restatement",
             "Assurance",
         ]
-        gri_report_info_disclosures_and_paths = []
+        subindicators = []
         for topic in general_material_topics:
-            for disclosures in GENERAL_DISCLOSURES_AND_PATHS[topic]:
-                gri_report_info_disclosures_and_paths.extend(disclosures["subindicators"])
+            if topic in GENERAL_DISCLOSURES_AND_PATHS:
+                subindicators.extend(GENERAL_DISCLOSURES_AND_PATHS[topic]["subindicators"])
         data_points = get_data_points_as_per_report(report=report)
-        for disclosure, path_slug in gri_report_info_disclosures_and_paths:
+        for disclosure, path_slug in subindicators:
             if not data_points.filter(path__slug=path_slug).exists():
                 report.delete()
                 raise DRFValidationError(
