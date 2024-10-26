@@ -16,6 +16,7 @@ from esg_report.Views.ScreenThirteen import ScreenThirteenView
 from esg_report.Views.ScreenFourteen import ScreenFourteenAPIView
 from esg_report.Views.EsgReportPDF import ESGReportPDFView
 from esg_report.Views.ScreenFifteen import ScreenFifteenAPIView
+from esg_report.Views.ContentIndex import GetContentIndex, StatementOfUseAPI
 
 router = DefaultRouter()
 
@@ -95,6 +96,16 @@ urlpatterns = [
         "esg_report_pdf/<int:pk>/",
         ESGReportPDFView.as_view(),
         name="esg_report_pdf",
+    ),
+    path(
+        "content_index/<int:report_id>/",
+        GetContentIndex.as_view(),
+        name="content_index",
+    ),
+    path(
+        "statement_of_use/<int:report_id>/",
+        StatementOfUseAPI.as_view(),
+        name="statement_of_use",
     ),
 ]
 urlpatterns += router.urls

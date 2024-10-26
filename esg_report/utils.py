@@ -437,38 +437,36 @@ def get_which_general_disclosure_is_empty(report: Report):
 
 
 def generate_disclosure_status(report: Report):
-    result = []
     data_points = get_data_points_as_per_report(report=report)
+    result = []
     for section_title, data in GENERAL_DISCLOSURES_AND_PATHS.items():
         indicator = data["indicator"]
         subindicators = data["subindicators"]
+
         # Collect all slugs from subindicators
         slugs = []
-        subindicator_titles = []
-        for sub in subindicators:
-            if isinstance(sub, tuple):
-                # It's a tuple: (title, slug)
-                subindicator_titles.append(sub[0])
-                slug = sub[1]
-                slugs.append(slug)
-            elif isinstance(sub, str):
-                # It's a slug without a title
-                slugs.append(sub)
-            else:
-                continue  # Skip if it's neither a tuple nor a string
+        for title, slug in subindicators:
+            slugs.append(slug)
+
         # Check if any slug has data
         is_filled = all(
-            DataPoint.objects.filter(path__slug=slug).exists() for slug in slugs
+            data_points.filter(path__slug=slug).exists() for slug in slugs
         )
-        # Generate random page number
-        page_number = f"Page {random.randint(1, 100)}"
+
+        # Set page_number and gri_sector_no to None as per your requirements
+        page_number = None
+        gri_sector_no = None
+
+        # Use the section title as the title
+        title = section_title
+
         # Append the dictionary to the result list
         result.append(
             {
                 "key": indicator,
-                "title": section_title,
+                "title": title,
                 "page_number": page_number,
-                "gri_sector_no": None,
+                "gri_sector_no": gri_sector_no,
                 "is_filled": is_filled,
             }
         )
