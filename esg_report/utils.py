@@ -1,5 +1,5 @@
 from sustainapp.models import Report
-from datametric.models import RawResponse, DataMetric, DataPoint
+from datametric.models import RawResponse, DataPoint
 from materiality_dashboard.models import MaterialityAssessment
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.db.models import Q, F, ExpressionWrapper, DurationField
@@ -7,11 +7,9 @@ from datetime import timedelta
 from django.db.models.functions import Greatest, Least
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIRequestFactory
-from rest_framework.request import Request
-from rest_framework.response import Response
-from django.http import HttpRequest
 from django.urls import reverse, resolve
 from common.enums.GeneralTopicDisclosuresAndPaths import GENERAL_DISCLOSURES_AND_PATHS
+import random
 import datetime
 import logging
 
@@ -371,6 +369,8 @@ def create_validation_method_for_report_creation(report: Report):
                         "detail": f"Data for disclosure {disclosure} does not exist for the report."
                     }
                 )
+
+
 def calling_analyse_view_with_params_for_same_year(view_url, request, report):
     """
     Calls another internal API view with the JWT token from the original request.
@@ -419,3 +419,55 @@ def calling_analyse_view_with_params_for_same_year(view_url, request, report):
     except Exception as e:
         logger.warning(f"An error occurred: {str(e)}", exc_info=True)
         return {"detail": f"An error occurred: {str(e)}"}
+
+
+def get_which_general_disclosure_is_empty(report: Report):
+    """
+    Retrieves the general disclosures that are empty for a given report.
+    """
+    data_points = get_data_points_as_per_report(report=report)
+    general_disclosures_and_paths = GENERAL_DISCLOSURES_AND_PATHS
+
+    empty_sub_indicators = []
+    for disclosure, indicator in general_disclosures_and_paths.items():
+        for sub_indicator_and_path in indicator:
+            if not data_points.filter(path__slug=sub_indicator_and_path[1]).exists():
+                empty_sub_indicators.append(sub_indicator_and_path)
+    return empty_sub_indicators
+
+
+def generate_disclosure_status(report: Report):
+    data_points = get_data_points_as_per_report(report=report)
+    result = []
+    for section_title, data in GENERAL_DISCLOSURES_AND_PATHS.items():
+        indicator = data["indicator"]
+        subindicators = data["subindicators"]
+
+        # Collect all slugs from subindicators
+        slugs = []
+        for title, slug in subindicators:
+            slugs.append(slug)
+
+        # Check if any slug has data
+        is_filled = all(
+            data_points.filter(path__slug=slug).exists() for slug in slugs
+        )
+
+        # Set page_number and gri_sector_no to None as per your requirements
+        page_number = None
+        gri_sector_no = None
+
+        # Use the section title as the title
+        title = section_title
+
+        # Append the dictionary to the result list
+        result.append(
+            {
+                "key": indicator,
+                "title": title,
+                "page_number": page_number,
+                "gri_sector_no": gri_sector_no,
+                "is_filled": is_filled,
+            }
+        )
+    return result
