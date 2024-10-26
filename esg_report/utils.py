@@ -449,9 +449,7 @@ def generate_disclosure_status(report: Report):
             slugs.append(slug)
 
         # Check if any slug has data
-        is_filled = all(
-            data_points.filter(path__slug=slug).exists() for slug in slugs
-        )
+        is_filled = all(data_points.filter(path__slug=slug).exists() for slug in slugs)
 
         # Set page_number and gri_sector_no to None as per your requirements
         page_number = None
@@ -468,6 +466,13 @@ def generate_disclosure_status(report: Report):
                 "page_number": page_number,
                 "gri_sector_no": gri_sector_no,
                 "is_filled": is_filled,
+                "omission": [
+                    {
+                        "req_omitted": None,
+                        "reason": None,
+                        "explanation": None,
+                    }
+                ],
             }
         )
     return result
