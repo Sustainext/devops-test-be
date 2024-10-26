@@ -7,6 +7,10 @@ import time
 from xhtml2pdf import pisa
 from esg_report.services.screen_one_service import CeoMessageService
 from esg_report.services.screen_two_service import AboutTheCompanyAndOperationsService
+from esg_report.services.screen_three_service import MissionVisionValuesService
+from esg_report.services.screen_four_service import SustainabilityRoadmapService
+from esg_report.services.screen_five_service import AwardsAndRecognitionService
+from esg_report.services.screen_six_service import StakeholderEngagementService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
 
@@ -30,11 +34,30 @@ class ESGReportPDFView(View):
         dict_ceo_message = model_to_dict(ceo_message)
         about_the_company_service = AboutTheCompanyAndOperationsService(pk, user)
         about_the_company = about_the_company_service.get_complete_report_data()
+        mission_vision_values = (
+            MissionVisionValuesService.get_mission_vision_values_by_report_id(pk)
+        )
+        sustainability_roadmap = (
+            SustainabilityRoadmapService.get_sustainability_roadmap_by_report_id(pk)
+        )
+        awards_and_recognition = (
+            AwardsAndRecognitionService.get_awards_and_recognition_by_report_id(pk)
+        )
+        stakeholder_engagement = (
+            StakeholderEngagementService.get_stakeholder_engagement_by_report_id(
+                pk, user
+            )
+        )
+        # print(stakeholder_engagement)
         # Prepare the context for rendering the PDF template
         context = {
             "report": report,
             # "ceo_message": dict_ceo_message,
-            "about_the_company": about_the_company,
+            # "about_the_company": about_the_company,
+            # "mission_vision_values": mission_vision_values,
+            # "sustainability_roadmap": sustainability_roadmap,
+            # "awards_and_recognition": awards_and_recognition,
+            # "stakeholder_engagement": stakeholder_engagement,
             "pk": pk,
         }
 
