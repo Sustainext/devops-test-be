@@ -100,7 +100,7 @@ class LocationAdmin(ClientFilterAdminMixin, admin.ModelAdmin):
 
 class UserorgAdmin(admin.ModelAdmin):
 
-    list_display = ["id", "user", "organization"]
+    list_display = ["id", "user"]
 
 
 class SdgAdmin(admin.ModelAdmin):

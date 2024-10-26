@@ -241,13 +241,10 @@ class Userorg(models.Model):
         null=True,
         blank=True,
     )
-    organization = models.ForeignKey(
-        Organization,
-        on_delete=models.CASCADE,
-        related_name="userorg_organization",
-        null=True,
-        blank=True,
+    organization = models.ManyToManyField(
+        Organization, related_name="userorg_organization"
     )
+
     group = models.ForeignKey(
         Group,
         on_delete=models.CASCADE,
@@ -267,16 +264,16 @@ class Userorg(models.Model):
 
     objects = ClientFiltering()
 
-    def clean(self):
-        if self.client.id and self.user.id and self.client.id != self.user.client.id:
-            raise ValidationError("Use and client mismatch")
-        if (
-            self.client.id
-            and self.organization.id
-            and self.client.id != self.organization.client.id
-        ):
-            raise ValidationError("Use and client mismatch")
-        super().clean()
+    # def clean(self):
+    #     if self.client.id and self.user.id and self.client.id != self.user.client.id:
+    #         raise ValidationError("Use and client mismatch")
+    #     if (
+    #         self.client.id
+    #         and self.organization.id
+    #         and self.client.id != self.organization.client.id
+    #     ):
+    #         raise ValidationError("Use and client mismatch")
+    #     super().clean()
 
     def save(self, *args, **kwargs):
         self.clean()
