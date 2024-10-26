@@ -9,9 +9,21 @@ class ContentIndexRequirementOmissionReason(AbstractModel, HistoricalModelMixin)
     Model for storing the reasons for omitting content index requirements.
     """
 
-    report = models.ForeignKey("sustainapp.Report", on_delete=models.CASCADE)
+    report = models.OneToOneField("sustainapp.Report", on_delete=models.CASCADE)
     is_filled = models.BooleanField(default=False)
-    reason = models.CharField(_("reason"), max_length=50)
+    reason = models.CharField(
+        _("reason"),
+        max_length=50,
+        choices=(
+            (
+                "information unavailable/incomplete",
+                "Information unavailable/incomplete",
+            ),
+            ("not applicable", "Not applicable"),
+            ("legal prohibitions", "Legal prohibitions"),
+            ("confidentiality constraints", "Confidentiality constraints"),
+        ),
+    )
     explanation = models.TextField(_("explanation"))
     indicator = models.CharField(_("indicator_number"), max_length=10, db_index=True)
 

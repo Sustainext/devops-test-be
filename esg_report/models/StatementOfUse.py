@@ -4,7 +4,7 @@ from common.models.HistoricalModel import HistoricalModelMixin
 
 
 class StatementOfUseModel(AbstractModel, HistoricalModelMixin):
-    report = models.ForeignKey(
+    report = models.OneToOneField(
         "sustainapp.Report",
         on_delete=models.CASCADE,
         related_name="statement_of_uses",

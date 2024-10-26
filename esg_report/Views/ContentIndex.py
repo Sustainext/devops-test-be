@@ -46,7 +46,19 @@ class GetContentIndex(APIView):
             )
         serializer = DataListSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response("Ok", status=status.HTTP_200_OK)
+        for data in serializer.validated_data:
+            content_index_omission_reason, _ = (
+                ContentIndexRequirementOmissionReason.objects.update_or_create(
+                    report=self.report,
+                    indicator=data["key"],
+                    defaults={
+                        "reason": data["omission"]["reason"],
+                        "explanation": data["omission"]["explanation"],
+                    },
+                )
+            )
+            content_index_omission_reason.save()
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 class StatementOfUseAPI(APIView):

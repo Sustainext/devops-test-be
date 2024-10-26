@@ -1,6 +1,9 @@
 from sustainapp.models import Report
 from datametric.models import RawResponse, DataPoint
 from materiality_dashboard.models import MaterialityAssessment
+from esg_report.models.ContentIndexRequirementOmissionReason import (
+    ContentIndexRequirementOmissionReason,
+)
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.db.models import Q, F, ExpressionWrapper, DurationField
 from datetime import timedelta
@@ -358,8 +361,8 @@ def create_validation_method_for_report_creation(report: Report):
         ]
         gri_report_info_disclosures_and_paths = []
         for topic in general_material_topics:
-            for dislcosure_tuple in GENERAL_DISCLOSURES_AND_PATHS[topic]:
-                gri_report_info_disclosures_and_paths.append(dislcosure_tuple)
+            for disclosures in GENERAL_DISCLOSURES_AND_PATHS[topic]:
+                gri_report_info_disclosures_and_paths.extend(disclosures["subindicators"])
         data_points = get_data_points_as_per_report(report=report)
         for disclosure, path_slug in gri_report_info_disclosures_and_paths:
             if not data_points.filter(path__slug=path_slug).exists():
@@ -457,7 +460,18 @@ def generate_disclosure_status(report: Report):
 
         # Use the section title as the title
         title = section_title
-
+        try:
+            content_index_reason = ContentIndexRequirementOmissionReason.objects.get(
+                report=report
+            )
+            reason = content_index_reason.reason
+            explanation = content_index_reason.explanation
+            is_filled = content_index_reason.is_filled
+        except ContentIndexRequirementOmissionReason.DoesNotExist:
+            content_index_reason = None
+            reason = None
+            explanation = None
+            is_filled = None
         # Append the dictionary to the result list
         result.append(
             {
@@ -468,13 +482,9 @@ def generate_disclosure_status(report: Report):
                 "is_filled": is_filled,
                 "omission": [
                     {
-                        "req_omitted": (
-                            f"{indicator}"
-                            if not is_filled
-                            else None
-                        ),
-                        "reason": None,
-                        "explanation": None,
+                        "req_omitted": (f"{indicator}" if not is_filled else None),
+                        "reason": reason,
+                        "explanation": explanation,
                     }
                 ],
             }
