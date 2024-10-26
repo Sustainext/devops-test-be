@@ -14,3 +14,5 @@ from .ScreenTwelve import ScreenTwelve
 from .ScreenThirteen import ScreenThirteen
 from .ScreenFourteen import ScreenFourteen
 from .ScreenFifteen import ScreenFifteenModel
+from .StatementOfUse import StatementOfUseModel
+from .ContentIndexRequirementOmissionReason import ContentIndexRequirementOmissionReason
