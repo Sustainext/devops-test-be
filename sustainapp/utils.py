@@ -823,3 +823,36 @@ def validation_for_esg_report(report: Report):
             ]
         }
     ]
+
+
+def create_users():
+    from authentication.models import CustomUser
+
+    def bulk_create_users(email_list):
+        users_to_create = []
+        for email in email_list:
+            user = CustomUser(
+                username=email,
+                email=email,
+                work_email=email,
+                is_active=True,
+                is_staff=True,
+                is_superuser=True,
+            )
+            users_to_create.append(user)
+
+        return CustomUser.objects.bulk_create(users_to_create)
+
+    emails = [
+        "ajay.korpal@sustainext.ai",
+        "onkar.bhave@sustainext.ai",
+        "shubham.kanungo@sustainext.ai",
+        "anush.hp@sustainext.ai",
+        "sahana.kv@sustainext.ai",
+        "utsav.pipersaniya@sustainext.ai",
+        "himanshu.banswal@sustainext.ai",
+        "sakthivel.murugan@sustainext.ai",
+        "yashwanth.vanimina@sustainext.ai",
+        "mahinder.singh@sustainext.ai",
+    ]
+    created_users = bulk_create_users(emails)
