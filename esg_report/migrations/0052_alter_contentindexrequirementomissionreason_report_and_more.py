@@ -7,18 +7,23 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sustainapp', '0013_alter_clienttaskdashboard_location'),
-        ('esg_report', '0051_alter_contentindexrequirementomissionreason_unique_together'),
+        ("sustainapp", "0002_remove_userorg_organization_userorg_organization"),
+        (
+            "esg_report",
+            "0051_alter_contentindexrequirementomissionreason_unique_together",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='contentindexrequirementomissionreason',
-            name='report',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='sustainapp.report'),
+            model_name="contentindexrequirementomissionreason",
+            name="report",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="sustainapp.report"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='contentindexrequirementomissionreason',
-            unique_together={('report', 'indicator')},
+            name="contentindexrequirementomissionreason",
+            unique_together={("report", "indicator")},
         ),
     ]

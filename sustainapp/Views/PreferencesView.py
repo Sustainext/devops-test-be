@@ -105,7 +105,7 @@ def TypeOfPreference(request):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        org = user_org.organization
+        org = user_org.organization.first()
 
         if preference == "sdg":
             linked_prefrerence = org.sdg.all()
@@ -187,7 +187,7 @@ def OrgPreference(request):
             return JsonResponse(
                 {"error": "Organization not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        org_data = Organization.objects.filter(id=org.id).first()
+        org_data = org.first()
         if org_data:
             # Fetching related data for organization
             sdgs = []
@@ -303,7 +303,7 @@ def UpdatePreference(request):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        org = user_org.organization
+        org = user_org.organization.first()
 
         queryset_model = MODEL_MAP.get(preference)
         if not queryset_model:

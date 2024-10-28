@@ -13,5 +13,5 @@ class LocationListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Location.objects.filter(client=self.request.client)
+        queryset = self.request.user.locs.filter(client=self.request.client)
         return queryset

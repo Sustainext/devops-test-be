@@ -36,6 +36,7 @@ from sustainapp.Views.OrganisationTaskList import OrganisationTaskDashboardView
 from sustainapp.Views import PreferencesView
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf import settings
+from authentication.admin import client_admin_site
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -103,6 +104,7 @@ urlpatterns = [
     path("sustainapp/", include("sustainapp.urls")),
     path("api/auth/", include("authentication.urls")),
     path("admin/", admin.site.urls),
+    path("client_admin/", client_admin_site.urls),
     path("organization", views.organizationonly, name="organization"),
     path(
         "corporate", views.corporateonly, name="corporateony"

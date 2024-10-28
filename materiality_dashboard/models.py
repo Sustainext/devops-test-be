@@ -26,7 +26,7 @@ class MaterialityAssessment(AbstractModel):
         ("GRI: With Reference to", "GRI: In accordance with"),
     ]
 
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE,default=Client.get_default_client)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     corporate = models.ForeignKey(
         Corporateentity, on_delete=models.SET_NULL, null=True, blank=True

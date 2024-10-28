@@ -1,0 +1,145 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ site_title }} | {{ index_title }}{% endblock %}
+
+{% block branding %}
+<style>
+    /* General styling */
+    #site-name {
+        font-family: 'Arial', sans-serif;
+        font-size: 1.8em;
+        color: #2C8C7D;
+        margin: 0;
+        padding: 0.5em 0;
+    }
+
+    #site-name a {
+        text-decoration: none;
+        color: #2C8C7D;
+        transition: color 0.3s ease;
+        /* Smooth color transition */
+    }
+
+    #site-name a:hover {
+        color: #23756B;
+        /* Darker green-blue */
+    }
+
+    /* Navigation styling */
+    #user-tools {
+        font-family: 'Arial', sans-serif;
+        font-size: 1em;
+        color: #666;
+        margin: 1em 0;
+        text-align: right;
+    }
+
+    #user-tools strong {
+        color: #333;
+    }
+
+    #user-tools a {
+        color: #2C8C7D;
+        text-decoration: none;
+        margin-left: 1em;
+        transition: color 0.3s ease;
+    }
+
+    #user-tools a:hover {
+        color: #23756B;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        #site-name {
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        #user-tools {
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        #user-tools a {
+            display: block;
+            margin: 0.5em 0;
+        }
+    }
+</style>
+
+<h1 id="site-name">
+    <a href="{% url 'client_admin:index' %}">{{ site_header }}</a>
+</h1>
+{% endblock %}
+
+{% block content-title %}
+<style>
+    h1 {
+        font-family: 'Verdana', sans-serif;
+        font-size: 2em;
+        color: #333;
+        margin-bottom: 0.5em;
+    }
+
+    .content-wrapper {
+        padding: 1.5em;
+        background-color: #F4F8F9;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .content-wrapper {
+            padding: 1em;
+        }
+    }
+</style>
+
+<div class="content-wrapper">
+    <h1>{{ index_title }}</h1>
+    <p>Welcome to the Client Admin Dashboard. Use the menu to navigate through your options.</p>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<style>
+    /* Breadcrumb and top navigation */
+    #header {
+        background-color: #23756B;
+        color: white;
+        padding: 0.5em;
+        font-size: 1em;
+    }
+
+    #header a {
+        color: #FFF;
+        text-decoration: none;
+        margin: 0 1em;
+        transition: color 0.3s ease;
+    }
+
+    #header a:hover {
+        color: #A1E0D0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        #header {
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        #header a {
+            display: inline-block;
+            margin: 0.5em 0;
+        }
+    }
+</style>
+
+{% endblock %}

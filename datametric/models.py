@@ -88,7 +88,7 @@ class RawResponse(AbstractModel):
         related_name="raw_responses",
     )
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, default=None, related_name="raw_responses"
+        Client, on_delete=models.CASCADE,  related_name="raw_responses",default=Client.get_default_client
     )
 
     organization = models.ForeignKey(
