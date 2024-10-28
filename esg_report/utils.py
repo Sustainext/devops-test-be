@@ -481,6 +481,7 @@ def generate_disclosure_status(report: Report):
             explanation = content_index_reason.explanation
             is_filled = content_index_reason.is_filled
         except ContentIndexRequirementOmissionReason.DoesNotExist:
+            print()
             content_index_reason = None
             reason = None
             explanation = None
