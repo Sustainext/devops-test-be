@@ -448,12 +448,13 @@ class ReportRetrieveSerializer(serializers.ModelSerializer):
         # Extract and return the date portion of the last_report datetime field
         return obj.last_report.date() if obj.last_report else None
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Report):
         # Override the to_representation method to filter data based on the status
         if (
             instance.status == 1
         ):  # Adjust the condition based on your status filtering requirement
-            return super().to_representation(instance)
+            data = super().to_representation(instance)
+            data["created_by"] = instance.user.username
         else:
             return None
 
