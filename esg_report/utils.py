@@ -118,7 +118,9 @@ def get_data_points_as_per_report(report: Report):
 
 
 def get_materiality_assessment(report):
-    materiality_assessment = MaterialityAssessment.objects.filter(client=report.client)
+    materiality_assessment = MaterialityAssessment.objects.filter(
+        client=report.client
+    ).exclude(status="outdated")
     start_date = report.start_date
     end_date = report.end_date
 
