@@ -20,7 +20,7 @@ class AssignedEmissionTask(APIView):
             .exclude(
                 roles__in=[3, 4]
             )  # Confirm with the team -> 3 completed, 4 -> the task is calculated
-            .filter(task_status__in=["in_progress", "reject"])
+            .filter(task_status__in=["in_progress", "reject", "under_review"])
         )
 
         # STATUS_CHOICES
@@ -56,8 +56,8 @@ class AssignedEmissionTask(APIView):
                         "Category": task["category"],
                         "Subcategory": task["subcategory"],
                         "Activity": task["activity"],
-                        "activity_id": "",
-                        "unit_type": None,
+                        "activity_id": task["activity_id"],
+                        "unit_type": task["unit_type"],
                         "Unit": task["unit1"],
                         "Quantity": (
                             float(task["value1"])
@@ -72,14 +72,22 @@ class AssignedEmissionTask(APIView):
                         ),
                         "file": (
                             {
+                                "name": task["file_data"].get("name"),
+                                "url": task["file_data"].get("url"),
+                                "type": task["file_data"].get("type"),
+                                "size": task["file_data"].get("size"),
+                                "uploadDateTime": task["file_data"].get(
+                                    "uploadDateTime"
+                                ),
+                            }
+                            if task["file_data"]
+                            else {
                                 "name": "",
                                 "url": "",
                                 "type": "",
-                                "size": None,
+                                "size": "",
                                 "uploadDateTime": "",
                             }
-                            if not task["file_data"]
-                            else task["file_data"]
                         ),
                     },
                 }

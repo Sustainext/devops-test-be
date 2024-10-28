@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     dependencies = [
         (
             "esg_report",
-            "0042_alter_historicalscreenfifteenmodel_commitment_statement_and_more",
+            "0002_initial",
         ),
     ]
 

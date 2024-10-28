@@ -1,990 +1,6 @@
 [
   {
     "model": "materiality_dashboard.disclosure",
-    "pk": 41,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.315Z",
-      "updated_at": "2024-09-24T10:27:27.533Z",
-      "identifier": "EnvBioDiversityLandUse304-1",
-      "topic": 3,
-      "description": "304-1 Operational sites owned, leased, managed in, or adjacent to, protected areas and areas of high biodiversity value outside protected areas",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 42,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.318Z",
-      "updated_at": "2024-09-24T10:27:27.554Z",
-      "identifier": "EnvBioDiversityLandUse304-2",
-      "topic": 3,
-      "description": "304-2 Significant impacts of activities, products and services on biodiversity",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 43,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.321Z",
-      "updated_at": "2024-09-24T10:27:27.558Z",
-      "identifier": "EnvBioDiversityLandUse304-3",
-      "topic": 3,
-      "description": "304-3 Habitats protected or restored",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 44,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.325Z",
-      "updated_at": "2024-09-24T10:27:27.565Z",
-      "identifier": "EnvBioDiversityLandUse304-4",
-      "topic": 3,
-      "description": "304-4 IUCN Red List species and national conservation list species with habitats in areas affected by operations",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 45,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.330Z",
-      "updated_at": "2024-09-24T10:27:27.572Z",
-      "identifier": "EnvAirQuality305-6",
-      "topic": 4,
-      "description": "305-6 Emissions of ozone-depleting substances (ODS)",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 46,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.333Z",
-      "updated_at": "2024-09-24T09:21:40.704Z",
-      "identifier": "EnvAirQuality305-7",
-      "topic": 4,
-      "description": "305-7 Nitrogen oxides (NOx), sulfur oxides (SOx), and other significant air emissions",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 47,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.337Z",
-      "updated_at": "2024-09-24T10:27:27.578Z",
-      "identifier": "EnvWaterEffluent303-1",
-      "topic": 5,
-      "description": "303-1 Interactions with water as a shared resource",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 48,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.342Z",
-      "updated_at": "2024-09-24T09:21:40.741Z",
-      "identifier": "EnvWaterEffluent303-2",
-      "topic": 5,
-      "description": "303-2 Management of water discharge-related impacts",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 49,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.346Z",
-      "updated_at": "2024-09-24T09:21:40.744Z",
-      "identifier": "EnvWaterEffluent303-3",
-      "topic": 5,
-      "description": "303-3 Water withdrawal",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 50,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.349Z",
-      "updated_at": "2024-09-24T09:21:40.748Z",
-      "identifier": "EnvWaterEffluent303-4",
-      "topic": 5,
-      "description": "303-4 Water discharge",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 51,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.352Z",
-      "updated_at": "2024-09-24T09:21:40.752Z",
-      "identifier": "EnvWaterEffluent303-5",
-      "topic": 5,
-      "description": "303-5 Water consumption",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 52,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.358Z",
-      "updated_at": "2024-09-24T10:27:27.585Z",
-      "identifier": "EnvRawMaterialSourcing301-1",
-      "topic": 6,
-      "description": "301-1 Materials used by weight or volume",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 53,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.362Z",
-      "updated_at": "2024-09-24T09:21:41.168Z",
-      "identifier": "EnvRawMaterialSourcing301-2",
-      "topic": 6,
-      "description": "301-2 Recycled input materials used",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 54,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.368Z",
-      "updated_at": "2024-09-24T10:27:27.591Z",
-      "identifier": "EnvWasteManagement306-1",
-      "topic": 7,
-      "description": "306-1 Waste generation and significant waste-related impacts",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 55,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.373Z",
-      "updated_at": "2024-09-24T09:21:40.786Z",
-      "identifier": "EnvWasteManagement306-2",
-      "topic": 7,
-      "description": "306-2 Management of significant waste-related impacts",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 56,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.376Z",
-      "updated_at": "2024-09-24T09:21:40.788Z",
-      "identifier": "EnvWasteManagement306-3",
-      "topic": 7,
-      "description": "306-3 Waste generated",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 57,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.379Z",
-      "updated_at": "2024-09-24T09:21:40.793Z",
-      "identifier": "EnvWasteManagement306-4",
-      "topic": 7,
-      "description": "306-4 Waste diverted from disposal",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 58,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.383Z",
-      "updated_at": "2024-09-24T09:21:40.794Z",
-      "identifier": "EnvWasteManagement306-5",
-      "topic": 7,
-      "description": "306-5 Waste directed to disposal",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 59,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.386Z",
-      "updated_at": "2024-09-24T10:27:27.598Z",
-      "identifier": "EnvEnergy302-1",
-      "topic": 8,
-      "description": "302-1 Energy consumption within the organization",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 60,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.390Z",
-      "updated_at": "2024-09-24T09:21:40.816Z",
-      "identifier": "EnvEnergy302-2",
-      "topic": 8,
-      "description": "302-2 Energy consumption outside of the organization",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 61,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.394Z",
-      "updated_at": "2024-09-24T09:21:40.818Z",
-      "identifier": "EnvEnergy302-3",
-      "topic": 8,
-      "description": "302-3 Energy intensity",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 62,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.399Z",
-      "updated_at": "2024-09-24T09:21:40.820Z",
-      "identifier": "EnvEnergy302-4",
-      "topic": 8,
-      "description": "302-4 Reduction of energy consumption",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 63,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.403Z",
-      "updated_at": "2024-09-24T09:21:40.824Z",
-      "identifier": "EnvEnergy302-5",
-      "topic": 8,
-      "description": "302-5 Reductions in energy requirements of products and services",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 64,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.408Z",
-      "updated_at": "2024-09-24T09:21:40.864Z",
-      "identifier": "EnvPkgMaterial301-3",
-      "topic": 9,
-      "description": "301-3 Reclaimed products and their packaging materials",
-      "category": "topic_disclosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 65,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.413Z",
-      "updated_at": "2024-09-24T10:27:27.603Z",
-      "identifier": "EnvSupplyChain308-1",
-      "topic": 10,
-      "description": "308-1 New suppliers that were screened using environmental criteria",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 66,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.416Z",
-      "updated_at": "2024-09-24T09:21:40.829Z",
-      "identifier": "EnvSupplyChain308-2",
-      "topic": 10,
-      "description": "308-2 Negative environmental impacts in the supply chain and actions taken",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 67,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.421Z",
-      "updated_at": "2024-09-24T10:27:27.609Z",
-      "identifier": "EnvFossilFuelGri11",
-      "topic": 11,
-      "description": "GRI 11: Oil and Gas Sector 2021",
-      "category": "True"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 68,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.424Z",
-      "updated_at": "2024-09-24T09:21:40.836Z",
-      "identifier": "EnvFossilFuelGri12",
-      "topic": 11,
-      "description": "GRI 12: Coal Sector 2022",
-      "category": "True"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 69,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.429Z",
-      "updated_at": "2024-09-24T09:21:40.869Z",
-      "identifier": "EnvAquaGri13",
-      "topic": 12,
-      "description": "GRI 13: Agriculture, Aquaculture and Fishing Sectors 2022",
-      "category": "True"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 70,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.436Z",
-      "updated_at": "2024-09-24T10:27:27.615Z",
-      "identifier": "SocHealthSafety403-1",
-      "topic": 15,
-      "description": "403-1 Occupational health and safety management system",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 71,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.440Z",
-      "updated_at": "2024-09-24T09:21:40.914Z",
-      "identifier": "SocHealthSafety403-2",
-      "topic": 15,
-      "description": "403-2 Hazard identification, risk assessment, and incident investigation",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 72,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.443Z",
-      "updated_at": "2024-09-24T09:21:40.917Z",
-      "identifier": "SocHealthSafety403-4",
-      "topic": 15,
-      "description": "403-4 Worker participation, consultation, and communication on occupational health and safety",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 73,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.446Z",
-      "updated_at": "2024-09-24T09:21:40.920Z",
-      "identifier": "SocHealthSafety403-5",
-      "topic": 15,
-      "description": "403-5 Worker training on occupational health and safety",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 74,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.450Z",
-      "updated_at": "2024-09-24T09:21:40.922Z",
-      "identifier": "SocHealthSafety403-6",
-      "topic": 15,
-      "description": "403-6 Promotion of worker health",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 75,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.452Z",
-      "updated_at": "2024-09-24T09:21:40.925Z",
-      "identifier": "SocHealthSafety403-7",
-      "topic": 15,
-      "description": "403-7 Prevention and mitigation of occupational health and safety impacts directly linked by business relationships",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 76,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.456Z",
-      "updated_at": "2024-09-24T09:21:40.928Z",
-      "identifier": "SocHealthSafety403-8",
-      "topic": 15,
-      "description": "403-8 Workers covered by an occupational health and safety management system",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 77,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.459Z",
-      "updated_at": "2024-09-24T09:21:40.932Z",
-      "identifier": "SocHealthSafety403-9",
-      "topic": 15,
-      "description": "403-9 Work-related injuries",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 78,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.462Z",
-      "updated_at": "2024-09-24T09:21:40.935Z",
-      "identifier": "SocHealthSafety403-10",
-      "topic": 15,
-      "description": "403-10 Work-related ill health",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 79,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.466Z",
-      "updated_at": "2024-09-24T10:27:27.622Z",
-      "identifier": "SocCommunityRelation411-1",
-      "topic": 16,
-      "description": "411-1 Incidents of violations involving rights of indigenous peoples",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 80,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.469Z",
-      "updated_at": "2024-09-24T09:21:40.952Z",
-      "identifier": "SocCommunityRelation413-1",
-      "topic": 16,
-      "description": "413-1 Operations with local community engagement, impact assessments, and development programs",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 81,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.472Z",
-      "updated_at": "2024-09-24T09:21:40.954Z",
-      "identifier": "SocCommunityRelation413-2",
-      "topic": 16,
-      "description": "413-2 Operations with significant actual and potential negative impacts on local communities",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 82,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.476Z",
-      "updated_at": "2024-09-24T10:27:27.629Z",
-      "identifier": "SocLabourManagement402-1",
-      "topic": 17,
-      "description": "402-1 Minimum notice periods regarding operational changes",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 83,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.479Z",
-      "updated_at": "2024-09-24T09:21:40.972Z",
-      "identifier": "SocLabourManagement407-1",
-      "topic": 17,
-      "description": "407-1 Operations and suppliers in which the right to freedom of association and collective bargaining may be at risk",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 84,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.481Z",
-      "updated_at": "2024-09-24T09:21:40.976Z",
-      "identifier": "SocLabourManagement409-1",
-      "topic": 17,
-      "description": "409-1 Operations and suppliers at significant risk for incidents of forced or compulsory labor",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 85,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.485Z",
-      "updated_at": "2024-09-24T09:21:40.876Z",
-      "identifier": "SocChildLabour408-1",
-      "topic": 18,
-      "description": "408-1 Operations and suppliers at significant risk for incidents of child labor",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 86,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.489Z",
-      "updated_at": "2024-09-24T10:27:27.636Z",
-      "identifier": "SocEmployment401-1",
-      "topic": 19,
-      "description": "401-1 New employee hires and employee turnover",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 87,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.492Z",
-      "updated_at": "2024-09-24T09:21:40.996Z",
-      "identifier": "SocEmployment401-2",
-      "topic": 19,
-      "description": "401-2 Benefits provided to full-time employees that are not provided to temporary or part-time employees",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 88,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.496Z",
-      "updated_at": "2024-09-24T09:21:41.001Z",
-      "identifier": "SocEmployment401-3",
-      "topic": 19,
-      "description": "401-3 Parental leave",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 89,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.501Z",
-      "updated_at": "2024-09-24T10:27:27.643Z",
-      "identifier": "SocHumanCapitalDevelopment404-1",
-      "topic": 20,
-      "description": "404-1 Average hours of training per year per employee",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 90,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.507Z",
-      "updated_at": "2024-09-24T09:21:41.261Z",
-      "identifier": "SocHumanCapitalDevelopment404-2",
-      "topic": 20,
-      "description": "404-2 Programs for upgrading employee skills and transition assistance programs",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 91,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.512Z",
-      "updated_at": "2024-09-24T09:21:41.266Z",
-      "identifier": "SocHumanCapitalDevelopment404-3",
-      "topic": 20,
-      "description": "404-3 Percentage of employees receiving regular performance and career development reviews",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 92,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.518Z",
-      "updated_at": "2024-09-24T09:21:41.272Z",
-      "identifier": "SocHumanCapitalDevelopment410-1",
-      "topic": 20,
-      "description": "410-1 Security personnel trained in human rights policies or procedures",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 93,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.525Z",
-      "updated_at": "2024-09-24T10:27:27.651Z",
-      "identifier": "SocPrivacyDataSecurity418-1",
-      "topic": 21,
-      "description": "418-1 Substantiated complaints concerning breaches of customer privacy and losses of customer data",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 94,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.530Z",
-      "updated_at": "2024-09-24T09:21:41.289Z",
-      "identifier": "SocProductSafetyQuality416-1",
-      "topic": 22,
-      "description": "416-1 Assessment of the health and safety impacts of product and service categories",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 95,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.533Z",
-      "updated_at": "2024-09-24T09:21:41.295Z",
-      "identifier": "SocProductSafetyQuality416-2",
-      "topic": 22,
-      "description": "416-2 Incidents of non-compliance concerning the health and safety impacts of products and services",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 96,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.539Z",
-      "updated_at": "2024-09-24T10:27:27.658Z",
-      "identifier": "SocMarketingLabeling417-1",
-      "topic": 23,
-      "description": "417-1 Requirements for product and service information and labeling",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 97,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.545Z",
-      "updated_at": "2024-09-24T09:21:41.315Z",
-      "identifier": "SocMarketingLabeling417-2",
-      "topic": 23,
-      "description": "417-2 Incidents of non-compliance concerning product and service information and labeling",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 98,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.550Z",
-      "updated_at": "2024-09-24T09:21:41.319Z",
-      "identifier": "SocMarketingLabeling417-3",
-      "topic": 23,
-      "description": "417-3 Incidents of non-compliance concerning marketing communications",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 99,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.556Z",
-      "updated_at": "2024-09-24T10:27:27.665Z",
-      "identifier": "SocPayEquality405-2",
-      "topic": 24,
-      "description": "405-2 Ratio of basic salary and remuneration of women to men",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 100,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.562Z",
-      "updated_at": "2024-09-24T09:21:41.329Z",
-      "identifier": "SocPayEquality202-1",
-      "topic": 24,
-      "description": "202-1 Ratios of standard entry level wage by gender compared to local minimum wage",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 101,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.570Z",
-      "updated_at": "2024-09-24T09:21:41.198Z",
-      "identifier": "SocHealthCare403-3",
-      "topic": 25,
-      "description": "403-3 Occupational health services",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 102,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.579Z",
-      "updated_at": "2024-09-24T10:27:27.672Z",
-      "identifier": "SocSupplyChainLabour414-1",
-      "topic": 26,
-      "description": "414-1 New suppliers that were screened using social criteria",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 103,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.586Z",
-      "updated_at": "2024-09-24T09:21:41.346Z",
-      "identifier": "SocSupplyChainLabour414-2",
-      "topic": 26,
-      "description": "414-2 Negative social impacts in the supply chain and actions taken",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 104,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.594Z",
-      "updated_at": "2024-09-24T09:21:41.352Z",
-      "identifier": "SocSupplyChainLabour204-1",
-      "topic": 26,
-      "description": "204-1 Proportion of spending on local suppliers",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 105,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.603Z",
-      "updated_at": "2024-09-24T09:21:41.211Z",
-      "identifier": "SocDiversityEqualOpp405-1",
-      "topic": 27,
-      "description": "405-1 Diversity of governance bodies and employees",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 106,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.613Z",
-      "updated_at": "2024-09-24T09:21:41.219Z",
-      "identifier": "SocNonDiscrimination406-1",
-      "topic": 28,
-      "description": "406-1 Incidents of discrimination and corrective actions taken",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 108,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.632Z",
-      "updated_at": "2024-09-24T09:21:41.229Z",
-      "identifier": "GovPolicy415-1",
-      "topic": 30,
-      "description": "415-1 Political contributions",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 109,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.639Z",
-      "updated_at": "2024-09-24T10:27:27.679Z",
-      "identifier": "GovEconomicImpact203-1",
-      "topic": 31,
-      "description": "203-1 Infrastructure investments and services supported",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 110,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.645Z",
-      "updated_at": "2024-09-24T09:21:41.364Z",
-      "identifier": "GovEconomicImpact203-2",
-      "topic": 31,
-      "description": "203-2 Significant indirect economic impacts",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 111,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.651Z",
-      "updated_at": "2024-09-24T10:27:27.688Z",
-      "identifier": "GovEconomicPerformance201-1",
-      "topic": 32,
-      "description": "201-1 Direct economic value generated and distributed",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 112,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.657Z",
-      "updated_at": "2024-09-24T09:21:41.389Z",
-      "identifier": "GovEconomicPerformance201-2",
-      "topic": 32,
-      "description": "201-2 Financial implications and other risks and opportunities due to climate change",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 113,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.663Z",
-      "updated_at": "2024-09-24T09:21:41.396Z",
-      "identifier": "GovEconomicPerformance201-3",
-      "topic": 32,
-      "description": "201-3 Defined benefit plan obligations and other retirement plans",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 114,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.671Z",
-      "updated_at": "2024-09-24T09:21:41.402Z",
-      "identifier": "GovEconomicPerformance201-4",
-      "topic": 32,
-      "description": "201-4 Financial assistance received from government",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 115,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.685Z",
-      "updated_at": "2024-09-24T10:27:27.696Z",
-      "identifier": "GovCorruption205-1",
-      "topic": 33,
-      "description": "205-1 Operations assessed for risks related to corruption",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 116,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.692Z",
-      "updated_at": "2024-09-24T09:21:41.431Z",
-      "identifier": "GovCorruption205-2",
-      "topic": 33,
-      "description": "205-2 Communication and training about anti-corruption policies and procedures",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 117,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.697Z",
-      "updated_at": "2024-09-24T09:21:41.435Z",
-      "identifier": "GovCorruption205-3",
-      "topic": 33,
-      "description": "205-3 Confirmed incidents of corruption and actions taken",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 118,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.702Z",
-      "updated_at": "2024-09-24T09:21:41.441Z",
-      "identifier": "GovCorruption206-1",
-      "topic": 33,
-      "description": "206-1 Legal actions for anti-competitive behavior, anti-trust, and monopoly practices",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 119,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.707Z",
-      "updated_at": "2024-09-24T10:27:27.704Z",
-      "identifier": "GovTaxTransparency207-1",
-      "topic": 34,
-      "description": "207-1 Approach to tax",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 120,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.712Z",
-      "updated_at": "2024-09-24T09:21:41.469Z",
-      "identifier": "GovTaxTransparency207-2",
-      "topic": 34,
-      "description": "207-2 Tax governance, control, and risk management",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 121,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.718Z",
-      "updated_at": "2024-09-24T09:21:41.476Z",
-      "identifier": "GovTaxTransparency207-3",
-      "topic": 34,
-      "description": "207-3 Stakeholder engagement and management of concerns related to tax",
-      "category": "topic_management_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 122,
-    "fields": {
-      "created_at": "2024-08-28T11:13:53.725Z",
-      "updated_at": "2024-09-24T09:21:41.483Z",
-      "identifier": "GovTaxTransparency207-4",
-      "topic": 34,
-      "description": "207-4 Country-by-country reporting",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
-    "pk": 123,
-    "fields": {
-      "created_at": "2024-08-28T11:19:21.151Z",
-      "updated_at": "2024-09-24T09:21:41.240Z",
-      "identifier": "GovGovernance202-2",
-      "topic": 36,
-      "description": "202-2 Proportion of senior management hired from the local community",
-      "category": "topic_dislcosure"
-    }
-  },
-  {
-    "model": "materiality_dashboard.disclosure",
     "pk": 129,
     "fields": {
       "created_at": "2024-09-05T04:17:31.093Z",
@@ -3129,6 +2145,150 @@
       "topic": 38,
       "description": "305-5 Reduction of GHG emissions",
       "category": "topic_disclosure"
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 313,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.825Z",
+      "updated_at": "2024-10-21T12:04:56.837Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Org Details",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 314,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.843Z",
+      "updated_at": "2024-10-21T12:04:56.847Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Entities",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 315,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.857Z",
+      "updated_at": "2024-10-21T12:04:56.861Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Report Details",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 316,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.870Z",
+      "updated_at": "2024-10-21T12:04:56.874Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Restatement",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 317,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.880Z",
+      "updated_at": "2024-10-21T12:04:56.884Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Assurance",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 318,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.899Z",
+      "updated_at": "2024-10-21T12:04:56.903Z",
+      "identifier": null,
+      "topic": 103,
+      "description": "Business Details",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 319,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.909Z",
+      "updated_at": "2024-10-21T12:04:56.913Z",
+      "identifier": null,
+      "topic": 103,
+      "description": "Workforce-Employees",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 320,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.919Z",
+      "updated_at": "2024-10-21T12:04:56.921Z",
+      "identifier": null,
+      "topic": 103,
+      "description": "Workforce-Other Workers",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 321,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.935Z",
+      "updated_at": "2024-10-21T12:04:56.939Z",
+      "identifier": null,
+      "topic": 104,
+      "description": "Laws and Regulation",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 322,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.953Z",
+      "updated_at": "2024-10-21T12:04:56.962Z",
+      "identifier": null,
+      "topic": 105,
+      "description": "Membership & Association",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 323,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.975Z",
+      "updated_at": "2024-10-21T12:04:56.979Z",
+      "identifier": null,
+      "topic": 106,
+      "description": "Stakeholder Engagement",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 324,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.994Z",
+      "updated_at": "2024-10-21T12:04:56.998Z",
+      "identifier": null,
+      "topic": 107,
+      "description": "Collective Bargaining Agreements",
+      "category": null
     }
   }
 ]

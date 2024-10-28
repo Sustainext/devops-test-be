@@ -54,6 +54,16 @@ class Command(BaseCommand):
             {"id": 5, "name": "SASB", "Image": "images/framework/SASB.png"},
             {"id": 6, "name": "TCFD", "Image": "images/framework/TCFD.png"},
             {"id": 7, "name": "UNPRI", "Image": "images/framework/UNPRI.png"},
+            {
+                "id": 8,
+                "name": "GRI: In accordance With",
+                "Image": "images/framework/GRI.png",
+            },
+            {
+                "id": 9,
+                "name": "GRI: with reference to",
+                "Image": "images/framework/GRI.png",
+            },
         ]
         for framework in frameworks:
             Framework.objects.update_or_create(id=framework["id"], defaults=framework)
