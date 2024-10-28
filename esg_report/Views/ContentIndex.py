@@ -54,7 +54,7 @@ class GetContentIndex(APIView):
                     defaults={
                         "reason": data["omission"][0]["reason"],
                         "explanation": data["omission"][0]["explanation"],
-                        "is_filled": data["omission"][0]["is_filled"],
+                        "is_filled": data["is_filled"],
                     },
                 )
             )

@@ -20,7 +20,7 @@ class AssignedEmissionTask(APIView):
             .exclude(
                 roles__in=[3, 4]
             )  # Confirm with the team -> 3 completed, 4 -> the task is calculated
-            .filter(task_status__in=["in_progress", "reject"])
+            .filter(task_status__in=["in_progress", "reject", "under_review"])
         )
 
         # STATUS_CHOICES
