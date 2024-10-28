@@ -479,13 +479,10 @@ def generate_disclosure_status(report: Report):
             )
             reason = content_index_reason.reason
             explanation = content_index_reason.explanation
-            is_filled = content_index_reason.is_filled
         except ContentIndexRequirementOmissionReason.DoesNotExist:
-            print()
             content_index_reason = None
             reason = None
             explanation = None
-            is_filled = is_filled
         # Append the dictionary to the result list
         result.append(
             {
