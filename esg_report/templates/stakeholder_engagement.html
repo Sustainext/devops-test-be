@@ -1,4 +1,6 @@
 <!-- stakeholder_engagement.html -->
+<!-- If stakesholder_engagement is not empty, display the content -->
+{% if stakeholder_engagement %}
 <h2>6. Stakeholder Engagement</h2>
 
 <p>{{stakeholder_engagement.description.content|safe}}</p>
@@ -50,3 +52,4 @@
 <p> {{stakeholder_engagement.Stakeholderengagement}} </p>
 <h3>Stakeholder’s Feedback</h3>
 <p>{{stakeholder_engagement.stakeholder_feedback}}</p>
+{% endif %}

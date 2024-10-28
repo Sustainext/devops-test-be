@@ -12,6 +12,7 @@ from esg_report.services.screen_four_service import SustainabilityRoadmapService
 from esg_report.services.screen_five_service import AwardsAndRecognitionService
 from esg_report.services.screen_six_service import StakeholderEngagementService
 from esg_report.services.screen_seven_service import AboutTheReportService
+from esg_report.services.screen_eight_service import MaterialityService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
 
@@ -31,26 +32,27 @@ class ESGReportPDFView(View):
             return HttpResponse(
                 "An unexpected error occurred while retrieving the report.", status=500
             )
-        ceo_message = CeoMessageService.get_ceo_message_by_report(report)
-        dict_ceo_message = model_to_dict(ceo_message)
-        about_the_company_service = AboutTheCompanyAndOperationsService(pk, user)
-        about_the_company = about_the_company_service.get_complete_report_data()
-        mission_vision_values = (
-            MissionVisionValuesService.get_mission_vision_values_by_report_id(pk)
-        )
-        sustainability_roadmap = (
-            SustainabilityRoadmapService.get_sustainability_roadmap_by_report_id(pk)
-        )
-        awards_and_recognition = (
-            AwardsAndRecognitionService.get_awards_and_recognition_by_report_id(pk)
-        )
-        stakeholder_engagement = (
-            StakeholderEngagementService.get_stakeholder_engagement_by_report_id(
-                pk, user
-            )
-        )
-        about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
-        print(about_the_report)
+        # ceo_message = CeoMessageService.get_ceo_message_by_report(report)
+        # dict_ceo_message = model_to_dict(ceo_message)
+        # about_the_company_service = AboutTheCompanyAndOperationsService(pk, user)
+        # about_the_company = about_the_company_service.get_complete_report_data()
+        # mission_vision_values = (
+        #     MissionVisionValuesService.get_mission_vision_values_by_report_id(pk)
+        # )
+        # sustainability_roadmap = (
+        #     SustainabilityRoadmapService.get_sustainability_roadmap_by_report_id(pk)
+        # )
+        # awards_and_recognition = (
+        #     AwardsAndRecognitionService.get_awards_and_recognition_by_report_id(pk)
+        # )
+        # stakeholder_engagement = (
+        #     StakeholderEngagementService.get_stakeholder_engagement_by_report_id(
+        #         pk, user
+        #     )
+        # )
+        # about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
+        materiality = MaterialityService.get_materiality_data(pk)
+        print(materiality)
         # Prepare the context for rendering the PDF template
         context = {
             "report": report,
@@ -60,7 +62,8 @@ class ESGReportPDFView(View):
             # "sustainability_roadmap": sustainability_roadmap,
             # "awards_and_recognition": awards_and_recognition,
             # "stakeholder_engagement": stakeholder_engagement,
-            "about_the_report": about_the_report,
+            # "about_the_report": about_the_report,
+            "materiality": materiality,
             "pk": pk,
         }
 

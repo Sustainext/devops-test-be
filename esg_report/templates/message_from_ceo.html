@@ -14,13 +14,13 @@
         font-size: 14px;
     }
 </style>
+{% if ceo_message %}
 <div class="ceo-message">
     <h2>Message from the CEO</h2>
-    {% if ceo_message %}
     <p>{{ ceo_message.message | safe }}</p>
     <p>Thank you for your continued trust and support.</p>
     <p>Sincerely,</p>
     <p><strong>{{ ceo_message.ceo_name }}</strong><br>Chief Executive
         Officer<br><strong>{{ ceo_message.company_name }}</strong></p>
-    {% endif %}
 </div>
+{% endif %}

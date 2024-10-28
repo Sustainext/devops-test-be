@@ -1,4 +1,5 @@
 <!-- about_the_report.html -->
+{% if about_the_report %}
 <h2>7. About the Report</h2>
 
 <p>{{about_the_report.description}}</p>
@@ -74,3 +75,4 @@
 
 <h4>Relationship between the organization and the assurance provider:</h4>
 <p>{{ about_the_report.2_5_b.Q7 }}</p>
+{% endif %}
