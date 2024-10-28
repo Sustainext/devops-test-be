@@ -121,6 +121,14 @@ def get_materiality_assessment(report):
     materiality_assessment = MaterialityAssessment.objects.filter(
         client=report.client
     ).exclude(status="outdated")
+    if report.corporate:
+        materiality_assessment = materiality_assessment.filter(
+            Q(corporate=report.corporate) | Q(organization=report.organization)
+        )
+    elif report.organization:
+        materiality_assessment = materiality_assessment.filter(
+            Q(organization=report.organization) | Q(corporate__in=report.organization.corporatenetityorg.all())
+        )
     start_date = report.start_date
     end_date = report.end_date
 
