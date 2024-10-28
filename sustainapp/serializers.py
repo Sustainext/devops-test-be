@@ -454,7 +454,7 @@ class ReportRetrieveSerializer(serializers.ModelSerializer):
             instance.status == 1
         ):  # Adjust the condition based on your status filtering requirement
             data = super().to_representation(instance)
-            data["created_by"] = instance.user.username
+            data["created_by"] = f"{instance.user.first_name} {instance.user.last_name}"
             return data
         else:
             return None
