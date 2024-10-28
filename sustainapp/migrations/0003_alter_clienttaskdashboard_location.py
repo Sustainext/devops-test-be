@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
     dependencies = [
         (
             "sustainapp",
-            "0012_rename_factor_id_clienttaskdashboard_activity_id_and_more",
+            "0002_remove_userorg_organization_userorg_organization",
         ),
     ]
 

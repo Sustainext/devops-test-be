@@ -8,21 +8,26 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('sustainapp', '0013_alter_clienttaskdashboard_location'),
-        ('esg_report', '0045_statementofuse_historicalstatementofuse'),
+        ("sustainapp", "0002_remove_userorg_organization_userorg_organization"),
+        ("esg_report", "0045_statementofuse_historicalstatementofuse"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='HistoricalStatementOfUse',
-            new_name='HistoricalStatementOfUseModel',
+            old_name="HistoricalStatementOfUse",
+            new_name="HistoricalStatementOfUseModel",
         ),
         migrations.RenameModel(
-            old_name='StatementOfUse',
-            new_name='StatementOfUseModel',
+            old_name="StatementOfUse",
+            new_name="StatementOfUseModel",
         ),
         migrations.AlterModelOptions(
-            name='historicalstatementofusemodel',
-            options={'get_latest_by': ('history_date', 'history_id'), 'ordering': ('-history_date', '-history_id'), 'verbose_name': 'historical statement of use model', 'verbose_name_plural': 'historical statement of use models'},
+            name="historicalstatementofusemodel",
+            options={
+                "get_latest_by": ("history_date", "history_id"),
+                "ordering": ("-history_date", "-history_id"),
+                "verbose_name": "historical statement of use model",
+                "verbose_name_plural": "historical statement of use models",
+            },
         ),
     ]

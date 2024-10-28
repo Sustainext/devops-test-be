@@ -10,52 +10,108 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('sustainapp', '0013_alter_clienttaskdashboard_location'),
-        ('esg_report', '0046_rename_historicalstatementofuse_historicalstatementofusemodel_and_more'),
+        ("sustainapp", "0002_remove_userorg_organization_userorg_organization"),
+        (
+            "esg_report",
+            "0046_rename_historicalstatementofuse_historicalstatementofusemodel_and_more",
+        ),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='HistoricalContentIndexRequirementOmissionReason',
+            name="HistoricalContentIndexRequirementOmissionReason",
             fields=[
-                ('id', models.BigIntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
-                ('created_at', models.DateTimeField(blank=True, editable=False)),
-                ('updated_at', models.DateTimeField(blank=True, editable=False)),
-                ('is_filled', models.BooleanField(default=False)),
-                ('reason', models.CharField(max_length=50, verbose_name='reason')),
-                ('explanation', models.TextField(verbose_name='explanation')),
-                ('indicator', models.CharField(db_index=True, max_length=10, verbose_name='indicator_number')),
-                ('history_id', models.AutoField(primary_key=True, serialize=False)),
-                ('history_date', models.DateTimeField(db_index=True)),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('report', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sustainapp.report')),
+                (
+                    "id",
+                    models.BigIntegerField(
+                        auto_created=True, blank=True, db_index=True, verbose_name="ID"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(blank=True, editable=False)),
+                ("updated_at", models.DateTimeField(blank=True, editable=False)),
+                ("is_filled", models.BooleanField(default=False)),
+                ("reason", models.CharField(max_length=50, verbose_name="reason")),
+                ("explanation", models.TextField(verbose_name="explanation")),
+                (
+                    "indicator",
+                    models.CharField(
+                        db_index=True, max_length=10, verbose_name="indicator_number"
+                    ),
+                ),
+                ("history_id", models.AutoField(primary_key=True, serialize=False)),
+                ("history_date", models.DateTimeField(db_index=True)),
+                ("history_change_reason", models.CharField(max_length=100, null=True)),
+                (
+                    "history_type",
+                    models.CharField(
+                        choices=[("+", "Created"), ("~", "Changed"), ("-", "Deleted")],
+                        max_length=1,
+                    ),
+                ),
+                (
+                    "history_user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        blank=True,
+                        db_constraint=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="+",
+                        to="sustainapp.report",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'historical content index requirement omission reason',
-                'verbose_name_plural': 'historical content index requirement omission reasons',
-                'ordering': ('-history_date', '-history_id'),
-                'get_latest_by': ('history_date', 'history_id'),
+                "verbose_name": "historical content index requirement omission reason",
+                "verbose_name_plural": "historical content index requirement omission reasons",
+                "ordering": ("-history_date", "-history_id"),
+                "get_latest_by": ("history_date", "history_id"),
             },
             bases=(simple_history.models.HistoricalChanges, models.Model),
         ),
         migrations.CreateModel(
-            name='ContentIndexRequirementOmissionReason',
+            name="ContentIndexRequirementOmissionReason",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('is_filled', models.BooleanField(default=False)),
-                ('reason', models.CharField(max_length=50, verbose_name='reason')),
-                ('explanation', models.TextField(verbose_name='explanation')),
-                ('indicator', models.CharField(db_index=True, max_length=10, verbose_name='indicator_number')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='sustainapp.report')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("is_filled", models.BooleanField(default=False)),
+                ("reason", models.CharField(max_length=50, verbose_name="reason")),
+                ("explanation", models.TextField(verbose_name="explanation")),
+                (
+                    "indicator",
+                    models.CharField(
+                        db_index=True, max_length=10, verbose_name="indicator_number"
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="sustainapp.report",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'content index requirement omission reason',
-                'verbose_name_plural': 'content index requirement omission reasons',
-                'unique_together': {('report', 'indicator')},
+                "verbose_name": "content index requirement omission reason",
+                "verbose_name_plural": "content index requirement omission reasons",
+                "unique_together": {("report", "indicator")},
             },
         ),
     ]
