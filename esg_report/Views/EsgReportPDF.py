@@ -51,8 +51,8 @@ class ESGReportPDFView(View):
         #     )
         # )
         # about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
-        materiality = MaterialityService.get_materiality_data(pk)
-        print(materiality)
+        # materiality = MaterialityService.get_materiality_data(pk)
+        # print(screen_nine_data)
         # Prepare the context for rendering the PDF template
         context = {
             "report": report,
@@ -63,7 +63,7 @@ class ESGReportPDFView(View):
             # "awards_and_recognition": awards_and_recognition,
             # "stakeholder_engagement": stakeholder_engagement,
             # "about_the_report": about_the_report,
-            "materiality": materiality,
+            # "materiality": materiality,
             "pk": pk,
         }
 
