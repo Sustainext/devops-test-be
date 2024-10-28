@@ -23,8 +23,10 @@ class ContentIndexRequirementOmissionReason(AbstractModel, HistoricalModelMixin)
             ("legal prohibitions", "Legal prohibitions"),
             ("confidentiality constraints", "Confidentiality constraints"),
         ),
+        null=True,
+        blank=True,
     )
-    explanation = models.TextField(_("explanation"))
+    explanation = models.TextField(_("explanation"), null=True, blank=True)
     indicator = models.CharField(_("indicator_number"), max_length=10, db_index=True)
 
     class Meta:

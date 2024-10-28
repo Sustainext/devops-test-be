@@ -46,14 +46,14 @@ class GetContentIndex(APIView):
             )
         serializer = DataListSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        for data in serializer.validated_data:
+        for data in serializer.validated_data["items"]:
             content_index_omission_reason, _ = (
                 ContentIndexRequirementOmissionReason.objects.update_or_create(
                     report=self.report,
                     indicator=data["key"],
                     defaults={
-                        "reason": data["omission"]["reason"],
-                        "explanation": data["omission"]["explanation"],
+                        "reason": data["omission"][0]["reason"],
+                        "explanation": data["omission"][0]["explanation"],
                     },
                 )
             )
