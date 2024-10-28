@@ -4,8 +4,8 @@ from rest_framework import serializers
 # Nested serializer for the 'omission' field
 class OmissionSerializer(serializers.Serializer):
     req_omitted = serializers.CharField(allow_null=True)
-    reason = serializers.CharField()
-    explanation = serializers.CharField()
+    reason = serializers.CharField(required=False,allow_null=True)
+    explanation = serializers.CharField(required=False, allow_null=True)
 
 
 # Main serializer for each dictionary in the list
