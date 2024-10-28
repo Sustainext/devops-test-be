@@ -873,6 +873,7 @@ logger = logging.getLogger(__name__)
 
 
 def load_successful_raw_responses_from_json(file_path):
+    from sustainapp.models import Corporateentity, Organization, Location
     """
     Load RawResponse objects from a JSON fixture, skipping entries with signal errors.
 
@@ -902,7 +903,7 @@ def load_successful_raw_responses_from_json(file_path):
                         id=fields["organization"]
                     )
                 if fields["corporate"]:
-                    fields["corporate"] = Corporate.objects.get(
+                    fields["corporate"] = Corporateentity.objects.get(
                         id=fields["corporate"]
                     )
                 if fields["locale"]:
