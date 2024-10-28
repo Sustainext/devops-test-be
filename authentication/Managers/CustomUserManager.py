@@ -23,3 +23,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self.create_user(email, password, **extra_fields)
+
+    def get_by_natural_key(self, username):
+        case_insensitive_username_field = "{}__iexact".format(self.model.USERNAME_FIELD)
+        return self.get(**{case_insensitive_username_field: username})
