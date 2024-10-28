@@ -127,7 +127,8 @@ def get_materiality_assessment(report):
         )
     elif report.organization:
         materiality_assessment = materiality_assessment.filter(
-            Q(organization=report.organization) | Q(corporate__in=report.organization.corporatenetityorg.all())
+            Q(organization=report.organization)
+            | Q(corporate__in=report.organization.corporatenetityorg.all())
         )
     start_date = report.start_date
     end_date = report.end_date
@@ -372,7 +373,9 @@ def create_validation_method_for_report_creation(report: Report):
         subindicators = []
         for topic in general_material_topics:
             if topic in GENERAL_DISCLOSURES_AND_PATHS:
-                subindicators.extend(GENERAL_DISCLOSURES_AND_PATHS[topic]["subindicators"])
+                subindicators.extend(
+                    GENERAL_DISCLOSURES_AND_PATHS[topic]["subindicators"]
+                )
         data_points = get_data_points_as_per_report(report=report)
         for disclosure, path_slug in subindicators:
             if not data_points.filter(path__slug=path_slug).exists():
@@ -472,7 +475,7 @@ def generate_disclosure_status(report: Report):
         title = section_title
         try:
             content_index_reason = ContentIndexRequirementOmissionReason.objects.get(
-                report=report
+                report=report, indicator=indicator
             )
             reason = content_index_reason.reason
             explanation = content_index_reason.explanation
