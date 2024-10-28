@@ -5,11 +5,12 @@ from rest_framework.permissions import IsAuthenticated
 from esg_report.Serializer.CeoMessageSerializer import CeoMessageSerializer
 from esg_report.models.ScreenOne import CeoMessage
 from sustainapp.models import Report
+from esg_report.services.screen_one_service import CeoMessageService
 
 
 class ScreenOneView(APIView):
     """
-    This API is used to get and update the CEO message 
+    This API is used to get and update the CEO message
     that is the whole screen one for an ESG Report.
     """
 
@@ -43,18 +44,17 @@ class ScreenOneView(APIView):
         This API is used to get the CEO message for an ESG Report.
         """
         try:
-            report = Report.objects.get(id=esg_report_id)
+            report = CeoMessageService.get_report_by_id(esg_report_id)
         except Report.DoesNotExist:
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_400_BAD_REQUEST
             )
-        try:
-            ceo_message = CeoMessage.objects.get(report=report)
-        except CeoMessage.DoesNotExist:
-            return Response(
-                None,
-                status=status.HTTP_200_OK,
-            )
+        # Use the service to get the CEO message for the report
+        ceo_message = CeoMessageService.get_ceo_message_by_report(report)
+        if not ceo_message:
+            return Response(None, status=status.HTTP_200_OK)
+
+        # Return the serialized CEO message data
         return Response(
             CeoMessageSerializer(ceo_message).data, status=status.HTTP_200_OK
         )

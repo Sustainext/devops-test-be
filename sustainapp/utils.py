@@ -789,3 +789,37 @@ def get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annua
             }
         )
     return local_response_data
+
+
+def validation_for_esg_report(report: Report):
+    paths_and_disclosures = [
+        {
+            "general": [
+                {
+                    "GRI Reporting Info": {
+                        "Org Details": [
+                            (
+                                "Organizational Details",
+                                "gri-general-org_details_2-1a-1b-1c-1d",
+                            )
+                        ],
+                        "Entities": [
+                            (
+                                "List of entities",
+                                "gri-general-entities-list_of_entities-2-2-a",
+                            ),
+                            (
+                                "Audited, consolidated financial statements",
+                                "gri-general-entities-audited-2-2-b",
+                            ),
+                            (
+                                "Multiple entities",
+                                "gri-general-entities-multiple-2-2-c",
+                            ),
+                        ],
+                        "Report Details": (),
+                    }
+                },
+            ]
+        }
+    ]

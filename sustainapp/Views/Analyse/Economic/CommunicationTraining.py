@@ -25,12 +25,23 @@ class CommunicationTrainingAnalyzeView(APIView):
                         append_res["loc"] = obj["Region Name"]
                     except KeyError:
                         append_res["loc"] = obj["Location Name"]
-                    append_res["total_communicated"] = obj[
-                        "Total number of governance body members that the organization's anti-corruption policies and procedures have been communicated to"
-                    ]
-                    append_res["total_region"] = obj[
-                        "Total number of governance body members in that region."
-                    ]
+                    if (
+                        path
+                        != "gri-economic-anti_corruption-comm_and_training-205-2d-training"
+                    ):
+                        append_res["total_communicated"] = obj[
+                            "Total number of governance body members that the organization's anti-corruption policies and procedures have been communicated to"
+                        ]
+                        append_res["total_region"] = obj[
+                            "Total number of governance body members in that region."
+                        ]
+                    else:
+                        append_res["total_communicated"] = obj[
+                            "Total number of governance body members that have received training on anti-corruption"
+                        ]
+                        append_res["total_region"] = obj[
+                            "Total number of governance body members"
+                        ]
                     append_res["percentage"] = (
                         (
                             float(append_res["total_communicated"])

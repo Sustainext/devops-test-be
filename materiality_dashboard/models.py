@@ -8,6 +8,7 @@ ESG_CHOICES = (
     ("environment", "Environment"),
     ("social", "Social"),
     ("governance", "Governance"),
+    ("general", "General"),
 )
 
 

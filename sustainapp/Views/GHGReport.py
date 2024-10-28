@@ -33,6 +33,7 @@ import time
 from sustainapp.report import generate_pdf_data
 from django.core.files.storage import default_storage
 from datametric.utils.analyse import filter_by_start_end_dates
+from esg_report.utils import create_validation_method_for_report_creation
 
 logger = logging.getLogger()
 
@@ -305,8 +306,11 @@ def get_analysis_data(
                 analysis_data_by_corporate,
                 ownership_ratio,
             )
-
-    if not analysis_data_by_corporate:
+    # * Added Condition such that if there is no data for the corporate for GHG report, it will not throw an error for ESG Report.
+    if (
+        not analysis_data_by_corporate
+        and report_type != "GRI Report: In accordance With"
+    ):
         return Response(
             {"message": "No data available for the given corporate IDs."},
             status=status.HTTP_404_NOT_FOUND,
@@ -574,7 +578,7 @@ class GHGReportView(generics.CreateAPIView):
         new_report = serializer.save(
             status=status, client_id=client_id, user_id=user_id
         )
-
+        create_validation_method_for_report_creation(report=new_report)
         report_id = new_report.id
         start_date = serializer.validated_data.get("start_date")
         end_date = serializer.validated_data.get("end_date")

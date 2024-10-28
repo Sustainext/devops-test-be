@@ -3130,5 +3130,149 @@
       "description": "305-5 Reduction of GHG emissions",
       "category": "topic_disclosure"
     }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 313,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.825Z",
+      "updated_at": "2024-10-21T12:04:56.837Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Org Details",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 314,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.843Z",
+      "updated_at": "2024-10-21T12:04:56.847Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Entities",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 315,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.857Z",
+      "updated_at": "2024-10-21T12:04:56.861Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Report Details",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 316,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.870Z",
+      "updated_at": "2024-10-21T12:04:56.874Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Restatement",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 317,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.880Z",
+      "updated_at": "2024-10-21T12:04:56.884Z",
+      "identifier": null,
+      "topic": 102,
+      "description": "Assurance",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 318,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.899Z",
+      "updated_at": "2024-10-21T12:04:56.903Z",
+      "identifier": null,
+      "topic": 103,
+      "description": "Business Details",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 319,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.909Z",
+      "updated_at": "2024-10-21T12:04:56.913Z",
+      "identifier": null,
+      "topic": 103,
+      "description": "Workforce-Employees",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 320,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.919Z",
+      "updated_at": "2024-10-21T12:04:56.921Z",
+      "identifier": null,
+      "topic": 103,
+      "description": "Workforce-Other Workers",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 321,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.935Z",
+      "updated_at": "2024-10-21T12:04:56.939Z",
+      "identifier": null,
+      "topic": 104,
+      "description": "Laws and Regulation",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 322,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.953Z",
+      "updated_at": "2024-10-21T12:04:56.962Z",
+      "identifier": null,
+      "topic": 105,
+      "description": "Membership & Association",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 323,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.975Z",
+      "updated_at": "2024-10-21T12:04:56.979Z",
+      "identifier": null,
+      "topic": 106,
+      "description": "Stakeholder Engagement",
+      "category": null
+    }
+  },
+  {
+    "model": "materiality_dashboard.disclosure",
+    "pk": 324,
+    "fields": {
+      "created_at": "2024-10-21T12:04:56.994Z",
+      "updated_at": "2024-10-21T12:04:56.998Z",
+      "identifier": null,
+      "topic": 107,
+      "description": "Collective Bargaining Agreements",
+      "category": null
+    }
   }
 ]
