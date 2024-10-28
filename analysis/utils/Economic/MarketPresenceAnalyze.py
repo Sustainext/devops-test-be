@@ -26,7 +26,40 @@ def gender_mapping(data):
 def create_data_for_economic_standard_wages(raw_response: RawResponse):
     if raw_response.path.slug not in [
         "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1a-s1",
+        "gri-economic-ratios_of_standard_entry-202-1c-location",
     ]:
+        return
+    try:
+        if (
+            raw_response.path.slug
+            == "gri-economic-ratios_of_standard_entry-202-1c-location"
+        ):
+
+            existing_model = EcoStandardWages.objects.filter(
+                month=raw_response.month,
+                year=raw_response.year,
+                organisation=raw_response.organization,
+                corporate=raw_response.corporate,
+                location=raw_response.locale,
+                client=raw_response.client,
+            )
+            min_wage = raw_response.data[0]["Currency"].split(" ")[0]
+            min_wage_currency = raw_response.data[0]["Currency"].split(" ")[1]
+
+            if existing_model:
+                existing_model.update(
+                    minimum_wage=min_wage, minimum_wage_currency=min_wage_currency
+                )
+            else:
+                logger.error(
+                    f"No data available in the EcoStandardWages for raw response id {raw_response.id}"
+                )
+                return
+            return
+    except Exception as e:
+        logger.error(
+            f"Error {e} occured while processing raw response id {raw_response.id}"
+        )
         return
     try:
         if raw_response.data[0]["Q2"] == "Yes":

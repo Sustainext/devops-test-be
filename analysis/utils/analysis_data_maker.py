@@ -80,6 +80,9 @@ from analysis.utils.Economic.CommunicationAndTrainingAnalyze import (
 from analysis.utils.Economic.MarketPresenceAnalyze import (
     create_data_for_economic_standard_wages,
 )
+from analysis.utils.Economic.OperationsAssesedAnalyze import (
+    create_data_for_economic_operations_assesed,
+)
 
 def create_analysis_data(raw_response: RawResponse):
     employment_analysis(raw_response=raw_response)
@@ -120,3 +123,4 @@ def create_analysis_data(raw_response: RawResponse):
     create_data_for_economic_total_body_members(raw_response=raw_response)
     create_data_for_economic_total_body_members_region(raw_response=raw_response)
     create_data_for_economic_standard_wages(raw_response=raw_response)
+    create_data_for_economic_operations_assesed(raw_response=raw_response)

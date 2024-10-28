@@ -56,7 +56,7 @@ class EmissionTask(APIView):
                             "Subcategory": task["subcategory"],
                             "Activity": task["activity"],
                             "activity_id": task["activity_id"],
-                            "unit_type": "",
+                            "unit_type": task["unit_type"],
                             "Unit": task["unit1"],
                             "Quantity": (
                                 float(task["value1"])
@@ -71,14 +71,22 @@ class EmissionTask(APIView):
                             ),
                             "file": (
                                 {
+                                    "name": task["file_data"].get("name"),
+                                    "url": task["file_data"].get("url"),
+                                    "type": task["file_data"].get("type"),
+                                    "size": task["file_data"].get("size"),
+                                    "uploadDateTime": task["file_data"].get(
+                                        "uploadDateTime"
+                                    ),
+                                }
+                                if task["file_data"]
+                                else {
                                     "name": "",
                                     "url": "",
                                     "type": "",
-                                    "size": None,
+                                    "size": "",
                                     "uploadDateTime": "",
                                 }
-                                if not task["file_data"]
-                                else task["file_data"]
                             ),
                         },
                     }
