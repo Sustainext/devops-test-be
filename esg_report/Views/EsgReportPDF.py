@@ -13,6 +13,7 @@ from esg_report.services.screen_five_service import AwardsAndRecognitionService
 from esg_report.services.screen_six_service import StakeholderEngagementService
 from esg_report.services.screen_seven_service import AboutTheReportService
 from esg_report.services.screen_eight_service import MaterialityService
+from esg_report.services.screen_ten_service import ScreenTenService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
 
@@ -52,7 +53,10 @@ class ESGReportPDFView(View):
         # )
         # about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
         # materiality = MaterialityService.get_materiality_data(pk)
-        # print(screen_nine_data)
+        # screen_nine_data = ScreenNineService.get_screen_nine_data(pk)
+        # screen_ten_service = ScreenTenService(pk)
+        screen_ten_data = ScreenTenService.get_screen_ten(pk)
+        print(screen_ten_data)
         # Prepare the context for rendering the PDF template
         context = {
             "report": report,
