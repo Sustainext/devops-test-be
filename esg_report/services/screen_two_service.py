@@ -64,7 +64,7 @@ class AboutTheCompanyAndOperationsService:
         )
         if raw_response_org_details:
             try:
-                response_data["2_1"] = {
+                response_data["2-1"] = {
                     "legal_name": raw_response_org_details.data[0]["Q1"]["text"],
                     "nature_of_ownership_and_legal_form": raw_response_org_details.data[
                         0
@@ -78,51 +78,51 @@ class AboutTheCompanyAndOperationsService:
                     ],
                 }
             except KeyError:
-                response_data["2_1"] = None
+                response_data["2-1"] = None
         else:
-            response_data["2_1"] = None
+            response_data["2-1"] = None
 
         raw_response_entities = get_latest_raw_response(
             raw_responses, slugs["entities"]
         )
         if raw_response_entities:
-            response_data["2_2_a"] = [
+            response_data["2-2-a"] = [
                 entity["Q1"] for entity in raw_response_entities.data
             ]
         else:
-            response_data["2_2_a"] = None
+            response_data["2-2-a"] = None
 
         raw_response_sectors = get_latest_raw_response(
             raw_responses=raw_responses, slug=slugs["sectors"]
         )
         if raw_response_sectors:
-            response_data["2_6_a"] = raw_response_sectors.data
+            response_data["2-6-a"] = raw_response_sectors.data
         else:
-            response_data["2_6_a"] = None
+            response_data["2-6-a"] = None
 
         raw_response_value_chain = get_latest_raw_response(
             raw_responses=raw_responses, slug=slugs["value_chain"]
         )
         if raw_response_value_chain:
-            response_data["2_6_b"] = raw_response_value_chain.data[0]
+            response_data["2-6-b"] = raw_response_value_chain.data[0]
         else:
-            response_data["2_6_b"] = None
+            response_data["2-6-b"] = None
 
         raw_response_relevant_business = get_latest_raw_response(
             raw_responses=raw_responses, slug=slugs["relevant_business"]
         )
         if raw_response_relevant_business:
-            response_data["2_6_c"] = raw_response_relevant_business.data[0]["Q1"]
+            response_data["2-6-c"] = raw_response_relevant_business.data[0]["Q1"]
         else:
-            response_data["2_6_c"] = None
+            response_data["2-6-c"] = None
 
         raw_response_change_information = get_latest_raw_response(
             raw_responses=raw_responses, slug=slugs["changes"]
         )
         if raw_response_change_information:
-            response_data["2_6_d"] = raw_response_change_information.data[0]["Q1"]
+            response_data["2-6-d"] = raw_response_change_information.data[0]["Q1"]
         else:
-            response_data["2_6_d"] = None
+            response_data["2-6-d"] = None
 
         return response_data
 

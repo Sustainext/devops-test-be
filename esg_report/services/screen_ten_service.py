@@ -73,14 +73,14 @@ class ScreenTenService:
         response_data.update(
             ScreenTenService.get_308_2de_analyse(report, raw_responses)
         )
-        response_data["308_2e_collect"] = ScreenTenService.get_308_2e_collect(
+        response_data["308-2e-collect"] = ScreenTenService.get_308_2e_collect(
             data_points
         )
-        response_data["414_1a_collect"] = ScreenTenService.get_414_1a_collect(
+        response_data["414-1a-collect"] = ScreenTenService.get_414_1a_collect(
             data_points
         )
-        response_data["414_1a_analyse"] = ScreenTenService.get_414_1a_analyse(report)
-        response_data["414_2b_collect"] = ScreenTenService.get_414_2b_collect(
+        response_data["414-1a-analyse"] = ScreenTenService.get_414_1a_analyse(report)
+        response_data["414-2b-collect"] = ScreenTenService.get_414_2b_collect(
             data_points
         )
 
@@ -147,7 +147,7 @@ class ScreenTenService:
             .order_by("-year")
             .first()
         )
-        response_data["414-2a"] = {
+        response_data["414_2a"] = {
             "total_suppliers_terminated_negative_impact": (
                 raw_response_a.data[0].get("Q1") if raw_response_a else None
             ),

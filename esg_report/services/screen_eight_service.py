@@ -38,16 +38,16 @@ class MaterialityService:
 
         # 3-2b: Reason for Change
         try:
-            response_data["3_2b"] = (
+            response_data["3-2b"] = (
                 materiality_assessment.change_confirmation.reason_for_change
             )
         except ObjectDoesNotExist:
-            response_data["3_2b"] = None
+            response_data["3-2b"] = None
 
         # 3-1-a: Assessment Process
         try:
             assessment_process = materiality_assessment.assessment_process.all().get()
-            response_data["3_1_a"] = {
+            response_data["3-1-a"] = {
                 "process_description": assessment_process.process_description,
                 "impact_assessment_process": assessment_process.impact_assessment_process,
                 "selected_stakeholders": list(
@@ -57,24 +57,24 @@ class MaterialityService:
                 ),
             }
         except ObjectDoesNotExist:
-            response_data["3_1_a"] = None
+            response_data["3-1-a"] = None
 
         # 3-3a: Management Impacts
         try:
-            response_data["3_3a"] = MaterialityImpactSerializer(
+            response_data["3-3a"] = MaterialityImpactSerializer(
                 materiality_assessment.management_impacts.all(), many=True
             ).data
         except ObjectDoesNotExist:
-            response_data["3_3a"] = None
+            response_data["3-3a"] = None
 
         # 3-3b: Negative Impact Involvement Description
         try:
-            response_data["3_3b"] = (
+            response_data["3-3b"] = (
                 materiality_assessment.management_approach_questions.all()
                 .get()
                 .negative_impact_involvement_description
             )
         except ObjectDoesNotExist:
-            response_data["3_3b"] = None
+            response_data["3-3b"] = None
 
         return response_data

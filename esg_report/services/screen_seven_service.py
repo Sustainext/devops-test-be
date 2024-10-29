@@ -47,25 +47,25 @@ class AboutTheReportService:
         )
 
         # Map slug responses to response data with default handling
-        response_data["2_3_a"] = (
+        response_data["2-3-a"] = (
             raw_responses.filter(path__slug=slugs[0]).order_by("year").first().data[0]
             if raw_responses.filter(path__slug=slugs[0]).order_by("year").first()
             is not None
             else None
         )
-        response_data["2_3d"] = (
+        response_data["2-3d"] = (
             raw_responses.filter(path__slug=slugs[1]).order_by("year").first().data[0]
             if raw_responses.filter(path__slug=slugs[1]).order_by("year").first()
             is not None
             else None
         )
-        response_data["2_4_a"] = (
+        response_data["2-4-a"] = (
             raw_responses.filter(path__slug=slugs[2]).order_by("year").first().data[0]
             if raw_responses.filter(path__slug=slugs[2]).order_by("year").first()
             is not None
             else None
         )
-        response_data["2_5_a"] = {
+        response_data["2-5-a"] = {
             "assurance_policy": (
                 raw_responses.filter(path__slug=slugs[3])
                 .order_by("year")
@@ -85,7 +85,7 @@ class AboutTheReportService:
                 else None
             ),
         }
-        response_data["2_5_b"] = (
+        response_data["2-5-b"] = (
             raw_responses.filter(path__slug=slugs[5]).order_by("year").first().data[0]
             if raw_responses.filter(path__slug=slugs[5]).order_by("year").first()
             is not None

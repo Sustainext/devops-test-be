@@ -18,6 +18,21 @@ from django.forms import model_to_dict
 from authentication.models import CustomUser
 
 
+def convert_keys(obj):
+    if isinstance(obj, dict):
+        new_obj = {}
+        for key, value in obj.items():
+            # Replace '-' with '_'
+            new_key = key.replace("-", "_")
+            # Recursively call convert_keys on the value if it's a dict or list
+            new_obj[new_key] = convert_keys(value)
+        return new_obj
+    elif isinstance(obj, list):
+        return [convert_keys(item) for item in obj]
+    else:
+        return obj
+
+
 class ESGReportPDFView(View):
     def get(self, request, *args, **kwargs):
         start_time = time.time()
@@ -35,27 +50,35 @@ class ESGReportPDFView(View):
             )
         # ceo_message = CeoMessageService.get_ceo_message_by_report(report)
         # dict_ceo_message = model_to_dict(ceo_message)
+        # dict_ceo_message = convert_keys(dict_ceo_message)
         # about_the_company_service = AboutTheCompanyAndOperationsService(pk, user)
         # about_the_company = about_the_company_service.get_complete_report_data()
+        # about_the_company = convert_keys(about_the_company)
         # mission_vision_values = (
         #     MissionVisionValuesService.get_mission_vision_values_by_report_id(pk)
         # )
+        # mission_vision_values = convert_keys(mission_vision_values)
         # sustainability_roadmap = (
         #     SustainabilityRoadmapService.get_sustainability_roadmap_by_report_id(pk)
         # )
+        # sustainability_roadmap = convert_keys(sustainability_roadmap)
         # awards_and_recognition = (
         #     AwardsAndRecognitionService.get_awards_and_recognition_by_report_id(pk)
         # )
+        # awards_and_recognition = convert_keys(awards_and_recognition)
         # stakeholder_engagement = (
         #     StakeholderEngagementService.get_stakeholder_engagement_by_report_id(
         #         pk, user
         #     )
         # )
+        # stakeholder_engagement = convert_keys(stakeholder_engagement)
         # about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
+        # about_the_report = convert_keys(about_the_report)
         # materiality = MaterialityService.get_materiality_data(pk)
+        # materiality = convert_keys(materiality)
         # screen_nine_data = ScreenNineService.get_screen_nine_data(pk)
-        # screen_ten_service = ScreenTenService(pk)
         screen_ten_data = ScreenTenService.get_screen_ten(pk)
+        screen_ten_data = convert_keys(screen_ten_data)
         print(screen_ten_data)
         # Prepare the context for rendering the PDF template
         context = {
@@ -68,6 +91,8 @@ class ESGReportPDFView(View):
             # "stakeholder_engagement": stakeholder_engagement,
             # "about_the_report": about_the_report,
             # "materiality": materiality,
+            # "screen_nine_data": screen_nine_data,
+            "screen_ten_data": screen_ten_data,
             "pk": pk,
         }
 
