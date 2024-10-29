@@ -856,3 +856,70 @@ def create_users():
         "mahinder.singh@sustainext.ai",
     ]
     created_users = bulk_create_users(emails)
+    from allauth.account.models import EmailAddress, EmailConfirmation
+    for user in CustomUser.objects.all():
+        user.set_password("sustainext@1234")
+        EmailAddress.objects.create(
+            user=user, email=user.email, verified=True, primary=True
+        ).save()
+
+import json
+import logging
+from django.core.exceptions import ValidationError
+from django.db import transaction
+
+
+logger = logging.getLogger(__name__)
+
+
+def load_successful_raw_responses_from_json(file_path):
+    from sustainapp.models import Corporateentity, Organization, Location
+    """
+    Load RawResponse objects from a JSON fixture, skipping entries with signal errors.
+
+    Args:
+        file_path (str): Path to the JSON fixture file.
+
+    Returns:
+        list: Successfully loaded RawResponse instances.
+    """
+    successful_responses = []
+
+    # Read JSON data from fixture file
+    with open(file_path, "r") as f:
+        data = json.load(f)
+
+    # Iterate over each entry in the JSON data
+    for raw_data in data:
+        try:
+            with transaction.atomic():  # Atomic block to prevent partial saves
+                # Remove "model" and "pk" fields used in Django's fixture format
+                fields = raw_data["fields"]
+                fields["path"] = Path.objects.get(id=fields["path"])
+                fields["user"] = CustomUser.objects.get(id=fields["user"])
+                fields["client"] = Client.objects.get(id=fields["client"])
+                if fields["organization"]:
+                    fields["organization"] = Organization.objects.get(
+                        id=fields["organization"]
+                    )
+                if fields["corporate"]:
+                    fields["corporate"] = Corporateentity.objects.get(
+                        id=fields["corporate"]
+                    )
+                if fields["locale"]:
+                    fields["locale"] = Location.objects.get(id=fields["locale"])
+                fields["month"] = fields["month"] if fields["month"] else None
+                fields["year"] = fields["year"] if fields["year"] else None
+                response = RawResponse(**fields)
+                response.full_clean()  # Validate all fields
+                response.save()
+                successful_responses.append(response)
+
+        except ValidationError as e:
+            # Log validation errors or handle as needed
+            print(f"Validation error loading RawResponse data: {e}")
+
+        except Exception as e:
+            # Catch other exceptions (likely from signals) and log them
+            print(f"Error loading RawResponse object: {e}")
+            continue
