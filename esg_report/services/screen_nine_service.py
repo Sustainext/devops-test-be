@@ -1,6 +1,10 @@
-from esg_report.models import Report
-
-
+from sustainapp.models import Report
+from datametric.models import RawResponse
+from esg_report.utils import get_raw_responses_as_per_report
+from sustainapp.utils import (
+    get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation,
+)
+#TODO: Add the logic to get the data from the raw responses 
 class ScreenNineService:
     def __init__(self, report_id: int) -> None:
         self.report_id = report_id
@@ -71,3 +75,778 @@ class ScreenNineService:
         }
 
     def get_response(self): ...
+
+    def set_raw_responses(self):
+        self.raw_responses = get_raw_responses_as_per_report(report=self.report)
+
+    def get_2_202_1d(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[58])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = (
+            raw_response.data[0]["Q1"] if raw_response is not None else None
+        )
+        return raw_response_data
+
+    def get_2_202_1c(self):
+        """
+        [
+                {
+                        "Currency": "100 USD",
+                        "Locationofoperation": {
+                                "currencyValue": "",
+                                "locations": [
+                                        {
+                                                "id": 1,
+                                                "value": "Rajendra Nagar"
+                                        }
+                                ],
+                                "radioValue": "Yes",
+                                "wages": {}
+                        }
+                }
+        ]
+        """
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[57])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        return raw_response_data
+
+    def get_2_202_1b(self):
+        """
+        [
+                        {
+                                "Q1": "Yes",
+                                "Q2": "Yes",
+                                "Q3": "Something"
+                        }
+        ]
+        """
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[56])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        else:
+            data = {
+                "does_your_organisation_subject_to_minimum_wage_rules": raw_response_data.get(
+                    "Q1"
+                ),
+                "are_a_significant_proportion_of_other_workers_excluding_employees_performing_the_organizations_activities_compensated_based_on_wages_subject_to_minimum_wage_rules": raw_response_data.get(
+                    "Q2"
+                ),
+                "describe_the_actions_taken_to_determine_whether_these_workers_are_paid_above_the_minimum_wage": raw_response_data.get(
+                    "Q3"
+                ),
+            }
+            return data
+
+    def get_2_202_1a(self):
+        """
+        [
+            {
+                "Q1": "Yes",
+                "Q2": "Yes",
+                "Q3": "USD",
+                "Q4": [
+                    {
+                        "Female": "101",
+                        "Location": "Rajendra Nagar",
+                        "Male": "100",
+                        "Non-binary": "102"
+                    }
+                ]
+            }
+            ]
+        """
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[55])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        else:
+            data = {
+                "does_your_organisation_subject_to_minimum_wage_rules": raw_response_data.get(
+                    "Q1"
+                ),
+                "are_a_significant_proportion_of_employees_compensated_based_on_wages_subject_to_minimum_wage_rules": raw_response_data.get(
+                    "Q2"
+                ),
+                "currency": raw_response_data.get("Q3"),
+                "if_yes_then_specify_the_relevant_entry_level_wage_by_gender_at_significant_locations_of_operation_to_the_minimum_wage": raw_response_data.get(
+                    "Q4"
+                ),
+            }
+            return data
+
+    def get_206_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[54])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data if raw_response is not None else None
+        return data
+
+    def get_2_23_f(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[53])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = (
+            raw_response.data[0]["Q1"] if raw_response is not None else None
+        )
+        return raw_response_data
+
+    def get_2_23_e(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[52])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = (
+            raw_response.data[0]["Q1"] if raw_response is not None else None
+        )
+        return raw_response_data
+
+    def get_2_23_d(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[51])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data if raw_response is not None else None
+        return raw_response_data
+
+    def get_2_23_c(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[50])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        else:
+            data = {
+                "are_the_organizations_policy_commitments_publicly_available": raw_response_data[
+                    0
+                ][
+                    "Q1"
+                ],
+                "please_provide_links_to_the_policy_commitments": raw_response_data[0][
+                    "Q2"
+                ],
+                "please_provide_links_to_the_policy_commitments": raw_response_data[0][
+                    "Q3"
+                ],
+            }
+            return data
+
+    def get_2_23_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[49])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        else:
+            data = {
+                "the_internationally_recognized_human_rights_that_the_commitment_covers": raw_response_data[
+                    0
+                ][
+                    "Disclosed"
+                ],
+                "the_categories_of_stakeholders_including_at_risk_or_vulnerable_groups_that_the_organization_gives_particular_attention_to_in_the_commitment": raw_response_data[
+                    1
+                ][
+                    "Disclosed"
+                ],
+                "other1": raw_response_data[2]["Disclosed"],
+                "other2": raw_response_data[3]["Disclosed"],
+            }
+            return data
+
+    def get_2_23_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[48])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data if raw_response is not None else None
+        return data
+
+    def get_2_9_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[0])
+            .order_by("-year")
+            .first()
+        )
+        return raw_response.data[0].get("Q1") if raw_response is not None else None
+
+    def get_2_9_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[1])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        if data is None:
+            return data
+        else:
+            d = dict()
+            for index, list_item in enumerate(data):
+                d[index] = list_item
+            return d
+
+    def get_2_9_c(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[2])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0] if raw_response is not None else None
+        return data
+
+    def get_2_10_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[3])
+            .order_by("-year")
+            .first()
+        )
+        data = (
+            raw_response.data[0].get("Q1").get("Q1")
+            if raw_response is not None
+            else None
+        )
+        return data
+
+    def get_2_10_b(self):
+        def get_2_10_b_criteria():
+            raw_response = (
+                self.raw_responses.filter(path__slug=self.slugs[4])
+                .order_by("-year")
+                .first()
+            )
+            data = raw_response.data[0].get("Q1") if raw_response is not None else None
+            return data
+
+        def get_2_10_b_governance_body_nomination_criteria():
+            raw_response = (
+                self.raw_responses.filter(path__slug=self.slugs[5])
+                .order_by("-year")
+                .first()
+            )
+            data = raw_response.data if raw_response is not None else None
+            return data
+
+        data = {}
+        data["criteria"] = get_2_10_b_criteria()
+        data["governance_body_nomination_criteria"] = (
+            get_2_10_b_governance_body_nomination_criteria()
+        )
+        return data
+
+    def get_2_11_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[6])
+            .order_by("-year")
+            .first()
+        )
+        local_response_data = raw_response.data[0] if raw_response is not None else None
+        d = {}
+        if not local_response_data:
+            return local_response_data
+        else:
+            if local_response_data.get("Q2") == "No":
+                d["is_chair_of_highest_governance"] = "No"
+            else:
+                d["is_chair_of_highest_governance"] = local_response_data.get("Q2")
+                d["table"] = local_response_data["Q3"][0]
+        return d
+
+    def get_202_2a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[7])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_202_2b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[8])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_202_2c(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[9])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_202_2d(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[10])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_12_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[11])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0] if raw_response is not None else None
+        return data
+
+    def get_2_12_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[12])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0] if raw_response is not None else None
+        return data
+
+    def get_2_17_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[13])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_14_a_and_b(self):
+        data = {}
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[14])
+            .order_by("-year")
+            .first()
+        )
+        response_data = raw_response.data[0] if raw_response is not None else None
+        if not response_data:
+            return response_data
+
+        data["highest_body_approves_report"] = response_data.get("Q1")
+        data["reason_for_yes"] = response_data["Q2"]
+        data["reason_for_no"] = response_data["Q3"]
+        return data
+
+    def get_2_13_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[15])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {
+            "governance_body_responsibility_delegation": raw_response_data.get("Q1"),
+            "has_appointed_executive_for_impact_management": raw_response_data["Q2"],
+            "reason_for_has_appointed_executive_for_impact_management": raw_response_data[
+                "Q3"
+            ],
+            "has_delegated_impact_management_to_employees": raw_response_data["Q4"],
+            "reason_for_has_delegated_impact_management_to_employees": raw_response_data[
+                "Q5"
+            ],
+        }
+        return data
+
+    def get_2_13_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[16])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_16_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[17])
+            .order_by("-year")
+            .first()
+        )
+        response_data = raw_response.data[0] if raw_response is not None else None
+        if not response_data:
+            return response_data
+        data = {}
+        data["critical_concerns_communicated_to_governance_body"] = response_data.get(
+            "Q1"
+        )
+        data["critical_concerns_communication_description"] = response_data["Q2"]
+        return data
+
+    def get_2_16_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[18])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {}
+        data["total_critical_concerns_reported"] = raw_response_data.get("Q1")
+        data["nature_of_critical_concerns_reported"] = raw_response_data["Q2"]
+        return data
+
+    def get_2_18_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[19])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_18_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[20])
+            .order_by("-year")
+            .first()
+        )
+        response_data = raw_response.data[0] if raw_response is not None else None
+        if not response_data:
+            return response_data
+        data = {}
+        data["evaluations_independent"] = response_data["Q2"]
+        data["evaluation_frequency"] = response_data["Q3"]
+        return data
+
+    def get_2_18_c(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[21])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_19_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[22])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {}
+        data["remuneration_policy_fixed_and_variable_pay"] = raw_response_data.get("Q1")
+        data["remuneration_policy_sign_on_bonuses"] = raw_response_data["Q2"]
+        data["remuneration_policy_termination_payments"] = raw_response_data["Q3"]
+        data["remuneration_policy_clawbacks"] = raw_response_data["Q4"]
+        data["remuneration_policy_retirement_benefits"] = raw_response_data["Q5"]
+        return data
+
+    def get_2_21_a(self):
+        # TODO: Sum of annual total compensation ratio
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[23])
+            .order_by("-year")
+            .first()
+        )
+        # TODO: Verify the logic to be used for multiple locations.
+        data = raw_response.data[0] if raw_response is not None else None
+        return data
+
+    def get_2_21_a_analyse_governance(self):
+        ...
+        local_slugs = {
+            0: self.slugs[59],
+            1: self.slugs[60],
+        }
+        return get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation(
+            raw_response=self.raw_responses, slugs=local_slugs
+        )
+
+    def get_2_21_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[24])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0] if raw_response is not None else None
+        return data
+
+    def get_2_21_c(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[25])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_22_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[26])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_28_a(self):
+        raw_response = (
+            (self.raw_responses.filter(path__slug=self.slugs[45]))
+            .order_by("-year")
+            .first()
+        )
+        local_data = raw_response.data if raw_response is not None else None
+        if not local_data:
+            return local_data
+        else:
+            return local_data[0]["MembershipAssociations"]["MembershipAssociations"]
+
+    def get_2_25_data(self):
+        data = {}
+        for i in range(27, 32):
+            slug = self.slugs[i]
+            raw_response = (
+                self.raw_responses.filter(path__slug=slug).order_by("-year").first()
+            )
+            key = f"2_25_{chr(97 + i - 27)}"  # This will generate keys 2_25_a, 2_25_b, etc.
+            data[key] = (
+                raw_response.data[0].get("Q1") if raw_response is not None else None
+            )
+        return data
+
+    def get_2_26_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[32])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {}
+        data["responsible_business_conduct_advice"] = raw_response_data.get("Q1")
+        data["business_conduct_concerns"] = raw_response_data["Q2"]
+        return data
+
+    def get_2_27_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[33])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {}
+        data["significant_non_compliance_occurred"] = raw_response_data.get("Q1")
+        data["total_significant_non_compliance_instances"] = raw_response_data["Q2"]
+        data["total_fines_incurred_instances"] = raw_response_data.get("Q3")
+        data["total_non_monetary_sanctions_instances"] = raw_response_data.get("Q4")
+
+        return data
+
+    def get_2_27_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[34])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {}
+        data["total_fines_incurred_instances"] = raw_response_data.get("Q1")
+        data["total_fines_incurred_instances_previous_periods"] = raw_response_data[
+            "Q2"
+        ]
+        return data
+
+    def get_2_27_c(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[35])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_27_d(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[36])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_3_c_d_e_in_material_topics(self):
+        # TODO: Complete this after completing logic of selection material topic for report.
+        return None
+
+    def get_206_1a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[37])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {}
+        data["legal_actions_anti_competitive_behavior"] = raw_response_data.get("Q1")
+        data["number_legal_actions_anti_competitive_behavior"] = {}
+        data["number_legal_actions_anti_competitive_behavior"]["pending"] = (
+            raw_response_data["Q2"]
+        )
+        data["number_legal_actions_anti_competitive_behavior"]["completed"] = (
+            raw_response_data["Q3"]
+        )
+        data["number_antitrust_monopoly_violations"] = raw_response_data["Q4"]
+        return data
+
+    def get_201_3a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[38])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_201_3b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[39])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {}
+        data["liabilities_coverage_extent"] = raw_response_data.get("Q1")
+        data["liabilities_estimate_basis"] = raw_response_data["Q2"]
+        data["liabilities_estimate_date_details"] = raw_response_data["Q3"]
+        return data
+
+    def get_201_3c(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[40])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {}
+        data["strategy_for_full_pension_liabilities_coverage"] = raw_response_data.get(
+            "Q1"
+        )
+        data["timescale_for_full_pension_liabilities_coverage"] = raw_response_data[
+            "Q2"
+        ]
+        return data
+
+    def get_201_3d(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[41])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_201_3e(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[42])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_15_a(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[43])
+            .order_by("-year")
+            .first()
+        )
+        data = raw_response.data[0].get("Q1") if raw_response is not None else None
+        return data
+
+    def get_2_15_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[44])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data if raw_response is not None else None
+        if not raw_response_data:
+            return raw_response_data
+        data = {
+            "cross_board_membership": raw_response_data[0]["Disclosed"],
+            "cross_shareholding_with_suppliers_and_other_stakeholders": raw_response_data[
+                1
+            ][
+                "Disclosed"
+            ],
+            "existence_of_controlling_shareholders": raw_response_data[2]["Disclosed"],
+            "related_parties_theri_relationships_transactions_and_outstanding_balances": raw_response_data[
+                3
+            ][
+                "Disclosed"
+            ],
+            "others": raw_response_data[4]["Disclosed"],
+        }
+        return data
+
+    def get_2_20_a(self):
+        local_raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[46])
+            .order_by("-year")
+            .first()
+        )
+        local_data = local_raw_response.data if local_raw_response is not None else None
+        if not local_data:
+            return local_data
+        return local_data[0]
+
+    def get_2_20_b(self):
+        local_raw_response = (
+            RawResponse.objects.filter(
+                path__slug=self.slugs[47]
+            )  # * This is the correct path.
+            .order_by("-year")
+            .first()
+        )
+        local_data = local_raw_response.data if local_raw_response is not None else None
+        if not local_data:
+            return local_data
+        else:
+            return local_data[0]["Q1"]
