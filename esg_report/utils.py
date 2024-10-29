@@ -472,7 +472,7 @@ def generate_disclosure_status(report: Report):
         gri_sector_no = None
 
         # Use the section title as the title
-        title = section_title
+        title = section_title["content_index_name"]
         try:
             content_index_reason = ContentIndexRequirementOmissionReason.objects.get(
                 report=report, indicator=indicator
