@@ -496,6 +496,13 @@ def organizationonly(request):
             if regulation
             else None
         )
+        # Link the organization to the user who created it
+        request.user.orgs.add(organization_data)
+        user_org, created = Userorg.objects.get_or_create(user=request.user)
+        user_org.organization.add(
+            organization_data
+        )  # Add the org to the ManyToMany field
+        user_org.save()
         organization_data.save()
         logging.info(f"organization_data- {organization_data}")
         org_data = OrganizationOnlySerializer(organization_data).data
@@ -601,6 +608,7 @@ def corporateonly(request):
             framework=framework,
             organization=organization_data,
         )
+        request.user.corps.add(corporate)
 
         logging.info(f"request.data- {organization_data}")
 
@@ -666,6 +674,7 @@ def locationonlyview(request):
             **request_data,
             corporateentity=corporate_data,
         )
+        request.user.locs.add(location_instance)
         location_instance.save()
         return Response("Location data created")
 
