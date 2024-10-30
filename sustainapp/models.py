@@ -1099,6 +1099,7 @@ class TrackDashboard(AbstractModel):
         ("material", "Material"),
         ("general", "General"),
         ("economic", "Economic"),
+        ("governance", "Governance"),
     ]
     table_name = models.CharField(max_length=255, default="")
     report_name = models.CharField(max_length=1024, choices=REPORT_CHOICES)
