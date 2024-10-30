@@ -60,6 +60,14 @@ def create_data_for_recycled_input_materials(raw_response: RawResponse):
         base_unit2 = recycled_input_materials_object.get_base_unit(
             recycled_input_materials_object.unit_input_material_used
         )
+
+        recycled_input_materials_object.total_weight_or_volume = (
+            recycled_input_materials_object.convert(
+                value=recycled_input_materials_object.total_weight_or_volume,
+                from_unit=recycled_input_materials_object.unit_material_recycled,
+                to_unit=base_unit,
+            )
+        )
         recycled_input_materials_object.amount_of_material_recycled = (
             recycled_input_materials_object.convert(
                 value=recycled_input_materials_object.amount_of_material_recycled,
