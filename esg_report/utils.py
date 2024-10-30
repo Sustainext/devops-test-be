@@ -458,7 +458,7 @@ def generate_disclosure_status(report: Report):
     for section_title, data in GENERAL_DISCLOSURES_AND_PATHS.items():
         indicator = data["indicator"]
         subindicators = data["subindicators"]
-
+        content_index_name = data["content_index_name"]
         # Collect all slugs from subindicators
         slugs = []
         for title, slug in subindicators:
@@ -472,7 +472,7 @@ def generate_disclosure_status(report: Report):
         gri_sector_no = None
 
         # Use the section title as the title
-        title = section_title["content_index_name"]
+        title = content_index_name
         try:
             content_index_reason = ContentIndexRequirementOmissionReason.objects.get(
                 report=report, indicator=indicator
