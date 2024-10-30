@@ -4,7 +4,12 @@ from esg_report.utils import get_raw_responses_as_per_report
 from sustainapp.utils import (
     get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation,
 )
-#TODO: Add the logic to get the data from the raw responses 
+from esg_report.models.ScreenNine import ScreenNine
+from esg_report.Serializer.ScreenNineSerializer import ScreenNineSerializer
+from django.core.exceptions import ObjectDoesNotExist
+
+
+# TODO: Add the logic to get the data from the raw responses
 class ScreenNineService:
     def __init__(self, report_id: int) -> None:
         self.report_id = report_id
@@ -74,7 +79,88 @@ class ScreenNineService:
             60: "gri-governance-compensation_ratio-2-21-b-percentage",
         }
 
-    def get_response(self): ...
+    def get_screen_nine_data(self):
+        try:
+            screen_nine = self.report.screen_nine
+            serializer = ScreenNineSerializer(screen_nine)
+            return serializer.data
+        except ObjectDoesNotExist:
+            # * get all fields of ScreenNine in a dictionary
+            screen_nine_data = dict()
+            for field in ScreenNine._meta.fields:
+                screen_nine_data[field.name] = None
+            return screen_nine_data
+
+    def get_response(self):
+        self.set_raw_responses()
+        response_data = dict()
+        response_data.update(self.get_screen_nine_data())
+        response_data["2_9_a"] = self.get_2_9_a()
+        response_data["2_9_b"] = self.get_2_9_b()
+        response_data["2_9_c"] = self.get_2_9_c()
+        response_data["2_10_a"] = self.get_2_10_a()
+        response_data["2_10_b"] = self.get_2_10_b()
+        response_data["2_11_b"] = self.get_2_11_b()
+        response_data["202_2a"] = self.get_202_2a()
+        response_data["202_2b"] = self.get_202_2b()
+        response_data["202_2c"] = self.get_202_2c()
+        response_data["202_2d"] = self.get_202_2d()
+        response_data["2_12_a"] = self.get_2_12_a()
+        response_data["2_12_b"] = self.get_2_12_b()
+        response_data["2_17_a"] = self.get_2_17_a()
+        response_data["2_14_a_and_b"] = self.get_2_14_a_and_b()
+        response_data["2_13_a"] = self.get_2_13_a()
+        response_data["2_13_b"] = self.get_2_13_b()
+        response_data["2_16_a"] = self.get_2_16_a()
+        response_data["2_16_b"] = self.get_2_16_b()
+        response_data["2_18_a"] = self.get_2_18_a()
+        response_data["2_18_b"] = self.get_2_18_b()
+        response_data["2_18_c"] = self.get_2_18_c()
+        response_data["2_19_a"] = self.get_2_19_a()
+        response_data["2_21_a"] = self.get_2_21_a()
+        response_data["2_21_a_analyse_governance"] = (
+            self.get_2_21_a_analyse_governance()
+        )
+        response_data["2_21_b"] = self.get_2_21_b()
+        response_data["2_21_c"] = self.get_2_21_c()
+        response_data["2_22_a"] = self.get_2_22_a()
+        response_data["2_28_a"] = self.get_2_28_a()
+        response_data["2_25_data"] = self.get_2_25_data()
+        response_data["2_26_a"] = self.get_2_26_a()
+        response_data["2_27_a"] = self.get_2_27_a()
+        response_data["2_27_b"] = self.get_2_27_b()
+        response_data["2_27_c"] = self.get_2_27_c()
+        response_data["2_27_d"] = self.get_2_27_d()
+        response_data["3_c_d_e_in_material_topics"] = (
+            self.get_3_c_d_e_in_material_topics()
+        )
+        response_data["206_1a"] = self.get_206_1a()
+        response_data["201_3a"] = self.get_201_3a()
+        response_data["201_3b"] = self.get_201_3b()
+        response_data["201_3c"] = self.get_201_3c()
+        response_data["201_3d"] = self.get_201_3d()
+        response_data["201_3e"] = self.get_201_3e()
+        response_data["2_15_a"] = self.get_2_15_a()
+        response_data["2_15_b"] = self.get_2_15_b()
+        response_data["2_20_a"] = self.get_2_20_a()
+        response_data["2_20_b"] = self.get_2_20_b()
+        response_data["206_1b"] = self.get_206_b()
+        response_data["2_23_f"] = self.get_2_23_f()
+        response_data["2_23_e"] = self.get_2_23_e()
+        response_data["2_23_d"] = self.get_2_23_d()
+        response_data["2_23_c"] = self.get_2_23_c()
+        response_data["2_23_b"] = self.get_2_23_b()
+        response_data["2_23_a"] = self.get_2_23_a()
+        response_data["2_202_1d"] = self.get_2_202_1d()
+        response_data["2_202_1c"] = self.get_2_202_1c()
+        response_data["2_202_1b"] = self.get_2_202_1b()
+        response_data["2_202_1a"] = self.get_2_202_1a()
+        response_data["2_23_f"] = self.get_2_23_f()
+        response_data["2_23_e"] = self.get_2_23_e()
+        response_data["2_23_d"] = self.get_2_23_d()
+        response_data["2_23_c"] = self.get_2_23_c()
+        response_data["2_23_b"] = self.get_2_23_b()
+        return response_data
 
     def set_raw_responses(self):
         self.raw_responses = get_raw_responses_as_per_report(report=self.report)

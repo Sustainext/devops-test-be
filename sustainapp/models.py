@@ -1096,6 +1096,10 @@ class TrackDashboard(AbstractModel):
         ("diversity_inclusion", "Diversity & Inclusion"),
         ("community_development", "Community Development"),
         ("water_and_effluents", "Water & Effluents"),
+        ("material", "Material"),
+        ("general", "General"),
+        ("economic", "Economic"),
+        ("governance", "Governance"),
     ]
     table_name = models.CharField(max_length=255, default="")
     report_name = models.CharField(max_length=1024, choices=REPORT_CHOICES)

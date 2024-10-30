@@ -204,6 +204,12 @@ class ScreenThirteenView(APIView):
     def set_raw_responses(self):
         self.raw_responses = get_raw_responses_as_per_report(self.report)
 
+    def get_202_1c(self):
+        slug = self.slugs[72]
+        local_raw_responses = self.raw_responses.filter(path__slug=slug).first()
+        if local_raw_responses is not None:
+            return [local_raw_responses.data[0]]
+
     def get(self, request, report_id, format=None):
         try:
             self.report = Report.objects.get(id=report_id)
@@ -440,8 +446,10 @@ class ScreenThirteenView(APIView):
         response_data["403-8c"] = collect_data_and_differentiate_by_location(
             data_points=self.data_points.filter(path__slug=self.slugs[49])
         )
-        response_data["402-1a_collective_bargainging_agreements"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[50])
+        response_data["402-1a_collective_bargainging_agreements"] = (
+            collect_data_and_differentiate_by_location(
+                data_points=self.data_points.filter(path__slug=self.slugs[50])
+            )
         )
         response_data["407-1a-operations"] = collect_data_by_raw_response_and_index(
             data_points=self.data_points.filter(path__slug=self.slugs[51])
@@ -550,9 +558,7 @@ class ScreenThirteenView(APIView):
         response_data["202_1b"] = collect_data_by_raw_response_and_index(
             data_points=self.data_points.filter(path__slug=self.slugs[71])
         )
-        response_data["202_1c"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[72])
-        )
+        response_data["202_1c"] = self.get_202_1c()
         response_data["202_1d"] = collect_data_by_raw_response_and_index(
             data_points=self.data_points.filter(path__slug=self.slugs[73])
         )

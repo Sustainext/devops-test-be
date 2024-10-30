@@ -8,6 +8,7 @@ def get_community_engagement_analysis(raw_responses, slugs):
     local_data = [
         raw_response.data for raw_response in raw_responses.filter(path__slug=slugs[0])
     ]
+    print(slugs[0])
     response_data = {
         "Social impact assessments": 0,
         "Environmental impact assessments": 0,
