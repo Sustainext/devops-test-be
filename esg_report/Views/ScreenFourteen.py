@@ -59,8 +59,8 @@ class ScreenFourteenAPIView(APIView):
         self.raw_responses = get_raw_responses_as_per_report(self.report)
 
     def get_413_1a(self):
-        slug = "gri-social-community_engagement-413-1a-number_of_operations"
-        raw_responses = self.raw_responses.filter(path__slug=slug)
+        slug = {0: "gri-social-community_engagement-413-1a-number_of_operations"}
+        raw_responses = self.raw_responses.filter(path__slug=slug[0])
         return get_community_engagement_analysis(
             raw_responses=raw_responses, slugs=slug
         )
