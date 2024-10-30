@@ -33,6 +33,7 @@ class ScreenNineView(APIView):
             )
         except ObjectDoesNotExist:
             serializer = ScreenNineSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         serializer.save(report=self.report)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
