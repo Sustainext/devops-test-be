@@ -23,8 +23,9 @@ from esg_report.Serializer.ScreenElevenSerializer import ScreenElevenSerializer
 
 
 class ScreenElevenService:
-    def __init__(self, report_id):
+    def __init__(self, report_id, request):
         self.report = Report.objects.get(id=report_id)
+        self.request = request
         self.slugs = {
             0: "gri-economic-direct_economic_value-report-201-1a-1b",
             1: "gri-economic-financial_assistance-204-1a-2b-provide",
