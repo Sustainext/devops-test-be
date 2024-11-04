@@ -21,9 +21,11 @@ class CreateCustomUserView(APIView):
         serializer = CustomUserSerializer(data=mutable_data)
 
         if serializer.is_valid():
+
             user = serializer.save()
 
             # Set additional fields
+            user.client = request.user.client
             user.is_client_admin = False
             user.admin = False
 
