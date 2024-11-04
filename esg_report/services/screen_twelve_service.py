@@ -356,6 +356,7 @@ class ScreenTwelveService:
                 ),
             }
         )
+        return response_data
 
     def get_report_response(self):
         response_data = self.get_api_response()

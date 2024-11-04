@@ -538,6 +538,7 @@ class ScreenElevenService:
         response_data["205_3a"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[28])
         )
+        return response_data
 
     def get_report_response(self):
         response_data = self.get_api_response()
