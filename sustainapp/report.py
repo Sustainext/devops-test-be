@@ -606,7 +606,7 @@ def generate_pdf_data(pk):
 
     context = {
         "object_list": report,
-        "org_logo": report.org_logo.path if report.org_logo else None,
+        "org_logo": report.org_logo if report.org_logo else None,
         "report_type": report.report_type,
         "report_by": report.report_by,
         "organization_name": organization_name,
