@@ -13,6 +13,7 @@ from esg_report.services.screen_five_service import AwardsAndRecognitionService
 from esg_report.services.screen_six_service import StakeholderEngagementService
 from esg_report.services.screen_seven_service import AboutTheReportService
 from esg_report.services.screen_eight_service import MaterialityService
+from esg_report.services.screen_nine_service import ScreenNineService
 from esg_report.services.screen_ten_service import ScreenTenService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
@@ -76,10 +77,12 @@ class ESGReportPDFView(View):
         # about_the_report = convert_keys(about_the_report)
         # materiality = MaterialityService.get_materiality_data(pk)
         # materiality = convert_keys(materiality)
-        # screen_nine_data = ScreenNineService.get_screen_nine_data(pk)
-        screen_ten_data = ScreenTenService.get_screen_ten(pk)
-        screen_ten_data = convert_keys(screen_ten_data)
-        print(screen_ten_data)
+        screen_nine_service = ScreenNineService(report_id=pk)
+        screen_nine_data = screen_nine_service.get_response()
+        # screen_nine_data = convert_keys(screen_nine_data)
+        # screen_ten_data = ScreenTenService.get_screen_ten(pk)
+        # screen_ten_data = convert_keys(screen_ten_data)
+        # print(screen_nine_data)
         # Prepare the context for rendering the PDF template
         context = {
             "report": report,
@@ -91,8 +94,8 @@ class ESGReportPDFView(View):
             # "stakeholder_engagement": stakeholder_engagement,
             # "about_the_report": about_the_report,
             # "materiality": materiality,
-            # "screen_nine_data": screen_nine_data,
-            "screen_ten_data": screen_ten_data,
+            "screen_nine_data": screen_nine_data,
+            # "screen_ten_data": screen_ten_data,
             "pk": pk,
         }
 

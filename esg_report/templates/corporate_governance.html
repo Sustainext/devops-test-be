@@ -1,62 +1,80 @@
 <!-- corporate_governance.html -->
 {% if screen_nine_data %}
 <h2>9. Corporate Governance</h2>
-
-<p>At <strong>[Company Name]</strong>, strong corporate governance is the foundation of our business integrity,
-    accountability, and sustainability. Our governance framework is designed to ensure transparent, ethical, and
-    effective management, aligning with best practices and standards to drive long-term value for our stakeholders.</p>
+{% if screen_nine_data.statement %}
+<p>{{screen_nine_data.statement}}</p>
+{% else %}
+<p>No statement provided.</p>
+{% endif %}
 
 <h3>9.1. Board of Directors</h3>
 
-<h4>9.1.1 Governance Structure and Composition (GRI 2-9-a)</h4>
-<p>Our Board of Directors comprises a diverse group of experienced professionals who bring a broad range of expertise
-    and perspectives. The Board is structured to provide balanced oversight and strategic guidance, with committees
-    dedicated to specific areas such as audit, risk management, and sustainability.</p>
+<h4>9.1.1 Governance Structure and Composition</h4>
 
-<h4>Committees of the Highest Governance Body (GRI 2-9-b)</h4>
-<p>(This data can be represented in the tabular format)</p>
+<p>{{screen_nine_data.board_gov_statement}}</p>
 
+<h4>Describe the governance structure, including the committees of the highest governance body</h4>
+{% if screen_nine_data.2_9_a %}
+<p>{{screen_nine_data.2_9_a}}</p>
+{% else %}
+<p>No data available.</p>
+{% endif %}
+
+<h4>Committees of the Highest Governance Body</h4>
+<table cellpadding="5" cellspacing="0">
+    {% for key, value in screen_nine_data.2_9_b.items %}
+    <tr>
+        {% for item in value %}
+        <td>{{ item }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+<h4>Committees of the highest governance body</h4>
 <table cellpadding="5" cellspacing="0">
     <thead>
         <tr>
             <th>Name</th>
-            <th>Executive Power</th>
+            <th>Executive power</th>
             <th>Independence</th>
-            <th>Tenure</th>
-            <th>Number of Significant Positions</th>
-            <th>Commitments Held</th>
-            <th>Nature of Commitments</th>
+            <th>Tenure on the governance body</th>
+            <th>Number of significant positions</th>
+            <th>Commitments held by members</th>
+            <th>The nature of commitments</th>
             <th>Gender</th>
-            <th>Underrepresented Groups</th>
-            <th>Competencies</th>
-            <th>Stakeholder Representation</th>
+            <th>Underrepresented social Groups</th>
+            <th>Competencies relevant to the impacts of the organization</th>
+            <th>Stakeholder representation</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>John Doe</td>
-            <td>Yes</td>
-            <td>Yes</td>
-            <td>5 years</td>
-            <td>3</td>
-            <td>Corporate Governance, Finance</td>
-            <td>External Board Membership</td>
-            <td>Male</td>
-            <td>No</td>
-            <td>Finance, Risk Management</td>
-            <td>Yes</td>
+            <td>{{ screen_nine_data.2_9_c.name }}</td>
+            <td>{{ screen_nine_data.2_9_c.executivePower }}</td>
+            <td>{{ screen_nine_data.2_9_c.independence }}</td>
+            <td>{{ screen_nine_data.2_9_c.tenure }}</td>
+            <td>{{ screen_nine_data.2_9_c.significantPositions }}</td>
+            <td>{{ screen_nine_data.2_9_c.commitmentsHeld }}</td>
+            <td>{{ screen_nine_data.2_9_c.natureOfCommitments }}</td>
+            <td>{{ screen_nine_data.2_9_c.gender }}</td>
+            <td>{{ screen_nine_data.2_9_c.underRepresentedGroups }}</td>
+            <td>{{ screen_nine_data.2_9_c.competencies }}</td>
+            <td>{{ screen_nine_data.2_9_c.stakeholderRepresentation }}</td>
         </tr>
-        <!-- Add more rows as necessary -->
     </tbody>
 </table>
 
 <h3>9.2. General Governance</h3>
 
-<h4>9.2.1 Nomination, Selection of the Highest Governance Body (GRI 2-10-a, 2-10-b)</h4>
+<h4>9.2.1 Nomination, Selection of the Highest Governance Body</h4>
 <p>The nomination and selection process for our Board of Directors is rigorous and transparent. Candidates are evaluated
     based on their qualifications, experience, and alignment with our company values. Criteria considered for nomination
     and selection include:</p>
+<p>{{ screen_nine_data.2_10_a }}</p>
+<p>{{ screen_nine_data.2_10_b.criteria }}</p>
 
+<h4>Criteria considered for nomination and selection of the highest governance body </h4>
 <table cellpadding="5" cellspacing="0">
     <thead>
         <tr>
@@ -66,127 +84,360 @@
         </tr>
     </thead>
     <tbody>
+        <!-- Views of Stakeholders Row -->
         <tr>
             <td>Views of Stakeholders</td>
-            <td>Yes</td>
-            <td>Feedback from shareholders, employees, and community members is taken into account.</td>
+            <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.0.Whethertakenintoconsideration }}</td>
+            <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.0.How }}</td>
         </tr>
+
+        <!-- Diversity Row -->
         <tr>
             <td>Diversity</td>
-            <td>Yes</td>
-            <td>We prioritize diversity in gender, ethnicity, and background.</td>
+            <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.1.Whethertakenintoconsideration }}</td>
+            <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.1.How }}</td>
         </tr>
+
+        <!-- Independence Row -->
         <tr>
             <td>Independence</td>
-            <td>Yes</td>
-            <td>Board members must demonstrate independence from executive influence.</td>
+            <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.2.Whethertakenintoconsideration }}</td>
+            <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.2.How }}</td>
         </tr>
-        <!-- Add more rows as necessary -->
+        <tr>
+            <td>Competencies relevant to the impacts of the Organization</td>
+            <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.3.Whethertakenintoconsideration }}</td>
+            <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.3.How }}</td>
+        </tr>
     </tbody>
 </table>
 
-<h4>9.2.2 Chair of the Highest Governance Body (GRI 2-11-a, 2-11-b)</h4>
-<p>The Chair of the Board is an independent director, ensuring impartial leadership and effective oversight. The Chair’s
-    responsibilities include leading board meetings, overseeing governance processes, and ensuring that the Board
-    operates efficiently.</p>
 
-<h4>9.2.3 Senior Management Hired from Local Community (GRI 202-2-a, 202-2-b, 202-2-c)</h4>
-<p>We prioritize hiring senior management from the local communities where we operate, supporting local employment and
-    leveraging regional expertise.</p>
+<h4>9.2.2 Chair of the Highest Governance Body</h4>
+<p>{{screen_nine_data.2_11_b.is_chair_of_highest_governance}}</p>
 
-<h4>9.2.4 Management of Material Topics (GRI 3-3-c, 3-3-d, 3-3-e)</h4>
-<p>[Details about how the company manages material topics]</p>
+<h4>9.2.3 Senior Management Hired from Local Community</h4>
+<p>Percentage of senior management at significant locations of operation that are hired from the local community:
+    {{screen_nine_data.202_2a}}</p>
+<p>The definition used for 'senior management': {{screen_nine_data.202_2b}}</p>
+<p>The organization's geographical definition of 'local': {{screen_nine_data.202_2c}}</p>
+<p>The definition used for "significant locations of operation": {{screen_nine_data.202_2d}}</p>
+
+<h4>9.2.4 Management of Material Topics </h4>
+{% if screen_nine_data.3_3_c_d_e_in_material_topics %}
+<p>{{screen_nine_data.3_c_d_e_in_material_topics}}</p>
+{% else %}
+<p>No material topics identified.</p>
+{% endif %}
 
 <h3>9.3. Responsibility, Evaluation, and Remuneration of the Board</h3>
 
-<h4>9.3.1 Role of the Highest Governance Body (GRI 2-12-a, 2-12-b, 2-12-c)</h4>
-<p>The Board's primary role is to provide strategic direction and oversight, ensuring that <strong>[Company
-        Name]</strong> operates in the best interests of its stakeholders.</p>
-
-<h4>9.3.2 Collective Knowledge of the Highest Governance Body (GRI 2-17-a)</h4>
-<p>Our Board members possess a wide range of collective knowledge and expertise in areas critical to our business,
-    including finance, sustainability, manufacturing, and corporate governance.</p>
-
-<h4>9.3.3 Role of the Highest Governance Body in Sustainability Reporting (GRI 2-14-a, 2-14-b)</h4>
-<p>The Board plays a crucial role in overseeing our sustainability reporting, ensuring that disclosures are accurate,
-    transparent, and aligned with GRI standards.</p>
-
-<h4>9.3.4 Delegation of Responsibility for Managing Impacts (GRI 2-13-a, 2-13-b)</h4>
-<p>The Board delegates responsibility for managing ESG impacts to dedicated committees and senior executives.</p>
-
-<h4>9.3.5 Communication of Critical Concerns (GRI 2-16-a, 2-16-b)</h4>
-<p>We have established clear channels for communicating critical concerns to the Board, including a whistleblower
-    hotline and direct communication mechanisms.</p>
-
-<h4>9.3.6 Evaluation of the Performance of the Highest Governance Body (GRI 2-18-a, 2-18-b, 2-18-c)</h4>
-<p>The performance of the Board is evaluated annually through a structured assessment process.</p>
-
-<h4>9.3.7 Remuneration Policies & Process to Determine Remuneration (GRI 2-19-a, 2-19-b)</h4>
-<p>Our remuneration policies are designed to attract, retain, and motivate high-caliber Board members and executives.
-    Compensation is based on industry benchmarks, individual performance, and the achievement of strategic objectives.
-</p>
-
-<h4>9.3.8 Annual Compensation Ratio (GRI 2-21-a, 2-21-b, 2-21-c)</h4>
-<p>We disclose the ratio of the annual total compensation of our CEO to the median annual total compensation of all
-    other employees.</p>
-
-<h3>9.4. Strategy</h3>
-
-<h4>9.4.1 Statement on Sustainable Development Strategy (GRI 2-22-a)</h4>
-<p><strong>[Company Name]</strong> is committed to integrating sustainable development into our core business strategy,
-    focusing on reducing environmental impact, enhancing social value, and maintaining strong governance.</p>
-
-<h4>9.4.2 Membership Association (GRI 2-28-a)</h4>
-<p>We actively participate in various industry associations and sustainability networks to collaborate on common
-    challenges and advocate for sustainable development. Our memberships include [List of Relevant Associations].</p>
-
-<h3>9.5. Risk Management</h3>
-
-<h4>9.5.1 Remediation of Negative Impacts (GRI 2-25-a, 2-25-b, 2-25-c)</h4>
-<p>We are committed to identifying, mitigating, and remediating any negative impacts associated with our operations.</p>
-
-<h4>9.5.2 Mechanism for Seeking Advice and Raising Concerns (GRI 2-26-a)</h4>
-<p>Employees and stakeholders can seek advice and raise concerns through multiple channels, including internal reporting
-    mechanisms and external consultations.</p>
-
-<h4>9.5.3 Compliance (GRI 2-27-a, 2-27-b, 2-27-c)</h4>
-<p>We maintain strict compliance with all applicable laws and regulations, including environmental, labor, and corporate
-    governance standards. The following table summarizes our compliance record:</p>
-
+<h4>9.3.1 Role of the Highest Governance Body</h4>
 <table cellpadding="5" cellspacing="0">
     <thead>
         <tr>
-            <th>Category</th>
-            <th>Number of Instances</th>
+            <th>The organization's purpose</th>
+            <th>Value or mission statements</th>
+            <th>Strategies</th>
+            <th>Policies</th>
+            <th>Goals related to sustainable development</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>Fines Incurred</td>
-            <td>23</td>
+            <td>{{ screen_nine_data.2_12_a.Theorganizationpurpose }}</td>
+            <td>{{ screen_nine_data.2_12_a.Valueormissionstatements }}</td>
+            <td>{{ screen_nine_data.2_12_a.Strategies }}</td>
+            <td>{{ screen_nine_data.2_12_a.Policies }}</td>
+            <td>{{ screen_nine_data.2_12_a.Goalsrelatedtosustainabledevelopment }}</td>
         </tr>
+</table>
+
+<h4>Role of the highest governance body and of senior executives in overseeing the organization's due diligence and
+    other processes to identify and manage the organization's impact on the economy, environment and people:</h4>
+{% if screen_nine_data.2_12_b.Q1 %}
+<p>{{ screen_nine_data.2_12_b.Q1 }}</p>
+{% else %}
+<p>No information provided.</p>
+{% endif %}
+
+<h4>How the highest governance body engage with stakeholders to support these processes:</h4>
+{% if screen_nine_data.2_12_b.Q3 %}
+<p>{{ screen_nine_data.2_12_b.Q3 }}</p>
+{% else %}
+<p>No information provided.</p>
+{% endif %}
+
+<h4>How the highest governance body considers the outcomes of these processes:</h4>
+{% if screen_nine_data.2_12_b.Q4 %}
+<p>{{ screen_nine_data.2_12_b.Q4 }}</p>
+{% else %}
+<p>No information provided.</p>
+{% endif %}
+
+<h4>9.3.2 Collective Knowledge of the Highest Governance Body </h4>
+<p>{{ screen_nine_data.2_17_a }}</p>
+
+<h4>9.3.3 Role of the Highest Governance Body in Sustainability Reporting</h4>
+<p> {{screen_nine_data.2_14_a_and_b.highest_body_approves_report}} </p>
+{% if screen_nine_data.2_14_a_and_b.highest_body_approves_report == "Yes" %}
+<p>{{ screen_nine_data.2_14_a_and_b.reason_for_yes }}</p>
+{% else %}
+<p>{{ screen_nine_data.2_14_a_and_b.reason_for_no }}</p>
+{% endif %}
+
+<h4>9.3.4 Delegation of Responsibility for Managing Impacts </h4>
+
+<h4>Description of how the highest governance body delegates responsibility for managing the organization's impacts on
+    economy, environment and people: </h4>
+{% if screen_nine_data.2_13_a.governance_body_responsibility_delegation %}
+<p> {{screen_nine_data.2_13_a.governance_body_responsibility_delegation}} </p>
+{% else %}
+<p>No information provided.</p>
+{% endif %}
+
+<h4>Senior executives with responsibility for the management of impacts: </h4>
+{% if screen_nine_data.2_13_a.has_appointed_executive_for_impact_management == "Yes" %}
+<p> {{screen_nine_data.2_13_a.reason_for_has_appointed_executive_for_impact_management}} </p>
+{% else %}
+<p>No.</p>
+{% endif %}
+
+<h4>Delegated responsibility for the management of impacts to other employees:</h4>
+{% if screen_nine_data.2_13_a.has_delegated_impact_management_to_employees == "Yes" %}
+<p> {{screen_nine_data.2_13_a.reason_for_has_delegated_impact_management_to_employees}} </p>
+{% else %}
+<p>No.</p>
+{% endif %}
+
+<h4>Description of the process and frequency for senior executives or other employees to report back to the highest
+    governance body on the management of the organization's impacts on the economy, environment and people:</h4>
+{% if screen_nine_data.2_13_b %}
+<p> {{screen_nine_data.2_13_b}} </p>
+{% else %}
+<p>No information provided.</p>
+{% endif %}
+
+<h4>9.3.5 Communication of Critical Concerns </h4>
+{% if screen_nine_data.2_16_a.critical_concerns_communication_description %}
+<p>{{ screen_nine_data.2_16_a.critical_concerns_communication_description }}</p>
+{% else %}
+<p>No information provided.</p>
+{% endif %}
+
+<h4>Total number of critical concerns that were communicated to the highest governance body :</h4>
+{% if screen_nine_data.2_16_b.total_critical_concerns_reported%}
+<p>{{ screen_nine_data.2_16_b.total_critical_concerns_reported }}</p>
+{% else %}
+<p>No information provided.</p>
+{% endif %}
+
+<h4>Nature of the critical concerns that were communicated to the highest governance body:</h4>
+{% if screen_nine_data.2_16_b.nature_of_critical_concerns_reported %}
+<p>{{ screen_nine_data.2_16_b.nature_of_critical_concerns_reported }}</p>
+{% else %}
+<p>No information provided.</p>
+{% endif %}
+
+<h4>9.3.6 Evaluation of the Performance of the Highest Governance Body </h4>
+<h4>Processes for evaluating the performance of the highest governance body:</h4>
+{% if screen_nine_data.2_18_a.Q1 %}
+<p>{{ screen_nine_data.2_18_a.Q1 }}</p>
+{% else %}
+<p>No information provided.</p>
+{% endif %}
+
+<h4>Frequency of the evaluations:</h4>
+{% if screen_nine_data.2_18_b.evaluations_independent == "Yes" %}
+<p> {{screen_nine_data.2_18_b.evaluation_frequency}} </p>
+{% else %}
+<p> {{screen_nine_data.2_18_b.evaluation_frequency}} </p>
+{% endif %}
+
+<h4>Actions taken in response to the evaluations:</h4>
+<p>{{screen_nine_data.2_18_c}}</p>
+
+<h4>9.3.7 Remuneration Policies & Process to Determine Remuneration </h4>
+<p>{{ screen_nine_data.remuneration_policies }}</p>
+
+<h4>Fixed pay & variable pay:</h4>
+<p>{{ screen_nine_data.2_19_a.remuneration_policy_fixed_and_variable_pay.text|default:"No data available" }}</p>
+
+<h4>Sign-on bonuses or recruitment incentive payments:</h4>
+<p>{{ screen_nine_data.2_19_a.remuneration_policy_sign_on_bonuses.text|default:"No data available" }}</p>
+
+<h4>Termination payments:</h4>
+<p>{{ screen_nine_data.2_19_a.remuneration_policy_termination_payments.text|default:"No data available" }}</p>
+
+<h4>Clawbacks:</h4>
+<p>{{ screen_nine_data.2_19_a.remuneration_policy_clawbacks.text|default:"No data available" }}</p>
+
+<h4>Retirement benefits:</h4>
+<p>{{ screen_nine_data.2_19_a.remuneration_policy_retirement_benefits.text|default:"No data available" }}</p>
+
+<h4>Process to determine remuneration:</h4>
+<h4>Process for designing remuneration policies and for determining remuneration:</h4>
+<p>{{ screen_nine_data.2_20_a.processDescription|default:"No data available" }}</p>
+
+<h4>Independent highest governance body members or an independent remuneration committee overseeing the process for
+    determining remuneration:</h4>
+<p>{{ screen_nine_data.2_20_a.tableData.0.How|default:"No data available" }}</p>
+
+<h4>How the views of stakeholders (including shareholders) regarding remuneration are sought and taken into
+    consideration:</h4>
+<p>{{ screen_nine_data.2_20_a.tableData.1.How|default:"No data available" }}</p>
+
+<h4>Remuneration consultants involved in determining remuneration and whether they are independent of the organization,
+    its highest governance body, and senior executives:</h4>
+<p>{{ screen_nine_data.2_20_a.tableData.2.How|default:"No data available" }}</p>
+
+<h4>Results of votes of stakeholders (including shareholders) on remuneration policies and proposals:</h4>
+<p>{{ screen_nine_data.2_20_b|default:"No data available" }}</p>
+
+
+<h4>9.3.8 Annual Compensation Ratio </h4>
+<p>We disclose the ratio of the annual total compensation of our CEO to the median annual total compensation of all
+    other employees. This metric provides transparency and helps stakeholders understand our compensation practices.
+</p>
+
+<h4>Annual total compensation for the organization's highest-paid individual:</h4>
+<p>{{ screen_nine_data.2_21_a.Q1|default:"No data available" }}</p>
+
+<h4>Median annual total compensation for all of the organization's employees excluding the highest-paid individual:</h4>
+<p>{{ screen_nine_data.2_21_a.Q2|default:"No data available" }}</p>
+
+<h4>Percentage increase in annual total compensation for the organization's highest-paid individual:</h4>
+<p>{{ screen_nine_data.2_21_b.Q1|default:"No data available" }}</p>
+
+<h4>Median percentage increase in annual total compensation for all of the organization's employees excluding the
+    highest-paid individual:</h4>
+<p>{{ screen_nine_data.2_21_b.Q2|default:"No data available" }}</p>
+
+<h4>Contextual information to understand data compilation:</h4>
+<p>{{ screen_nine_data.2_21_c|default:"No data available" }}</p>
+
+<h4>Ratio of annual total compensation & ratio of percentage increase in annual total compensation </h4>
+<table cellpadding="5" cellspacing="0">
+    <thead>
         <tr>
-            <td>Non-Monetary Sanctions</td>
-            <td>13</td>
+            <th>Ratio of annual total compensation</th>
+            <th>Ratio of percentage increase in annual total compensation</th>
         </tr>
+    </thead>
+    <tbody>
+        {% for data in screen_nine_data.2_21_a_analyse_governance %}
         <tr>
-            <td>Total Fines for Non-Compliance (Current Period)</td>
-            <td>34</td>
+            <td>{{ data.ratio_of_annual_total_compensation }}</td>
+            <td>{{ data.ratio_of_percentage_increase_in_annual_total_compensation }}</td>
         </tr>
-        <tr>
-            <td>Total Fines for Non-Compliance (Previous Period)</td>
-            <td>12</td>
-        </tr>
-        <!-- Add more rows as necessary -->
+        {% endfor %}
     </tbody>
 </table>
 
+
+<h3>9.4 Strategy</h3>
+
+<h4>9.4.1 Statement on Sustainable Development Strategy</h4>
+<p>{{ screen_nine_data.2_22_a|default:"No data available" }}</p>
+
+
+<h4>9.4.2 Membership Association</h4>
+<p>We actively participate in various industry associations and sustainability networks to stay informed of best
+    practices, collaborate on common challenges, and advocate for sustainable development.Our membership included:</p>
+
+{% if screen_nine_data.2_28_a %}
+<table cellpadding="5" cellspacing="0">
+    <tbody>
+        {% for rowData in screen_nine_data.2_28_a %}
+        <tr>
+            {% for cellData in rowData %}
+            <td style="padding: 8px; text-align: center;">{{ cellData }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No data available</p>
+{% endif %}
+
+
+<h3>9.5. Risk Management</h3>
+
+<h4>9.5.1 Remediation of Negative Impacts</h4>
+<p>We are committed to identifying, mitigating, and remediating any negative impacts associated with our operations.
+    This includes:</p>
+
+<h4>Organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization
+    identifies it has caused or contributed to:</h4>
+<p>{{ screen_nine_data.2_25_data.2_25_a|default:"No data available" }}</p>
+
+<h4>Description of organisation's approach to identify and address grievances, including the grievance mechanisms that
+    the organization has established or participates in:</h4>
+<p>{{ screen_nine_data.2_25_data.2_25_b.Q1|default:"No data available" }}</p>
+
+<h4>Description of other processes by which the organization provides for or cooperates in the remediation of negative
+    impacts that it identifies it has caused or contributed to:</h4>
+<p>{{ screen_nine_data.2_25_data.2_25_c|default:"No data available" }}</p>
+
+<h4>Description of how stakeholders who are the intended users of the grievance mechanisms are involved in the design,
+    review, operation, and improvement of these mechanisms:</h4>
+<p>{{ screen_nine_data.2_25_data.2_25_d|default:"No data available" }}</p>
+
+<h4>Description of how the organization tracks the effectiveness of the grievance mechanisms and other remediation
+    processes, and report examples of their effectiveness, including stakeholder feedback:</h4>
+<p>{{ screen_nine_data.2_25_data.2_25_e|default:"No data available" }}</p>
+
+<h4>9.5.2 Mechanism for Seeking Advice and Raising Concerns</h4>
+<p>{{ screen_nine_data.2_26_a.responsible_business_conduct_advice|default:"No data available" }}</p>
+<p>{{ screen_nine_data.2_26_a.business_conduct_concerns|default:"No data available" }}</p>
+
+<h3>9.5.3 Compliance</h3>
+
+<p>{{ screen_nine_data.2_27_a.significant_non_compliance_occurred|default:"No data available" }}</p>
+<p>{{ screen_nine_data.2_27_a.total_significant_non_compliance_instances|default:"No data available" }}</p>
+
+<h4>Summary of Non-Compliance Instances and Fines (Current Period):</h4>
+<table cellpadding="5" cellspacing="0">
+    <tbody>
+        <tr>
+            <th>Total Significant Non-Compliance Instances</th>
+            <td>{{ screen_nine_data.2_27_a.total_significant_non_compliance_instances|default:"No data available" }}
+            </td>
+        </tr>
+        <tr>
+            <th>Total Fines Incurred Instances</th>
+            <td>{{ screen_nine_data.2_27_a.total_fines_incurred_instances|default:"No data available" }}</td>
+        </tr>
+        <tr>
+            <th>Total Non-Monetary Sanctions Instances</th>
+            <td>{{ screen_nine_data.2_27_a.total_non_monetary_sanctions_instances|default:"No data available" }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>Summary of Fines Incurred (Current and Previous Periods):</h4>
+<table cellpadding="5" cellspacing="0">
+    <tbody>
+        <tr>
+            <th>Total Fines Incurred Instances (Current Period)</th>
+            <td>{{ screen_nine_data.2_27_b.total_fines_incurred_instances|default:"No data available" }}</td>
+        </tr>
+        <tr>
+            <th>Total Fines Incurred Instances (Previous Periods)</th>
+            <td>{{ screen_nine_data.2_27_b.total_fines_incurred_instances_previous_periods|default:"No data available"}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
 <h3>9.6 Policy</h3>
 
-<h4>9.6.1 Management of Material Topics (GRI 3-3-c, d, e)</h4>
+<h4>9.6.1 Management of Material Topics </h4>
 <p>[Details about management of material topics]</p>
 <!-- embedding_policy_commitment.html -->
-<h4>9.6.2. Embedding Policy Commitment (GRI 2-23-a, 2-23-b, 2-23-c, 2-23-d, 2-23-e, 2-23-f)</h4>
+<h4>9.6.2. Embedding Policy Commitment </h4>
 
 <p>Our commitment to sustainability is embedded in our corporate policies and practices. These policies are regularly
     reviewed and updated to reflect evolving best practices and stakeholder expectations.</p>
@@ -228,7 +479,7 @@
 <p>[Can include policy document or additional information about the policies]</p>
 
 
-<h4>9.6.3. Anti-trust, Anti-competitive Behavior, Monopoly Practices (GRI 205-3-d, 206-1-a, 206-1-b)</h4>
+<h4>9.6.3. Anti-trust, Anti-competitive Behavior, Monopoly Practices </h4>
 
 <p>We have strict policies against anti-trust, anti-competitive behavior, and monopoly practices. These policies are
     designed to ensure fair competition and uphold the integrity of our business operations.</p>
@@ -284,11 +535,11 @@
     </tbody>
 </table>
 
-<h4>9.6.4 Defined Benefit Plan Obligations and Other Retirement Plans (GRI 201-3-a, 201-3-b)</h4>
+<h4>9.6.4 Defined Benefit Plan Obligations and Other Retirement Plans </h4>
 <p>We offer defined benefit plans and other retirement benefits to our employees, ensuring long-term financial security.
 </p>
 
-<h4>9.7 Conflict of Interest (GRI 2-15-a, 2-15-b)</h4>
+<h4>9.7 Conflict of Interest </h4>
 <p>We have a comprehensive conflict of interest policy to ensure that all potential conflicts are disclosed and managed
     appropriately.</p>
 
