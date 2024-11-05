@@ -1,82 +1,83 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>Table of Contents</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+      body {
+        font-family: Arial, sans-serif;
+      }
 
-        h1 {
-            font-size: 18px;
-            font-weight: bold;
+      h1 {
+        font-size: 18px;
+        font-weight: bold;
+      }
 
-        }
+      h2 {
+        font-size: 16px;
+        font-weight: bold;
+        color: #118dc5;
+      }
 
-        h2 {
-            font-size: 16px;
-            font-weight: bold;
-            color: #118dc5;
-        }
+      h3 {
+        font-size: 14px;
+      }
 
-        h3 {
-            font-size: 14px;
-        }
+      p {
+        font-size: 12px;
+      }
 
-        p {
-            font-size: 12px;
-        }
+      ul {
+        list-style-type: none;
+        padding-left: 0;
+      }
 
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
+      ul ul {
+        padding-left: 20px;
+      }
 
-        ul ul {
-            padding-left: 20px;
-        }
+      ul ul ul {
+        padding-left: 40px;
+        padding-top: 0px;
+      }
 
-        ul ul ul {
-            padding-left: 40px;
-            padding-top: 0px;
-        }
+      .page-break {
+        page-break-before: always;
+      }
 
-        .page-break {
-            page-break-before: always;
-        }
+      .message-from-ceo h2 {
+        font-size: 10px;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 20px;
+      }
 
-        .message-from-ceo h2 {
-            font-size: 10px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-        }
+      table > thead > tr {
+        background-color: #dcfce7;
+      }
 
-        table>thead>tr {
-            background-color: #dcfce7;
-        }
+      table > thead > tr > th {
+        font-weight: 500;
+      }
 
-        table>thead>tr>th {
-            font-weight: 500;
-        }
+      table > tbody > tr > td {
+        font-weight: 400;
+        text-align: center;
+      }
 
-        table>tbody>tr>td {
-            font-weight: 400;
-            text-align: center;
-        }
-
-        table {
-            border-radius: 10px;
-            border: 1px solid #d1d5db;
-        }
+      table {
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- {% include "esg_contents.html" %} -->
     <!-- <div class="page-break"></div> -->
     <!-- {% include "message_from_ceo.html" %} -->
@@ -95,8 +96,9 @@
     <!-- <div class="page-break"></div> -->
     <!-- {% include "materiality.html" %} -->
     <!-- <div class="page-break"></div> -->
-    {% include "corporate_governance.html" %}
+    {% comment %} {% include "corporate_governance.html" %} {% endcomment %} {% comment %}
     <div class="page-break"></div>
+    {% endcomment %}
     <!-- {% include "sustainability_journey.html" %} -->
     <!-- <div class="page-break"></div> -->
     {% include "screen11/economic_performance.html" %}
@@ -142,7 +144,5 @@
     {% include "screen14/community_engagement_csr.html" %}
     <div class="page-break"></div>
     {% include "screen15/customers_products_services.html" %}
-</body>
-
-
+  </body>
 </html>

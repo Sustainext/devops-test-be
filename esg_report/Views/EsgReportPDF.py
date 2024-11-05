@@ -77,8 +77,8 @@ class ESGReportPDFView(View):
         # about_the_report = convert_keys(about_the_report)
         # materiality = MaterialityService.get_materiality_data(pk)
         # materiality = convert_keys(materiality)
-        screen_nine_service = ScreenNineService(report_id=pk)
-        screen_nine_data = screen_nine_service.get_response()
+        # screen_nine_service = ScreenNineService(report_id=pk)
+        # screen_nine_data = screen_nine_service.get_response()
         # screen_nine_data = convert_keys(screen_nine_data)
         # screen_ten_data = ScreenTenService.get_screen_ten(pk)
         # screen_ten_data = convert_keys(screen_ten_data)
@@ -94,7 +94,7 @@ class ESGReportPDFView(View):
             # "stakeholder_engagement": stakeholder_engagement,
             # "about_the_report": about_the_report,
             # "materiality": materiality,
-            "screen_nine_data": screen_nine_data,
+            # "screen_nine_data": screen_nine_data,
             # "screen_ten_data": screen_ten_data,
             "pk": pk,
         }
