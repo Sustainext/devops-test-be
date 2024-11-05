@@ -14,7 +14,6 @@ from sustainapp.models import ClientTaskDashboard
 
 logger = logging.getLogger("django")
 
-
 class Climatiq:
     """
     Climatiq is a class that calculates the batch data of emissions.
@@ -65,17 +64,26 @@ class Climatiq:
         self.index_mapping_to_emissons = {}
         for index, emission_data in enumerate(data_to_process):
             row_type = emission_data["Emission"].get("rowType")
+            emission = emission_data["Emission"]
 
-            # if a row is assigned we can neglect calculating the emission for it
+            # if a rowType is assigned or rowType is not present
+            # we can neglect calculating the emission for it
             if not row_type or row_type in ["default", "approved", "calculated"]:
-                emission = emission_data["Emission"]
 
                 if any(not emission.get(field) for field in required_fields):
+                    # if the rowType is not present then mark it as default
+                    if not row_type:
+                        self.raw_response.data[index]["Emission"]["rowType"] = "default"
                     continue
 
-                if (emission.get("Quantity2") and not emission.get("Unit2")) or (
-                    not emission.get("Quantity2") and emission.get("Unit2")
-                ):
+                # if the Unit2 is present but Quantity2 is not present then we can neglect calculating the emission for it, vice versa is also true
+                unit2 = emission.get("Unit2")
+                quantity2 = emission.get("Quantity2")
+
+                # Check for inconsistent Unit2 and Quantity2 entries
+                if bool(quantity2) != bool(unit2):
+                    if not row_type:
+                        self.raw_response.data[index]["Emission"]["rowType"] = "default"
                     continue
                 self.index_mapping_to_emissons.update({index: emission_data})
                 processed_data.append(emission_data)
@@ -88,6 +96,7 @@ class Climatiq:
         payload = []
 
         data_to_process = self.raw_response.data
+        # remove the emissions where mandatory fields are missing
         processed_data = self.neglect_missing_row(data_to_process)
 
         if processed_data != []:
@@ -248,6 +257,8 @@ class Climatiq:
                     == emission_data.get("emission_factor").get("activity_id")
                     and emission.get("Quantity") == emission_data.get("Quantity")
                     and emission.get("Unit") == emission_data.get("Unit")
+                    and emission.get("Unit2") == emission_data.get("Unit2")
+                    and emission.get("Quantity2") == emission_data.get("Quantity2")
                 ):
                     # Update rowType to 'calculated' and break out of the loop once matched
                     # emission["rowType"] = "calculated"
@@ -322,11 +333,15 @@ class Climatiq:
                     #* Get the complete folder path.
                     "instance": os.path.abspath(__file__)
                 }
+                # update the  raw_response's emissions to rowType = default where error is present
+                found_index = list(self.index_mapping_to_emissons.items())[index][0]
+                self.raw_response.data[found_index]["Emission"]["rowType"] = "default"
                 error_message = f"Error with emission: {emission_data} with data {payload[index]} \n Details for Debugging: {details}"
+
                 self.send_error_email(error_message)
 
     def round_decimal_or_nulls(self, value, decimal_point=3):
-        if value is None:
+        if not bool(value):
             return None
         elif isinstance(value, str):
             return round(decimal.Decimal(value), decimal_point)

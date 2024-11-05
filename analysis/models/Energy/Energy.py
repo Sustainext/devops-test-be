@@ -26,7 +26,9 @@ class BasicDataForEnergy(AbstractModel):
     )
     unit = models.CharField(max_length=8, null=True, blank=True)
     index = models.PositiveIntegerField(null=True, blank=True)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, null=True)
+    client = models.ForeignKey(
+        Client, on_delete=models.CASCADE, null=True,default=Client.get_default_client
+    )
 
     class Meta:
         abstract = True

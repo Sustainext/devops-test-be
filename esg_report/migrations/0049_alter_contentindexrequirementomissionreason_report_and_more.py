@@ -7,19 +7,28 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sustainapp', '0013_alter_clienttaskdashboard_location'),
-        ('esg_report', '0048_alter_contentindexrequirementomissionreason_reason_and_more'),
+        ("sustainapp", "0002_remove_userorg_organization_userorg_organization"),
+        (
+            "esg_report",
+            "0048_alter_contentindexrequirementomissionreason_reason_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='contentindexrequirementomissionreason',
-            name='report',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='sustainapp.report'),
+            model_name="contentindexrequirementomissionreason",
+            name="report",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE, to="sustainapp.report"
+            ),
         ),
         migrations.AlterField(
-            model_name='statementofusemodel',
-            name='report',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='statement_of_uses', to='sustainapp.report'),
+            model_name="statementofusemodel",
+            name="report",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="statement_of_uses",
+                to="sustainapp.report",
+            ),
         ),
     ]

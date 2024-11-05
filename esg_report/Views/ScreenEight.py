@@ -29,13 +29,13 @@ class ScreenEightAPIView(APIView):
         response_data = {}
         try:
             materiality_statement: MaterialityStatement = report.materiality_statement
-            materiality_statement.delete()
+            serializer = MaterialityStatementSerializer(
+                materiality_statement, context={"request": request}, data=request.data
+            )
         except ObjectDoesNotExist:
-            # * If the MaterialityStatement does not exist, create a new one
-            pass
-        serializer = MaterialityStatementSerializer(
-            data=request.data, context={"request": request}
-        )
+            serializer = MaterialityStatementSerializer(
+                data=request.data, context={"request": request}
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         response_data.update(serializer.data)
@@ -108,23 +108,3 @@ class ScreenEightAPIView(APIView):
             response_data["3-3b"] = None
 
         return Response(response_data, status=status.HTTP_200_OK)
-
-    def put(self, request, report_id, format=None):
-        try:
-            report = Report.objects.get(id=report_id)
-        except Report.DoesNotExist:
-            return Response(
-                {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-        try:
-            materiality_statement: MaterialityStatement = report.materiality_statement
-            materiality_statement.delete()
-        except ObjectDoesNotExist:
-            # * If the MaterialityStatement does not exist, create a new one
-            pass
-        serializer = MaterialityStatementSerializer(
-            data=request.data, context={"request": request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save(report=report)
-        return Response(serializer.data, status=status.HTTP_200_OK)

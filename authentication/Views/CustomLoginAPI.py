@@ -11,20 +11,6 @@ from datetime import timedelta, datetime
 
 
 class CustomLoginView(LoginView):
-    """Over-riding the Default Login View"""
-
-    def post(self, request, *args, **kwargs):
-        # Make a mutable copy of request.data
-        data = request.data.copy()
-
-        # Normalize the email to lowercase
-        data["username"] = data.get("username", "").lower()
-
-        # Pass the modified data to the serializer manually instead of modifying request.data
-        self.request._data = data  # Replace the request's data in a safe way
-
-        # Now proceed with the normal login process
-        return super().post(request, *args, **kwargs)
 
     def get_response(self):
         """Customizing token response format with claims and token_type
@@ -51,7 +37,7 @@ class CustomLoginView(LoginView):
 
         long_validity_request = self.request.data.get("long_validity_request")
 
-        if long_validity_request :
+        if long_validity_request:
             """Tokens for longer validity So that Devs can use it on postman"""
             access_token_lifetime = timedelta(days=30)
 
@@ -79,9 +65,28 @@ class CustomLoginView(LoginView):
             "refresh_exp": refresh["exp"],
             "refresh_exp_readable": refresh_exp_readable,
         }
+        roles = user.roles
+        custom_role = user.custom_role.name if user.custom_role else None
+        admin = user.admin
+        permissions = {
+            "collect": user.collect,
+            "analyse": user.analyse,
+            "report": user.report,
+            "optimise": user.optimise,
+            "track": user.track,
+        }
 
         response = Response(
-            {"key": data, "needs_password_reset": needs_password_reset,"client_key":client_key}, status=200
+            {
+                "key": data,
+                "needs_password_reset": needs_password_reset,
+                "client_key": client_key,
+                "role": roles,
+                "custom_role": custom_role,
+                "admin": admin,
+                "permissions": permissions,
+            },
+            status=200,
         )
 
         # Set access and refresh tokens in cookies

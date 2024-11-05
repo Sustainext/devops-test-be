@@ -50,25 +50,42 @@ class SupplierEnvAnlayzeView(APIView):
             if self.corp is not None:
 
                 filter_by["corporate__id"] = self.corp.id
-
+                filter_by_corp = True
             else:
 
                 filter_by["corporate__id"] = None
+                filter_by_corp = False
 
             supplier_env_data = {}
 
             supplier_env_data["gri_308_1a"] = new_suppliers(
-                "gri-supplier_environmental_assessment-new_suppliers-308-1a", filter_by
+                org=self.org,
+                corp=self.corp,
+                client_id=self.request.user.client.id,
+                year=self.year,
+                path="gri-supplier_environmental_assessment-new_suppliers-308-1a",
+                filter_by=filter_by,
+                filter_for_corp=filter_by_corp,
             )
 
             supplier_env_data["gri_308_2d"] = new_suppliers(
-                "gri-supplier_environmental_assessment-negative_environmental-308-2d",
-                filter_by,
+                org=self.org,
+                corp=self.corp,
+                client_id=self.request.user.client.id,
+                year=self.year,
+                path="gri-supplier_environmental_assessment-negative_environmental-308-2d",
+                filter_by=filter_by,
+                filter_for_corp=filter_by_corp,
             )
 
             supplier_env_data["gri_308_2e"] = new_suppliers(
-                "gri-supplier_environmental_assessment-negative_environmental-308-2e",
-                filter_by,
+                org=self.org,
+                corp=self.corp,
+                client_id=self.request.user.client.id,
+                year=self.year,
+                path="gri-supplier_environmental_assessment-negative_environmental-308-2e",
+                filter_by=filter_by,
+                filter_for_corp=filter_by_corp,
             )
 
             return Response(

@@ -27,8 +27,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = ["*"]
+DEBUG = os.getenv("DEBUG", "False") == "True"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOST").split(",")
 
 
 # Application definition
@@ -202,6 +202,8 @@ ACCOUNT_ADAPTER = "sustainapp.adapters.CustomAccountAdapter"
 
 # SMTP settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 EMAIL_HOST = "smtp.office365.com"
 
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "False") == "True"

@@ -21,3 +21,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "profile_picture",
             "user_id",
         )
+
