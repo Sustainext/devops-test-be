@@ -10,6 +10,7 @@ from authentication.Managers.CustomUserManager import CustomUserManager
 from uuid import uuid4
 from django.utils.text import slugify
 from django.db import connection
+from django.conf import settings
 
 # Create your models here.
 
@@ -167,3 +168,15 @@ class LoginCounter(AbstractModel):
     )
     login_counter = models.IntegerField(default=-1)
     needs_password_change = models.BooleanField(default=True, null=True, blank=True)
+
+
+class UserSafeLock(AbstractModel):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="safelock"
+    )
+    is_locked = models.BooleanField(default=False)
+    failed_login_attempts = models.IntegerField(default=0)
+    locked_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"SafeLock for {self.user.username}"
