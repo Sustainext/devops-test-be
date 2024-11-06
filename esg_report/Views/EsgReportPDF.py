@@ -15,6 +15,7 @@ from esg_report.services.screen_seven_service import AboutTheReportService
 from esg_report.services.screen_eight_service import MaterialityService
 from esg_report.services.screen_nine_service import ScreenNineService
 from esg_report.services.screen_ten_service import ScreenTenService
+from esg_report.services.screen_eleven_service import ScreenElevenService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
 
@@ -79,10 +80,11 @@ class ESGReportPDFView(View):
         # materiality = convert_keys(materiality)
         # screen_nine_service = ScreenNineService(report_id=pk)
         # screen_nine_data = screen_nine_service.get_response()
-        # screen_nine_data = convert_keys(screen_nine_data)
         # screen_ten_data = ScreenTenService.get_screen_ten(pk)
         # screen_ten_data = convert_keys(screen_ten_data)
-        # print(screen_nine_data)
+        screen_eleven_service = ScreenElevenService(report_id=pk, request=request)
+        screen_eleven_data = screen_eleven_service.get_report_response()
+        # print(screen_eleven_data)
         # Prepare the context for rendering the PDF template
         context = {
             "report": report,
@@ -96,6 +98,7 @@ class ESGReportPDFView(View):
             # "materiality": materiality,
             # "screen_nine_data": screen_nine_data,
             # "screen_ten_data": screen_ten_data,
+            "screen_eleven_data": screen_eleven_data,
             "pk": pk,
         }
 
