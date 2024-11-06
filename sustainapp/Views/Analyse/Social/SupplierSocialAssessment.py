@@ -45,7 +45,25 @@ class SupplierSocialAssessmentView(APIView):
         if filter_by:
             dp_data, pos_data = get_data(year, client_id, filter_by)
             dp = get_social_data(dp_data)
+            dp.update(
+                    {
+                        "org_or_corp": (
+                            filter_by["corporate"].name
+                            if corporate
+                            else filter_by["organization"].name
+                        )
+                    }
+                ),
             pos = get_pos_data(pos_data)
+            pos.update(
+                    {
+                        "org_or_corp": (
+                            filter_by["corporate"].name
+                            if corporate
+                            else filter_by["organization"].name
+                        )
+                    }
+                ),
 
         final = {
             "new_suppliers_that_were_screened_using_social_criteria": filter_non_zero_values(
