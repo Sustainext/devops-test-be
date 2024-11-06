@@ -80,6 +80,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
     "sustainapp.Middleware.middleware.JWTMiddleware",
+    "sustainapp.Middleware.middleware.MITMDetectionMiddleware",
+    "sustainapp.Middleware.middleware.SessionTimeoutMiddleware",
+    "sustainapp.Middleware.middleware.SecureCookiesMiddleware",
     "datametric.middleware.GeneralBusinessDetails.PathSlugMiddleware",
 ]
 
