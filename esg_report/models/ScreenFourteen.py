@@ -9,7 +9,7 @@ class ScreenFourteen(AbstractModel, HistoricalModelMixin):
         on_delete=models.CASCADE,
         related_name="screen_fourteen",
     )
-    community_engagement = models.JSONField(
+    community_engagement = models.TextField(
         verbose_name="Community Engagement Statement",
         help_text="Add a statement about the company's community engagement.",
         null=True,
@@ -17,7 +17,7 @@ class ScreenFourteen(AbstractModel, HistoricalModelMixin):
     )
 
     # Field to store the impact assessment statement
-    impact_assessment = models.JSONField(
+    impact_assessment = models.TextField(
         verbose_name="Impact Assessment",
         help_text="Add a statement about the company's impact assessment.",
         null=True,
@@ -25,7 +25,7 @@ class ScreenFourteen(AbstractModel, HistoricalModelMixin):
     )
 
     # Field to store the company's CSR policies statement
-    csr_policies = models.JSONField(
+    csr_policies = models.TextField(
         verbose_name="Corporate Social Responsibility Policies",
         help_text="Add a statement about the company's Corporate Social Responsibility policies.",
         null=True,

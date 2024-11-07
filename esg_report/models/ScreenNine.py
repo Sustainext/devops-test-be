@@ -8,10 +8,10 @@ class ScreenNine(AbstractModel, HistoricalModelMixin):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="screen_nine"
     )
-    statement = models.JSONField(null=True, blank=True)
-    board_gov_statement = models.JSONField(null=True, blank=True)
-    remuneration_policies = models.JSONField(null=True, blank=True)
-    policy_not_public_reason = models.JSONField(blank=True, null=True)
+    statement = models.TextField(null=True, blank=True)
+    board_gov_statement = models.TextField(null=True, blank=True)
+    remuneration_policies = models.TextField(null=True, blank=True)
+    policy_not_public_reason = models.TextField(blank=True, null=True)
 
     def __str__(self) -> str:
         return f"{self.report.name} - Screen Nine Statements"
