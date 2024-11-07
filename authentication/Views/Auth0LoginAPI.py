@@ -62,7 +62,7 @@ class Auth0LoginView(APIView):
             access_token["client_id"] = user.client.id
             client_key = user.client.uuid
 
-            needs_password_reset = 1 if user.first_login.needs_password_change else 0
+            needs_password_reset = 0
             access_token.set_exp(lifetime=access_token_lifetime)
 
             access_exp_readable = datetime.fromtimestamp(access_token["exp"]).strftime(
