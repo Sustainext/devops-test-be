@@ -4,6 +4,7 @@ def exchange_authorization_code(token_uri, client_id, client_secret, redirect_ur
     """Exchange authorization code for access tokens."""
     # Prepare the data for token exchange
     data = {
+        'grant_type': 'authorization_code',
         'client_id': client_id,
         'client_secret': client_secret,
         'code': auth_code,
