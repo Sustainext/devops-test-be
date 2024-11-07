@@ -8,7 +8,8 @@ from authentication.serializers.CustomLoginSerializers import (
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from datetime import timedelta, datetime
-
+from django.contrib.auth import get_user_model
+from authentication.utils import handle_failed_login, reset_failed_login_attempts
 
 class CustomLoginView(LoginView):
 
@@ -109,3 +110,31 @@ class CustomLoginView(LoginView):
         )
 
         return response
+
+    def post(self, request, *args, **kwargs):
+        self.serializer = self.get_serializer(data=self.request.data)
+        user_model = get_user_model()
+
+        if not self.serializer.is_valid():
+            user = user_model.objects.filter(
+                username__iexact=request.data.get("username")
+            ).first()
+            if user:
+                handle_failed_login(user)
+                if user.safelock.is_locked:
+                    return Response(
+                        {"error": "Account locked due to multiple failed attempts"},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+            return Response(self.serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        self.login()
+        user = self.user
+
+        if user.safelock.is_locked:
+            return Response(
+                {"error": "Account locked"}, status=status.HTTP_403_FORBIDDEN
+            )
+
+        reset_failed_login_attempts(user)
+        return self.get_response()

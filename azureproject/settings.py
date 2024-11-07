@@ -80,6 +80,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
     "sustainapp.Middleware.middleware.JWTMiddleware",
+    "sustainapp.Middleware.middleware.MITMDetectionMiddleware",
+    "sustainapp.Middleware.middleware.SessionTimeoutMiddleware",
+    "sustainapp.Middleware.middleware.SecureCookiesMiddleware",
     "datametric.middleware.GeneralBusinessDetails.PathSlugMiddleware",
 ]
 
@@ -186,6 +189,9 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
+    'ALGORITHM': 'RS256', #added new
+    'SIGNING_KEY': 'YOUR_SIGNING_KEY',  # You can get this from Auth0 or use a static key for testing
+
 }
 
 CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
@@ -326,3 +332,6 @@ AZURE_POWERBI_USERNAME = os.environ.get("AZURE_POWERBI_USERNAME")
 AZURE_POWERBI_PASSWORD = os.environ.get("AZURE_POWERBI_PASSWORD")
 AZURE_POWERBI_APP_ID = os.environ.get("AZURE_POWERBI_APP_ID")
 AZURE_POWERBI_TENANT_ID = os.environ.get("AZURE_POWERBI_TENANT_ID")
+AUTH0_CLIENT_SECRET='xgnUcPBtoVvt6NoLlh8zeSmwRqRQZX1aCUkr1zklEoil93fiXlzhfQ9fgutypts9',
+AUTH0_DOMAIN = 'https://dev-0biozzwskqs6o65f.us.auth0.com'
+AUTH0_CLIENT_ID = 'HM0PdW9MjGEtDTUAOMJo8QsCUT5PThdz'

@@ -132,66 +132,6 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         ],
         "content_index_name": "2-8 Workers who are not employees",
     },
-    "Laws and Regulation": {
-        "indicator": "2-27",
-        "subindicators": [
-            (
-                "Instance of non-compliance",
-                "gri-general-laws_and_regulation-instance-2-27-a",
-            ),
-            (
-                "GRI 2-27-b Monetary value of fines for instances of non-compliance",
-                "gri-general-laws_and_regulation-monetary-2-27-b",
-            ),
-            (
-                "Describe the significant instances of non-compliance",
-                "gri-general-laws_and_regulation-significant-2-27-c",
-            ),
-            (
-                "Describe how the organisation has determined significant instances of non-compliance",
-                "gri-general-laws_and_regulation-organization-2-27-d",
-            ),
-        ],
-        "content_index_name": "2-27 Compliance with laws and regulations",
-    },
-    "Membership & Association": {
-        "indicator": "2-28",
-        "subindicators": [
-            (
-                "Report industry associations, other membership associations, and national or international advocacy organizations in which it participates in a significant role",
-                "gri-general-membership_association-2-28-a-report",
-            )
-        ],
-        "content_index_name": "2-28 Membership associations",
-    },
-    "Stakeholder Engagement": {
-        "indicator": "2-29",
-        "subindicators": [
-            (
-                "Describe the organisation's approach to engaging with stakeholders, including:",
-                "gri-general-stakeholder_engagement-2-29a-describe",
-            ),
-            (
-                "How the organization seeks to ensure meaningful engagement with stakeholders",
-                "gri-general-stakeholder_engagement-2-29b-stakeholder",
-            ),
-        ],
-        "content_index_name": "2-29 Approach to stakeholder engagement",
-    },
-    "Collective Bargaining Agreements": {
-        "indicator": "2-30",
-        "subindicators": [
-            (
-                "Percentage of total employees covered by collective bargaining agreements",
-                "gri-general-collective_bargaining-2-30-a-percentage",
-            ),
-            (
-                "For employees not covered by collective bargaining agreements, describe whether the Organization determines their working conditions and terms of employment based on collective bargaining agreements that cover its other employees or based on collective bargaining agreements from other organizations.",
-                "gri-general-collective_bargaining-2-30-b-employees",
-            ),
-        ],
-        "content_index_name": "2-30 Collective bargaining agreements",
-    },
     "Structure": {
         "indicator": "2-9",
         "subindicators": [
@@ -467,5 +407,65 @@ GENERAL_DISCLOSURES_AND_PATHS = {
             ),
         ],
         "content_index_name": "2-26 Mechanisms for seeking advice and raising concerns",
+    },
+    "Laws and Regulation": {
+        "indicator": "2-27",
+        "subindicators": [
+            (
+                "Instance of non-compliance",
+                "gri-general-laws_and_regulation-instance-2-27-a",
+            ),
+            (
+                "GRI 2-27-b Monetary value of fines for instances of non-compliance",
+                "gri-general-laws_and_regulation-monetary-2-27-b",
+            ),
+            (
+                "Describe the significant instances of non-compliance",
+                "gri-general-laws_and_regulation-significant-2-27-c",
+            ),
+            (
+                "Describe how the organisation has determined significant instances of non-compliance",
+                "gri-general-laws_and_regulation-organization-2-27-d",
+            ),
+        ],
+        "content_index_name": "2-27 Compliance with laws and regulations",
+    },
+    "Membership & Association": {
+        "indicator": "2-28",
+        "subindicators": [
+            (
+                "Report industry associations, other membership associations, and national or international advocacy organizations in which it participates in a significant role",
+                "gri-general-membership_association-2-28-a-report",
+            )
+        ],
+        "content_index_name": "2-28 Membership associations",
+    },
+    "Stakeholder Engagement": {
+        "indicator": "2-29",
+        "subindicators": [
+            (
+                "Describe the organisation's approach to engaging with stakeholders, including:",
+                "gri-general-stakeholder_engagement-2-29a-describe",
+            ),
+            (
+                "How the organization seeks to ensure meaningful engagement with stakeholders",
+                "gri-general-stakeholder_engagement-2-29b-stakeholder",
+            ),
+        ],
+        "content_index_name": "2-29 Approach to stakeholder engagement",
+    },
+    "Collective Bargaining Agreements": {
+        "indicator": "2-30",
+        "subindicators": [
+            (
+                "Percentage of total employees covered by collective bargaining agreements",
+                "gri-general-collective_bargaining-2-30-a-percentage",
+            ),
+            (
+                "For employees not covered by collective bargaining agreements, describe whether the Organization determines their working conditions and terms of employment based on collective bargaining agreements that cover its other employees or based on collective bargaining agreements from other organizations.",
+                "gri-general-collective_bargaining-2-30-b-employees",
+            ),
+        ],
+        "content_index_name": "2-30 Collective bargaining agreements",
     },
 }
