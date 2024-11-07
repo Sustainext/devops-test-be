@@ -189,6 +189,9 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
+    'ALGORITHM': 'RS256', #added new
+    'SIGNING_KEY': 'YOUR_SIGNING_KEY',  # You can get this from Auth0 or use a static key for testing
+
 }
 
 CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
