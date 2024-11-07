@@ -183,13 +183,23 @@ REST_FRAMEWORK = {
 }
 
 # JWT TOKEN LIFETIME
+# Load keys (ensure you have both a private and public key)
+with open("private_key.pem", "r") as private_key_file:
+    PRIVATE_KEY = private_key_file.read()
+
+with open("public_key.pem", "r") as public_key_file:
+    PUBLIC_KEY = public_key_file.read()
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LITERATURE": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
+    "ALGORITHM": "RS256",  # added new
+    "SIGNING_KEY": PRIVATE_KEY,  # Correct way to use your private key
+    "VERIFYING_KEY": PUBLIC_KEY,  # Optional, but recommended if you want explicit separation
 }
+
 
 CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
 
@@ -329,3 +339,8 @@ AZURE_POWERBI_USERNAME = os.environ.get("AZURE_POWERBI_USERNAME")
 AZURE_POWERBI_PASSWORD = os.environ.get("AZURE_POWERBI_PASSWORD")
 AZURE_POWERBI_APP_ID = os.environ.get("AZURE_POWERBI_APP_ID")
 AZURE_POWERBI_TENANT_ID = os.environ.get("AZURE_POWERBI_TENANT_ID")
+AUTH0_CLIENT_SECRET = (
+    "xgnUcPBtoVvt6NoLlh8zeSmwRqRQZX1aCUkr1zklEoil93fiXlzhfQ9fgutypts9",
+)
+AUTH0_DOMAIN = "https://dev-0biozzwskqs6o65f.us.auth0.com"
+AUTH0_CLIENT_ID = "HM0PdW9MjGEtDTUAOMJo8QsCUT5PThdz"

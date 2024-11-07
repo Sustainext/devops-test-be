@@ -78,6 +78,7 @@ class EmissionTask(APIView):
                                     "uploadDateTime": task["file_data"].get(
                                         "uploadDateTime"
                                     ),
+                                    "uploadedBy": task["file_data"].get("uploadedBy"),
                                 }
                                 if task["file_data"]
                                 else {
@@ -86,6 +87,7 @@ class EmissionTask(APIView):
                                     "type": "",
                                     "size": "",
                                     "uploadDateTime": "",
+                                    "uploadedBy": "",
                                 }
                             ),
                         },
