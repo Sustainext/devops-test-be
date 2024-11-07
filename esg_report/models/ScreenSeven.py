@@ -8,9 +8,9 @@ class AboutTheReport(AbstractModel, HistoricalModelMixin):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="about_the_report"
     )
-    description = models.JSONField(null=True, blank=True)
-    framework_description = models.JSONField(null=True, blank=True)
-    external_assurance = models.JSONField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    framework_description = models.TextField(null=True, blank=True)
+    external_assurance = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name = "About The Report"
