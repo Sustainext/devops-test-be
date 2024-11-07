@@ -13,6 +13,7 @@ import logging
 
 logger = logging.getLogger("django")
 
+
 class JWTMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -27,10 +28,12 @@ class JWTMiddleware:
             if auth_header:
                 try:
                     token = auth_header.split(" ")[1]
+                    with open("public_key.pem", "r") as key_file:
+                        public_key = key_file.read()
                     payload = jwt.decode(
                         token,
-                        settings.SECRET_KEY,
-                        algorithms=["HS256"],
+                        public_key,
+                        algorithms=["RS256"],
                     )
                     client = payload.get("client_id")
                     if not client:

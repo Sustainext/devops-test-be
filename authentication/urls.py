@@ -23,6 +23,7 @@ from authentication.Views.CustomUser import (
     CheckUserExistsView,
     ClientUsersListView,
 )
+from authentication.Views.Auth0LoginAPI import Auth0LoginView
 from authentication.Views.ManageUser import ManageUserViewSet
 
 router = routers.DefaultRouter()
@@ -73,5 +74,6 @@ urlpatterns = [
     ),
     path("check-user-exists/", CheckUserExistsView.as_view(), name="check-user-exists"),
     path("client-users/", ClientUsersListView.as_view(), name="client-users"),
+    path("auth0-login/", Auth0LoginView.as_view(), name="auth0-login"),
     path("", include(router.urls)),
 ]

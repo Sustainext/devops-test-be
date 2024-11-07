@@ -1,12 +1,10 @@
 import requests
 import jwt
-from jose import jwks
 from jwt import PyJWTError
 from django.conf import settings
-from datetime import datetime
-
+from datetime import datetime, timezone
 # Fetch Auth0 JWKS (JSON Web Key Set) URL
-JWKS_URL = f'https://{settings.AUTH0_DOMAIN}/.well-known/jwks.json'
+JWKS_URL = f'{settings.AUTH0_DOMAIN}/.well-known/jwks.json'
 
 def get_jwk_keys():
     """Fetch the JSON Web Key Set from Auth0 to validate the JWT"""
@@ -53,14 +51,14 @@ def validate_id_token(id_token):
             public_key,
             algorithms=["RS256"],
             audience=settings.AUTH0_CLIENT_ID,  # Verify audience
-            issuer=f"https://{settings.AUTH0_DOMAIN}/",  # Verify issuer
+            issuer=f"{settings.AUTH0_DOMAIN}/",  # Verify issuer
         )
     except PyJWTError as e:
         raise ValueError(f"Token validation failed: {str(e)}")
 
     # Check the token's expiration time
     exp = decoded_token.get("exp")
-    if exp and exp < datetime.utcnow().timestamp():
+    if exp and exp < datetime.now(timezone.utc).timestamp():
         raise ValueError("Token has expired")
 
     return decoded_token  # Return the decoded user data
