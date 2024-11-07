@@ -93,6 +93,6 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                     index=index,
                     age_group=age_group,
                     table_name=table_name,
-                    gender=Gender.objects.get(gender=gender),
+                    gender=Gender.objects.get_or_create(gender=gender)[0],
                     defaults=defaults,
                 )[0].save()

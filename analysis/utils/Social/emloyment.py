@@ -128,7 +128,7 @@ def parental_leave_analysis(raw_response: RawResponse):
                     client=raw_response.client,
                     organisation=organisation,
                     corporate=corporate,
-                    gender=Gender.objects.get(gender=gender),
+                    gender=Gender.objects.get_or_create(gender=gender)[0],
                     employee_category=EMPLOYEE_CATEGORIES[index][0],
                     defaults={"value": get_float(value)},
                 )[0].save()
