@@ -1,102 +1,73 @@
 <!-- community_engagement_csr.html -->
-
+{% load custom_tags%}
 <h2>14. Community</h2>
 
-<h4>14.1. Community Engagement (GRI 413-1-a, 413-2-a)</h4>
-<p>Our commitment to community engagement is integral to our business strategy and operational philosophy. We recognize
-    the importance of fostering strong, positive relationships with the communities where we operate. This approach not
-    only enhances our social license to operate but also contributes to the overall well-being and development of these
-    communities.</p>
+<h4>14.1. Community Engagement</h4>
+<p>{{screen_fourteen_data.community_engagement}}</p>
 
 <h5>Percentage of Operations Implemented by Engaging Local Communities</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Category</th>
-            <th>Percentage of Operations</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Social Impact Assessments</td>
-            <td>{{ engagement_percentage.social_impact_assessments }}%</td>
-        </tr>
-        <tr>
-            <td>Environmental Impact Assessments</td>
-            <td>{{ engagement_percentage.environmental_impact_assessments }}%</td>
-        </tr>
-        <tr>
-            <td>Public Disclosure</td>
-            <td>{{ engagement_percentage.public_disclosure }}%</td>
-        </tr>
-        <tr>
-            <td>Community Development Programs</td>
-            <td>{{ engagement_percentage.community_development_programs }}%</td>
-        </tr>
-        <tr>
-            <td>Stakeholder Engagement Plans</td>
-            <td>{{ engagement_percentage.stakeholder_engagement_plans }}%</td>
-        </tr>
-        <tr>
-            <td>Local Community Consultation Committees</td>
-            <td>{{ engagement_percentage.local_community_consultation_committees }}%</td>
-        </tr>
-        <tr>
-            <td>Works Councils, Occupational Health and Safety Committees</td>
-            <td>{{ engagement_percentage.works_councils }}%</td>
-        </tr>
-        <tr>
-            <td>Community Grievance Processes</td>
-            <td>{{ engagement_percentage.community_grievance_processes }}%</td>
-        </tr>
-    </tbody>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Percentage of Operations</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in screen_fourteen_data.413_1a_analyse %}
+    <tr>
+      <td>{{ item|get_item:"" }}</td>
+      <td>{{ item|get_item:"Percentage of operations implemented by engaging local communities" }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
 <h5>Impact Assessment</h5>
-<p>We conduct comprehensive social impact assessments to understand the potential effects of our operations on local
-    communities. These assessments help us identify both positive and negative impacts, enabling us to implement
-    mitigation measures where necessary and enhance beneficial outcomes.</p>
+<p>{{screen_fourteen_data.impact_assessment}}</p>
 
 <h5>Operations with Significant Actual and Potential Negative Impacts</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Operation</th>
-            <th>Location of Operations</th>
-            <th>Potential Negative Impacts of the Operation</th>
-            <th>Actual Negative Impacts of the Operation</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for operation in negative_impact_operations %}
-        <tr>
-            <td>{{ operation.name }}</td>
-            <td>{{ operation.location }}</td>
-            <td>{{ operation.potential_negative_impacts }}</td>
-            <td>{{ operation.actual_negative_impacts }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Operation</th>
+      <th>Location of Operations</th>
+      <th>Potential Negative Impacts of the Operation</th>
+      <th>Actual Negative Impacts of the Operation</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for operation in screen_fourteen_data.413_2a.data %}
+    <tr>
+      <td>{{ operation.localcommunities }}</td>
+      <td>{{ operation.locationofoperations }}</td>
+      <td>{{ operation.potentialnegative }}</td>
+      <td>{{ operation.impactsoftheOperation }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
 <h4>14.1.1. Management of Material Topics (GRI 3-3-c, d, e)</h4>
-<hr>
-<p>[Details on the management of community engagement, including policies, strategies, and initiatives to foster
-    positive relationships and manage community impacts.]</p>
+<p>
+  Description of organisation's policies or commitments for the material topic, along with actions taken to address, prevent or mitigate potential negative impacts and mention the actions taken by the
+  organisation to manage actual and potential positive impacts.
+</p>
+<p>No data available for this section.</p>
+
+<p>
+  Process used to track the effectiveness of the actions and mention goals, targets, and indicators used to evaluate the process along with specific lessons learned and how these have been incoporated
+  to organisation's operational policies and procedures.
+</p>
+<p>No data available for this section.</p>
 
 <h4>14.2. Corporate Social Responsibility (CSR)</h4>
-<p><em>Note: Data for this section should be collected separately from the client, as it is not part of the GRI
-        screens.</em></p>
-<p>Corporate Social Responsibility (CSR) is a cornerstone of our community engagement strategy. Our CSR efforts are
-    guided by the principles of ethical business practices, sustainability, and social equity. We are committed to
-    making a positive impact through strategic investments and partnerships that address critical social and
-    environmental challenges.</p>
-
-<h5>CSR Framework</h5>
-<p>Our CSR framework is built on three pillars: People, Planet, and Prosperity. This holistic approach ensures that our
-    initiatives are inclusive, environmentally sustainable, and economically beneficial.</p>
-
-<h5>Partnerships and Collaborations</h5>
-<p>Collaboration with stakeholders is key to the success of our CSR initiatives. We partner with local governments,
-    NGOs, and other organizations to leverage resources, expertise, and networks. These partnerships enable us to scale
-    our impact and ensure that our CSR activities are aligned with community needs and priorities.</p>
+<p>{{screen_fourteen_data.csr_policies|safe}}</p>
