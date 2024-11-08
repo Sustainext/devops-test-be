@@ -8,7 +8,7 @@ class MaterialityStatement(AbstractModel, HistoricalModelMixin):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="materiality_statement"
     )
-    statement = models.JSONField(null=True, blank=True)
+    statement = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Materiality Statements"

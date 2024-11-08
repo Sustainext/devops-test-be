@@ -16,10 +16,10 @@ class CeoMessage(AbstractModel, HistoricalModelMixin):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="ceo_message"
     )
-    message = models.JSONField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
     message_image = models.TextField(null=True, blank=True)
     signature_image = models.TextField(null=True, blank=True)
-    ceo_name = models.JSONField(null=True, blank=True)
+    ceo_name = models.TextField(null=True, blank=True)
     signature_image_name = models.TextField(null=True, blank=True)
     message_image_name = models.TextField(null=True, blank=True)
     company_name = models.TextField(null=True, blank=True)
