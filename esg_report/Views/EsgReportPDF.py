@@ -105,8 +105,8 @@ class ESGReportPDFView(View):
             # "materiality": materiality,
             # "screen_nine_data": screen_nine_data,
             # "screen_ten_data": screen_ten_data,
-            # "screen_eleven_data": screen_eleven_data,
-            "screen_twelve_data": context_data,
+            "screen_eleven_data": context_data,
+            # "screen_twelve_data": context_data,
             "pk": pk,
         }
 

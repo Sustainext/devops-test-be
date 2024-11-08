@@ -1,8 +1,8 @@
 <!-- anti_corruption.html -->
-
+{% load custom_tags %}
 <h2>11.5. Anti-Corruption</h2>
 
-<h3>11.5.1. Management of Material Topic (GRI 3-3-c, d, e)</h3>
+<h3>11.5.1. Management of Material Topic</h3>
 <p>
   Description of organisation's policies or commitments for the material topic, along with actions taken to address, prevent or mitigate potential negative impacts and mention the actions taken by the
   organisation to manage actual and potential positive impacts.
@@ -35,11 +35,13 @@
     </tr>
   </thead>
   <tbody>
+    {%for data in screen_eleven_data.economic_analyse.operations_assessed_analyze.operations_assesed%}
     <tr>
-      <td>{{ screen_eleven_data.economic_analyse.operations_assessed_analyze.total_operations_assessed|default:"No data available" }}</td>
-      <td>{{ screen_eleven_data.economic_analyse.operations_assessed_analyze.total_operations|default:"No data available" }}</td>
-      <td>{{ screen_eleven_data.economic_analyse.operations_assessed_analyze.percentage_operations_assessed|default:"No data available" }}</td>
+      <td>{{ data.total_number_of_operations_assesed|default:"No data available"|round_to:5 }}</td>
+      <td>{{ data.number_of_operations|default:"No data available"|round_to:5 }}</td>
+      <td>{{ data.percentage|default:"No data available"|round_to:5 }}%</td>
     </tr>
+    {% endfor %}
   </tbody>
 </table>
 
@@ -60,7 +62,7 @@
 <p>No data available</p>
 {% endif %}
 
-<h3>11.5.4. Training on Anti-Corruption (GRI 205-2-a, b, c, d, e)</h3>
+<h3>11.5.4. Training on Anti-Corruption</h3>
 
 <h4>Governance Body Members</h4>
 <p>Total number and percentage of governance body members that the organization’s anti-corruption policies and procedures have been communicated to, by region:</p>
@@ -79,12 +81,12 @@
     </tr>
   </thead>
   <tbody>
-    {% for region in governance_body_members %}
+    {% for region in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2a %}
     <tr>
-      <td>{{ region.name }}</td>
-      <td>{{ region.total_communicated }}</td>
-      <td>{{ region.total_members }}</td>
-      <td>{{ region.percentage_communicated }}%</td>
+      <td>{{ region.loc }}</td>
+      <td>{{ region.total_communicated|round_to:5 }}</td>
+      <td>{{ region.total_region|round_to:5 }}</td>
+      <td>{{ region.percentage|round_to:5 }}%</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -108,16 +110,26 @@
     </tr>
   </thead>
   <tbody>
-    {% for location in employee_communication %}
+    {% for location_name, location_data in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2b.items %} {% for location in location_data %}
     <tr>
-      <td>{{ location.name }}</td>
-      <td>{{ location.employee_category }}</td>
-      <td>{{ location.total_communicated }}</td>
-      <td>{{ location.total_employees }}</td>
-      <td>{{ location.percentage_communicated }}%</td>
+      <td>{{ location_name }}</td>
+      <!-- This will display the dynamic location name -->
+      <td>{{ location.EmployeeCategory }}</td>
+      <td>{{ location.Totalnumberemployees|round_to:5 }}</td>
+      <td>{{ location.Totalemployeeinthisregion|round_to:5 }}</td>
+      <td>{{ location.percentage|round_to:5 }}%</td>
     </tr>
-    {% endfor %}
+    {% endfor %} {% endfor %}
   </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"><strong>Total</strong></td>
+      <!-- Applying sum_values filter on data dynamically based on structure -->
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2b|sum_values:'Totalnumberemployees' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2b|sum_values:'Totalemployeeinthisregion' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2b|sum_values:'percentage' }}%</td>
+    </tr>
+  </tfoot>
 </table>
 
 <h4>Business Partners</h4>
@@ -138,16 +150,26 @@
     </tr>
   </thead>
   <tbody>
-    {% for partner in business_partner_communication %}
+    {% for location_name, location_data in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2c.items %} {% for location in location_data %}
     <tr>
-      <td>{{ partner.location }}</td>
-      <td>{{ partner.partner_type }}</td>
-      <td>{{ partner.total_communicated }}</td>
-      <td>{{ partner.total_partners }}</td>
-      <td>{{ partner.percentage_communicated }}%</td>
+      <td>{{ location_name }}</td>
+      <!-- This will display the dynamic location name -->
+      <td>{{ location.Typeofbusinesspartner }}</td>
+      <td>{{ location.Totalnumberemployees|round_to:5}}</td>
+      <td>{{ location.Totalemployeeinthisregion|round_to:5 }}</td>
+      <td>{{ location.percentage|round_to:5 }}%</td>
     </tr>
-    {% endfor %}
+    {% endfor %} {% endfor %}
   </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"><strong>Total</strong></td>
+      <!-- Applying sum_values filter on data dynamically based on structure -->
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2c|sum_values:'Totalnumberemployees' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2c|sum_values:'Totalemployeeinthisregion' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2c|sum_values:'percentage' }}%</td>
+    </tr>
+  </tfoot>
 </table>
 
 <h4>Governance Body Members - Training</h4>
@@ -167,12 +189,12 @@
     </tr>
   </thead>
   <tbody>
-    {% for location in governance_body_training %}
+    {% for location in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2d %}
     <tr>
-      <td>{{ location.name }}</td>
-      <td>{{ location.total_trained }}</td>
-      <td>{{ location.total_members }}</td>
-      <td>{{ location.percentage_trained }}%</td>
+      <td>{{ location.loc }}</td>
+      <td>{{ location.total_communicated|round_to:5}}</td>
+      <td>{{ location.total_region|round_to:5 }}</td>
+      <td>{{ location.percentage|round_to:5 }}%</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -196,14 +218,24 @@
     </tr>
   </thead>
   <tbody>
-    {% for location in employee_training %}
+    {% for location_name, location_data in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2e.items %} {% for location in location_data %}
     <tr>
-      <td>{{ location.name }}</td>
-      <td>{{ location.employee_category }}</td>
-      <td>{{ location.total_trained }}</td>
-      <td>{{ location.total_employees }}</td>
-      <td>{{ location.percentage_trained }}%</td>
+      <td>{{ location_name }}</td>
+      <!-- This will display the dynamic location name -->
+      <td>{{ location.EmployeeCategory }}</td>
+      <td>{{ location.Totalnumberemployees|round_to:5}}</td>
+      <td>{{ location.Totalemployeeinthisregion|round_to:5 }}</td>
+      <td>{{ location.percentage|round_to:5 }}%</td>
     </tr>
-    {% endfor %}
+    {% endfor %} {% endfor %}
   </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"><strong>Total</strong></td>
+      <!-- Applying sum_values filter on data dynamically based on structure -->
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2e|sum_values:'Totalnumberemployees' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2e|sum_values:'Totalemployeeinthisregion' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2e|sum_values:'percentage' }}%</td>
+    </tr>
+  </tfoot>
 </table>
