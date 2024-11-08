@@ -39,6 +39,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(migrate_data),
         migrations.AlterField(
             model_name="historicalstakeholderengagement",
             name="description",
@@ -49,5 +50,4 @@ class Migration(migrations.Migration):
             name="description",
             field=models.JSONField(blank=True, null=True),
         ),
-        migrations.RunPython(migrate_data),
     ]
