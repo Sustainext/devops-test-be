@@ -7,7 +7,8 @@ from sustainapp.models import (
     Corporateentity,
     Location,
 )
-from authentication.models import CustomUser, Client
+from authentication.models import CustomUser, Client, UserSafeLock
+from django.conf import settings
 
 
 @receiver(post_save, sender=CustomUser)
@@ -88,3 +89,17 @@ def remove_client_admin_permissions(user):
     # if not user.is_superuser:  # Keep is_staff for superusers
     #     user.is_staff = False
     #     user.save()
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_user_safelock(sender, instance, created, **kwargs):
+    if created:
+        safe_lock, _ = UserSafeLock.objects.get_or_create(user=instance)
+        safe_lock.save()
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def save_user_safelock(sender, instance, **kwargs):
+    safe_lock, _ = UserSafeLock.objects.get_or_create(user=instance)
+    safe_lock.save()
+    instance.safelock.save()

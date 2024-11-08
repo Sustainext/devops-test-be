@@ -77,6 +77,9 @@ from sustainapp.Views.Analyse.SupplierEnvironment.SupplierEnvironment import (
     SupplierEnvAnlayzeView,
 )
 from sustainapp.Views.OrgCorpLocViewset import CorporateListView, LocationListView
+from sustainapp.Views.Analyse.Social.SecurityPersonnelAnalysis import (
+    SecurityPersonnelAnalysisView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -248,4 +251,9 @@ urlpatterns = [
     ),
     path("roles/corporates/", CorporateListView.as_view(), name="corporates-list"),
     path("roles/locations/", LocationListView.as_view(), name="locations-list"),
+    path(
+        "get_analysis_security_personnel/",
+        SecurityPersonnelAnalysisView.as_view(),
+        name="get_analysis_security_personnel",
+    ),
 ]

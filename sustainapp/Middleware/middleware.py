@@ -4,6 +4,14 @@ import jwt
 from rest_framework.response import Response
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
+from django.http import HttpResponseForbidden
+from django.conf import settings
+from django.utils import timezone
+from django.conf import settings
+from datetime import timedelta
+import logging
+
+logger = logging.getLogger("django")
 
 
 class JWTMiddleware:
@@ -20,10 +28,12 @@ class JWTMiddleware:
             if auth_header:
                 try:
                     token = auth_header.split(" ")[1]
+                    with open("public_key.pem", "r") as key_file:
+                        public_key = key_file.read()
                     payload = jwt.decode(
                         token,
-                        settings.SECRET_KEY,
-                        algorithms=["HS256"],
+                        public_key,
+                        algorithms=["RS256"],
                     )
                     client = payload.get("client_id")
                     if not client:
@@ -39,4 +49,62 @@ class JWTMiddleware:
                     raise PermissionDenied("Client Not Found")
 
         response = self.get_response(request)
+        return response
+
+
+class MITMDetectionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        logger.info("Checking for MITM")
+        logger.info(request.headers)
+        # Allow localhost
+        if request.get_host().startswith("127.0.0.1") or request.get_host().startswith(
+            "localhost"
+        ):
+            return self.get_response(request)
+
+        # Check for secure connection
+        if not request.is_secure():
+            return HttpResponseForbidden("HTTPS Required")
+
+        response = self.get_response(request)
+        return response
+
+
+class SessionTimeoutMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Get the last activity time from session
+        last_activity = request.session.get("last_activity")
+        if last_activity:
+            now = timezone.now()
+            last_activity_time = timezone.datetime.fromisoformat(last_activity)
+            if now - last_activity_time > timedelta(
+                seconds=settings.SESSION_COOKIE_AGE
+            ):
+                # Timeout, log out the user
+                from django.contrib.auth import logout
+
+                logout(request)
+
+        # Update last activity time
+        request.session["last_activity"] = timezone.now().isoformat()
+
+        response = self.get_response(request)
+        return response
+
+
+class SecureCookiesMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        for cookie in response.cookies.values():
+            cookie.secure = True
+            cookie.httponly = True
         return response

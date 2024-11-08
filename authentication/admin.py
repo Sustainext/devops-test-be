@@ -6,6 +6,7 @@ from authentication.models import (
     CustomRole,
     CustomUser,
     Client,
+    UserSafeLock,
 )
 from authentication.AdminSite.ClientAdmin import client_admin_site
 from django.contrib.auth.admin import UserAdmin
@@ -80,8 +81,14 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ["id", "user_id", "user"]
 
 
+class UserSafeLockAdmin(admin.ModelAdmin):
+    list_display = ["user", "is_locked", "failed_login_attempts", "locked_at"]
+
+
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(LoginCounter, LoginCounterAdmin)
 admin.site.register(CustomPermission, CustomPermissionAdmin)
 admin.site.register(CustomRole, CustomRoleAdmin)
 admin.site.register(CustomUser, CustomUserAdmin)  # Remove the comma here
+admin.site.register(UserSafeLock, UserSafeLockAdmin)
+client_admin_site.register(UserSafeLock, UserSafeLockAdmin)

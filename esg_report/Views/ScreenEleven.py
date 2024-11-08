@@ -45,7 +45,9 @@ class ScreenElevenAPIView(APIView):
             return Response(
                 {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        screen_eleven_service = ScreenElevenService(report_id=report_id)
+        screen_eleven_service = ScreenElevenService(
+            report_id=report_id, request=request
+        )
         response_data = screen_eleven_service.get_api_response()
 
         return Response(response_data, status=status.HTTP_200_OK)
