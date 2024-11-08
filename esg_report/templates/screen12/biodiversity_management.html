@@ -2,71 +2,14 @@
 
 <h2>12.6. Biodiversity</h2>
 
-<p>We are committed to protecting and enhancing biodiversity in the areas where we operate. Our biodiversity management
-    includes assessing potential impacts, implementing mitigation measures, and promoting conservation efforts.</p>
+<p>
+  We are committed to protecting and enhancing biodiversity in the areas where we operate. Our biodiversity management includes assessing potential impacts, implementing mitigation measures, and
+  promoting conservation efforts.
+</p>
 
-<h4>12.6.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
-<hr>
-
-<p>[Details on biodiversity management can be included here, such as strategies, assessments, and ongoing conservation
-    projects.]</p>
+<h4>12.6.1. Management of Material Topic</h4>
+<p>No data available</p>
+<p>No data available</p>
 
 <h4>12.6.2. Habitat Protected and Restored</h4>
-<p><em>Note for developers: Biodiversity screens are not yet integrated into the platform.</em></p>
-<p>We work to protect and restore habitats affected by our operations. This includes creating conservation areas,
-    rehabilitating disturbed lands, and supporting biodiversity projects.</p>
-
-<p><em>This section’s data can be represented using graphics (charts, maps, or graphs).</em></p>
-
-<h5>Key Conservation Efforts</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Conservation Area</th>
-            <th>Location</th>
-            <th>Size (hectares)</th>
-            <th>Type of Restoration/Protection</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for area in conservation_areas %}
-        <tr>
-            <td>{{ area.name }}</td>
-            <td>{{ area.location }}</td>
-            <td>{{ area.size }}</td>
-            <td>{{ area.type_of_restoration }}</td>
-            <td>{{ area.status }}</td>
-        </tr>
-        {% endfor %}
-        <tr>
-            <td colspan="2"><strong>Total Protected/Restored Area</strong></td>
-            <td><strong>{{ total_restored_area }}</strong></td>
-            <td colspan="2"></td>
-        </tr>
-    </tbody>
-</table>
-
-<h5>Projects Supporting Biodiversity</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Project Name</th>
-            <th>Location</th>
-            <th>Type of Biodiversity Support</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for project in biodiversity_projects %}
-        <tr>
-            <td>{{ project.name }}</td>
-            <td>{{ project.location }}</td>
-            <td>{{ project.type_of_support }}</td>
-            <td>{{ project.status }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<p><em>Graphics or maps representing the biodiversity efforts can be added here.</em></p>
+<p>{{screen_twelve_data.habitat_protection_restoration_commitment|safe}}</p>

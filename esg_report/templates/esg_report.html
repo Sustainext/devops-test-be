@@ -9,27 +9,56 @@
     />
     <title>Table of Contents</title>
     <style>
+      /* Set A4 page size */
+      @page {
+        size: A4;
+        margin: 10mm; /* Set the margins for all pages */
+        margin-bottom: 5mm;
+        @bottom-right {
+          content: "Page " counter(page) " of " counter(pages); /* Add page numbering */
+          font-size: 10px;
+          color: #333;
+          margin-bottom: 5mm;
+          padding: 5px; /* Adjust as needed */
+        }
+      }
+
       body {
         font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #333;
+        padding: 10px;
       }
 
       h1 {
         font-size: 18px;
         font-weight: bold;
+        color: #118dc5;
+        margin-bottom: 10px;
       }
 
       h2 {
         font-size: 16px;
         font-weight: bold;
         color: #118dc5;
+        margin-bottom: 8px;
       }
 
       h3 {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 6px;
+      }
+      h4 {
         font-size: 14px;
+        margin-bottom: 6px;
       }
 
       p {
         font-size: 12px;
+        margin: 5px 0;
       }
 
       ul {
@@ -43,87 +72,113 @@
 
       ul ul ul {
         padding-left: 40px;
-        padding-top: 0px;
       }
 
       .page-break {
         page-break-before: always;
       }
 
-      .message-from-ceo h2 {
-        font-size: 10px;
-        font-weight: bold;
-        text-align: center;
-        margin-top: 20px;
+      /* Table Container for Centering */
+      .table-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        border-radius: 15px;
       }
 
-      table > thead > tr {
-        background-color: #dcfce7;
-      }
-
-      table > thead > tr > th {
-        font-weight: 500;
-      }
-
-      table > tbody > tr > td {
-        font-weight: 400;
-        text-align: center;
-      }
-
+      /* Table Styling */
       table {
-        border-radius: 10px;
+        width: 100%; /* Use 90% of the available width to ensure it fits within the A4 page */
+        max-width: 190mm; /* Slightly less than A4 width to account for margins */
+        border-collapse: collapse;
+        margin: 15px auto;
+        font-size: 9px;
+        table-layout: fixed; /* Fixed layout to keep columns evenly sized */
+        word-wrap: break-word;
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      table,
+      th,
+      td {
         border: 1px solid #d1d5db;
+      }
+
+      th,
+      td {
+        padding: 6px;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      thead th {
+        font-weight: 500;
+        color: #6b7280;
+      }
+
+      .table-header {
+        background: linear-gradient(90deg, rgba(0, 174, 239, 0.05) 7.92%, rgba(106, 223, 35, 0.05) 89.75%);
+        color: #118dc5;
+        font-weight: 600;
+      }
+
+      /* Ensure Text Breaks Properly */
+      th,
+      td {
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+
+      table > thead {
+        background: linear-gradient(to right, rgba(0, 174, 239, 0.05), rgba(106, 223, 35, 0.05));
       }
     </style>
   </head>
 
   <body>
-    <!-- {% include "esg_contents.html" %} -->
-    <!-- <div class="page-break"></div> -->
-    <!-- {% include "message_from_ceo.html" %} -->
-    <!-- <div class="page-break"></div> -->
-    <!-- {% include "about_the_company.html" %} -->
-    <!-- <div class="page-break"></div> -->
-    <!-- {% include "mission_vision_values.html" %} -->
-    <!-- <div class="page-break"></div> Removing page-break for now, later need to add this again -->
-    <!-- {% include "sustainability_roadmap.html" %} -->
-    <!-- <div class="page-break"></div> Removing page-break for now, later need to add this again -->
-    <!-- {% include "award_and_recognization.html" %} -->
-    <!-- <div class="page-break"></div> -->
-    <!-- {% include "stakeholder_engagement.html" %} -->
-    <!-- <div class="page-break"></div> -->
-    <!-- {% include "about_the_report.html" %} -->
-    <!-- <div class="page-break"></div> -->
-    <!-- {% include "materiality.html" %} -->
-    <!-- <div class="page-break"></div> -->
-    {% comment %} {% include "corporate_governance.html" %} {% endcomment %} {% comment %}
+    {% comment %} {% include "esg_contents.html" %}
     <div class="page-break"></div>
-    {% endcomment %}
-    <!-- {% include "sustainability_journey.html" %} -->
-    <!-- <div class="page-break"></div> -->
-    {% comment %} {% include "screen11/economic_performance.html" %} {% endcomment %} {% comment %}
+    {% include "message_from_ceo.html" %}
     <div class="page-break"></div>
-    {% endcomment %} {% include "screen11/climate_related_impacts.html" %} {% include "screen11/tax_performance.html" %}
+    {% include "about_the_company.html" %}
     <div class="page-break"></div>
-    {% include "screen11/anti_corruption.html" %}
+    {% include "mission_vision_values.html" %}
     <div class="page-break"></div>
-    {% include "screen11/political_contributions.html" %}
+    {% include "sustainability_roadmap.html" %}
     <div class="page-break"></div>
-    {% include "screen12/emission.html" %}
+    {% include "award_and_recognization.html" %}
     <div class="page-break"></div>
-    {% include "screen12/materials.html" %}
+    {% include "stakeholder_engagement.html" %}
     <div class="page-break"></div>
-    {% include "screen12/water_management.html" %}
+    {% include "about_the_report.html" %}
     <div class="page-break"></div>
-    {% include "screen12/energy_management.html" %}
+    {% include "materiality.html" %}
     <div class="page-break"></div>
-    {% include "screen12/waste_management.html" %}
+    {% include "corporate_governance.html" %}
     <div class="page-break"></div>
-    {% include "screen12/biodiversity_management.html" %}
+    {% include "sustainability_journey.html" %}
     <div class="page-break"></div>
-    {% include "screen12/air_quality_management.html" %}
+    {% endcomment %} {% include "screen11/economic_performance.html" %} {% comment %}
     <div class="page-break"></div>
-    {% include "screen13/people_management.html" %}
+    {% include "screen11/climate_related_impacts.html" %} {% include "screen11/tax_performance.html" %} {% endcomment %} {% comment %} {% include "screen11/anti_corruption.html" %} {% include
+    "screen11/political_contributions.html" %}
+    <div class="page-break"></div>
+    {% endcomment %} {% comment %} {% include "screen12/emission.html" %}
+    <div class="page-break"></div>
+    {% endcomment %} {% comment %} {% include "screen12/materials.html" %} {% endcomment %} {% comment %}
+    <div class="page-break"></div>
+    {% endcomment %} {% comment %} {% include "screen12/water_management.html" %} {% endcomment %} {% comment %}
+    <div class="page-break"></div>
+    {% endcomment %} {% comment %} {% include "screen12/energy_management.html" %} {% endcomment %} {% comment %}
+    <div class="page-break"></div>
+    {% endcomment %} {% comment %} {% include "screen12/waste_management.html" %} {% endcomment %} {% comment %}
+    <div class="page-break"></div>
+    {% endcomment %} {% comment %} {% include "screen12/biodiversity_management.html" %} {% endcomment %} {% comment %}
+    <div class="page-break"></div>
+    {% endcomment %} {% comment %} {% include "screen12/air_quality_management.html" %} {% endcomment %} {% comment %}
+    <div class="page-break"></div>
+    {% endcomment %} {% include "screen13/people_management.html" %}
     <div class="page-break"></div>
     {% include "screen13/labour_management.html" %}
     <div class="page-break"></div>

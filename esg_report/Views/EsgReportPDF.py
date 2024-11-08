@@ -4,6 +4,7 @@ from django.template.loader import get_template
 from django.views import View
 from sustainapp.models import Report
 import time
+from weasyprint import HTML
 from xhtml2pdf import pisa
 from esg_report.services.screen_one_service import CeoMessageService
 from esg_report.services.screen_two_service import AboutTheCompanyAndOperationsService
@@ -16,8 +17,10 @@ from esg_report.services.screen_eight_service import MaterialityService
 from esg_report.services.screen_nine_service import ScreenNineService
 from esg_report.services.screen_ten_service import ScreenTenService
 from esg_report.services.screen_eleven_service import ScreenElevenService
+from esg_report.services.screen_twelve_service import ScreenTwelveService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
+from esg_report.services.data import context_data
 
 
 def convert_keys(obj):
@@ -82,10 +85,14 @@ class ESGReportPDFView(View):
         # screen_nine_data = screen_nine_service.get_response()
         # screen_ten_data = ScreenTenService.get_screen_ten(pk)
         # screen_ten_data = convert_keys(screen_ten_data)
-        screen_eleven_service = ScreenElevenService(report_id=pk, request=request)
-        screen_eleven_data = screen_eleven_service.get_report_response()
-        # print(screen_eleven_data)
+        # screen_eleven_service = ScreenElevenService(report_id=pk, request=request)
+        # screen_eleven_data = screen_eleven_service.get_report_response()
+        # screen_twelve_service = ScreenTwelveService(report_id=pk, request=request)
+        # screen_twelve_data = screen_twelve_service.get_report_response()
+        # print(screen_twelve_data)
         # Prepare the context for rendering the PDF template
+        # data = convert_keys(context_data)
+        # print(data)
         context = {
             "report": report,
             # "ceo_message": dict_ceo_message,
@@ -98,7 +105,8 @@ class ESGReportPDFView(View):
             # "materiality": materiality,
             # "screen_nine_data": screen_nine_data,
             # "screen_ten_data": screen_ten_data,
-            "screen_eleven_data": screen_eleven_data,
+            # "screen_eleven_data": screen_eleven_data,
+            "screen_twelve_data": context_data,
             "pk": pk,
         }
 
@@ -106,26 +114,20 @@ class ESGReportPDFView(View):
         try:
             # Get the template and render HTML
             template = get_template(template_path)
-            html = template.render(context, request)
+            html_content = template.render(context, request)
         except Exception as e:
             print(f"Error rendering the PDF template: {e}")
             return HttpResponse("Error rendering the PDF template.", status=500)
 
+        # Configure the response to return a PDF file
         response = HttpResponse(content_type="application/pdf")
-        try:
-            # Check if the PDF should be downloaded or viewed inline
-            disposition = "attachment" if "download" in request.GET else "inline"
-            pdf_filename = (
-                f"{report.name}.pdf"  # Assuming `name` is a field in the `Report` model
-            )
-            response["Content-Disposition"] = (
-                f'{disposition}; filename="{pdf_filename}"'
-            )
+        disposition = "attachment" if "download" in request.GET else "inline"
+        pdf_filename = f"{report.name}.pdf"
+        response["Content-Disposition"] = f'{disposition}; filename="{pdf_filename}"'
 
-            # Generate the PDF
-            pisa_status = pisa.CreatePDF(html, dest=response)
-            if pisa_status.err:
-                return HttpResponse("Error generating PDF", status=500)
+        try:
+            # Generate the PDF with WeasyPrint
+            HTML(string=html_content).write_pdf(response)
 
             # Print time taken for PDF generation
             print(
@@ -134,6 +136,7 @@ class ESGReportPDFView(View):
             return response
 
         except Exception as e:
+            print(f"Error generating PDF: {e}")
             return HttpResponse(
                 "Unexpected error occurred while generating the PDF.", status=500
             )

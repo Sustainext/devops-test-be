@@ -2,129 +2,120 @@
 
 <h2>12.2. Materials (GRI 301-1-a)</h2>
 
-<p>Our materials management strategy focuses on responsible sourcing, reducing material consumption, and increasing the
-    use of recycled materials. We aim to minimize our environmental footprint by adopting sustainable practices
-    throughout our supply chain.</p>
+<p>{{screen_twelve_data.material_management_strategy}}</p>
 
 <h4>Non-Renewable Materials Used</h4>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Material Type</th>
-            <th>Material Category</th>
-            <th>Source</th>
-            <th>Total Quantity</th>
-            <th>Unit</th>
-            <th>Associated Process</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for material in non_renewable_materials %}
-        <tr>
-            <td>{{ material.type }}</td>
-            <td>{{ material.category }}</td>
-            <td>{{ material.source }}</td>
-            <td>{{ material.quantity }}</td>
-            <td>{{ material.unit }}</td>
-            <td>{{ material.associated_process }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Material Type</th>
+      <th>Material Category</th>
+      <th>Source</th>
+      <th>Total Quantity</th>
+      <th>Unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for material in screen_twelve_data.301_1a_non_renewable_materials %}
+    <tr>
+      <td>{{ material.Typeofmaterial }}</td>
+      <td>{{ material.Materialsused }}</td>
+      <td>{{ material.Source }}</td>
+      <td>{{ material.Totalweight }}</td>
+      <td>{{ material.Unit }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
 <h4>Renewable Materials Used</h4>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Material Type</th>
-            <th>Material Category</th>
-            <th>Source</th>
-            <th>Total Quantity</th>
-            <th>Unit</th>
-            <th>Associated Process</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for material in renewable_materials %}
-        <tr>
-            <td>{{ material.type }}</td>
-            <td>{{ material.category }}</td>
-            <td>{{ material.source }}</td>
-            <td>{{ material.quantity }}</td>
-            <td>{{ material.unit }}</td>
-            <td>{{ material.associated_process }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Material Type</th>
+      <th>Material Category</th>
+      <th>Source</th>
+      <th>Total Quantity</th>
+      <th>Unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for material in screen_twelve_data.301_1a_renewable_materials %}
+    <tr>
+      <td>{{ material.Typeofmaterial }}</td>
+      <td>{{ material.Materialsused }}</td>
+      <td>{{ material.Source }}</td>
+      <td>{{ material.Totalweight }}</td>
+      <td>{{ material.Unit }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
-<h4>Semi-Manufactured Goods or Parts</h4>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Material Type</th>
-            <th>Total Weight/Volume</th>
-            <th>Unit</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for material in semi_manufactured_goods %}
-        <tr>
-            <td>{{ material.type }}</td>
-            <td>{{ material.total_weight }}</td>
-            <td>{{ material.unit }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<h4>12.2.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
-<hr>
+<h4>12.2.1. Management of Material Topic</h4>
+<p>No data available</p>
+<p>No data available</p>
+<hr />
 
 <h4>12.2.2. Recycled Input Materials Used (GRI 301-2-a)</h4>
-<p>We prioritize the use of recycled materials in our products and processes. This not only reduces the demand for
-    virgin materials but also helps to close the loop in our production cycle.</p>
+<p>{{screen_twelve_data.recycling_process}}</p>
 
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Types of Recycled Material</th>
-            <th>Percentage of Recycled Input Materials Used</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for material in recycled_materials %}
-        <tr>
-            <td>{{ material.type }}</td>
-            <td>{{ material.percentage }}%</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<h4>Non-Renewable Materials Used</h4>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Types of Recycled Material</th>
+      <th>Percentage of Recycled Input Materials Used</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for material in screen_twelve_data.material_analyse.recycled_materials %}
+    <tr>
+      <td>{{ material.type_of_recycled_material_used }}</td>
+      <td>{{ material.percentage_of_recycled_input_materials_used }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
-<h4>12.2.3. Reclaimed Products and Their Packaging Materials (GRI 301-3-a, b)</h4>
-<p>We actively promote the reclamation and recycling of our products and packaging materials. Our take-back programs and
-    recycling initiatives help to ensure that materials are reused and diverted from landfills.</p>
+<h4>12.2.3. Reclaimed Products and Their Packaging Materials</h4>
+<p>{{screen_twelve_data.reclamation_recycling_process}}</p>
 
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Type of Product</th>
-            <th>Product Code</th>
-            <th>Product Name</th>
-            <th>Percentage of Reclaimed Products and Packaging Materials (%)</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for product in reclaimed_products %}
-        <tr>
-            <td>{{ product.type }}</td>
-            <td>{{ product.code }}</td>
-            <td>{{ product.name }}</td>
-            <td>{{ product.percentage }}%</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Type of Product</th>
+      <th>Product Code</th>
+      <th>Product Name</th>
+      <th>Percentage of Reclaimed Products and Packaging Materials (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in screen_twelve_data.material_analyse.reclaimed_materials %}
+    <tr>
+      <td>{{ product.type_of_product }}</td>
+      <td>{{ product.product_code }}</td>
+      <td>{{ product.product_name }}</td>
+      <td>{{ product.percentage_of_reclaimed_products }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
-<hr>
+<hr />
