@@ -3,7 +3,7 @@
 from django.db import migrations, models
 
 
-def migrate_data(apps, schema_editor):
+def remove_data(apps, schema_editor):
     HistoricalStakeholderEngagement = apps.get_model(
         "esg_report", "HistoricalStakeholderEngagement"
     )
@@ -11,25 +11,11 @@ def migrate_data(apps, schema_editor):
 
     # For StakeholderEngagement model
     for record in StakeholderEngagement.objects.all():
-        old_text = record.description or ""
-        record.description = {
-            "page": "screen_six",
-            "label": "Stakeholder Engagement",
-            "type": "textarea",
-            "content": old_text,
-        }
-        record.save()
+        record.delete()
 
     # For HistoricalStakeholderEngagement model
     for record in HistoricalStakeholderEngagement.objects.all():
-        old_text = record.description or ""
-        record.description = {
-            "page": "screen_six",
-            "label": "Stakeholder Engagement",
-            "type": "textarea",
-            "content": old_text,
-        }
-        record.save()
+        record.delete()
 
 
 class Migration(migrations.Migration):
@@ -39,7 +25,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(migrate_data),
+        migrations.RunPython(remove_data),
         migrations.AlterField(
             model_name="historicalstakeholderengagement",
             name="description",
