@@ -13,65 +13,59 @@
       @page {
         size: A4;
         margin: 10mm; /* Set the margins for all pages */
-        margin-bottom: 5mm;
         @bottom-right {
           content: "Page " counter(page) " of " counter(pages); /* Add page numbering */
           font-size: 10px;
-          color: #333;
-          margin-bottom: 5mm;
-          padding: 5px; /* Adjust as needed */
+          color: #27272a;
+          margin-bottom: 3mm;
+          padding: 5px;
         }
       }
 
       body {
         font-family: Arial, sans-serif;
         margin: 0;
-        padding: 0;
         color: #333;
-        padding: 10px;
+        padding: 10px 15px;
       }
 
       h1 {
         font-size: 18px;
-        font-weight: bold;
+        font-weight: 500;
         color: #118dc5;
         margin-bottom: 10px;
       }
 
       h2 {
-        font-size: 16px;
-        font-weight: bold;
-        color: #118dc5;
+        font-size: 18px;
+        font-weight: 500;
         margin-bottom: 8px;
+        color: #045fb0;
       }
 
       h3 {
         font-size: 16px;
-        font-weight: bold;
+        font-weight: 500;
         color: #333;
         margin-bottom: 6px;
       }
       h4 {
-        font-size: 14px;
+        font-weight: 500;
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+
+      h5 {
+        font-weight: 500;
+        font-size: 13px;
         margin-bottom: 6px;
       }
 
       p {
-        font-size: 12px;
+        font-size: 11px;
         margin: 5px 0;
-      }
-
-      ul {
-        list-style-type: none;
-        padding-left: 0;
-      }
-
-      ul ul {
-        padding-left: 20px;
-      }
-
-      ul ul ul {
-        padding-left: 40px;
+        color: #495059;
+        line-height: 1.5;
       }
 
       .page-break {
@@ -103,6 +97,7 @@
       th,
       td {
         border: 1px solid #d1d5db;
+        font-weight: 400;
       }
 
       th,
@@ -110,11 +105,8 @@
         padding: 6px;
         text-align: center;
         vertical-align: middle;
-      }
-
-      thead th {
         font-weight: 500;
-        color: #6b7280;
+        color: #242424;
       }
 
       .table-header {
@@ -131,68 +123,110 @@
       }
 
       table > thead {
-        background: linear-gradient(to right, rgba(0, 174, 239, 0.05), rgba(106, 223, 35, 0.05));
+        background: linear-gradient(to right, rgba(0, 174, 239, 0.1), rgba(106, 223, 35, 0.1));
+        font-weight: bold;
+      }
+      table > tbody > tr > td {
+        font-weight: 400;
+        color: #667085;
+      }
+      .blob-top {
+        width: 145px;
+        height: 150px;
+        background: linear-gradient(to right, rgba(0, 174, 239, 0.25), rgba(106, 223, 35, 0.25)); /* Light green color */
+        border-radius: 50% 50% 70% 70% / 50% 50% 70% 70%; /* Creates an irregular blob shape */
+        position: fixed;
+        top: -85px; /* Adjust as needed */
+        left: -140px; /* Adjust as needed */
+        z-index: -1; /* Send it to the background */
+      }
+      .blob-bottom {
+        width: 200px;
+        height: 110px;
+        background: #007eef; /* Light green color */
+        border-radius: 70% 10% 30% 20% / 90% 20% 20% 20%; /* Creates an irregular blob shape */
+        position: fixed;
+        bottom: -90px; /* Adjust as needed */
+        right: -70px; /* Adjust as needed */
+        z-index: -1; /* Send it to the background */
+        opacity: 0.2;
+      }
+
+      ul > li {
+        font-size: 11px;
+        color: #495059;
+        line-height: 1.5;
+        list-style-type: disc;
+        margin-left: 15px;
+      }
+      ol > li {
+        font-size: 11px;
+        color: #495059;
+        line-height: 1.5;
+        margin-left: 15px;
       }
     </style>
   </head>
 
   <body>
-    {% comment %} {% include "esg_contents.html" %}
+    <div class="blob-top"></div>
+    <div class="blob-bottom"></div>
+    {% include "esg_contents.html" %}
     <div class="page-break"></div>
     {% include "message_from_ceo.html" %}
-    <div class="page-break"></div>
+    
     {% include "about_the_company.html" %}
-    <div class="page-break"></div>
+    
     {% include "mission_vision_values.html" %}
-    <div class="page-break"></div>
+    
     {% include "sustainability_roadmap.html" %}
-    <div class="page-break"></div>
+    
     {% include "award_and_recognization.html" %}
-    <div class="page-break"></div>
+    
     {% include "stakeholder_engagement.html" %}
-    <div class="page-break"></div>
+    
     {% include "about_the_report.html" %}
-    <div class="page-break"></div>
+    
     {% include "materiality.html" %}
-    <div class="page-break"></div>
+    
     {% include "corporate_governance.html" %}
-    <div class="page-break"></div>
+    
     {% include "sustainability_journey.html" %}
     <div class="page-break"></div>
-    {% include "screen11/economic_performance.html" %} {% endcomment %} {% comment %} {% include "screen11/climate_related_impacts.html" %} {% endcomment %} {% comment %} {% include
-    "screen11/tax_performance.html" %} {% endcomment %} {% comment %} {% include "screen11/anti_corruption.html" %} {% endcomment %} {% comment %} {% include "screen11/political_contributions.html" %}
-    {% endcomment %} {% comment %} {% include "screen12/emission.html" %}
+    {% include "screen11/economic_performance.html" %} {% include "screen11/climate_related_impacts.html" %} {% include "screen11/tax_performance.html" %} {% include "screen11/anti_corruption.html" %}
+    {% include "screen11/political_contributions.html" %} 
+    {% include "screen12/emission.html" %}
+
+    {% include "screen12/materials.html" %}
+    
+    {% include "screen12/water_management.html" %}
+    
+    {% include "screen12/energy_management.html" %}
+    
+    {% include "screen12/waste_management.html" %}
+    
+    {% include "screen12/biodiversity_management.html" %}
+    
+    {% include "screen12/air_quality_management.html" %}
     <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen12/materials.html" %} {% endcomment %} {% comment %}
+    {% include "screen13/people_management.html" %}
+    
+    {% include "screen13/labour_management.html" %}
+    
+    {% include "screen13/child_labour_management.html" %}
+    
+    {% include "screen13/diversity_inclusion.html" %}
+    
+    {% include "screen13/training_education.html" %}
+    
+    {% include "screen13/occupational_health_safety.html" %}
+    
+    {% include "screen13/collective_bargaining.html" %}
+    
+    {% include "screen13/incidents_violation_discrimination.html" %}
     <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen12/water_management.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen12/energy_management.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen12/waste_management.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen12/biodiversity_management.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen12/air_quality_management.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen13/people_management.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen13/labour_management.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen13/child_labour_management.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen13/diversity_inclusion.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen13/training_education.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen13/occupational_health_safety.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen13/collective_bargaining.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen13/incidents_violation_discrimination.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% comment %} {% include "screen14/community_engagement_csr.html" %} {% endcomment %} {% comment %}
-    <div class="page-break"></div>
-    {% endcomment %} {% include "screen15/customers_products_services.html" %}
+    {% include "screen14/community_engagement_csr.html" %}
+    
+    {% include "screen15/customers_products_services.html" %}
   </body>
 </html>

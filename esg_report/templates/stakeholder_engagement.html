@@ -1,6 +1,5 @@
 <!-- stakeholder_engagement.html -->
 <!-- If stakesholder_engagement is not empty, display the content -->
-{% if stakeholder_engagement %}
 <h2>6. Stakeholder Engagement</h2>
 
 <p>{{stakeholder_engagement.description.content|safe}}</p>
@@ -8,48 +7,49 @@
 <h3>6.1 Approach to Stakeholder Engagement</h3>
 
 <ul>
-    <li><strong>Identification and Prioritization</strong></li>
-    <p>{{stakeholder_engagement.Stakeholdersidentified}}</p>
+  <li><strong>Identification and Prioritization</strong></li>
+  <p>{{stakeholder_engagement.Stakeholdersidentified}}</p>
 
-    <li><strong>Stakeholder Categories</strong></li>
-    <p>{{stakeholder_engagement.Organisationengages}}</p>
+  <li><strong>Stakeholder Categories</strong></li>
+  <p>{{stakeholder_engagement.Organisationengages}}</p>
 
-    <li><strong>Approach to Stakeholder Engagement</strong></li>
-    <p>We employ a variety of engagement methods tailored to the needs and preferences of different stakeholder groups.
-        The purpose of stakeholder engagement is to ensure mutual understanding, address concerns, and collaborate on
-        sustainability initiatives that benefit both {{ ceo_message.company_name }} and the community.</p>
+  <li><strong>Approach to Stakeholder Engagement</strong></li>
+  <p>
+    We employ a variety of engagement methods tailored to the needs and preferences of different stakeholder groups. The purpose of stakeholder engagement is to ensure mutual understanding, address
+    concerns, and collaborate on sustainability initiatives that benefit both {{ ceo_message.company_name }} and the community.
+  </p>
 </ul>
 
-
 <h2>Approach to Stakeholder engagement.</h2>
-<table cellpadding="5" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Stakeholder</th>
-            <th>Representative Group</th>
-            <th>Engagement Method</th>
-            <th>Frequency</th>
-            <th>Key Concern Raised</th>
-            <th>Response to Concerns</th>
-        </tr>
-    </thead>
-    <tbody>
-
-        {% for row in stakeholder_engagement.approach_to_stakeholder_engagement %}
-        <tr>
-            <td>{{row.Stakeholder}}</td>
-            <td>{{row.RepresentativeGroup}}</td>
-            <td>{{row.EngagementMethod}}</td>
-            <td>{{row.Frequency}}</td>
-            <td>{{row.Keyconcernraised}}</td>
-            <td>{{row.Responsetoconcerns}}</td>
-        </tr>
-        {% endfor %}
-        <!-- Add more rows as necessary -->
-    </tbody>
+<table
+  cellpadding="5"
+  cellspacing="0"
+>
+  <thead>
+    <tr>
+      <th>Stakeholder</th>
+      <th>Representative Group</th>
+      <th>Engagement Method</th>
+      <th>Frequency</th>
+      <th>Key Concern Raised</th>
+      <th>Response to Concerns</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in stakeholder_engagement.approach_to_stakeholder_engagement %}
+    <tr>
+      <td>{{row.Stakeholder}}</td>
+      <td>{{row.RepresentativeGroup}}</td>
+      <td>{{row.EngagementMethod}}</td>
+      <td>{{row.Frequency}}</td>
+      <td>{{row.Keyconcernraised}}</td>
+      <td>{{row.Responsetoconcerns}}</td>
+    </tr>
+    {% endfor %}
+    <!-- Add more rows as necessary -->
+  </tbody>
 </table>
 <h3>Engagement with Stakeholders</h3>
-<p> {{stakeholder_engagement.Stakeholderengagement}} </p>
+<p>{{stakeholder_engagement.Stakeholderengagement}}</p>
 <h3>Stakeholder’s Feedback</h3>
 <p>{{stakeholder_engagement.stakeholder_feedback}}</p>
-{% endif %}

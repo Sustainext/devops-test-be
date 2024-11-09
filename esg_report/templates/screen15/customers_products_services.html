@@ -50,7 +50,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for product in screen_fifteen_data.417_1b_analysis.417_1b_analysis %}
+    {% for product in screen_fifteen_data.417_1b_analysis.marketing_labeling %}
     <tr>
       <td>{{ product.org_or_corp }}</td>
       <td>{{ product.percentage }}%</td>
@@ -66,19 +66,19 @@
 <h5>15.2.2. Marketing</h5>
 <p>{{screen_fifteen_data.marketing_practices|default:"No data available"}}</p>
 
-<ul style="font-size: 12px; list-style-type: disc; margin-left: 20px">
-  <li style="margin-bottom: 5px">Number of incidents of non-compliance with regulations resulting in a fine or penalty: {{ screen_fifteen_data.417_3a.data.0.Q1 }}</li>
-  <li style="margin-bottom: 5px">Number of incidents of non-compliance with regulations resulting in a warning: {{ screen_fifteen_data.417_3a.data.0.Q2 }}</li>
-  <li style="margin-bottom: 5px">Number of incidents of non-compliance with voluntary codes: {{ screen_fifteen_data.417_3a.data.0.Q3 }}</li>
+<ul>
+  <li>Number of incidents of non-compliance with regulations resulting in a fine or penalty: {{ screen_fifteen_data.417_3a.data.0.Q1 }}</li>
+  <li>Number of incidents of non-compliance with regulations resulting in a warning: {{ screen_fifteen_data.417_3a.data.0.Q2 }}</li>
+  <li>Number of incidents of non-compliance with voluntary codes: {{ screen_fifteen_data.417_3a.data.0.Q3 }}</li>
 </ul>
 
 <h5>Ethical Marketing Practices</h5>
-<ul style="font-size: 12px; list-style-type: disc; margin-left: 20px">
-  <li style="margin-bottom: 5px">
+<ul>
+  <li>
     <strong>Truthful Advertising:</strong> We ensure that all marketing communications are truthful, not misleading, and substantiated by evidence. We adhere to industry standards and regulatory
     requirements for advertising.
   </li>
-  <li style="margin-bottom: 5px">
+  <li>
     <strong>Respect for Privacy:</strong> We respect customer privacy and ensure that all marketing activities comply with data protection regulations. Personal information collected for marketing
     purposes is handled with the utmost care and confidentiality.
   </li>
@@ -90,9 +90,9 @@
   benefit.
 </p>
 
-<ul style="font-size: 12px; list-style-type: disc; margin-left: 20px">
-  <li style="margin-bottom: 5px">Number of identified leaks, thefts, or losses of customer data: {{ screen_fifteen_data.418_1b.0.Q1 }}</li>
-  <li style="margin-bottom: 5px">Statement of fact: {{ screen_fifteen_data.418_1c.0.Q1 }}</li>
+<ul>
+  <li>Number of identified leaks, thefts, or losses of customer data: {{ screen_fifteen_data.418_1b.0.Q1 }}</li>
+  <li>Statement of fact: {{ screen_fifteen_data.418_1c.0.Q1 }}</li>
 </ul>
 <p><strong>Total number of substantiated complaints received concerning breaches of customer privacy</strong></p>
 <table>
