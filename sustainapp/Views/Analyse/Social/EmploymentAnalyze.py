@@ -8,14 +8,13 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from datametric.utils.analyse import set_locations_data
 from operator import itemgetter
 
 from django.db.models import Prefetch
 from rest_framework import serializers
 from django.db.models import QuerySet
 from django.db.models import Sum
-from datametric.utils.analyse import filter_by_start_end_dates
+from datametric.utils.analyse import filter_by_start_end_dates, get_raw_response_filters
 from rest_framework.exceptions import APIException
 from django.db.models import Max
 from datametric.utils.analyse import safe_divide
@@ -1373,28 +1372,47 @@ class EmploymentAnalyzeView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data["organisation"]
         self.location = serializer.validated_data.get("location")  # * This is optional
-        # * Set Locations Queryset
-        self.locations = set_locations_data(
-            organisation=self.organisation,
-            corporate=self.corporate,
-            location=self.location,
-        )
+
         client_id = request.user.client.id
-        new_emp_data_points = DataPoint.objects.filter(
-            client_id=client_id,
-            path__slug__in=self.new_employee_hire_path_slugs,
-            locale__in=self.locations,  # .values_list("name", flat=True),
-        ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
-        emp_turnover_data_points = DataPoint.objects.filter(
-            client_id=client_id,
-            path__slug__in=self.employee_turnover_path_slugs,
-            locale__in=self.locations,  # .values_list("name", flat=True),
-        ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        new_emp_data_points = (
+            DataPoint.objects.filter(
+                client_id=client_id,
+                path__slug__in=self.new_employee_hire_path_slugs,
+            )
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
+            )
+            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        )
+        emp_turnover_data_points = (
+            DataPoint.objects.filter(
+                client_id=client_id,
+                path__slug__in=self.employee_turnover_path_slugs,
+            )
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
+            )
+            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        )
         benefits_data_points = (
             DataPoint.objects.filter(
                 client_id=client_id,
                 path__slug__in=self.employee_benefits_path_slugs,
-                locale__in=self.locations,  # .values_list("name", flat=True),
+            )
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .order_by("-year", "-month")
@@ -1403,7 +1421,13 @@ class EmploymentAnalyzeView(APIView):
             DataPoint.objects.filter(
                 client_id=client_id,
                 path__slug__in=self.employee_parental_leave_path_slugs,
-                locale__in=self.locations,  # .values_list("name", flat=True),
+            )
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .order_by("-year", "-month")
