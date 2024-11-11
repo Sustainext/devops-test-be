@@ -244,7 +244,6 @@ class EmploymentAnalyzeView(APIView):
             parental_leave_response_table,
         ) = self.get_response_dictionaries()
 
-        print("new employ dps *****")
         dp_employ_permanent = []
         dp_employ_permanent_qs = []
 
@@ -372,8 +371,6 @@ class EmploymentAnalyzeView(APIView):
         ne_temporary_50_qs = dp_employ_temporary_qs.filter(
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
-
-        print(ne_male_temporary_qs, ne_female_temporary_qs, ne_nb_temporary_qs)
 
         total_temporary = (
             get_value(ne_male_temporary_qs["number_holder__sum"])
@@ -699,8 +696,6 @@ class EmploymentAnalyzeView(APIView):
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
 
-        print(et_male_permanent_qs)
-
         # * Total Number of employees
         total_permanent_eto = (
             get_value(et_male_permanent_qs)
@@ -812,8 +807,6 @@ class EmploymentAnalyzeView(APIView):
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
 
-        print(et_temporary_30_qs)
-
         total_temporary_eto = (
             get_value(et_male_temporary_qs)
             + get_value(et_female_temporary_qs)
@@ -924,8 +917,6 @@ class EmploymentAnalyzeView(APIView):
             Sum("number_holder")
         )
 
-        print(et_male_ng_qs)
-
         total_ng_eto = (
             get_value(et_male_ng_qs)
             + get_value(et_female_ng_qs)
@@ -1026,8 +1017,6 @@ class EmploymentAnalyzeView(APIView):
             Sum("number_holder")
         )
 
-        print(et_male_ft_qs)
-
         total_ft_eto = (
             get_value(et_male_ft_qs)
             + get_value(et_female_ft_qs)
@@ -1125,8 +1114,6 @@ class EmploymentAnalyzeView(APIView):
         et_pt_50_qs = dp_employ_to_pt_qs.filter(metric_name="yearsold50").aggregate(
             Sum("number_holder")
         )
-
-        print(et_male_pt_qs)
 
         total_pt_eto = (
             get_value(et_male_pt_qs)
