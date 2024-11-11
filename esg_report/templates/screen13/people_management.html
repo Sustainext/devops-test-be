@@ -1,24 +1,74 @@
 <!-- people_management.html -->
-
+{% load custom_tags %}
 <h2>13. People</h2>
 
-<p>Our employees are our most valuable asset, and we are committed to creating a safe, inclusive, and supportive work
-    environment. We aim to attract, develop, and retain top talent while fostering a culture of respect, diversity, and
-    inclusion. This section outlines our management of people-related material topics, including employee welfare, labor
-    management, diversity and inclusion, training and education, occupational health and safety, and collective
-    bargaining.</p>
+<p>{{screen_thirteen_data.employee_policies_statement|default:"No data available."}}</p>
 
 <h4>13.1. Employees</h4>
 
 <h4>13.1.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
-<hr>
-<p>[Details on the management of employee-related material topics, including strategies and initiatives for diversity,
-    inclusion, and employee development.]</p>
+<p>Add data from materials section here.</p>
 
 <h4>13.1.2. Employee Hire and Turnover (GRI 2-7-a, b, c, d, e, 401-1-a, b)</h4>
-<p>We strive to maintain a dynamic and engaged workforce by attracting and retaining talented individuals. Our hiring
-    practices emphasize diversity and equal opportunity, while our retention strategies focus on employee satisfaction
-    and career development.</p>
+<p>{{screen_thirteen_data.workforce_hire_retention_statement}}</p>
+
+<h5>Methodologies and Assumptions used</h5>
+<p>No data available</p>
+
+<h5>Data Compilation Timeframe</h5>
+<p>No data available</p>
+
+<h5>Contextual information</h5>
+<p>No data available</p>
+
+<h5>Employee Fluctuations</h5>
+<p>No data available</p>
+
+
+<h5>Total Number of Employees</h5>
+<table>
+    <thead>
+        <tr>
+            <th>Type of Employees</th>
+            <th>Number of Male Employees</th>
+            <th>Number of Female Employees</th>
+            <th>Number of Non-Binary Employees</th>
+            <th colspan="3">Number of Employees by Age Group</th>
+            <th>Total</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>&lt; 30 years old</th>
+            <th>30-50 years old</th>
+            <th>&gt; 50 years old</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if employees %}
+            {% for employee in screen_thirteen_data.2_7a_2_7b_analyse.total_number_of_employees %}
+                <tr>
+                    <td>{{ employee.type }}</td>
+                    <td>{{ employee.male_count }}</td>
+                    <td>{{ employee.female_count }}</td>
+                    <td>{{ employee.non_binary_count }}</td>
+                    <td>{{ employee.age_group_30 }}</td>
+                    <td>{{ employee.age_group_30_50 }}</td>
+                    <td>{{ employee.age_group_50 }}</td>
+                    <td>{{ employee.total }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="8">No data available</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
 
 <h5>New Employee Hires</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
@@ -28,23 +78,25 @@
             <th>Percentage of Male Employees</th>
             <th>Percentage of Female Employees</th>
             <th>Percentage of Non-Binary Employees</th>
-            <th>Percentage of Employees by Age Group</th>
+            <th>Percentage of Employees < 30 years old</th>
+            <th>Percentage of Employees 30-50 years old</th>
+            <th>Percentage of Employees > 50 years old</th>
         </tr>
     </thead>
     <tbody>
-        {% for hire in new_employee_hires %}
+        {% for hire in screen_thirteen_data.401_social_analyse.data.new_employee_hires %}
         <tr>
-            <td>{{ hire.employee_type }}</td>
-            <td>{{ hire.percentage_male }}%</td>
-            <td>{{ hire.percentage_female }}%</td>
-            <td>{{ hire.percentage_nonbinary }}%</td>
-            <td>{{ hire.age_group_distribution }}</td>
+            <td>{{ hire.type_of_employee }}</td>
+            <td>{{ hire.percentage_of_male_employee }}%</td>
+            <td>{{ hire.percentage_of_female_employee }}%</td>
+            <td>{{ hire.percentage_of_non_binary_employee }}%</td>
+            <td>{{ hire.yearsold30 }}%</td>
+            <td>{{ hire.yearsold50 }}%</td>
+            <td>{{ hire.yearsold30to50 }}%</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
-<p><em>This data can also be represented in graphical form.</em></p>
 
 <h5>New Employee Turnover</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
@@ -54,57 +106,61 @@
             <th>Percentage of Male Employees</th>
             <th>Percentage of Female Employees</th>
             <th>Percentage of Non-Binary Employees</th>
-            <th>Percentage of Employees by Age Group</th>
+            <th>Percentage of Employees < 30 years old</th>
+            <th>Percentage of Employees 30-50 years old</th>
+            <th>Percentage of Employees > 50 years old</th>
         </tr>
     </thead>
     <tbody>
-        {% for turnover in employee_turnover %}
+        {% for hire in screen_thirteen_data.401_social_analyse.data.employee_turnover %}
         <tr>
-            <td>{{ turnover.employee_type }}</td>
-            <td>{{ turnover.percentage_male }}%</td>
-            <td>{{ turnover.percentage_female }}%</td>
-            <td>{{ turnover.percentage_nonbinary }}%</td>
-            <td>{{ turnover.age_group_distribution }}</td>
+            <td>{{ hire.type_of_employee }}</td>
+            <td>{{ hire.percentage_of_male_employee }}%</td>
+            <td>{{ hire.percentage_of_female_employee }}%</td>
+            <td>{{ hire.percentage_of_non_binary_employee }}%</td>
+            <td>{{ hire.yearsold30 }}%</td>
+            <td>{{ hire.yearsold50 }}%</td>
+            <td>{{ hire.yearsold30to50 }}%</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<h4>13.1.3. Employee Benefits and Health Services (GRI 401-2-a, b, 402-1-a)</h4>
+<h4>13.1.3. Employee Benefits and Health Services</h4>
 <p>We offer comprehensive benefits and health services to support the well-being of our employees, including medical
     insurance, wellness programs, and mental health resources.</p>
+
+<h5>Significant locations of operation</h5>
+<p>How does the organization define Significant locations of operation for reporting purposes</p>
+
+<h5>Minimum number of weeks’ notice</h5>
+<p> {{screen_thirteen_data.402_1a_minimum_number_of_weeks.data.0.Q1}} </p>
 
 <h5>Benefits Provided to Employees by Location</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
-            <th>Significant Location of Operation</th>
-            <th>Life Insurance</th>
-            <th>Health Care</th>
-            <th>Disability & Invalidity Coverage</th>
-            <th>Parental Leave</th>
-            <th>Retirement Provision</th>
-            <th>Stock Ownership</th>
+            <th>Benefit</th>
+            <th>Full-Time Employees</th>
+            <th>Part-Time Employees</th>
+            <th>Temporary Employees</th>
+            <th>Significant Location</th>
         </tr>
     </thead>
     <tbody>
-        {% for benefit in employee_benefits %}
+        {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits %}
         <tr>
-            <td>{{ benefit.location }}</td>
-            <td>{{ benefit.life_insurance }}</td>
-            <td>{{ benefit.health_care }}</td>
-            <td>{{ benefit.disability_coverage }}</td>
-            <td>{{ benefit.parental_leave }}</td>
-            <td>{{ benefit.retirement_provision }}</td>
-            <td>{{ benefit.stock_ownership }}</td>
-        </tr>
+            <td>{{ benefit.location|default:"No data available" }}</td>
+            <td>{{ benefit.life_insurance|default:"No data available" }}</td>
+            <td>{{ benefit.health_care|default:"No data available" }}</td>
+            <td>{{ benefit.disability_coverage|default:"No data available" }}</td>
+            <td>{{ benefit.parental_leave|default:"No data available" }}</td>
         {% endfor %}
     </tbody>
 </table>
 
-<h4>13.1.4. Parental Leave (GRI 401-3-a, 401-3-b, 401-3-c, 401-3-d, 401-3-e)</h4>
-<p>We provide parental leave policies that support our employees in balancing their professional and personal lives.
-    This includes paid leave for new parents and flexible return-to-work options.</p>
+<h4>13.1.4. Parental Leave</h4>
+<p>{{screen_thirteen_data.parental_leaves|default:"No data available"}}</p>
 
 <h5>Parental Leave Data</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
@@ -117,97 +173,86 @@
         </tr>
     </thead>
     <tbody>
+        {% for parental_leave in screen_thirteen_data.401_social_analyse.data.parental_leave %}
         <tr>
-            <td>Parental Leave Entitlement</td>
-            <td>{{ parental_leave.male_entitlement }}</td>
-            <td>{{ parental_leave.female_entitlement }}</td>
-            <td>{{ parental_leave.total_entitlement }}</td>
+            <td>{{ parental_leave.employee_category }}</td>
+            <td>{{ parental_leave.male }}</td>
+            <td>{{ parental_leave.female }}</td>
+            <td>{{ parental_leave.total }}</td>
         </tr>
-        <tr>
-            <td>Taking Parental Leave</td>
-            <td>{{ parental_leave.male_taken }}</td>
-            <td>{{ parental_leave.female_taken }}</td>
-            <td>{{ parental_leave.total_taken }}</td>
-        </tr>
-        <tr>
-            <td>Returning to Work Post-Leave</td>
-            <td>{{ parental_leave.male_returned }}</td>
-            <td>{{ parental_leave.female_returned }}</td>
-            <td>{{ parental_leave.total_returned }}</td>
-        </tr>
-        <tr>
-            <td>Retained 12 Months After Leave</td>
-            <td>{{ parental_leave.male_retained }}</td>
-            <td>{{ parental_leave.female_retained }}</td>
-            <td>{{ parental_leave.total_retained }}</td>
-        </tr>
+        {% endfor %}
     </tbody>
 </table>
 
-<p><em>This section can also be represented using graphics (e.g., charts).</em></p>
-
-<h4>13.1.5. Standard Wage (GRI 202-1-a, b, c, d)</h4>
-<p>We are committed to providing fair and competitive wages that meet or exceed industry standards. Our compensation
-    packages reflect the skills, experience, and performance of our employees.</p>
-
-<h5>Ratio of Entry-Level Wage to Minimum Wage by Gender</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Gender</th>
-            <th>Location 1</th>
-            <th>Location 2</th>
-            <th>Location 3</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Male</td>
-            <td>{{ wage_ratio.location_1_male }}</td>
-            <td>{{ wage_ratio.location_2_male }}</td>
-            <td>{{ wage_ratio.location_3_male }}</td>
-        </tr>
-        <tr>
-            <td>Female</td>
-            <td>{{ wage_ratio.location_1_female }}</td>
-            <td>{{ wage_ratio.location_2_female }}</td>
-            <td>{{ wage_ratio.location_3_female }}</td>
-        </tr>
-        <tr>
-            <td>Non-binary</td>
-            <td>{{ wage_ratio.location_1_nonbinary }}</td>
-            <td>{{ wage_ratio.location_2_nonbinary }}</td>
-            <td>{{ wage_ratio.location_3_nonbinary }}</td>
-        </tr>
-    </tbody>
-</table>
-
-<h4>13.1.6. Performance and Career Development Reviews of Employees (GRI 404-3-a)</h4>
-<p>Regular performance reviews and career development planning are integral to our employee management approach. We
-    provide ongoing feedback, set clear goals, and offer opportunities for professional growth and advancement.</p>
-
-<h5>Percentage of Employees Receiving Regular Performance and Career Development Reviews</h5>
+<h5>Return to work & retention rate of employees.</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
             <th>Employee Category</th>
             <th>Male</th>
             <th>Female</th>
-            <th>Non-Binary</th>
         </tr>
     </thead>
     <tbody>
+        {% for parental_leave in screen_thirteen_data.401_social_analyse.data.return_to_work_rate_and_retention_rate_of_employee %}
         <tr>
-            <td>Performance Review</td>
-            <td>{{ performance_review.male_percentage }}</td>
-            <td>{{ performance_review.female_percentage }}</td>
-            <td>{{ performance_review.nonbinary_percentage }}</td>
+            <td>{{ parental_leave.employee_category }}</td>
+            <td>{{ parental_leave.male }}</td>
+            <td>{{ parental_leave.female }}</td>
         </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.1.5. Standard Wage</h4>
+<p>{{screen_thirteen_data.standard_wage}}</p>
+
+<p>{{ screen_thirteen_data.202_1b.0.Q3|default:"No data available" }}</p>
+<p>{{ screen_thirteen_data.202_1c.0.Currency|default:"No data available" }}</p>
+<p>{{ screen_thirteen_data.202_1d.0.Q1|default:"No data available" }}</p>
+
+
+<h5>Ratio of Entry-Level Wage to Minimum Wage by Gender</h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
         <tr>
-            <td>Career Development Review</td>
-            <td>{{ career_development_review.male_percentage }}</td>
-            <td>{{ career_development_review.female_percentage }}</td>
-            <td>{{ career_development_review.nonbinary_percentage }}</td>
+            <th>Location</th>
+            <th>Male</th>
+            <th>Female</th>
+            <th>Non-binary</th>
         </tr>
+    </thead>
+    <tbody>
+        {% for wage_ratio in screen_thirteen_data.202_1a_analyse.marketing_presence%}
+        <tr>
+            <td>{{ wage_ratio.Location |default:"No data available." }}</td>
+            <td>{{ wage_ratio.Male |default:"No data available." }}</td>
+            <td>{{ wage_ratio.Female |default:"No data available." }}</td>
+            <td>{{ wage_ratio|get_item:"Non-binary" |default:"No data available." }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.1.6. Performance and Career Development Reviews of Employees (GRI 404-3-a)</h4>
+<p>{{screen_thirteen_data.performance_review_process|default:"No data available" }}</p>
+
+<h5>Percentage of Employees Receiving Regular Performance and Career Development Reviews</h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Employee Category</th>
+            <th>Percentage of employees who received regular performance review</th>
+            <th>Percentage of employees who received regular career development review</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for performance_review in screen_thirteen_data.404_social_analyse.percentage_of_employees_receiving_regular_performance_and_career_development_reviews %}
+        <tr>
+            <td>{{ performance_review.Category }}</td>
+            <td>{{ performance_review.percentage_of_employees_who_received_regular_performance_reviews }}</td>
+            <td>{{ performance_review.percentage_of_employees_who_received_regular_career_development_reviews }}</td>
+        </tr>
+        {% endfor %}
     </tbody>
 </table>

@@ -1,232 +1,236 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <title>Table of Contents</title>
-    <style>
-      /* Set A4 page size */
-      @page {
-        size: A4;
-        margin: 10mm; /* Set the margins for all pages */
-        @bottom-right {
-          content: "Page " counter(page) " of " counter(pages); /* Add page numbering */
-          font-size: 10px;
-          color: #27272a;
-          margin-bottom: 3mm;
-          padding: 5px;
-        }
-      }
 
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        color: #333;
-        padding: 10px 15px;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Table of Contents</title>
+  <style>
+    /* Set A4 page size */
+    @page {
+      size: A4;
+      margin: 10mm;
 
-      h1 {
-        font-size: 18px;
-        font-weight: 500;
-        color: #118dc5;
-        margin-bottom: 10px;
+      /* Set the margins for all pages */
+      @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        /* Add page numbering */
+        font-size: 10px;
+        color: #27272a;
+        margin-bottom: 3mm;
+        padding: 5px;
       }
+    }
 
-      h2 {
-        font-size: 18px;
-        font-weight: 500;
-        margin-bottom: 8px;
-        color: #045fb0;
-      }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      color: #333;
+      padding: 10px 15px;
+    }
 
-      h3 {
-        font-size: 16px;
-        font-weight: 500;
-        color: #333;
-        margin-bottom: 6px;
-      }
-      h4 {
-        font-weight: 500;
-        font-size: 15px;
-        margin-bottom: 6px;
-      }
+    h1 {
+      font-size: 18px;
+      font-weight: 500;
+      color: #118dc5;
+      margin-bottom: 10px;
+    }
 
-      h5 {
-        font-weight: 500;
-        font-size: 13px;
-        margin-bottom: 6px;
-      }
+    h2 {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #045fb0;
+    }
 
-      p {
-        font-size: 11px;
-        margin: 5px 0;
-        color: #495059;
-        line-height: 1.5;
-      }
+    h3 {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 6px;
+    }
 
-      .page-break {
-        page-break-before: always;
-      }
+    h4 {
+      font-weight: 500;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
 
-      /* Table Container for Centering */
-      .table-container {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        border-radius: 15px;
-      }
+    h5 {
+      font-weight: 500;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
 
-      /* Table Styling */
-      table {
-        width: 100%; /* Use 90% of the available width to ensure it fits within the A4 page */
-        max-width: 190mm; /* Slightly less than A4 width to account for margins */
-        border-collapse: collapse;
-        margin: 15px auto;
-        font-size: 9px;
-        table-layout: fixed; /* Fixed layout to keep columns evenly sized */
-        word-wrap: break-word;
-        border-radius: 15px;
-        overflow: hidden;
-      }
+    p {
+      font-size: 11px;
+      margin: 5px 0;
+      color: #495059;
+      line-height: 1.5;
+    }
 
-      table,
-      th,
-      td {
-        border: 1px solid #d1d5db;
-        font-weight: 400;
-      }
+    .page-break {
+      page-break-before: always;
+    }
 
-      th,
-      td {
-        padding: 6px;
-        text-align: center;
-        vertical-align: middle;
-        font-weight: 500;
-        color: #242424;
-      }
+    /* Table Container for Centering */
+    .table-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      border-radius: 15px;
+    }
 
-      .table-header {
-        background: linear-gradient(90deg, rgba(0, 174, 239, 0.05) 7.92%, rgba(106, 223, 35, 0.05) 89.75%);
-        color: #118dc5;
-        font-weight: 600;
-      }
+    /* Table Styling */
+    table {
+      width: 100%;
+      /* Use 90% of the available width to ensure it fits within the A4 page */
+      max-width: 190mm;
+      /* Slightly less than A4 width to account for margins */
+      border-collapse: collapse;
+      margin: 15px auto;
+      font-size: 9px;
+      table-layout: fixed;
+      /* Fixed layout to keep columns evenly sized */
+      word-wrap: break-word;
+      border-radius: 15px;
+      overflow: hidden;
+    }
 
-      /* Ensure Text Breaks Properly */
-      th,
-      td {
-        word-break: break-word;
-        overflow-wrap: break-word;
-      }
+    table,
+    th,
+    td {
+      border: 1px solid #d1d5db;
+      font-weight: 400;
+    }
 
-      table > thead {
-        background: linear-gradient(to right, rgba(0, 174, 239, 0.1), rgba(106, 223, 35, 0.1));
-        font-weight: bold;
-      }
-      table > tbody > tr > td {
-        font-weight: 400;
-        color: #667085;
-      }
-      .blob-top {
-        width: 145px;
-        height: 150px;
-        background: linear-gradient(to right, rgba(0, 174, 239, 0.25), rgba(106, 223, 35, 0.25)); /* Light green color */
-        border-radius: 50% 50% 70% 70% / 50% 50% 70% 70%; /* Creates an irregular blob shape */
-        position: fixed;
-        top: -85px; /* Adjust as needed */
-        left: -140px; /* Adjust as needed */
-        z-index: -1; /* Send it to the background */
-      }
-      .blob-bottom {
-        width: 200px;
-        height: 110px;
-        background: #007eef; /* Light green color */
-        border-radius: 70% 10% 30% 20% / 90% 20% 20% 20%; /* Creates an irregular blob shape */
-        position: fixed;
-        bottom: -90px; /* Adjust as needed */
-        right: -70px; /* Adjust as needed */
-        z-index: -1; /* Send it to the background */
-        opacity: 0.2;
-      }
+    th,
+    td {
+      padding: 6px;
+      text-align: center;
+      vertical-align: middle;
+      font-weight: 500;
+      color: #242424;
+    }
 
-      ul > li {
-        font-size: 11px;
-        color: #495059;
-        line-height: 1.5;
-        list-style-type: disc;
-        margin-left: 15px;
-      }
-      ol > li {
-        font-size: 11px;
-        color: #495059;
-        line-height: 1.5;
-        margin-left: 15px;
-      }
-    </style>
-  </head>
+    .table-header {
+      background: linear-gradient(90deg, rgba(0, 174, 239, 0.05) 7.92%, rgba(106, 223, 35, 0.05) 89.75%);
+      color: #118dc5;
+      font-weight: 600;
+    }
 
-  <body>
-    <div class="blob-top"></div>
-    <div class="blob-bottom"></div>
-    {% include "esg_contents.html" %}
-    <div class="page-break"></div>
-    {% include "message_from_ceo.html" %}
-    
-    {% include "about_the_company.html" %}
-    
-    {% include "mission_vision_values.html" %}
-    
-    {% include "sustainability_roadmap.html" %}
-    
-    {% include "award_and_recognization.html" %}
-    
-    {% include "stakeholder_engagement.html" %}
-    
-    {% include "about_the_report.html" %}
-    
-    {% include "materiality.html" %}
-    
-    {% include "corporate_governance.html" %}
-    
-    {% include "sustainability_journey.html" %}
-    <div class="page-break"></div>
-    {% include "screen11/economic_performance.html" %} {% include "screen11/climate_related_impacts.html" %} {% include "screen11/tax_performance.html" %} {% include "screen11/anti_corruption.html" %}
-    {% include "screen11/political_contributions.html" %} 
-    {% include "screen12/emission.html" %}
+    /* Ensure Text Breaks Properly */
+    th,
+    td {
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
 
-    {% include "screen12/materials.html" %}
-    
-    {% include "screen12/water_management.html" %}
-    
-    {% include "screen12/energy_management.html" %}
-    
-    {% include "screen12/waste_management.html" %}
-    
-    {% include "screen12/biodiversity_management.html" %}
-    
-    {% include "screen12/air_quality_management.html" %}
-    <div class="page-break"></div>
-    {% include "screen13/people_management.html" %}
-    
-    {% include "screen13/labour_management.html" %}
-    
-    {% include "screen13/child_labour_management.html" %}
-    
-    {% include "screen13/diversity_inclusion.html" %}
-    
-    {% include "screen13/training_education.html" %}
-    
-    {% include "screen13/occupational_health_safety.html" %}
-    
-    {% include "screen13/collective_bargaining.html" %}
-    
-    {% include "screen13/incidents_violation_discrimination.html" %}
-    <div class="page-break"></div>
-    {% include "screen14/community_engagement_csr.html" %}
-    
-    {% include "screen15/customers_products_services.html" %}
-  </body>
+    table>thead {
+      background: linear-gradient(to right, rgba(0, 174, 239, 0.1), rgba(106, 223, 35, 0.1));
+      font-weight: bold;
+    }
+
+    table>tbody>tr>td {
+      font-weight: 400;
+      color: #667085;
+    }
+
+    .blob-top {
+      width: 145px;
+      height: 150px;
+      background: linear-gradient(to right, rgba(0, 174, 239, 0.25), rgba(106, 223, 35, 0.25));
+      /* Light green color */
+      border-radius: 50% 50% 70% 70% / 50% 50% 70% 70%;
+      /* Creates an irregular blob shape */
+      position: fixed;
+      top: -85px;
+      /* Adjust as needed */
+      left: -140px;
+      /* Adjust as needed */
+      z-index: -1;
+      /* Send it to the background */
+    }
+
+    .blob-bottom {
+      width: 200px;
+      height: 110px;
+      background: #007eef;
+      /* Light green color */
+      border-radius: 70% 10% 30% 20% / 90% 20% 20% 20%;
+      /* Creates an irregular blob shape */
+      position: fixed;
+      bottom: -90px;
+      /* Adjust as needed */
+      right: -70px;
+      /* Adjust as needed */
+      z-index: -1;
+      /* Send it to the background */
+      opacity: 0.2;
+    }
+
+    ul>li {
+      font-size: 11px;
+      color: #495059;
+      line-height: 1.5;
+      list-style-type: none;
+      margin-left: 15px;
+    }
+
+    ol>li {
+      font-size: 11px;
+      color: #495059;
+      line-height: 1.5;
+      margin-left: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="blob-top"></div>
+  <div class="blob-bottom"></div>
+  {% comment %}
+  {% include "esg_contents.html" %}
+  <div class="page-break"></div>
+  {% include "message_from_ceo.html" %}
+  {% include "about_the_company.html" %}
+  {% include "mission_vision_values.html" %}
+  {% include "sustainability_roadmap.html" %}
+  {% include "award_and_recognization.html" %}
+  {% include "stakeholder_engagement.html" %}
+  {% include "about_the_report.html" %}
+  {% include "materiality.html" %}
+  {% include "corporate_governance.html" %}
+  {% include "sustainability_journey.html" %}
+  <div class="page-break"></div>
+  {% include "screen11/economic_performance.html" %}
+  {% include "screen11/climate_related_impacts.html" %}
+  {% include "screen11/tax_performance.html" %}
+  {% include "screen11/anti_corruption.html" %}
+  {% include "screen11/political_contributions.html" %}
+  {% include "screen12/emission.html" %}
+  {% include "screen12/materials.html" %}
+  {% include "screen12/water_management.html" %}
+  {% include "screen12/energy_management.html" %}
+  {% include "screen12/waste_management.html" %}
+  {% include "screen12/biodiversity_management.html" %}
+  {% include "screen12/air_quality_management.html" %}
+  <div class="page-break"></div>
+  {% endcomment %}
+  {% comment %} {% include "screen13/people_management.html" %} {% endcomment %}
+  {% comment %} {% include "screen13/labour_management.html" %} {% endcomment %}
+  {% include "screen13/child_labour_management.html" %}
+  {% comment %} {% include "screen13/diversity_inclusion.html" %} {% endcomment %}
+  {% comment %} {% include "screen13/training_education.html" %} {% endcomment %}
+  {% comment %} {% include "screen13/occupational_health_safety.html" %} {% endcomment %}
+  {% comment %} {% include "screen13/collective_bargaining.html" %} {% endcomment %}
+  {% comment %} {% include "screen13/incidents_violation_discrimination.html" %} {% endcomment %}
+  {% comment %} 
+  <div class="page-break"></div>
+  {% include "screen14/community_engagement_csr.html" %}
+  {% include "screen15/customers_products_services.html" %} 
+  {% endcomment %}
+</body>
+
 </html>

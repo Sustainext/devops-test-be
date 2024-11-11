@@ -1,117 +1,133 @@
 <!-- diversity_inclusion.html -->
 
-<h2>13.4. Diversity, Inclusion (GRI 405-2-b)</h2>
+<h2>13.4. Diversity, Inclusion</h2>
 
-<h4>13.4.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
-<hr>
-<p>[Details on how the organization manages diversity and inclusion, including initiatives, policies, and programs to
-    foster an inclusive environment and promote diversity in the workplace.]</p>
+<h4>13.4.1. Management of Material Topic</h4>
+<p> Need to add data here from material topic </p>
 
 <h4>13.4.2. Diversity of Governance Bodies and Employees (GRI 405-1-a, b)</h4>
-<p>We believe in the power of diversity and strive to create an inclusive workplace. Our commitment to diversity is
-    reflected in the composition of our governance bodies and workforce.</p>
+<p>{{screen_thirteen_data.employee_diversity_position|default:"No data added."}}</p>
 
+<h4>Governance Bodies</h4>
 <h5>Diversity Representation in Governance Bodies</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
-            <th>Gender</th>
-            <th>Age Group</th>
-            <th>Diversity Groups</th>
-            <th>Vulnerable Groups</th>
-            <th>Type of Vulnerable Group (No. of Individuals)</th>
+            <th>Percentage of female within organisation's governance bodies</th>
+            <th>Percentage of male within organisation's governance bodies</th>
+            <th>Percentage of Non-binary within organisation's governance bodies</th>
+            <th>Percentage of employee within age group of (under 30 years old) organisation's governance bodies</th>
+            <th>Percentage of employee within age group of (30-50 years old) organisation's governance bodies</th>
+            <th>Percentage of employee within age group of (over 50 years old) organisation's governance bodies</th>
+            <th>Percentage of employee in minority group</th>
+            
         </tr>
     </thead>
     <tbody>
+        {% for governance_bodies in screen_thirteen_data.405_2a_analyse.percentage_of_employees_within_government_bodies %}
         <tr>
-            <td>Male</td>
-            <td>{{ governance_bodies.male.age_group }}</td>
-            <td>{{ governance_bodies.male.diversity_group }}</td>
-            <td>{{ governance_bodies.male.vulnerable_group }}</td>
-            <td>{{ governance_bodies.male.vulnerable_group_type }}</td>
-        </tr>
-        <tr>
-            <td>Female</td>
-            <td>{{ governance_bodies.female.age_group }}</td>
-            <td>{{ governance_bodies.female.diversity_group }}</td>
-            <td>{{ governance_bodies.female.vulnerable_group }}</td>
-            <td>{{ governance_bodies.female.vulnerable_group_type }}</td>
-        </tr>
-        <tr>
-            <td>Non-Binary</td>
-            <td>{{ governance_bodies.nonbinary.age_group }}</td>
-            <td>{{ governance_bodies.nonbinary.diversity_group }}</td>
-            <td>{{ governance_bodies.nonbinary.vulnerable_group }}</td>
-            <td>{{ governance_bodies.nonbinary.vulnerable_group_type }}</td>
-        </tr>
-    </tbody>
-</table>
-
-<h5>Diversity of Employees by Category</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Employee Category</th>
-            <th>Gender</th>
-            <th>Age Group</th>
-            <th>Diversity Groups</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for employee in employee_diversity %}
-        <tr>
-            <td>{{ employee.category }}</td>
-            <td>{{ employee.gender }}</td>
-            <td>{{ employee.age_group }}</td>
-            <td>{{ employee.diversity_group }}</td>
+            <td>{{ governance_bodies.percentage_of_female_with_org_governance }}</td>
+            <td>{{ governance_bodies.percentage_of_male_with_org_governance }}</td>
+            <td>{{ governance_bodies.percentage_of_non_binary_with_org_governance }}</td>
+            <td>{{ governance_bodies.percentage_of_employees_within_30_age_group }}</td>
+            <td>{{ governance_bodies.percentage_of_employees_within_30_to_50_age_group }}</td>
+            <td>{{ governance_bodies.percentage_of_employees_more_than_50_age_group }}</td>
+            <td>{{ governance_bodies.percentage_of_employees_in_minority_group }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<h4>13.4.3. Remuneration (GRI 405-2-a)</h4>
-<p>We ensure equitable remuneration practices across our organization. Our compensation policies are designed to
-    eliminate pay disparities and promote fairness.</p>
+<h5>Percentage of Employees per employee category </h5>
+<table>
+    <thead>
+        <tr>
+            <th rowspan="2">Type of Employees</th>
+            <th colspan="3">Gender</th>
+            <th colspan="3">Age Group</th>
+            <th rowspan="2">Diversity Groups</th>
+        </tr>
+        <tr>
+            <th>Male</th>
+            <th>Female</th>
+            <th>Non-Binary</th>
+            <th>&lt; 30 years</th>
+            <th>30-50 years</th>
+            <th>&gt; 50 years</th>
+            <th>Minority Group</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee_category in screen_thirteen_data.405_2a_analyse.number_of_employee_per_employee_category %}
+        <tr>
+            <td>{{employee_category.Category }}</td>
+            <td>{{employee_category.percentage_of_male_with_org_governance }}</td>
+            <td>{{employee_category.percentage_of_female_with_org_governance }}</td>
+            <td>{{employee_category.percentage_of_non_binary_with_org_governance }}</td>
+            <td>{{employee_category.percentage_of_employees_within_30_age_group }}</td>
+            <td>{{employee_category.percentage_of_employees_within_30_to_50_age_group }}</td>
+            <td>{{employee_category.percentage_of_employees_more_than_50_age_group }}</td>
+            <td>{{employee_category.percentage_of_employees_in_minority_group }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<h4>13.4.3. Remuneration</h4>
+<p>{{screen_thirteen_data.remuneration_practices|default:"No data available."}}</p>
 
 <h5>Ratio of Basic Salary of Women to Men</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
+<table>
     <thead>
         <tr>
-            <th>Employee Category</th>
-            <th>Gender</th>
-            <th>Significant Location of Operations</th>
+            <th rowspan="2">Basic Salary per Employee Category</th>
+            <th colspan="3">Gender</th>
+            <th rowspan="2">Significant Location of Operations</th>
+        </tr>
+        <tr>
+            <th>Male</th>
+            <th>Female</th>
+            <th>Non-Binary</th>
         </tr>
     </thead>
     <tbody>
-        {% for salary in salary_ratio %}
+        {% for data in screen_thirteen_data.405_2a_analyse.ratio_of_basic_salary_of_women_to_men.0.Q2 %}
         <tr>
-            <td>{{ salary.category }}</td>
-            <td>{{ salary.gender }}</td>
-            <td>{{ salary.location }}</td>
+            <td>{{data.category}}</td>
+            <td>{{data.male}}</td>
+            <td>{{data.female}}</td>
+            <td>{{data.nonBinary}}</td>
+            <td>{{data.locationandoperation}}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
 
 <h5>Ratio of Remuneration of Women to Men</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
+<table>
     <thead>
         <tr>
-            <th>Employee Category</th>
-            <th>Gender</th>
-            <th>Significant Location of Operations</th>
+            <th rowspan="2">Remuneration per Employee Category</th>
+            <th colspan="3">Gender</th>
+            <th rowspan="2">Significant Location of Operations</th>
+        </tr>
+        <tr>
+            <th>Male</th>
+            <th>Female</th>
+            <th>Non-Binary</th>
         </tr>
     </thead>
     <tbody>
-        {% for remuneration in remuneration_ratio %}
+        {% for data in screen_thirteen_data.405_2a_analyse.ratio_of_remuneration_of_women_to_men.0.Q2 %}
         <tr>
-            <td>{{ remuneration.category }}</td>
-            <td>{{ remuneration.gender }}</td>
-            <td>{{ remuneration.location }}</td>
+            <td>{{data.category}}</td>
+            <td>{{data.male}}</td>
+            <td>{{data.female}}</td>
+            <td>{{data.nonBinary}}</td>
+            <td>{{data.locationandoperation}}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
-<p><em>Note: This section's data can also be represented using graphics or visual charts to illustrate gender and
-        diversity representation in governance bodies and workforce, as well as remuneration data.</em></p>

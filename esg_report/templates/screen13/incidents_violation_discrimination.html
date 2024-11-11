@@ -2,9 +2,53 @@
 
 <h2>13.8. Incidents of Violation/Discrimination (406-1-a, b)</h2>
 
-<p><em>Note for developers: A tailored version of the 406-1-b data is required here.</em></p>
-<p>We are committed to respecting the rights of indigenous people and addressing any incidents of violations promptly
-    and effectively. Our policies and practices aim to foster a respectful and inclusive environment for all.</p>
+<p>{{screen_thirteen_data.violation_discrimination_policy|default:"No data available."}}</p>
+<h5>Status of the incidents and actions taken</h5>
+<p>
+    {% if screen_thirteen_data.406_1b and screen_thirteen_data.406_1b.data and screen_thirteen_data.406_1b.data|length > 0 %}
+        {% if screen_thirteen_data.406_1b.data.0.Q1 %}
+            {{ screen_thirteen_data.406_1b.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.406_1b and screen_thirteen_data.406_1b.data and screen_thirteen_data.406_1b.data|length > 0 %}
+        {% if screen_thirteen_data.406_1b.data.0.Q2 %}
+            {{ screen_thirteen_data.406_1b.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.406_1b and screen_thirteen_data.406_1b.data and screen_thirteen_data.406_1b.data|length > 0 %}
+        {% if screen_thirteen_data.406_1b.data.0.Q3 %}
+            {{ screen_thirteen_data.406_1b.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.406_1b and screen_thirteen_data.406_1b.data and screen_thirteen_data.406_1b.data|length > 0 %}
+        {% if screen_thirteen_data.406_1b.data.0.Q4 %}
+            {{ screen_thirteen_data.406_1b.data.0.Q4 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+
 
 <h5>Incidents of Discrimination</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
@@ -16,45 +60,83 @@
         </tr>
     </thead>
     <tbody>
-        {% for incident in discrimination_incidents %}
+        {% for incident in screen_thirteen_data.406_1a.data %}
         <tr>
-            <td>{{ incident.type }}</td>
-            <td>{{ incident.total }}</td>
-            <td>{{ incident.description }}</td>
+            <td>{{ incident.typeofincident }}</td>
+            <td>{{ incident.totalnumberofincidentsofdiscrimination }}</td>
+            <td>{{ incident.describetheincident }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <h4>13.8.1. Management of Material Topic (GRI 3-3-c, 3-3-d, 3-3-e)</h4>
-<hr>
-<p>[Details on how the organization manages incidents of discrimination and violations, including policies, procedures,
-    and strategies to address and prevent these incidents from occurring in the future.]</p>
+<p>Need to add data here from material topic</p>
 
 <h4>13.8.2. Incidents of Violation of Rights of Indigenous People (GRI 411-1-a, b)</h4>
-<p>At [Company Name], we are dedicated to supporting our people, ensuring their well-being, and promoting a positive and
-    inclusive workplace culture. We believe that our commitment to our employees is key to our long-term success and
-    sustainability.</p>
+<p>{{screen_thirteen_data.indigenous_rights_policy|default:"No data available."}}</p>
 
-<h5>Incidents of Violation of Rights of Indigenous People</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Type of Incident</th>
-            <th>Total Number of Incidents</th>
-            <th>Description of Incident</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for indigenous_incident in indigenous_rights_violations %}
-        <tr>
-            <td>{{ indigenous_incident.type }}</td>
-            <td>{{ indigenous_incident.total }}</td>
-            <td>{{ indigenous_incident.description }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<h5>Status of the incidents and actions taken</h5>
+<p>
+    {% if screen_thirteen_data.411_1b and screen_thirteen_data.411_1b.data and screen_thirteen_data.411_1b.data|length > 0 %}
+        {% if screen_thirteen_data.411_1b.data.0.Q1 %}
+            {{ screen_thirteen_data.411_1b.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.411_1b and screen_thirteen_data.411_1b.data and screen_thirteen_data.411_1b.data|length > 0 %}
+        {% if screen_thirteen_data.411_1b.data.0.Q2 %}
+            {{ screen_thirteen_data.411_1b.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.411_1b and screen_thirteen_data.411_1b.data and screen_thirteen_data.411_1b.data|length > 0 %}
+        {% if screen_thirteen_data.411_1b.data.0.Q3 %}
+            {{ screen_thirteen_data.411_1b.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.411_1b and screen_thirteen_data.411_1b.data and screen_thirteen_data.411_1b.data|length > 0 %}
+        {% if screen_thirteen_data.411_1b.data.0.Q4 %}
+            {{ screen_thirteen_data.411_1b.data.0.Q4 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
 
-<p><em>Note: This data can also be represented graphically to show the number of incidents of discrimination and
-        violation of rights of indigenous people, along with the type of incidents.</em></p>
+<h5>Total number of incident violations involving the rights of indigenous peoples</h5>
+{% if screen_thirteen_data.411_1a and screen_thirteen_data.411_1a.data and screen_thirteen_data.411_1a.data|length > 0 %}
+    {% if screen_thirteen_data.411_1a.data.0.Q1 == "Yes" %}
+        <div>
+            <p>
+                {% if screen_thirteen_data.411_1a.data.0.Q2 %}
+                    {{ screen_thirteen_data.411_1a.data.0.Q2 }}
+                {% else %}
+                    No data available
+                {% endif %}
+            </p>
+        </div>
+    {% else %}
+        <div></div>
+    {% endif %}
+{% else %}
+    <p>No data available</p>
+{% endif %}

@@ -1,29 +1,45 @@
 <!-- occupational_health_safety.html -->
+{%load custom_tags%}
 
 <h2>13.6. Occupational Health and Safety</h2>
 
-<h4>13.6.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
-<hr>
-<p>[Details on how the organization manages Occupational Health and Safety, including strategies, policies, and
-    initiatives to ensure a safe working environment.]</p>
+<h4>13.6.1. Management of Material Topic</h4>
+<p>Need to add data from material topic</p>
 
 <h4>13.6.2. OHS Management System (GRI 403-1-a, b)</h4>
-<p>Our Occupational Health and Safety (OHS) management system is designed to prevent workplace injuries and illnesses.
-    It includes policies, procedures, and practices that ensure a safe working environment.</p>
+<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q1|default:"No data available" }}</p>
+<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q2.selected|default:screen_thirteen_data.403_1a_ohs_management_system.data.0.Q2.otherValue|default:"No data available" }}</p>
+<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q3|default:"No data available" }}</p>
+<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q4|default:"No data available" }}</p>
+<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q5|default:"No data available" }}</p>
+
+<h5>Workers covered</h5>
+<p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q1|default:"No data available" }}</p>
+<h5>Activities covered</h5>
+<p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q2|default:"No data available" }}</p>
+<h5>Workplaces Covered</h5>
+<p>{{ data.403_1b_scope_of_workers.data.0.Q3|default:"No data available" }}</p>
+<h5>Exclusions</h5>
+<p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q4|default:"No data available" }}</p>
+<h5>Reason for exclusion</h5>
+<p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q5|default:"No data available" }}</p>
+
 
 <h4>13.6.3. Occupational Health Services (GRI 403-3-a)</h4>
-<p>We provide access to occupational health services that support the physical and mental well-being of our employees.
-    This includes medical check-ups, health screenings, and counseling services.</p>
+<p>{{screen_thirteen_data.403_3a_ohs_functions.data.0.Q1|default:"No data available."}}</p>
 
 <h4>13.6.4. Worker Participation, Consultation, and Communication on OHS (GRI 403-4-a, b)</h4>
-<p>We engage our workers in OHS through participation, consultation, and communication. This ensures that their insights
-    and concerns are considered in our safety practices.</p>
+<p>{{screen_thirteen_data.ohs_policies|default:"No data available."}}</p>
+<p>{{ screen_thirteen_data.403_4a_ohs_system_1.data.0.Q1|default:"No data available" }}</p>
+<p>{{ screen_thirteen_data.403_4a_ohs_system_2.data.0.Q1|default:"No data available" }}</p>
+<p>{{ screen_thirteen_data.403_4a_ohs_system_2.data.0.Q2|default:"No data available" }}</p>
+
 
 <h5>Formal Joint Management-Worker Health and Safety Committees</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
-            <th>Committee Name</th>
+            <th>Formal joint management-worker health and safety committees</th>
             <th>Responsibilities</th>
             <th>Meeting Frequency</th>
             <th>Decision-Making Authority</th>
@@ -31,12 +47,12 @@
         </tr>
     </thead>
     <tbody>
-        {% for committee in ohs_committees %}
+        {% for committee in screen_thirteen_data.get_403_analyse.formal_joint_management %}
         <tr>
-            <td>{{ committee.name }}</td>
+            <td>{{ committee.committeeName }}</td>
             <td>{{ committee.responsibilities }}</td>
-            <td>{{ committee.meeting_frequency }}</td>
-            <td>{{ committee.decision_making_authority }}</td>
+            <td>{{ committee.meetingFrequency }}</td>
+            <td>{{ committee.decisionMaking }}</td>
             <td>{{ committee.exclusions }}</td>
         </tr>
         {% endfor %}
@@ -44,107 +60,445 @@
 </table>
 
 <h4>13.6.5. Promotion of Worker Health (GRI 403-6-a, b)</h4>
-<p>Our health promotion programs encourage healthy lifestyles and proactive health management among our employees.</p>
+<h5>Access to non-occupational medical and healthcare services</h5>
+<p>{{ screen_thirteen_data.403_6a_access_non_occupational.data.0.Q1|default:"No data available" }}</p>
+
+<h5>Scope of access</h5>
+<p>{{ screen_thirteen_data.403_6a_scope_of_access.data.0.Q1|default:"No data available" }}</p>
+
+<h5>Voluntary health promotion and programs offered</h5>
+<p>{{ screen_thirteen_data.403_6a_voluntary_health.data.0.Q1|default:"No data available" }}</p>
+
+<h5>Health risk addressed</h5>
+<p>{{ screen_thirteen_data.403_6a_health_risk.data.0.Q1|default:"No data available" }}</p>
+
+<h5>Workers' access to the services and programs</h5>
+<p>{{ screen_thirteen_data.403_6b_workers_access.data.0.Q1|default:"No data available" }}</p>
 
 <h4>13.6.6. Prevention and Mitigation of OHS Impacts (GRI 403-7-a)</h4>
-<p>We proactively identify and mitigate OHS risks through regular risk assessments, safety audits, and incident
-    investigations.</p>
+<h5>Negative occupational health and safety impacts</h5>
+<p>{{ screen_thirteen_data.403_7a_negative_occupational.data.0.Q1|default:"No data available" }}</p>
+
+<h5>Hazards and risks</h5>
+<p>{{ screen_thirteen_data.403_7a_hazards_risks.data.0.Q1|default:"No data available" }}</p>
+
 
 <h4>13.6.7. Hazard, Risk Identification and Investigation (GRI 403-2-a, b, c, d)</h4>
-<p>We conduct thorough hazard and risk assessments to identify potential workplace dangers and implement measures to
-    mitigate them.</p>
+<p>{{screen_thirteen_data.hazard_risk_assessment}}</p>
 
-<h5>Routine Hazard Identification and Risk Assessment</h5>
-<ul>
-    <li>Routine hazard identification and risk assessment: {{ hazard_assessment.routine }}</li>
-    <li>Non-routine hazard identification and risk assessment: {{ hazard_assessment.non_routine }}</li>
-    <li>Hierarchy of controls: {{ hazard_assessment.controls }}</li>
-    <li>Legal basis: {{ hazard_assessment.legal_basis }}</li>
-    <li>Standards/Guidelines: {{ hazard_assessment.standards }}</li>
-    <li>Legal requirements: {{ hazard_assessment.legal_requirements }}</li>
-    <li>Vulnerable workers: {{ hazard_assessment.vulnerable_workers }}</li>
-    <li>Process Quality Assurance: {{ hazard_assessment.quality_assurance }}</li>
-    <li>Personal competency assurance: {{ hazard_assessment.competency_assurance }}</li>
-    <li>Results utilization and improvement: {{ hazard_assessment.improvement }}</li>
-</ul>
+<h5>Process for hazard identification:</h5>
+{% if screen_thirteen_data.403_2a_process_for_hazard and screen_thirteen_data.403_2a_process_for_hazard.Q3 %}
+    <p>{{ screen_thirteen_data.403_2a_process_for_hazard.Q3.selected|default:screen_thirteen_data.403_2a_process_for_hazard.Q3.otherValue|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
 
-<h5>Work-Related Incident Investigation</h5>
+<h5>Routine hazard identification and risk assessment:</h5>
+{% if screen_thirteen_data.403_2a_process_for_hazard and screen_thirteen_data.403_2a_process_for_hazard.Q1 %}
+    <p>{{ screen_thirteen_data.403_2a_process_for_hazard.Q1.selected|default:screen_thirteen_data.403_2a_process_for_hazard.Q1.otherValue|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h5>Non-routine hazard identification and risk assessment:</h5>
+{% if screen_thirteen_data.403_2a_process_for_hazard and screen_thirteen_data.403_2a_process_for_hazard.Q2 %}
+    <p>{{ screen_thirteen_data.403_2a_process_for_hazard.Q2.selected|default:screen_thirteen_data.403_2a_process_for_hazard.Q2.otherValue|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h5>Hierarchy of controls:</h5>
+{% if screen_thirteen_data.403_2a_process_for_hazard and screen_thirteen_data.403_2a_process_for_hazard.Q4 %}
+    <p>{{ screen_thirteen_data.403_2a_process_for_hazard.Q4.selected|default:screen_thirteen_data.403_2a_process_for_hazard.Q4.otherValue|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h5>Legal basis:</h5>
+{% if screen_thirteen_data.403_2a_process_for_hazard and screen_thirteen_data.403_2a_process_for_hazard.Q5 %}
+    <p>{{ screen_thirteen_data.403_2a_process_for_hazard.Q5.selected|default:screen_thirteen_data.403_2a_process_for_hazard.Q5|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h5>List of standards/guidelines:</h5>
+<p>No data available</p>
+
+<h5>List of legal requirements:</h5>
+{% if screen_thirteen_data.403_2a_process_for_hazard and screen_thirteen_data.403_2a_process_for_hazard.Q6 %}
+    <p>{{ screen_thirteen_data.403_2a_process_for_hazard.Q6.selected|default:screen_thirteen_data.403_2a_process_for_hazard.Q6|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h5>Vulnerable Workers:</h5>
+{% if screen_thirteen_data.403_2a_process_for_hazard and screen_thirteen_data.403_2a_process_for_hazard.Q7 %}
+    <p>{{ screen_thirteen_data.403_2a_process_for_hazard.Q7.selected|default:screen_thirteen_data.403_2a_process_for_hazard.Q7.otherValue|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h5>Process Quality Assurance:</h5>
+{% if screen_thirteen_data.403_2b_quality_assurance and screen_thirteen_data.403_2b_quality_assurance.data.0 and screen_thirteen_data.403_2b_quality_assurance.data.0.Q1 %}
+    <p>{{ screen_thirteen_data.403_2b_quality_assurance.data.0.Q1 }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h5>Personal competency assurance:</h5>
+{% if screen_thirteen_data.403_2b_quality_assurance and screen_thirteen_data.403_2b_quality_assurance.data.0 and screen_thirteen_data.403_2b_quality_assurance.data.0.Q2 %}
+    <p>{{ screen_thirteen_data.403_2b_quality_assurance.data.0.Q2 }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h5>Results Utilization and Improvement:</h5>
+{% if screen_thirteen_data.403_2b_quality_assurance and screen_thirteen_data.403_2b_quality_assurance.data.0 and screen_thirteen_data.403_2b_quality_assurance.data.0.Q3 %}
+    <p>{{ screen_thirteen_data.403_2b_quality_assurance.data.0.Q3 }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h5>Work-related incident investigation:</h5>
+{% if screen_thirteen_data.403_2d and screen_thirteen_data.403_2d.data.0 and screen_thirteen_data.403_2d.data.0.Q1 %}
+    <p>{{ screen_thirteen_data.403_2d.data.0.Q1 }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+<h4>13.6.8. Work-Related Ill-Health & Injuries (GRI 403-9-a, b, c, d, e, f, g, 403-10-a, b, c, d, e)</h4>
+<p>{{screen_thirteen_data.work_related_health_injuries|default:"No data available."}}</p>
+
+<h5>
+    Work-related hazards that pose a risk of high-consequence injury
+</h5>
+<p>
+    {% if screen_thirteen_data.403_9c_9d and screen_thirteen_data.403_9c_9d.data and screen_thirteen_data.403_9c_9d.data|length > 0 %}
+        {% if screen_thirteen_data.403_9c_9d.data.0.Q1 %}
+            {{ screen_thirteen_data.403_9c_9d.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_9c_9d and screen_thirteen_data.403_9c_9d.data and screen_thirteen_data.403_9c_9d.data|length > 0 %}
+        {% if screen_thirteen_data.403_9c_9d.data.0.Q2 %}
+            {{ screen_thirteen_data.403_9c_9d.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_9c_9d and screen_thirteen_data.403_9c_9d.data and screen_thirteen_data.403_9c_9d.data|length > 0 %}
+        {% if screen_thirteen_data.403_9c_9d.data.0.Q3 %}
+            {{ screen_thirteen_data.403_9c_9d.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+
+<h5>
+    Number of Hours Worked
+</h5>
+<p>
+    {% if screen_thirteen_data.403_9e and screen_thirteen_data.403_9e.data and screen_thirteen_data.403_9e.data|length > 0 %}
+        {% if screen_thirteen_data.403_9e.data.0.Q1 %}
+            {{ screen_thirteen_data.403_9e.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+
+<h5>
+    Workers excluded from the disclosure
+</h5>
+<p>
+    {% if screen_thirteen_data.403_9f and screen_thirteen_data.403_9f.data and screen_thirteen_data.403_9f.data|length > 0 %}
+        {% if screen_thirteen_data.403_9f.data.0.Q1 %}
+            {{ screen_thirteen_data.403_9f.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_9f and screen_thirteen_data.403_9f.data and screen_thirteen_data.403_9f.data|length > 0 %}
+        {% if screen_thirteen_data.403_9f.data.0.Q2 %}
+            {{ screen_thirteen_data.403_9f.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_9f and screen_thirteen_data.403_9f.data and screen_thirteen_data.403_9f.data|length > 0 %}
+        {% if screen_thirteen_data.403_9f.data.0.Q3 %}
+            {{ screen_thirteen_data.403_9f.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+
+<h5>
+    Standards, methodologies, and assumptions used
+</h5>
+<p>
+    {% if screen_thirteen_data.403_9g and screen_thirteen_data.403_9g.data and screen_thirteen_data.403_9g.data|length > 0 %}
+        {% if screen_thirteen_data.403_9g.data.0.Q1 %}
+            {{ screen_thirteen_data.403_9g.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_9g and screen_thirteen_data.403_9g.data and screen_thirteen_data.403_9g.data|length > 0 %}
+        {% if screen_thirteen_data.403_9g.data.0.Q2 %}
+            {{ screen_thirteen_data.403_9g.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_9g and screen_thirteen_data.403_9g.data and screen_thirteen_data.403_9g.data|length > 0 %}
+        {% if screen_thirteen_data.403_9g.data.0.Q3 %}
+            {{ screen_thirteen_data.403_9g.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+
+<h5>
+    Work-related hazards that pose a risk of ill health
+</h5>
+<p>
+    {% if screen_thirteen_data.403_10c and screen_thirteen_data.403_10c.data and screen_thirteen_data.403_10c.data|length > 0 %}
+        {% if screen_thirteen_data.403_10c.data.0.Q1 %}
+            {{ screen_thirteen_data.403_10c.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_10c and screen_thirteen_data.403_10c.data and screen_thirteen_data.403_10c.data|length > 0 %}
+        {% if screen_thirteen_data.403_10c.data.0.Q2 %}
+            {{ screen_thirteen_data.403_10c.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_10c and screen_thirteen_data.403_10c.data and screen_thirteen_data.403_10c.data|length > 0 %}
+        {% if screen_thirteen_data.403_10c.data.0.Q3 %}
+            {{ screen_thirteen_data.403_10c.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+
+<h5>
+    Workers excluded from the disclosure
+</h5>
+<p>
+    {% if screen_thirteen_data.403_10d and screen_thirteen_data.403_10d.data and screen_thirteen_data.403_10d.data|length > 0 %}
+        {% if screen_thirteen_data.403_10d.data.0.Q1 %}
+            {{ screen_thirteen_data.403_10d.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_10d and screen_thirteen_data.403_10d.data and screen_thirteen_data.403_10d.data|length > 0 %}
+        {% if screen_thirteen_data.403_10d.data.0.Q2 %}
+            {{ screen_thirteen_data.403_10d.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_10d and screen_thirteen_data.403_10d.data and screen_thirteen_data.403_10d.data|length > 0 %}
+        {% if screen_thirteen_data.403_10d.data.0.Q3 %}
+            {{ screen_thirteen_data.403_10d.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+
+<h5>
+    Standards, methodologies, and assumptions used
+</h5>
+<p>
+    {% if screen_thirteen_data.403_10e and screen_thirteen_data.403_10e.data and screen_thirteen_data.403_10e.data|length > 0 %}
+        {% if screen_thirteen_data.403_10e.data.0.Q1 %}
+            {{ screen_thirteen_data.403_10e.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_10e and screen_thirteen_data.403_10e.data and screen_thirteen_data.403_10e.data|length > 0 %}
+        {% if screen_thirteen_data.403_10e.data.0.Q2 %}
+            {{ screen_thirteen_data.403_10e.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_10e and screen_thirteen_data.403_10e.data and screen_thirteen_data.403_10e.data|length > 0 %}
+        {% if screen_thirteen_data.403_10e.data.0.Q3 %}
+            {{ screen_thirteen_data.403_10e.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+
+
+<h5>Rate of injuries: For all employees</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
-            <th>Description of Incident</th>
-            <th>Reporting Personnel</th>
-            <th>Investigation Team</th>
-            <th>Investigation Methods</th>
-            <th>Corrective Actions</th>
-            <th>System Improvement</th>
+            <th>Rate of fatalities as a result of work-related injury </th>
+            <th>Rate of high-consequence work-related injuries (excluding fatalities)</th>
+            <th>Rate of recordable work-related injuries </th>
         </tr>
     </thead>
     <tbody>
-        {% for incident in incidents %}
+        {% for ill_health in screen_thirteen_data.get_403_analyse.rate_of_injuries_for_all_employees %}
         <tr>
-            <td>{{ incident.description }}</td>
-            <td>{{ incident.reporting_personnel }}</td>
-            <td>{{ incident.investigation_team }}</td>
-            <td>{{ incident.investigation_methods }}</td>
-            <td>{{ incident.corrective_actions }}</td>
-            <td>{{ incident.system_improvement }}</td>
+            <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury }}</td>
+            <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities }}</td>
+            <td>{{ ill_health.rate_of_recordable_work_related_injuries }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<h4>13.6.8. Work-Related Ill-Health & Injuries (GRI 403-9-a, b, c, d, e, f, g, 403-10-a, b, c, d, e)</h4>
-<p>We track and report work-related ill-health and injuries, using this data to continuously improve our OHS practices.
-</p>
+<h5>For all workers who are not employees but whose work and/or workplace is controlled by the organization </h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Rate of fatalities as a result of work-related injury </th>
+            <th>Rate of high-consequence work-related injuries (excluding fatalities)</th>
+            <th>Rate of recordable work-related injuries </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ill_health in screen_thirteen_data.get_403_analyse.rate_of_injuries_for_not_included_in_company_employees %}
+        <tr>
+            <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury }}</td>
+            <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities }}</td>
+            <td>{{ ill_health.rate_of_recordable_work_related_injuries }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-<h5>Rate of Injuries (For All Employees)</h5>
-<ul>
-    <li>Rate of fatalities as a result of work-related injury: {{ injury_rates.employee_fatalities }}</li>
-    <li>Rate of high-consequence work-related injuries (excluding fatalities): {{ injury_rates.high_consequence_injuries
-        }}</li>
-    <li>Rate of recordable work-related injuries: {{ injury_rates.recordable_injuries }}</li>
-</ul>
-
-<h5>Rate of Injuries (For Non-Employees but whose Work is Controlled by the Organization)</h5>
-<ul>
-    <li>Rate of fatalities as a result of work-related injury: {{ injury_rates.non_employee_fatalities }}</li>
-    <li>Rate of high-consequence work-related injuries (excluding fatalities): {{
-        injury_rates.non_employee_high_consequence_injuries }}</li>
-    <li>Rate of recordable work-related injuries: {{ injury_rates.non_employee_recordable_injuries }}</li>
-</ul>
-
-<h5>Ill-Health Data</h5>
+<h5>Health for all employees</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
             <th>Employee Category</th>
-            <th>Number of Fatalities (Work-Related Ill-Health)</th>
-            <th>Number of Cases (Recordable Work-Related Ill-Health)</th>
-            <th>Main Types of Work-Related Ill-Health</th>
+            <th>Number of fatalities as a result of work-related ill health</th>
+            <th>Number of cases of recordable work-related ill health</th>
+            <th>Main types of work-related ill health</th>
         </tr>
     </thead>
     <tbody>
-        {% for ill_health in employee_ill_health %}
+        {% for ill_health in screen_thirteen_data.get_403_analyse.ill_health_for_all_employees_analysis %}
         <tr>
-            <td>{{ ill_health.category }}</td>
+            <td>{{ ill_health.employeeCategory }}</td>
             <td>{{ ill_health.fatalities }}</td>
-            <td>{{ ill_health.recordable_cases }}</td>
-            <td>{{ ill_health.main_types }}</td>
+            <td>{{ ill_health.recordable }}</td>
+            <td>{{ ill_health.highconsequence }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h5>Health for workers who are not employees but whose work and workplace is controlled by the organization </h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Employee Category</th>
+            <th>Number of fatalities as a result of work-related ill health</th>
+            <th>Number of cases of recordable work-related ill health</th>
+            <th>Main types of work-related ill health</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ill_health in screen_thirteen_data.get_403_analyse.ill_health_for_all_workers_who_are_not_employees_analysis %}
+        <tr>
+            <td>{{ ill_health.employeeCategory }}</td>
+            <td>{{ ill_health.fatalities }}</td>
+            <td>{{ ill_health.recordable }}</td>
+            <td>{{ ill_health.highconsequence }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <h4>13.6.9. Safety Training (GRI 403-5-a)</h4>
-<p>Safety training is a cornerstone of our OHS program. We provide regular training sessions to ensure that all
-    employees are aware of safety protocols and procedures.</p>
+<p>{{screen_thirteen_data.safety_training|default:"No data available."}}</p>
 
 <h5>Occupational Health and Safety Training</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
-            <th>Training Category</th>
+            <th>Occupational health and safety training provided to workers</th>
             <th>Generic Training</th>
             <th>Specific Work-Related Hazards</th>
             <th>Hazardous Activities</th>
@@ -152,45 +506,112 @@
         </tr>
     </thead>
     <tbody>
-        {% for training in safety_training %}
+        {% for training in screen_thirteen_data.403_5a.data %}
         <tr>
-            <td>{{ training.category }}</td>
-            <td>{{ training.generic }}</td>
-            <td>{{ training.work_related_hazards }}</td>
-            <td>{{ training.hazardous_activities }}</td>
-            <td>{{ training.hazardous_situations }}</td>
+            <td>{{ training.occupational }}</td>
+            <td>{{ training.generictraining }}</td>
+            <td>{{ training.specificworkre }}</td>
+            <td>{{ training.hazardousactivities }}</td>
+            <td>{{ training.hazardoussituations }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <h4>13.6.10. Workers Covered by OHS Management System (GRI 403-8-a, b, c)</h4>
-<p>We ensure that all workers, including contractors and temporary workers, are covered by our OHS management system.
+<p>{{screen_thirteen_data.ohs_management_system|default:"No data available."}}</p>
+
+<h5>
+    Workers excluded & type of workers excluded
+</h5>
+<p>
+    {% if screen_thirteen_data.403_8b and screen_thirteen_data.403_8b.data and screen_thirteen_data.403_8b.data|length > 0 %}
+        {% if screen_thirteen_data.403_8b.data.0.Q1 %}
+            {{ screen_thirteen_data.403_8b.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_8b and screen_thirteen_data.403_8b.data and screen_thirteen_data.403_8b.data|length > 0 %}
+        {% if screen_thirteen_data.403_8b.data.0.Q2 %}
+            {{ screen_thirteen_data.403_8b.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_8b and screen_thirteen_data.403_8b.data and screen_thirteen_data.403_8b.data|length > 0 %}
+        {% if screen_thirteen_data.403_8b.data.0.Q3 %}
+            {{ screen_thirteen_data.403_8b.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
 </p>
 
-<h5>Percentage of Workers Covered</h5>
+<h5>
+    Standards, methodologies, and assumptions used
+</h5>
+<p>
+    {% if screen_thirteen_data.403_8c and screen_thirteen_data.403_8c.data and screen_thirteen_data.403_8c.data|length > 0 %}
+        {% if screen_thirteen_data.403_8c.data.0.Q1 %}
+            {{ screen_thirteen_data.403_8c.data.0.Q1 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_8c and screen_thirteen_data.403_8c.data and screen_thirteen_data.403_8c.data|length > 0 %}
+        {% if screen_thirteen_data.403_8c.data.0.Q2 %}
+            {{ screen_thirteen_data.403_8c.data.0.Q2 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+<p>
+    {% if screen_thirteen_data.403_8c and screen_thirteen_data.403_8c.data and screen_thirteen_data.403_8c.data|length > 0 %}
+        {% if screen_thirteen_data.403_8c.data.0.Q3 %}
+            {{ screen_thirteen_data.403_8c.data.0.Q3 }}
+        {% else %}
+            No data available
+        {% endif %}
+    {% else %}
+        No data available
+    {% endif %}
+</p>
+
+
+<h5>Percentage of emplyoees/workers who are not employees</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
-            <th>Category</th>
-            <th>Percentage of Employees</th>
-            <th>Percentage of Non-Employees</th>
-            <th>Internally Audited</th>
-            <th>Audited/Certified by an External Party</th>
+            <th>Rate of fatalities as a result of work-related injury </th>
+            <th>Percentage of all Employees </th>
+            <th>Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization </th>
         </tr>
     </thead>
     <tbody>
-        {% for worker_coverage in ohs_coverage %}
+        {% for worker_coverage in screen_thirteen_data.get_403_analyse.workers_covered_by_an_occupational_health_and_safety_management_system %}
         <tr>
-            <td>{{ worker_coverage.category }}</td>
-            <td>{{ worker_coverage.percentage_employees }}</td>
-            <td>{{ worker_coverage.percentage_non_employees }}</td>
-            <td>{{ worker_coverage.internally_audited }}</td>
-            <td>{{ worker_coverage.externally_audited }}</td>
+            <td>{{ worker_coverage. }}</td>
+            <td>{{ worker_coverage|get_item:"Percentage of all Employees" }}</td>
+            <td>{{ worker_coverage|get_item:"Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization" }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
-<p><em>Note: This data can also be represented using graphical charts or other visual tools to illustrate the rates and
-        percentages for injuries, ill-health, training, and worker coverage.</em></p>

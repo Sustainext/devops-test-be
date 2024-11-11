@@ -24,6 +24,7 @@ from esg_report.services.screen_fifteen_service import ScreenFifteenService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
 from esg_report.services.data import context_data
+import json
 
 
 def convert_keys(obj):
@@ -57,68 +58,68 @@ class ESGReportPDFView(View):
                 "An unexpected error occurred while retrieving the report.", status=500
             )
         # ceo_message = CeoMessageService.get_ceo_message_by_report(report)
-        # dict_ceo_message = model_to_dict(ceo_message)
+        # dict_ceo_message = model_to_dict(ceo_message) if ceo_message else {}
         # dict_ceo_message = convert_keys(dict_ceo_message)
-        service = ScreenTwoService(user)
-        about_the_company_service, is_new = service.fetch_about_company(report)
-        about_the_company = service.get_about_company_data(
-            about_the_company_service, report, request
-        )
-        about_the_company = convert_keys(about_the_company)
+        # service = ScreenTwoService(user)
+        # about_the_company_service, is_new = service.fetch_about_company(report)
+        # about_the_company = service.get_about_company_data(
+        #     about_the_company_service, report, request
+        # )
+        # about_the_company = convert_keys(about_the_company)
 
-        mission_vision_values = (
-            MissionVisionValuesService.get_mission_vision_values_by_report_id(pk)
-        )
-        mission_vision_values = convert_keys(mission_vision_values)
+        # mission_vision_values = (
+        #     MissionVisionValuesService.get_mission_vision_values_by_report_id(pk)
+        # )
+        # mission_vision_values = convert_keys(mission_vision_values)
 
-        sustainability_roadmap = (
-            SustainabilityRoadmapService.get_sustainability_roadmap_by_report_id(pk)
-        )
-        sustainability_roadmap = convert_keys(sustainability_roadmap)
+        # sustainability_roadmap = (
+        #     SustainabilityRoadmapService.get_sustainability_roadmap_by_report_id(pk)
+        # )
+        # sustainability_roadmap = convert_keys(sustainability_roadmap)
 
-        awards_and_recognition = (
-            AwardsAndRecognitionService.get_awards_and_recognition_by_report_id(pk)
-        )
-        awards_and_recognition = convert_keys(awards_and_recognition)
+        # awards_and_recognition = (
+        #     AwardsAndRecognitionService.get_awards_and_recognition_by_report_id(pk)
+        # )
+        # awards_and_recognition = convert_keys(awards_and_recognition)
 
-        stakeholder_engagement = (
-            StakeholderEngagementService.get_stakeholder_engagement_by_report_id(
-                pk, user
-            )
-        )
-        stakeholder_engagement = convert_keys(stakeholder_engagement)
+        # stakeholder_engagement = (
+        #     StakeholderEngagementService.get_stakeholder_engagement_by_report_id(
+        #         pk, user
+        #     )
+        # )
+        # stakeholder_engagement = convert_keys(stakeholder_engagement)
 
-        about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
-        about_the_report = convert_keys(about_the_report)
+        # about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
+        # about_the_report = convert_keys(about_the_report)
 
-        materiality = MaterialityService.get_materiality_data(pk)
-        materiality = convert_keys(materiality)
+        # materiality = MaterialityService.get_materiality_data(pk)
+        # materiality = convert_keys(materiality)
 
-        screen_nine_service = ScreenNineService(report_id=pk)
-        screen_nine_data = screen_nine_service.get_response()
+        # screen_nine_service = ScreenNineService(report_id=pk)
+        # screen_nine_data = screen_nine_service.get_response()
 
-        screen_ten_data = ScreenTenService.get_screen_ten(pk)
-        screen_ten_data = convert_keys(screen_ten_data)
+        # screen_ten_data = ScreenTenService.get_screen_ten(pk)
+        # screen_ten_data = convert_keys(screen_ten_data)
 
-        screen_eleven_service = ScreenElevenService(report_id=pk, request=request)
-        screen_eleven_data = screen_eleven_service.get_report_response()
-        # screen_eleven_data = convert_keys(screen_eleven_data)
+        # screen_eleven_service = ScreenElevenService(report_id=pk, request=request)
+        # screen_eleven_data = screen_eleven_service.get_report_response()
+        # # screen_eleven_data = convert_keys(screen_eleven_data)
 
-        screen_twelve_service = ScreenTwelveService(report_id=pk, request=request)
-        screen_twelve_data = screen_twelve_service.get_report_response()
-        screen_twelve_data = convert_keys(screen_twelve_data)
+        # screen_twelve_service = ScreenTwelveService(report_id=pk, request=request)
+        # screen_twelve_data = screen_twelve_service.get_report_response()
+        # screen_twelve_data = convert_keys(screen_twelve_data)
 
-        screen_thirteen_service = ScreenThirteenService(report_id=pk, request=request)
-        screen_thirteen_data = screen_thirteen_service.get_report_response()
-        screen_thirteen_data = convert_keys(screen_thirteen_data)
+        # screen_thirteen_service = ScreenThirteenService(report_id=pk, request=request)
+        # screen_thirteen_data = screen_thirteen_service.get_report_response()
+        # screen_thirteen_data = convert_keys(screen_thirteen_data)
 
-        screen_fourteen_service = ScreenFourteenService(report_id=pk, request=request)
-        screen_fourteen_data = screen_fourteen_service.get_report_response()
-        screen_fourteen_data = convert_keys(screen_fourteen_data)
+        # screen_fourteen_service = ScreenFourteenService(report_id=pk, request=request)
+        # screen_fourteen_data = screen_fourteen_service.get_report_response()
+        # screen_fourteen_data = convert_keys(screen_fourteen_data)
 
-        screen_fifteen_service = ScreenFifteenService(report_id=pk, request=request)
-        screen_fifteen_data = screen_fifteen_service.get_report_response()
-        screen_fifteen_data = convert_keys(screen_fifteen_data)
+        # screen_fifteen_service = ScreenFifteenService(report_id=pk, request=request)
+        # screen_fifteen_data = screen_fifteen_service.get_report_response()
+        # screen_fifteen_data = convert_keys(screen_fifteen_data)
         # print(screen_fifteen_data)
         # Prepare the context for rendering the PDF template
         # data = convert_keys(context_data)
@@ -126,20 +127,20 @@ class ESGReportPDFView(View):
         context = {
             "report": report,
             # "ceo_message": dict_ceo_message,
-            "about_the_company": about_the_company,
-            "mission_vision_values": mission_vision_values,
-            "sustainability_roadmap": sustainability_roadmap,
-            "awards_and_recognition": awards_and_recognition,
-            "stakeholder_engagement": stakeholder_engagement,
-            "about_the_report": about_the_report,
-            "materiality": materiality,
-            "screen_nine_data": screen_nine_data,
-            "screen_ten_data": screen_ten_data,
-            "screen_eleven_data": screen_eleven_data,
-            "screen_twelve_data": screen_twelve_data,
-            "screen_thirteen_data": screen_thirteen_data,
-            "screen_fourteen_data": screen_fourteen_data,
-            "screen_fifteen_data": screen_fifteen_data,
+            # "about_the_company": about_the_company,
+            # "mission_vision_values": mission_vision_values,
+            # "sustainability_roadmap": sustainability_roadmap,
+            # "awards_and_recognition": awards_and_recognition,
+            # "stakeholder_engagement": stakeholder_engagement,
+            # "about_the_report": about_the_report,
+            # "materiality": materiality,
+            # "screen_nine_data": screen_nine_data,
+            # "screen_ten_data": screen_ten_data,
+            # "screen_eleven_data": screen_eleven_data,
+            # "screen_twelve_data": screen_twelve_data,
+            "screen_thirteen_data": context_data,
+            # "screen_fourteen_data": screen_fourteen_data,
+            # "screen_fifteen_data": screen_fifteen_data,
             "pk": pk,
         }
 

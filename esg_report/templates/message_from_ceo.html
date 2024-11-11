@@ -1,26 +1,25 @@
 <!-- message_from_ceo.html -->
 <style>
-    .ceo-message {
-        margin-top: 20px;
-        font-family: Arial, sans-serif;
-    }
+  .ceo-message {
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+  }
 
-    .ceo-message h2 {
-        font-size: 18px;
-        font-weight: bold;
-    }
+  .ceo-message h2 {
+    font-size: 18px;
+    font-weight: bold;
+  }
 
-    .ceo-message p {
-        font-size: 14px;
-    }
+  .ceo-message p {
+    font-size: 14px;
+  }
 </style>
-{% if ceo_message %}
 <div class="ceo-message">
-    <h2>Message from the CEO</h2>
-    <p>{{ ceo_message.message | safe }}</p>
-    <p>Thank you for your continued trust and support.</p>
-    <p>Sincerely,</p>
-    <p><strong>{{ ceo_message.ceo_name }}</strong><br>Chief Executive
-        Officer<br><strong>{{ ceo_message.company_name }}</strong></p>
+  <h2>Message from the CEO</h2>
+  <p>{{ ceo_message.message | safe |default:"No data available." }}</p>
+  {% if ceo_message.message %}
+  <p>Thank you for your continued trust and support.</p>
+  <p>Sincerely,</p>
+  {% endif %}
+  <p><strong>{{ ceo_message.ceo_name|default:"No data available." }}</strong><br />Chief Executive Officer<br /><strong>{{ ceo_message.company_name|default:"No data available." }}</strong></p>
 </div>
-{% endif %}
