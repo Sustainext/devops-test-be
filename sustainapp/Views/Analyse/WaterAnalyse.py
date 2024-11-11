@@ -33,7 +33,7 @@ class WaterAnalyse(APIView):
     CONVERSION_FACTORS = {
         "litre": 1e-6,
         "cubic meter": 1e-3,
-        "kilolitre": 1e-3,
+        "MegaLitre": 1e-3,
         "million litres per day": 1,
         "megalitre": 1,
         "million litrse per day": 1,
@@ -94,7 +94,7 @@ class WaterAnalyse(APIView):
             grouped_data[group_key][discharge_literal] += discharge
             grouped_data[group_key][withdrawal_literal] += withdrawal
             grouped_data[group_key][consumed_literal] += consumed
-            grouped_data[group_key]["Units"] = "KiloLitre"
+            grouped_data[group_key]["Units"] = "MegaLitre"
             grouped_data[group_key]["Watertype"] = (
                 entry["Watertype"] if "Watertype" in entry else ""
             )
@@ -163,7 +163,7 @@ class WaterAnalyse(APIView):
         result.append(
             {
                 "Total": total_consumed,
-                "Units": "KiloLitre",
+                "Units": "MegaLitre",
             }
         )
         return result
@@ -193,7 +193,7 @@ class WaterAnalyse(APIView):
             group_key = tuple(entry[key] for key in group_by_keys)
             # Add the entry to the appropriate group
             grouped_data[group_key][withdrawal_literal] += withdrawal
-            grouped_data[group_key]["Units"] = "KiloLitre"
+            grouped_data[group_key]["Units"] = "MegaLitre"
             grouped_data[group_key]["Source"] = (
                 entry["Source"] if "Source" in entry else ""
             )
@@ -244,7 +244,7 @@ class WaterAnalyse(APIView):
             group_key = tuple(entry[key] for key in group_by_keys)
             # Add the entry to the appropriate group
             grouped_data[group_key][discharge_literal] += discharge
-            grouped_data[group_key]["Units"] = "KiloLitre"
+            grouped_data[group_key]["Units"] = "MegaLitre"
             grouped_data[group_key]["Source"] = (
                 entry["Source"] if "Source" in entry else ""
             )
@@ -305,7 +305,7 @@ class WaterAnalyse(APIView):
                 value=float(entry["Reporting2"]) - float(entry["Reporting1"]),
                 unit=entry["Unit"],
             )
-            processed_data["Unit"] = "KiloLitre"
+            processed_data["Unit"] = "MegaLitre"
             result.append(processed_data)
         # * Sort the result by Water Storage
         result.sort(key=lambda x: x["WaterStorage"], reverse=True)
@@ -450,14 +450,14 @@ class WaterAnalyse(APIView):
                         "total_discharge": total_discharge,
                         "total_withdrawal": total_withdrawal,
                         "total_consumption": total_consumption,
-                        "unit": "KiloLitre",
+                        "unit": "MegaLitre",
                         "discharge_contribution": discharge_contribution,
                         "withdrawal_contribution": withdrawal_contribution,
                         "consumption_contribution": consumption_contribution,
                     }
                 )
         total_consumption = sum(entry["total_consumption"] for entry in result)
-        result.append({"Total": total_consumption, "Unit": "KiloLitre"})
+        result.append({"Total": total_consumption, "Unit": "MegaLitre"})
         return result
 
     def process_water_data_by_location(self, data):
@@ -551,7 +551,7 @@ class WaterAnalyse(APIView):
         for all_area, stress_area in zip(all_areas_data, stress_areas_data):
             return_data.append(
                 {
-                    "Unit": "KiloLitre",
+                    "Unit": "MegaLitre",
                     "total_water_consumption": self.convert_to_megalitres(
                         float(all_area["discharge"]) - float(all_area["withdrawal"]),
                         unit=all_area["Unit"],
