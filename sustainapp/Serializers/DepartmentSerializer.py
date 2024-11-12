@@ -5,5 +5,5 @@ from sustainapp.models import Department
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = ["id", "value"]  # Exclude 'client' from fields
+        fields = ["id", "name"]  # Exclude 'client' from fields
 
