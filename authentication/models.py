@@ -180,3 +180,10 @@ class UserSafeLock(AbstractModel):
 
     def __str__(self):
         return f"SafeLock for {self.user.username}"
+
+class Department(AbstractModel):
+    value = models.TextField()
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.client} - {self.value}"
