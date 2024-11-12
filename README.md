@@ -1,9 +1,13 @@
-## This is a README.md file
-
+# Setup
 
 ## Setting up database in postgresql
+
 Imagine Database name is New_db
 Imagine user name is New_User_be
+
+```bash
+sudo -u postgres psql
+```
 
 ```sql
 CREATE DATABASE New_db;
