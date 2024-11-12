@@ -278,14 +278,8 @@ class IllnessAnalysisView(APIView):
         self.corporate = serializer.validated_data.get(
             "corporate"
         )  # * This is optional
-        self.organisation = serializer.validated_data["organisation"]
+        self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
-        # * Set Locations Queryset
-        self.locations = set_locations_data(
-            organisation=self.organisation,
-            corporate=self.corporate,
-            location=self.location,
-        )
         self.set_raw_responses()
 
         response_data = {
