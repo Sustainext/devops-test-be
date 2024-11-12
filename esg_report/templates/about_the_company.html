@@ -1,5 +1,5 @@
 <!-- about_the_company.html -->
-{% if about_the_company %}
+
 <h2>2. About the Company and Operations</h2>
 <p>{{about_the_company.about_the_company|safe}}</p>
 
@@ -74,4 +74,3 @@
 <p> {% if about_the_company.supply_chain_description %}{{about_the_company.supply_chain_description|safe}}{% else %} No
     data
     added. {% endif %} </p>
-{% endif %}
