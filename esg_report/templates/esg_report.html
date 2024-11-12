@@ -10,16 +10,17 @@
     /* Set A4 page size */
     @page {
       size: A4;
-      margin: 10mm;
+      margin: 8mm;
 
       /* Set the margins for all pages */
       @bottom-right {
-        content: "Page " counter(page) " of " counter(pages);
+        content: counter(page);
         /* Add page numbering */
         font-size: 10px;
         color: #27272a;
         margin-bottom: 3mm;
         padding: 5px;
+        margin-right: 10px;
       }
     }
 
@@ -175,14 +176,13 @@
       color: #495059;
       line-height: 1.5;
       list-style-type: none;
-      margin-left: 15px;
+      
     }
 
     ol>li {
       font-size: 11px;
       color: #495059;
       line-height: 1.5;
-      margin-left: 15px;
     }
   </style>
 </head>
@@ -190,7 +190,6 @@
 <body>
   <div class="blob-top"></div>
   <div class="blob-bottom"></div>
-  {% comment %}
   {% include "esg_contents.html" %}
   <div class="page-break"></div>
   {% include "message_from_ceo.html" %}
@@ -217,20 +216,17 @@
   {% include "screen12/biodiversity_management.html" %}
   {% include "screen12/air_quality_management.html" %}
   <div class="page-break"></div>
-  {% endcomment %}
-  {% comment %} {% include "screen13/people_management.html" %} {% endcomment %}
-  {% comment %} {% include "screen13/labour_management.html" %} {% endcomment %}
+  {% include "screen13/people_management.html" %}
+  {% include "screen13/labour_management.html" %}
   {% include "screen13/child_labour_management.html" %}
-  {% comment %} {% include "screen13/diversity_inclusion.html" %} {% endcomment %}
-  {% comment %} {% include "screen13/training_education.html" %} {% endcomment %}
-  {% comment %} {% include "screen13/occupational_health_safety.html" %} {% endcomment %}
-  {% comment %} {% include "screen13/collective_bargaining.html" %} {% endcomment %}
-  {% comment %} {% include "screen13/incidents_violation_discrimination.html" %} {% endcomment %}
-  {% comment %} 
+  {% include "screen13/diversity_inclusion.html" %}
+  {% include "screen13/training_education.html" %}
+  {% include "screen13/occupational_health_safety.html" %}
+  {% include "screen13/collective_bargaining.html" %}
+  {% include "screen13/incidents_violation_discrimination.html" %}
   <div class="page-break"></div>
   {% include "screen14/community_engagement_csr.html" %}
   {% include "screen15/customers_products_services.html" %} 
-  {% endcomment %}
 </body>
 
 </html>
