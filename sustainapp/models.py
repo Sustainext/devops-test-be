@@ -1112,4 +1112,4 @@ class Department(AbstractModel):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.client} - {self.value}"
+        return f"{self.client} - {self.name}"
