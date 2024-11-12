@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from authentication.models import Department
-from authentication.serializers.DepartmentSerializer import DepartmentSerializer
+from sustainapp.models import Department
+from sustainapp.Serializers.DepartmentSerializer import DepartmentSerializer
 
 
 class DepartmentViewSet(viewsets.ModelViewSet):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from authentication.models import Department
+from sustainapp.models import Department
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
