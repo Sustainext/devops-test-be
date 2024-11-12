@@ -5,7 +5,11 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
-from datametric.utils.analyse import set_locations_data, filter_by_start_end_dates
+from datametric.utils.analyse import (
+    set_locations_data,
+    filter_by_start_end_dates,
+    get_raw_response_filters,
+)
 from datametric.models import RawResponse
 from django.db.models.expressions import RawSQL
 from django.db.models import Q, Func, Value
@@ -29,7 +33,13 @@ class IllnessAnalysisView(APIView):
             RawResponse.objects.filter(
                 path__slug__in=slugs,
                 client=self.request.user.client,
-                locale__in=self.locations,  # .values_list("name", flat=True),
+            )
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .annotate(json_data=RawSQL("CAST(data AS JSONB)", []))
