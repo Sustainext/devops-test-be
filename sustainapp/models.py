@@ -1105,3 +1105,11 @@ class TrackDashboard(AbstractModel):
     report_name = models.CharField(max_length=1024, choices=REPORT_CHOICES)
     report_id = models.CharField(max_length=255)
     group_id = models.CharField(max_length=255)
+
+
+class Department(AbstractModel):
+    name = models.TextField()
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.client} - {self.name}"

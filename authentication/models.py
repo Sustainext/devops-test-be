@@ -179,4 +179,8 @@ class UserSafeLock(AbstractModel):
     locked_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
+<<<<<<< HEAD
         return f"SafeLock for {self.user.username}"
+=======
+        return f"SafeLock for {self.user.username}"
+>>>>>>> c83bcc07c18276b53a162be2fab21facf002ae59
