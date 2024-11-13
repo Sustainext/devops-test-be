@@ -1,2 +1,6 @@
 <h2>4. Sustainability Roadmap</h2>
-<p>{{sustainability_roadmap.description|safe}}</p>
+{% if sustainability_roadmap.description %}
+<p>{{sustainability_roadmap.description|safe|default:"No data available."}}</p>
+{% else %}
+<p>No data available.</p>
+{% endif %}

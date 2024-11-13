@@ -1,8 +1,7 @@
 <!-- corporate_governance.html -->
-{% if screen_nine_data %}
 <h2>9. Corporate Governance</h2>
 {% if screen_nine_data.statement %}
-<p>{{screen_nine_data.statement}}</p>
+<p>{{screen_nine_data.statement|safe}}</p>
 {% else %}
 <p>No statement provided.</p>
 {% endif %}
@@ -750,4 +749,3 @@
     <!-- Add more rows as necessary -->
   </tbody>
 </table>
-{% endif %}

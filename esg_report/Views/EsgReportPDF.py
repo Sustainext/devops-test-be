@@ -25,6 +25,7 @@ from django.forms import model_to_dict
 from authentication.models import CustomUser
 from esg_report.services.data import context_data
 import json
+from threading import Thread
 
 
 def convert_keys(obj):
@@ -46,101 +47,162 @@ class ESGReportPDFView(View):
     def get(self, request, *args, **kwargs):
         start_time = time.time()
         user = CustomUser.objects.get(username="utsav.pipersaniya@sustainext.ai")
-
         pk = self.kwargs.get("pk")
-        try:
-            # Retrieve the report object
-            report = CeoMessageService.get_report_by_id(pk)
-        except Report.DoesNotExist:
-            return HttpResponse(f"No report found with ID={pk}", status=404)
-        except Exception as e:
-            return HttpResponse(
-                "An unexpected error occurred while retrieving the report.", status=500
+        results = {}
+
+        # Function to retrieve report
+        def fetch_report():
+            try:
+                results["report"] = CeoMessageService.get_report_by_id(pk)
+            except Report.DoesNotExist:
+                results["error"] = HttpResponse(
+                    f"No report found with ID={pk}", status=404
+                )
+            except Exception as e:
+                results["error"] = HttpResponse(
+                    "An unexpected error occurred while retrieving the report.",
+                    status=500,
+                )
+
+        # Define all tasks as separate functions
+        def get_ceo_message():
+            ceo_message = CeoMessageService.get_ceo_message_by_report(results["report"])
+            dict_ceo_message = model_to_dict(ceo_message) if ceo_message else {}
+            results["ceo_message"] = convert_keys(dict_ceo_message)
+
+        def get_about_the_company():
+            service = ScreenTwoService(user)
+            about_the_company_service, is_new = service.fetch_about_company(
+                results["report"]
             )
-        ceo_message = CeoMessageService.get_ceo_message_by_report(report)
-        dict_ceo_message = model_to_dict(ceo_message) if ceo_message else {}
-        dict_ceo_message = convert_keys(dict_ceo_message)
-        service = ScreenTwoService(user)
-        about_the_company_service, is_new = service.fetch_about_company(report)
-        about_the_company = service.get_about_company_data(
-            about_the_company_service, report, request
-        )
-        about_the_company = convert_keys(about_the_company)
-
-        mission_vision_values = (
-            MissionVisionValuesService.get_mission_vision_values_by_report_id(pk)
-        )
-        mission_vision_values = convert_keys(mission_vision_values)
-
-        sustainability_roadmap = (
-            SustainabilityRoadmapService.get_sustainability_roadmap_by_report_id(pk)
-        )
-        sustainability_roadmap = convert_keys(sustainability_roadmap)
-
-        awards_and_recognition = (
-            AwardsAndRecognitionService.get_awards_and_recognition_by_report_id(pk)
-        )
-        awards_and_recognition = convert_keys(awards_and_recognition)
-
-        stakeholder_engagement = (
-            StakeholderEngagementService.get_stakeholder_engagement_by_report_id(
-                pk, user
+            about_the_company = service.get_about_company_data(
+                about_the_company_service, results["report"], request
             )
-        )
-        stakeholder_engagement = convert_keys(stakeholder_engagement)
+            results["about_the_company"] = convert_keys(about_the_company)
 
-        about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
-        about_the_report = convert_keys(about_the_report)
+        def get_mission_vision_values():
+            mission_vision_values = (
+                MissionVisionValuesService.get_mission_vision_values_by_report_id(pk)
+            )
+            results["mission_vision_values"] = convert_keys(mission_vision_values)
 
-        materiality = MaterialityService.get_materiality_data(pk)
-        materiality = convert_keys(materiality)
+        def get_sustainability_roadmap():
+            sustainability_roadmap = (
+                SustainabilityRoadmapService.get_sustainability_roadmap_by_report_id(pk)
+            )
+            results["sustainability_roadmap"] = convert_keys(sustainability_roadmap)
 
-        screen_nine_service = ScreenNineService(report_id=pk)
-        screen_nine_data = screen_nine_service.get_response()
+        def get_awards_and_recognition():
+            awards_and_recognition = (
+                AwardsAndRecognitionService.get_awards_and_recognition_by_report_id(pk)
+            )
+            results["awards_and_recognition"] = convert_keys(awards_and_recognition)
 
-        screen_ten_data = ScreenTenService.get_screen_ten(pk)
-        screen_ten_data = convert_keys(screen_ten_data)
+        def get_stakeholder_engagement():
+            stakeholder_engagement = (
+                StakeholderEngagementService.get_stakeholder_engagement_by_report_id(
+                    pk, user
+                )
+            )
+            results["stakeholder_engagement"] = convert_keys(stakeholder_engagement)
 
-        # screen_eleven_service = ScreenElevenService(report_id=pk, request=request)
-        # screen_eleven_data = screen_eleven_service.get_report_response()
-        # # screen_eleven_data = convert_keys(screen_eleven_data)
+        def get_about_the_report():
+            about_the_report = AboutTheReportService.get_about_the_report_data(pk, user)
+            results["about_the_report"] = convert_keys(about_the_report)
 
-        # screen_twelve_service = ScreenTwelveService(report_id=pk, request=request)
-        # screen_twelve_data = screen_twelve_service.get_report_response()
-        # screen_twelve_data = convert_keys(screen_twelve_data)
+        def get_materiality():
+            materiality = MaterialityService.get_materiality_data(pk)
+            results["materiality"] = convert_keys(materiality)
 
-        # screen_thirteen_service = ScreenThirteenService(report_id=pk, request=request)
-        # screen_thirteen_data = screen_thirteen_service.get_report_response()
-        # screen_thirteen_data = convert_keys(screen_thirteen_data)
+        def get_screen_nine_data():
+            screen_nine_service = ScreenNineService(report_id=pk)
+            results["screen_nine_data"] = screen_nine_service.get_response()
 
-        # screen_fourteen_service = ScreenFourteenService(report_id=pk, request=request)
-        # screen_fourteen_data = screen_fourteen_service.get_report_response()
-        # screen_fourteen_data = convert_keys(screen_fourteen_data)
+        def get_screen_ten_data():
+            screen_ten_data = ScreenTenService.get_screen_ten(pk)
+            results["screen_ten_data"] = convert_keys(screen_ten_data)
 
-        # screen_fifteen_service = ScreenFifteenService(report_id=pk, request=request)
-        # screen_fifteen_data = screen_fifteen_service.get_report_response()
-        # screen_fifteen_data = convert_keys(screen_fifteen_data)
-        # print(screen_fifteen_data)
-        # Prepare the context for rendering the PDF template
-        # data = convert_keys(context_data)
-        # print(data)
+        def get_screen_eleven_data():
+            screen_eleven_service = ScreenElevenService(report_id=pk, request=request)
+            results["screen_eleven_data"] = screen_eleven_service.get_report_response()
+
+        def get_screen_twelve_data():
+            screen_twelve_service = ScreenTwelveService(report_id=pk, request=request)
+            results["screen_twelve_data"] = convert_keys(
+                screen_twelve_service.get_report_response()
+            )
+
+        def get_screen_thirteen_data():
+            screen_thirteen_service = ScreenThirteenService(
+                report_id=pk, request=request
+            )
+            results["screen_thirteen_data"] = convert_keys(
+                screen_thirteen_service.get_report_response()
+            )
+
+        def get_screen_fourteen_data():
+            screen_fourteen_service = ScreenFourteenService(
+                report_id=pk, request=request
+            )
+            results["screen_fourteen_data"] = convert_keys(
+                screen_fourteen_service.get_report_response()
+            )
+
+        def get_screen_fifteen_data():
+            screen_fifteen_service = ScreenFifteenService(report_id=pk, request=request)
+            results["screen_fifteen_data"] = convert_keys(
+                screen_fifteen_service.get_report_response()
+            )
+
+        fetch_report()
+        # List of threads to run
+        threads = [
+            Thread(target=get_ceo_message),
+            Thread(target=get_about_the_company),
+            Thread(target=get_mission_vision_values),
+            Thread(target=get_sustainability_roadmap),
+            Thread(target=get_awards_and_recognition),
+            Thread(target=get_stakeholder_engagement),
+            Thread(target=get_about_the_report),
+            Thread(target=get_materiality),
+            Thread(target=get_screen_nine_data),
+            Thread(target=get_screen_ten_data),
+            Thread(target=get_screen_eleven_data),
+            Thread(target=get_screen_twelve_data),
+            Thread(target=get_screen_thirteen_data),
+            Thread(target=get_screen_fourteen_data),
+            Thread(target=get_screen_fifteen_data),
+        ]
+
+        # Start all threads
+        for thread in threads:
+            thread.start()
+
+        # Wait for all threads to complete
+        for thread in threads:
+            thread.join()
+
+        # Handle errors from fetching report
+        if "error" in results:
+            return results["error"]
+
+        # Create context for rendering
         context = {
-            "report": report,
-            "ceo_message": dict_ceo_message,
-            "about_the_company": about_the_company,
-            "mission_vision_values": mission_vision_values,
-            "sustainability_roadmap": sustainability_roadmap,
-            "awards_and_recognition": awards_and_recognition,
-            "stakeholder_engagement": stakeholder_engagement,
-            "about_the_report": about_the_report,
-            "materiality": materiality,
-            "screen_nine_data": screen_nine_data,
-            # "screen_ten_data": screen_ten_data,
-            # "screen_eleven_data": screen_eleven_data,
-            # "screen_twelve_data": screen_twelve_data,
-            "screen_thirteen_data": context_data,
-            # "screen_fourteen_data": screen_fourteen_data,
-            # "screen_fifteen_data": screen_fifteen_data,
+            "ceo_message": results["ceo_message"],
+            "about_the_company": results["about_the_company"],
+            "mission_vision_values": results["mission_vision_values"],
+            "sustainability_roadmap": results["sustainability_roadmap"],
+            "awards_and_recognition": results["awards_and_recognition"],
+            "stakeholder_engagement": results["stakeholder_engagement"],
+            "about_the_report": results["about_the_report"],
+            "materiality": results["materiality"],
+            "screen_nine_data": results["screen_nine_data"],
+            "screen_ten_data": results["screen_ten_data"],
+            "screen_eleven_data": results["screen_eleven_data"],
+            "screen_twelve_data": results["screen_twelve_data"],
+            "screen_thirteen_data": results["screen_thirteen_data"],
+            "screen_fourteen_data": results["screen_fourteen_data"],
+            "screen_fifteen_data": results["screen_fifteen_data"],
             "pk": pk,
         }
 
@@ -156,7 +218,7 @@ class ESGReportPDFView(View):
         # Configure the response to return a PDF file
         response = HttpResponse(content_type="application/pdf")
         disposition = "attachment" if "download" in request.GET else "inline"
-        pdf_filename = f"{report.name}.pdf"
+        pdf_filename = f"{results['report'].name}.pdf"
         response["Content-Disposition"] = f'{disposition}; filename="{pdf_filename}"'
 
         try:

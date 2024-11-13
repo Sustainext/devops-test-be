@@ -1,10 +1,19 @@
 <!-- message_from_ceo.html -->
 <div>
   <h2>1. Message from the CEO</h2>
+  <div style="text-align: center; margin: 20px 0;">
+    <img src="{{ ceo_message.message_image }}" alt=""
+      style="max-width: 400px; height: 300px; object-fit: cover; border-radius: 10px; margin: 0 auto;" />
+  </div>
+
+
   <p>{{ ceo_message.message | safe |default:"No data available." }}</p>
   {% if ceo_message.message %}
   <p>Thank you for your continued trust and support.</p>
   <p>Sincerely,</p>
   {% endif %}
-  <p><strong>{{ ceo_message.ceo_name|default:"No data available." }}</strong><br />Chief Executive Officer<br /><strong>{{ ceo_message.company_name|default:"No data available." }}</strong></p>
+  <p>{{ ceo_message.ceo_name|default:"No data available." }}<br />Chief Executive
+    Officer<br />{{ ceo_message.company_name|default:"No data available." }}</p>
+  <img src="{{ ceo_message.signature_image }}" alt=""
+    style="max-width: 100px; height: 100px; object-fit: cover; border-radius: 10px; margin: 0 auto;" />
 </div>

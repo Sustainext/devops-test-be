@@ -3,14 +3,14 @@
 <h2>2. About the Company and Operations</h2>
 <p>{{about_the_company.about_the_company|safe}}</p>
 
-<p><strong>• Nature of ownership and legal form:</strong>
+<p><span style="color: black;">• Nature of ownership and legal form:</span>
     {% if about_the_company.2_1 and about_the_company.2_1.nature_of_ownership_and_legal_form %}
     {{ about_the_company.2_1.nature_of_ownership_and_legal_form }}
     {% else %}
     No data available
     {% endif %}
 </p>
-<p><strong>• Countries of operation:</strong>
+<p><span style="color: black;">• Countries of operation:</span>
     {% if about_the_company.2_1 and about_the_company.2_1.countries_of_operation %}
     {% for country in about_the_company.2_1.countries_of_operation %}
     {{ country }}{% if not loop.last %}, {% endif %}
@@ -18,7 +18,7 @@
     {% else %}
     No data available
     {% endif %}</p>
-<p><strong>• Headquarters:</strong>
+<p><span style="color: black;">• Headquarters:</span>
     {% if about_the_company.2_1 and about_the_company.2_1.location_of_headquarters %}
     {{about_the_company.2_1.location_of_headquarters}}
     {% else %}
@@ -27,7 +27,6 @@
 </p>
 
 <h3>2.1. Business Model and Impact</h3>
-
 
 <h4>2.1.1 Activities, Value Chain, and Other Business Relationships</h4>
 <p>{{ about_the_company.entities_included|safe }}</p>
@@ -43,17 +42,17 @@
 
 <p>Our value chain encompasses several key stages:</p>
 <ul>
-    <li><strong>• Activities:</strong>{{ about_the_company.2_6_b.Q1}}</li>
-    <li><strong>• Product:</strong> {{ about_the_company.2_6_b.Q2}}</li>
-    <li><strong>• Services:</strong> {{ about_the_company.2_6_b.Q3}}</li>
-    <li><strong>• Market served:</strong> {{ about_the_company.2_6_b.Q4}}</li>
-    <li><strong>• Supply chain:</strong> {{ about_the_company.2_6_b.Q5}}</li>
-    <li><strong>• Entities downstream from the organization & their activities:</strong> {{ about_the_company.2_6_b.Q6}}
+    <li>• Activities:{{ about_the_company.2_6_b.Q1}}</li>
+    <li>• Product: {{ about_the_company.2_6_b.Q2}}</li>
+    <li>• Services: {{ about_the_company.2_6_b.Q3}}</li>
+    <li>• Market served: {{ about_the_company.2_6_b.Q4}}</li>
+    <li>• Supply chain: {{ about_the_company.2_6_b.Q5}}</li>
+    <li>• Entities downstream from the organization & their activities:</strong> {{ about_the_company.2_6_b.Q6}}
     </li>
-    <li><strong>• Other relevant business relationships:</strong> {{ about_the_company.2_6_c}}</li>
+    <li>• Other relevant business relationships: {{ about_the_company.2_6_c}}</li>
 </ul>
 
-<h4>2.1.2 Entities Included in the Organization's Sustainability Reporting (GRI 2-2-a)</h4>
+<h4>2.1.2 Entities Included in the Organization's Sustainability Reporting</h4>
 <p>This report includes sustainability performance data from all entities under
     <strong>{{ceo_message.company_name}}</strong>'s
     operational control. This encompasses:

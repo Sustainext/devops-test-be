@@ -2,29 +2,28 @@
 <!-- If stakesholder_engagement is not empty, display the content -->
 <h2>6. Stakeholder Engagement</h2>
 
-<p>{{stakeholder_engagement.description.content|safe}}</p>
+<p>{{stakeholder_engagement.description.content|safe|default:"No data available."}}</p>
 
 <h3>6.1 Approach to Stakeholder Engagement</h3>
 
 <ul>
-  <li><strong>Identification and Prioritization</strong></li>
-  <p>{{stakeholder_engagement.Stakeholdersidentified}}</p>
+  <li>Identification and Prioritization</li>
+  <p>{{stakeholder_engagement.Stakeholdersidentified|default:"No data available."}}</p>
 
-  <li><strong>Stakeholder Categories</strong></li>
-  <p>{{stakeholder_engagement.Organisationengages}}</p>
+  <li>Stakeholder Categories</li>
+  <p>{{stakeholder_engagement.Organisationengages|default:"No data available."}}</p>
 
-  <li><strong>Approach to Stakeholder Engagement</strong></li>
+  <li>Approach to Stakeholder Engagement</li>
   <p>
-    We employ a variety of engagement methods tailored to the needs and preferences of different stakeholder groups. The purpose of stakeholder engagement is to ensure mutual understanding, address
-    concerns, and collaborate on sustainability initiatives that benefit both {{ ceo_message.company_name }} and the community.
+    We employ a variety of engagement methods tailored to the needs and preferences of different stakeholder groups. The
+    purpose of stakeholder engagement is to ensure mutual understanding, address
+    concerns, and collaborate on sustainability initiatives that benefit both {{ ceo_message.company_name }} and the
+    community.
   </p>
 </ul>
 
-<h2>Approach to Stakeholder engagement.</h2>
-<table
-  cellpadding="5"
-  cellspacing="0"
->
+<h5>Approach to Stakeholder engagement.</h5>
+<table cellpadding="5" cellspacing="0">
   <thead>
     <tr>
       <th>Stakeholder</th>
@@ -49,7 +48,7 @@
     <!-- Add more rows as necessary -->
   </tbody>
 </table>
-<h3>Engagement with Stakeholders</h3>
-<p>{{stakeholder_engagement.Stakeholderengagement}}</p>
-<h3>Stakeholder’s Feedback</h3>
-<p>{{stakeholder_engagement.stakeholder_feedback}}</p>
+<h5>Engagement with Stakeholders</h5>
+<p>{{stakeholder_engagement.Stakeholderengagement|default:"No data available."}}</p>
+<h5>Stakeholder’s Feedback</h5>
+<p>{{stakeholder_engagement.stakeholder_feedback|default:"No data available."}}</p>
