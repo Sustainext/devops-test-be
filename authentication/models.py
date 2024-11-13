@@ -126,8 +126,12 @@ class CustomUser(AbstractUser):
     optimise = models.BooleanField(default=False)
     track = models.BooleanField(default=False)
     permissions_checkbox = models.BooleanField(default=False)
-    orgs = models.ManyToManyField("sustainapp.Organization", related_name="organizations")
-    corps = models.ManyToManyField("sustainapp.Corporateentity", related_name="corporates")
+    orgs = models.ManyToManyField(
+        "sustainapp.Organization", related_name="organizations"
+    )
+    corps = models.ManyToManyField(
+        "sustainapp.Corporateentity", related_name="corporates"
+    )
     locs = models.ManyToManyField("sustainapp.Location", related_name="locations")
 
     @property
@@ -179,8 +183,4 @@ class UserSafeLock(AbstractModel):
     locked_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-<<<<<<< HEAD
         return f"SafeLock for {self.user.username}"
-=======
-        return f"SafeLock for {self.user.username}"
->>>>>>> c83bcc07c18276b53a162be2fab21facf002ae59
