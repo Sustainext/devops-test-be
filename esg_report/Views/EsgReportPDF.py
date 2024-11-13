@@ -203,7 +203,7 @@ class ESGReportPDFView(View):
             "screen_thirteen_data": results["screen_thirteen_data"] if "screen_thirteen_data" in results else None,
             "screen_fourteen_data": results["screen_fourteen_data"] if "screen_fourteen_data" in results else None,
             "screen_fifteen_data": results["screen_fifteen_data"] if "screen_fifteen_data" in results else None,
-            "pk": pk,
+            "pk": pk, # Pass the report ID to the template
         }
 
         template_path = "esg_report.html"
