@@ -2,9 +2,16 @@
 {% load custom_tags %}
 <h3>12.3. Water</h3>
 
-<p><span style="color:#000;">Interaction with water as a shared resource:</span> {{screen_twelve_data.303_1b_1c_1d.data.0.Q1|default:"No data available."}}</p>
-<p><span style="color:#000;">Water-related impacts:</span> {{screen_twelve_data.303_1b_1c_1d.data.0.Q2}}, {{screen_twelve_data.303_1b_1c_1d.data.0.Q3|default:"No data available."}}</p>
-<p><span style="color:#000;">Water-related goals and targets:</span> {{screen_twelve_data.303_1b_1c_1d.data.0.Q4|default:"No data available."}}</p>
+{% if screen_twelve_data.303_1b_1c_1d.data and screen_twelve_data.303_1b_1c_1d.data|length > 0 %}
+  <p><span style="color:#000;">Interaction with water as a shared resource:</span> {{ screen_twelve_data.303_1b_1c_1d.data.0.Q1|default:"No data available." }}</p>
+  <p><span style="color:#000;">Water-related impacts:</span> 
+    {{ screen_twelve_data.303_1b_1c_1d.data.0.Q2|default:"No data available." }}, 
+    {{ screen_twelve_data.303_1b_1c_1d.data.0.Q3|default:"No data available." }}
+  </p>
+  <p><span style="color:#000;">Water-related goals and targets:</span> {{ screen_twelve_data.303_1b_1c_1d.data.0.Q4|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
 
 <h4>12.3.1. Management of Material Topic</h4>
 <p>No data available</p>
@@ -371,16 +378,19 @@
   </tbody>
 </table>
 
-{% if screen_twelve_data.303_2a_management_water_discharge and screen_twelve_data.303_2a_management_water_discharge.data %}
-<p style ="color:#000;">Discharge Standard used:</p>
-<p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q1|default:"No data available" }}</p>
-<p style ="color:#000;">Process to determine discharge standards:</p>
-<p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q2|default:"No data available" }}</p>
-<p style ="color:#000;">Internal water quality standards:</p>
-<p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q3|default:"No data available" }}</p>
+{% if screen_twelve_data.303_2a_management_water_discharge and screen_twelve_data.303_2a_management_water_discharge.data and screen_twelve_data.303_2a_management_water_discharge.data|length > 0 %}
+  <p style="color:#000;">Discharge Standard used:</p>
+  <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q1|default:"No data available" }}</p>
+  
+  <p style="color:#000;">Process to determine discharge standards:</p>
+  <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q2|default:"No data available" }}</p>
+  
+  <p style="color:#000;">Internal water quality standards:</p>
+  <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q3|default:"No data available" }}</p>
 {% else %}
-<p>No data available</p>
+  <p>No data available</p>
 {% endif %}
+
 
 <h4>12.3.4. Water Consumption</h4>
 <p>

@@ -3,7 +3,12 @@
 <h3>13.3. Incidents of Child Labour</h3>
 
 <h5>Measures taken by the organization</h5>
-<p> {{screen_thirteen_data.408_1c_measures_taken.data.0.Q1|default:"No data available."}} </p>
+{% if screen_thirteen_data.408_1c_measures_taken and screen_thirteen_data.408_1c_measures_taken.data and screen_thirteen_data.408_1c_measures_taken.data|length > 0 %}
+  <p>{{ screen_thirteen_data.408_1c_measures_taken.data.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+
 
 <h4>Operations at significant risk for incidents of young workers exposed to hazardous work </h4>
 <table cellpadding="5" cellspacing="0" width="100%">

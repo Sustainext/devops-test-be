@@ -2,7 +2,12 @@
 
 <h3>13.2. Labour Management</h3>
 <h5>Measures taken by the organization</h5>
-<p> {{screen_thirteen_data.409_1b.data.0.Q1|default:"No data available."}} </p>
+{% if screen_thirteen_data.409_1b and screen_thirteen_data.409_1b.data and screen_thirteen_data.409_1b.data|length > 0 %}
+  <p>{{ screen_thirteen_data.409_1b.data.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+
 
 <h4>13.2.1. Management of Material Topics</h4>
 <p>No data available.</p>
@@ -43,7 +48,12 @@
 <p>{{screen_thirteen_data.forced_labor_position|default:"No data available."}}</p>
 
 <h5>Measures taken by the organization</h5>
-<p> {{screen_thirteen_data.409_1b.data.0.Q1|default:"No data available."}} </p>
+{% if screen_thirteen_data.409_1b and screen_thirteen_data.409_1b.data and screen_thirteen_data.409_1b.data|length > 0 %}
+  <p>{{ screen_thirteen_data.409_1b.data.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+
 
 
 <h5>Operations at Significant Risk for Forced or Compulsory Labour</h5>
