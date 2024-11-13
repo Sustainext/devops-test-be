@@ -1,104 +1,123 @@
 <!-- customers_products_services.html -->
-
+{% load custom_tags %}
 <h2>15. Customers, Products & Services</h2>
 
 <h4>15.1. Products and Services</h4>
-<p>Our commitment to providing high-quality products and services is central to our business strategy. We adhere to the
-    Global Reporting Initiative (GRI) standards to ensure that our offerings meet the highest levels of safety,
-    sustainability, and customer satisfaction. This section outlines our approach to managing the health and safety
-    impacts of our products, addressing incidents of non-compliance, and ensuring accurate product information and
-    labelling.</p>
+<p>{{screen_fifteen_data.commitment_statement|default:"No data available"}}</p>
 
-<h5>15.1.1. Management of Material Topics (GRI 3-3-c, d, e)</h5>
-<hr>
-<p>[Details on how the organization manages material topics related to products and services, including strategies,
-    policies, and initiatives to ensure product safety, quality, and customer satisfaction.]</p>
+<h5>15.1.1. Management of Material Topics</h5>
+<p>No data available</p>
 
-<h5>15.1.2. Health and Safety Impacts of Product and Service Categories (GRI 416-1-a)</h5>
-<p>Ensuring the health and safety of our customers is paramount. We rigorously assess the health and safety impacts of
-    our products throughout their lifecycle, from design and manufacturing to usage and disposal.</p>
+<h4>15.1.2. Health and Safety Impacts of Product and Service Categories</h4>
+{% if screen_fifteen_data.416_1a.0.Q1 == 'Yes' %}
+<p>Number of product and service categories</p>
+<p>{{screen_fifteen_data.416_1a.0.Q2}}</p>
+
+<p>Number of product and service categories for which health and safety impacts are assessed for improvement.</p>
+<p>{{screen_fifteen_data.416_1a.0.Q3}}</p>
+{% else %}
+<p>No data available</p>
+{% endif %}
+
+<h4>15.1.3. Incidents of Non-Compliance</h4>
+
+<h5>Incidents of non-compliance concerning the health and safety impacts of products and services</h5>
+<p><span style = "color: #000;">Total number of Incidents of non-compliance with regulations resulting in a fine or penalty:</span> {{screen_fifteen_data.416_2a.0.Q1}}</p>
+<p><span style = "color: #000;">Total number of Incidents of non-compliance with regulations resulting in a warning:</span> {{screen_fifteen_data.416_2a.0.Q2}}</p>
+<p><span style = "color: #000;">Total number of Incidents of non-compliance with voluntary codes:</span> {{screen_fifteen_data.416_2a.0.Q3}}</p>
+<p><span style = "color: #000;">Non-compliance with regulations and/or voluntary codes:</span> {{screen_fifteen_data.416_2b.0.Q1}}</p>
+
+<h5>Incidents of non-compliance concerning product and service information and labeling</h5>
+<p><span style = "color: #000;">Total number of Incidents of non-compliance with regulations resulting in a fine or penalty:</span> {{screen_fifteen_data.417_2a.data.0.Q1}}</p>
+<p><span style = "color: #000;">Total number of Incidents of non-compliance with regulations resulting in a warning:</span> {{screen_fifteen_data.417_2a.data.0.Q2}}</p>
+<p><span style = "color: #000;">Total number of Incidents of non-compliance with voluntary codes:</span> {{screen_fifteen_data.417_2a.data.0.Q3}}</p>
+<p><span style = "color: #000;">Non-compliance with regulations and/or voluntary codes:</span> {{screen_fifteen_data.417_2b.0.Q1}}</p>
+
+<h3>15.2. Product and Service Information and Labelling</h3>
+<p>{{screen_fifteen_data.product_info_labelling|default:"No data available"}}</p>
+{% if screen_fifteen_data.417_1a.data.0.Q1 == 'Yes' %}
+<h5>Product and Service Information and Labeling</h5>
+<p><span style = "color: #000;">Source of Components:</span> {{screen_fifteen_data.417_1a.data.0.Q2}}</p>
+<p><span style = "color: #000;">Substances that might produce an environmental or social impact:</span> {{screen_fifteen_data.417_1a.data.0.Q3}}</p>
+<p><span style = "color: #000;">Safe use of the product or service:</span> {{screen_fifteen_data.417_1a.data.0.Q4}}</p>
+<p><span style = "color: #000;">Disposal of the product:</span> {{screen_fifteen_data.417_1a.data.0.Q5}}</p>
+{% endif %}
+
+<table>
+  <thead>
+    <tr>
+      <th>Organization/Corporation</th>
+      <th>Percentage of significant product or service categories covered by and assessed for compliance with such procedures</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in screen_fifteen_data.417_1b_analysis.marketing_labeling %}
+    <tr>
+      <td>{{ product.org_or_corp }}</td>
+      <td>{{ product.percentage }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h4>15.2.1. Management of Material Topics</h4>
+<p>No data available</p>
+<p>No data available</p>
+
+<h4>15.2.2. Marketing</h4>
+<p>{{screen_fifteen_data.marketing_practices|default:"No data available"}}</p>
 
 <ul>
-    <li>Percentage of significant product and service categories for which health and safety impacts are assessed for
-        improvement: {{ health_safety_impacts.percentage_assessed }}%</li>
-</ul>
-
-<h5>15.1.3. Incidents of Non-Compliance (GRI 416-2-a, b, 417-2-a, b)</h5>
-<p>Maintaining compliance with regulatory standards and internal policies is critical to our operations. We have robust
-    systems in place to monitor, report, and address any incidents of non-compliance.</p>
-
-<ul>
-    <li>Number of incidents of non-compliance with regulations resulting in a fine or penalty: {{
-        non_compliance.incidents_fine }}</li>
-    <li>Number of incidents of non-compliance with regulations resulting in a warning: {{
-        non_compliance.incidents_warning }}</li>
-    <li>Number of incidents of non-compliance with voluntary codes: {{ non_compliance.incidents_voluntary }}</li>
-</ul>
-
-<h4>15.2. Product and Service Information and Labelling (GRI 417-1-a, b)</h4>
-<p>Providing accurate and comprehensive information about our products is essential for informed customer
-    decision-making. We adhere to stringent standards for product labelling and information disclosure.</p>
-
-<ul>
-    <li>Percentage of significant product or service categories covered by and assessed for compliance with such
-        procedures: {{ product_labelling.compliance_percentage }}%</li>
-</ul>
-
-<h5>15.2.1. Management of Material Topics (GRI 3-3-c, d, e)</h5>
-<hr>
-<p>[Details on how the organization manages material topics related to product and service information and labelling,
-    ensuring accuracy, transparency, and customer protection.]</p>
-
-<h5>15.2.2. Marketing (GRI 417-3-a, b)</h5>
-<p>Our marketing practices reflect our commitment to ethical standards, transparency, and customer satisfaction. We
-    strive to promote our products and services in a manner that is honest, accurate, and respectful of our customers'
-    needs and preferences. We have robust systems in place to monitor, report, and address any incidents of
-    non-compliance.</p>
-
-<ul>
-    <li>Number of incidents of non-compliance with regulations resulting in a fine or penalty: {{
-        marketing_non_compliance.incidents_fine }}</li>
-    <li>Number of incidents of non-compliance with regulations resulting in a warning: {{
-        marketing_non_compliance.incidents_warning }}</li>
-    <li>Number of incidents of non-compliance with voluntary codes: {{ marketing_non_compliance.incidents_voluntary }}
-    </li>
+  <li style="margin-bottom: 10px;">Number of incidents of non-compliance with regulations resulting in a fine or penalty: <span style="color: #495059">{{ screen_fifteen_data.417_3a.data.0.Q1|default:"No data available." }}</span></li>
+  <li style="margin-bottom: 10px;">Number of incidents of non-compliance with regulations resulting in a warning: <span style="color: #495059">{{ screen_fifteen_data.417_3a.data.0.Q2|default:"No data available." }}</span></li>
+  <li style="margin-bottom: 10px;">Number of incidents of non-compliance with voluntary codes: <span style="color: #495059">{{ screen_fifteen_data.417_3a.data.0.Q3|default:"No data available." }}</span></li>
 </ul>
 
 <h5>Ethical Marketing Practices</h5>
 <ul>
-    <li><strong>Truthful Advertising:</strong> We ensure that all marketing communications are truthful, not misleading,
-        and substantiated by evidence. We adhere to industry standards and regulatory requirements for advertising.</li>
-    <li><strong>Respect for Privacy:</strong> We respect customer privacy and ensure that all marketing activities
-        comply with data protection regulations. Personal information collected for marketing purposes is handled with
-        the utmost care and confidentiality.</li>
+  <li style="margin-bottom: 10px;">
+    Truthful Advertising:<span style="color: #495059"> We ensure that all marketing communications are truthful, not misleading, and substantiated by evidence. We adhere to industry standards and regulatory
+    requirements for advertising.</span>
+  </li>
+  <li style="margin-bottom: 10px;">
+    Respect for Privacy: <span style="color: #495059">We respect customer privacy and ensure that all marketing activities comply with data protection regulations. Personal information collected for marketing
+    purposes is handled with the utmost care and confidentiality.</span>
+  </li>
 </ul>
 
-<h4>15.3. Customers (GRI 418-1-a, b, c)</h4>
-<p>Our customers are at the heart of everything we do. We are dedicated to delivering exceptional value, ensuring
-    customer satisfaction, and building long-term relationships based on trust and mutual benefit.</p>
+<h3>15.3. Customers</h3>
+<p>
+  Our customers are at the heart of everything we do. We are dedicated to delivering exceptional value, ensuring customer satisfaction, and building long-term relationships based on trust and mutual
+  benefit.
+</p>
 
 <ul>
-    <li>Number of substantiated complaints received concerning breaches of customers' privacy: {{
-        customer_privacy.complaints_substantiated }}</li>
-    <li>Complaints received from outside parties and substantiated by the organization: {{
-        customer_privacy.outside_complaints }}</li>
-    <li>Complaints from regulatory bodies: {{ customer_privacy.regulatory_complaints }}</li>
-    <li>Number of identified leaks, thefts, or losses of customer data: {{ customer_privacy.data_leaks }}</li>
+  <li style="margin-bottom: 10px;">Number of identified leaks, thefts, or losses of customer data: <span style="color: #495059;">{{ screen_fifteen_data.418_1b.0.Q1|default:"No data available." }} </span></li>
+  <li style="margin-bottom: 10px;">Statement of fact: <span style="color: #495059;">{{ screen_fifteen_data.418_1c.0.Q1|default:"No data available." }} </span></li>
 </ul>
 
-<h5>15.3.1. Management of Material Topics (GRI 3-3-c, d, e)</h5>
-<hr>
-<p>[Details on how the organization manages material topics related to customer privacy, satisfaction, and data
-    protection, including systems in place to handle complaints and prevent data breaches.]</p>
+<h5>Total number of substantiated complaints received concerning breaches of customer privacy</h5>
+<table>
+  <thead>
+    <tr>
+      <th>Number of substantiated complaints received concerning breaches of customer privacy</th>
+      <th>Complaints received from outside parties and substantiated by the organization</th>
+      <th>Complaints from regulatory bodies</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for data in screen_fifteen_data.418_1a_analyse.customer_privacy_data %}
+    <tr>
+      <td>{{ data.customerprivacy }}</td>
+      <td>{{ data.substantiatedorganization }}</td>
+      <td>{{ data.regulatorybodies }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h4>15.3.1. Management of Material Topics</h4>
+<p>No data available.</p>
 
 <h4>Conclusion</h4>
-<p>At [Company Name], our commitment to sustainability is unwavering. This report, prepared in accordance with the
-    Global Reporting Initiative (GRI) standards, outlines our efforts, achievements, and future goals in fostering
-    sustainable development across our operations. We recognize that our journey toward sustainability is continuous and
-    requires persistent effort, innovation, and collaboration.</p>
-
-<h5>Our Commitment to Continuous Improvement</h5>
-<p>Sustainability is embedded in our corporate strategy, and we are dedicated to continuous improvement in all areas of
-    our business. We have set ambitious targets and implemented robust systems to monitor our progress. Our commitment
-    is reflected in the strides we have made in reducing our environmental footprint, enhancing our social
-    contributions, and upholding strong governance practices.</p>
+<p>{{screen_fifteen_data.conclusion|safe|default:"No data available"}}</p>

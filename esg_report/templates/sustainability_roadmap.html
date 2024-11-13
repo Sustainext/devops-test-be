@@ -1,3 +1,6 @@
 <h2>4. Sustainability Roadmap</h2>
-<p>(Data for this section should be collected separately from client, as it is not part of the
-    GRI screens)</p>
+{% if sustainability_roadmap.description %}
+<p>{{sustainability_roadmap.description|safe|default:"No data available."}}</p>
+{% else %}
+<p>No data available.</p>
+{% endif %}

@@ -1,91 +1,91 @@
 <!-- child_labour_management.html -->
 
-<h2>13.3. Incidents of Child Labour (GRI 408-1-a, b, c)</h2>
+<h3>13.3. Incidents of Child Labour</h3>
 
-<p>We have strict policies and procedures in place to prevent child labor. Any incidents are thoroughly investigated,
-    and corrective actions are implemented to prevent recurrence.</p>
+<h5>Measures taken by the organization</h5>
+<p> {{screen_thirteen_data.408_1c_measures_taken.data.0.Q1|default:"No data available."}} </p>
 
-<h4>Operations Considered to Have Significant Risk of Child Labour</h4>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
+<h4>Operations at significant risk for incidents of young workers exposed to hazardous work </h4>
+<table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
-            <th>Operation</th>
+            <th>Operations considered to have significant risk of young workers exposed to hazardous work </th>
             <th>Type of Operation</th>
             <th>Countries or Geographic Areas</th>
         </tr>
     </thead>
     <tbody>
-        {% for operation in child_labour_risk_operations %}
+        {% for operation in screen_thirteen_data.408_1a_408_1b_analyse.operation_significant_risk_of_young_workers %}
         <tr>
-            <td>{{ operation.operation_name }}</td>
-            <td>{{ operation.operation_type }}</td>
-            <td>{{ operation.geographic_area }}</td>
+            <td>{{ operation.hazardouswork }}</td>
+            <td>{{ operation.TypeofOperation }}</td>
+            <td>{{ operation.geographicareas }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<h4>Suppliers at Significant Risk for Incidents of Child Labour</h4>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Supplier</th>
-            <th>Type of Supplier</th>
-            <th>Countries or Geographic Areas</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for supplier in child_labour_risk_suppliers %}
-        <tr>
-            <td>{{ supplier.supplier_name }}</td>
-            <td>{{ supplier.supplier_type }}</td>
-            <td>{{ supplier.geographic_area }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<p> {{screen_thirteen_data.child_labor_position|default:"No data available"}} </p>
 
-<h4>Operations at Significant Risk for Young Workers Exposed to Hazardous Work</h4>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
+<h4>Operations considered to have significant risk of child labor</h4>
+<table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
-            <th>Operation</th>
+            <th>Operations considered to have significant risk of child labor </th>
             <th>Type of Operation</th>
             <th>Countries or Geographic Areas</th>
         </tr>
     </thead>
     <tbody>
-        {% for operation in young_workers_hazard_risk_operations %}
+        {% for supplier in screen_thirteen_data.408_1a_408_1b_analyse.operation_significant_risk_of_child_labor %}
         <tr>
-            <td>{{ operation.operation_name }}</td>
-            <td>{{ operation.operation_type }}</td>
-            <td>{{ operation.geographic_area }}</td>
+            <td>{{ supplier.childlabor }}</td>
+            <td>{{ supplier.TypeofOperation }}</td>
+            <td>{{ supplier.geographicareas }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<h4>Suppliers at Significant Risk for Young Workers Exposed to Hazardous Work</h4>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
+<h4>Suppliers at significant risk for incidents of child labor</h4>
+<table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
-            <th>Supplier</th>
+            <th>Suppliers considered to have significant risk of child labor</th>
             <th>Type of Supplier</th>
             <th>Countries or Geographic Areas</th>
         </tr>
     </thead>
     <tbody>
-        {% for supplier in young_workers_hazard_risk_suppliers %}
+        {% for operation in screen_thirteen_data.408_1a_408_1b_analyse.suppliers_significant_risk_of_child_labor %}
         <tr>
-            <td>{{ supplier.supplier_name }}</td>
-            <td>{{ supplier.supplier_type }}</td>
-            <td>{{ supplier.geographic_area }}</td>
+            <td>{{ operation.childlabor }}</td>
+            <td>{{ operation.TypeofOperation }}</td>
+            <td>{{ operation.geographicareas }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<h4>13.3.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
-<hr>
-<p>[Details on the management of child labor and hazardous work risks, including policies, monitoring systems, and
-    corrective measures implemented to mitigate such risks in operations and supply chains.]</p>
+<h4>Suppliers at significant risk for incidents of young workers exposed to hazardous work </h4>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Suppliers considered to have significant risk of young workers exposed to hazardous work </th>
+            <th>Type of Supplier</th>
+            <th>Countries or Geographic Areas</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for supplier in screen_thirteen_data.408_1a_408_1b_analyse.suppliers_significant_risk_of_young_workers %}
+        <tr>
+            <td>{{ supplier.hazardouswork }}</td>
+            <td>{{ supplier.TypeofOperation }}</td>
+            <td>{{ supplier.geographicareas }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4>13.3.1. Management of Material Topic</h4>
+<p>Need to add data here from material topic</p>

@@ -85,8 +85,6 @@ class UserSafeLockAdmin(admin.ModelAdmin):
     list_display = ["user", "is_locked", "failed_login_attempts", "locked_at"]
 
 
-
-
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(LoginCounter, LoginCounterAdmin)
 admin.site.register(CustomPermission, CustomPermissionAdmin)

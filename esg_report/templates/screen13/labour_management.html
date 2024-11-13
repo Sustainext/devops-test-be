@@ -1,18 +1,20 @@
 <!-- labour_management.html -->
 
-<h2>13.2. Labour Management (GRI 409-1-b)</h2>
+<h3>13.2. Labour Management</h3>
+<h5>Measures taken by the organization</h5>
+<p> {{screen_thirteen_data.409_1b.data.0.Q1|default:"No data available."}} </p>
 
-<h4>13.2.1. Management of Material Topics (GRI 3-3-c, d, e)</h4>
-<hr>
-<p>[Details on the management of labor-related material topics, including policies, initiatives, and strategies to
-    ensure fair labor practices, working conditions, and engagement with non-employee workers.]</p>
+<h4>13.2.1. Management of Material Topics</h4>
+<p>No data available.</p>
 
-<h4>13.2.2. Workers Who Are Not Employees (GRI 2-8-a, b, c)</h4>
-<p>We ensure that all workers, including those who are not direct employees, are treated fairly and have access to safe
-    working conditions. This includes contractors, temporary workers, and subcontractors.</p>
+<h4>13.2.2. Workers Who Are Not Employees</h4>
+
+<h5>Measures taken by the organization</h5>
+<p> {{screen_thirteen_data.2_8_b|default:"No data available."}} </p>
+
 
 <h5>Types of Workers</h5>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
+<table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
             <th>Type of Worker</th>
@@ -24,25 +26,28 @@
         </tr>
     </thead>
     <tbody>
-        {% for worker in non_employee_workers %}
+        {% for worker in screen_thirteen_data.2_8_a %}
         <tr>
-            <td>{{ worker.worker_type }}</td>
-            <td>{{ worker.total_number }}</td>
-            <td>{{ worker.contractual_relationship }}</td>
-            <td>{{ worker.work_performed }}</td>
-            <td>{{ worker.engagement_approach }}</td>
-            <td>{{ worker.third_party }}</td>
+            <td>{{ worker.TypeofWorker }}</td>
+            <td>{{ worker.TotalnumberofWorkers }}</td>
+            <td>{{ worker.Contractualrelationship }}</td>
+            <td>{{ worker.Workperformed }}</td>
+            <td>{{ worker.Engagementapproach }}</td>
+            <td>{{ worker.Thirdparty }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<h4>13.2.3. Forced or Compulsory Labour (GRI 409-1-a)</h4>
-<p>We are committed to eradicating forced or compulsory labor from our operations and supply chain. We conduct regular
-    audits and assessments to ensure compliance with our labor standards.</p>
+<h4>13.2.3. Forced or Compulsory Labour</h4>
+<p>{{screen_thirteen_data.forced_labor_position|default:"No data available."}}</p>
+
+<h5>Measures taken by the organization</h5>
+<p> {{screen_thirteen_data.409_1b.data.0.Q1|default:"No data available."}} </p>
+
 
 <h5>Operations at Significant Risk for Forced or Compulsory Labour</h5>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
+<table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
             <th>Operation</th>
@@ -51,18 +56,18 @@
         </tr>
     </thead>
     <tbody>
-        {% for operation in forced_labour_operations %}
+        {% for operation in screen_thirteen_data.409_1a_analyse.operations_considered_to_have_significant_risk_for_incidents_of_forced_or_compulsary_labor %}
         <tr>
-            <td>{{ operation.operation_name }}</td>
-            <td>{{ operation.operation_type }}</td>
-            <td>{{ operation.geographic_area }}</td>
+            <td>{{ operation.childlabor }}</td>
+            <td>{{ operation.TypeofOperation }}</td>
+            <td>{{ operation.geographicareas }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <h5>Suppliers at Significant Risk for Forced or Compulsory Labour</h5>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
+<table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
             <th>Supplier</th>
@@ -71,15 +76,12 @@
         </tr>
     </thead>
     <tbody>
-        {% for supplier in forced_labour_suppliers %}
+        {% for supplier in screen_thirteen_data.409_1a_analyse.suppliers_at_significant_risk_for_incidents_of_forced_or_compulsory_labor %}
         <tr>
-            <td>{{ supplier.supplier_name }}</td>
-            <td>{{ supplier.supplier_type }}</td>
-            <td>{{ supplier.geographic_area }}</td>
+            <td>{{ supplier.compulsorylabor|default:"No data available." }}</td>
+            <td>{{ supplier.TypeofOperation|default:"No data available." }}</td>
+            <td>{{ supplier.geographicareas|default:"No data available." }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
-<p><em>Note: Graphics or visual data representations (e.g., charts, maps) can be included to illustrate the risks and
-        management strategies related to forced or compulsory labor.</em></p>

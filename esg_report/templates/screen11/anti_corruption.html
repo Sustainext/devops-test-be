@@ -1,164 +1,240 @@
-<!-- anti_corruption.html -->
-
-<h2>11.5. Anti-Corruption</h2>
-
-<h3>11.5.1. Management of Material Topic (GRI 3-3-c, d, e)</h3>
-<p>[Details on management of material topics related to anti-corruption]</p>
-
-<h3>11.5.2. Operations Assessed for Risks Related to Anti-Corruption (GRI 205-1-a, b)</h3>
-
-<p>Operations assessed for risks related to corruption:</p>
-
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Total Number of Operations Assessed</th>
-            <th>Total Number of Operations</th>
-            <th>Percentage of Operations Assessed for Risks Related to Corruption</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>{{ total_operations_assessed }}</td>
-            <td>{{ total_operations }}</td>
-            <td>{{ percentage_operations_assessed }}%</td>
-        </tr>
-    </tbody>
+{% load custom_tags %}
+<h3>11.5. Anti-Corruption</h3>
+ 
+<h4>11.5.1. Management of Material Topic</h4>
+<h5>
+  Description of organisation's policies or commitments for the material topic, along with actions taken to address, prevent or mitigate potential negative impacts and mention the actions taken by the
+  organisation to manage actual and potential positive impacts.
+</h5>
+ 
+<p>No data available</p>
+ 
+<h5>
+  Process used to track the effectiveness of the actions and mention goals, targets, and indicators used to evaluate the process along with specific lessons learned and how these have been incoporated
+  to organisation's operational policies and procedures.
+</h5>
+ 
+<p>No data available</p>
+ 
+<h4>11.5.2. Operations Assessed for Risks Related to Anti-Corruption</h4>
+ 
+<table
+  cellpadding="5"
+  cellspacing="0"
+  border="1"
+>
+  <thead>
+    <tr>
+      <th colspan="3">Operations assessed for risks related to corruption</th>
+    </tr>
+    <tr>
+      <th>Total number of operations assessed for risks related to corruption</th>
+      <th>Total number of operations</th>
+      <th>Percentage of operations assessed for risks related to corruption</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%for data in screen_eleven_data.economic_analyse.operations_assessed_analyze.operations_assesed%}
+    <tr>
+      <td>{{ data.total_number_of_operations_assesed|default:"No data available"|round_to:5 }}</td>
+      <td>{{ data.number_of_operations|default:"No data available"|round_to:5 }}</td>
+      <td>{{ data.percentage|default:"No data available"|round_to:5 }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
-
-<h3>11.5.3. Incidents of Anti-Corruption (GRI 205-3-a, b, c)</h3>
-<p>In <strong>{{ year }}</strong>, we recorded <strong>{{ corruption_incidents }}</strong> incidents of corruption. Each
-    incident was thoroughly investigated, and appropriate actions were taken, including disciplinary measures and
-    process improvements to prevent future occurrences.</p>
-
-<h3>11.5.4. Training on Anti-Corruption (GRI 205-2-a, b, c, d, e)</h3>
-
-<h4>Governance Body Members</h4>
-<p>Total number and percentage of governance body members that the organization’s anti-corruption policies and
-    procedures have been communicated to, by region:</p>
-
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Region</th>
-            <th>Total Number of Governance Body Members Communicated</th>
-            <th>Total Number of Governance Body Members</th>
-            <th>Percentage Communicated</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for region in governance_body_members %}
-        <tr>
-            <td>{{ region.name }}</td>
-            <td>{{ region.total_communicated }}</td>
-            <td>{{ region.total_members }}</td>
-            <td>{{ region.percentage_communicated }}%</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+ 
+<h4>11.5.3. Incidents of Anti-Corruption</h4>
+ 
+{% if screen_eleven_data.205_3a_anti_corruption and screen_eleven_data.205_3a_anti_corruption|length > 0 %} {% for item in screen_eleven_data.205_3a_anti_corruption %}
+<p>{{ item.Q1|default:"No data available" }}</p>
+<p>{{ item.Q2|default:"No data available" }}</p>
+{% endfor %} {% else %}
+<p>No data available</p>
+{% endif %} {% if screen_eleven_data.205_3b_anti_corruption and screen_eleven_data.205_3b_anti_corruption|length > 0 %} {% for item in screen_eleven_data.205_3b_anti_corruption %}
+<p>{{ item.Q1|default:"No data available" }}</p>
+{% endfor %} {% else %}
+<p>No data available</p>
+{% endif %} {% if screen_eleven_data.205_3c_anti_corruption and screen_eleven_data.205_3c_anti_corruption|length > 0 %} {% for item in screen_eleven_data.205_3c_anti_corruption %}
+<p>{{ item.Q1|default:"No data available" }}</p>
+{% endfor %} {% else %}
+<p>No data available</p>
+{% endif %}
+ 
+<h4>11.5.4. Training on Anti-Corruption</h4>
+ 
+<h5>Governance Body Members</h5>
+<h5>Total number and percentage of governance body members that the organization’s anti-corruption policies and procedures have been communicated to, by region:</h5>
+ 
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Region</th>
+      <th>Total Number of Governance Body Members Communicated</th>
+      <th>Total Number of Governance Body Members</th>
+      <th>Percentage Communicated</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for region in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2a %}
+    <tr>
+      <td>{{ region.loc }}</td>
+      <td>{{ region.total_communicated|round_to:5 }}</td>
+      <td>{{ region.total_region|round_to:5 }}</td>
+      <td>{{ region.percentage|round_to:5 }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
-
-<h4>Employees</h4>
-<p>Total number and percentage of employees that the organization’s anti-corruption policies and procedures have been
-    communicated to, broken down by employee category and region:</p>
-
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Location</th>
-            <th>Employee Category</th>
-            <th>Total Number of Employees Communicated</th>
-            <th>Total Number of Employees</th>
-            <th>Percentage Communicated</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for location in employee_communication %}
-        <tr>
-            <td>{{ location.name }}</td>
-            <td>{{ location.employee_category }}</td>
-            <td>{{ location.total_communicated }}</td>
-            <td>{{ location.total_employees }}</td>
-            <td>{{ location.percentage_communicated }}%</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+ 
+<h5>Employees</h5>
+<h5>Total number and percentage of employees that the organization’s anti-corruption policies and procedures have been communicated to, broken down by employee category and region:</h5>
+ 
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>Employee Category</th>
+      <th>Total Number of Employees Communicated</th>
+      <th>Total Number of Employees</th>
+      <th>Percentage Communicated</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for location_name, location_data in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2b.items %} {% for location in location_data %}
+    <tr>
+      <td>{{ location_name }}</td>
+      <!-- This will display the dynamic location name -->
+      <td>{{ location.EmployeeCategory }}</td>
+      <td>{{ location.Totalnumberemployees|round_to:5 }}</td>
+      <td>{{ location.Totalemployeeinthisregion|round_to:5 }}</td>
+      <td>{{ location.percentage|round_to:5 }}%</td>
+    </tr>
+    {% endfor %} {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"><strong>Total</strong></td>
+      <!-- Applying sum_values filter on data dynamically based on structure -->
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2b|sum_values:'Totalnumberemployees' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2b|sum_values:'Totalemployeeinthisregion' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2b|sum_values:'percentage' }}%</td>
+    </tr>
+  </tfoot>
 </table>
-
-<h4>Business Partners</h4>
-<p>Total number and percentage of business partners that the organization’s anti-corruption policies and procedures have
-    been communicated to, broken down by type of business partner and region:</p>
-
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Location</th>
-            <th>Type of Business Partner</th>
-            <th>Total Number Communicated</th>
-            <th>Total Number of Business Partners</th>
-            <th>Percentage Communicated</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for partner in business_partner_communication %}
-        <tr>
-            <td>{{ partner.location }}</td>
-            <td>{{ partner.partner_type }}</td>
-            <td>{{ partner.total_communicated }}</td>
-            <td>{{ partner.total_partners }}</td>
-            <td>{{ partner.percentage_communicated }}%</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+ 
+<h5>Business Partners</h5>
+<h5>Total number and percentage of business partners that the organization’s anti-corruption policies and procedures have been communicated to, broken down by type of business partner and region:</h5>
+ 
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>Type of Business Partner</th>
+      <th>Total Number Communicated</th>
+      <th>Total Number of Business Partners</th>
+      <th>Percentage Communicated</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for location_name, location_data in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2c.items %} {% for location in location_data %}
+    <tr>
+      <td>{{ location_name }}</td>
+      <!-- This will display the dynamic location name -->
+      <td>{{ location.Typeofbusinesspartner }}</td>
+      <td>{{ location.Totalnumberemployees|round_to:5}}</td>
+      <td>{{ location.Totalemployeeinthisregion|round_to:5 }}</td>
+      <td>{{ location.percentage|round_to:5 }}%</td>
+    </tr>
+    {% endfor %} {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"><strong>Total</strong></td>
+      <!-- Applying sum_values filter on data dynamically based on structure -->
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2c|sum_values:'Totalnumberemployees' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2c|sum_values:'Totalemployeeinthisregion' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2c|sum_values:'percentage' }}%</td>
+    </tr>
+  </tfoot>
 </table>
-
-<h4>Governance Body Members - Training</h4>
-<p>Total number and percentage of governance body members that have received training on anti-corruption, broken down by
-    region:</p>
-
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Location</th>
-            <th>Total Number of Governance Body Members Trained</th>
-            <th>Total Number of Governance Body Members</th>
-            <th>Percentage Trained</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for location in governance_body_training %}
-        <tr>
-            <td>{{ location.name }}</td>
-            <td>{{ location.total_trained }}</td>
-            <td>{{ location.total_members }}</td>
-            <td>{{ location.percentage_trained }}%</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+ 
+<h5>Governance Body Members - Training</h5>
+<h5>Total number and percentage of governance body members that have received training on anti-corruption, broken down by region:</h5>
+ 
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>Total Number of Governance Body Members Trained</th>
+      <th>Total Number of Governance Body Members</th>
+      <th>Percentage Trained</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for location in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2d %}
+    <tr>
+      <td>{{ location.loc }}</td>
+      <td>{{ location.total_communicated|round_to:5}}</td>
+      <td>{{ location.total_region|round_to:5 }}</td>
+      <td>{{ location.percentage|round_to:5 }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
-
-<h4>Employees - Training</h4>
-<p>Total number and percentage of employees that have received training on anti-corruption, broken down by region:</p>
-
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Location</th>
-            <th>Employee Category</th>
-            <th>Total Number of Employees Trained</th>
-            <th>Total Number of Employees</th>
-            <th>Percentage Trained</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for location in employee_training %}
-        <tr>
-            <td>{{ location.name }}</td>
-            <td>{{ location.employee_category }}</td>
-            <td>{{ location.total_trained }}</td>
-            <td>{{ location.total_employees }}</td>
-            <td>{{ location.percentage_trained }}%</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+ 
+<h5>Employees - Training</h5>
+<h5>Total number and percentage of employees that have received training on anti-corruption, broken down by region:</h5>
+ 
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>Employee Category</th>
+      <th>Total Number of Employees Trained</th>
+      <th>Total Number of Employees</th>
+      <th>Percentage Trained</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for location_name, location_data in screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2e.items %} {% for location in location_data %}
+    <tr>
+      <td>{{ location_name }}</td>
+      <!-- This will display the dynamic location name -->
+      <td>{{ location.EmployeeCategory }}</td>
+      <td>{{ location.Totalnumberemployees|round_to:5}}</td>
+      <td>{{ location.Totalemployeeinthisregion|round_to:5 }}</td>
+      <td>{{ location.percentage|round_to:5 }}%</td>
+    </tr>
+    {% endfor %} {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"><strong>Total</strong></td>
+      <!-- Applying sum_values filter on data dynamically based on structure -->
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2e|sum_values:'Totalnumberemployees' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2e|sum_values:'Totalemployeeinthisregion' }}</td>
+      <td>{{ screen_eleven_data.economic_analyse.communication_training_analyze.analyze_205_2e|sum_values:'percentage' }}%</td>
+    </tr>
+  </tfoot>
 </table>
