@@ -1,28 +1,17 @@
 <!-- economic_performance.html -->
 {% if screen_eleven_data %}
 <h2>11. Economic Performance</h2>
-
-<p>{{screen_eleven_data.company_economic_performance_statement}}</p>
-
+ 
+<p>{{screen_eleven_data.company_economic_performance_statement|default:"No data available"}}</p>
+ 
 <h3>11.1 Highlights</h3>
 
 <h4>11.1.1 Management of Material Topics</h4>
-
-<p>
-  Description of organisation's policies or commitments for the material topic, along with actions taken to address, prevent or mitigate potential negative impacts and mention the actions taken by the
-  organisation to manage actual and potential positive impacts.
-</p>
 <p>No data available</p>
-
-<p>
-  Process used to track the effectiveness of the actions and mention goals, targets, and indicators used to evaluate the process along with specific lessons learned and how these have been
-  incorporated into organisation's operational policies and procedures.
-</p>
-<p>No data available</p>
-
+ 
 <h4>11.1.2 Economic Value Creation</h4>
-<p>{{ screen_eleven_data.introduction_to_economic_value_creation }}</p>
-
+<p>{{ screen_eleven_data.introduction_to_economic_value_creation |default:"No data available" }}</p>
+ 
 <table
   border="1"
   cellpadding="5"
@@ -54,7 +43,7 @@
       <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;iv) Payments to governments by country</td>
       <td align="left">{{ screen_eleven_data.201_1ab.payments_to_governments_by_country|default:"No data available" }}</td>
     </tr>
-
+ 
     {% for country in screen_eleven_data.201_1ab.countries_and_payments %}
     <tr>
       <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ country.country|default:"Country" }}</td>
@@ -70,7 +59,7 @@
       </td>
     </tr>
     {% endfor %}
-
+ 
     <tr>
       <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;v) Community investments</td>
       <td align="left">{{ screen_eleven_data.201_1ab.community_investments|default:"No data available" }}</td>
@@ -85,10 +74,10 @@
     </tr>
   </tbody>
 </table>
-
+ 
 <h4>11.1.3. Financial Assistance Received from Government</h4>
-<p>{{screen_eleven_data.financial_assistance_from_government}}</p>
-
+<p>{{screen_eleven_data.financial_assistance_from_government |default:"No data available"}}</p>
+ 
 <table
   border="1"
   cellpadding="5"
@@ -134,9 +123,9 @@
     </tr>
   </tbody>
 </table>
-
+ 
 <h3>11.2 Infrastructure Investment and Services Supported</h3>
-
+ 
 {% for item in screen_eleven_data.203_1a %}
 <p>{{ item.Q1|default:"No data available" }}</p>
 {% empty %}
@@ -150,10 +139,10 @@
 {% empty %}
 <p>No data available</p>
 {% endfor %}
-
+ 
 <h4>11.2.1. Material Management of Topic</h4>
-<p>[TODO: Need to add details from Materiality screen later when it gets completed]</p>
-
+<p>No data available.</p>
+ 
 <h4>11.2.2. Indirect Economic Impacts</h4>
 {% for item in screen_eleven_data.203_2a %}
 <p>{{ item.Q1|default:"No data available" }}</p>

@@ -1,9 +1,11 @@
 <!-- air_quality_management.html -->
 
-<h2>12.7. Air Quality</h2>
-
+<h3>12.7. Air Quality</h3>
+{% if screen_twelve_data.air_quality_protection_commitment %}
 <p>{{screen_twelve_data.air_quality_protection_commitment|safe}}</p>
+{% else %}
+<p>No data available for this section.</p>
+{% endif %}
 
 <h4>12.7.1. Management of Material Topic</h4>
-<p>NO data available</p>
 <p>NO data available</p>

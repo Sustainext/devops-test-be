@@ -1,18 +1,16 @@
 <!-- water_management.html -->
 {% load custom_tags %}
-<h2>12.3. Water (303-1-a, b, c, d)</h2>
+<h3>12.3. Water</h3>
 
-<p>Interaction with water as a shared resource: {{screen_twelve_data.303_1b_1c_1d.data.0.Q1}}</p>
-<p>Water-related impacts: {{screen_twelve_data.303_1b_1c_1d.data.0.Q2}}, {{screen_twelve_data.303_1b_1c_1d.data.0.Q3}}</p>
-<p>Water-related goals and targets: {{screen_twelve_data.303_1b_1c_1d.data.0.Q4}}</p>
+<p>Interaction with water as a shared resource: {{screen_twelve_data.303_1b_1c_1d.data.0.Q1|default:"No data available."}}</p>
+<p>Water-related impacts: {{screen_twelve_data.303_1b_1c_1d.data.0.Q2}}, {{screen_twelve_data.303_1b_1c_1d.data.0.Q3|default:"No data available."}}</p>
+<p>Water-related goals and targets: {{screen_twelve_data.303_1b_1c_1d.data.0.Q4|default:"No data available."}}</p>
 
 <h4>12.3.1. Management of Material Topic</h4>
 <p>No data available</p>
-<p>No data available</p>
-<hr />
 
 <h4>12.3.2. Water Withdrawal</h4>
-<p>{{screen_twelve_data.water_withdrawal_tracking}}</p>
+<p>{{screen_twelve_data.water_withdrawal_tracking|default:"No data available."}}</p>
 
 <h5>Total Fresh Water Withdrawal by Business Operation</h5>
 <table
@@ -180,7 +178,7 @@
   </tbody>
 </table>
 
-<h4>12.3.3. Water Discharge & Management of Associated Impacts (GRI 303-4)</h4>
+<h4>12.3.3. Water Discharge & Management of Associated Impacts</h4>
 <p>We manage water discharge to minimize its impact on local ecosystems. This includes treating wastewater to meet regulatory standards and monitoring the quality of discharged water.</p>
 
 <h5>Total Water Discharge by Location</h5>

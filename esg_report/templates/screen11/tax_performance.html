@@ -1,25 +1,16 @@
 <!-- tax_performance.html -->
 
-<h2>11.4. Tax</h2>
+<h3>11.4. Tax</h3>
 
 <p>
   Our tax strategy is designed to support <strong>{{ceo_message.company_name}}</strong>'s business objectives while ensuring we meet our legal and ethical obligations. We are committed to transparency
   in tax reporting and compliance across all jurisdictions in which we operate.
 </p>
 
-<h3>11.4.1. Management of Material Topic</h3>
-<p>
-  Description of organisation's policies or commitments for the material topic, along with actions taken to address, prevent or mitigate potential negative impacts and mention the actions taken by the
-  organisation to manage actual and potential positive impacts.
-</p>
-<p>No data available</p>
-<p>
-  Process used to track the effectiveness of the actions and mention goals, targets, and indicators used to evaluate the process along with specific lessons learned and how these have been incoporated
-  to organisation's operational policies and procedures.
-</p>
+<h4>11.4.1. Management of Material Topic</h4>
 <p>No data available</p>
 
-<h3>11.4.2. Approach to Tax</h3>
+<h4>11.4.2. Approach to Tax</h4>
 <p>
   Our approach to tax is aligned with our commitment to compliance, transparency, and the sustainable creation of value. The following tax jurisdictions are included in our consolidated financial
   statements:
@@ -51,7 +42,7 @@
   </table>
 </div>
 
-<h4>Tax Jurisdictions and Key Details</h4>
+<h5>Tax Jurisdictions and Key Details</h5>
 <table
   cellpadding="5"
   cellspacing="0"
@@ -90,7 +81,7 @@
   </tbody>
 </table>
 
-<h3>11.4.3. Tax Governance and Risk Management</h3>
+<h4>11.4.3. Tax Governance and Risk Management</h4>
 
 {% if screen_eleven_data.207_2a and screen_eleven_data.207_2a|length > 0 %} {% for item in screen_eleven_data.207_2a %}
 <p>{{ item.Q1|default:"No data available" }}</p>
@@ -109,7 +100,7 @@
 <p>{{ screen_eleven_data.207_2c.Q3.text|default:"No data available" }}</p>
 {% endif %}
 
-<h3>11.4.4. Stakeholder Engagement and Management of Concerns Related to Tax</h3>
+<h4>11.4.4. Stakeholder Engagement and Management of Concerns Related to Tax</h4>
 
 {% if screen_eleven_data.207_3a %}
 <p>{{ screen_eleven_data.207_3a.Q1|default:"No data available" }}</p>

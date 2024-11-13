@@ -10,30 +10,29 @@
 
 <h4>9.1.1 Governance Structure and Composition</h4>
 
-<p>{{screen_nine_data.board_gov_statement}}</p>
+<p>{{screen_nine_data.board_gov_statement|default:"No data available."}}</p>
 
-<h4>Describe the governance structure, including the committees of the highest governance body</h4>
+<h5>Describe the governance structure, including the committees of the highest governance body</h5>
 {% if screen_nine_data.2_9_a %}
 <p>{{screen_nine_data.2_9_a}}</p>
 {% else %}
 <p>No data available.</p>
 {% endif %}
 
-<h4>Committees of the Highest Governance Body</h4>
-<table
-  cellpadding="5"
-  cellspacing="0"
->
+<h5>Committees of the Highest Governance Body</h5>
+<p>
   {% for key, value in screen_nine_data.2_9_b.items %}
-  <tr>
-    {% for item in value %}
-    <td>{{ item }}</td>
-    {% endfor %}
-  </tr>
+    {% if value %}
+      {% for item in value %}
+        <span style="color: #495059;">{{ item|default:"No data available." }}</span>
+      {% endfor %}
+    {% else %}
+      <span style="color: #495059;">No data available.</span>
+    {% endif %}
   {% endfor %}
-</table>
+</p>
 
-<h4>Committees of the highest governance body</h4>
+<h5>Composition of the highest governance body</h5>
 <table
   cellpadding="5"
   cellspacing="0"
@@ -77,10 +76,10 @@
   The nomination and selection process for our Board of Directors is rigorous and transparent. Candidates are evaluated based on their qualifications, experience, and alignment with our company
   values. Criteria considered for nomination and selection include:
 </p>
-<p>{{ screen_nine_data.2_10_a }}</p>
-<p>{{ screen_nine_data.2_10_b.criteria }}</p>
+<p>{{ screen_nine_data.2_10_a|default:"No data available." }}</p>
+<p>{{ screen_nine_data.2_10_b.criteria|default:"No data available." }}</p>
 
-<h4>Criteria considered for nomination and selection of the highest governance body</h4>
+<h5>Criteria considered for nomination and selection of the highest governance body</h5>
 <table
   cellpadding="5"
   cellspacing="0"
@@ -122,13 +121,13 @@
 </table>
 
 <h4>9.2.2 Chair of the Highest Governance Body</h4>
-<p>{{screen_nine_data.2_11_b.is_chair_of_highest_governance}}</p>
+<p>{{screen_nine_data.2_11_b.is_chair_of_highest_governance|default:"No data available."}}</p>
 
 <h4>9.2.3 Senior Management Hired from Local Community</h4>
-<p>Percentage of senior management at significant locations of operation that are hired from the local community: {{screen_nine_data.202_2a}}</p>
-<p>The definition used for 'senior management': {{screen_nine_data.202_2b}}</p>
-<p>The organization's geographical definition of 'local': {{screen_nine_data.202_2c}}</p>
-<p>The definition used for "significant locations of operation": {{screen_nine_data.202_2d}}</p>
+<p><span style="color: #000;">Percentage of senior management at significant locations of operation that are hired from the local community:</span> {{screen_nine_data.202_2a|default:"No data available."}}</p>
+<p><span style="color: #000;">The definition used for 'senior management':</span> {{screen_nine_data.202_2b|default:"No data available."}}</p>
+<p><span style="color: #000;">The organization's geographical definition of 'local':</span> {{screen_nine_data.202_2c|default:"No data available."}}</p>
+<p><span style="color: #000;">The definition used for "significant locations of operation":</span> {{screen_nine_data.202_2d|default:"No data available."}}</p>
 
 <h4>9.2.4 Management of Material Topics</h4>
 {% if screen_nine_data.3_3_c_d_e_in_material_topics %}
@@ -164,35 +163,35 @@
   </tbody>
 </table>
 
-<h4>
+<h5>
   Role of the highest governance body and of senior executives in overseeing the organization's due diligence and other processes to identify and manage the organization's impact on the economy,
   environment and people:
-</h4>
+</h5>
 {% if screen_nine_data.2_12_b.Q1 %}
 <p>{{ screen_nine_data.2_12_b.Q1 }}</p>
 {% else %}
-<p>No information provided.</p>
+<p>No data available</p>
 {% endif %}
 
-<h4>How the highest governance body engage with stakeholders to support these processes:</h4>
+<h5>How the highest governance body engage with stakeholders to support these processes:</h5>
 {% if screen_nine_data.2_12_b.Q3 %}
 <p>{{ screen_nine_data.2_12_b.Q3 }}</p>
 {% else %}
-<p>No information provided.</p>
+<p>No data available</p>
 {% endif %}
 
-<h4>How the highest governance body considers the outcomes of these processes:</h4>
+<h5>How the highest governance body considers the outcomes of these processes:</h5>
 {% if screen_nine_data.2_12_b.Q4 %}
 <p>{{ screen_nine_data.2_12_b.Q4 }}</p>
 {% else %}
-<p>No information provided.</p>
+<p>No data available</p>
 {% endif %}
 
 <h4>9.3.2 Collective Knowledge of the Highest Governance Body</h4>
-<p>{{ screen_nine_data.2_17_a }}</p>
+<p>{{ screen_nine_data.2_17_a|default:"no data available." }}</p>
 
 <h4>9.3.3 Role of the Highest Governance Body in Sustainability Reporting</h4>
-<p>{{screen_nine_data.2_14_a_and_b.highest_body_approves_report}}</p>
+<p>{{screen_nine_data.2_14_a_and_b.highest_body_approves_report|default:"no data available."}}</p>
 {% if screen_nine_data.2_14_a_and_b.highest_body_approves_report == "Yes" %}
 <p>{{ screen_nine_data.2_14_a_and_b.reason_for_yes }}</p>
 {% else %}
@@ -201,108 +200,108 @@
 
 <h4>9.3.4 Delegation of Responsibility for Managing Impacts</h4>
 
-<h4>Description of how the highest governance body delegates responsibility for managing the organization's impacts on economy, environment and people:</h4>
+<h5>Description of how the highest governance body delegates responsibility for managing the organization's impacts on economy, environment and people:</h5>
 {% if screen_nine_data.2_13_a.governance_body_responsibility_delegation %}
 <p>{{screen_nine_data.2_13_a.governance_body_responsibility_delegation}}</p>
 {% else %}
-<p>No information provided.</p>
+<p>No data available</p>
 {% endif %}
 
-<h4>Senior executives with responsibility for the management of impacts:</h4>
+<h5>Senior executives with responsibility for the management of impacts:</h5>
 {% if screen_nine_data.2_13_a.has_appointed_executive_for_impact_management == "Yes" %}
 <p>{{screen_nine_data.2_13_a.reason_for_has_appointed_executive_for_impact_management}}</p>
 {% else %}
 <p>No.</p>
 {% endif %}
 
-<h4>Delegated responsibility for the management of impacts to other employees:</h4>
+<h5>Delegated responsibility for the management of impacts to other employees:</h5>
 {% if screen_nine_data.2_13_a.has_delegated_impact_management_to_employees == "Yes" %}
 <p>{{screen_nine_data.2_13_a.reason_for_has_delegated_impact_management_to_employees}}</p>
 {% else %}
 <p>No.</p>
 {% endif %}
 
-<h4>
+<h5>
   Description of the process and frequency for senior executives or other employees to report back to the highest governance body on the management of the organization's impacts on the economy,
   environment and people:
-</h4>
+</h5>
 {% if screen_nine_data.2_13_b %}
 <p>{{screen_nine_data.2_13_b}}</p>
 {% else %}
-<p>No information provided.</p>
+<p>No data available</p>
 {% endif %}
 
 <h4>9.3.5 Communication of Critical Concerns</h4>
 {% if screen_nine_data.2_16_a.critical_concerns_communication_description %}
 <p>{{ screen_nine_data.2_16_a.critical_concerns_communication_description }}</p>
 {% else %}
-<p>No information provided.</p>
+<p>No data available</p>
 {% endif %}
 
-<h4>Total number of critical concerns that were communicated to the highest governance body :</h4>
+<h5>Total number of critical concerns that were communicated to the highest governance body :</h5>
 {% if screen_nine_data.2_16_b.total_critical_concerns_reported%}
 <p>{{ screen_nine_data.2_16_b.total_critical_concerns_reported }}</p>
 {% else %}
-<p>No information provided.</p>
+<p>No data available</p>
 {% endif %}
 
-<h4>Nature of the critical concerns that were communicated to the highest governance body:</h4>
+<h5>Nature of the critical concerns that were communicated to the highest governance body:</h5>
 {% if screen_nine_data.2_16_b.nature_of_critical_concerns_reported %}
 <p>{{ screen_nine_data.2_16_b.nature_of_critical_concerns_reported }}</p>
 {% else %}
-<p>No information provided.</p>
+<p>No data available</p>
 {% endif %}
 
 <h4>9.3.6 Evaluation of the Performance of the Highest Governance Body</h4>
-<h4>Processes for evaluating the performance of the highest governance body:</h4>
+<h5>Processes for evaluating the performance of the highest governance body:</h5>
 {% if screen_nine_data.2_18_a.Q1 %}
 <p>{{ screen_nine_data.2_18_a.Q1 }}</p>
 {% else %}
-<p>No information provided.</p>
+<p>No data available</p>
 {% endif %}
 
-<h4>Frequency of the evaluations:</h4>
+<h5>Frequency of the evaluations:</h5>
 {% if screen_nine_data.2_18_b.evaluations_independent == "Yes" %}
 <p>{{screen_nine_data.2_18_b.evaluation_frequency}}</p>
 {% else %}
 <p>{{screen_nine_data.2_18_b.evaluation_frequency}}</p>
 {% endif %}
 
-<h4>Actions taken in response to the evaluations:</h4>
-<p>{{screen_nine_data.2_18_c}}</p>
+<h5>Actions taken in response to the evaluations:</h5>
+<p>{{screen_nine_data.2_18_c|default:"No data available."}}</p>
 
 <h4>9.3.7 Remuneration Policies & Process to Determine Remuneration</h4>
-<p>{{ screen_nine_data.remuneration_policies }}</p>
+<p>{{ screen_nine_data.remuneration_policies|default:"No data available." }}</p>
 
-<h4>Fixed pay & variable pay:</h4>
+<h5>Fixed pay & variable pay:</h5>
 <p>{{ screen_nine_data.2_19_a.remuneration_policy_fixed_and_variable_pay.text|default:"No data available" }}</p>
 
-<h4>Sign-on bonuses or recruitment incentive payments:</h4>
+<h5>Sign-on bonuses or recruitment incentive payments:</h5>
 <p>{{ screen_nine_data.2_19_a.remuneration_policy_sign_on_bonuses.text|default:"No data available" }}</p>
 
-<h4>Termination payments:</h4>
+<h5>Termination payments:</h5>
 <p>{{ screen_nine_data.2_19_a.remuneration_policy_termination_payments.text|default:"No data available" }}</p>
 
-<h4>Clawbacks:</h4>
+<h5>Clawbacks:</h5>
 <p>{{ screen_nine_data.2_19_a.remuneration_policy_clawbacks.text|default:"No data available" }}</p>
 
-<h4>Retirement benefits:</h4>
+<h5>Retirement benefits:</h5>
 <p>{{ screen_nine_data.2_19_a.remuneration_policy_retirement_benefits.text|default:"No data available" }}</p>
 
-<h4>Process to determine remuneration:</h4>
-<h4>Process for designing remuneration policies and for determining remuneration:</h4>
+<h5>Process to determine remuneration:</h5>
+<h5>Process for designing remuneration policies and for determining remuneration:</h5>
 <p>{{ screen_nine_data.2_20_a.processDescription|default:"No data available" }}</p>
 
-<h4>Independent highest governance body members or an independent remuneration committee overseeing the process for determining remuneration:</h4>
+<h5>Independent highest governance body members or an independent remuneration committee overseeing the process for determining remuneration:</h5>
 <p>{{ screen_nine_data.2_20_a.tableData.0.How|default:"No data available" }}</p>
 
-<h4>How the views of stakeholders (including shareholders) regarding remuneration are sought and taken into consideration:</h4>
+<h5>How the views of stakeholders (including shareholders) regarding remuneration are sought and taken into consideration:</h5>
 <p>{{ screen_nine_data.2_20_a.tableData.1.How|default:"No data available" }}</p>
 
-<h4>Remuneration consultants involved in determining remuneration and whether they are independent of the organization, its highest governance body, and senior executives:</h4>
+<h5>Remuneration consultants involved in determining remuneration and whether they are independent of the organization, its highest governance body, and senior executives:</h5>
 <p>{{ screen_nine_data.2_20_a.tableData.2.How|default:"No data available" }}</p>
 
-<h4>Results of votes of stakeholders (including shareholders) on remuneration policies and proposals:</h4>
+<h5>Results of votes of stakeholders (including shareholders) on remuneration policies and proposals:</h5>
 <p>{{ screen_nine_data.2_20_b|default:"No data available" }}</p>
 
 <h4>9.3.8 Annual Compensation Ratio</h4>
@@ -311,22 +310,22 @@
   our compensation practices.
 </p>
 
-<h4>Annual total compensation for the organization's highest-paid individual:</h4>
+<h5>Annual total compensation for the organization's highest-paid individual:</h5>
 <p>{{ screen_nine_data.2_21_a.Q1|default:"No data available" }}</p>
 
-<h4>Median annual total compensation for all of the organization's employees excluding the highest-paid individual:</h4>
+<h5>Median annual total compensation for all of the organization's employees excluding the highest-paid individual:</h5>
 <p>{{ screen_nine_data.2_21_a.Q2|default:"No data available" }}</p>
 
-<h4>Percentage increase in annual total compensation for the organization's highest-paid individual:</h4>
+<h5>Percentage increase in annual total compensation for the organization's highest-paid individual:</h5>
 <p>{{ screen_nine_data.2_21_b.Q1|default:"No data available" }}</p>
 
-<h4>Median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual:</h4>
+<h5>Median percentage increase in annual total compensation for all of the organization's employees excluding the highest-paid individual:</h5>
 <p>{{ screen_nine_data.2_21_b.Q2|default:"No data available" }}</p>
 
-<h4>Contextual information to understand data compilation:</h4>
+<h5>Contextual information to understand data compilation:</h5>
 <p>{{ screen_nine_data.2_21_c|default:"No data available" }}</p>
 
-<h4>Ratio of annual total compensation & ratio of percentage increase in annual total compensation</h4>
+<h5>Ratio of annual total compensation & ratio of percentage increase in annual total compensation</h5>
 <table
   cellpadding="5"
   cellspacing="0"
@@ -342,6 +341,10 @@
     <tr>
       <td>{{ data.ratio_of_annual_total_compensation }}</td>
       <td>{{ data.ratio_of_percentage_increase_in_annual_total_compensation }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="2">No data available</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -382,21 +385,21 @@
 <h4>9.5.1 Remediation of Negative Impacts</h4>
 <p>We are committed to identifying, mitigating, and remediating any negative impacts associated with our operations. This includes:</p>
 
-<h4>Organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to:</h4>
+<h5>Organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to:</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_a|default:"No data available" }}</p>
 
-<h4>Description of organisation's approach to identify and address grievances, including the grievance mechanisms that the organization has established or participates in:</h4>
+<h5>Description of organisation's approach to identify and address grievances, including the grievance mechanisms that the organization has established or participates in:</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_b.Q1|default:"No data available" }}</p>
 
-<h4>Description of other processes by which the organization provides for or cooperates in the remediation of negative impacts that it identifies it has caused or contributed to:</h4>
+<h5>Description of other processes by which the organization provides for or cooperates in the remediation of negative impacts that it identifies it has caused or contributed to:</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_c|default:"No data available" }}</p>
 
-<h4>Description of how stakeholders who are the intended users of the grievance mechanisms are involved in the design, review, operation, and improvement of these mechanisms:</h4>
+<h5>Description of how stakeholders who are the intended users of the grievance mechanisms are involved in the design, review, operation, and improvement of these mechanisms:</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_d|default:"No data available" }}</p>
 
-<h4>
+<h5>
   Description of how the organization tracks the effectiveness of the grievance mechanisms and other remediation processes, and report examples of their effectiveness, including stakeholder feedback:
-</h4>
+</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_e|default:"No data available" }}</p>
 
 <h4>9.5.2 Mechanism for Seeking Advice and Raising Concerns</h4>
@@ -408,7 +411,7 @@
 <p>{{ screen_nine_data.2_27_a.significant_non_compliance_occurred|default:"No data available" }}</p>
 <p>{{ screen_nine_data.2_27_a.total_significant_non_compliance_instances|default:"No data available" }}</p>
 
-<h4>Summary of Non-Compliance Instances and Fines (Current Period):</h4>
+<h5>Summary of Non-Compliance Instances and Fines (Current Period):</h5>
 <table
   cellpadding="5"
   cellspacing="0"
@@ -429,7 +432,7 @@
   </tbody>
 </table>
 
-<h4>Summary of Fines Incurred (Current and Previous Periods):</h4>
+<h5>Summary of Fines Incurred (Current and Previous Periods):</h5>
 <table
   cellpadding="5"
   cellspacing="0"
@@ -481,21 +484,21 @@
 <h4>9.5.1 Remediation of Negative Impacts</h4>
 <p>We are committed to identifying, mitigating, and remediating any negative impacts associated with our operations. This includes:</p>
 
-<h4>Organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to:</h4>
+<h5>Organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to:</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_a|default:"No data available" }}</p>
 
-<h4>Description of organisation's approach to identify and address grievances, including the grievance mechanisms that the organization has established or participates in:</h4>
+<h5>Description of organisation's approach to identify and address grievances, including the grievance mechanisms that the organization has established or participates in:</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_b.Q1|default:"No data available" }}</p>
 
-<h4>Description of other processes by which the organization provides for or cooperates in the remediation of negative impacts that it identifies it has caused or contributed to:</h4>
+<h5>Description of other processes by which the organization provides for or cooperates in the remediation of negative impacts that it identifies it has caused or contributed to:</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_c|default:"No data available" }}</p>
 
-<h4>Description of how stakeholders who are the intended users of the grievance mechanisms are involved in the design, review, operation, and improvement of these mechanisms:</h4>
+<h5>Description of how stakeholders who are the intended users of the grievance mechanisms are involved in the design, review, operation, and improvement of these mechanisms:</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_d|default:"No data available" }}</p>
 
-<h4>
+<h5>
   Description of how the organization tracks the effectiveness of the grievance mechanisms and other remediation processes, and report examples of their effectiveness, including stakeholder feedback:
-</h4>
+</h5>
 <p>{{ screen_nine_data.2_25_data.2_25_e|default:"No data available" }}</p>
 
 <h4>9.5.2 Mechanism for Seeking Advice and Raising Concerns</h4>
@@ -507,7 +510,7 @@
 <p>{{ screen_nine_data.2_27_a.significant_non_compliance_occurred|default:"No data available" }}</p>
 <p>{{ screen_nine_data.2_27_a.total_significant_non_compliance_instances|default:"No data available" }}</p>
 
-<h4>Summary of Non-Compliance Instances and Fines (Current Period):</h4>
+<h5>Summary of Non-Compliance Instances and Fines (Current Period):</h5>
 <table
   cellpadding="5"
   cellspacing="0"
@@ -528,7 +531,7 @@
   </tbody>
 </table>
 
-<h4>Summary of Fines Incurred (Current and Previous Periods):</h4>
+<h5>Summary of Fines Incurred (Current and Previous Periods):</h5>
 <table
   cellpadding="5"
   cellspacing="0"
@@ -556,65 +559,65 @@
   enhancing social value, and maintaining strong governance. We aim to create long-term value for our stakeholders while contributing to a more sustainable future.
 </p>
 
-<p>
-  <strong>Overall organization's policy commitments for "responsible business conduct"</strong>
-</p>
+<h5>
+  Overall organization's policy commitments for "responsible business conduct"
+</h5>
 <p>{{ screen_nine_data.2_23_a.0.column1|default:"No data available" }}</p>
 
-<p>
-  <strong>Authoritative governmental instruments that the commitments reference</strong>
-</p>
+<h5>
+  Authoritative governmental instruments that the commitments reference
+</h5>
 <p>{{ screen_nine_data.2_23_a.1.column1|default:"No data available" }}</p>
 
-<p><strong>The commitments that stipulate conducting due diligence</strong></p>
+<h5>The commitments that stipulate conducting due diligence</h5>
 <p>{{ screen_nine_data.2_23_a.2.column1|default:"No data available" }}</p>
 {% if screen_nine_data.2_23_a.2.column1_details %}
 <p>{{ screen_nine_data.2_23_a.2.column1_details }}</p>
 {% endif %}
 
-<p>
-  <strong>The commitments that stipulate applying the precautionary principle</strong>
-</p>
+<h5>
+  The commitments that stipulate applying the precautionary principle
+</h5>
 <p>{{ screen_nine_data.2_23_a.3.column1|default:"No data available" }}</p>
 {% if screen_nine_data.2_23_a.3.column1_details %}
 <p>{{ screen_nine_data.2_23_a.3.column1_details }}</p>
 {% endif %}
 
-<p><strong>The commitments that stipulate respecting human rights</strong></p>
+<h5>The commitments that stipulate respecting human rights</h5>
 <p>{{ screen_nine_data.2_23_a.4.column1|default:"No data available" }}</p>
 {% if screen_nine_data.2_23_a.4.column1_details %}
 <p>{{ screen_nine_data.2_23_a.4.column1_details }}</p>
 {% endif %}
 
-<p>
-  <strong>The internationally recognized human rights that the commitment covers</strong>
-</p>
+<h5>
+The internationally recognized human rights that the commitment covers
+</h5>
 <!-- prettier-ignore -->
 <p>
   {{screen_nine_data.2_23_b.the_internationally_recognized_human_rights_that_the_commitment_covers|default:"No data available"}}
 </p>
 
-<p>
-  <strong>The categories of stakeholders, including at-risk or vulnerable groups, that the organization gives particular attention to in the commitment</strong>
-</p>
+<h5>
+The categories of stakeholders, including at-risk or vulnerable groups, that the organization gives particular attention to in the commitment
+</h5>
 <!-- prettier-ignore -->
 <p>{{screen_nine_data.2_23_b.the_categories_of_stakeholders_including_at_risk_or_vulnerable_groups_that_the_organization_gives_particular_attention_to_in_the_commitment|default:"No data available" }}
 </p>
 
-<p><strong>Links to policy commitments</strong></p>
+<h5>Links to policy commitments</h5>
 <!-- prettier-ignore -->
 <p>
   {{screen_nine_data.2_23_c.are_the_organizations_policy_commitments_publicly_available|default:"No data available"}}
 </p>
 
-<p><strong>Reason why policy is not publicly available</strong></p>
+<h5>Reason why policy is not publicly available</h5>
 <!-- prettier-ignore -->
 <p>
   {{ screen_nine_data.2_23_c.please_provide_links_to_the_policy_commitments|default:"No data available" }}
 </p>
-<p>{{screen_nine_data.policy_not_public_reason }}</p>
+<p>{{screen_nine_data.policy_not_public_reason|default:"No data available." }}</p>
 
-<h4>Level of approval: Policy commitments</h4>
+<h5>Level of approval: Policy commitments</h5>
 <table
   cellpadding="5"
   cellspacing="0"

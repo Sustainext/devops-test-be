@@ -2,7 +2,7 @@
 {% if materiality %}
 <h2>8. Materiality</h2>
 
-<p>{{materiality.statement}}</p>
+<p>{{materiality.statement|default:"No data available."}}</p>
 
 <h3>8.1.1 List of Material Topics</h3>
 
@@ -32,23 +32,22 @@
 <h3>8.1.3 Materiality Assessment – Process</h3>
 <p>Our materiality assessment process involves several key steps:</p>
 <ol>
-    <li><strong>Identification of Relevant Issues:</strong> {{materiality.3_1_a.impact_assessment_process}}</li>
-    <li><strong>Stakeholder Engagement:</strong>
-        <ul>
-            {% for stakeholder in materiality.3_1_a.selected_stakeholders %}
-            <li>{{ stakeholder }}</li>
-            {% empty %}
-            <li>No stakeholders listed.</li>
-            {% endfor %}
-        </ul>
+    <li style="margin-bottom: 10px;">Identification of Relevant Issues: <span style="color: #495059;">{{materiality.3_1_a.impact_assessment_process|default:"No data available."}}</span></li>
+    <li style="margin-bottom: 10px;">Stakeholder Engagement: <span style="color: #495059;"> 
+        {% if materiality.3_1_a.selected_stakeholders %}
+            {{ materiality.3_1_a.selected_stakeholders|join:", " }}
+        {% else %}
+            No data available
+        {% endif %}
+    </span>
     </li>
-    <li><strong>Prioritization:</strong> {% if materiality.3_1_a.process_description %}
-        {{materiality.3_1_a.process_description}}{% else %}No data added {% endif%}</li>
-    <li><strong>Validation:</strong> The results of the materiality assessment are reviewed and validated by our senior
-        management and Board of Directors.</li>
+    <li style="margin-bottom: 10px;">Prioritization: <span style="color: #495059;">{% if materiality.3_1_a.process_description|default:"No data available." %}
+        {{materiality.3_1_a.process_description}}{% else %}No data added {% endif%}</span></li>
+    <li style="margin-bottom: 10px;">Validation: <span style="color: #495059;">The results of the materiality assessment are reviewed and validated by our senior
+        management and Board of Directors.</span></li>
 </ol>
 
-<h3>8.1.4 Management of Material Topics (GRI 3-3-a, 3-3-b)</h3>
+<h3>8.1.4 Management of Material Topics</h3>
 <table cellpadding="5" cellspacing="0">
     <thead>
         <tr>

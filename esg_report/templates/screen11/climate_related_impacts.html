@@ -1,27 +1,18 @@
 <!-- climate_related_impacts.html -->
-<h2>11.3 Climate-related Impacts, Risks, and Opportunities</h2>
+<h3>11.3 Climate-related Impacts, Risks, and Opportunities</h3>
 
-<h3>11.3.1 Management of Material Topics (GRI 3-3-c, d, e)</h3>
-<p>
-  Description of organisation's policies or commitments for the material topic, along with actions taken to address, prevent or mitigate potential negative impacts and mention the actions taken by the
-  organisation to manage actual and potential positive impacts.
-</p>
-<p>No data available</p>
-<p>
-  Process used to track the effectiveness of the actions and mention goals, targets, and indicators used to evaluate the process along with specific lessons learned and how these have been incoporated
-  to organisation's operational policies and procedures.
-</p>
+<h4>11.3.1 Management of Material Topics</h4>
 <p>No data available</p>
 
-<h3>11.3.2 Climate-related Financial Implications</h3>
+<h4>11.3.2 Climate-related Financial Implications</h4>
 {% for data in screen_eleven_data.financial_implications_201_2a %}
 <p>{{data.Q1}}</p>
 {% if data.Q1 == "Yes" %}
 <p>{{data.Q2}}</p>
 {% endif %} {% endfor %}
-
+ 
 <h4>11.3.3 Climate-related Risks</h4>
-
+ 
 <table>
   <thead>
     <tr>
@@ -117,7 +108,7 @@
     {% endfor %}
   </tbody>
 </table>
-
+ 
 <h4>11.3.4 Climate-related Opportunities</h4>
 <table
   cellpadding="5"

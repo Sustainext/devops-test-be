@@ -64,7 +64,6 @@ class ESGReportPDFView(View):
                     status=500,
                 )
 
-        # Define all tasks as separate functions
         def get_ceo_message():
             ceo_message = CeoMessageService.get_ceo_message_by_report(results["report"])
             dict_ceo_message = model_to_dict(ceo_message) if ceo_message else {}
@@ -157,21 +156,21 @@ class ESGReportPDFView(View):
         fetch_report()
         # List of threads to run
         threads = [
-            Thread(target=get_ceo_message),
+            # Thread(target=get_ceo_message),
             Thread(target=get_about_the_company),
-            Thread(target=get_mission_vision_values),
-            Thread(target=get_sustainability_roadmap),
-            Thread(target=get_awards_and_recognition),
-            Thread(target=get_stakeholder_engagement),
-            Thread(target=get_about_the_report),
-            Thread(target=get_materiality),
-            Thread(target=get_screen_nine_data),
-            Thread(target=get_screen_ten_data),
-            Thread(target=get_screen_eleven_data),
-            Thread(target=get_screen_twelve_data),
+            # Thread(target=get_mission_vision_values),
+            # Thread(target=get_sustainability_roadmap),
+            # Thread(target=get_awards_and_recognition),
+            # Thread(target=get_stakeholder_engagement),
+            # Thread(target=get_about_the_report),
+            # Thread(target=get_materiality),
+            # Thread(target=get_screen_nine_data),
+            # Thread(target=get_screen_ten_data),
+            # Thread(target=get_screen_eleven_data),
+            # Thread(target=get_screen_twelve_data),
             Thread(target=get_screen_thirteen_data),
-            Thread(target=get_screen_fourteen_data),
-            Thread(target=get_screen_fifteen_data),
+            # Thread(target=get_screen_fourteen_data),
+            # Thread(target=get_screen_fifteen_data),
         ]
 
         # Start all threads
@@ -188,21 +187,21 @@ class ESGReportPDFView(View):
 
         # Create context for rendering
         context = {
-            "ceo_message": results["ceo_message"],
+            # "ceo_message": results["ceo_message"],
             "about_the_company": results["about_the_company"],
-            "mission_vision_values": results["mission_vision_values"],
-            "sustainability_roadmap": results["sustainability_roadmap"],
-            "awards_and_recognition": results["awards_and_recognition"],
-            "stakeholder_engagement": results["stakeholder_engagement"],
-            "about_the_report": results["about_the_report"],
-            "materiality": results["materiality"],
-            "screen_nine_data": results["screen_nine_data"],
-            "screen_ten_data": results["screen_ten_data"],
-            "screen_eleven_data": results["screen_eleven_data"],
-            "screen_twelve_data": results["screen_twelve_data"],
+            # "mission_vision_values": results["mission_vision_values"],
+            # "sustainability_roadmap": results["sustainability_roadmap"],
+            # "awards_and_recognition": results["awards_and_recognition"],
+            # "stakeholder_engagement": results["stakeholder_engagement"],
+            # "about_the_report": results["about_the_report"],
+            # "materiality": results["materiality"],
+            # "screen_nine_data": results["screen_nine_data"],
+            # "screen_ten_data": results["screen_ten_data"],
+            # "screen_eleven_data": results["screen_eleven_data"],
+            # "screen_twelve_data": results["screen_twelve_data"],
             "screen_thirteen_data": results["screen_thirteen_data"],
-            "screen_fourteen_data": results["screen_fourteen_data"],
-            "screen_fifteen_data": results["screen_fifteen_data"],
+            # "screen_fourteen_data": results["screen_fourteen_data"],
+            # "screen_fifteen_data": results["screen_fifteen_data"],
             "pk": pk,
         }
 

@@ -2,8 +2,8 @@
 {% load custom_tags%}
 <h2>14. Community</h2>
 
-<h4>14.1. Community Engagement</h4>
-<p>{{screen_fourteen_data.community_engagement}}</p>
+<h3>14.1. Community Engagement</h3>
+<p>{{screen_fourteen_data.community_engagement|default:"No data available."}}</p>
 
 <h5>Percentage of Operations Implemented by Engaging Local Communities</h5>
 <table
@@ -28,7 +28,7 @@
 </table>
 
 <h5>Impact Assessment</h5>
-<p>{{screen_fourteen_data.impact_assessment}}</p>
+<p>{{screen_fourteen_data.impact_assessment|default:"No data available."}}</p>
 
 <h5>Operations with Significant Actual and Potential Negative Impacts</h5>
 <table
@@ -56,18 +56,8 @@
   </tbody>
 </table>
 
-<h4>14.1.1. Management of Material Topics (GRI 3-3-c, d, e)</h4>
-<p>
-  Description of organisation's policies or commitments for the material topic, along with actions taken to address, prevent or mitigate potential negative impacts and mention the actions taken by the
-  organisation to manage actual and potential positive impacts.
-</p>
+<h4>14.1.1. Management of Material Topics</h4>
 <p>No data available for this section.</p>
 
-<p>
-  Process used to track the effectiveness of the actions and mention goals, targets, and indicators used to evaluate the process along with specific lessons learned and how these have been incoporated
-  to organisation's operational policies and procedures.
-</p>
-<p>No data available for this section.</p>
-
-<h4>14.2. Corporate Social Responsibility (CSR)</h4>
-<p>{{screen_fourteen_data.csr_policies|safe}}</p>
+<h3>14.2. Corporate Social Responsibility (CSR)</h3>
+<p>{{screen_fourteen_data.csr_policies|safe|default:"No data available."}}</p>

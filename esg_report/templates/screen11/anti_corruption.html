@@ -1,24 +1,23 @@
-<!-- anti_corruption.html -->
 {% load custom_tags %}
-<h2>11.5. Anti-Corruption</h2>
-
-<h3>11.5.1. Management of Material Topic</h3>
-<p>
+<h3>11.5. Anti-Corruption</h3>
+ 
+<h4>11.5.1. Management of Material Topic</h4>
+<h5>
   Description of organisation's policies or commitments for the material topic, along with actions taken to address, prevent or mitigate potential negative impacts and mention the actions taken by the
   organisation to manage actual and potential positive impacts.
-</p>
-
+</h5>
+ 
 <p>No data available</p>
-
-<p>
+ 
+<h5>
   Process used to track the effectiveness of the actions and mention goals, targets, and indicators used to evaluate the process along with specific lessons learned and how these have been incoporated
   to organisation's operational policies and procedures.
-</p>
-
+</h5>
+ 
 <p>No data available</p>
-
-<h3>11.5.2. Operations Assessed for Risks Related to Anti-Corruption</h3>
-
+ 
+<h4>11.5.2. Operations Assessed for Risks Related to Anti-Corruption</h4>
+ 
 <table
   cellpadding="5"
   cellspacing="0"
@@ -44,9 +43,9 @@
     {% endfor %}
   </tbody>
 </table>
-
-<h3>11.5.3. Incidents of Anti-Corruption</h3>
-
+ 
+<h4>11.5.3. Incidents of Anti-Corruption</h4>
+ 
 {% if screen_eleven_data.205_3a_anti_corruption and screen_eleven_data.205_3a_anti_corruption|length > 0 %} {% for item in screen_eleven_data.205_3a_anti_corruption %}
 <p>{{ item.Q1|default:"No data available" }}</p>
 <p>{{ item.Q2|default:"No data available" }}</p>
@@ -61,12 +60,12 @@
 {% endfor %} {% else %}
 <p>No data available</p>
 {% endif %}
-
-<h3>11.5.4. Training on Anti-Corruption</h3>
-
-<h4>Governance Body Members</h4>
-<p>Total number and percentage of governance body members that the organization’s anti-corruption policies and procedures have been communicated to, by region:</p>
-
+ 
+<h4>11.5.4. Training on Anti-Corruption</h4>
+ 
+<h5>Governance Body Members</h5>
+<h5>Total number and percentage of governance body members that the organization’s anti-corruption policies and procedures have been communicated to, by region:</h5>
+ 
 <table
   cellpadding="5"
   cellspacing="0"
@@ -91,10 +90,10 @@
     {% endfor %}
   </tbody>
 </table>
-
-<h4>Employees</h4>
-<p>Total number and percentage of employees that the organization’s anti-corruption policies and procedures have been communicated to, broken down by employee category and region:</p>
-
+ 
+<h5>Employees</h5>
+<h5>Total number and percentage of employees that the organization’s anti-corruption policies and procedures have been communicated to, broken down by employee category and region:</h5>
+ 
 <table
   cellpadding="5"
   cellspacing="0"
@@ -131,10 +130,10 @@
     </tr>
   </tfoot>
 </table>
-
-<h4>Business Partners</h4>
-<p>Total number and percentage of business partners that the organization’s anti-corruption policies and procedures have been communicated to, broken down by type of business partner and region:</p>
-
+ 
+<h5>Business Partners</h5>
+<h5>Total number and percentage of business partners that the organization’s anti-corruption policies and procedures have been communicated to, broken down by type of business partner and region:</h5>
+ 
 <table
   cellpadding="5"
   cellspacing="0"
@@ -171,10 +170,10 @@
     </tr>
   </tfoot>
 </table>
-
-<h4>Governance Body Members - Training</h4>
-<p>Total number and percentage of governance body members that have received training on anti-corruption, broken down by region:</p>
-
+ 
+<h5>Governance Body Members - Training</h5>
+<h5>Total number and percentage of governance body members that have received training on anti-corruption, broken down by region:</h5>
+ 
 <table
   cellpadding="5"
   cellspacing="0"
@@ -199,10 +198,10 @@
     {% endfor %}
   </tbody>
 </table>
-
-<h4>Employees - Training</h4>
-<p>Total number and percentage of employees that have received training on anti-corruption, broken down by region:</p>
-
+ 
+<h5>Employees - Training</h5>
+<h5>Total number and percentage of employees that have received training on anti-corruption, broken down by region:</h5>
+ 
 <table
   cellpadding="5"
   cellspacing="0"

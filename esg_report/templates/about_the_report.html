@@ -6,7 +6,7 @@
 
 <h3>7.1. Reporting Period, Frequency, and Point of Contact</h3>
 
-<h4>Reporting Period and Frequency</h4>
+<h5>Reporting Period and Frequency</h5>
 <p>
     {% for key, value in about_the_report.2_3_a.items %}
     {{ value }}<br>
@@ -16,7 +16,7 @@
     annual sustainability reporting cycle. We are committed to providing regular updates on our ESG performance to
     ensure transparency and keep our stakeholders informed of our progress.</p> -->
 
-<h4>Point of Contact</h4>
+<h5>Point of Contact</h5>
 <p>{% for key, value in about_the_report.2_3d.items %}{{ value }}<br>{% endfor %}
 </p>
 <!-- <p>For further information regarding this report or our sustainability initiatives, please contact:</p>
@@ -51,28 +51,28 @@
 <p>To ensure the credibility and reliability of our ESG disclosures, we have engaged an independent third-party
     assurance provider to verify selected information in this report. The scope of the assurance includes:</p>
 
-<h3>The scope of the assurance includes</h3>
+<h4>The scope of the assurance includes</h4>
 
-<h4>Policy and practice for seeking external assurance:</h4>
+<h5>Policy and practice for seeking external assurance:</h5>
 <p>{% for key, value in about_the_report.2_5_a.assurance_policy.items %}{{ value }}<br>{% endfor %}</p>
-<h4>Involvement of highest governance body and senior executives in the process.</h4>
+<h5>Involvement of highest governance body and senior executives in the process.</h5>
 <p>{% for key, value in about_the_report.2_5_a.assurance_highest.items %}{{ value }}<br>{% endfor %}</p>
-<h4>Link or reference to the external assurance reports or assurance statements:</h4>
+<h5>Link or reference to the external assurance reports or assurance statements:</h5>
 <p>{{ about_the_report.2_5_b.Q1 }}</p>
 <p>{{ about_the_report.2_5_b.Q2.text }}</p>
 
-<h4>Data that was assured and the basis of assurance:</h4>
+<h5>Data that was assured and the basis of assurance:</h5>
 <p>{{ about_the_report.2_5_b.Q3 }}</p>
 
-<h4>Assurance Standard used:</h4>
+<h5>Assurance Standard used:</h5>
 <p>{{ about_the_report.2_5_b.Q4 }}</p>
 
-<h4>Level of Assurance obtained:</h4>
+<h5>Level of Assurance obtained:</h5>
 <p>{{ about_the_report.2_5_b.Q5 }}</p>
 
-<h4>Limitations of the assurance process:</h4>
+<h5>Limitations of the assurance process:</h5>
 <p>{{ about_the_report.2_5_b.Q6 }}</p>
 
-<h4>Relationship between the organization and the assurance provider:</h4>
+<h5>Relationship between the organization and the assurance provider:</h5>
 <p>{{ about_the_report.2_5_b.Q7 }}</p>
 {% endif %}

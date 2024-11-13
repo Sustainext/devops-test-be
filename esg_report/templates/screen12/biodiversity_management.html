@@ -1,6 +1,6 @@
 <!-- biodiversity_management.html -->
 
-<h2>12.6. Biodiversity</h2>
+<h3>12.6. Biodiversity</h3>
 
 <p>
   We are committed to protecting and enhancing biodiversity in the areas where we operate. Our biodiversity management includes assessing potential impacts, implementing mitigation measures, and
@@ -9,7 +9,9 @@
 
 <h4>12.6.1. Management of Material Topic</h4>
 <p>No data available</p>
-<p>No data available</p>
-
 <h4>12.6.2. Habitat Protected and Restored</h4>
+{%if screen_twelve_data.habitat_protection_restoration_commitment %}
 <p>{{screen_twelve_data.habitat_protection_restoration_commitment|safe}}</p>
+{% else %}
+<p>No data available for this section.</p>
+{% endif %}

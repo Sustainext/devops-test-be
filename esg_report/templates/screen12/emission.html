@@ -2,18 +2,17 @@
 
 <h2>12. Environment</h2>
 
-<p>{{screen_twelve_data.environmental_responsibility_statement}}</p>
+<p>{{screen_twelve_data.environmental_responsibility_statement|default:"No data available."}}</p>
 
 <h3>12.1. Emissions</h3>
 
-<p>{{screen_twelve_data.emissions}}</p>
+<p>{{screen_twelve_data.emissions|default:"No data available."}}</p>
 
 <h4>12.1.1. Management of Material Topic</h4>
 <p>No data available</p>
-<p>No data available</p>
 
 <h4>12.1.2. Scope 1 GHG Emissions</h4>
-<p>{{screen_twelve_data.scope_one_emissions}}</p>
+<p>{{screen_twelve_data.scope_one_emissions|default:"No data available."}}</p>
 
 <h5>Scope 1</h5>
 <table
@@ -40,7 +39,7 @@
 </table>
 
 <h4>12.1.3. Scope 2 GHG Emissions</h4>
-<p>{{screen_twelve_data.scope_two_emissions}}</p>
+<p>{{screen_twelve_data.scope_two_emissions|default:"No data available."}}</p>
 
 <h5>Scope 2</h5>
 <table
@@ -67,7 +66,7 @@
 </table>
 
 <h4>12.1.4. Scope 3 GHG Emissions</h4>
-<p>{{screen_twelve_data.scope_three_emissions}}</p>
+<p>{{screen_twelve_data.scope_three_emissions|default:"No data available."}}</p>
 
 <h5>Scope 3</h5>
 <table
@@ -171,16 +170,39 @@
   </tbody>
 </table>
 
-<hr />
-
 <h4>305-3-c. Biogenic CO2 emissions</h4>
-<p>{{screen_twelve_data.biogenic_c02_emissions_305_3c | safe}}</p>
+<p>
+  {% if screen_twelve_data.biogenic_c02_emissions_305_3c is not None %}
+    {{ screen_twelve_data.biogenic_c02_emissions_305_3c|safe }}
+  {% else %}
+    No data available.
+  {% endif %}
+</p>
 
 <h4>12.1.5. GHG Emission Intensity</h4>
-<p>{{screen_twelve_data.ghg_emission_intensity_tracking|safe}}</p>
+<p>
+  {% if screen_twelve_data.ghg_emission_intensity_tracking is not None %}
+    {{ screen_twelve_data.ghg_emission_intensity_tracking|safe }}
+  {% else %}
+    No data available.
+  {% endif %}
+</p>
 
 <h4>12.1.6. Reduction in GHG Emissions</h4>
-<p>{{screen_twelve_data.ghg_emission_reduction_efforts|safe}}</p>
+<p>
+  {% if screen_twelve_data.ghg_emission_reduction_efforts is not None %}
+    {{ screen_twelve_data.ghg_emission_reduction_efforts|safe }}
+  {% else %}
+    No data available.
+  {% endif %}
+</p>
 
 <h4>12.1.7. Ozone Depleting Substances</h4>
-<p>{{screen_twelve_data.ozone_depleting_substance_elimination|safe}}</p>
+<p>
+  {% if screen_twelve_data.ozone_depleting_substance_elimination is not None %}
+    {{ screen_twelve_data.ozone_depleting_substance_elimination|safe }}
+  {% else %}
+    No data available.
+  {% endif %}
+</p>
+
