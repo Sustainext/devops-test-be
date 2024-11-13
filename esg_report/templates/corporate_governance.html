@@ -95,30 +95,80 @@
     <!-- Views of Stakeholders Row -->
     <tr>
       <td>Views of Stakeholders</td>
-      <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.0.Whethertakenintoconsideration }}</td>
-      <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.0.How }}</td>
+      <td>
+        {% if screen_nine_data.2_10_b.governance_body_nomination_criteria|length > 0 %}
+          {{ screen_nine_data.2_10_b.governance_body_nomination_criteria.0.Whethertakenintoconsideration|default:"No data available." }}
+        {% else %}
+          No data available.
+        {% endif %}
+      </td>
+      <td>
+        {% if screen_nine_data.2_10_b.governance_body_nomination_criteria|length > 0 %}
+          {{ screen_nine_data.2_10_b.governance_body_nomination_criteria.0.How|default:"No data available." }}
+        {% else %}
+          No data available.
+        {% endif %}
+      </td>
     </tr>
 
     <!-- Diversity Row -->
     <tr>
       <td>Diversity</td>
-      <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.1.Whethertakenintoconsideration }}</td>
-      <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.1.How }}</td>
+      <td>
+        {% if screen_nine_data.2_10_b.governance_body_nomination_criteria|length > 1 %}
+          {{ screen_nine_data.2_10_b.governance_body_nomination_criteria.1.Whethertakenintoconsideration|default:"No data available." }}
+        {% else %}
+          No data available.
+        {% endif %}
+      </td>
+      <td>
+        {% if screen_nine_data.2_10_b.governance_body_nomination_criteria|length > 1 %}
+          {{ screen_nine_data.2_10_b.governance_body_nomination_criteria.1.How|default:"No data available." }}
+        {% else %}
+          No data available.
+        {% endif %}
+      </td>
     </tr>
 
     <!-- Independence Row -->
     <tr>
       <td>Independence</td>
-      <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.2.Whethertakenintoconsideration }}</td>
-      <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.2.How }}</td>
+      <td>
+        {% if screen_nine_data.2_10_b.governance_body_nomination_criteria|length > 2 %}
+          {{ screen_nine_data.2_10_b.governance_body_nomination_criteria.2.Whethertakenintoconsideration|default:"No data available." }}
+        {% else %}
+          No data available.
+        {% endif %}
+      </td>
+      <td>
+        {% if screen_nine_data.2_10_b.governance_body_nomination_criteria|length > 2 %}
+          {{ screen_nine_data.2_10_b.governance_body_nomination_criteria.2.How|default:"No data available." }}
+        {% else %}
+          No data available.
+        {% endif %}
+      </td>
     </tr>
+
+    <!-- Competencies Row -->
     <tr>
       <td>Competencies relevant to the impacts of the Organization</td>
-      <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.3.Whethertakenintoconsideration }}</td>
-      <td>{{ screen_nine_data.2_10_b.governance_body_nomination_criteria.3.How }}</td>
+      <td>
+        {% if screen_nine_data.2_10_b.governance_body_nomination_criteria|length > 3 %}
+          {{ screen_nine_data.2_10_b.governance_body_nomination_criteria.3.Whethertakenintoconsideration|default:"No data available." }}
+        {% else %}
+          No data available.
+        {% endif %}
+      </td>
+      <td>
+        {% if screen_nine_data.2_10_b.governance_body_nomination_criteria|length > 3 %}
+          {{ screen_nine_data.2_10_b.governance_body_nomination_criteria.3.How|default:"No data available." }}
+        {% else %}
+          No data available.
+        {% endif %}
+      </td>
     </tr>
-  </tbody>
-</table>
+</tbody>
+
 
 <h4>9.2.2 Chair of the Highest Governance Body</h4>
 <p>{{screen_nine_data.2_11_b.is_chair_of_highest_governance|default:"No data available."}}</p>
@@ -293,13 +343,29 @@
 <p>{{ screen_nine_data.2_20_a.processDescription|default:"No data available" }}</p>
 
 <h5>Independent highest governance body members or an independent remuneration committee overseeing the process for determining remuneration:</h5>
-<p>{{ screen_nine_data.2_20_a.tableData.0.How|default:"No data available" }}</p>
+{% if screen_nine_data.2_20_a.tableData and screen_nine_data.2_20_a.tableData|length > 0 %}
+    <p>{{ screen_nine_data.2_20_a.tableData.0.How|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
 
 <h5>How the views of stakeholders (including shareholders) regarding remuneration are sought and taken into consideration:</h5>
-<p>{{ screen_nine_data.2_20_a.tableData.1.How|default:"No data available" }}</p>
+{% if screen_nine_data.2_20_a.tableData and screen_nine_data.2_20_a.tableData|length > 1 %}
+    <p>{{ screen_nine_data.2_20_a.tableData.1.How|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
 
 <h5>Remuneration consultants involved in determining remuneration and whether they are independent of the organization, its highest governance body, and senior executives:</h5>
-<p>{{ screen_nine_data.2_20_a.tableData.2.How|default:"No data available" }}</p>
+{% if screen_nine_data.2_20_a.tableData and screen_nine_data.2_20_a.tableData|length > 2 %}
+    <p>{{ screen_nine_data.2_20_a.tableData.2.How|default:"No data available" }}</p>
+{% else %}
+    <p>No data available</p>
+{% endif %}
+
+
 
 <h5>Results of votes of stakeholders (including shareholders) on remuneration policies and proposals:</h5>
 <p>{{ screen_nine_data.2_20_b|default:"No data available" }}</p>
@@ -559,21 +625,36 @@
   enhancing social value, and maintaining strong governance. We aim to create long-term value for our stakeholders while contributing to a more sustainable future.
 </p>
 
-<h5>
-  Overall organization's policy commitments for "responsible business conduct"
-</h5>
-<p>{{ screen_nine_data.2_23_a.0.column1|default:"No data available" }}</p>
+<h5>Overall organization's policy commitments for "responsible business conduct"</h5>
+<p>
+  {% if screen_nine_data.2_23_a and screen_nine_data.2_23_a|length > 0 %}
+    {{ screen_nine_data.2_23_a.0.column1|default:"No data available" }}
+  {% else %}
+    No data available
+  {% endif %}
+</p>
 
-<h5>
-  Authoritative governmental instruments that the commitments reference
-</h5>
-<p>{{ screen_nine_data.2_23_a.1.column1|default:"No data available" }}</p>
+<h5>Authoritative governmental instruments that the commitments reference</h5>
+<p>
+  {% if screen_nine_data.2_23_a and screen_nine_data.2_23_a|length > 1 %}
+    {{ screen_nine_data.2_23_a.1.column1|default:"No data available" }}
+  {% else %}
+    No data available
+  {% endif %}
+</p>
 
 <h5>The commitments that stipulate conducting due diligence</h5>
-<p>{{ screen_nine_data.2_23_a.2.column1|default:"No data available" }}</p>
-{% if screen_nine_data.2_23_a.2.column1_details %}
-<p>{{ screen_nine_data.2_23_a.2.column1_details }}</p>
+<p>
+  {% if screen_nine_data.2_23_a and screen_nine_data.2_23_a|length > 2 %}
+    {{ screen_nine_data.2_23_a.2.column1|default:"No data available" }}
+  {% else %}
+    No data available
+  {% endif %}
+</p>
+{% if screen_nine_data.2_23_a and screen_nine_data.2_23_a|length > 2 and screen_nine_data.2_23_a.2.column1_details %}
+  <p>{{ screen_nine_data.2_23_a.2.column1_details }}</p>
 {% endif %}
+
 
 <h5>
   The commitments that stipulate applying the precautionary principle

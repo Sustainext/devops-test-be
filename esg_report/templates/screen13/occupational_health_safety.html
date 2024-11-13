@@ -7,32 +7,68 @@
 <p>Need to add data from material topic</p>
 
 <h4>13.6.2. OHS Management System</h4>
-<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q1|default:"No data available" }}</p>
-<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q2.selected|default:screen_thirteen_data.403_1a_ohs_management_system.data.0.Q2.otherValue|default:"No data available" }}</p>
-<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q3|default:"No data available" }}</p>
-<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q4|default:"No data available" }}</p>
-<p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q5|default:"No data available" }}</p>
 
-<h5>Workers covered</h5>
-<p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q1|default:"No data available" }}</p>
-<h5>Activities covered</h5>
-<p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q2|default:"No data available" }}</p>
-<h5>Workplaces Covered</h5>
-<p>{{ data.403_1b_scope_of_workers.data.0.Q3|default:"No data available" }}</p>
-<h5>Exclusions</h5>
-<p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q4|default:"No data available" }}</p>
-<h5>Reason for exclusion</h5>
-<p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q5|default:"No data available" }}</p>
+{% if screen_thirteen_data.403_1a_ohs_management_system and screen_thirteen_data.403_1a_ohs_management_system.data and screen_thirteen_data.403_1a_ohs_management_system.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q1|default:"No data available" }}</p>
+  <p>
+    {% if screen_thirteen_data.403_1a_ohs_management_system.data.0.Q2 %}
+      {{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q2.selected|default:screen_thirteen_data.403_1a_ohs_management_system.data.0.Q2.otherValue|default:"No data available" }}
+    {% else %}
+      No data available
+    {% endif %}
+  </p>
+  <p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q3|default:"No data available" }}</p>
+  <p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q4|default:"No data available" }}</p>
+  <p>{{ screen_thirteen_data.403_1a_ohs_management_system.data.0.Q5|default:"No data available" }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+
+
+{% if screen_thirteen_data.403_1b_scope_of_workers and screen_thirteen_data.403_1b_scope_of_workers.data and screen_thirteen_data.403_1b_scope_of_workers.data|length > 0 %}
+  <h5>Workers covered</h5>
+  <p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q1|default:"No data available" }}</p>
+  
+  <h5>Activities covered</h5>
+  <p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q2|default:"No data available" }}</p>
+  
+  <h5>Workplaces Covered</h5>
+  <p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q3|default:"No data available" }}</p>
+  
+  <h5>Exclusions</h5>
+  <p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q4|default:"No data available" }}</p>
+  
+  <h5>Reason for exclusion</h5>
+  <p>{{ screen_thirteen_data.403_1b_scope_of_workers.data.0.Q5|default:"No data available" }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+
 
 
 <h4>13.6.3. Occupational Health Services</h4>
-<p>{{screen_thirteen_data.403_3a_ohs_functions.data.0.Q1|default:"No data available."}}</p>
+{% if screen_thirteen_data.403_3a_ohs_functions and screen_thirteen_data.403_3a_ohs_functions.data and screen_thirteen_data.403_3a_ohs_functions.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_3a_ohs_functions.data.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
 
 <h4>13.6.4. Worker Participation, Consultation, and Communication on OHS</h4>
-<p>{{screen_thirteen_data.ohs_policies|default:"No data available."}}</p>
-<p>{{ screen_thirteen_data.403_4a_ohs_system_1.data.0.Q1|default:"No data available" }}</p>
-<p>{{ screen_thirteen_data.403_4a_ohs_system_2.data.0.Q1|default:"No data available" }}</p>
-<p>{{ screen_thirteen_data.403_4a_ohs_system_2.data.0.Q2|default:"No data available" }}</p>
+<p>{{ screen_thirteen_data.ohs_policies|default:"No data available." }}</p>
+
+{% if screen_thirteen_data.403_4a_ohs_system_1 and screen_thirteen_data.403_4a_ohs_system_1.data and screen_thirteen_data.403_4a_ohs_system_1.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_4a_ohs_system_1.data.0.Q1|default:"No data available" }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+
+{% if screen_thirteen_data.403_4a_ohs_system_2 and screen_thirteen_data.403_4a_ohs_system_2.data and screen_thirteen_data.403_4a_ohs_system_2.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_4a_ohs_system_2.data.0.Q1|default:"No data available" }}</p>
+  <p>{{ screen_thirteen_data.403_4a_ohs_system_2.data.0.Q2|default:"No data available" }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+
 
 
 <h5>Formal Joint Management-Worker Health and Safety Committees</h5>
@@ -60,27 +96,57 @@
 </table>
 
 <h4>13.6.5. Promotion of Worker Health</h4>
+
 <h5>Access to non-occupational medical and healthcare services</h5>
-<p>{{ screen_thirteen_data.403_6a_access_non_occupational.data.0.Q1|default:"No data available" }}</p>
+{% if screen_thirteen_data.403_6a_access_non_occupational and screen_thirteen_data.403_6a_access_non_occupational.data and screen_thirteen_data.403_6a_access_non_occupational.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_6a_access_non_occupational.data.0.Q1|default:"No data available" }}</p>
+{% else %}
+  <p>No data available</p>
+{% endif %}
 
 <h5>Scope of access</h5>
-<p>{{ screen_thirteen_data.403_6a_scope_of_access.data.0.Q1|default:"No data available" }}</p>
+{% if screen_thirteen_data.403_6a_scope_of_access and screen_thirteen_data.403_6a_scope_of_access.data and screen_thirteen_data.403_6a_scope_of_access.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_6a_scope_of_access.data.0.Q1|default:"No data available" }}</p>
+{% else %}
+  <p>No data available</p>
+{% endif %}
 
 <h5>Voluntary health promotion and programs offered</h5>
-<p>{{ screen_thirteen_data.403_6a_voluntary_health.data.0.Q1|default:"No data available" }}</p>
+{% if screen_thirteen_data.403_6a_voluntary_health and screen_thirteen_data.403_6a_voluntary_health.data and screen_thirteen_data.403_6a_voluntary_health.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_6a_voluntary_health.data.0.Q1|default:"No data available" }}</p>
+{% else %}
+  <p>No data available</p>
+{% endif %}
 
 <h5>Health risk addressed</h5>
-<p>{{ screen_thirteen_data.403_6a_health_risk.data.0.Q1|default:"No data available" }}</p>
+{% if screen_thirteen_data.403_6a_health_risk and screen_thirteen_data.403_6a_health_risk.data and screen_thirteen_data.403_6a_health_risk.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_6a_health_risk.data.0.Q1|default:"No data available" }}</p>
+{% else %}
+  <p>No data available</p>
+{% endif %}
 
 <h5>Workers' access to the services and programs</h5>
-<p>{{ screen_thirteen_data.403_6b_workers_access.data.0.Q1|default:"No data available" }}</p>
+{% if screen_thirteen_data.403_6b_workers_access and screen_thirteen_data.403_6b_workers_access.data and screen_thirteen_data.403_6b_workers_access.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_6b_workers_access.data.0.Q1|default:"No data available" }}</p>
+{% else %}
+  <p>No data available</p>
+{% endif %}
 
 <h4>13.6.6. Prevention and Mitigation of OHS Impacts</h4>
+
 <h5>Negative occupational health and safety impacts</h5>
-<p>{{ screen_thirteen_data.403_7a_negative_occupational.data.0.Q1|default:"No data available" }}</p>
+{% if screen_thirteen_data.403_7a_negative_occupational and screen_thirteen_data.403_7a_negative_occupational.data and screen_thirteen_data.403_7a_negative_occupational.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_7a_negative_occupational.data.0.Q1|default:"No data available" }}</p>
+{% else %}
+  <p>No data available</p>
+{% endif %}
 
 <h5>Hazards and risks</h5>
-<p>{{ screen_thirteen_data.403_7a_hazards_risks.data.0.Q1|default:"No data available" }}</p>
+{% if screen_thirteen_data.403_7a_hazards_risks and screen_thirteen_data.403_7a_hazards_risks.data and screen_thirteen_data.403_7a_hazards_risks.data|length > 0 %}
+  <p>{{ screen_thirteen_data.403_7a_hazards_risks.data.0.Q1|default:"No data available" }}</p>
+{% else %}
+  <p>No data available</p>
+{% endif %}
 
 
 <h4>13.6.7. Hazard, Risk Identification and Investigation</h4>

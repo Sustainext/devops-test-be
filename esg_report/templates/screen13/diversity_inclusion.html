@@ -92,16 +92,23 @@
         </tr>
     </thead>
     <tbody>
-        {% for data in screen_thirteen_data.405_2a_analyse.ratio_of_basic_salary_of_women_to_men.0.Q2 %}
-        <tr>
-            <td>{{data.category}}</td>
-            <td>{{data.male}}</td>
-            <td>{{data.female}}</td>
-            <td>{{data.nonBinary}}</td>
-            <td>{{data.locationandoperation}}</td>
-        </tr>
-        {% endfor %}
+        {% if screen_thirteen_data.405_2a_analyse and screen_thirteen_data.405_2a_analyse.ratio_of_basic_salary_of_women_to_men and screen_thirteen_data.405_2a_analyse.ratio_of_basic_salary_of_women_to_men|length > 0 and screen_thirteen_data.405_2a_analyse.ratio_of_basic_salary_of_women_to_men.0.Q2 %}
+            {% for data in screen_thirteen_data.405_2a_analyse.ratio_of_basic_salary_of_women_to_men.0.Q2 %}
+                <tr>
+                    <td>{{ data.category|default:"No data available" }}</td>
+                    <td>{{ data.male|default:"No data available" }}</td>
+                    <td>{{ data.female|default:"No data available" }}</td>
+                    <td>{{ data.nonBinary|default:"No data available" }}</td>
+                    <td>{{ data.locationandoperation|default:"No data available" }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="5">No data available</td>
+            </tr>
+        {% endif %}
     </tbody>
+    
 </table>
 
 
@@ -120,14 +127,21 @@
         </tr>
     </thead>
     <tbody>
-        {% for data in screen_thirteen_data.405_2a_analyse.ratio_of_remuneration_of_women_to_men.0.Q2 %}
-        <tr>
-            <td>{{data.category}}</td>
-            <td>{{data.male}}</td>
-            <td>{{data.female}}</td>
-            <td>{{data.nonBinary}}</td>
-            <td>{{data.locationandoperation}}</td>
-        </tr>
-        {% endfor %}
+        {% if screen_thirteen_data.405_2a_analyse and screen_thirteen_data.405_2a_analyse.ratio_of_remuneration_of_women_to_men and screen_thirteen_data.405_2a_analyse.ratio_of_remuneration_of_women_to_men|length > 0 and screen_thirteen_data.405_2a_analyse.ratio_of_remuneration_of_women_to_men.0.Q2 %}
+            {% for data in screen_thirteen_data.405_2a_analyse.ratio_of_remuneration_of_women_to_men.0.Q2 %}
+                <tr>
+                    <td>{{ data.category|default:"No data available" }}</td>
+                    <td>{{ data.male|default:"No data available" }}</td>
+                    <td>{{ data.female|default:"No data available" }}</td>
+                    <td>{{ data.nonBinary|default:"No data available" }}</td>
+                    <td>{{ data.locationandoperation|default:"No data available" }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="5">No data available</td>
+            </tr>
+        {% endif %}
     </tbody>
+    
 </table>
