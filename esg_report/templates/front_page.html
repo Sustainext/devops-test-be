@@ -72,8 +72,16 @@
     <div class="top-graphic"></div>
     <div class="bottom-graphic"></div>
     <div class="title-section">
-        <div class="subtitle">Acme Corporation</div>
-        <div class="title">Sustainability Report 2022</div>
-        <div class="year">Year: 2022</div>
+        <div class="subtitle">{{ceo_message.company_name}}</div>
+        <div class="title">Sustainability Report {% if report.start_date|date:"Y" == report.end_date|date:"Y" %}
+            {{ report.start_date|date:"Y" }}
+        {% else %}
+            {{ report.start_date|date:"Y" }} - {{ report.end_date|date:"Y" }}
+        {% endif %}</div>
+        <div class="year">Year: {% if report.start_date|date:"Y" == report.end_date|date:"Y" %}
+            {{ report.start_date|date:"Y" }}
+        {% else %}
+            {{ report.start_date|date:"Y" }} - {{ report.end_date|date:"Y" }}
+        {% endif %}</div>
     </div>
 </div>
