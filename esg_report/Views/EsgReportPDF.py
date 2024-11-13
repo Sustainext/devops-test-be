@@ -54,9 +54,6 @@ class ESGReportPDFView(View):
         def fetch_report():
             try:
                 results["report"] = CeoMessageService.get_report_by_id(pk)
-                report_data = results["report"].__dict__
-                for key, value in report_data.items():
-                    print(f"{key}: {value}")
             except Report.DoesNotExist:
                 results["error"] = HttpResponse(
                     f"No report found with ID={pk}", status=404
