@@ -120,4 +120,8 @@
 <p>No data available.</p>
 
 <h4>Conclusion</h4>
+{% if screen_fifteen_data.conclusion %}
 <p>{{screen_fifteen_data.conclusion|safe|default:"No data available"}}</p>
+{% else %}
+<p>No data available</p>
+{% endif %}
