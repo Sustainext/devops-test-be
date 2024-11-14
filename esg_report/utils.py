@@ -13,6 +13,7 @@ from rest_framework.test import APIRequestFactory
 from django.urls import reverse, resolve
 from common.enums.GeneralTopicDisclosuresAndPaths import GENERAL_DISCLOSURES_AND_PATHS
 import random
+from collections import defaultdict
 import datetime
 import logging
 
@@ -99,10 +100,7 @@ def get_data_points_as_per_report(report: Report):
     data_points = DataPoint.objects.filter(client_id=report.client.id)
     if report.corporate:
         data_points = data_points.filter(
-            Q(corporate=report.corporate) | Q(organization=report.organization)
-        )
-        data_points = data_points.filter(
-            Q(locale__in=report.corporate.location.all()) | Q(locale=None)
+            Q(corporate=report.corporate) | Q(organization=report.organization) | Q(locale__in=report.corporate.location.all()) | Q(locale=None)
         )
     elif report.organization:
         data_points = data_points.filter(
@@ -159,11 +157,7 @@ def get_materiality_assessment(report):
         if materiality_assessment.exists():
             return materiality_assessment.first()
         else:
-            raise ValidationError("Materiality Assessment not found")
-
-
-from collections import defaultdict
-
+            return None
 
 def collect_data_by_raw_response_and_index(data_points):
     # Create a dictionary where the key is raw_response and the value is another dictionary

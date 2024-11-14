@@ -2,7 +2,6 @@ from sustainapp.models import Report
 from esg_report.models.ScreenTwelve import ScreenTwelve
 from collections import defaultdict
 from esg_report.utils import (
-    get_materiality_assessment,
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     collect_data_by_raw_response_and_index,

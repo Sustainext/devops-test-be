@@ -67,7 +67,7 @@ class ScreenEightAPIView(APIView):
             response_data["3-2b"] = (
                 materiality_assessment.change_confirmation.reason_for_change
             )
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, AttributeError):
             response_data["3-2b"] = None
 
         try:
@@ -87,14 +87,14 @@ class ScreenEightAPIView(APIView):
                 ),
             }
 
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, AttributeError):
             response_data["3-1-a"] = None
 
         try:
             response_data["3-3a"] = MaterialityImpactSerializer(
                 materiality_assessment.management_impacts.all(), many=True
             ).data
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, AttributeError):
             response_data["3-3a"] = None
 
         try:
@@ -104,7 +104,7 @@ class ScreenEightAPIView(APIView):
                 .get()
                 .negative_impact_involvement_description
             )
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, AttributeError):
             response_data["3-3b"] = None
 
         return Response(response_data, status=status.HTTP_200_OK)
