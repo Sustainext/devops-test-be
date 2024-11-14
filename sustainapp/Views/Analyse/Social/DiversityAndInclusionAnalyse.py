@@ -11,7 +11,7 @@ from datametric.utils.analyse import (
     safe_divide,
     get_raw_response_filters,
 )
-from datametric.models import RawResponse
+from datametric.models import RawResponse, DataPoint
 
 
 class DiversityAndInclusionAnalyse(APIView):
@@ -42,6 +42,14 @@ class DiversityAndInclusionAnalyse(APIView):
             .prefetch_related("path")
             .order_by("-year", "-month")
         )
+
+    def set_data_points(self):
+        client_id = self.request.user.client.id
+        self.data_points = DataPoint.objects.filter(
+            client_id=client_id,
+            path__slug__in=self.slugs,
+        ).filter(filter_by_start_end_dates(self.start, self.end))
+
 
     def get_diversity_of_the_board(self, slug):  # 405-1
         local_raw_response = (
@@ -80,6 +88,10 @@ class DiversityAndInclusionAnalyse(APIView):
                 }
             )
         return local_response
+    
+    def get_diversity_of_the_individuals(self,slug):
+        ...
+
 
     def get_salary_ration(self, slug):  # 405-2
         local_raw_response = (
