@@ -73,7 +73,7 @@
     <div class="bottom-graphic"></div>
     <div class="title-section">
         <div class="subtitle">{{ceo_message.company_name}}</div>
-        <div class="title">Sustainability Report {% if report.start_date|date:"Y" == report.end_date|date:"Y" %}
+        <div class="title">{{report.name}} {% if report.start_date|date:"Y" == report.end_date|date:"Y" %}
             {{ report.start_date|date:"Y" }}
         {% else %}
             {{ report.start_date|date:"Y" }} - {{ report.end_date|date:"Y" }}
