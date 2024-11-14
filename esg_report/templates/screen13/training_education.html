@@ -1,87 +1,90 @@
 <!-- training_education.html -->
 
-<h2>13.5. Training & Education (404-1-a, 410-1-a, b, 404-2-a, b)</h2>
+<h3>13.5. Training & Education</h3>
 
-<h4>13.5.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
-<hr>
-<p>[Details on the management of training and education, including strategies to promote employee development, skill
-    enhancement, and career transition support programs.]</p>
+<h5>Training requirements apply to third party organisations</h5>
+<p>{{screen_thirteen_data.410_1b_training_requirements.data.0.Q1|default:"No data available." }}</p>
+<p></p>
+
+<h5>Average training hours per employee:</h5>
+<p>{{screen_thirteen_data.404_1a_analyse.average_hours_of_training_provided_to_employees.0.average_training_hours_per_employee|default:"No data available." }}</p>
+<p></p>
+
+<h5>Average training hours per female employee:</h5>
+<p>{{screen_thirteen_data.404_1a_analyse.average_hours_of_training_provided_to_employees.0.average_training_hours_per_female_employee|default:"No data available." }}</p>
+<p></p>
+
+<h5>Average training hours per male employee:</h5>
+<p>{{screen_thirteen_data.404_1a_analyse.average_hours_of_training_provided_to_employees.0.average_training_hours_per_male_employee|default:"No data available." }}</p>
+<p></p>
+
+<h5>Average training hours per other employee:</h5>
+<p>{{screen_thirteen_data.404_1a_analyse.average_hours_of_training_provided_to_employees.0.average_training_hours_per_non_binary_employee|default:"No data available." }}</p>
+<p></p>
+
+<h5>Percentage of security personnel who have received formal training in the organisation:</h5>
+<p>{{screen_thirteen_data.security_personnel_internal_training|default:"No data available." }}</p>
+<p></p>
+
+<h5>Percentage of security personnel who have received formal training from third-party organisation:</h5>
+<p>{{screen_thirteen_data.security_personnel_external_training|default:"No data available." }}</p>
+<p></p>
+
+<h5>Average hours of training provided to employees</h5>
+<table>
+  <thead>
+    <tr>
+      <th>Categories</th>
+      <th>Average training hours per employee category</th>
+      <th>Average training hours of male employee in category</th>
+      <th>Average training hours of female employee in category</th>
+      <th>Average training hours of non-binary employee in category</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for category in screen_thirteen_data.404_social_analyse.average_training_hours_per_employee_category %}
+    <tr>
+      <td>{{ category.category }}</td>
+      <td>{{ category.average_training_hours_per_employee }}</td>
+      <td>{{ category.average_training_hours_per_male_employee }}</td>
+      <td>{{ category.average_training_hours_per_female_employee }}</td>
+      <td>{{ category.average_training_hours_per_non_binary_employee }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h4>13.5.1. Management of Material Topic</h4>
+<p>Need to add data from material topic here </p>
 
 <h4>13.5.2. Programs for Upgrading Employee Skills and Transition Assistance Programs</h4>
-<p>We invest in continuous learning and development opportunities for our employees. Our programs include skills
-    training, leadership development, and transition assistance for those moving to new roles or retiring.</p>
+<p>
+  {{screen_thirteen_data.employee_skill_upgrade_programs|default:"No data available." }}
+</p>
 
-<p><em>Note for developers: A tailored version of the 404-1-a, 410-1-a, 404-2-a, b data is required here.</em></p>
+<p>Programs for upgrading employee skills:</p>
+{% if screen_thirteen_data.404_2a_2b_collect %}
+    {% if screen_thirteen_data.404_2a_2b_collect|length > 0 %}
+        {% if screen_thirteen_data.404_2a_2b_collect.0.Q1 %}
+            {% if screen_thirteen_data.404_2a_2b_collect.0.Q1 == "Yes" %}
+                <p>Type of program and its scope</p>
+                <p>{{ screen_thirteen_data.404_2a_2b_collect.0.Q2|default:"No data available" }}</p>
 
-<h5>Average Training Hours</h5>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Category</th>
-            <th>Average Training Hours</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Per Employee</td>
-            <td>{{ average_training_hours.per_employee }}</td>
-        </tr>
-        <tr>
-            <td>Per Female Employee</td>
-            <td>{{ average_training_hours.per_female_employee }}</td>
-        </tr>
-        <tr>
-            <td>Per Male Employee</td>
-            <td>{{ average_training_hours.per_male_employee }}</td>
-        </tr>
-        <tr>
-            <td>Per Non-Binary Employee</td>
-            <td>{{ average_training_hours.per_nonbinary_employee }}</td>
-        </tr>
-    </tbody>
-</table>
+                <p>Describe the programs provided to facilitate continued employability</p>
+                <p>{{ screen_thirteen_data.404_2a_2b_collect.0.Q3|default:"No data available" }}</p>
 
-<h5>Average Training Hours by Employee Category</h5>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Employee Category</th>
-            <th>Average Training Hours (Male)</th>
-            <th>Average Training Hours (Female)</th>
-            <th>Average Training Hours (Non-Binary)</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for category in training_hours_by_category %}
-        <tr>
-            <td>{{ category.name }}</td>
-            <td>{{ category.male_hours }}</td>
-            <td>{{ category.female_hours }}</td>
-            <td>{{ category.nonbinary_hours }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                <p>Describe assistance programs to manage career endings resulting from retirement or termination</p>
+                <p>{{ screen_thirteen_data.404_2a_2b_collect.0.Q4|default:"No data available" }}</p>
+            {% else %}
+                <p>No</p>
+            {% endif %}
+        {% else %}
+            <p>No data available</p>
+        {% endif %}
+    {% else %}
+        <p>No data available</p>
+    {% endif %}
+{% else %}
+    <p>No data available</p>
+{% endif %}
 
-<h5>Percentage of Security Personnel Receiving Formal Training</h5>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Training Type</th>
-            <th>Percentage</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Formal Training within the Organisation</td>
-            <td>{{ security_training.org_training_percentage }}%</td>
-        </tr>
-        <tr>
-            <td>Formal Training from Third-Party Organisation</td>
-            <td>{{ security_training.third_party_training_percentage }}%</td>
-        </tr>
-    </tbody>
-</table>
-
-<p><em>Note: This data can be represented using visual aids, such as charts, to display training hours and training
-        percentages.</em></p>

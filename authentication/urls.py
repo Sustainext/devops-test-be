@@ -26,9 +26,11 @@ from authentication.Views.CustomUser import (
 from authentication.Views.Auth0LoginAPI import Auth0LoginView
 from authentication.Views.ManageUser import ManageUserViewSet
 
+
 router = routers.DefaultRouter()
 router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
 router.register(r"manage_user", ManageUserViewSet, basename="ManageUser")
+
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="rest_register"),
     # path("login/", LoginView.as_view(), name="rest_login"),

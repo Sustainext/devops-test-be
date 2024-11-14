@@ -34,6 +34,8 @@ admin.site.register(DataMetric, DataMetricAdmin)
 class PathAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ("id", "name", "slug")
     actions = ["export_as_csv"]
+    #* Add search fields
+    search_fields = ["slug"]
 
 
 admin.site.register(Path, PathAdmin)
