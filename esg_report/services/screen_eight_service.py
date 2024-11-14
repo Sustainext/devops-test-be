@@ -41,7 +41,7 @@ class MaterialityService:
             response_data["3-2b"] = (
                 materiality_assessment.change_confirmation.reason_for_change
             )
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, AttributeError):
             response_data["3-2b"] = None
 
         # 3-1-a: Assessment Process
@@ -56,7 +56,7 @@ class MaterialityService:
                     )
                 ),
             }
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, AttributeError):
             response_data["3-1-a"] = None
 
         # 3-3a: Management Impacts
@@ -64,7 +64,7 @@ class MaterialityService:
             response_data["3-3a"] = MaterialityImpactSerializer(
                 materiality_assessment.management_impacts.all(), many=True
             ).data
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, AttributeError):
             response_data["3-3a"] = None
 
         # 3-3b: Negative Impact Involvement Description
@@ -74,7 +74,7 @@ class MaterialityService:
                 .get()
                 .negative_impact_involvement_description
             )
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, AttributeError):
             response_data["3-3b"] = None
 
         return response_data
