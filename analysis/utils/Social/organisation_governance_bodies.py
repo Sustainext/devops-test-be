@@ -82,6 +82,7 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                     ),
                     "employee_category": local_data["category"],
                 }
+                gender_obj, _ = Gender.objects.get_or_create(gender=gender)
                 OrganisationGovernanceBodies.objects.update_or_create(
                     raw_response=raw_response,
                     month=raw_response.month,
@@ -93,6 +94,6 @@ def create_data_for_organisation_governance_bodies(raw_response: RawResponse):
                     index=index,
                     age_group=age_group,
                     table_name=table_name,
-                    gender=Gender.objects.get_or_create(gender=gender),
+                    gender=gender_obj,
                     defaults=defaults,
                 )[0].save()
