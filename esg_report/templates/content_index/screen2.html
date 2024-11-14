@@ -1,0 +1,68 @@
+<div style="overflow-x: auto; border: 1px solid #E5E7EB; border-radius: 5px;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead style="background-color: #3B82F6; color: white;">
+        <tr>
+          {% for col in columns %}
+            <th style="padding: 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; 
+                       {% if col.subHeaders|length > 0 %} text-align: center; {% else %} text-align: left; {% endif %}"
+                colspan="{{ col.subHeaders|length|default:1 }}" 
+                rowspan="{% if col.subHeaders|length > 0 %}1{% else %}2{% endif %}">
+              {{ col.header }}
+            </th>
+          {% endfor %}
+        </tr>
+        <tr>
+          {% for col in columns %}
+            {% if col.subHeaders|length > 0 %}
+              {% for subHeader in col.subHeaders %}
+                <th style="padding: 8px; border-right: 1px solid #D1D5DB;">{{ subHeader }}</th>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody style="background-color: white; border-top: 1px solid #E5E7EB;">
+        <!-- Header row for General Disclosure -->
+        <tr style="background-color: #F1F7FF;">
+          <td colspan="7" style="padding: 8px; font-weight: bold; font-size: 13px; color: #0F6CBD;">
+            GRI 2: General Disclosure 2021
+          </td>
+        </tr>
+        <!-- Row title for the disclosure -->
+        <tr style="font-size: 13px;">
+          <td rowspan="{{ data|length|add:1 }}" style="padding: 16px; color: #667085; border-right: 1px solid #D1D5DB;">
+            GRI 2: General Disclosure 2021
+          </td>
+        </tr>
+        <!-- Map through dataRows -->
+        {% for row in data %}
+          <tr style="font-size: 13px; color: {% if not row.is_filled %}red{% else %}#667085{% endif %};">
+            <td style="padding: 16px;" title="{% if not row.is_filled %}Disclosure not filled. Provide reason for omission or fill in the data.{% endif %}">
+              {{ row.title }}
+            </td>
+            <td style="padding: 16px;">{{ row.page }}</td>
+            <!-- Omission details -->
+            {% for omissionItem in row.omission %}
+              <td style="padding: 16px;">{{ omissionItem.req_omitted }}</td>
+              <td style="padding: 16px;">
+                {% if row.is_filled %}
+                  {{ omissionItem.reason }}
+                {% else %}
+                  Add in next step
+                {% endif %}
+              </td>
+              <td style="padding: 16px;">
+                {% if row.is_filled %}
+                  {{ omissionItem.explanation }}
+                {% else %}
+                  Add in next step
+                {% endif %}
+              </td>
+            {% endfor %}
+            <td style="padding: 16px;">{{ row.gri_sector_no }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
