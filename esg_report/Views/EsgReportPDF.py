@@ -21,11 +21,13 @@ from esg_report.services.screen_twelve_service import ScreenTwelveService
 from esg_report.services.screen_thirteen_service import ScreenThirteenService
 from esg_report.services.screen_fourteen_service import ScreenFourteenService
 from esg_report.services.screen_fifteen_service import ScreenFifteenService
+from esg_report.services.content_index_service import StatementOfUseService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
 import json
 from threading import Thread
 from esg_report.utils import generate_disclosure_status
+
 
 
 def convert_keys(obj):
@@ -187,6 +189,8 @@ class ESGReportPDFView(View):
             return results["error"]
 
         content_index_data = generate_disclosure_status(report=results["report"])
+        statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
+        print(statement_of_use)
 
         # Create context for rendering
         context = {
