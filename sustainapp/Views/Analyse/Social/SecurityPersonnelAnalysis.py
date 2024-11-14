@@ -56,12 +56,15 @@ class SecurityPersonnelAnalysisView(APIView):
                     grouped_data.append(
                         {
                             "sp_in_org": (
-                                (organization / securitypersonnel) * 100
+                                round((organization / securitypersonnel) * 100, 3)
                                 if securitypersonnel
                                 else 0
                             ),
                             "sp_3rd_org": (
-                                (thirdpartyorganizations / securitypersonnel) * 100
+                                round(
+                                    (thirdpartyorganizations / securitypersonnel) * 100,
+                                    3,
+                                )
                                 if securitypersonnel
                                 else 0
                             ),

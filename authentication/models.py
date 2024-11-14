@@ -126,8 +126,12 @@ class CustomUser(AbstractUser):
     optimise = models.BooleanField(default=False)
     track = models.BooleanField(default=False)
     permissions_checkbox = models.BooleanField(default=False)
-    orgs = models.ManyToManyField("sustainapp.Organization", related_name="organizations")
-    corps = models.ManyToManyField("sustainapp.Corporateentity", related_name="corporates")
+    orgs = models.ManyToManyField(
+        "sustainapp.Organization", related_name="organizations"
+    )
+    corps = models.ManyToManyField(
+        "sustainapp.Corporateentity", related_name="corporates"
+    )
     locs = models.ManyToManyField("sustainapp.Location", related_name="locations")
 
     @property

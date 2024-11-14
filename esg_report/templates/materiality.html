@@ -1,15 +1,11 @@
 <!-- materiality.html -->
 <h2>8. Materiality</h2>
 
-<p>Understanding the issues that matter most to our stakeholders and our business is fundamental to <strong>[Company
-        Name]</strong>'s approach to sustainability. Our materiality assessment identifies and prioritizes the
-    environmental, social, and governance (ESG) issues that are most significant to our stakeholders and our ability to
-    create long-term value.</p>
+<p>{{materiality.statement|default:"No data available."}}</p>
 
-<h3>8.1.1 List of Material Topics (GRI 3-2-a)</h3>
-<p>(List of material topics can be represented in the tabular format)</p>
+<h3>8.1.1 List of Material Topics</h3>
 
-<table border="1" cellpadding="5" cellspacing="0">
+<table cellpadding="5" cellspacing="0">
     <thead>
         <tr>
             <th>ESG Pillar</th>
@@ -20,37 +16,53 @@
     </thead>
     <tbody>
         <tr>
-            <td>Environment</td>
-            <td>GHG Emission</td>
-            <td>305</td>
-            <td>SDG 3, SDG 13</td>
+            <td>NO data available</td>
+            <td>NO data available</td>
+            <td>NO data available</td>
+            <td>NO data available</td>
         </tr>
         <!-- Add more rows as necessary -->
     </tbody>
 </table>
 
-<h3>8.1.2 Changes in the List of Material Topics (GRI 3-2-b)</h3>
-<p>In line with our commitment to transparency and continuous improvement, we regularly review and update our list of
-    material topics to reflect the evolving landscape of our business and the broader external environment. As a result
-    of our materiality assessment, we have made several changes to our list of material topics to better reflect the
-    current priorities and challenges. The following key changes have been made:</p>
-<ul>
-    <li>[Detail key changes in the material topics]</li>
-</ul>
+<h3>8.1.2 Changes in the List of Material Topics </h3>
+<p>{% if materiality.3_2b %}{{materiality.3_2b}}{% else %} No data available{% endif %} </p>
 
-<h3>8.1.3 Materiality Assessment – Process (GRI 3-1-a, 3-1-b)</h3>
+<h3>8.1.3 Materiality Assessment – Process</h3>
 <p>Our materiality assessment process involves several key steps:</p>
 <ol>
-    <li><strong>Identification of Relevant Issues:</strong> We begin by identifying a comprehensive list of potential
-        ESG issues that could impact our business and stakeholders.</li>
-    <li><strong>Stakeholder Engagement:</strong> We engage with a diverse range of stakeholders, including
-        [stakeholders] to gather insights and perspectives on the most pressing issues.</li>
-    <li><strong>Prioritization:</strong> The feedback from our stakeholders is combined with an analysis of the
-        potential impact of each issue on our business. The issues are then prioritized based on their significance to
-        both stakeholders and our organization.</li>
-    <li><strong>Validation:</strong> The results of the materiality assessment are reviewed and validated by our senior
-        management and Board of Directors.</li>
+    <li style="margin-bottom: 10px;">Identification of Relevant Issues: <span style="color: #495059;">{{materiality.3_1_a.impact_assessment_process|default:"No data available."}}</span></li>
+    <li style="margin-bottom: 10px;">Stakeholder Engagement: <span style="color: #495059;"> 
+        {% if materiality.3_1_a.selected_stakeholders %}
+            {{ materiality.3_1_a.selected_stakeholders|join:", " }}
+        {% else %}
+            No data available
+        {% endif %}
+    </span>
+    </li>
+    <li style="margin-bottom: 10px;">Prioritization: <span style="color: #495059;">{% if materiality.3_1_a.process_description|default:"No data available." %}
+        {{materiality.3_1_a.process_description}}{% else %}No data added {% endif%}</span></li>
+    <li style="margin-bottom: 10px;">Validation: <span style="color: #495059;">The results of the materiality assessment are reviewed and validated by our senior
+        management and Board of Directors.</span></li>
 </ol>
 
-<h3>8.1.4 Management of Material Topics (GRI 3-3-a, 3-3-b)</h3>
-<p>[Details about how the company manages material topics]</p>
+<h3>8.1.4 Management of Material Topics</h3>
+<table cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Material Topic</th>
+            <th>Impact Type</th>
+            <th>Impact Overview</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for topic in materiality.3_3a %}
+        <tr>
+            <td>{{topic.material_topic_name}}</td>
+            <td>{{topic.impact_type}}</td>
+            <td>{{topic.impact_overview}}</td>
+        </tr>
+        {% endfor %}
+        <!-- Add more rows as necessary -->
+    </tbody>
+</table>

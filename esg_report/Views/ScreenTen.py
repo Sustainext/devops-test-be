@@ -82,7 +82,6 @@ class ScreenTenAPIView(APIView):
     def set_data_points(self):
         self.data_points = get_data_points_as_per_report(report=self.report)
 
-
     def get_414_2b_collect(self):
         local_data_points = self.data_points.filter(
             path__slug=self.slugs[14]
@@ -301,11 +300,14 @@ class ScreenTenAPIView(APIView):
         self.set_raw_responses()
         self.set_data_points()
         materiality_assessment = get_materiality_assessment(self.report)
-        management_approach_question: ManagementApproachQuestion | None = (
-            ManagementApproachQuestion.objects.filter(
-                assessment=materiality_assessment
-            ).first()
-        )
+        if materiality_assessment is None:
+            management_approach_question = None
+        else:
+            management_approach_question: ManagementApproachQuestion | None = (
+                ManagementApproachQuestion.objects.filter(
+                    assessment=materiality_assessment
+                ).first()
+            )
         response_data["3-3cde"] = {}
         if management_approach_question:
             response_data["3-3cde"][

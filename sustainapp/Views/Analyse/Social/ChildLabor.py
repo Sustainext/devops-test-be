@@ -19,19 +19,7 @@ class ChildLabourAnalyzeView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def process_childlabor(self, path):
-
-        child_labour = DataPoint.objects.filter(
-            locale__in=self.locations,  # .values_list("name", flat=True),
-            path__slug=path,
-            client_id=self.clients_id,
-        ).filter(
-            filter_by_start_end_dates(start_date=self.from_date, end_date=self.to_date)
-        )
-
-        if not child_labour:
-            return []
-
+    def call_commoncode(self, path, child_labour_dp):
         if (
             path == "gri-social-human_rights-408-1a-1b-operations_risk_child_labour"
             or path == "gri-social-human_rights-408-1a-1b-supplier_risk_child_labor"
@@ -40,7 +28,7 @@ class ChildLabourAnalyzeView(APIView):
         else:
             necessary = ["hazardouswork", "TypeofOperation", "geographicareas"]
         indexed_data = {}
-        for dp in child_labour:
+        for dp in child_labour_dp:
             if dp.raw_response.id not in indexed_data:
                 indexed_data[dp.raw_response.id] = {}
             if dp.metric_name in necessary:
@@ -77,6 +65,41 @@ class ChildLabourAnalyzeView(APIView):
 
         return grouped_data
 
+    def process_childlabor(self, path):
+
+        child_labour_dp = DataPoint.objects.filter(
+            organization=self.organisation,
+            corporate=self.corporate,
+            path__slug=path,
+            client_id=self.clients_id,
+            year=self.from_date.year,
+        )
+
+        if not child_labour_dp:
+            logger.error(
+                f"No data found for child labour analysis for organisation {self.organisation}, corporate {self.corporate}, path {path}, client id {self.clients_id} and year {self.from_date.year}"
+            )
+            if not self.corporate:
+                corps_of_org = Corporateentity.objects.filter(
+                    organization=self.organisation
+                )
+                res = []
+                # filtering the data as per corporate
+                for a_corp in corps_of_org:
+                    child_labour_corp_dp = DataPoint.objects.filter(
+                        organization=self.organisation,
+                        corporate=a_corp,
+                        path__slug=path,
+                        client_id=self.clients_id,
+                        year=self.from_date.year,
+                    )
+                    res.extend(self.call_commoncode(path, child_labour_corp_dp))
+                return res
+
+            return []
+
+        return self.call_commoncode(path, child_labour_dp)
+
     def get(self, request):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -86,15 +109,20 @@ class ChildLabourAnalyzeView(APIView):
 
             self.organisation = serializer.validated_data["organisation"]
             self.corporate = serializer.validated_data.get("corporate", None)
-            self.location = serializer.validated_data.get("location", None)
+            # self.location = serializer.validated_data.get("location", None)
 
             self.clients_id = request.user.client.id
 
-            self.locations = set_locations_data(
-                organisation=self.organisation,
-                corporate=self.corporate,
-                location=self.location,
-            )
+            if self.from_date.year != self.to_date.year:
+                return Response(
+                    "Start and End dates must be in the same year",
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            # self.locations = set_locations_data(
+            #     organisation=self.organisation,
+            #     corporate=self.corporate,
+            #     location=self.location,
+            # )
 
             operations_childlabor = self.process_childlabor(
                 "gri-social-human_rights-408-1a-1b-operations_risk_child_labour"

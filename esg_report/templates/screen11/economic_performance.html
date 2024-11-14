@@ -1,59 +1,155 @@
 <!-- economic_performance.html -->
+{% if screen_eleven_data %}
 <h2>11. Economic Performance</h2>
-
-<p>Our economic performance is a testament to <strong>[Company Name]</strong>'s resilience, innovation, and commitment
-    to creating value for our stakeholders. Through strategic investments, prudent financial management, and robust risk
-    mitigation, we aim to sustain long-term economic growth while addressing social and environmental challenges.</p>
-
+ 
+<p>{{screen_eleven_data.company_economic_performance_statement|default:"No data available"}}</p>
+ 
 <h3>11.1 Highlights</h3>
 
-<h4>11.1.1. Management of Material Topics (GRI 3-3-c, d, e)</h4>
-<p>[Details on management of material topics related to economic performance]</p>
-
-<h4>11.1.2 Economic Value Creation (GRI 201-1-a, b)</h4>
-<p>In <strong>[Year]</strong>, <strong>[Company Name]</strong> generated substantial economic value through our
-    operations, creating benefits for shareholders, employees, suppliers, and communities. Key highlights include:</p>
-<ul>
-    <li><strong>Direct Economic Value Generated (Revenues):</strong> $345</li>
-    <li><strong>Economic Value Distributed:</strong> $81</li>
-    <ul>
-        <li><strong>i) Operating Costs</strong></li>
-        <li><strong>ii) Employee Wages & Benefits</strong></li>
-        <li><strong>iii) Payments to Providers of Capital</strong></li>
-        <li><strong>iv) Payments to Governments by Country</strong></li>
-        <ul>
-            <li><strong>Country A:</strong> [Amount]</li>
-            <li><strong>Country B:</strong> [Amount]</li>
-        </ul>
-        <li><strong>v) Community Investments</strong></li>
-    </ul>
-</ul>
-
-<h4>11.1.3. Financial Assistance Received from Government (GRI 201-4-a, b, c)</h4>
-<p>In <strong>[Year]</strong>, <strong>[Company Name]</strong> received the following financial assistance from the
-    government:</p>
-<ul>
-    <li><strong>Tax relief and tax credits:</strong> $124</li>
-    <li><strong>Subsidies:</strong> $43</li>
-    <li><strong>Other relevant grants and financial assistance:</strong></li>
-    <ul>
-        <li>Investment grants</li>
-        <li>Research and development grants</li>
-        <li>Awards</li>
-        <li>Royalty holidays</li>
-        <li>Export Credit Agencies (ECAs)</li>
-        <li>Other financial incentives</li>
-    </ul>
-</ul>
-
-<h3>11.2 Infrastructure Investment and Services Supported (GRI 203-1-a, b, c)</h3>
-<p>In <strong>[Year]</strong>, we invested <strong>[Amount]</strong> in infrastructure projects and services, including
-    <strong>[Specific Projects or Services]</strong>. These investments enhance our operational efficiency, support
-    local economic development, and contribute to the well-being of the communities where we operate.</p>
-
-<h4>11.2.1. Material Management of Topic (GRI 3-3-c, d, e)</h4>
-<p>[Details on how the company manages infrastructure investments and services supported]</p>
-
-<h4>11.2.2. Indirect Economic Impacts (GRI 203-2-a, 203-2-b)</h4>
-<p>[Details about the indirect economic impacts of the company’s operations on communities, supply chains, or other
-    stakeholders]</p>
+<h4>11.1.1 Management of Material Topics</h4>
+<p>No data available</p>
+ 
+<h4>11.1.2 Economic Value Creation</h4>
+<p>{{ screen_eleven_data.introduction_to_economic_value_creation |default:"No data available" }}</p>
+ 
+<table
+  border="1"
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <tbody>
+    <tr>
+      <td align="left">1) Direct Economic value generated (Revenues)</td>
+      <td align="left">{{ screen_eleven_data.201_1ab.revenues|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">2) Economic Value distributed</td>
+      <td align="left">{{ screen_eleven_data.201_1ab.economic_value_distributed_1|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;i) Operating costs</td>
+      <td align="left">{{ screen_eleven_data.201_1ab.operating_costs|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;ii) Employee wages & benefits</td>
+      <td align="left">{{ screen_eleven_data.201_1ab.employee_wages_benefits|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;iii) Payments to providers of capital</td>
+      <td align="left">{{ screen_eleven_data.201_1ab.payments_to_providers_of_capital|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;iv) Payments to governments by country</td>
+      <td align="left">{{ screen_eleven_data.201_1ab.payments_to_governments_by_country|default:"No data available" }}</td>
+    </tr>
+ 
+    {% for country in screen_eleven_data.201_1ab.countries_and_payments %}
+    <tr>
+      <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ country.country|default:"Country" }}</td>
+      <td align="left">{{ country.paymentCode|default:"No data available" }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td
+        align="left"
+        colspan="2"
+      >
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No country payment data available
+      </td>
+    </tr>
+    {% endfor %}
+ 
+    <tr>
+      <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;v) Community investments</td>
+      <td align="left">{{ screen_eleven_data.201_1ab.community_investments|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">3) Direct economic value generated</td>
+      <td align="left">{{ screen_eleven_data.201_1ab.direct_economic_value_generated|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">4) Economic value distributed</td>
+      <td align="left">{{ screen_eleven_data.201_1ab.economic_value_distributed_2|default:"No data available" }}</td>
+    </tr>
+  </tbody>
+</table>
+ 
+<h4>11.1.3. Financial Assistance Received from Government</h4>
+<p>{{screen_eleven_data.financial_assistance_from_government |default:"No data available"}}</p>
+ 
+<table
+  border="1"
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <tbody>
+    <tr>
+      <td align="left">Currency</td>
+      <td align="left">{{ screen_eleven_data.201_4ab.currency|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">Tax relief and tax credits</td>
+      <td align="left">{{ screen_eleven_data.201_4ab.tax_relief_and_tax_credits|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">Subsidies</td>
+      <td align="left">{{ screen_eleven_data.201_4ab.subsidies|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">Investment, research, and development grants</td>
+      <td align="left">{{ screen_eleven_data.201_4ab.provide_details_of_investment_grants_research_and_development_grants_and_other_relevant_types_of_grant|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">Awards</td>
+      <td align="left">{{ screen_eleven_data.201_4ab.awards|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">Royalty holidays</td>
+      <td align="left">{{ screen_eleven_data.201_4ab.royalty_holidays|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">Financial assistance from export credit agencies</td>
+      <td align="left">{{ screen_eleven_data.201_4ab.financial_assistance_from_export_credit_agencies|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">Financial incentives</td>
+      <td align="left">{{ screen_eleven_data.201_4ab.financial_incentives|default:"No data available" }}</td>
+    </tr>
+    <tr>
+      <td align="left">Other financial benefits from government</td>
+      <td align="left">{{ screen_eleven_data.201_4ab.other_financial_benefits_received_or_receivable_from_any_government_for_any_operation|default:"No data available" }}</td>
+    </tr>
+  </tbody>
+</table>
+ 
+<h3>11.2 Infrastructure Investment and Services Supported</h3>
+ 
+{% for item in screen_eleven_data.203_1a %}
+<p>{{ item.Q1|default:"No data available" }}</p>
+{% empty %}
+<p>No data available</p>
+{% endfor %} {% for item in screen_eleven_data.203_1b %}
+<p>{{ item.Q1|default:"No data available" }}</p>
+{% empty %}
+<p>No data available</p>
+{% endfor %} {% for item in screen_eleven_data.203_1c %}
+<p>{{ item.Q1|default:"No data available" }}</p>
+{% empty %}
+<p>No data available</p>
+{% endfor %}
+ 
+<h4>11.2.1. Material Management of Topic</h4>
+<p>No data available.</p>
+ 
+<h4>11.2.2. Indirect Economic Impacts</h4>
+{% for item in screen_eleven_data.203_2a %}
+<p>{{ item.Q1|default:"No data available" }}</p>
+{% empty %}
+<p>No data available</p>
+{% endfor %} {% for item in screen_eleven_data.203_2b %}
+<p>{{ item.Q1|default:"No data available" }}</p>
+{% empty %}
+<p>No data available</p>
+{% endfor %} {% endif %}
