@@ -25,6 +25,7 @@ from django.forms import model_to_dict
 from authentication.models import CustomUser
 import json
 from threading import Thread
+from esg_report.utils import generate_disclosure_status
 
 
 def convert_keys(obj):
@@ -53,6 +54,7 @@ class ESGReportPDFView(View):
         def fetch_report():
             try:
                 results["report"] = CeoMessageService.get_report_by_id(pk)
+
             except Report.DoesNotExist:
                 results["error"] = HttpResponse(
                     f"No report found with ID={pk}", status=404
@@ -184,6 +186,8 @@ class ESGReportPDFView(View):
         if "error" in results:
             return results["error"]
 
+        content_index_data = generate_disclosure_status(report=results["report"])
+
         # Create context for rendering
         context = {
             "report": results["report"] if "report" in results else None,
@@ -246,6 +250,7 @@ class ESGReportPDFView(View):
                 if "screen_fifteen_data" in results
                 else None
             ),
+            "content_index_data": content_index_data,
             "pk": pk,  # Pass the report ID to the template
         }
 
