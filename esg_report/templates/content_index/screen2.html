@@ -23,20 +23,20 @@
                   GRI 2: General Disclosure 2021
               </td>
           </tr>
-          <tr style="font-size: 10px; color: #667085;">
-            <td rowspan="{{ content_index|length|add:1 }}" style="text-align: left; vertical-align: middle; border-right: 1px solid #D1D5DB;">
+          <tr style="font-size: 10px; color: #667085; page-break-inside: avoid;">
+            <td rowspan="{{ content_index_data|length|add:1 }}" style="text-align: left; vertical-align: middle; border-right: 1px solid #D1D5DB;">
                 GRI 2: General Disclosure 2021
             </td>
         </tr>
           
-          {% for row in content_index %}
-          <tr style="font-size: 10px; color: #667085; border-bottom: 1px solid #D1D5DB; padding: 5px;">
-              <td style="padding: 12px; text-align: left; border: none !important;">{{ row.title }}</td>
-              <td style="padding: 12px; text-align: left; border: none !important;">{{ row.page_number }}</td>
+          {% for row in content_index_data %}
+          <tr style="font-size: 10px; color: #667085; border-bottom: 1px solid #D1D5DB; padding: 5px;page-break-inside: avoid;">
+              <td style="padding: 12px; text-align: left; border: none !important;">{{ row.title|default:"" }}</td>
+              <td style="padding: 12px; text-align: left; border: none !important;">{{ row.page_number|default:"" }}</td>
               {% for omissionItem in row.omission %}
-              <td style="padding: 12px; text-align: left; border: none !important;">{{ omissionItem.req_omitted }}</td>
-              <td style="padding: 12px; text-align: left; border: none !important;">{{ omissionItem.reason }}</td>
-              <td style="padding: 12px; text-align: left; border-left: none !important;">{{ omissionItem.explanation }}</td>
+              <td style="padding: 12px; text-align: left; border: none !important;">{{ omissionItem.req_omitted|default:"" }}</td>
+              <td style="padding: 12px; text-align: left; border: none !important;">{{ omissionItem.reason|default:"" }}</td>
+              <td style="padding: 12px; text-align: left; border-left: none !important;">{{ omissionItem.explanation|default:"" }}</td>
               {% endfor %}
               <!-- <td style="padding: 12px;">{{ row.gri_sector_no }}</td> -->
           </tr>
