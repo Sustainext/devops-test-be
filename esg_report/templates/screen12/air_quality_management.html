@@ -1,50 +1,11 @@
 <!-- air_quality_management.html -->
 
-<h2>12.7. Air Quality (GRI 305-7-a, b, c)</h2>
+<h3>12.7. Air Quality</h3>
+{% if screen_twelve_data.air_quality_protection_commitment %}
+<p>{{screen_twelve_data.air_quality_protection_commitment|safe}}</p>
+{% else %}
+<p>No data available for this section.</p>
+{% endif %}
 
-<p>We recognize the importance of maintaining air quality and work to minimize air emissions from our operations. This
-    includes implementing measures to reduce pollutants, monitoring air quality, and complying with regulatory
-    standards.</p>
-
-<p><em>Note for developers: GRI Emission screens are not yet integrated into the platform.</em></p>
-
-<p><em>This section’s data can also be represented using graphics (charts, graphs, etc.).</em></p>
-
-<h4>Air Emissions by Pollutants</h4>
-<table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Sr. No.</th>
-            <th>Air Pollutants</th>
-            <th>Total Emissions</th>
-            <th>Contribution %</th>
-            <th>Source of Emission Factor</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for emission in air_emissions %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ emission.pollutant }}</td>
-            <td>{{ emission.total_emissions }}</td>
-            <td>{{ emission.contribution_percentage }}%</td>
-            <td>{{ emission.source_of_emission }}</td>
-        </tr>
-        {% endfor %}
-        <tr>
-            <td colspan="2"><strong>Total</strong></td>
-            <td><strong>{{ total_emissions }}</strong></td>
-            <td><strong>{{ total_contribution_percentage }}</strong>%</td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
-
-<h4>12.7.1. Management of Material Topic (GRI 3-3-c, d, e)</h4>
-<hr>
-
-<p>[Details on the management of air quality, including strategies, technologies implemented, and regulatory
-    compliance.]</p>
-
-<p><em>Graphics or visual data representations (charts, maps, etc.) can be included here to illustrate the air emissions
-        and their sources.</em></p>
+<h4>12.7.1. Management of Material Topic</h4>
+<p>NO data available</p>
