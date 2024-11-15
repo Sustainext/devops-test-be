@@ -29,7 +29,6 @@ from threading import Thread
 from esg_report.utils import generate_disclosure_status
 
 
-
 def convert_keys(obj):
     if isinstance(obj, dict):
         new_obj = {}
@@ -187,10 +186,54 @@ class ESGReportPDFView(View):
         # Handle errors from fetching report
         if "error" in results:
             return results["error"]
+        content_index_only = request.GET.get("content_index", "false").lower() == "true"
+
+        if content_index_only:
+            # Generate content index data only
+            content_index_data = generate_disclosure_status(report=results["report"])
+            statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
+
+            # Prepare context for content index only
+            context = {
+                "report": results["report"],
+                "content_index_only": content_index_only,
+                "content_index_data": content_index_data,
+                "pk": pk,  # Pass the report ID to the template
+            }
+            template_path = "content_index/esg_content_index.html"  # Use a dedicated template or adapt the existing one
+            try:
+                template = get_template(template_path)
+                html_content = template.render(context, request)
+            except Exception as e:
+                print(f"Error rendering the PDF template: {e}")
+                return HttpResponse("Error rendering the PDF template.", status=500)
+
+            # Configure the response for PDF output
+            response = HttpResponse(content_type="application/pdf")
+            disposition = "attachment" if "download" in request.GET else "inline"
+            pdf_filename = f"{results['report'].name}_content_index.pdf"
+            response["Content-Disposition"] = (
+                f'{disposition}; filename="{pdf_filename}"'
+            )
+
+            try:
+                # Generate the PDF with WeasyPrint
+                HTML(string=html_content).write_pdf(response)
+
+                # Print time taken for PDF generation
+                print(
+                    f"Total time taken to generate content index PDF: {time.time() - start_time:.2f} seconds."
+                )
+                return response
+
+            except Exception as e:
+                print(f"Error generating content index PDF: {e}")
+                return HttpResponse(
+                    "Unexpected error occurred while generating the PDF.", status=500
+                )
 
         content_index_data = generate_disclosure_status(report=results["report"])
         statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
-        print(statement_of_use)
 
         # Create context for rendering
         context = {
