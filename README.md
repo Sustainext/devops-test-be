@@ -16,8 +16,16 @@ ALTER ROLE New_User_be SET client_encoding TO 'utf8';
 ALTER ROLE New_User_be SET default_transaction_isolation TO 'read committed';
 ALTER ROLE New_User_be SET timezone TO 'UTC';
 GRANT ALL PRIVILEGES ON DATABASE New_db TO New_User_be;
+\c New_db;
 GRANT USAGE ON SCHEMA public TO New_User_be;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO New_User_be;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO New_User_be;
 GRANT CREATE ON SCHEMA public TO New_User_be;
+```
+
+
+## Libraries required
+
+```bash
+
 ```

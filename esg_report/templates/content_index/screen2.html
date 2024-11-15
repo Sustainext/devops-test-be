@@ -1,0 +1,46 @@
+
+
+<div>
+  <table style="margin: 0px; border-collapse: collapse; border: none;">
+    <thead>
+      <tr style="background-color: #3B82F6;">
+          <th rowspan="2" style="padding: 12px; border-right: 1px solid #D1D5DB; color: #fff; font-size: 11px; text-align: left;">GRI Standards and Other Resources</th>
+          <th rowspan="2" style="padding: 12px; border-right: 1px solid #D1D5DB; color: #fff; font-size: 11px; ">Disclosure</th>
+          <th rowspan="2" style="padding: 12px; border-right: 1px solid #D1D5DB; color: #fff; font-size: 11px;">Location</th>
+          <th colspan="3" style="padding: 12px; border-right: 1px solid #D1D5DB; text-align: center; color: #fff; font-size: 11px;">Omission</th>
+          <!-- <th rowspan="2" style="padding: 12px; border-right: 1px solid #D1D5DB; color: #fff; font-size: 11px; text-align: left;">GRI Sector Standard Ref No</th> -->
+      </tr>
+      <tr style="background-color: #3B82F6;">
+          <th style="padding: 12px; border-right: 1px solid #D1D5DB; color: #fff; font-size: 11px;">Req omitted</th>
+          <th style="padding: 12px; border-right: 1px solid #D1D5DB; color: #fff; font-size: 11px;">Reason</th>
+          <th style="padding: 12px; border-right: 1px solid #D1D5DB; color: #fff; font-size: 11px;">Explanation</th>
+      </tr>
+  </thead>
+  
+      <tbody style="background-color: white; border-top: 1px solid #E5E7EB;">
+          <tr style="background-color: #F1F7FF;">
+              <td colspan="7" style="padding: 12px; font-weight: 500; font-size: 11px; color: #0F6CBD; text-align: left;">
+                  GRI 2: General Disclosure 2021
+              </td>
+          </tr>
+          <tr style="font-size: 10px; color: #667085; page-break-inside: avoid;">
+            <td rowspan="{{ content_index_data|length|add:1 }}" style="text-align: left; vertical-align: middle; border-right: 1px solid #D1D5DB;">
+                GRI 2: General Disclosure 2021
+            </td>
+        </tr>
+          
+          {% for row in content_index_data %}
+          <tr style="font-size: 10px; color: #667085; border-bottom: 1px solid #D1D5DB; padding: 5px;page-break-inside: avoid;">
+              <td style="padding: 12px; text-align: left; border: none !important;">{{ row.title|default:"" }}</td>
+              <td style="padding: 12px; text-align: left; border: none !important;">{{ row.page_number|default:"" }}</td>
+              {% for omissionItem in row.omission %}
+              <td style="padding: 12px; text-align: left; border: none !important;">{{ omissionItem.req_omitted|default:"" }}</td>
+              <td style="padding: 12px; text-align: left; border: none !important;">{{ omissionItem.reason|default:"" }}</td>
+              <td style="padding: 12px; text-align: left; border-left: none !important;">{{ omissionItem.explanation|default:"" }}</td>
+              {% endfor %}
+              <!-- <td style="padding: 12px;">{{ row.gri_sector_no }}</td> -->
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div>

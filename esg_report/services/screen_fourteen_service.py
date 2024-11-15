@@ -1,5 +1,4 @@
 from esg_report.utils import (
-    get_materiality_assessment,
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     get_maximum_months_year,
