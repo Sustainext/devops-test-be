@@ -15,6 +15,9 @@ from rest_framework import serializers
 from django.db.models import QuerySet
 from django.db.models import Sum
 from datametric.utils.analyse import filter_by_start_end_dates, get_raw_response_filters
+from common.utils.get_data_points_as_raw_responses import (
+    collect_data_by_raw_response_and_index,
+)
 from rest_framework.exceptions import APIException
 from django.db.models import Max
 from datametric.utils.analyse import safe_divide
@@ -77,7 +80,12 @@ class EmploymentAnalyzeView(APIView):
         "gri-social-employee_hires-401-1a-emp_turnover-fulltime",
         "gri-social-employee_hires-401-1a-emp_turnover-parttime",
     ]
-    employee_benefits_path_slugs = ["gri-social-benefits-401-2a-benefits_provided"]
+    employee_benefits_path_slugs = [
+        "gri-social-benefits-401-2a-benefits_provided",
+        "gri-social-benefits-401-2a-benefits_provided_tab_1",
+        "gri-social-benefits-401-2a-benefits_provided_tab_2",
+        "gri-social-benefits-401-2a-benefits_provided_tab_3",
+    ]
     employee_parental_leave_path_slugs = [
         "gri-social-parental_leave-401-3a-3b-3c-3d-parental_leave"
     ]
@@ -1334,6 +1342,22 @@ class EmploymentAnalyzeView(APIView):
                 }
             )
 
+        benefits_response_table["benefits_full_time_employees"] = (
+            collect_data_by_raw_response_and_index(
+                benefits_dps.filter(path__slug=self.employee_benefits_path_slugs[1])
+            )
+        )
+        benefits_response_table["benefits_part_time_employees"] = (
+            collect_data_by_raw_response_and_index(
+                benefits_dps.filter(path__slug=self.employee_benefits_path_slugs[2])
+            )
+        )
+        benefits_response_table["benefits_temporary_employees"] = (
+            collect_data_by_raw_response_and_index(
+                benefits_dps.filter(path__slug=self.employee_benefits_path_slugs[3])
+            )
+        )
+
         return (
             new_employee_reponse_table,
             employee_turnover_reponse_table,
@@ -1681,9 +1705,21 @@ class EmploymentAnalyzeView(APIView):
         ]
         response_data["employee_turnover"].append(employee_turnover_pt)
 
-        all_benefits = []
+        all_benefits = {
+            "benefits_full_time_employees": [],
+            "benefits_part_time_employees": [],
+            "benefits_temporary_employees": [],
+        }
 
-        all_benefits.extend(benefits_response_table["extra_benefits"])
+        all_benefits["benefits_full_time_employees"].extend(
+            benefits_response_table["benefits_full_time_employees"]
+        )
+        all_benefits["benefits_part_time_employees"].extend(
+            benefits_response_table["benefits_part_time_employees"]
+        )
+        all_benefits["benefits_temporary_employees"].extend(
+            benefits_response_table["benefits_temporary_employees"]
+        )
 
         response_data["benefits"] = all_benefits
 
