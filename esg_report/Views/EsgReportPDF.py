@@ -21,11 +21,13 @@ from esg_report.services.screen_twelve_service import ScreenTwelveService
 from esg_report.services.screen_thirteen_service import ScreenThirteenService
 from esg_report.services.screen_fourteen_service import ScreenFourteenService
 from esg_report.services.screen_fifteen_service import ScreenFifteenService
+from esg_report.services.content_index_service import StatementOfUseService
 from django.forms import model_to_dict
 from authentication.models import CustomUser
-from esg_report.services.data import context_data
 import json
 from threading import Thread
+from esg_report.utils import generate_disclosure_status
+
 
 
 def convert_keys(obj):
@@ -54,6 +56,7 @@ class ESGReportPDFView(View):
         def fetch_report():
             try:
                 results["report"] = CeoMessageService.get_report_by_id(pk)
+
             except Report.DoesNotExist:
                 results["error"] = HttpResponse(
                     f"No report found with ID={pk}", status=404
@@ -185,25 +188,74 @@ class ESGReportPDFView(View):
         if "error" in results:
             return results["error"]
 
+        content_index_data = generate_disclosure_status(report=results["report"])
+        statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
+        print(statement_of_use)
+
         # Create context for rendering
         context = {
             "report": results["report"] if "report" in results else None,
             "ceo_message": results["ceo_message"] if "ceo_message" in results else None,
-            "about_the_company": results["about_the_company"] if "about_the_company" in results else None,
-            "mission_vision_values": results["mission_vision_values"] if "mission_vision_values" in results else None,
-            "sustainability_roadmap": results["sustainability_roadmap"] if "sustainability_roadmap" in results else None,
-            "awards_and_recognition": results["awards_and_recognition"] if "awards_and_recognition" in results else None,
-            "stakeholder_engagement": results["stakeholder_engagement"] if "stakeholder_engagement" in results else None,
-            "about_the_report": results["about_the_report"] if "about_the_report" in results else None,
+            "about_the_company": (
+                results["about_the_company"] if "about_the_company" in results else None
+            ),
+            "mission_vision_values": (
+                results["mission_vision_values"]
+                if "mission_vision_values" in results
+                else None
+            ),
+            "sustainability_roadmap": (
+                results["sustainability_roadmap"]
+                if "sustainability_roadmap" in results
+                else None
+            ),
+            "awards_and_recognition": (
+                results["awards_and_recognition"]
+                if "awards_and_recognition" in results
+                else None
+            ),
+            "stakeholder_engagement": (
+                results["stakeholder_engagement"]
+                if "stakeholder_engagement" in results
+                else None
+            ),
+            "about_the_report": (
+                results["about_the_report"] if "about_the_report" in results else None
+            ),
             "materiality": results["materiality"] if "materiality" in results else None,
-            "screen_nine_data": results["screen_nine_data"] if "screen_nine_data" in results else None,
-            "screen_ten_data": results["screen_ten_data"] if "screen_ten_data" in results else None,
-            "screen_eleven_data": results["screen_eleven_data"] if "screen_eleven_data" in results else None,
-            "screen_twelve_data": results["screen_twelve_data"] if "screen_twelve_data" in results else None,
-            "screen_thirteen_data": results["screen_thirteen_data"] if "screen_thirteen_data" in results else None,
-            "screen_fourteen_data": results["screen_fourteen_data"] if "screen_fourteen_data" in results else None,
-            "screen_fifteen_data": results["screen_fifteen_data"] if "screen_fifteen_data" in results else None,
-            "pk": pk, # Pass the report ID to the template
+            "screen_nine_data": (
+                results["screen_nine_data"] if "screen_nine_data" in results else None
+            ),
+            "screen_ten_data": (
+                results["screen_ten_data"] if "screen_ten_data" in results else None
+            ),
+            "screen_eleven_data": (
+                results["screen_eleven_data"]
+                if "screen_eleven_data" in results
+                else None
+            ),
+            "screen_twelve_data": (
+                results["screen_twelve_data"]
+                if "screen_twelve_data" in results
+                else None
+            ),
+            "screen_thirteen_data": (
+                results["screen_thirteen_data"]
+                if "screen_thirteen_data" in results
+                else None
+            ),
+            "screen_fourteen_data": (
+                results["screen_fourteen_data"]
+                if "screen_fourteen_data" in results
+                else None
+            ),
+            "screen_fifteen_data": (
+                results["screen_fifteen_data"]
+                if "screen_fifteen_data" in results
+                else None
+            ),
+            "content_index_data": content_index_data,
+            "pk": pk,  # Pass the report ID to the template
         }
 
         template_path = "esg_report.html"
