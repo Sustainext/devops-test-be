@@ -46,7 +46,8 @@ type1_paths = {
     "gri-governance-implementing-commitments-2-24-a-describe": "",
     "gri-governance-determine-remuneration-2-20-a-process": "",
     "gri-governance-chair_of_board-2-11-b-chair": "",
-    "gri-general-org_details_2-1a-1b-1c-1d": "",
+    "gri-economic-climate_related_risks-202-2a-physical_risk": "",
+    "gri-economic-climate_related_risks-202-2a-transition_risk": "",
 }
 
 type2_paths = {
@@ -57,4 +58,6 @@ type3_paths = {
     "gri-governance-structure-2-9-b-committees": "",
 }
 
-all_type_paths = {**type1_paths, **type2_paths, **type3_paths}
+type4_path = {"gri-general-org_details_2-1a-1b-1c-1d": ""}
+
+all_type_paths = {**type1_paths, **type2_paths, **type3_paths, **type4_path}

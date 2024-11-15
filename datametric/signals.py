@@ -10,7 +10,7 @@ from analysis.utils.analysis_data_maker import create_analysis_data
 from datametric.utils.PathsForDataPoints import (
     all_type_paths,
 )
-from datametric.utils.CreateDataPoints import create_data_points_for_raw_response
+from datametric.utils.CreateDataPoints import CreateDataPointsClass
 from logging import getLogger
 
 logger = getLogger("django.log")
@@ -23,7 +23,10 @@ def process_json(json_obj, path, raw_response):
 
     # Create DataPoints for RawResponse where it's failing to create DataPoints
     if path.slug in all_type_paths:
-        create_data_points_for_raw_response(json_obj, path, raw_response, data_metrics)
+        create_dp_obj = CreateDataPointsClass(
+            json_obj, path, raw_response, data_metrics
+        )
+        create_dp_obj.create_data_points_for_raw_response()
     else:
         for index, item in enumerate(json_obj):
             print(item)
