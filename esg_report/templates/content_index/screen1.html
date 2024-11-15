@@ -1,12 +1,12 @@
 <!-- gri_content_index.html -->
-<h2>16. GRI-Content Index</h1>
+<h2>{% if content_index_only == false %}16. GRI-Content Index{% else %}GRI-Content Index{% endif %}</h1>
 
 <!-- Information Table -->
 <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px; margin-top: 30px;">
     <tr>
         <th style="padding: 20px; background-color: #007bff; color: white; text-align: left; width: 20%; font-size: 11px;">Statement of use</th>
         <td style="padding: 20px; border: 1px solid #ccc; text-align: left; font-size: 10px;">
-            Acme Corporation has reported in accordance with the GRI Standards for the period 1st January to 31st December 2022
+            {{report.organization.name}} has reported in accordance with the GRI Standards for the period {{report.start_date|date:"Y-m-d"}} to {{report.end_date|date:"Y-m-d"}}.
         </td>
     </tr>
     <tr>
