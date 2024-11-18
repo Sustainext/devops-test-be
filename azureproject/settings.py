@@ -62,6 +62,7 @@ THIRD_PARTY = [
     "dj_rest_auth",
     "dj_rest_auth.registration",
     "simple_history",
+    "storages",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY
@@ -128,12 +129,6 @@ EMAIL_CONFIRM_REDIRECT_BASE_URL = os.environ.get("EMAIL_CONFIRM_REDIRECT_BASE_UR
 PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = os.environ.get(
     "PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL"
 )
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.0/howto/static-files/
-
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -314,8 +309,18 @@ CACHES = {
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# * Media Files Settings
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
+DEFAULT_FILE_STORAGE = "azureproject.azure_storage.AzureMediaStorage"
+STATICFILES_STORAGE = "azureproject.azure_storage.AzureStaticStorage"
+STATIC_LOCATION = "static"
+MEDIA_LOCATION = "media"
+AZURE_ACCOUNT_NAME = os.getenv("AZURE_STORAGE_ACCOUNT_NAME", None)
+AZURE_CUSTOM_DOMAIN = f"{AZURE_ACCOUNT_NAME}.blob.core.windows.net"
+STATIC_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
+MEDIA_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
+
 
 AUTH_USER_MODEL = "authentication.CustomUser"
 
