@@ -119,7 +119,7 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(_("phone number"), max_length=20, blank=True)
     job_title = models.CharField(_("job title"), max_length=100, blank=True)
     department = models.CharField(_("department"), max_length=100, blank=True)
-    work_email = models.CharField(_("department"), max_length=200, blank=True)
+    work_email = models.CharField(_("work_email"), max_length=200, blank=True)
     collect = models.BooleanField(default=True)
     analyse = models.BooleanField(default=True)
     report = models.BooleanField(default=False)

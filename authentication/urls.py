@@ -25,6 +25,11 @@ from authentication.Views.CustomUser import (
 )
 from authentication.Views.Auth0LoginAPI import Auth0LoginView
 from authentication.Views.ManageUser import ManageUserViewSet
+from authentication.views import (
+    get_orgs_by_client,
+    get_corps_by_orgs,
+    get_locs_by_corps,
+)
 
 
 router = routers.DefaultRouter()
@@ -77,5 +82,12 @@ urlpatterns = [
     path("check-user-exists/", CheckUserExistsView.as_view(), name="check-user-exists"),
     path("client-users/", ClientUsersListView.as_view(), name="client-users"),
     path("auth0-login/", Auth0LoginView.as_view(), name="auth0-login"),
+    path(
+        "get_orgs_by_client/<int:client_id>/",
+        get_orgs_by_client,
+        name="get_orgs_by_client",
+    ),
+    path("get_corps_by_orgs/", get_corps_by_orgs, name="get_corps_by_orgs"),
+    path("get_locs_by_corps/", get_locs_by_corps, name="get_locs_by_corps"),
     path("", include(router.urls)),
 ]

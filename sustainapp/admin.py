@@ -50,7 +50,7 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from authentication.Mixins.ClientAdminMixin import ClientFilterAdminMixin
 from django.contrib.contenttypes.models import ContentType
-from authentication.Views.CustomUserCreationForm import CustomUserCreationForm
+from authentication.AdminForm.CustomUserCreationForm import CustomUserCreationForm
 from authentication.models import CustomUser, UserProfile
 from authentication.admin import UserProfileInline
 from authentication.AdminSite.ClientAdmin import client_admin_site, ClientAdmin
