@@ -1,46 +1,76 @@
 <!-- about_the_report.html -->
 <h2>7. About the Report</h2>
 
-<p>This ESG report, prepared in accordance with the Global Reporting Initiative (GRI) standards, provides a
-    comprehensive overview of <strong>[Company Name]</strong>'s environmental, social, and governance (ESG) performance
-    for the reporting period <strong>[Year]</strong>. It reflects our commitment to transparency, accountability, and
-    continuous improvement in our sustainability practices.</p>
+<p>{{about_the_report.description}}</p>
 
-<h3>7.1. Reporting Period, Frequency, and Point of Contact (GRI 2-3-a, 2-3-b, 2-3-c, 2-3-d)</h3>
+<h3>7.1. Reporting Period, Frequency, and Point of Contact</h3>
 
-<h4>Reporting Period and Frequency</h4>
-<p>This report covers the period from <strong>[Start Date]</strong> to <strong>[End Date]</strong> and is part of our
+<h5>Reporting Period and Frequency</h5>
+<p>
+    {% for key, value in about_the_report.2_3_a.items %}
+    {{ value }}<br>
+    {% endfor %}
+</p>
+<!-- <p>This report covers the period from <strong>[Start Date]</strong> to <strong>[End Date]</strong> and is part of our
     annual sustainability reporting cycle. We are committed to providing regular updates on our ESG performance to
-    ensure transparency and keep our stakeholders informed of our progress.</p>
+    ensure transparency and keep our stakeholders informed of our progress.</p> -->
 
-<h4>Point of Contact</h4>
-<p>For further information regarding this report or our sustainability initiatives, please contact:</p>
+<h5>Point of Contact</h5>
+<p>{% for key, value in about_the_report.2_3d.items %}{{ value }}<br>{% endfor %}
+</p>
+<!-- <p>For further information regarding this report or our sustainability initiatives, please contact:</p>
 <ul>
     <li><strong>[Your Name]</strong></li>
     <li><strong>[Your Position]</strong></li>
     <li><strong>[Email Address]</strong></li>
     <li><strong>[Phone Number]</strong></li>
     <li><strong>[Company Address]</strong></li>
-</ul>
+</ul> -->
 
 <h4>7.1.1. Restatement of Information (GRI 2-4-a)</h4>
 <p>In this report, we have made several restatements of information from previous reports to enhance accuracy and
     comparability. These restatements include:</p>
-<ul>
-    <li>[Details of restatements]</li>
-</ul>
+<p>
+    {% for key, value in about_the_report.2_4_a.items %}
+    {{ value }}<br>
+    {% endfor %}
+</p>
 
 <h3>7.2. Frameworks</h3>
-<p>This report has been prepared in accordance with the GRI Standards, the leading global framework for sustainability
+<p>{{about_the_report.framework_description}}</p>
+<!-- <p>This report has been prepared in accordance with the GRI Standards, the leading global framework for sustainability
     reporting. We also align our reporting with other relevant frameworks and guidelines, including:</p>
 <ul>
     <li><strong>United Nations Sustainable Development Goals (SDGs):</strong> Our initiatives and performance metrics
         are mapped to specific SDGs to demonstrate our contribution to global sustainability targets.</li>
-</ul>
+</ul> -->
 
-<h3>7.3. External Assurance (optional section) (GRI 2-5-a, 2-5-b)</h3>
+<h3>7.3. External Assurance (optional section)</h3>
+<p>{{about_the_report.external_assurance}}</p>
 <p>To ensure the credibility and reliability of our ESG disclosures, we have engaged an independent third-party
     assurance provider to verify selected information in this report. The scope of the assurance includes:</p>
-<ul>
-    <li>[Details of the assurance provider and the scope of the assurance]</li>
-</ul>
+
+<h4>The scope of the assurance includes</h4>
+
+<h5>Policy and practice for seeking external assurance:</h5>
+<p>{% for key, value in about_the_report.2_5_a.assurance_policy.items %}{{ value }}<br>{% endfor %}</p>
+<h5>Involvement of highest governance body and senior executives in the process.</h5>
+<p>{% for key, value in about_the_report.2_5_a.assurance_highest.items %}{{ value }}<br>{% endfor %}</p>
+<h5>Link or reference to the external assurance reports or assurance statements:</h5>
+<p>{{ about_the_report.2_5_b.Q1 }}</p>
+<p>{{ about_the_report.2_5_b.Q2.text }}</p>
+
+<h5>Data that was assured and the basis of assurance:</h5>
+<p>{{ about_the_report.2_5_b.Q3 }}</p>
+
+<h5>Assurance Standard used:</h5>
+<p>{{ about_the_report.2_5_b.Q4 }}</p>
+
+<h5>Level of Assurance obtained:</h5>
+<p>{{ about_the_report.2_5_b.Q5 }}</p>
+
+<h5>Limitations of the assurance process:</h5>
+<p>{{ about_the_report.2_5_b.Q6 }}</p>
+
+<h5>Relationship between the organization and the assurance provider:</h5>
+<p>{{ about_the_report.2_5_b.Q7 }}</p>

@@ -11,7 +11,10 @@ from datametric.utils.analyse import (
     safe_divide,
     get_raw_response_filters,
 )
-from datametric.models import RawResponse
+from datametric.models import RawResponse, DataPoint
+from common.utils.get_data_points_as_raw_responses import (
+    collect_data_by_raw_response_and_index,
+)
 
 
 class DiversityAndInclusionAnalyse(APIView):
@@ -41,6 +44,23 @@ class DiversityAndInclusionAnalyse(APIView):
             )
             .prefetch_related("path")
             .order_by("-year", "-month")
+        )
+
+    def set_data_points(self):
+        client_id = self.request.user.client.id
+        self.data_points = (
+            DataPoint.objects.filter(
+                client_id=client_id,
+                path__slug__in=self.slugs,
+            )
+            .filter(filter_by_start_end_dates(self.start, self.end))
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
+            )
         )
 
     def get_diversity_of_the_board(self, slug):  # 405-1
@@ -81,6 +101,53 @@ class DiversityAndInclusionAnalyse(APIView):
             )
         return local_response
 
+    def get_diversity_of_the_individuals(self, slug):
+        data_points = self.data_points.filter(path__slug=slug).order_by("index")
+        data = collect_data_by_raw_response_and_index(data_points)
+        calculate_dict = {}
+        for item in data:
+            for key, value in item.items():
+                if key != "category":
+                    if key in calculate_dict:
+                        calculate_dict[key] += int(value)
+                    else:
+                        calculate_dict[key] = int(value)
+        response_dict = {}
+        
+        # Calculating percentages
+        if response_dict["totalGender"] > 0:
+            response_dict["male_percentage"] = (
+                response_dict["male"] / response_dict["totalGender"]
+            ) * 100
+            response_dict["female_percentage"] = (
+                response_dict["female"] / response_dict["totalGender"]
+            ) * 100
+            response_dict["nonBinary_percentage"] = (
+                response_dict["nonBinary"] / response_dict["totalGender"]
+            ) * 100
+
+        if response_dict["totalAge"] > 0:
+            response_dict["lessThan30_percentage"] = (
+                response_dict["lessThan30"] / response_dict["totalAge"]
+            ) * 100
+            response_dict["between30and50_percentage"] = (
+                response_dict["between30and50"] / response_dict["totalAge"]
+            ) * 100
+            response_dict["moreThan50_percentage"] = (
+                response_dict["moreThan50"] / response_dict["totalAge"]
+            ) * 100
+
+        # Calculating minority group percentage
+        total_minority_and_vulnerable = (
+            response_dict["minorityGroup"] + response_dict["vulnerableCommunities"]
+        )
+        if total_minority_and_vulnerable > 0:
+            response_dict["minorityGroup_percentage"] = (
+                response_dict["minorityGroup"] / total_minority_and_vulnerable
+            ) * 100
+
+        return response_dict
+
     def get_salary_ration(self, slug):  # 405-2
         local_raw_response = (
             self.raw_response.only("data").filter(path__slug=slug).first()
@@ -97,6 +164,7 @@ class DiversityAndInclusionAnalyse(APIView):
         self.start = serializer.validated_data["start"]
         self.end = serializer.validated_data["end"]
         self.set_raw_responses()
+        self.set_data_points()
         response_data = {
             "percentage_of_employees_within_government_bodies": self.get_diversity_of_the_board(
                 self.slugs[0]
@@ -109,6 +177,9 @@ class DiversityAndInclusionAnalyse(APIView):
             ),
             "ratio_of_remuneration_of_women_to_men": self.get_salary_ration(
                 self.slugs[3]
+            ),
+            "diversity_of_the_individuals": self.get_diversity_of_the_individuals(
+                self.slugs[0]
             ),
         }
 

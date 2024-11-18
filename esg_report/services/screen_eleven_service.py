@@ -1,7 +1,6 @@
 from sustainapp.models import Report
 from datametric.models import RawResponse, DataMetric, DataPoint
 from esg_report.utils import (
-    get_materiality_assessment,
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     get_maximum_months_year,
@@ -361,16 +360,16 @@ class ScreenElevenService:
         local_data_points = self.data_points.filter(path__slug=self.slugs[19]).order_by(
             "-year"
         )
-        collect_data_by_raw_response_and_index(local_data_points)
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_205_3c(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[20]).order_by(
             "-year"
         )
-        collect_data_by_raw_response_and_index(local_data_points)
+        return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_205_1a(self):
-        collect_data_by_raw_response_and_index(
+        return collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[21])
         )
 

@@ -8,14 +8,16 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from datametric.utils.analyse import set_locations_data
 from operator import itemgetter
 
 from django.db.models import Prefetch
 from rest_framework import serializers
 from django.db.models import QuerySet
 from django.db.models import Sum
-from datametric.utils.analyse import filter_by_start_end_dates
+from datametric.utils.analyse import filter_by_start_end_dates, get_raw_response_filters
+from common.utils.get_data_points_as_raw_responses import (
+    collect_data_by_raw_response_and_index,
+)
 from rest_framework.exceptions import APIException
 from django.db.models import Max
 from datametric.utils.analyse import safe_divide
@@ -78,7 +80,12 @@ class EmploymentAnalyzeView(APIView):
         "gri-social-employee_hires-401-1a-emp_turnover-fulltime",
         "gri-social-employee_hires-401-1a-emp_turnover-parttime",
     ]
-    employee_benefits_path_slugs = ["gri-social-benefits-401-2a-benefits_provided"]
+    employee_benefits_path_slugs = [
+        "gri-social-benefits-401-2a-benefits_provided",
+        "gri-social-benefits-401-2a-benefits_provided_tab_1",
+        "gri-social-benefits-401-2a-benefits_provided_tab_2",
+        "gri-social-benefits-401-2a-benefits_provided_tab_3",
+    ]
     employee_parental_leave_path_slugs = [
         "gri-social-parental_leave-401-3a-3b-3c-3d-parental_leave"
     ]
@@ -245,7 +252,6 @@ class EmploymentAnalyzeView(APIView):
             parental_leave_response_table,
         ) = self.get_response_dictionaries()
 
-        print("new employ dps *****")
         dp_employ_permanent = []
         dp_employ_permanent_qs = []
 
@@ -373,8 +379,6 @@ class EmploymentAnalyzeView(APIView):
         ne_temporary_50_qs = dp_employ_temporary_qs.filter(
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
-
-        print(ne_male_temporary_qs, ne_female_temporary_qs, ne_nb_temporary_qs)
 
         total_temporary = (
             get_value(ne_male_temporary_qs["number_holder__sum"])
@@ -700,8 +704,6 @@ class EmploymentAnalyzeView(APIView):
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
 
-        print(et_male_permanent_qs)
-
         # * Total Number of employees
         total_permanent_eto = (
             get_value(et_male_permanent_qs)
@@ -813,8 +815,6 @@ class EmploymentAnalyzeView(APIView):
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
 
-        print(et_temporary_30_qs)
-
         total_temporary_eto = (
             get_value(et_male_temporary_qs)
             + get_value(et_female_temporary_qs)
@@ -925,8 +925,6 @@ class EmploymentAnalyzeView(APIView):
             Sum("number_holder")
         )
 
-        print(et_male_ng_qs)
-
         total_ng_eto = (
             get_value(et_male_ng_qs)
             + get_value(et_female_ng_qs)
@@ -1027,8 +1025,6 @@ class EmploymentAnalyzeView(APIView):
             Sum("number_holder")
         )
 
-        print(et_male_ft_qs)
-
         total_ft_eto = (
             get_value(et_male_ft_qs)
             + get_value(et_female_ft_qs)
@@ -1126,8 +1122,6 @@ class EmploymentAnalyzeView(APIView):
         et_pt_50_qs = dp_employ_to_pt_qs.filter(metric_name="yearsold50").aggregate(
             Sum("number_holder")
         )
-
-        print(et_male_pt_qs)
 
         total_pt_eto = (
             get_value(et_male_pt_qs)
@@ -1348,6 +1342,22 @@ class EmploymentAnalyzeView(APIView):
                 }
             )
 
+        benefits_response_table["benefits_full_time_employees"] = (
+            collect_data_by_raw_response_and_index(
+                benefits_dps.filter(path__slug=self.employee_benefits_path_slugs[1])
+            )
+        )
+        benefits_response_table["benefits_part_time_employees"] = (
+            collect_data_by_raw_response_and_index(
+                benefits_dps.filter(path__slug=self.employee_benefits_path_slugs[2])
+            )
+        )
+        benefits_response_table["benefits_temporary_employees"] = (
+            collect_data_by_raw_response_and_index(
+                benefits_dps.filter(path__slug=self.employee_benefits_path_slugs[3])
+            )
+        )
+
         return (
             new_employee_reponse_table,
             employee_turnover_reponse_table,
@@ -1373,28 +1383,47 @@ class EmploymentAnalyzeView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data["organisation"]
         self.location = serializer.validated_data.get("location")  # * This is optional
-        # * Set Locations Queryset
-        self.locations = set_locations_data(
-            organisation=self.organisation,
-            corporate=self.corporate,
-            location=self.location,
-        )
+
         client_id = request.user.client.id
-        new_emp_data_points = DataPoint.objects.filter(
-            client_id=client_id,
-            path__slug__in=self.new_employee_hire_path_slugs,
-            locale__in=self.locations,  # .values_list("name", flat=True),
-        ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
-        emp_turnover_data_points = DataPoint.objects.filter(
-            client_id=client_id,
-            path__slug__in=self.employee_turnover_path_slugs,
-            locale__in=self.locations,  # .values_list("name", flat=True),
-        ).filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        new_emp_data_points = (
+            DataPoint.objects.filter(
+                client_id=client_id,
+                path__slug__in=self.new_employee_hire_path_slugs,
+            )
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
+            )
+            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        )
+        emp_turnover_data_points = (
+            DataPoint.objects.filter(
+                client_id=client_id,
+                path__slug__in=self.employee_turnover_path_slugs,
+            )
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
+            )
+            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        )
         benefits_data_points = (
             DataPoint.objects.filter(
                 client_id=client_id,
                 path__slug__in=self.employee_benefits_path_slugs,
-                locale__in=self.locations,  # .values_list("name", flat=True),
+            )
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .order_by("-year", "-month")
@@ -1403,7 +1432,13 @@ class EmploymentAnalyzeView(APIView):
             DataPoint.objects.filter(
                 client_id=client_id,
                 path__slug__in=self.employee_parental_leave_path_slugs,
-                locale__in=self.locations,  # .values_list("name", flat=True),
+            )
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .order_by("-year", "-month")
@@ -1670,9 +1705,21 @@ class EmploymentAnalyzeView(APIView):
         ]
         response_data["employee_turnover"].append(employee_turnover_pt)
 
-        all_benefits = []
+        all_benefits = {
+            "benefits_full_time_employees": [],
+            "benefits_part_time_employees": [],
+            "benefits_temporary_employees": [],
+        }
 
-        all_benefits.extend(benefits_response_table["extra_benefits"])
+        all_benefits["benefits_full_time_employees"].extend(
+            benefits_response_table["benefits_full_time_employees"]
+        )
+        all_benefits["benefits_part_time_employees"].extend(
+            benefits_response_table["benefits_part_time_employees"]
+        )
+        all_benefits["benefits_temporary_employees"].extend(
+            benefits_response_table["benefits_temporary_employees"]
+        )
 
         response_data["benefits"] = all_benefits
 

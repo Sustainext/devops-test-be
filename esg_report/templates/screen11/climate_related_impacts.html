@@ -1,128 +1,150 @@
 <!-- climate_related_impacts.html -->
-<h2>11.3 Climate-related Impacts, Risks, and Opportunities</h2>
+<h3>11.3 Climate-related Impacts, Risks, and Opportunities</h3>
 
-<h3>11.3.1 Management of Material Topics (GRI 3-3-c, d, e)</h3>
-<p>[Details on the management of material topics related to climate impacts]</p>
+<h4>11.3.1 Management of Material Topics</h4>
+<p>No data available</p>
 
-<h3>11.3.2 Climate-related Financial Implications (GRI 201-2-a)</h3>
-<p>[Details on the financial implications of climate-related impacts]</p>
-
-<h4>11.3.2.1 Climate-related Risks (GRI 201-2-a)</h4>
-
-<table border="1" cellpadding="5" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Risk Category</th>
-            <th>Type of Risk</th>
-            <th>Potential Impact</th>
-            <th>Likelihood of Impact</th>
-            <th>Magnitude of Impact</th>
-            <th>Financial Effect</th>
-            <th>Financial Implications</th>
-            <th>Management Methods</th>
-            <th>Time Frame</th>
-            <th>Direct or Indirect Impacts</th>
-            <th>Implemented Mitigation Strategies</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Physical Risk</td>
-            <td>Extreme Weather Events</td>
-            <td>Increased or decreased capital costs</td>
-            <td>Low</td>
-            <td>Moderate</td>
-            <td>Potential fines and revenue loss</td>
-            <td>Diversification of supply chain</td>
-            <td>Short-term (1-3 years)</td>
-            <td>Indirect</td>
-            <td>Yes</td>
-            <td>Community engagement and education</td>
-        </tr>
-        <tr>
-            <td>Transition Risk</td>
-            <td>Temperature Changes</td>
-            <td>Increased or decreased capital costs</td>
-            <td>Low</td>
-            <td>Moderate</td>
-            <td>Potential fines and revenue loss</td>
-            <td>Climate control technologies</td>
-            <td>Short-term (1-3 years)</td>
-            <td>Indirect</td>
-            <td>Yes</td>
-            <td>Real-time temperature monitoring</td>
-        </tr>
-        <tr>
-            <td>Physical Risk</td>
-            <td>Sea Level Rise</td>
-            <td>Increased or decreased capital costs</td>
-            <td>Low</td>
-            <td>Moderate</td>
-            <td>Potential fines and revenue loss</td>
-            <td>Land use planning</td>
-            <td>Short-term (1-3 years)</td>
-            <td>Indirect</td>
-            <td>Yes</td>
-            <td>Community relocation programs</td>
-        </tr>
-        <!-- Add more rows as necessary -->
-    </tbody>
+<h4>11.3.2 Climate-related Financial Implications</h4>
+{% for data in screen_eleven_data.financial_implications_201_2a %}
+<p>{{data.Q1}}</p>
+{% if data.Q1 == "Yes" %}
+<p>{{data.Q2}}</p>
+{% endif %} {% endfor %}
+ 
+<h4>11.3.3 Climate-related Risks</h4>
+ 
+<table>
+  <thead>
+    <tr>
+      <th>Risk Category</th>
+      <th>Type of Risk</th>
+      <th>Potential Impact</th>
+      <th>Likelihood of Impact</th>
+      <th>Magnitude of Impact</th>
+      <th>Financial Effect</th>
+      <th>Financial Implications</th>
+      <th>Management Methods</th>
+      <th>Time Frame</th>
+      <th>Direct or Indirect Impacts</th>
+      <th>Implemented Mitigation Strategies</th>
+      <th>Mitigation Strategies</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in screen_eleven_data.201_2a.201_2a1 %}
+    <tr>
+      <td>Physical Risk</td>
+      <td>{{ item.TypeofRisk|default:"N/A" }}</td>
+      <td>
+        {% if item.PotentialImpact %} {{ item.PotentialImpact|join:", " }} {% if item.PotentialImpact_others %}, {{ item.PotentialImpact_others }}{% endif %} {% else %} {{
+        item.PotentialImpact_others|default:"N/A" }} {% endif %}
+      </td>
+      <td>{{ item.Likelihoodofimpact|default:"N/A" }}</td>
+      <td>{{ item.MagnitudeofImpact|default:"N/A" }}</td>
+      <td>{{ item.FinancialEffect|default:"N/A" }}</td>
+      <td>
+        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{
+        item.FinancialImplications_others|default:"N/A" }} {% endif %}
+      </td>
+      <td>
+        {% if item.ManagementMethods %} {{ item.ManagementMethods|join:", " }} {% if item.ManagementMethods_others %}, {{ item.ManagementMethods_others }}{% endif %} {% else %} {{
+        item.ManagementMethods_others|default:"N/A" }} {% endif %}
+      </td>
+      <td>{{ item.TimeFrame|default:"N/A" }}</td>
+      <td>{{ item.DirectImpacts|default:"N/A" }}</td>
+      <td>{% if item.ImplementedMitigationStrategies == "Yes" %} Yes {% else %} No {% endif %}</td>
+      <td>{{ item.MitigationStrategies|default:"N/A" }} {% if item.MitigationStrategies_others %}, {{ item.MitigationStrategies_others }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
-
-<h4>11.3.2.2 Climate-related Opportunities (GRI 201-2-a)</h4>
-
-<table border="1" cellpadding="5" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Type of Opportunity</th>
-            <th>Potential Impact</th>
-            <th>Magnitude of Impact</th>
-            <th>Likelihood of Impact</th>
-            <th>Financial Effect</th>
-            <th>Financial Implications</th>
-            <th>Management Methods</th>
-            <th>Time Frame</th>
-            <th>Direct or Indirect Impacts</th>
-            <th>Implemented Mitigation Strategies</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Renewable Energy Adoption</td>
-            <td>Increased or decreased capital costs</td>
-            <td>Low</td>
-            <td>Low</td>
-            <td>Tax Incentives</td>
-            <td>Onsite generation</td>
-            <td>Partnership with renewable energy providers</td>
-            <td>Short-term (1-3 years)</td>
-            <td>Indirect</td>
-            <td>Yes</td>
-        </tr>
-        <tr>
-            <td>Energy Efficiency</td>
-            <td>Increased or decreased capital costs</td>
-            <td>Low</td>
-            <td>Low</td>
-            <td>Low Initial Investment</td>
-            <td>Energy Audits</td>
-            <td>Continuous Monitoring</td>
-            <td>Short-term (1-3 years)</td>
-            <td>Indirect</td>
-            <td>Yes</td>
-        </tr>
-        <tr>
-            <td>Water Conservation</td>
-            <td>Increased or decreased capital costs</td>
-            <td>Low</td>
-            <td>Low</td>
-            <td>Initial Infrastructure Investment</td>
-            <td>Rainwater Harvesting</td>
-            <td>Drip Irrigation Systems</td>
-            <td>Short-term (1-3 years)</td>
-            <td>Indirect</td>
-            <td>Yes</td>
-        </tr>
-        <!-- Add more rows as necessary -->
-    </tbody>
+<br />
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Risk Category</th>
+      <th>Type of Risk</th>
+      <th>Potential Impact</th>
+      <th>Likelihood of Impact</th>
+      <th>Magnitude of Impact</th>
+      <th>Financial Effect</th>
+      <th>Financial Implications</th>
+      <th>Management Methods</th>
+      <th>Time Frame</th>
+      <th>Direct or Indirect Impacts</th>
+      <th>Implemented Mitigation Strategies</th>
+      <th>Mitigation Strategies</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in screen_eleven_data.201_2a.201_2a2 %}
+    <tr>
+      <td>Transition Risk</td>
+      <td>{{ item.TypeofRisk|default:"No data available" }}</td>
+      <td>
+        {% if item.PotentialImpact %} {{ item.PotentialImpact|join:", " }} {% if item.PotentialImpact_others %}, {{ item.PotentialImpact_others }}{% endif %} {% else %} {{
+        item.PotentialImpact_others|default:"No data available" }} {% endif %}
+      </td>
+      <td>{{ item.Likelihoodofimpact|default:"No data available" }}</td>
+      <td>{{ item.MagnitudeofImpact|default:"No data available" }}</td>
+      <td>{{ item.FinancialEffect|default:"No data available" }}</td>
+      <td>
+        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{
+        item.FinancialImplications_others|default:"No data available" }} {% endif %}
+      </td>
+      <td>
+        {% if item.ManagementMethods %} {{ item.ManagementMethods|join:", " }} {% if item.ManagementMethods_others %}, {{ item.ManagementMethods_others }}{% endif %} {% else %} {{
+        item.ManagementMethods_others|default:"No data available" }} {% endif %}
+      </td>
+      <td>{{ item.TimeFrame|default:"No data available" }}</td>
+      <td>{{ item.DirectImpacts|default:"No data available" }}</td>
+      <td>{% if item.ImplementedMitigationStrategies == "Yes" %} Yes {% else %} No {% endif %}</td>
+      <td>{{ item.MitigationStrategies|default:"No data available" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+ 
+<h4>11.3.4 Climate-related Opportunities</h4>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Risk Category</th>
+      <th>Type of Risk</th>
+      <th>Potential Impact</th>
+      <th>Likelihood of Impact</th>
+      <th>Magnitude of Impact</th>
+      <th>Financial Effect</th>
+      <th>Financial Implications</th>
+      <th>Management Methods</th>
+      <th>Time Frame</th>
+      <th>Direct or Indirect Impacts</th>
+      <th>Implemented Mitigation Strategies</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in screen_eleven_data.201_2a.201_2a3 %}
+    <tr>
+      <td>{{ item.RiskCategory|default:"No data available" }}</td>
+      <td>{{ item.TypeofRiskoth|default:"No data available" }}</td>
+      <td>{{ item.PotentialImpactoth|default:"No data available" }}</td>
+      <td>{{ item.Likelihoodofimpact|default:"No data available" }}</td>
+      <td>{{ item.MagnitudeofImpact|default:"No data available" }}</td>
+      <td>{{ item.FinancialEffect|default:"No data available" }}</td>
+      <td>{% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% else %} No data available {% endif %}</td>
+      <td>{{ item.ManagementMethodsoth|default:"No data available" }}</td>
+      <td>{{ item.TimeFrame|default:"No data available" }}</td>
+      <td>{{ item.DirectImpacts|default:"No data available" }}</td>
+      <td>{{ item.ImplementedMitigationStrategies|yesno:"Yes,No" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
