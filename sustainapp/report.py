@@ -562,21 +562,24 @@ def generate_pdf_data(pk):
         highest_contribution_value = 0
         highest_source_name = None
         for item in organized_data_list:
-            highest_contribution_source_for_corporate = max(
-                item["sources"],
-                key=lambda x: float(x["contribution_source"]),
-            )
-            # Compare the numeric value instead of the dictionary
-            if (
-                float(highest_contribution_source_for_corporate["contribution_source"])
-                > highest_contribution_value
-            ):
-                highest_contribution_value = float(
-                    highest_contribution_source_for_corporate["contribution_source"]
+            if item["sources"]:  # Check if item["sources"] is not empty
+                highest_contribution_source_for_corporate = max(
+                    item["sources"],
+                    key=lambda x: float(x["contribution_source"]),
                 )
-                highest_source_name = highest_contribution_source_for_corporate[
-                    "source_name"
-                ]
+                # Compare the numeric value instead of the dictionary
+                if (
+                    float(
+                        highest_contribution_source_for_corporate["contribution_source"]
+                    )
+                    > highest_contribution_value
+                ):
+                    highest_contribution_value = float(
+                        highest_contribution_source_for_corporate["contribution_source"]
+                    )
+                    highest_source_name = highest_contribution_source_for_corporate[
+                        "source_name"
+                    ]
     else:
         highest_source_name = None
 
