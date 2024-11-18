@@ -145,6 +145,9 @@ class DiversityAndInclusionAnalyse(APIView):
             response_dict["minorityGroup_percentage"] = (
                 response_dict["minorityGroup"] / total_minority_and_vulnerable
             ) * 100
+            response_dict["vulnerableCommunities_percentage"] = (
+                response_dict["vulnerableCommunities"] / total_minority_and_vulnerable
+            ) * 100
 
         return response_dict
 
