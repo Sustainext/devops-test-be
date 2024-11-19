@@ -479,7 +479,7 @@ def generate_pdf_data(pk):
 
     # image_url = request.build_absolute_uri(staticfiles_storage.url('ghg-methodology-flowchart.png'))
     # image_path = finders.find("images/ghg-methodology-flowchart.png")
-    image_path = default_storage.path("ghg-methodology-flowchart.png")
+    image_path = default_storage.url("ghg-methodology-flowchart.png")
 
     data_entry = get_object_or_404(AnalysisData2, report_id=pk)
 
