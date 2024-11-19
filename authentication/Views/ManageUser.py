@@ -26,10 +26,8 @@ class ManageUserViewSet(viewsets.ModelViewSet):
         related_fields = instance._meta.get_fields()
         
         for field in related_fields:
-            if field.one_to_many or field.one_to_one:
                 try:
-                    related_objects = getattr(instance, field.get_accessor_name()).all()
-                    related_objects.delete()
+                    return super().perform_destroy(instance)
                 except ProtectedError as e:
                     # Handle protected objects by force deleting them
                     protected_objects = e.protected_objects
