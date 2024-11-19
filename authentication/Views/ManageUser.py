@@ -25,13 +25,12 @@ class ManageUserViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         related_fields = instance._meta.get_fields()
         
-        for field in related_fields:
-                try:
-                    return super().perform_destroy(instance)
-                except ProtectedError as e:
-                    # Handle protected objects by force deleting them
-                    protected_objects = e.protected_objects
-                    for protected_obj in protected_objects:
-                        protected_obj.delete()
+        try:
+            return super().perform_destroy(instance)
+        except ProtectedError as e:
+            # Handle protected objects by force deleting them
+            protected_objects = e.protected_objects
+            for protected_obj in protected_objects:
+                protected_obj.delete()
                         
         return super().perform_destroy(instance)
