@@ -27,7 +27,8 @@ from authentication.models import CustomUser
 import json
 from threading import Thread
 from esg_report.utils import generate_disclosure_status
-
+import logging
+logger = logging.getLogger("user_logger")
 
 def convert_keys(obj):
     if isinstance(obj, dict):
@@ -80,6 +81,7 @@ class ESGReportPDFView(View):
                 about_the_company_service, results["report"], request
             )
             results["about_the_company"] = convert_keys(about_the_company)
+            logger.info(results["about_the_company"])
 
         def get_mission_vision_values():
             mission_vision_values = (
@@ -300,7 +302,7 @@ class ESGReportPDFView(View):
             "content_index_data": content_index_data,
             "pk": pk,  # Pass the report ID to the template
         }
-
+        logger.info(context)
         template_path = "esg_report.html"
         try:
             # Get the template and render HTML

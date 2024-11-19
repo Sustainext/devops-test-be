@@ -146,7 +146,7 @@ urlpatterns = [
     ),
     path(
         "get_water_analysis/",
-        WaterAnalyseByDataPoints.as_view(),
+        WaterAnalyse.as_view(),
         name="get_water_analysis",
     ),
     path(
