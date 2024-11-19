@@ -34,6 +34,8 @@ from sustainapp.report import generate_pdf_data
 from django.core.files.storage import default_storage
 from datametric.utils.analyse import filter_by_start_end_dates
 from esg_report.utils import create_validation_method_for_report_creation
+from azure.storage.blob import BlobClient
+
 
 logger = logging.getLogger()
 
@@ -743,14 +745,20 @@ class ReportViewSet(viewsets.ModelViewSet):
             org_logo = request.FILES.get("org_logo", None)
 
             if reset_logo:
-                default_image_path = default_storage.path("sustainext.jpeg")
-                with default_storage.open(default_image_path, "rb") as image_file:
-                    # Read the image content and save it to the instance's logo field
-                    instance.org_logo.save(
-                        os.path.basename(default_image_path),
-                        ContentFile(image_file.read()),
-                        save=True,
-                    )
+                # Get blob client for the default logo
+                blob_client = BlobClient.from_connection_string(
+                    conn_str=settings.AZURE_STORAGE_CONNECTION_STRING,
+                    container_name="media",
+                    blob_name="sustainext.jpeg",
+                )
+
+                # Download the default logo blob content
+                blob_data = blob_client.download_blob()
+
+                # Save the blob content to the instance's logo field
+                instance.org_logo.save(
+                    "sustainext.jpeg", ContentFile(blob_data.readall()), save=True
+                )
             elif org_logo is not None:
                 instance.org_logo = org_logo
 
