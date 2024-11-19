@@ -38,30 +38,7 @@ def convert_text_to_json(apps, schema_editor):
     for model_name in models_to_convert:
         Model = apps.get_model("esg_report", model_name)
         for obj in Model.objects.all():
-            modified = False
-            for field in obj._meta.fields:
-                if field.get_internal_type() == "JSONField":
-                    value = getattr(obj, field.name)
-                    if value is None:
-                        continue
-                    if not isinstance(value, dict):
-                        try:
-                            json_value = (
-                                json.loads(value)
-                                if isinstance(value, str)
-                                else {"content": value}
-                            )
-                            setattr(obj, field.name, json_value)
-                            modified = True
-                        except (json.JSONDecodeError, TypeError):
-                            if value:
-                                setattr(obj, field.name, {"content": str(value)})
-                                modified = True
-                            else:
-                                setattr(obj, field.name, {})
-                                modified = True
-            if modified:
-                obj.save()
+            obj.delete()
 
 
 def reverse_convert(apps, schema_editor):
