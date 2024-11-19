@@ -314,6 +314,9 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
 DEFAULT_FILE_STORAGE = "azureproject.azure_storage.AzureMediaStorage"
 STATICFILES_STORAGE = "azureproject.azure_storage.AzureStaticStorage"
+AZURE_STORAGE_CONNECTION_STRING = os.environ.get(
+    "AZURE_STORAGE_CONNECTION_STRING"
+)
 STATIC_LOCATION = "static"
 MEDIA_LOCATION = "media"
 AZURE_ACCOUNT_NAME = os.getenv("AZURE_STORAGE_ACCOUNT_NAME", None)
