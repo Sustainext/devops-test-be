@@ -5,7 +5,8 @@ from esg_report.Serializer.AboutTheReportSerializer import (
 from sustainapp.models import Report
 from datametric.models import RawResponse
 
-
+#TODO: We have to unify this service with report api response.
+#! Possible errors can come.
 class AboutTheReportService:
     @staticmethod
     def get_about_the_report_data(report_id, user):

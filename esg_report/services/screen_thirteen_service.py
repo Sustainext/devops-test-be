@@ -109,6 +109,7 @@ class ScreenThirteenService:
             83: "gri-social-notice_period-402-1a-minimum",  #
             84: "gri-social-notice_period-402-1a-collective_bargaining",
         }
+        #TODO: Add new points for 13.6.7
 
     def get_403_2a_process_for_hazard(self):
         local_raw_responses = self.raw_responses.filter(path__slug=self.slugs[34])
