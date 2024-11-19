@@ -45,6 +45,7 @@ class WaterAnalyse(APIView):
         "million litres per day": 1,
         "megalitre": 1,
         "million litrse per day": 1,
+        "kilolitre": 0.001,
     }
     discharge_literal = "Total Discharge"
     withdrawal_literal = "Total Withdrawal"
