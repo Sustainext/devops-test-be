@@ -113,40 +113,43 @@ class DiversityAndInclusionAnalyse(APIView):
                     else:
                         calculate_dict[key] = int(value)
         response_dict = {}
-        
+
         # Calculating percentages
-        if response_dict["totalGender"] > 0:
+        if calculate_dict.get("totalGender") and calculate_dict["totalGender"] > 0:
             response_dict["male_percentage"] = (
-                response_dict["male"] / response_dict["totalGender"]
+                calculate_dict.get("male", 0) / calculate_dict.get("totalGender", 0)
             ) * 100
             response_dict["female_percentage"] = (
-                response_dict["female"] / response_dict["totalGender"]
+                calculate_dict.get("female", 0) / calculate_dict.get("totalGender", 0)
             ) * 100
             response_dict["nonBinary_percentage"] = (
-                response_dict["nonBinary"] / response_dict["totalGender"]
+                calculate_dict.get("nonBinary", 0)
+                / calculate_dict.get("totalGender", 0)
             ) * 100
 
-        if response_dict["totalAge"] > 0:
+        if calculate_dict.get("totalAge") and calculate_dict["totalAge"] > 0:
             response_dict["lessThan30_percentage"] = (
-                response_dict["lessThan30"] / response_dict["totalAge"]
+                calculate_dict.get("lessThan30", 0) / calculate_dict.get("totalAge", 0)
             ) * 100
             response_dict["between30and50_percentage"] = (
-                response_dict["between30and50"] / response_dict["totalAge"]
+                calculate_dict.get("between30and50", 0)
+                / calculate_dict.get("totalAge", 0)
             ) * 100
             response_dict["moreThan50_percentage"] = (
-                response_dict["moreThan50"] / response_dict["totalAge"]
+                calculate_dict.get("moreThan50", 0) / calculate_dict.get("totalAge", 0)
             ) * 100
 
         # Calculating minority group percentage
-        total_minority_and_vulnerable = (
-            response_dict["minorityGroup"] + response_dict["vulnerableCommunities"]
-        )
+        total_minority_and_vulnerable = calculate_dict.get(
+            "minorityGroup", 0
+        ) + calculate_dict.get("vulnerableCommunities", 0)
         if total_minority_and_vulnerable > 0:
             response_dict["minorityGroup_percentage"] = (
-                response_dict["minorityGroup"] / total_minority_and_vulnerable
+                calculate_dict.get("minorityGroup", 0) / total_minority_and_vulnerable
             ) * 100
             response_dict["vulnerableCommunities_percentage"] = (
-                response_dict["vulnerableCommunities"] / total_minority_and_vulnerable
+                calculate_dict.get("vulnerableCommunities", 0)
+                / total_minority_and_vulnerable
             ) * 100
 
         return response_dict
@@ -180,9 +183,6 @@ class DiversityAndInclusionAnalyse(APIView):
             ),
             "ratio_of_remuneration_of_women_to_men": self.get_salary_ration(
                 self.slugs[3]
-            ),
-            "diversity_of_the_individuals": self.get_diversity_of_the_individuals(
-                self.slugs[0]
             ),
         }
 
