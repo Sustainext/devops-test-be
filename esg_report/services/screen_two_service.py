@@ -5,7 +5,7 @@ from esg_report.Serializer.AboutTheCompanyAndOperationsSerializer import (
     AboutTheCompanyAndOperationsSerializer,
 )
 from rest_framework.exceptions import NotFound
-from esg_report.utils import get_latest_raw_response
+from esg_report.utils import get_latest_raw_response, get_raw_responses_as_per_report
 from django.shortcuts import get_object_or_404
 
 
@@ -42,10 +42,7 @@ class ScreenTwoService:
 
     def fetch_raw_responses(self, report):
         """Fetch all relevant raw responses for the user."""
-        return RawResponse.objects.filter(
-            client=self.user.client,
-            year__range=(report.start_date.year, report.end_date.year),
-        )
+        return get_raw_responses_as_per_report(report=report)
 
     def extract_data(self, raw_responses, slugs):
         """Extract and map raw response data based on specified slugs."""
@@ -96,7 +93,7 @@ class ScreenTwoService:
         self, raw_responses, slug, key=None, list_response=False, index=None
     ):
         """Helper method to fetch raw response data."""
-        #TODO: Match with esg report api. 
+        # TODO: Match with esg report api.
         raw_response = get_latest_raw_response(raw_responses=raw_responses, slug=slug)
         if raw_response:
             if key and index is not None:
