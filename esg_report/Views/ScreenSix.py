@@ -52,7 +52,7 @@ class ScreenSixAPIView(APIView):
                 }
             )
         response_data["approach_to_stakeholder_engagement"] = [
-            i[0]
+            i
             for i in raw_responses.filter(path__slug=slugs[1]).values_list(
                 "data", flat=True
             )
