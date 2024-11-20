@@ -109,7 +109,7 @@ class ScreenThirteenService:
             83: "gri-social-notice_period-402-1a-minimum",  #
             84: "gri-social-notice_period-402-1a-collective_bargaining",
         }
-        #TODO: Add new points for 13.6.7
+        # TODO: Add new points for 13.6.7
 
     def get_403_2a_process_for_hazard(self):
         local_raw_responses = self.raw_responses.filter(path__slug=self.slugs[34])
@@ -602,10 +602,12 @@ class ScreenThirteenService:
                 request=self.request,
             )
         )
-        response_data["409_1a_analyse"] = calling_analyse_view_with_params(
-            view_url="get_forced_labor_analysis",
-            report=self.report,
-            request=self.request,
+        response_data["409_1a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_forced_labor_analysis",
+                report=self.report,
+                request=self.request,
+            )
         )
         response_data["2_8_a"] = collect_data_by_raw_response_and_index(
             data_points=self.data_points.filter(path__slug=self.slugs[79])
