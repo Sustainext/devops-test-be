@@ -307,7 +307,7 @@ def calling_analyse_view_with_params(view_url, request, report):
         return {"detail": str(e)}
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}", exec_info=True)
-        return {"detail": f"An error occurred: {str(e)}"}
+        return None
 
 
 def creating_material_topic_and_disclosure():
