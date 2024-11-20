@@ -30,50 +30,48 @@ class ScreenSixAPIView(APIView):
                 report.stakeholder_engagement
             )
             serializer = StakeholderEngagementSerializer(stakeholder_engagement)
-            slugs = [
-                "gri-general-stakeholder_engagement-2-29a-describe",
-                "gri-general-stakeholder_engagement-2-29b-stakeholder",
-            ]
-            raw_responses = (
-                RawResponse.objects.filter(path__slug__in=slugs)
-                .filter(year__range=(report.start_date.year, report.end_date.year))
-                .filter(client=self.request.user.client)
-            ).order_by("-year")
             response_data = serializer.data
-            if raw_responses.filter(path__slug=slugs[0]).exists():
-                response_data.update(
-                    raw_responses.filter(path__slug=slugs[0]).first().data[0]
-                )
-            else:
-                response_data.update(
-                    {
-                        "Organisationengages": None,
-                        "Stakeholdersidentified": None,
-                        "Stakeholderengagement": None,
-                    }
-                )
-            response_data["approach_to_stakeholder_engagement"] = [
-                i[0]
-                for i in raw_responses.filter(path__slug=slugs[1]).values_list(
-                    "data", flat=True
-                )
-            ]
-            # TODO: Change the getting stakeholder_feedback from materiality assessment ones relationship converts to OneToOne Field
-            materiality_assessment = get_materiality_assessment(report)
-            try:
-                response_data["stakeholder_feedback"] = (
-                    materiality_assessment.management_approach_questions.all()
-                    .first()
-                    .stakeholder_engagement_effectiveness_description
-                )
-            except (ObjectDoesNotExist, AttributeError):
-                response_data["stakeholder_feedback"] = None
-            return Response(response_data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
-            return Response(
-                None,
-                status=status.HTTP_200_OK,
+            # * Add model fields with None values as a dictionary
+            response_data = {"description": None, "report": report_id}
+        slugs = [
+            "gri-general-stakeholder_engagement-2-29a-describe",
+            "gri-general-stakeholder_engagement-2-29b-stakeholder",
+        ]
+        raw_responses = (
+            RawResponse.objects.filter(path__slug__in=slugs)
+            .filter(year__range=(report.start_date.year, report.end_date.year))
+            .filter(client=self.request.user.client)
+        ).order_by("-year")
+        if raw_responses.filter(path__slug=slugs[0]).exists():
+            response_data.update(
+                raw_responses.filter(path__slug=slugs[0]).first().data[0]
             )
+        else:
+            response_data.update(
+                {
+                    "Organisationengages": None,
+                    "Stakeholdersidentified": None,
+                    "Stakeholderengagement": None,
+                }
+            )
+        response_data["approach_to_stakeholder_engagement"] = [
+            i[0]
+            for i in raw_responses.filter(path__slug=slugs[1]).values_list(
+                "data", flat=True
+            )
+        ]
+        # TODO: Change the getting stakeholder_feedback from materiality assessment ones relationship converts to OneToOne Field
+        materiality_assessment = get_materiality_assessment(report)
+        try:
+            response_data["stakeholder_feedback"] = (
+                materiality_assessment.management_approach_questions.all()
+                .first()
+                .stakeholder_engagement_effectiveness_description
+            )
+        except (ObjectDoesNotExist, AttributeError):
+            response_data["stakeholder_feedback"] = None
+        return Response(response_data, status=status.HTTP_200_OK)
 
     def put(self, request, report_id, format=None):
         try:
