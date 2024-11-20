@@ -11,7 +11,7 @@ from esg_report.Serializer.StakeholderEngagementSerializer import (
 )
 from sustainapp.models import Report
 from datametric.models import RawResponse
-from esg_report.utils import get_materiality_assessment
+from esg_report.utils import get_materiality_assessment, get_raw_responses_as_per_report
 
 
 class ScreenSixAPIView(APIView):
@@ -38,11 +38,7 @@ class ScreenSixAPIView(APIView):
             "gri-general-stakeholder_engagement-2-29a-describe",
             "gri-general-stakeholder_engagement-2-29b-stakeholder",
         ]
-        raw_responses = (
-            RawResponse.objects.filter(path__slug__in=slugs)
-            .filter(year__range=(report.start_date.year, report.end_date.year))
-            .filter(client=self.request.user.client)
-        ).order_by("-year")
+        raw_responses = get_raw_responses_as_per_report(report)
         if raw_responses.filter(path__slug=slugs[0]).exists():
             response_data.update(
                 raw_responses.filter(path__slug=slugs[0]).first().data[0]
