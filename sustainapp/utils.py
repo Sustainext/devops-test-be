@@ -422,21 +422,24 @@ def generate_report_data(pk, request):
         highest_contribution_value = 0
         highest_source_name = None
         for item in organized_data_list:
-            highest_contribution_source_for_corporate = max(
-                item["sources"],
-                key=lambda x: float(x["contribution_source"]),
-            )
-            # Compare the numeric value instead of the dictionary
-            if (
-                float(highest_contribution_source_for_corporate["contribution_source"])
-                > highest_contribution_value
-            ):
-                highest_contribution_value = float(
-                    highest_contribution_source_for_corporate["contribution_source"]
+            if item["sources"]:  # Check if item["sources"] is not empty
+                highest_contribution_source_for_corporate = max(
+                    item["sources"],
+                    key=lambda x: float(x["contribution_source"]),
                 )
-                highest_source_name = highest_contribution_source_for_corporate[
-                    "source_name"
-                ]
+                # Compare the numeric value instead of the dictionary
+                if (
+                    float(
+                        highest_contribution_source_for_corporate["contribution_source"]
+                    )
+                    > highest_contribution_value
+                ):
+                    highest_contribution_value = float(
+                        highest_contribution_source_for_corporate["contribution_source"]
+                    )
+                    highest_source_name = highest_contribution_source_for_corporate[
+                        "source_name"
+                    ]
 
     # Extract total_co2e and scope_name from combined_scopes
     extracted_data = [
@@ -566,9 +569,7 @@ def adjust_paragraphs(doc_stream):
 
 
 def word_docx_report(pk: int):
-    blob_name = os.path.join(
-        settings.MEDIA_ROOT, "files", "report", "report_demo_v2.docx"
-    )
+    blob_name = blob_name = "files/report/report_demo_v2.docx"
     blob_object = default_storage.open(blob_name, "rb")
     blob_stream = io.BytesIO(blob_object.read())
     tpl = DocxTemplate(blob_stream)
@@ -823,5 +824,3 @@ def validation_for_esg_report(report: Report):
             ]
         }
     ]
-
-

@@ -36,7 +36,7 @@ from sustainapp.Views.GetLocationAsPerCorporate import (
 )
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
-from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
+from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse, WaterAnalyseByDataPoints
 from sustainapp.Views.Analyse.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
 from sustainapp.Views.Analyse.Social.ChildLabor import ChildLabourAnalyzeView
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView

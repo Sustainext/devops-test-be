@@ -96,6 +96,7 @@ class ScreenTwoService:
         self, raw_responses, slug, key=None, list_response=False, index=None
     ):
         """Helper method to fetch raw response data."""
+        #TODO: Match with esg report api. 
         raw_response = get_latest_raw_response(raw_responses=raw_responses, slug=slug)
         if raw_response:
             if key and index is not None:

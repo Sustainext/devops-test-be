@@ -145,6 +145,9 @@ class DiversityAndInclusionAnalyse(APIView):
             response_dict["minorityGroup_percentage"] = (
                 response_dict["minorityGroup"] / total_minority_and_vulnerable
             ) * 100
+            response_dict["vulnerableCommunities_percentage"] = (
+                response_dict["vulnerableCommunities"] / total_minority_and_vulnerable
+            ) * 100
 
         return response_dict
 
@@ -178,9 +181,9 @@ class DiversityAndInclusionAnalyse(APIView):
             "ratio_of_remuneration_of_women_to_men": self.get_salary_ration(
                 self.slugs[3]
             ),
-            "diversity_of_the_individuals": self.get_diversity_of_the_individuals(
-                self.slugs[0]
-            ),
+            # "diversity_of_the_individuals": self.get_diversity_of_the_individuals(
+            #     self.slugs[0]
+            # ),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
