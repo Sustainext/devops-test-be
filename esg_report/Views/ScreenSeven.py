@@ -9,7 +9,7 @@ from esg_report.Serializer.AboutTheReportSerializer import (
 )
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
-
+from esg_report.utils import get_raw_responses_as_per_report
 
 class ScreenSevenAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -41,11 +41,7 @@ class ScreenSevenAPIView(APIView):
             "gri-general-assurance-highest-2-5-a",
             "gri-general-assurance-external-2-5-b",
         ]
-        raw_responses = (
-            RawResponse.objects.filter(path__slug__in=slugs)
-            .filter(year__range=(report.start_date.year, report.end_date.year))
-            .filter(client=self.request.user.client)
-        )
+        raw_responses = get_raw_responses_as_per_report(report)
         response_data["2-3-a"] = (
             raw_responses.filter(path__slug=slugs[0]).order_by("year").first().data[0]
             if raw_responses.filter(path__slug=slugs[0]).order_by("year").first() is not None
