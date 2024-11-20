@@ -16,6 +16,11 @@ class CustomUserCreationForm(UserCreationForm):
             "admin",
             # "password1",
             # "password2",
+            "collect",
+            "analyse",
+            "report",
+            "track",
+            "optimise",
         )
 
     def clean(self):
