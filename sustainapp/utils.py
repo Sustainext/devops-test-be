@@ -569,9 +569,7 @@ def adjust_paragraphs(doc_stream):
 
 
 def word_docx_report(pk: int):
-    blob_name = os.path.join(
-        settings.MEDIA_ROOT, "files", "report", "report_demo_v2.docx"
-    )
+    blob_name = blob_name = "files/report/report_demo_v2.docx"
     blob_object = default_storage.open(blob_name, "rb")
     blob_stream = io.BytesIO(blob_object.read())
     tpl = DocxTemplate(blob_stream)
