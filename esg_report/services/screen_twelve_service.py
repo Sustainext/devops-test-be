@@ -190,7 +190,7 @@ class ScreenTwelveService:
         top_emission_by_scope, top_emission_by_source, top_emission_by_location = (
             get_top_emission_by_scope(
                 locations=locations,
-                user=self.request.user,
+                user=self.report.user,
                 start=self.report.start_date,
                 end=self.report.end_date,
                 path_slug={

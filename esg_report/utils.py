@@ -256,6 +256,7 @@ def forward_request_with_jwt(view_class, original_request, url, query_params):
         # Step 5: Return the response from the internal view
         return temp.data
     except Exception as e:
+        logger.error(e,exc_info=True)
         return None
 
 
