@@ -429,7 +429,7 @@ def calling_analyse_view_with_params_for_same_year(view_url, request, report):
         return {"detail": str(e)}
     except Exception as e:
         logger.warning(f"An error occurred: {str(e)}", exc_info=True)
-        return {"detail": f"An error occurred: {str(e)}"}
+        return None
 
 
 def get_which_general_disclosure_is_empty(report: Report):
