@@ -14,6 +14,7 @@ from datametric.utils.analyse import (
 from datametric.models import RawResponse, DataPoint
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
+    collect_data_segregated_by_location,
 )
 
 
@@ -103,53 +104,54 @@ class DiversityAndInclusionAnalyse(APIView):
 
     def get_diversity_of_the_individuals(self, slug):
         data_points = self.data_points.filter(path__slug=slug).order_by("index")
-        data = collect_data_by_raw_response_and_index(data_points)
-        calculate_dict = {}
-        for item in data:
-            for key, value in item.items():
-                if key != "category":
-                    if key in calculate_dict:
-                        calculate_dict[key] += int(value)
-                    else:
-                        calculate_dict[key] = int(value)
-        response_dict = {}
-        
-        # Calculating percentages
-        if response_dict["totalGender"] > 0:
-            response_dict["male_percentage"] = (
-                response_dict["male"] / response_dict["totalGender"]
-            ) * 100
-            response_dict["female_percentage"] = (
-                response_dict["female"] / response_dict["totalGender"]
-            ) * 100
-            response_dict["nonBinary_percentage"] = (
-                response_dict["nonBinary"] / response_dict["totalGender"]
-            ) * 100
+        location_wise_data = collect_data_segregated_by_location(data_points)
+        response_data = []
+        for data in location_wise_data:
+            response_dict = {}
+            for item in data:
+                for key, value in item.items():
+                    if key != "category":
+                        if key in response_dict:
+                            response_dict[key] += int(value)
+                        else:
+                            response_dict[key] = int(value)
+            calculation_dict = {}
+            # Calculating percentages
+            if response_dict["totalGender"] > 0:
+                calculation_dict["male_percentage"] = (
+                    response_dict["male"] / response_dict["totalGender"]
+                ) * 100
+                calculation_dict["female_percentage"] = (
+                    response_dict["female"] / response_dict["totalGender"]
+                ) * 100
+                calculation_dict["nonBinary_percentage"] = (
+                    response_dict["nonBinary"] / response_dict["totalGender"]
+                ) * 100
 
-        if response_dict["totalAge"] > 0:
-            response_dict["lessThan30_percentage"] = (
-                response_dict["lessThan30"] / response_dict["totalAge"]
-            ) * 100
-            response_dict["between30and50_percentage"] = (
-                response_dict["between30and50"] / response_dict["totalAge"]
-            ) * 100
-            response_dict["moreThan50_percentage"] = (
-                response_dict["moreThan50"] / response_dict["totalAge"]
-            ) * 100
+            if response_dict["totalAge"] > 0:
+                calculation_dict["lessThan30_percentage"] = (
+                    response_dict["lessThan30"] / response_dict["totalAge"]
+                ) * 100
+                calculation_dict["between30and50_percentage"] = (
+                    response_dict["between30and50"] / response_dict["totalAge"]
+                ) * 100
+                calculation_dict["moreThan50_percentage"] = (
+                    response_dict["moreThan50"] / response_dict["totalAge"]
+                ) * 100
 
-        # Calculating minority group percentage
-        total_minority_and_vulnerable = (
-            response_dict["minorityGroup"] + response_dict["vulnerableCommunities"]
-        )
-        if total_minority_and_vulnerable > 0:
-            response_dict["minorityGroup_percentage"] = (
-                response_dict["minorityGroup"] / total_minority_and_vulnerable
-            ) * 100
-            response_dict["vulnerableCommunities_percentage"] = (
-                response_dict["vulnerableCommunities"] / total_minority_and_vulnerable
-            ) * 100
-
-        return response_dict
+            # Calculating minority group percentage
+            total_minority_and_vulnerable = (
+                response_dict["minorityGroup"] + response_dict["vulnerableCommunities"]
+            )
+            if total_minority_and_vulnerable > 0:
+                calculation_dict["minorityGroup_percentage"] = (
+                    response_dict["minorityGroup"] / total_minority_and_vulnerable
+                ) * 100
+                calculation_dict["vulnerableCommunities_percentage"] = (
+                    response_dict["vulnerableCommunities"] / total_minority_and_vulnerable
+                ) * 100
+            response_data.append(response_dict)
+        return response_data    
 
     def get_salary_ration(self, slug):  # 405-2
         local_raw_response = (
