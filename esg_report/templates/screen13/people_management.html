@@ -230,6 +230,49 @@
     </tbody>
 </table>
 
+<h5>Local minimum wage is absent or variable at significant locations of operation, by gender:</h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Significant Location of Operations</th>
+            <th>Gender</th>
+            <th>Minimum Wage</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for location_data in screen_thirteen_data.202_1c %}
+            {% for location in location_data.Locationofoperation.locations %}
+                {% with location_name=location.value %}
+                    <tr>
+                        <td>{{ location_name }}</td>
+                        <td>Male</td>
+                        <td>
+                            {{ location_data.Locationofoperation.wages|get_wage:location_name|dict_get:"Male" }}
+                            {{ location_data.Locationofoperation.currencyValue }}
+                        </td>                                                                  
+                    </tr>
+                    <tr>
+                        <td>{{ location_name }}</td>
+                        <td>Female</td>
+                        <td>
+                            {{ location_data.Locationofoperation.wages|get_wage:location_name|dict_get:"Female" }}
+                            {{ location_data.Locationofoperation.currencyValue }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{ location_name }}</td>
+                        <td>Non-binary</td>
+                        <td>
+                            {{ location_data.Locationofoperation.wages|get_wage:location_name|dict_get:"Non_binary" }}
+                            {{ location_data.Locationofoperation.currencyValue }}
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+
 <h4>13.1.6. Performance and Career Development Reviews of Employees (GRI 404-3-a)</h4>
 <p>{{screen_thirteen_data.performance_review_process|default:"No data available" }}</p>
 
