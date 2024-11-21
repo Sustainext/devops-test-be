@@ -181,9 +181,9 @@ class DiversityAndInclusionAnalyse(APIView):
             "ratio_of_remuneration_of_women_to_men": self.get_salary_ration(
                 self.slugs[3]
             ),
-            # "diversity_of_the_individuals": self.get_diversity_of_the_individuals(
-            #     self.slugs[0]
-            # ),
+            "diversity_of_the_individuals": self.get_diversity_of_the_individuals(
+                self.slugs[0]
+            ),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
