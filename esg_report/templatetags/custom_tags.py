@@ -53,7 +53,6 @@ def nested_dict_get(dictionary, keys):
     try:
         for key in keys.split("."):
             dictionary = dictionary.get(key, {})
-            print(dictionary)
         return dictionary or "No data available"
     except AttributeError:
         return "No data available"
