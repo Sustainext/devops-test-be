@@ -185,9 +185,6 @@ class ESGReportPDFView(View):
         for thread in threads:
             thread.join()
 
-        # Log results in a json
-        open("results.json", "w").write(json.dumps(results["stakeholder_engagement"]))
-
         # Handle errors from fetching report
         if "error" in results:
             return results["error"]

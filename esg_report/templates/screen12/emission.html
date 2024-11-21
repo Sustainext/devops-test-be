@@ -1,4 +1,4 @@
-<!-- emission.html -->
+{% load custom_tags %}
 
 <h2>12. Environment</h2>
 
@@ -26,15 +26,19 @@
       <th>Sub Category</th>
       <th>Activity</th>
       <th>Value</th>
+      <th>Value2</th>
     </tr>
   </thead>
   <tbody>
+    {% for data in screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_1%}
     <tr>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_1.Category }}</td>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_1.Subcategory }}</td>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_1.Activity }}</td>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_1.Quantity }} {{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_1.Unit }}</td>
+      <td>{{ data.Category }}</td>
+      <td>{{ data.Subcategory }}</td>
+      <td>{{ data.Activity }}</td>
+      <td>{{ data.Quantity|round_to:2 }} {{ data.Unit }}</td>
+      <td>{{ data.Quantity2|round_to:2 }} {{ data.Unit2 }}</td>
     </tr>
+    {% endfor %}
   </tbody>
 </table>
 
@@ -53,15 +57,19 @@
       <th>Sub Category</th>
       <th>Activity</th>
       <th>Value</th>
+      <th>Value2</th>
     </tr>
   </thead>
   <tbody>
+    {% for data in screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_2%}
     <tr>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_2.Category }}</td>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_2.Subcategory }}</td>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_2.Activity }}</td>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_2.Quantity }} {{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_2.Unit }}</td>
+      <td>{{ data.Category }}</td>
+      <td>{{ data.Subcategory }}</td>
+      <td>{{ data.Activity }}</td>
+      <td>{{ data.Quantity|round_to:2 }} {{ data.Unit }}</td>
+      <td>{{ data.Quantity2|round_to:2 }} {{ data.Unit2 }}</td>
     </tr>
+    {% endfor %}
   </tbody>
 </table>
 
@@ -80,15 +88,19 @@
       <th>Sub Category</th>
       <th>Activity</th>
       <th>Value</th>
+      <th>Value2</th>
     </tr>
   </thead>
   <tbody>
+    {% for data in screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_3%}
     <tr>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_3.Category }}</td>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_3.Subcategory }}</td>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_3.Activity }}</td>
-      <td>{{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_3.Quantity }} {{ screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_3.Unit }}</td>
+      <td>{{ data.Category }}</td>
+      <td>{{ data.Subcategory }}</td>
+      <td>{{ data.Activity }}</td>
+      <td>{{ data.Quantity|round_to:2 }} {{ data.Unit }}</td>
+      <td>{{ data.Quantity2|round_to:2 }} {{ data.Unit2 }}</td>
     </tr>
+    {% endfor %}
   </tbody>
 </table>
 
@@ -110,8 +122,8 @@
     {% for data in screen_twelve_data.305_123_analyse.all_emission_by_source%}
     <tr>
       <td>{{data.source}}</td>
-      <td>{{data.contribution}}</td>
-      <td>{{data.total}}</td>
+      <td>{{data.contribution|round_to:2}}</td>
+      <td>{{data.total|round_to:2}}</td>
       <td>{{data.Units}}</td>
     </tr>
     {% endfor %}
@@ -136,8 +148,8 @@
     {% for data in screen_twelve_data.305_123_analyse.all_emission_by_location%}
     <tr>
       <td>{{data.location}}</td>
-      <td>{{data.contribution}}</td>
-      <td>{{data.total}}</td>
+      <td>{{data.contribution|round_to:2}}</td>
+      <td>{{data.total|round_to:2}}</td>
       <td>{{data.Units}}</td>
     </tr>
     {% endfor %}
@@ -162,8 +174,8 @@
     {% for data in screen_twelve_data.305_123_analyse.all_emission_by_scope%}
     <tr>
       <td>{{data.scope}}</td>
-      <td>{{data.contribution}}</td>
-      <td>{{data.total}}</td>
+      <td>{{data.contribution|round_to:2}}</td>
+      <td>{{data.total|round_to:2}}</td>
       <td>{{data.Units}}</td>
     </tr>
     {% endfor %}
