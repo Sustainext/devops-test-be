@@ -6,6 +6,7 @@ from sustainapp.models import (
     Organization,
     Corporateentity,
     Location,
+    Userorg,
 )
 from authentication.models import CustomUser, Client, UserSafeLock
 from django.conf import settings
@@ -96,6 +97,11 @@ def create_user_safelock(sender, instance, created, **kwargs):
     if created:
         safe_lock, _ = UserSafeLock.objects.get_or_create(user=instance)
         safe_lock.save()
+        userorg, _ = Userorg.objects.get_or_create(
+            user=instance, client=instance.client
+        )
+        userorg.organization.set(instance.orgs.all())
+        userorg.save()
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

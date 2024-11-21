@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from authentication.models import CustomUser
+from sustainapp.models import Userorg
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -14,13 +15,14 @@ class CustomUserCreationForm(UserCreationForm):
             "work_email",
             "client",
             "admin",
-            # "password1",
-            # "password2",
+            "password1",
+            "password2",
             "collect",
             "analyse",
             "report",
             "track",
             "optimise",
+            "orgs",
         )
 
     def clean(self):
@@ -39,8 +41,21 @@ class CustomUserCreationForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        if not user.pk:  # New user creation
-            user.set_password("asdfghjkl@1234567890")  # Set default password
+        # Set the default password
+        default_password = "asdfghjkl@1234567890"
+        user.set_password(default_password)
+
         if commit:
-            user.save()
+            user.save()  # Save the user first to ensure it has a primary key
+
+            # Ensure the related Userorg object exists
+            userorg, created = Userorg.objects.get_or_create(
+                user=user, defaults={"client": user.client}
+            )
+
+            # Update the organization Many-to-Many relationship
+            if "orgs" in self.cleaned_data:
+                userorg.organization.set(self.cleaned_data["orgs"])
+            userorg.save()
+
         return user

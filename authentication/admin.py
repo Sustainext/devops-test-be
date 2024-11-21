@@ -86,6 +86,8 @@ class CustomUserAdmin(UserAdmin):
                     "username",
                     "first_name",
                     "last_name",
+                    "job_title",
+                    "department",
                     "admin",
                     "is_client_admin",
                     "password1",

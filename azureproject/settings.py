@@ -314,9 +314,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
 DEFAULT_FILE_STORAGE = "azureproject.azure_storage.AzureMediaStorage"
 STATICFILES_STORAGE = "azureproject.azure_storage.AzureStaticStorage"
-AZURE_STORAGE_CONNECTION_STRING = os.environ.get(
-    "AZURE_STORAGE_CONNECTION_STRING"
-)
+AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 STATIC_LOCATION = "static"
 MEDIA_LOCATION = "media"
 AZURE_ACCOUNT_NAME = os.getenv("AZURE_STORAGE_ACCOUNT_NAME", None)
@@ -328,12 +326,14 @@ MEDIA_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
 AUTH_USER_MODEL = "authentication.CustomUser"
 
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", False)
+print(f"DEVELOPMENT_MODE: {DEVELOPMENT_MODE}")
 
 FIXTURE_DIRS = [
     BASE_DIR / "fixtures",
 ]
 
 if DEVELOPMENT_MODE:
+    print("Development mode is enabled.")
     INSTALLED_APPS += [
         "drf_yasg",
         "django_extensions",
@@ -342,6 +342,8 @@ if DEVELOPMENT_MODE:
     MIDDLEWARE = [
         "silk.middleware.SilkyMiddleware",
     ] + MIDDLEWARE
+    STATIC_URL = "/static/"
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 AZURE_POWERBI_USERNAME = os.environ.get("AZURE_POWERBI_USERNAME")
 AZURE_POWERBI_PASSWORD = os.environ.get("AZURE_POWERBI_PASSWORD")
