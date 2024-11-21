@@ -35,16 +35,18 @@
     </tr>
   </thead>
   <tbody>
-    {% for row in stakeholder_engagement.approach_to_stakeholder_engagement %}
+{% for group in stakeholder_engagement.approach_to_stakeholder_engagement %}
+    {% for row in group %}
     <tr>
-      <td>{{row.Stakeholder}}</td>
-      <td>{{row.RepresentativeGroup}}</td>
-      <td>{{row.EngagementMethod}}</td>
-      <td>{{row.Frequency}}</td>
-      <td>{{row.Keyconcernraised}}</td>
-      <td>{{row.Responsetoconcerns}}</td>
+        <td>{{row.Stakeholder}}</td>
+        <td>{{row.RepresentativeGroup}}</td>
+        <td>{{row.EngagementMethod}}</td>
+        <td>{{row.Frequency}}</td>
+        <td>{{row.Keyconcernraised}}</td>
+        <td>{{row.Responsetoconcerns}}</td>
     </tr>
     {% endfor %}
+{% endfor %}
     <!-- Add more rows as necessary -->
   </tbody>
 </table>
