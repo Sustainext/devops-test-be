@@ -11,7 +11,7 @@
 <p>{{data.Q2}}</p>
 {% endif %} {% endfor %}
  
-<h4>11.3.3 Climate-related Risks</h4>
+<h4>11.3.2.1 Climate-related Risks</h4>
  
 <table>
   <thead>
@@ -36,19 +36,16 @@
       <td>Physical Risk</td>
       <td>{{ item.TypeofRisk|default:"N/A" }}</td>
       <td>
-        {% if item.PotentialImpact %} {{ item.PotentialImpact|join:", " }} {% if item.PotentialImpact_others %}, {{ item.PotentialImpact_others }}{% endif %} {% else %} {{
-        item.PotentialImpact_others|default:"N/A" }} {% endif %}
+        {% if item.PotentialImpact %} {{ item.PotentialImpact|join:", " }} {% if item.PotentialImpact_others %}, {{ item.PotentialImpact_others }}{% endif %} {% else %} {{ item.PotentialImpact_others|default:"N/A" }} {% endif %}
       </td>
       <td>{{ item.Likelihoodofimpact|default:"N/A" }}</td>
       <td>{{ item.MagnitudeofImpact|default:"N/A" }}</td>
       <td>{{ item.FinancialEffect|default:"N/A" }}</td>
       <td>
-        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{
-        item.FinancialImplications_others|default:"N/A" }} {% endif %}
+        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{ item.FinancialImplications_others|default:"N/A" }} {% endif %}
       </td>
       <td>
-        {% if item.ManagementMethods %} {{ item.ManagementMethods|join:", " }} {% if item.ManagementMethods_others %}, {{ item.ManagementMethods_others }}{% endif %} {% else %} {{
-        item.ManagementMethods_others|default:"N/A" }} {% endif %}
+        {% if item.ManagementMethods %} {{ item.ManagementMethods|join:", " }} {% if item.ManagementMethods_others %}, {{ item.ManagementMethods_others }}{% endif %} {% else %} {{ item.ManagementMethods_others|default:"N/A" }} {% endif %}
       </td>
       <td>{{ item.TimeFrame|default:"N/A" }}</td>
       <td>{{ item.DirectImpacts|default:"N/A" }}</td>
@@ -86,19 +83,16 @@
       <td>Transition Risk</td>
       <td>{{ item.TypeofRisk|default:"No data available" }}</td>
       <td>
-        {% if item.PotentialImpact %} {{ item.PotentialImpact|join:", " }} {% if item.PotentialImpact_others %}, {{ item.PotentialImpact_others }}{% endif %} {% else %} {{
-        item.PotentialImpact_others|default:"No data available" }} {% endif %}
+        {% if item.PotentialImpact %} {{ item.PotentialImpact|join:", " }} {% if item.PotentialImpact_others %}, {{ item.PotentialImpact_others }}{% endif %} {% else %} {{ item.PotentialImpact_others|default:"No data available" }} {% endif %}
       </td>
       <td>{{ item.Likelihoodofimpact|default:"No data available" }}</td>
       <td>{{ item.MagnitudeofImpact|default:"No data available" }}</td>
       <td>{{ item.FinancialEffect|default:"No data available" }}</td>
       <td>
-        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{
-        item.FinancialImplications_others|default:"No data available" }} {% endif %}
+        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{ item.FinancialImplications_others|default:"No data available" }} {% endif %}
       </td>
       <td>
-        {% if item.ManagementMethods %} {{ item.ManagementMethods|join:", " }} {% if item.ManagementMethods_others %}, {{ item.ManagementMethods_others }}{% endif %} {% else %} {{
-        item.ManagementMethods_others|default:"No data available" }} {% endif %}
+        {% if item.ManagementMethods %} {{ item.ManagementMethods|join:", " }} {% if item.ManagementMethods_others %}, {{ item.ManagementMethods_others }}{% endif %} {% else %} {{ item.ManagementMethods_others|default:"No data available" }} {% endif %}
       </td>
       <td>{{ item.TimeFrame|default:"No data available" }}</td>
       <td>{{ item.DirectImpacts|default:"No data available" }}</td>
@@ -108,8 +102,7 @@
     {% endfor %}
   </tbody>
 </table>
- 
-<h4>11.3.4 Climate-related Opportunities</h4>
+<br />
 <table
   cellpadding="5"
   cellspacing="0"
@@ -128,23 +121,119 @@
       <th>Time Frame</th>
       <th>Direct or Indirect Impacts</th>
       <th>Implemented Mitigation Strategies</th>
+      <th>Mitigation Strategies</th>
     </tr>
   </thead>
   <tbody>
     {% for item in screen_eleven_data.201_2a.201_2a3 %}
     <tr>
-      <td>{{ item.RiskCategory|default:"No data available" }}</td>
+      <td>Other risks</td>
       <td>{{ item.TypeofRiskoth|default:"No data available" }}</td>
-      <td>{{ item.PotentialImpactoth|default:"No data available" }}</td>
+      <td>
+        {% if item.PotentialImpactoth %} {{ item.PotentialImpactoth|join:", " }} {% if item.PotentialImpact_others %}, {{ item.PotentialImpact_others }}{% endif %} {% else %} {{ item.PotentialImpact_others|default:"No data available" }} {% endif %}
+      </td>
       <td>{{ item.Likelihoodofimpact|default:"No data available" }}</td>
       <td>{{ item.MagnitudeofImpact|default:"No data available" }}</td>
       <td>{{ item.FinancialEffect|default:"No data available" }}</td>
-      <td>{% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% else %} No data available {% endif %}</td>
-      <td>{{ item.ManagementMethodsoth|default:"No data available" }}</td>
+      <td>
+        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{ item.FinancialImplications_others|default:"No data available" }} {% endif %}
+      </td>
+      <td>
+        {% if item.ManagementMethodsoth %} {{ item.ManagementMethodsoth|join:", " }} {% if item.ManagementMethods_others %}, {{ item.ManagementMethods_others }}{% endif %} {% else %} {{ item.ManagementMethods_others|default:"No data available" }} {% endif %}
+      </td>
       <td>{{ item.TimeFrame|default:"No data available" }}</td>
       <td>{{ item.DirectImpacts|default:"No data available" }}</td>
-      <td>{{ item.ImplementedMitigationStrategies|yesno:"Yes,No" }}</td>
+      <td>{% if item.ImplementedMitigationStrategies == "Yes" %} Yes {% else %} No {% endif %}</td>
+      <td>{{ item.MitigationStrategiesoth|default:"No data available" }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+ 
+<h4>11.3.2.2 Climate-related Opportunities</h4>
+<table cellpadding="5" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Type of Opportunities</th>
+      <th>Potential Impact</th>
+      <th>Magnitude of Impact</th>
+      <th>Likelihood of Impact</th>
+      <th>Financial Effect</th>
+      <th>Financial Implications</th>
+      <th>Management Methods</th>
+      <th>Time Frame</th>
+      <th>Direct or Indirect Impacts</th>
+      <th>Implemented Mitigation Strategies</th>
+      <th>Mitigation Strategies</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in screen_eleven_data.202_2a %}
+    <tr>
+      <!-- Type of Opportunities -->
+      <td>{{ item.TypeofOpportunities|default:"No data available" }}</td>
+
+      <!-- Potential Impact -->
+      <td>
+        {% if item.PotentialImpact %}
+          {{ item.PotentialImpact|join:", " }}
+        {% endif %}
+        {% if item.PotentialImpact_others %}
+          , {{ item.PotentialImpact_others }}
+        {% endif %}
+        {% if not item.PotentialImpact and not item.PotentialImpact_others %}
+          No data available
+        {% endif %}
+      </td>
+
+      <!-- Magnitude of Impact -->
+      <td>{{ item.MagnitudeofImpact|default:"No data available" }}</td>
+
+      <!-- Likelihood of Impact -->
+      <td>{{ item.Likelihoodofimpact|default:"No data available" }}</td>
+
+      <!-- Financial Effect -->
+      <td>{{ item.FinancialEffect|default:"No data available" }}</td>
+
+      <!-- Financial Implications -->
+      <td>
+        {% if item.FinancialImplications %}
+          {{ item.FinancialImplications|join:", " }}
+        {% endif %}
+        {% if item.FinancialImplications_others %}
+          , {{ item.FinancialImplications_others }}
+        {% endif %}
+        {% if not item.FinancialImplications and not item.FinancialImplications_others %}
+          No data available
+        {% endif %}
+      </td>
+
+      <!-- Management Methods -->
+      <td>
+        {% if item.ManagementMethods %}
+          {{ item.ManagementMethods|join:", " }}
+        {% endif %}
+        {% if item.ManagementMethods_others %}
+          , {{ item.ManagementMethods_others }}
+        {% endif %}
+        {% if not item.ManagementMethods and not item.ManagementMethods_others %}
+          No data available
+        {% endif %}
+      </td>
+
+      <!-- Time Frame -->
+      <td>{{ item.TimeFrame|default:"No data available" }}</td>
+
+      <!-- Direct or Indirect Impacts -->
+      <td>{{ item.DirectorIndirectImpacts|default:"No data available" }}</td>
+
+      <!-- Implemented Mitigation Strategies -->
+      <td>{{ item.ImplementedMitigationStrategies|yesno:"Yes,No" }}</td>
+
+      <!-- Mitigation Strategies -->
+      <td>{{ item.MitigationStrategies|default:"No data available" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+

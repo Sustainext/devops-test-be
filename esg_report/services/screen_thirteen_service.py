@@ -446,10 +446,12 @@ class ScreenThirteenService:
             report=self.report,
             request=self.request,
         )
-        response_data["408_1a_1b_analyse"] = calling_analyse_view_with_params(
-            view_url="get_child_labor_analysis",
-            report=self.report,
-            request=self.request,
+        response_data["408_1a_1b_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_child_labor_analysis",
+                report=self.report,
+                request=self.request,
+            )
         )
         response_data["406_1a"] = collect_data_and_differentiate_by_location(
             data_points=self.data_points.filter(path__slug=self.slugs[53])
