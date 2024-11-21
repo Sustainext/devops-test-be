@@ -48,24 +48,18 @@
         </tr>
     </thead>
     <tbody>
-        {% if employees %}
             {% for employee in screen_thirteen_data.2_7a_2_7b_analyse.total_number_of_employees %}
                 <tr>
-                    <td>{{ employee.type }}</td>
-                    <td>{{ employee.male_count }}</td>
-                    <td>{{ employee.female_count }}</td>
-                    <td>{{ employee.non_binary_count }}</td>
-                    <td>{{ employee.age_group_30 }}</td>
-                    <td>{{ employee.age_group_30_50 }}</td>
-                    <td>{{ employee.age_group_50 }}</td>
-                    <td>{{ employee.total }}</td>
+                    <td>{{ employee.type_of_employee }}</td>
+                    <td>{{ employee.male.total }}</td>
+                    <td>{{ employee.female.total }}</td>
+                    <td>{{ employee.others.total }}</td>
+                    <td>{{ employee.male.yearsold30 |add:employee.female.yearsold30 |add:employee.others.yearsold30}}</td>
+                    <td>{{ employee.male.yearsold30to50 |add:employee.female.yearsold30to50 |add:employee.others.yearsold30to50 }}</td>
+                    <td>{{ employee.male.yearsold50 |add:employee.female.yearsold50 |add:employee.others.yearsold50 }}</td>
+                    <td>{{ employee.male.total|add:employee.female.total|add:employee.others.total }}</td>
                 </tr>
             {% endfor %}
-        {% else %}
-            <tr>
-                <td colspan="8">No data available</td>
-            </tr>
-        {% endif %}
     </tbody>
 </table>
 
@@ -91,8 +85,9 @@
             <td>{{ hire.percentage_of_female_employee }}%</td>
             <td>{{ hire.percentage_of_non_binary_employee }}%</td>
             <td>{{ hire.yearsold30 }}%</td>
-            <td>{{ hire.yearsold50 }}%</td>
             <td>{{ hire.yearsold30to50 }}%</td>
+            <td>{{ hire.yearsold50 }}%</td>
+            
         </tr>
         {% endfor %}
     </tbody>
@@ -119,8 +114,9 @@
             <td>{{ hire.percentage_of_female_employee }}%</td>
             <td>{{ hire.percentage_of_non_binary_employee }}%</td>
             <td>{{ hire.yearsold30 }}%</td>
-            <td>{{ hire.yearsold50 }}%</td>
             <td>{{ hire.yearsold30to50 }}%</td>
+            <td>{{ hire.yearsold50 }}%</td>
+            
         </tr>
         {% endfor %}
     </tbody>
@@ -228,8 +224,51 @@
             <td>{{ wage_ratio.Location |default:"No data available." }}</td>
             <td>{{ wage_ratio.Male |default:"No data available." }}</td>
             <td>{{ wage_ratio.Female |default:"No data available." }}</td>
-            <td>{{ wage_ratio|get_item:"Non-binary" |default:"No data available." }}</td>
+            <td>{{ wage_ratio|get_item:"Non_binary" |default:"No data available." }}</td>
         </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h5>Local minimum wage is absent or variable at significant locations of operation, by gender:</h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Significant Location of Operations</th>
+            <th>Gender</th>
+            <th>Minimum Wage</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for location_data in screen_thirteen_data.202_1c %}
+            {% for location in location_data.Locationofoperation.locations %}
+                {% with location_name=location.value %}
+                    <tr>
+                        <td>{{ location_name }}</td>
+                        <td>Male</td>
+                        <td>
+                            {{ location_data.Locationofoperation.wages|get_wage:location_name|dict_get:"Male" }}
+                            {{ location_data.Locationofoperation.currencyValue }}
+                        </td>                                                                  
+                    </tr>
+                    <tr>
+                        <td>{{ location_name }}</td>
+                        <td>Female</td>
+                        <td>
+                            {{ location_data.Locationofoperation.wages|get_wage:location_name|dict_get:"Female" }}
+                            {{ location_data.Locationofoperation.currencyValue }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{ location_name }}</td>
+                        <td>Non-binary</td>
+                        <td>
+                            {{ location_data.Locationofoperation.wages|get_wage:location_name|dict_get:"Non_binary" }}
+                            {{ location_data.Locationofoperation.currencyValue }}
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
         {% endfor %}
     </tbody>
 </table>

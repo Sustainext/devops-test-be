@@ -39,8 +39,8 @@ class ScreenTwelveService:
             9: "gri-environment-energy-302-1c-1e-consumed_fuel",
             10: "gri-environment-energy-302-1-self_generated",
             11: "gri-environment-energy-302-1d-energy_sold",
-            12: "gri-environment-energy-302-1f-smac",
-            13: "gri-environment-energy-302-1g-conversion_factor",
+            12: "gri-environment-energy-302-1f-2b-4d-5c-smac",
+            13: "gri-environment-energy-302-1g-2c-conversion_factor",
             14: "gri-environment-energy-302-2a-energy_consumption_outside_organization",
             15: "gri-environment-energy-302-2b-smac",
             16: "gri-environment-energy-302-2c-conversion_factor",
@@ -175,10 +175,9 @@ class ScreenTwelveService:
         data_points = self.data_points.filter(path__slug__in=slugs)
         slug_data = defaultdict(list)
         for slug in slugs:
-            response_data = defaultdict(list)
-            for data_point in data_points.filter(path__slug=slug):
-                response_data[data_point.data_metric.name] = data_point.value
-            slug_data[slug] = response_data
+            slug_data[slug] = collect_data_by_raw_response_and_index(
+                data_points=data_points.filter(path__slug=slug)
+            )
         return slug_data
 
     def get_301_123_analyse(self):
@@ -190,7 +189,7 @@ class ScreenTwelveService:
         top_emission_by_scope, top_emission_by_source, top_emission_by_location = (
             get_top_emission_by_scope(
                 locations=locations,
-                user=self.request.user,
+                user=self.report.user,
                 start=self.report.start_date,
                 end=self.report.end_date,
                 path_slug={

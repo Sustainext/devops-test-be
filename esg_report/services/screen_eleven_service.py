@@ -58,6 +58,7 @@ class ScreenElevenService:
             29: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3b-s2",
             30: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3c-s3",
             31: "gri-economic-public_legal_cases-205-3d",
+            32: "gri-economic-climate_realted_opportunities-202-2a-report",
         }
 
     def set_data_points(self):
@@ -536,6 +537,9 @@ class ScreenElevenService:
         ] = self.get_operations_assessed_analyze()
         response_data["205_3a"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[28])
+        )
+        response_data["202_2a"] = collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[32])
         )
         return response_data
 

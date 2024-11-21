@@ -37,3 +37,29 @@ def round_to(value, decimal_places):
         return round(float(value), int(decimal_places))
     except (ValueError, TypeError):
         return value
+
+
+@register.filter
+def dict_get(dictionary, key):
+    """Safely get a value from a dictionary."""
+    if isinstance(dictionary, dict):
+        return dictionary.get(key, "No data available")
+    return "No data available"
+
+
+@register.filter
+def nested_dict_get(dictionary, keys):
+    """Safely get a nested value from a dictionary using a series of keys."""
+    try:
+        for key in keys.split("."):
+            dictionary = dictionary.get(key, {})
+        return dictionary or "No data available"
+    except AttributeError:
+        return "No data available"
+
+
+@register.filter
+def get_wage(wages, location):
+    # Replace any hyphens with underscores to match the data structure
+    location_key = location.replace("-", "_")
+    return wages.get(location_key, {})

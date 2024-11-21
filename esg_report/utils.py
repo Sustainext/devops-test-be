@@ -256,6 +256,7 @@ def forward_request_with_jwt(view_class, original_request, url, query_params):
         # Step 5: Return the response from the internal view
         return temp.data
     except Exception as e:
+        logger.error(e,exc_info=True)
         return None
 
 
@@ -306,7 +307,7 @@ def calling_analyse_view_with_params(view_url, request, report):
         return {"detail": str(e)}
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}", exec_info=True)
-        return {"detail": f"An error occurred: {str(e)}"}
+        return None
 
 
 def creating_material_topic_and_disclosure():
@@ -428,7 +429,7 @@ def calling_analyse_view_with_params_for_same_year(view_url, request, report):
         return {"detail": str(e)}
     except Exception as e:
         logger.warning(f"An error occurred: {str(e)}", exc_info=True)
-        return {"detail": f"An error occurred: {str(e)}"}
+        return None
 
 
 def get_which_general_disclosure_is_empty(report: Report):

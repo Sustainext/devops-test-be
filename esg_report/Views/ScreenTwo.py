@@ -5,7 +5,7 @@ from esg_report.models.ScreenTwo import AboutTheCompanyAndOperations
 from esg_report.Serializer.AboutTheCompanyAndOperationsSerializer import (
     AboutTheCompanyAndOperationsSerializer,
 )
-from esg_report.utils import get_latest_raw_response
+from esg_report.utils import get_latest_raw_response, get_raw_responses_as_per_report
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from sustainapp.models import Report
@@ -52,10 +52,7 @@ class ScreenTwo(APIView):
         }
 
         # Fetch all raw responses once, filter by the year range and client
-        raw_responses = RawResponse.objects.filter(
-            client=request.user.client,
-            year__range=(report.start_date.year, report.end_date.year),
-        )
+        raw_responses = get_raw_responses_as_per_report(report=report)
 
         # Fetch raw responses and update the response data
         raw_response_org_details = get_latest_raw_response(
