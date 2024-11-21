@@ -175,10 +175,9 @@ class ScreenTwelveService:
         data_points = self.data_points.filter(path__slug__in=slugs)
         slug_data = defaultdict(list)
         for slug in slugs:
-            response_data = defaultdict(list)
-            for data_point in data_points.filter(path__slug=slug):
-                response_data[data_point.data_metric.name] = data_point.value
-            slug_data[slug] = response_data
+            slug_data[slug] = collect_data_by_raw_response_and_index(
+                data_points=data_points.filter(path__slug=slug)
+            )
         return slug_data
 
     def get_301_123_analyse(self):
