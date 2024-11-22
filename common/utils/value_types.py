@@ -39,3 +39,7 @@ def format_decimal_places(value):
     except (ValueError, TypeError):
         logger.info(f"Error formatting decimal places: {value}", exc_info=True)
         return float(Decimal("0"))
+
+
+def safe_divide(numerator, denominator):
+    return format_decimal_places(((numerator / denominator)) if denominator != 0 else 0)
