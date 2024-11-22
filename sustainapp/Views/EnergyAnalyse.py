@@ -58,8 +58,8 @@ class EnergyAnalyzeView(APIView):
                 return 0, 0
             unit = item[unit_key]
             return (
-                format_decimal_places(conversions[unit]["GJ"] * Decimal(quantity)),
-                format_decimal_places(conversions[unit]["KWh"] * Decimal(quantity)),
+                format_decimal_places(Decimal(conversions[unit]["GJ"]) * Decimal(quantity)),
+                format_decimal_places(Decimal(conversions[unit]["KWh"]) * Decimal(quantity)),
             )
 
         key_generators = {
