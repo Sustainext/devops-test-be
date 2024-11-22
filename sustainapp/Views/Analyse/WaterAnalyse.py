@@ -129,10 +129,10 @@ class WaterAnalyse(APIView):
             total_withdrawal = data[withdrawal_literal]
             total_consumed = data[consumed_literal]
             consumption_percentage = (
-                (safe_divide(total_consumed, complete_total_consumption) * 100),
+                safe_divide(total_consumed, complete_total_consumption) * 100
             )
             withdrawal_percentage = (
-                (safe_divide(total_withdrawal, complete_total_withdrawal) * 100),
+                safe_divide(total_withdrawal, complete_total_withdrawal) * 100
             )
             discharge_percentage = (
                 safe_divide(total_discharge, complete_total_discharge) * 100
@@ -245,7 +245,7 @@ class WaterAnalyse(APIView):
         for group, data in grouped_data.items():
             total_discharge = data[discharge_literal]
             discharge_percentage = (
-                (safe_divide(total_discharge, complete_total_discharge) * 100),
+                safe_divide(total_discharge, complete_total_discharge) * 100
             )
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(

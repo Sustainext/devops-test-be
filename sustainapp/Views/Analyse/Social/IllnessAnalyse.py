@@ -74,13 +74,12 @@ class IllnessAnalysisView(APIView):
                 [int(_["internallyaudited"]) for _ in entry]
             )
             temp = {}
-            temp["percentage_of_all_employees_covered_by_the_system"] = round(
+            temp["percentage_of_all_employees_covered_by_the_system"] = (
                 safe_divide(
                     int(entry[0]["coveredbythesystem"]),
                     total_number_of_employees_covered_by_the_system,
                 )
-                * 100,
-                2,
+                * 100
             )
             temp["percentage_of_internally_audited_workers"] = (
                 safe_divide(
@@ -102,7 +101,7 @@ class IllnessAnalysisView(APIView):
                         int(entry[1]["internallyaudited"]),
                         total_number_of_internally_audited_workers,
                     )
-                    * 100,
+                    * 100
                 )
             )
             temp["percentage_of_all_employees_externally_audited"] = (
@@ -110,14 +109,14 @@ class IllnessAnalysisView(APIView):
                     int(entry[2]["coveredbythesystem"]),
                     total_number_of_employees_covered_by_the_system,
                 )
-                * 100,
+                * 100
             )
             temp["percentage_of_workers_who_are_not_emplyees_externally_audited"] = (
                 safe_divide(
                     int(entry[2]["internallyaudited"]),
                     total_number_of_internally_audited_workers,
                 )
-                * 100,
+                * 100
             )
             local_response_data.append(temp)
         return self.convert_ohs_data_as_per_frontend_response(local_response_data)
