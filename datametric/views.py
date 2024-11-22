@@ -224,7 +224,7 @@ class UpdateFieldGroupView(APIView):
         serializer = UpdateFieldGroupSerializer(data=request.data)
         if serializer.is_valid():
             path_name = serializer.validated_data["path_name"]
-            field_group = FieldGroup.objects.filter(path__name=path_name).first()
+            field_group = FieldGroup.objects.filter(path__slug=path_name).first()
 
             if not field_group:
                 return Response(
