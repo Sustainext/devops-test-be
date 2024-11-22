@@ -6,24 +6,27 @@ from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSe
 from datametric.models import RawResponse
 from sustainapp.models import Corporateentity
 from logging import getLogger
+from common.utils.value_types import safe_divide
 
 logger = getLogger("error.log")
+
+
 class MarketPresenceAnalyseView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def format_data(self, raw_resp_1a, currency : float) -> list :
-        #What if they don't add the values in male and female
-        res =[]
+    def format_data(self, raw_resp_1a, currency: float) -> list:
+        # What if they don't add the values in male and female
+        res = []
         for obj in raw_resp_1a.data[0]["Q4"]:
-            try : 
-                obj["Male"] = float(obj["Male"])/currency
-                obj["Female"] = float(obj["Female"])/currency
-                obj["Non-binary"] = float(obj["Non-binary"])/currency
+            try:
+                obj["Male"] = safe_divide((obj["Male"]), currency)
+                obj["Female"] = safe_divide((obj["Female"]), currency)
+                obj["Non-binary"] = safe_divide((obj["Non-binary"]), currency)
                 res.append(obj)
             except Exception as e:
                 logger.error(f"Analyze Economic Market Precesnse error : {e}")
                 continue
-        
+
         return res
 
     def process_market_presence(self, path, filter_by):
@@ -33,29 +36,33 @@ class MarketPresenceAnalyseView(APIView):
             path__slug=path,
             client_id=self.client_id,
             year=self.year,
-            ).first()
-        
+        ).first()
+
         raw_resp_1c = RawResponse.objects.filter(
             **filter_by,
             path__slug="gri-economic-ratios_of_standard_entry-202-1c-location",
             client_id=self.client_id,
             year=self.year,
-            ).first()
+        ).first()
         if raw_resp_1a and raw_resp_1c:
-            if raw_resp_1a.data[0]["Q4"] and raw_resp_1a.data[0]["Q3"] == raw_resp_1c.data[0]["Currency"].split(" ")[1]:
+            if (
+                raw_resp_1a.data[0]["Q4"]
+                and raw_resp_1a.data[0]["Q3"]
+                == raw_resp_1c.data[0]["Currency"].split(" ")[1]
+            ):
                 currency = float(raw_resp_1c.data[0]["Currency"].split(" ")[0])
-                return self.format_data(raw_resp_1a, currency)  
-            else :
-                raise KeyError ("Please add data and also match the currency")
-            
-        elif not raw_resp_1a and not raw_resp_1c and  self.corp is None:
+                return self.format_data(raw_resp_1a, currency)
+            else:
+                raise KeyError("Please add data and also match the currency")
+
+        elif not raw_resp_1a and not raw_resp_1c and self.corp is None:
             logger.error(
                 f"Economic/MarketPresenceAnalyse : There is no data for the organization {self.org} and the path {path} and the year {self.year}, So proceeding to check for its Corporates"
             )
             corps_of_org = Corporateentity.objects.filter(organization__id=self.org.id)
             corp_res = []
-            for corp in corps_of_org :
-                
+            for corp in corps_of_org:
+
                 raw_resp_1a = RawResponse.objects.filter(
                     organization__id=self.org.id,
                     corporate__id=corp.id,
@@ -70,14 +77,19 @@ class MarketPresenceAnalyseView(APIView):
                     client_id=self.client_id,
                     year=self.year,
                 ).first()
-            
-                if raw_resp_1a and raw_resp_1c :
-                    corp_res.extend(self.format_data(raw_resp_1a, float(raw_resp_1c.data[0]["Currency"].split(" ")[0])))
-            
+
+                if raw_resp_1a and raw_resp_1c:
+                    corp_res.extend(
+                        self.format_data(
+                            raw_resp_1a,
+                            float(raw_resp_1c.data[0]["Currency"].split(" ")[0]),
+                        )
+                    )
+
             return corp_res
 
-        else : 
-            #There is no data added
+        else:
+            # There is no data added
             return []
 
     def get(self, request):
@@ -114,7 +126,8 @@ class MarketPresenceAnalyseView(APIView):
                 filter_by["corporate__id"] = None
 
             marketing_presence_ratio = self.process_market_presence(
-                "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1a-s1", filter_by
+                "gri-economic-ratios_of_standard_entry_level_wage_by_gender_compared_to_local_minimum_wage-202-1a-s1",
+                filter_by,
             )
 
             return Response(

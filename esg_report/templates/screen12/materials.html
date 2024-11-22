@@ -20,13 +20,13 @@
     </tr>
   </thead>
   <tbody>
-    {% for material in screen_twelve_data.301_1a_non_renewable_materials %}
+    {% for material in screen_twelve_data.material_analyse.renewable_materials %}
     <tr>
-      <td>{{ material.Typeofmaterial }}</td>
-      <td>{{ material.Materialsused }}</td>
-      <td>{{ material.Source }}</td>
-      <td>{{ material.Totalweight|round_to:2 }}</td>
-      <td>{{ material.Unit }}</td>
+      <td>{{ material.material_type }}</td>
+      <td>{{ material.material_category }}</td>
+      <td>{{ material.source }}</td>
+      <td>{{ material.total_quantity|round_to:2 }}</td>
+      <td>{{ material.units }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -48,13 +48,13 @@
     </tr>
   </thead>
   <tbody>
-    {% for material in screen_twelve_data.301_1a_renewable_materials %}
+    {% for material in screen_twelve_data.material_analyse.non_renewable_materials %}
     <tr>
-      <td>{{ material.Typeofmaterial }}</td>
-      <td>{{ material.Materialsused }}</td>
-      <td>{{ material.Source }}</td>
-      <td>{{ material.Totalweight|round_to:2 }}</td>
-      <td>{{ material.Unit }}</td>
+      <td>{{ material.material_type }}</td>
+      <td>{{ material.material_category }}</td>
+      <td>{{ material.source }}</td>
+      <td>{{ material.total_quantity|round_to:2 }}</td>
+      <td>{{ material.units }}</td>
     </tr>
     {% endfor %}
   </tbody>

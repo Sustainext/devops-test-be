@@ -1,5 +1,5 @@
 from sustainapp.models import Report
-from datametric.models import RawResponse, DataPoint
+from datametric.models import RawResponse, DataPoint, EmissionAnalysis
 from materiality_dashboard.models import MaterialityAssessment
 from esg_report.models.ContentIndexRequirementOmissionReason import (
     ContentIndexRequirementOmissionReason,
@@ -84,11 +84,13 @@ def get_raw_responses_as_per_report(report: Report):
     elif report.organization:
         raw_responses = raw_responses.filter(
             Q(organization=report.organization)
+            | Q(corporate=report.corporate)
             | Q(
                 locale__in=report.organization.corporatenetityorg.all().values_list(
                     "location", flat=True
                 )
             )
+            | Q(locale=None)
         )
     return raw_responses.filter(year=get_maximum_months_year(report))
 
@@ -100,7 +102,10 @@ def get_data_points_as_per_report(report: Report):
     data_points = DataPoint.objects.filter(client_id=report.client.id)
     if report.corporate:
         data_points = data_points.filter(
-            Q(corporate=report.corporate) | Q(organization=report.organization) | Q(locale__in=report.corporate.location.all()) | Q(locale=None)
+            Q(corporate=report.corporate)
+            | Q(organization=report.organization)
+            | Q(locale__in=report.corporate.location.all())
+            | Q(locale=None)
         )
     elif report.organization:
         data_points = data_points.filter(
@@ -113,6 +118,17 @@ def get_data_points_as_per_report(report: Report):
         )
 
     return data_points.filter(year=get_maximum_months_year(report))
+
+
+def get_emission_analysis_as_per_report(report: Report):
+    """
+    Get EmissionAnalysis Objects as per report.
+    """
+    emission_analysis_objects = EmissionAnalysis.objects.filter(
+        raw_response__in=get_raw_responses_as_per_report(report)
+    )
+
+    return emission_analysis_objects
 
 
 def get_materiality_assessment(report):
@@ -158,6 +174,7 @@ def get_materiality_assessment(report):
             return materiality_assessment.first()
         else:
             return None
+
 
 def collect_data_by_raw_response_and_index(data_points):
     # Create a dictionary where the key is raw_response and the value is another dictionary
@@ -256,7 +273,7 @@ def forward_request_with_jwt(view_class, original_request, url, query_params):
         # Step 5: Return the response from the internal view
         return temp.data
     except Exception as e:
-        logger.error(e,exc_info=True)
+        logger.error(e, exc_info=True)
         return None
 
 
