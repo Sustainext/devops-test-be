@@ -15,7 +15,14 @@
 <h4>13.2.2. Workers Who Are Not Employees</h4>
 
 <h5>Measures taken by the organization</h5>
-<p> {{screen_thirteen_data.2_8_b|default:"No data available."}} </p>
+<p>
+    {% if screen_thirteen_data.2_8_b and screen_thirteen_data.2_8_b|length > 0 and screen_thirteen_data.2_8_b.0.Q1 %}
+      {{ screen_thirteen_data.2_8_b.0.Q1 }}
+    {% else %}
+      No data available.
+    {% endif %}
+  </p>
+  
 
 
 <h5>Types of Workers</h5>
