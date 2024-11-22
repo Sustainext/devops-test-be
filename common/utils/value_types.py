@@ -34,11 +34,11 @@ def format_decimal_places(value):
     try:
         decimal_value = Decimal(str(value))
         if abs(decimal_value) < 1:
-            return float(round(decimal_value, 4))
-        return float(round(decimal_value, 2))
+            return round(decimal_value, 4)
+        return round(decimal_value, 2)
     except (ValueError, TypeError):
         logger.info(f"Error formatting decimal places: {value}", exc_info=True)
-        return float(Decimal("0"))
+        return Decimal("0")
 
 
 def safe_divide(numerator, denominator):
