@@ -1,6 +1,11 @@
 <!-- diversity_inclusion.html -->
 
 <h3>13.4. Diversity, Inclusion</h3>
+{% if screen_thirteen_data.405_2b_significant_locations.data|length > 0 %}
+  <p>{{ screen_thirteen_data.405_2b_significant_locations.data.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
 
 <h4>13.4.1. Management of Material Topic</h4>
 <p> Need to add data here from material topic </p>

@@ -13,16 +13,33 @@
 <p>{{screen_thirteen_data.workforce_hire_retention_statement|default:"No data available."}}</p>
 
 <h5>Methodologies and Assumptions used</h5>
-<p>No data available</p>
+{% if screen_thirteen_data.2_7_c_methodologies|length > 0 %}
+  <p>{{ screen_thirteen_data.2_7_c_methodologies.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+
 
 <h5>Data Compilation Timeframe</h5>
-<p>No data available</p>
+{% if screen_thirteen_data.2_7_c_data|length > 0 %}
+  <p>{{ screen_thirteen_data.2_7_c_data.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
 
 <h5>Contextual information</h5>
-<p>No data available</p>
+{% if screen_thirteen_data.2_7_d_contextual|length > 0 %}
+  <p>{{ screen_thirteen_data.2_7_d_contextual.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
 
 <h5>Employee Fluctuations</h5>
-<p>No data available</p>
+{% if screen_thirteen_data.2_7_e_fluctuations|length > 0 %}
+  <p>{{ screen_thirteen_data.2_7_e_fluctuations.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
 
 
 <h5>Total Number of Employees</h5>
@@ -123,11 +140,13 @@
 </table>
 
 <h4>13.1.3. Employee Benefits and Health Services</h4>
-<p>We offer comprehensive benefits and health services to support the well-being of our employees, including medical
-    insurance, wellness programs, and mental health resources.</p>
 
 <h5>Significant locations of operation</h5>
-<p>How does the organization define Significant locations of operation for reporting purposes</p>
+{% if screen_thirteen_data.401_2b_significant_loc.data|length > 0 %}
+  <p>{{ screen_thirteen_data.401_2b_significant_loc.data.0.Q1|default:"No data available." }}</p>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
 
 <h5>Minimum number of weeks’ notice</h5>
 <p> {{screen_thirteen_data.402_1a_minimum_number_of_weeks.data.0.Q1}} </p>
@@ -144,13 +163,13 @@
         </tr>
     </thead>
     <tbody>
-        {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits %}
+        {% for benefit in screen_thirteen_data.401_2a_benefits_provided.data %}
         <tr>
-            <td>{{ benefit.location|default:"No data available" }}</td>
-            <td>{{ benefit.life_insurance|default:"No data available" }}</td>
-            <td>{{ benefit.health_care|default:"No data available" }}</td>
-            <td>{{ benefit.disability_coverage|default:"No data available" }}</td>
-            <td>{{ benefit.parental_leave|default:"No data available" }}</td>
+            <td>{{ benefit.benefits|default:"No data available" }}</td>
+            <td>{{ benefit.fulltime|default:"No data available" }}</td>
+            <td>{{ benefit.parttime|default:"No data available" }}</td>
+            <td>{{ benefit.temporary|default:"No data available" }}</td>
+            <td>{{ benefit.significantlocation|default:"No data available" }}</td>
         {% endfor %}
     </tbody>
 </table>
