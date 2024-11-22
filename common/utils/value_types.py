@@ -42,4 +42,6 @@ def format_decimal_places(value):
 
 
 def safe_divide(numerator, denominator):
-    return format_decimal_places(((numerator / denominator)) if denominator != 0 else 0)
+    return format_decimal_places(
+        ((Decimal(numerator) / Decimal(denominator))) if denominator != 0 else 0
+    )
