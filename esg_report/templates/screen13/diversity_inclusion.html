@@ -101,9 +101,9 @@
             {% for data in screen_thirteen_data.405_2a_analyse.ratio_of_basic_salary_of_women_to_men.0.Q2 %}
                 <tr>
                     <td>{{ data.category|default:"No data available" }}</td>
-                    <td>{{ data.male|default:"No data available" }}</td>
-                    <td>{{ data.female|default:"No data available" }}</td>
-                    <td>{{ data.nonBinary|default:"No data available" }}</td>
+                    <td>{{ data.male|default:"0" }}</td>
+                    <td>{{ data.female|default:"0" }}</td>
+                    <td>{{ data.nonBinary|default:"0" }}</td>
                     <td>{{ data.locationandoperation|default:"No data available" }}</td>
                 </tr>
             {% endfor %}
@@ -136,9 +136,9 @@
             {% for data in screen_thirteen_data.405_2a_analyse.ratio_of_remuneration_of_women_to_men.0.Q2 %}
                 <tr>
                     <td>{{ data.category|default:"No data available" }}</td>
-                    <td>{{ data.male|default:"No data available" }}</td>
-                    <td>{{ data.female|default:"No data available" }}</td>
-                    <td>{{ data.nonBinary|default:"No data available" }}</td>
+                    <td>{{ data.male|default:"0" }}</td>
+                    <td>{{ data.female|default:"0" }}</td>
+                    <td>{{ data.nonBinary|default:"0" }}</td>
                     <td>{{ data.locationandoperation|default:"No data available" }}</td>
                 </tr>
             {% endfor %}
