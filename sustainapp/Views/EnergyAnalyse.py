@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from decimal import Decimal
+
 from django.db.models import Prefetch
 from rest_framework import serializers
 from datametric.utils.analyse import filter_by_start_end_dates
@@ -58,8 +58,8 @@ class EnergyAnalyzeView(APIView):
                 return 0, 0
             unit = item[unit_key]
             return (
-                format_decimal_places(Decimal(conversions[unit]["GJ"]) * Decimal(quantity)),
-                format_decimal_places(Decimal(conversions[unit]["KWh"]) * Decimal(quantity)),
+                round(conversions[unit]["GJ"] * quantity, 2),
+                round(conversions[unit]["KWh"] * quantity, 2),
             )
 
         key_generators = {
