@@ -80,21 +80,17 @@
 <p>{{ screen_nine_data.2_10_b.criteria|default:"No data available." }}</p>
 
 <h5>Criteria considered for nomination and selection of the highest governance body</h5>
-<table
-  cellpadding="5"
-  cellspacing="0"
->
+<table cellpadding="5" cellspacing="0">
   <thead>
     <tr>
       <th>Criteria</th>
-      <th>Whether Considered?</th>
+      <th>Whether taken into consideration?</th>
       <th>How?</th>
     </tr>
   </thead>
   <tbody>
-    <!-- Views of Stakeholders Row -->
     <tr>
-      <td>Views of Stakeholders</td>
+      <td>Views of stakeholders (including shareholders)</td>
       <td>
         {% if screen_nine_data.2_10_b.governance_body_nomination_criteria|length > 0 %}
           {{ screen_nine_data.2_10_b.governance_body_nomination_criteria.0.Whethertakenintoconsideration|default:"No data available." }}
@@ -110,8 +106,6 @@
         {% endif %}
       </td>
     </tr>
-
-    <!-- Diversity Row -->
     <tr>
       <td>Diversity</td>
       <td>
@@ -129,8 +123,6 @@
         {% endif %}
       </td>
     </tr>
-
-    <!-- Independence Row -->
     <tr>
       <td>Independence</td>
       <td>
@@ -148,8 +140,6 @@
         {% endif %}
       </td>
     </tr>
-
-    <!-- Competencies Row -->
     <tr>
       <td>Competencies relevant to the impacts of the Organization</td>
       <td>
@@ -167,11 +157,30 @@
         {% endif %}
       </td>
     </tr>
-</tbody>
+  </tbody>
+</table>
+
+
 
 
 <h4>9.2.2 Chair of the Highest Governance Body</h4>
 <p>{{screen_nine_data.2_11_b.is_chair_of_highest_governance|default:"No data available."}}</p>
+<table cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Their function within the organization</th>
+      <th>Reasons for this arrangement</th>
+      <th>How conflicts of interest are prevented and mitigated</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{ screen_nine_data.2_11_b.table.TheirFunctionWithinTheOrganization }}</td>
+      <td>{{ screen_nine_data.2_11_b.table.ReasonsForThisArrangement }}</td>
+      <td>{{ screen_nine_data.2_11_b.table.HowConFlictsArePrevented }}</td>
+    </tr>
+  </tbody>
+</table>
 
 <h4>9.2.3 Senior Management Hired from Local Community</h4>
 <p><span style="color: #000;">Percentage of senior management at significant locations of operation that are hired from the local community:</span> {{screen_nine_data.202_2a|default:"No data available."}}</p>
@@ -477,138 +486,36 @@
 <p>{{ screen_nine_data.2_27_a.significant_non_compliance_occurred|default:"No data available" }}</p>
 <p>{{ screen_nine_data.2_27_a.total_significant_non_compliance_instances|default:"No data available" }}</p>
 
-<h5>Summary of Non-Compliance Instances and Fines (Current Period):</h5>
+
 <table
   cellpadding="5"
   cellspacing="0"
 >
   <tbody>
     <tr>
-      <th>Total Significant Non-Compliance Instances</th>
-      <td>{{ screen_nine_data.2_27_a.total_significant_non_compliance_instances|default:"No data available" }}</td>
-    </tr>
-    <tr>
-      <th>Total Fines Incurred Instances</th>
+      <th>Provide the total number of instances for which fines were incurred</th>
       <td>{{ screen_nine_data.2_27_a.total_fines_incurred_instances|default:"No data available" }}</td>
     </tr>
     <tr>
-      <th>Total Non-Monetary Sanctions Instances</th>
+      <th>Provide the total number of instances for which non-monetary sanctions were incurred</th>
       <td>{{ screen_nine_data.2_27_a.total_non_monetary_sanctions_instances|default:"No data available" }}</td>
     </tr>
   </tbody>
 </table>
 
-<h5>Summary of Fines Incurred (Current and Previous Periods):</h5>
-<table
-  cellpadding="5"
-  cellspacing="0"
->
-  <tbody>
-    <tr>
-      <th>Total Fines Incurred Instances (Current Period)</th>
-      <td>{{ screen_nine_data.2_27_b.total_fines_incurred_instances|default:"No data available" }}</td>
-    </tr>
-    <tr>
-      <th>Total Fines Incurred Instances (Previous Periods)</th>
-      <td>{{ screen_nine_data.2_27_b.total_fines_incurred_instances_previous_periods|default:"No data available"}}</td>
-    </tr>
-  </tbody>
-</table>
-
-<h3>9.4 Strategy</h3>
-
-<h4>9.4.1 Statement on Sustainable Development Strategy</h4>
-<p>{{ screen_nine_data.2_22_a|default:"No data available" }}</p>
-
-<h4>9.4.2 Membership Association</h4>
-<p>
-  We actively participate in various industry associations and sustainability networks to stay informed of best practices, collaborate on common challenges, and advocate for sustainable
-  development.Our membership included:
-</p>
-
-{% if screen_nine_data.2_28_a %}
-<table
-  cellpadding="5"
-  cellspacing="0"
->
-  <tbody>
-    {% for rowData in screen_nine_data.2_28_a %}
-    <tr>
-      {% for cellData in rowData %}
-      <td style="padding: 8px; text-align: center">{{ cellData }}</td>
-      {% endfor %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>No data available</p>
-{% endif %}
-
-<h3>9.5. Risk Management</h3>
-
-<h4>9.5.1 Remediation of Negative Impacts</h4>
-<p>We are committed to identifying, mitigating, and remediating any negative impacts associated with our operations. This includes:</p>
-
-<h5>Organisation's commitments to provide for or cooperate in the remediation of negative impacts that the organization identifies it has caused or contributed to:</h5>
-<p>{{ screen_nine_data.2_25_data.2_25_a|default:"No data available" }}</p>
-
-<h5>Description of organisation's approach to identify and address grievances, including the grievance mechanisms that the organization has established or participates in:</h5>
-<p>{{ screen_nine_data.2_25_data.2_25_b.Q1|default:"No data available" }}</p>
-
-<h5>Description of other processes by which the organization provides for or cooperates in the remediation of negative impacts that it identifies it has caused or contributed to:</h5>
-<p>{{ screen_nine_data.2_25_data.2_25_c|default:"No data available" }}</p>
-
-<h5>Description of how stakeholders who are the intended users of the grievance mechanisms are involved in the design, review, operation, and improvement of these mechanisms:</h5>
-<p>{{ screen_nine_data.2_25_data.2_25_d|default:"No data available" }}</p>
-
-<h5>
-  Description of how the organization tracks the effectiveness of the grievance mechanisms and other remediation processes, and report examples of their effectiveness, including stakeholder feedback:
+<h5>Provide the total number and the monetary value of fines for instances of non-compliance with laws and regulations that were paid during the reporting period, and a breakdown of this total by:  
 </h5>
-<p>{{ screen_nine_data.2_25_data.2_25_e|default:"No data available" }}</p>
-
-<h4>9.5.2 Mechanism for Seeking Advice and Raising Concerns</h4>
-<p>{{ screen_nine_data.2_26_a.responsible_business_conduct_advice|default:"No data available" }}</p>
-<p>{{ screen_nine_data.2_26_a.business_conduct_concerns|default:"No data available" }}</p>
-
-<h3>9.5.3 Compliance</h3>
-
-<p>{{ screen_nine_data.2_27_a.significant_non_compliance_occurred|default:"No data available" }}</p>
-<p>{{ screen_nine_data.2_27_a.total_significant_non_compliance_instances|default:"No data available" }}</p>
-
-<h5>Summary of Non-Compliance Instances and Fines (Current Period):</h5>
 <table
   cellpadding="5"
   cellspacing="0"
 >
   <tbody>
     <tr>
-      <th>Total Significant Non-Compliance Instances</th>
-      <td>{{ screen_nine_data.2_27_a.total_significant_non_compliance_instances|default:"No data available" }}</td>
-    </tr>
-    <tr>
-      <th>Total Fines Incurred Instances</th>
-      <td>{{ screen_nine_data.2_27_a.total_fines_incurred_instances|default:"No data available" }}</td>
-    </tr>
-    <tr>
-      <th>Total Non-Monetary Sanctions Instances</th>
-      <td>{{ screen_nine_data.2_27_a.total_non_monetary_sanctions_instances|default:"No data available" }}</td>
-    </tr>
-  </tbody>
-</table>
-
-<h5>Summary of Fines Incurred (Current and Previous Periods):</h5>
-<table
-  cellpadding="5"
-  cellspacing="0"
->
-  <tbody>
-    <tr>
-      <th>Total Fines Incurred Instances (Current Period)</th>
+      <th>Provide the total number of fines for instances of non-compliance with laws and regulations that occurred in the current reporting period</th>
       <td>{{ screen_nine_data.2_27_b.total_fines_incurred_instances|default:"No data available" }}</td>
     </tr>
     <tr>
-      <th>Total Fines Incurred Instances (Previous Periods)</th>
+      <th>Provide the total number of fines for instances of non-compliance with laws and regulations that occurred in previous reporting periods</th>
       <td>{{ screen_nine_data.2_27_b.total_fines_incurred_instances_previous_periods|default:"No data available"}}</td>
     </tr>
   </tbody>
@@ -617,7 +524,7 @@
 <h3>9.6 Policy</h3>
 
 <h4>9.6.1 Management of Material Topics</h4>
-<p>[TODO: This data needs to be here 3_c_d_e_in_material_topics]</p>
+<p>No data available.</p>
 
 <h3>9.6.2 Embedding Policy Commitment</h3>
 <p>
@@ -797,7 +704,7 @@ The categories of stakeholders, including at-risk or vulnerable groups, that the
 <p>{{ screen_nine_data.201_3e|default:"No data available" }}</p>
 
 <h3>9.7 Conflict of Interest</h3>
-<p>We have a comprehensive conflict of interest policy to ensure that all potential conflicts are disclosed and managed appropriately.</p>
+<p>{{screen_nine_data.2_15_a}}</p>
 
 <table
   cellpadding="5"
