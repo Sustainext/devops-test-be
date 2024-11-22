@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from datametric.utils.analyse import (
     set_locations_data,
     filter_by_start_end_dates,
-    safe_divide,
+    safe_divide_percentage,
     get_raw_response_filters,
 )
 from datametric.models import RawResponse, DataPoint
@@ -74,27 +74,27 @@ class DiversityAndInclusionAnalyse(APIView):
             local_response.append(
                 {
                     "Category": category_data["category"],
-                    "percentage_of_female_with_org_governance": safe_divide(
+                    "percentage_of_female_with_org_governance": safe_divide_percentage(
                         int(category_data["female"]), int(category_data["totalGender"])
                     ),
-                    "percentage_of_male_with_org_governance": safe_divide(
+                    "percentage_of_male_with_org_governance": safe_divide_percentage(
                         int(category_data["male"]), int(category_data["totalGender"])
                     ),
-                    "percentage_of_non_binary_with_org_governance": safe_divide(
+                    "percentage_of_non_binary_with_org_governance": safe_divide_percentage(
                         int(category_data["nonBinary"]),
                         int(category_data["totalGender"]),
                     ),
-                    "percentage_of_employees_within_30_age_group": safe_divide(
+                    "percentage_of_employees_within_30_age_group": safe_divide_percentage(
                         int(category_data["lessThan30"]), int(category_data["totalAge"])
                     ),
-                    "percentage_of_employees_within_30_to_50_age_group": safe_divide(
+                    "percentage_of_employees_within_30_to_50_age_group": safe_divide_percentage(
                         int(category_data["between30and50"]),
                         int(category_data["totalAge"]),
                     ),
-                    "percentage_of_employees_more_than_50_age_group": safe_divide(
+                    "percentage_of_employees_more_than_50_age_group": safe_divide_percentage(
                         int(category_data["moreThan50"]), int(category_data["totalAge"])
                     ),
-                    "percentage_of_employees_in_minority_group": safe_divide(
+                    "percentage_of_employees_in_minority_group": safe_divide_percentage(
                         int(category_data["minorityGroup"]),
                         int(category_data["vulnerableCommunities"]),
                     ),
@@ -148,10 +148,11 @@ class DiversityAndInclusionAnalyse(APIView):
                     response_dict["minorityGroup"] / total_minority_and_vulnerable
                 ) * 100
                 calculation_dict["vulnerableCommunities_percentage"] = (
-                    response_dict["vulnerableCommunities"] / total_minority_and_vulnerable
+                    response_dict["vulnerableCommunities"]
+                    / total_minority_and_vulnerable
                 ) * 100
             response_data.append(response_dict)
-        return response_data    
+        return response_data
 
     def get_salary_ration(self, slug):  # 405-2
         local_raw_response = (
