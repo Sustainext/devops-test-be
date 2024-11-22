@@ -105,7 +105,7 @@
     {% for operation in screen_twelve_data.water_analyse.total_fresh_water_withdrawal_by_location_country %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.location|default:"N/A" }}</td>
-      <td>{{ operation.consumption_contribution|default:"N/A"|round_to:2 }}%</td>
+      <td>{{ operation.withdrawal_contribution|default:"0"|round_to:2 }}%</td>
       <td>{{ operation.total_withdrawal|round_to:2 }}</td>
       <td>{{ operation.unit|default:"N/A" }}</td>
     </tr>

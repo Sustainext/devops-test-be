@@ -26,17 +26,15 @@
       <th>Sub Category</th>
       <th>Activity</th>
       <th>Value</th>
-      <th>Value2</th>
     </tr>
   </thead>
   <tbody>
     {% for data in screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_1%}
     <tr>
-      <td>{{ data.Category }}</td>
-      <td>{{ data.Subcategory }}</td>
-      <td>{{ data.Activity }}</td>
-      <td>{{ data.Quantity|round_to:2 }} {{ data.Unit }}</td>
-      <td>{{ data.Quantity2|round_to:2 }} {{ data.Unit2 }}</td>
+      <td>{{ data.category }}</td>
+      <td>{{ data.subcategory }}</td>
+      <td>{{ data.activity }}</td>
+      <td>{{ data.activity_value|round_to:2 }} {{ data.activity_unit }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -57,17 +55,15 @@
       <th>Sub Category</th>
       <th>Activity</th>
       <th>Value</th>
-      <th>Value2</th>
     </tr>
   </thead>
   <tbody>
     {% for data in screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_2%}
     <tr>
-      <td>{{ data.Category }}</td>
-      <td>{{ data.Subcategory }}</td>
-      <td>{{ data.Activity }}</td>
-      <td>{{ data.Quantity|round_to:2 }} {{ data.Unit }}</td>
-      <td>{{ data.Quantity2|round_to:2 }} {{ data.Unit2 }}</td>
+      <td>{{ data.category }}</td>
+      <td>{{ data.subcategory }}</td>
+      <td>{{ data.activity }}</td>
+      <td>{{ data.activity_value|round_to:2 }} {{ data.activity_unit }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -88,17 +84,15 @@
       <th>Sub Category</th>
       <th>Activity</th>
       <th>Value</th>
-      <th>Value2</th>
     </tr>
   </thead>
   <tbody>
     {% for data in screen_twelve_data.305_123_collect.gri_environment_emissions_301_a_scope_3%}
     <tr>
-      <td>{{ data.Category }}</td>
-      <td>{{ data.Subcategory }}</td>
-      <td>{{ data.Activity }}</td>
-      <td>{{ data.Quantity|round_to:2 }} {{ data.Unit }}</td>
-      <td>{{ data.Quantity2|round_to:2 }} {{ data.Unit2 }}</td>
+      <td>{{ data.category }}</td>
+      <td>{{ data.subcategory }}</td>
+      <td>{{ data.activity }}</td>
+      <td>{{ data.activity_value|round_to:2 }} {{ data.activity_unit }}</td>
     </tr>
     {% endfor %}
   </tbody>

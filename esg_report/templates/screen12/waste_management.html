@@ -166,8 +166,9 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.waste_directed_to_disposal_by_material_type|last as last_operation %}
     <tr>
-      <td colspan="3"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
+      <td></td>
       <td>t (metric tons)</td>
     </tr>
     {% endwith %}
@@ -203,7 +204,7 @@
       <td>{{ operation.inceneration_without_energy_percentage|default:"0"|round_to:2 }}%</td>
       <td>{{ operation.landfill_percentage|default:"0"|round_to:2 }}%</td>
       <td>{{ operation.other_disposal_percentage|default:"0"|round_to:2 }}%</td>
-      <td>{{ operation.external_percentage|default:"N/A"|round_to:2 }}</td>
+      <td>{{ operation.external_percentage|default:"0"|round_to:2 }}</td>
       <td>{{ operation.site|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.hazardeous_waste_directed_to_disposal|last as last_operation %}
@@ -245,7 +246,7 @@
       <td>{{ operation.inceneration_without_energy_percentage|default:"0"|round_to:2 }}%</td>
       <td>{{ operation.landfill_percentage|default:"0"|round_to:2 }}%</td>
       <td>{{ operation.other_disposal_percentage|default:"0"|round_to:2 }}%</td>
-      <td>{{ operation.external_percentage|default:"N/A"|round_to:2 }}</td>
+      <td>{{ operation.external_percentage|default:"0"|round_to:2 }}</td>
       <td>{{ operation.site|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.non_hazardeous_waste_directed_to_disposal|last as last_operation %}

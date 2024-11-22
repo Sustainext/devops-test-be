@@ -10,8 +10,6 @@
 
   <p>{{ ceo_message.message | safe |default:"No data available." }}</p>
   {% if ceo_message.message %}
-  <p>Thank you for your continued trust and support.</p>
-  <p>Sincerely,</p>
   {% endif %}
   <p>{{ ceo_message.ceo_name|default:"No data available." }}<br />Chief Executive
     Officer<br />{{ ceo_message.company_name|default:"No data available." }}</p>
