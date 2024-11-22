@@ -98,12 +98,11 @@ class IllnessAnalysisView(APIView):
             )
             temp["percentage_of_workers_who_are_not_emplyees_internally_audited"] = (
                 round(
-                    (
-                        int(entry[1]["internallyaudited"])
-                        / total_number_of_internally_audited_workers
+                    safe_divide(
+                        int(entry[1]["internallyaudited"]),
+                        total_number_of_internally_audited_workers,
                     )
                     * 100,
-                    2,
                 )
             )
             temp["percentage_of_all_employees_externally_audited"] = (
@@ -268,7 +267,7 @@ class IllnessAnalysisView(APIView):
         response = [
             {
                 "": "Covered by the system",
-                "Percentage of all Employees": f"{original_data.get('percentage_of_all_employees_covered_by_the_system', 0)}%",
+                "Percentage of all Employees": f"{str(original_data.get('percentage_of_all_employees_covered_by_the_system', 0))}%",
                 "Percentage of workers who are not employees but whose work and/or workplace is controlled by the organization": f"{original_data.get('percentage_of_internally_audited_workers', 0)}%",
             },
             {
