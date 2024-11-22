@@ -134,8 +134,8 @@ class WaterAnalyse(APIView):
             withdrawal_percentage = (
                 (safe_divide(total_withdrawal, complete_total_withdrawal) * 100),
             )
-            discharge_percentage = safe_divide(
-                (total_discharge, complete_total_discharge) * 100
+            discharge_percentage = (
+                safe_divide(total_discharge, complete_total_discharge) * 100
             )
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
