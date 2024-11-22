@@ -11,6 +11,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 from django.db.models import Prefetch
 from rest_framework import serializers
 from datametric.utils.analyse import filter_by_start_end_dates
+from common.utils.value_types import safe_divide
 
 
 class EnergyAnalyzeView(APIView):
@@ -184,15 +185,13 @@ class EnergyAnalyzeView(APIView):
             6: lambda key, total: {
                 "Energy_quantity": total_energy_consumption_within_org,
                 "Organization_metric": key[0],
-                "Energy_intensity1": round(
-                    total_energy_consumption_within_org / total["Metricquantity"], 2
+                "Energy_intensity1": safe_divide(
+                    total_energy_consumption_within_org, total["Metricquantity"]
                 ),
                 "Unit1": f"GJ/{key[1]}",
-                "Energy_intensity2": round(
-                    total_energy_consumption_within_org
-                    / total["Metricquantity"]
-                    * 277.778,
-                    3,
+                "Energy_intensity2": safe_divide(
+                    total_energy_consumption_within_org,
+                    total["Metricquantity"] * 277.778,
                 ),
                 "Unit2": f"KWh/{key[1]}",
             },

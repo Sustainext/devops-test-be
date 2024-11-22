@@ -97,8 +97,8 @@ class FieldGroupGetSerializer(serializers.Serializer):
 
 
 class GetClimatiqComputedSerializer(serializers.Serializer):
-    
-    #TODO: Location should be based on the client.
+
+    # TODO: Location should be based on the client.
     location = serializers.PrimaryKeyRelatedField(
         queryset=Location.objects.all(), required=True
     )
@@ -107,3 +107,16 @@ class GetClimatiqComputedSerializer(serializers.Serializer):
 
     class Meta:
         fields = ["location", "year", "month"]
+
+
+class UpdateFieldGroupSerializer(serializers.Serializer):
+    path_name = serializers.CharField(required=True)
+    schema = serializers.JSONField(required=False, allow_null=True)
+    ui_schema = serializers.JSONField(required=False, allow_null=True)
+
+    def validate(self, data):
+        if not any([data.get("schema"), data.get("ui_schema")]):
+            raise serializers.ValidationError(
+                "At least one of 'schema' or 'ui_schema' must be provided."
+            )
+        return data

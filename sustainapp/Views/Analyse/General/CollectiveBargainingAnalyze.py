@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
 from sustainapp.models import Corporateentity
 from logging import getLogger
+from common.utils.value_types import safe_divide
 
 logger = getLogger("error.log")
 
@@ -66,16 +67,15 @@ class CollectiveBargainingAnalyzeView(APIView):
                         res.append(
                             {
                                 "org_or_corp": a_corp.name,
-                                "total_number_of_emps_in_org": temp_req_data_2[
-                                    "Q2"
+                                "total_number_of_emps_in_org": temp_req_data_2["Q2"],
+                                "number_of_employees_collective_bargaining": temp_req_data_2[
+                                    "Q1"
                                 ],
-                                "number_of_employees_collective_bargaining": temp_req_data_2["Q1"],
                                 "percentage": (
-                                    (
-                                        temp_req_data_2["Q1"]
-                                        / temp_req_data_2["Q2"]
-                                        * 100
+                                    safe_divide(
+                                        temp_req_data_2["Q1"], temp_req_data_2["Q2"]
                                     )
+                                    * 100
                                     if temp_req_data_2["Q2"] != 0
                                     else 0
                                 ),
@@ -92,9 +92,7 @@ class CollectiveBargainingAnalyzeView(APIView):
                 "total_number_of_emps_in_org": temp_req_data["Q2"],
                 "number_of_employees_collective_bargaining": temp_req_data["Q1"],
                 "percentage": (
-                    (temp_req_data["Q1"] / temp_req_data["Q2"] * 100)
-                    if temp_req_data["Q2"] != 0
-                    else 0
+                    safe_divide(temp_req_data["Q1"], temp_req_data["Q2"]) * 100
                 ),
             }
         ]
