@@ -11,7 +11,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 from django.db.models import Prefetch
 from rest_framework import serializers
 from datametric.utils.analyse import filter_by_start_end_dates
-from common.utils.value_types import safe_divide
+from common.utils.value_types import safe_divide, format_decimal_places
 
 
 class EnergyAnalyzeView(APIView):
@@ -58,8 +58,8 @@ class EnergyAnalyzeView(APIView):
                 return 0, 0
             unit = item[unit_key]
             return (
-                conversions[unit]["GJ"] * quantity,
-                conversions[unit]["KWh"] * quantity,
+                format_decimal_places(conversions[unit]["GJ"] * quantity),
+                format_decimal_places(conversions[unit]["KWh"] * quantity),
             )
 
         key_generators = {
