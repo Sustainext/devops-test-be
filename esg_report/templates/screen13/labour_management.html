@@ -22,6 +22,15 @@
       No data available.
     {% endif %}
   </p>
+
+<h5>Worker Fluctuations</h5>
+<p>
+    {% if screen_thirteen_data.2_8_c and screen_thirteen_data.2_8_c|length > 0 and screen_thirteen_data.2_8_c.0.Q1 %}
+      {{ screen_thirteen_data.2_8_c.0.Q1 }}
+    {% else %}
+      No data available.
+    {% endif %}
+  </p>
   
 
 
