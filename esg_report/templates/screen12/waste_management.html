@@ -48,7 +48,7 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.waste_generated_by_material|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="2"><strong>Total </strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
       <td>t (metric tons)</td>
     </tr>
@@ -82,7 +82,7 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.waste_generated_by_location|last as last_operation %}
     <tr>
-      <td colspan="3"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="3"><strong>Total </strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
       <td>t (metric tons)</td>
     </tr>
@@ -115,7 +115,7 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.hazardous_and_non_hazardous_waste_composition|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="2"><strong>Total </strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
       <td>t (metric tons)</td>
     </tr>
@@ -166,7 +166,7 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.waste_directed_to_disposal_by_material_type|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="2"><strong>Total </strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
       <td></td>
       <td>t (metric tons)</td>
@@ -209,7 +209,7 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.hazardeous_waste_directed_to_disposal|last as last_operation %}
     <tr>
-      <td colspan="1"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="1"><strong>Total </strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
       <td>t (metric tons)</td>
     </tr>
@@ -251,7 +251,7 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.non_hazardeous_waste_directed_to_disposal|last as last_operation %}
     <tr>
-      <td colspan="1"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="1"><strong>Total </strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
       <td>t (metric tons)</td>
     </tr>
@@ -288,7 +288,7 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.waste_diverted_from_disposal_by_material_type|last as last_operation %}
     <tr>
-      <td colspan="3"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="3"><strong>Total </strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
       <td>t (metric tons)</td>
     </tr>
@@ -326,7 +326,7 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.hazardous_waste_diverted_form_disposal|last as last_operation %}
     <tr>
-      <td colspan="1"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="1"><strong>Total </strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
       <td>t (metric tons)</td>
     </tr>
@@ -364,7 +364,7 @@
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.waste_analyse.non_hazardeous_waste_diverted_from_disposal|last as last_operation %}
     <tr>
-      <td colspan="1"><strong>Total Water Withdrawal</strong></td>
+      <td colspan="1"><strong>Total </strong></td>
       <td><strong>{{ last_operation.total_waste_generated|round_to:2 }}</strong></td>
       <td>t (metric tons)</td>
     </tr>
