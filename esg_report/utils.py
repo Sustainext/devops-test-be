@@ -84,13 +84,11 @@ def get_raw_responses_as_per_report(report: Report):
     elif report.organization:
         raw_responses = raw_responses.filter(
             Q(organization=report.organization)
-            | Q(corporate=report.corporate)
             | Q(
                 locale__in=report.organization.corporatenetityorg.all().values_list(
                     "location", flat=True
                 )
             )
-            | Q(locale=None)
         )
     return raw_responses.filter(year=get_maximum_months_year(report))
 
