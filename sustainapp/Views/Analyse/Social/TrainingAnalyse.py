@@ -14,6 +14,7 @@ from datametric.utils.analyse import (
     get_sum_from_dictionary_list,
 )
 from statistics import mean
+from common.utils.value_types import format_decimal_places
 
 
 class TrainingSocial(APIView):
@@ -59,17 +60,19 @@ class TrainingSocial(APIView):
 
             categories[category].append(
                 {
-                    "average_training_hours_per_employee": safe_integer_divide(
-                        item["totalTrainingHours"], item["totalEmployees"]
+                    "average_training_hours_per_employee": format_decimal_places(
+                        safe_integer_divide(
+                            item["totalTrainingHours"], item["totalEmployees"]
+                        )
                     ),
-                    "average_training_hours_per_female_employee": safe_integer_divide(
-                        item["female1"], item["female"]
+                    "average_training_hours_per_female_employee": format_decimal_places(
+                        safe_integer_divide(item["female1"], item["female"])
                     ),
-                    "average_training_hours_per_male_employee": safe_integer_divide(
-                        item["male1"], item["male"]
+                    "average_training_hours_per_male_employee": format_decimal_places(
+                        safe_integer_divide(item["male1"], item["male"])
                     ),
-                    "average_training_hours_per_non_binary_employee": safe_integer_divide(
-                        item["others1"], item["others"]
+                    "average_training_hours_per_non_binary_employee": format_decimal_places(
+                        safe_integer_divide(item["others1"], item["others"])
                     ),
                 }
             )
@@ -79,27 +82,35 @@ class TrainingSocial(APIView):
             result.append(
                 {
                     "category": category,
-                    "average_training_hours_per_employee": mean(
-                        [
-                            item["average_training_hours_per_employee"]
-                            for item in data_list
-                        ]
+                    "average_training_hours_per_employee": format_decimal_places(
+                        mean(
+                            [
+                                item["average_training_hours_per_employee"]
+                                for item in data_list
+                            ]
+                        )
                     ),
-                    "average_training_hours_per_female_employee": mean(
-                        [
-                            item["average_training_hours_per_female_employee"]
-                            for item in data_list
-                        ]
+                    "average_training_hours_per_female_employee": format_decimal_places(
+                        mean(
+                            [
+                                item["average_training_hours_per_female_employee"]
+                                for item in data_list
+                            ]
+                        )
                     ),
-                    "average_training_hours_per_male_employee": mean(
-                        [
-                            item["average_training_hours_per_male_employee"]
-                            for item in data_list
-                        ]
+                    "average_training_hours_per_male_employee": format_decimal_places(
+                        mean(
+                            [
+                                item["average_training_hours_per_male_employee"]
+                                for item in data_list
+                            ]
+                        )
                     ),
-                    "average_training_hours_per_non_binary_employee": mean(
-                        item["average_training_hours_per_non_binary_employee"]
-                        for item in data_list
+                    "average_training_hours_per_non_binary_employee": format_decimal_places(
+                        mean(
+                            item["average_training_hours_per_non_binary_employee"]
+                            for item in data_list
+                        )
                     ),
                 }
             )
@@ -120,20 +131,28 @@ class TrainingSocial(APIView):
         for local_data_item in local_data:
             local_response_data.append(
                 {
-                    "average_training_hours_per_employee": safe_integer_divide(
-                        local_data_item[
-                            "totalEmployees"
-                        ],  # * This is wrong data metriced, this gives total working hours instead of total number of employees.
-                        local_data_item["totalTrainingHours"],
+                    "average_training_hours_per_employee": format_decimal_places(
+                        safe_integer_divide(
+                            local_data_item[
+                                "totalEmployees"
+                            ],  # * This is wrong data metriced, this gives total working hours instead of total number of employees.
+                            local_data_item["totalTrainingHours"],
+                        )
                     ),
-                    "average_training_hours_per_female_employee": safe_integer_divide(
-                        local_data_item["female"], local_data_item["female1"]
+                    "average_training_hours_per_female_employee": format_decimal_places(
+                        safe_integer_divide(
+                            local_data_item["female"], local_data_item["female1"]
+                        )
                     ),
-                    "average_training_hours_per_male_employee": safe_integer_divide(
-                        local_data_item["male"], local_data_item["male1"]
+                    "average_training_hours_per_male_employee": format_decimal_places(
+                        safe_integer_divide(
+                            local_data_item["male"], local_data_item["male1"]
+                        )
                     ),
-                    "average_training_hours_per_non_binary_employee": safe_integer_divide(
-                        local_data_item["others"], local_data_item["others1"]
+                    "average_training_hours_per_non_binary_employee": format_decimal_places(
+                        safe_integer_divide(
+                            local_data_item["others"], local_data_item["others1"]
+                        )
                     ),
                 }
             )
@@ -141,29 +160,37 @@ class TrainingSocial(APIView):
         # * Get sum of Average training hours per employee.
         return [
             {
-                "average_training_hours_per_employee": mean(
-                    [
-                        item["average_training_hours_per_employee"]
-                        for item in local_response_data
-                    ],
+                "average_training_hours_per_employee": format_decimal_places(
+                    mean(
+                        [
+                            item["average_training_hours_per_employee"]
+                            for item in local_response_data
+                        ],
+                    )
                 ),
-                "average_training_hours_per_female_employee": mean(
-                    [
-                        item["average_training_hours_per_female_employee"]
-                        for item in local_response_data
-                    ],
+                "average_training_hours_per_female_employee": format_decimal_places(
+                    mean(
+                        [
+                            item["average_training_hours_per_female_employee"]
+                            for item in local_response_data
+                        ],
+                    )
                 ),
-                "average_training_hours_per_male_employee": mean(
-                    [
-                        item["average_training_hours_per_male_employee"]
-                        for item in local_response_data
-                    ],
+                "average_training_hours_per_male_employee": format_decimal_places(
+                    mean(
+                        [
+                            item["average_training_hours_per_male_employee"]
+                            for item in local_response_data
+                        ],
+                    )
                 ),
-                "average_training_hours_per_non_binary_employee": mean(
-                    [
-                        item["average_training_hours_per_non_binary_employee"]
-                        for item in local_response_data
-                    ],
+                "average_training_hours_per_non_binary_employee": format_decimal_places(
+                    mean(
+                        [
+                            item["average_training_hours_per_non_binary_employee"]
+                            for item in local_response_data
+                        ],
+                    )
                 ),
             },
         ]
@@ -181,11 +208,15 @@ class TrainingSocial(APIView):
             response_data.append(
                 {
                     "Category": item["category"],
-                    "percentage_of_employees_who_received_regular_performance_reviews": safe_integer_divide(
-                        item["totalTrainingHours"], item["totalEmployees"]
+                    "percentage_of_employees_who_received_regular_performance_reviews": format_decimal_places(
+                        safe_integer_divide(
+                            item["totalTrainingHours"], item["totalEmployees"]
+                        )
                     ),
-                    "percentage_of_employees_who_received_regular_career_development_reviews": safe_integer_divide(
-                        item["totalEmployees"], item["totalEmployees"]
+                    "percentage_of_employees_who_received_regular_career_development_reviews": format_decimal_places(
+                        safe_integer_divide(
+                            item["totalEmployees"], item["totalEmployees"]
+                        )
                     ),
                 }
             )
@@ -210,11 +241,15 @@ class TrainingSocial(APIView):
         return [
             {
                 "Gender": gender,
-                "percentage_of_employees_who_received_regular_performance_reviews": safe_integer_divide(
-                    sum(int(item[key1]) for item in data), total_employees
+                "percentage_of_employees_who_received_regular_performance_reviews": format_decimal_places(
+                    safe_integer_divide(
+                        sum(int(item[key1]) for item in data), total_employees
+                    )
                 ),
-                "percentage_of_employees_who_received_regular_career_development_reviews": safe_integer_divide(
-                    sum(int(item[key2]) for item in data), total_employees
+                "percentage_of_employees_who_received_regular_career_development_reviews": format_decimal_places(
+                    safe_integer_divide(
+                        sum(int(item[key2]) for item in data), total_employees
+                    )
                 ),
             }
             for gender, key1, key2 in genders
