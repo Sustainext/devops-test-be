@@ -71,13 +71,16 @@ class CollectiveBargainingAnalyzeView(APIView):
                                 "number_of_employees_collective_bargaining": temp_req_data_2[
                                     "Q1"
                                 ],
-                                "percentage": (
-                                    safe_divide(
-                                        temp_req_data_2["Q1"], temp_req_data_2["Q2"]
-                                    )
-                                    * 100
-                                    if temp_req_data_2["Q2"] != 0
-                                    else 0
+                                "percentage": round(
+                                    (
+                                        safe_divide(
+                                            temp_req_data_2["Q1"], temp_req_data_2["Q2"]
+                                        )
+                                        * 100
+                                        if temp_req_data_2["Q2"] != 0
+                                        else 0
+                                    ),
+                                    2,
                                 ),
                             }
                         )
@@ -91,8 +94,8 @@ class CollectiveBargainingAnalyzeView(APIView):
                 "org_or_corp": self.corp.name if self.corp else self.org.name,
                 "total_number_of_emps_in_org": temp_req_data["Q2"],
                 "number_of_employees_collective_bargaining": temp_req_data["Q1"],
-                "percentage": (
-                    safe_divide(temp_req_data["Q1"], temp_req_data["Q2"]) * 100
+                "percentage": round(
+                    safe_divide(temp_req_data["Q1"], temp_req_data["Q2"]) * 100, 2
                 ),
             }
         ]
