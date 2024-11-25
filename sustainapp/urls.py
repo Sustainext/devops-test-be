@@ -181,12 +181,12 @@ urlpatterns = [
         name="get_ohs_analysis",
     ),
     path(
-        "get_diversity_inclusion_analysis/",
+        "get_diversity_inclusion_second_screen_analyse/",
         DiversityAndInclusionAnalyse.as_view(),
         name="get_diversity_inclusion_analysis",
     ),
     path(
-        "get_diversity_inclusion_second_screen_analyse/",
+        "get_diversity_inclusion_first_screen_analyse/",
         DiversityAndInclusionSecondScreenAnalyse.as_view(),
         name="get_diversity_inclusion_second_screen_analyse",
     ),
