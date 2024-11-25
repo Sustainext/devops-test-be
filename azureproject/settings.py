@@ -332,7 +332,6 @@ FIXTURE_DIRS = [
 ]
 
 if DEVELOPMENT_MODE:
-    print("Development mode is enabled.")
     INSTALLED_APPS += [
         "drf_yasg",
         "django_extensions",

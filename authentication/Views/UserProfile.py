@@ -26,11 +26,17 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         user = instance.user
         first_name = request.data.get("first_name", None)
         last_name = request.data.get("last_name", None)
+        department = request.data.get("department", None)
+        job_title = request.data.get("designation", None)
 
         if first_name is not None:
             user.first_name = first_name
         if last_name is not None:
             user.last_name = last_name
+        if department is not None:
+            user.department = department
+        if job_title is not None:
+            user.job_title = job_title
 
         user.save()
 
