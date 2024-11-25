@@ -117,7 +117,16 @@ class DiversityAndInclusionAnalyse(APIView):
                             response_dict[key] += int(value)
                         else:
                             response_dict[key] = int(value)
-            calculation_dict = {}
+            calculation_dict = {
+                "male_percentage": 0,
+                "female_percentage": 0,
+                "nonBinary_percentage": 0,
+                "lessThan30_percentage": 0,
+                "between30and50_percentage": 0,
+                "moreThan50_percentage": 0,
+                "minorityGroup_percentage": 0,
+                "vulnerableCommunities_percentage": 0,
+            }
             # Calculating percentages
             if response_dict["totalGender"] > 0:
                 calculation_dict["male_percentage"] = (
