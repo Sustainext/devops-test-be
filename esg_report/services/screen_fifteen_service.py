@@ -4,6 +4,7 @@ from esg_report.utils import (
     collect_data_by_raw_response_and_index,
     get_raw_responses_as_per_report,
     calling_analyse_view_with_params,
+    get_management_materiality_topics,
 )
 from esg_report.Serializer.ScreenFifteenSerializer import ScreenFifteenSerializer
 from django.core.exceptions import ObjectDoesNotExist
@@ -27,6 +28,9 @@ class ScreenFifteenService:
             8: "gri-social-statement_marketing-417-3b-statement",
             9: "gri-social-customer_privacy-418-1b-identified_leaks",
             10: "gri-social-customer_privacy-418-1c-statement",
+            11: "gri_collect_product_safety_management_material_topic",
+            12: "gri_collect_marketing_and_labeling_management_material_topic",
+            13: "gri_collect_customer_privacy_management_material_topic",
         }
 
     def set_data_points(self):
@@ -100,7 +104,16 @@ class ScreenFifteenService:
         response_data["418_1c"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[10]),
         )
-        response_data["3-3cde"] = None
+        response_data["3-3cde_15-1-1"] = get_management_materiality_topics(
+            self.report, self.slugs[11]
+        )
+        response_data["3-3cde_15-2-1"] = get_management_materiality_topics(
+            self.report, self.slugs[12]
+        )
+        response_data["3-3cde_15-3-1"] = get_management_materiality_topics(
+            self.report, self.slugs[13]
+        )
+
         return response_data
 
     def get_report_response(self):
