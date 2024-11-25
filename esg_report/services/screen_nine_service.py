@@ -1,12 +1,19 @@
 from sustainapp.models import Report
 from datametric.models import RawResponse
-from esg_report.utils import get_raw_responses_as_per_report
+from esg_report.utils import (
+    get_raw_responses_as_per_report,
+    get_data_points_as_per_report,
+    get_management_materiality_topics,
+)
 from sustainapp.utils import (
     get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation,
 )
 from esg_report.models.ScreenNine import ScreenNine
 from esg_report.Serializer.ScreenNineSerializer import ScreenNineSerializer
 from django.core.exceptions import ObjectDoesNotExist
+from logging import getLogger
+
+logger = getLogger("error.log")
 
 
 # TODO: Add the logic to get the data from the raw responses
@@ -77,6 +84,7 @@ class ScreenNineService:
             58: "gri-economic-ratios_of_standard_entry-202-1d-definition",
             59: "gri-governance-compensation_ratio-2-21-a-annual",
             60: "gri-governance-compensation_ratio-2-21-b-percentage",
+            61: "gri_collect_economic_governance_management_material_topic",
         }
 
     def get_screen_nine_data(self):
@@ -794,7 +802,29 @@ class ScreenNineService:
 
     def get_3_c_d_e_in_material_topics(self):
         # TODO: Complete this after completing logic of selection material topic for report.
-        return None
+        # try:
+        #     dps = (
+        #         get_data_points_as_per_report(report=self.report)
+        #         .filter(path__slug=self.slugs[61])
+        #         .order_by("-year")
+        #     )
+        #     data = {
+        #         "economic_governance": {
+        #             "GRI33cd": "",
+        #             "GRI33e": "",
+        #         }
+        #     }
+        #     for dps_data in dps:
+        #         if dps_data.metric_name == "GRI33cd":
+        #             data["economic_governance"]["GRI33cd"] = dps_data.value
+        #         elif dps_data.metric_name == "GRI33e":
+        #             data["economic_governance"]["GRI33e"] = dps_data.value
+        #     return data
+        # except Exception as e:
+        #     logger.error(
+        #         f"An error occured while getting 3_c_d_e_in_material_topics : {e}"
+        #     )
+        return get_management_materiality_topics(self.report, self.slugs[61])
 
     def get_206_1a(self):
         raw_response = (

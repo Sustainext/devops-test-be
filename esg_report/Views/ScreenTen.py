@@ -11,6 +11,7 @@ from esg_report.utils import (
     get_data_points_as_per_report,
     get_maximum_months_year,
     collect_data_by_raw_response_and_index,
+    get_management_materiality_topics,
 )
 from esg_report.Serializer.ScreenTenSerializer import ScreenTenSerializer
 from sustainapp.models import Report
@@ -30,7 +31,9 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
+from logging import getLogger
 
+logger = getLogger("error.log")
 
 class ScreenTenAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -52,6 +55,7 @@ class ScreenTenAPIView(APIView):
             12: "gri-supplier_environmental_assessment-negative_environmental-308-2e",
             13: "gri-social-supplier_screened-414-1a-number_of_new_suppliers",
             14: "gri-social-impacts_and_actions-414-2b-number_of_suppliers",
+            15: "gri_collect_supplier_environmental_assessment_management_material_topic",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -280,6 +284,31 @@ class ScreenTenAPIView(APIView):
             response_data["414-2c"] = None
         return response_data
 
+    # def get_3_c_d_e_in_material_topics(self):
+    #     try:
+    #         dps = self.data_points.filter(
+    #             path__slug=self.slugs[15],
+    #             corporate=self.report.corporate,
+    #             organization=self.report.organization,
+    #             locale=None,
+    #         ).order_by("-year")
+    #         data = {
+    #             "economic_governance": {
+    #                 "GRI33cd": "",
+    #                 "GRI33e": "",
+    #             }
+    #         }
+    #         for dps_data in dps:
+    #             if dps_data.metric_name == "GRI33cd":
+    #                 data["economic_governance"]["GRI33cd"] = dps_data.value
+    #             elif dps_data.metric_name == "GRI33e":
+    #                 data["economic_governance"]["GRI33e"] = dps_data.value
+    #         return data
+    #     except Exception as e:
+    #         logger.error(
+    #             f"An error occured while getting 3_c_d_e_in_material_topics : {e}"
+    #         )
+
     def get(self, request, report_id: int) -> Response:
         try:
             self.report = Report.objects.get(id=report_id)
@@ -334,5 +363,8 @@ class ScreenTenAPIView(APIView):
         response_data["414_1a_collect"] = self.get_414_1a_collect()
         response_data["414_1a_analyse"] = self.get_414_1a_analyse()
         response_data["414_2b_collect"] = self.get_414_2b_collect()
+        response_data["3_c_d_e_in_material_topics"] = get_management_materiality_topics(
+            self.report, self.slugs[15]
+        )
 
         return Response(response_data, status=status.HTTP_200_OK)
