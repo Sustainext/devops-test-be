@@ -18,11 +18,11 @@ from common.utils.get_data_points_as_raw_responses import (
 from common.utils.value_types import safe_divide
 
 
-class DiversityAndInclusionSecondScreenAnalyse(APIView):
+class DiversityAndInclusionFirstScreenAnalyse(APIView):
     permission_classes = [IsAuthenticated]
 
     slugs = [
-        "gri-social-diversity_of_board-405-1b-number_of_employee",
+        "gri-social-diversity_of_board-405-1a-number_of_individuals",
     ]
 
     def set_raw_responses(self):
@@ -61,42 +61,88 @@ class DiversityAndInclusionSecondScreenAnalyse(APIView):
             )
         )
 
-    def get_diversity_of_the_board(self, slug):  # 405-1
-        local_data = collect_data_by_raw_response_and_index(
-            self.data_points.filter(path__slug=slug)
-        )
-        local_response = list()
-        for category_data in local_data:
-            local_response.append(
-                {
-                    "Category": category_data["category"],
-                    "percentage_of_female_with_org_governance": safe_divide_percentage(
-                        int(category_data["female"]), int(category_data["totalGender"])
-                    ),
-                    "percentage_of_male_with_org_governance": safe_divide_percentage(
-                        int(category_data["male"]), int(category_data["totalGender"])
-                    ),
-                    "percentage_of_non_binary_with_org_governance": safe_divide_percentage(
-                        int(category_data["nonBinary"]),
-                        int(category_data["totalGender"]),
-                    ),
-                    "percentage_of_employees_within_30_age_group": safe_divide_percentage(
-                        int(category_data["lessThan30"]), int(category_data["totalAge"])
-                    ),
-                    "percentage_of_employees_within_30_to_50_age_group": safe_divide_percentage(
-                        int(category_data["between30and50"]),
-                        int(category_data["totalAge"]),
-                    ),
-                    "percentage_of_employees_more_than_50_age_group": safe_divide_percentage(
-                        int(category_data["moreThan50"]), int(category_data["totalAge"])
-                    ),
-                    "percentage_of_employees_in_minority_group": safe_divide_percentage(
-                        int(category_data["minorityGroup"]),
-                        int(category_data["vulnerableCommunities"]),
-                    ),
-                }
+    def get_diversity_of_the_individuals(self, slug):
+        """
+        Gets data by location and then calculates the percentage of the total of each point within the location data.
+        """
+        data_points = self.data_points.filter(path__slug=slug).order_by("index")
+        location_wise_data = collect_data_segregated_by_location(data_points)
+        response_data = []
+        for data in location_wise_data:
+            response_dict = {}
+            for item in data:
+                for key, value in item.items():
+                    if key != "category":
+                        if key in response_dict:
+                            response_dict[key] += int(value)
+                        else:
+                            response_dict[key] = int(value)
+            calculation_dict = {
+                "male_percentage": 0,
+                "female_percentage": 0,
+                "nonBinary_percentage": 0,
+                "lessThan30_percentage": 0,
+                "between30and50_percentage": 0,
+                "moreThan50_percentage": 0,
+                "minorityGroup_percentage": 0,
+                "vulnerableCommunities_percentage": 0,
+            }
+            # Calculating percentages
+            if response_dict["totalGender"] > 0:
+                calculation_dict["male_percentage"] = (
+                    safe_divide(response_dict["male"], response_dict["totalGender"])
+                    * 100
+                )
+                calculation_dict["female_percentage"] = (
+                    safe_divide(response_dict["female"], response_dict["totalGender"])
+                    * 100
+                )
+                calculation_dict["nonBinary_percentage"] = (
+                    safe_divide(
+                        response_dict["nonBinary"], response_dict["totalGender"]
+                    )
+                    * 100
+                )
+
+            if response_dict["totalAge"] > 0:
+                calculation_dict["lessThan30_percentage"] = (
+                    safe_divide(response_dict["lessThan30"], response_dict["totalAge"])
+                    * 100
+                )
+                calculation_dict["between30and50_percentage"] = (
+                    safe_divide(
+                        response_dict["between30and50"], response_dict["totalAge"]
+                    )
+                    * 100
+                )
+                calculation_dict["moreThan50_percentage"] = (
+                    safe_divide(
+                        response_dict["moreThan50"],
+                        response_dict["totalAge"],
+                    )
+                    * 100
+                )
+
+            # Calculating minority group percentage
+            total_minority_and_vulnerable = (
+                response_dict["minorityGroup"] + response_dict["vulnerableCommunities"]
             )
-        return local_response
+            if total_minority_and_vulnerable > 0:
+                calculation_dict["minorityGroup_percentage"] = (
+                    safe_divide(
+                        response_dict["minorityGroup"], total_minority_and_vulnerable
+                    )
+                    * 100
+                )
+                calculation_dict["vulnerableCommunities_percentage"] = (
+                    safe_divide(
+                        response_dict["vulnerableCommunities"],
+                        total_minority_and_vulnerable,
+                    )
+                    * 100
+                )
+            response_data.append(response_dict)
+        return response_data
 
     def get(self, request):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
@@ -106,12 +152,12 @@ class DiversityAndInclusionSecondScreenAnalyse(APIView):
         self.location = serializer.validated_data.get("location")
         self.start = serializer.validated_data["start"]
         self.end = serializer.validated_data["end"]
-        self.set_raw_responses()
         self.set_data_points()
         response_data = {
-            "number_of_employee_per_employee_category": self.get_diversity_of_the_board(
+                        "percentage_of_employees_within_government_bodies": self.get_diversity_of_the_individuals(
                 self.slugs[0]
             ),
+
         }
 
         return Response(response_data, status=status.HTTP_200_OK)

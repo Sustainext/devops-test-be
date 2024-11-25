@@ -47,7 +47,7 @@ from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
 )
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionSecondScreen import (
-    DiversityAndInclusionSecondScreenAnalyse,
+    DiversityAndInclusionFirstScreenAnalyse,
 )
 from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
     SupplierSocialAssessmentView,
@@ -187,7 +187,7 @@ urlpatterns = [
     ),
     path(
         "get_diversity_inclusion_first_screen_analyse/",
-        DiversityAndInclusionSecondScreenAnalyse.as_view(),
+        DiversityAndInclusionFirstScreenAnalyse.as_view(),
         name="get_diversity_inclusion_second_screen_analyse",
     ),
     path(
