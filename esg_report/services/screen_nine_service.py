@@ -802,28 +802,6 @@ class ScreenNineService:
 
     def get_3_c_d_e_in_material_topics(self):
         # TODO: Complete this after completing logic of selection material topic for report.
-        # try:
-        #     dps = (
-        #         get_data_points_as_per_report(report=self.report)
-        #         .filter(path__slug=self.slugs[61])
-        #         .order_by("-year")
-        #     )
-        #     data = {
-        #         "economic_governance": {
-        #             "GRI33cd": "",
-        #             "GRI33e": "",
-        #         }
-        #     }
-        #     for dps_data in dps:
-        #         if dps_data.metric_name == "GRI33cd":
-        #             data["economic_governance"]["GRI33cd"] = dps_data.value
-        #         elif dps_data.metric_name == "GRI33e":
-        #             data["economic_governance"]["GRI33e"] = dps_data.value
-        #     return data
-        # except Exception as e:
-        #     logger.error(
-        #         f"An error occured while getting 3_c_d_e_in_material_topics : {e}"
-        #     )
         return get_management_materiality_topics(self.report, self.slugs[61])
 
     def get_206_1a(self):

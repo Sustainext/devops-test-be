@@ -35,6 +35,7 @@ from logging import getLogger
 
 logger = getLogger("error.log")
 
+
 class ScreenTenAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -283,31 +284,6 @@ class ScreenTenAPIView(APIView):
         else:
             response_data["414-2c"] = None
         return response_data
-
-    # def get_3_c_d_e_in_material_topics(self):
-    #     try:
-    #         dps = self.data_points.filter(
-    #             path__slug=self.slugs[15],
-    #             corporate=self.report.corporate,
-    #             organization=self.report.organization,
-    #             locale=None,
-    #         ).order_by("-year")
-    #         data = {
-    #             "economic_governance": {
-    #                 "GRI33cd": "",
-    #                 "GRI33e": "",
-    #             }
-    #         }
-    #         for dps_data in dps:
-    #             if dps_data.metric_name == "GRI33cd":
-    #                 data["economic_governance"]["GRI33cd"] = dps_data.value
-    #             elif dps_data.metric_name == "GRI33e":
-    #                 data["economic_governance"]["GRI33e"] = dps_data.value
-    #         return data
-    #     except Exception as e:
-    #         logger.error(
-    #             f"An error occured while getting 3_c_d_e_in_material_topics : {e}"
-    #         )
 
     def get(self, request, report_id: int) -> Response:
         try:
