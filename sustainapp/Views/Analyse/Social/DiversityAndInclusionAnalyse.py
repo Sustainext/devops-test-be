@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from datametric.utils.analyse import (
-    set_locations_data,
     filter_by_start_end_dates,
     safe_divide_percentage,
     get_raw_response_filters,
@@ -66,10 +65,9 @@ class DiversityAndInclusionAnalyse(APIView):
         )
 
     def get_diversity_of_the_board(self, slug):  # 405-1
-        local_raw_response = (
-            self.raw_response.only("data").filter(path__slug=slug).first()
+        local_data = collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=slug)
         )
-        local_data = local_raw_response.data if local_raw_response is not None else []
         local_response = list()
         for category_data in local_data:
             local_response.append(
@@ -104,6 +102,9 @@ class DiversityAndInclusionAnalyse(APIView):
         return local_response
 
     def get_diversity_of_the_individuals(self, slug):
+        """
+        Gets data by location and then calculates the percentage of the total of each point within the location data.
+        """
         data_points = self.data_points.filter(path__slug=slug).order_by("index")
         location_wise_data = collect_data_segregated_by_location(data_points)
         response_data = []
