@@ -36,12 +36,18 @@ from sustainapp.Views.GetLocationAsPerCorporate import (
 )
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
-from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse, WaterAnalyseByDataPoints
+from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
+from sustainapp.Views.Analyse.Environment.WaterAnalyseAPI import (
+    WaterAnalyseByDataPoints,
+)
 from sustainapp.Views.Analyse.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
 from sustainapp.Views.Analyse.Social.ChildLabor import ChildLabourAnalyzeView
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
+)
+from sustainapp.Views.Analyse.Social.DiversityAndInclusionSecondScreen import (
+    DiversityAndInclusionSecondScreenAnalyse,
 )
 from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
     SupplierSocialAssessmentView,
@@ -150,6 +156,11 @@ urlpatterns = [
         name="get_water_analysis",
     ),
     path(
+        "get_water_analysis_api/",
+        WaterAnalyseByDataPoints.as_view(),
+        name="get_water_analysis_api",
+    ),
+    path(
         "get_employment_analysis/",
         EmploymentAnalyzeView.as_view(),
         name="get_employment_analyze",
@@ -173,6 +184,11 @@ urlpatterns = [
         "get_diversity_inclusion_analysis/",
         DiversityAndInclusionAnalyse.as_view(),
         name="get_diversity_inclusion_analysis",
+    ),
+    path(
+        "get_diversity_inclusion_second_screen_analyse/",
+        DiversityAndInclusionSecondScreenAnalyse.as_view(),
+        name="get_diversity_inclusion_second_screen_analyse",
     ),
     path(
         "get_supplier_social_assessment_analysis/",
