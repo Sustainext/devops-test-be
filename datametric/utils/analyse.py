@@ -66,12 +66,8 @@ def filter_by_start_end_dates(start_date, end_date):
     return q_objects
 
 
-def safe_divide_percentage(numerator, denominator, decimal_places=2):
-    return (
-        round((numerator / denominator * 100), decimal_places)
-        if denominator != 0
-        else 0
-    )
+def safe_divide_percentage(numerator, denominator):
+    return safe_divide(numerator, denominator) * 100
 
 
 def safe_integer_divide(numerator, denominator, decimal_places=2):
