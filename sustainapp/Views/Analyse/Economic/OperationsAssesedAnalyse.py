@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
 from sustainapp.models import Corporateentity
 from logging import getLogger
+from common.utils.value_types import safe_divide
 
 logger = getLogger("error.log")
 
@@ -71,13 +72,10 @@ class OperationsAssessedAnalyzeView(APIView):
                                 ],
                                 "number_of_operations": temp_req_data_2["Q2"],
                                 "percentage": (
-                                    (
-                                        temp_req_data_2["Q1"]
-                                        / temp_req_data_2["Q2"]
-                                        * 100
+                                    safe_divide(
+                                        temp_req_data_2["Q1"], temp_req_data_2["Q2"]
                                     )
-                                    if temp_req_data_2["Q2"] != 0
-                                    else 0
+                                    * 100
                                 ),
                             }
                         )
@@ -92,9 +90,7 @@ class OperationsAssessedAnalyzeView(APIView):
                 "total_number_of_operations_assesed": temp_req_data["Q1"],
                 "number_of_operations": temp_req_data["Q2"],
                 "percentage": (
-                    (temp_req_data["Q1"] / temp_req_data["Q2"] * 100)
-                    if temp_req_data["Q2"] != 0
-                    else 0
+                    safe_divide(temp_req_data["Q1"], temp_req_data["Q2"]) * 100
                 ),
             }
         ]
@@ -131,7 +127,8 @@ class OperationsAssessedAnalyzeView(APIView):
                 filter_by["corporate__id"] = None
 
             operations_assesed_percent = self.process_operations_assessed(
-                "gri-economic-operations_assessed_for_risks_related_to_corruption-205-1a-total", filter_by
+                "gri-economic-operations_assessed_for_risks_related_to_corruption-205-1a-total",
+                filter_by,
             )
 
             return Response(

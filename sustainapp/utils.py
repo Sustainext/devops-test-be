@@ -52,7 +52,7 @@ from django.conf import settings
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from common.utils.value_types import get_decimal
+from common.utils.value_types import get_decimal, safe_divide
 
 logger = logging.getLogger(__name__)
 
@@ -391,9 +391,9 @@ def generate_report_data(pk, request):
             else:
                 combined_scopes[scope_name]["total_co2e"] += float(scope["total_co2e"])
                 combined_scopes[scope_name]["combined_percentage"] = (
-                    (
-                        float(combined_scopes[scope_name]["total_co2e"])
-                        / total_co2e_combined
+                    safe_divide(
+                        float(combined_scopes[scope_name]["total_co2e"]),
+                        total_co2e_combined,
                     )
                     * 100
                     if total_co2e_combined != 0
@@ -403,9 +403,7 @@ def generate_report_data(pk, request):
         # After updating total_co2e for all scopes in the current corporate, calculate combined_percentage
         for scope_name, scope_data in combined_scopes.items():
             scope_data["combined_percentage"] = (
-                (scope_data["total_co2e"] / total_co2e_combined) * 100
-                if total_co2e_combined != 0
-                else 0
+                safe_divide(scope_data["total_co2e"], total_co2e_combined) * 100
             )
             # Convert the combined scopes back to a list if necessary
             combined_scopes_list = list(combined_scopes.values())
@@ -781,11 +779,11 @@ def get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annua
     for annual, contextual in zip(local_annual_response, local_contextual_response):
         local_response_data.append(
             {
-                "ratio_of_annual_total_compensation": get_decimal(
-                    get_decimal(annual["Q1"]) / get_decimal(annual["Q2"])
+                "ratio_of_annual_total_compensation": safe_divide(
+                    get_decimal(annual["Q1"]), get_decimal(annual["Q2"])
                 ),
-                "ratio_of_percentage_increase_in_annual_total_compensation": get_decimal(
-                    get_decimal(contextual["Q1"]) / get_decimal(contextual["Q2"])
+                "ratio_of_percentage_increase_in_annual_total_compensation": safe_divide(
+                    get_decimal(contextual["Q1"]), get_decimal(contextual["Q2"])
                 ),
             }
         )

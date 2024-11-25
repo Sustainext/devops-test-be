@@ -8,6 +8,7 @@ from esg_report.utils import (
     collect_data_and_differentiate_by_location,
     get_data_by_raw_response_and_index,
     forward_request_with_jwt,
+    get_emission_analysis_as_per_report,
 )
 from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
@@ -20,6 +21,7 @@ from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.Serializer.ScreenTwelveSerializer import ScreenTwelveSerializer
+from common.utils.value_types import format_decimal_places
 
 
 class ScreenTwelveService:
@@ -172,13 +174,27 @@ class ScreenTwelveService:
 
     def get_301_123_collect(self):
         slugs = [self.slugs[0], self.slugs[1], self.slugs[2]]
-        data_points = self.data_points.filter(path__slug__in=slugs)
+        emission_analysis_objects = get_emission_analysis_as_per_report(
+            report=self.report
+        )
+        slugs_dict = {
+            "Scope-1": "gri-environment-emissions-301-a-scope-1",
+            "Scope-2": "gri-environment-emissions-301-a-scope-2",
+            "Scope-3": "gri-environment-emissions-301-a-scope-3",
+        }
         slug_data = defaultdict(list)
-        for slug in slugs:
-            response_data = defaultdict(list)
-            for data_point in data_points.filter(path__slug=slug):
-                response_data[data_point.data_metric.name] = data_point.value
-            slug_data[slug] = response_data
+        for emission_analyse_object in emission_analysis_objects:
+            slug_data[slugs_dict[emission_analyse_object.scope]].append(
+                {
+                    "category": emission_analyse_object.category,
+                    "subcategory": emission_analyse_object.subcategory,
+                    "activity": emission_analyse_object.activity,
+                    "activity_value": format_decimal_places(
+                        emission_analyse_object.consumption
+                    ),
+                    "activity_unit": emission_analyse_object.unit,
+                }
+            )
         return slug_data
 
     def get_301_123_analyse(self):
@@ -190,7 +206,7 @@ class ScreenTwelveService:
         top_emission_by_scope, top_emission_by_source, top_emission_by_location = (
             get_top_emission_by_scope(
                 locations=locations,
-                user=self.request.user,
+                user=self.report.user,
                 start=self.report.start_date,
                 end=self.report.end_date,
                 path_slug={

@@ -1,5 +1,6 @@
 from datametric.models import DataPoint
 from collections import defaultdict
+from common.utils.value_types import safe_divide
 
 
 def get_data(year, client_id, filter_by):
@@ -33,7 +34,7 @@ def get_social_data(data_points):
     total_new_suppliers = new_supplier_data["total_new_suppliers"]
     total_suppliers = new_supplier_data["total_suppliers"]
     new_supplier_data["percentage"] = (
-        (total_new_suppliers / total_suppliers) * 100 if total_suppliers > 0 else 0
+        safe_divide(total_new_suppliers, total_suppliers) * 100
     )
 
     return new_supplier_data
@@ -57,14 +58,16 @@ def get_pos_data(data_points):
     total_number_of_suppliers_assessed = pos["total_number_of_suppliers_assessed"]
 
     pos["percentage_negative"] = (
-        (total_number_of_negative_suppliers / total_number_of_suppliers_assessed) * 100
-        if total_number_of_suppliers_assessed > 0
-        else 0
+        safe_divide(
+            total_number_of_negative_suppliers, total_number_of_suppliers_assessed
+        )
+        * 100
     )
     pos["percentage_improved"] = (
-        (total_number_of_improved_suppliers / total_number_of_suppliers_assessed) * 100
-        if total_number_of_suppliers_assessed > 0
-        else 0
+        safe_divide(
+            total_number_of_improved_suppliers, total_number_of_suppliers_assessed
+        )
+        * 100
     )
 
     return pos
