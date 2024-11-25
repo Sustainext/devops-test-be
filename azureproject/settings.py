@@ -325,8 +325,7 @@ MEDIA_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
 
 AUTH_USER_MODEL = "authentication.CustomUser"
 
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", False)
-print(f"DEVELOPMENT_MODE: {DEVELOPMENT_MODE}")
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", False) == "True"
 
 FIXTURE_DIRS = [
     BASE_DIR / "fixtures",
