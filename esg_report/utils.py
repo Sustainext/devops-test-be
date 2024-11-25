@@ -545,7 +545,16 @@ def management_materiality_topics_common_code(dps, org_or_corp_name):
 
 
 def get_management_materiality_topics(report: Report, path):
-
+    """
+    This is specifically designed to get the Management Materiality Topics.
+    It assumes that every Management Materiality Topic contains the data points
+    with the metrics names : GRI33cd and GRI33e
+    If only Organization is selected for reporting, then we check the organization
+    for the data points, if no data is available, we check and return all the
+    data for the corresponding corporate entites.
+    If the Organization and Corporate is selected for reporting, then we check the
+    organization and corporate.
+    """
     year = get_maximum_months_year(report)
 
     mmt_dps = DataPoint.objects.filter(
