@@ -94,7 +94,17 @@ class DiversityAndInclusionAnalyse(APIView):
                     ),
                     "percentage_of_employees_in_minority_group": safe_divide_percentage(
                         int(category_data["minorityGroup"]),
+                        (
+                            int(category_data["vulnerableCommunities"])
+                            + int(category_data["minorityGroup"])
+                        ),
+                    ),
+                    "percentage_of_employees_in_vulnerable_communities": safe_divide_percentage(
                         int(category_data["vulnerableCommunities"]),
+                        (
+                            int(category_data["vulnerableCommunities"])
+                            + int(category_data["minorityGroup"])
+                        ),
                     ),
                 }
             )
