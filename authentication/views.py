@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from sustainapp.models import Organization, Corporateentity, Location
 from django.http import JsonResponse
 from authentication.Permissions.isSuperuserAndClientAdmin import (
-    superuser_and_client_admin_required,
+    SuperuserAndClientAdminRequired,
 )
 from rest_framework.decorators import api_view, permission_classes
 
@@ -22,7 +22,7 @@ def password_reset_confirm_redirect(request, uidb64, token):
 
 
 @api_view(["GET"])
-@permission_classes([superuser_and_client_admin_required])
+@permission_classes([SuperuserAndClientAdminRequired])
 def get_orgs_by_client(request, client_id):
     orgs = Organization.objects.filter(client_id=client_id)
     data = list(orgs.values("id", "name"))
@@ -30,7 +30,7 @@ def get_orgs_by_client(request, client_id):
 
 
 @api_view(["GET"])
-@permission_classes([superuser_and_client_admin_required])
+@permission_classes([SuperuserAndClientAdminRequired])
 def get_corps_by_orgs(request):
     org_ids = request.GET.getlist("org_ids")
     corps = Corporateentity.objects.filter(organization_id__in=org_ids).values(
@@ -40,7 +40,7 @@ def get_corps_by_orgs(request):
 
 
 @api_view(["GET"])
-@permission_classes([superuser_and_client_admin_required])
+@permission_classes([SuperuserAndClientAdminRequired])
 def get_locs_by_corps(request):
     corp_ids = request.GET.getlist("corp_ids")
     locs = Location.objects.filter(corporateentity_id__in=corp_ids).values("id", "name")

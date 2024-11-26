@@ -23,7 +23,7 @@ class IsAdmin(permissions.BasePermission):
         )
 
 
-class superuser_and_client_admin_required(permissions.BasePermission):
+class SuperuserAndClientAdminRequired(permissions.BasePermission):
     """
     Decorator for views that checks if the user is a superuser or a client admin.
     """
