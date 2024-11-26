@@ -6,9 +6,11 @@ from sustainapp.models import (
     Organization,
     Corporateentity,
     Location,
+    Userorg,
 )
 from authentication.models import CustomUser, Client, UserSafeLock
 from django.conf import settings
+from django.db import transaction
 
 
 @receiver(post_save, sender=CustomUser)
@@ -96,6 +98,16 @@ def create_user_safelock(sender, instance, created, **kwargs):
     if created:
         safe_lock, _ = UserSafeLock.objects.get_or_create(user=instance)
         safe_lock.save()
+
+        # Delay the handling of orgs until after the transaction commits
+        transaction.on_commit(lambda: handle_user_orgs(instance))
+
+
+def handle_user_orgs(instance):
+    userorg, _ = Userorg.objects.get_or_create(user=instance, client=instance.client)
+    if instance.orgs.exists():
+        userorg.organization.set(instance.orgs.all())
+    userorg.save()
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
