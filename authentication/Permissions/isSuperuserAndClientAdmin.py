@@ -21,3 +21,14 @@ class IsAdmin(permissions.BasePermission):
                 or user.is_client_admin  # Check if the user has the is_client_admin flag
             )
         )
+
+
+class superuser_and_client_admin_required(permissions.BasePermission):
+    """
+    Decorator for views that checks if the user is a superuser or a client admin.
+    """
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and (
+            request.user.is_superuser or request.user.is_client_admin
+        )

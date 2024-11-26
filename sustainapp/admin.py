@@ -103,6 +103,12 @@ class UserorgAdmin(admin.ModelAdmin):
 
     list_display = ["id", "user"]
 
+    class Media:
+        js = (
+            "https://code.jquery.com/jquery-3.6.0.min.js",
+            "sustainapp/js/filter_orgs.js",
+        )
+
 
 class SdgAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "Image", "Target_no", "goal_no"]

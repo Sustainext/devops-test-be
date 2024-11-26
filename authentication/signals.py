@@ -107,8 +107,6 @@ def handle_user_orgs(instance):
     userorg, _ = Userorg.objects.get_or_create(user=instance, client=instance.client)
     if instance.orgs.exists():
         userorg.organization.set(instance.orgs.all())
-    else:
-        print("No organizations found for the user.")
     userorg.save()
 
 

@@ -106,43 +106,29 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
-    def save_model(self, request, obj, form, change):
-        if not change:  # Only auto-set fields when adding a new user
-            obj.email = obj.username
-            obj.work_email = obj.username
-            default_password = "asdfghjkl@1234567890"
-            obj.set_password(default_password)
-        super().save_model(request, obj, form, change)
-
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        if obj:  # Editing an existing user
-            # Pre-select linked orgs, corps, and locs
-            form.base_fields["orgs"].initial = [o.id for o in obj.orgs.all()]
-            form.base_fields["corps"].initial = [c.id for c in obj.corps.all()]
-            form.base_fields["locs"].initial = [l.id for l in obj.locs.all()]
-            # Add data-selected attributes to the fields if using templates
+        if obj:
+            org_ids = obj.orgs.values_list("id", flat=True)
+            corp_ids = obj.corps.values_list("id", flat=True)
+            loc_ids = obj.locs.values_list("id", flat=True)
+
+            form.base_fields["orgs"].initial = org_ids
+            form.base_fields["corps"].initial = corp_ids
+            form.base_fields["locs"].initial = loc_ids
+
             form.base_fields["orgs"].widget.attrs["data-selected"] = ",".join(
-                str(o.id) for o in obj.orgs.all()
+                map(str, org_ids)
             )
             form.base_fields["corps"].widget.attrs["data-selected"] = ",".join(
-                str(c.id) for c in obj.corps.all()
+                map(str, corp_ids)
             )
             form.base_fields["locs"].widget.attrs["data-selected"] = ",".join(
-                str(l.id) for l in obj.locs.all()
+                map(str, loc_ids)
             )
-        if not obj:  # Only modify the form when adding a new user
+        else:
             kwargs["form"] = self.add_form
         return form
-
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name == "orgs":
-            client_id = request.POST.get("client") or request.GET.get("client")
-            if client_id:
-                kwargs["queryset"] = Organization.objects.filter(client_id=client_id)
-            else:
-                kwargs["queryset"] = Organization.objects.none()  # No client selected
-        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "client":
