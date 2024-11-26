@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from authentication.models import CustomUser
 from rest_framework.response import Response
 from rest_framework import status
-from authentication.Permissions.IsAdmin import IsAdmin
+from authentication.Permissions.isSuperuserAndClientAdmin import IsAdmin
 from django.db.models import ProtectedError
 
 
@@ -24,7 +24,7 @@ class ManageUserViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         related_fields = instance._meta.get_fields()
-        
+
         try:
             return super().perform_destroy(instance)
         except ProtectedError as e:
@@ -32,5 +32,5 @@ class ManageUserViewSet(viewsets.ModelViewSet):
             protected_objects = e.protected_objects
             for protected_obj in protected_objects:
                 protected_obj.delete()
-                        
+
         return super().perform_destroy(instance)

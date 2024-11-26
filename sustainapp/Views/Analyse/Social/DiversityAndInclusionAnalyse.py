@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from datametric.utils.analyse import (
-    set_locations_data,
     filter_by_start_end_dates,
     safe_divide_percentage,
     get_raw_response_filters,
@@ -23,7 +22,6 @@ class DiversityAndInclusionAnalyse(APIView):
     permission_classes = [IsAuthenticated]
 
     slugs = [
-        "gri-social-diversity_of_board-405-1a-number_of_individuals",
         "gri-social-diversity_of_board-405-1b-number_of_employee",
         "gri-social-salary_ratio-405-2a-number_of_individuals",
         "gri-social-salary_ratio-405-2a-ratio_of_remuneration",
@@ -66,10 +64,9 @@ class DiversityAndInclusionAnalyse(APIView):
         )
 
     def get_diversity_of_the_board(self, slug):  # 405-1
-        local_raw_response = (
-            self.raw_response.only("data").filter(path__slug=slug).first()
+        local_data = collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=slug)
         )
-        local_data = local_raw_response.data if local_raw_response is not None else []
         local_response = list()
         for category_data in local_data:
             local_response.append(
@@ -97,82 +94,21 @@ class DiversityAndInclusionAnalyse(APIView):
                     ),
                     "percentage_of_employees_in_minority_group": safe_divide_percentage(
                         int(category_data["minorityGroup"]),
+                        (
+                            int(category_data["vulnerableCommunities"])
+                            + int(category_data["minorityGroup"])
+                        ),
+                    ),
+                    "percentage_of_employees_in_vulnerable_communities": safe_divide_percentage(
                         int(category_data["vulnerableCommunities"]),
+                        (
+                            int(category_data["vulnerableCommunities"])
+                            + int(category_data["minorityGroup"])
+                        ),
                     ),
                 }
             )
         return local_response
-
-    def get_diversity_of_the_individuals(self, slug):
-        data_points = self.data_points.filter(path__slug=slug).order_by("index")
-        location_wise_data = collect_data_segregated_by_location(data_points)
-        response_data = []
-        for data in location_wise_data:
-            response_dict = {}
-            for item in data:
-                for key, value in item.items():
-                    if key != "category":
-                        if key in response_dict:
-                            response_dict[key] += int(value)
-                        else:
-                            response_dict[key] = int(value)
-            calculation_dict = {}
-            # Calculating percentages
-            if response_dict["totalGender"] > 0:
-                calculation_dict["male_percentage"] = (
-                    safe_divide(response_dict["male"], response_dict["totalGender"])
-                    * 100
-                )
-                calculation_dict["female_percentage"] = (
-                    safe_divide(response_dict["female"], response_dict["totalGender"])
-                    * 100
-                )
-                calculation_dict["nonBinary_percentage"] = (
-                    safe_divide(
-                        response_dict["nonBinary"], response_dict["totalGender"]
-                    )
-                    * 100
-                )
-
-            if response_dict["totalAge"] > 0:
-                calculation_dict["lessThan30_percentage"] = (
-                    safe_divide(response_dict["lessThan30"], response_dict["totalAge"])
-                    * 100
-                )
-                calculation_dict["between30and50_percentage"] = (
-                    safe_divide(
-                        response_dict["between30and50"], response_dict["totalAge"]
-                    )
-                    * 100
-                )
-                calculation_dict["moreThan50_percentage"] = (
-                    safe_divide(
-                        response_dict["moreThan50"],
-                        response_dict["totalAge"],
-                    )
-                    * 100
-                )
-
-            # Calculating minority group percentage
-            total_minority_and_vulnerable = (
-                response_dict["minorityGroup"] + response_dict["vulnerableCommunities"]
-            )
-            if total_minority_and_vulnerable > 0:
-                calculation_dict["minorityGroup_percentage"] = (
-                    safe_divide(
-                        response_dict["minorityGroup"], total_minority_and_vulnerable
-                    )
-                    * 100
-                )
-                calculation_dict["vulnerableCommunities_percentage"] = (
-                    safe_divide(
-                        response_dict["vulnerableCommunities"],
-                        total_minority_and_vulnerable,
-                    )
-                    * 100
-                )
-            response_data.append(response_dict)
-        return response_data
 
     def get_salary_ration(self, slug):  # 405-2
         local_raw_response = (
@@ -192,20 +128,14 @@ class DiversityAndInclusionAnalyse(APIView):
         self.set_raw_responses()
         self.set_data_points()
         response_data = {
-            "percentage_of_employees_within_government_bodies": self.get_diversity_of_the_board(
-                self.slugs[0]
-            ),
             "number_of_employee_per_employee_category": self.get_diversity_of_the_board(
-                self.slugs[1]
+                self.slugs[0]
             ),
             "ratio_of_basic_salary_of_women_to_men": self.get_salary_ration(
-                self.slugs[2]
+                self.slugs[1]
             ),
             "ratio_of_remuneration_of_women_to_men": self.get_salary_ration(
-                self.slugs[3]
-            ),
-            "diversity_of_the_individuals": self.get_diversity_of_the_individuals(
-                self.slugs[0]
+                self.slugs[2]
             ),
         }
 
