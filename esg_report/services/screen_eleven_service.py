@@ -65,6 +65,7 @@ class ScreenElevenService:
             35: "gri_collect_risks_and_opportunities_management_material_topic",  # 11.3.1
             36: "gri_collect_tax_management_material_topic",  # 11.4.1
             37: "gri_collect_anti_corruption_management_material_topic",  # 11.5.1
+            38: "gri_collect_lobbying_political_influence_management_material_topic",  # 11.6.1
         }
 
     def set_data_points(self):
@@ -550,17 +551,20 @@ class ScreenElevenService:
         response_data["3-3cde_11-1-1"] = get_management_materiality_topics(
             self.report, self.slugs[33]
         )
-        response_data["3-3cde_11-1-2"] = get_management_materiality_topics(
+        response_data["3-3cde_11-2-1"] = get_management_materiality_topics(
             self.report, self.slugs[34]
         )
-        response_data["3-3cde_11-1-3"] = get_management_materiality_topics(
+        response_data["3-3cde_11-3-1"] = get_management_materiality_topics(
             self.report, self.slugs[35]
         )
-        response_data["3-3cde_11-1-4"] = get_management_materiality_topics(
+        response_data["3-3cde_11-4-1"] = get_management_materiality_topics(
             self.report, self.slugs[36]
         )
-        response_data["3-3cde_11-1-5"] = get_management_materiality_topics(
+        response_data["3-3cde_11-5-1"] = get_management_materiality_topics(
             self.report, self.slugs[37]
+        )
+        response_data["3-3cde_11-6-1"] = get_management_materiality_topics(
+            self.report, self.slugs[38]
         )
         return response_data
 
