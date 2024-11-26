@@ -38,10 +38,11 @@ class CustomUserCreationForm(UserCreationForm):
         email = cleaned_data.get("email")
         work_email = cleaned_data.get("work_email")
 
-        if email != work_email or username != email:
-            raise forms.ValidationError(
-                "Username, Email, and Work Email must be the same."
-            )
+        if username and email and work_email:
+            if email != work_email or username != email:
+                raise forms.ValidationError(
+                    "Username, Email, and Work Email must be the same."
+                )
 
         return cleaned_data
 
