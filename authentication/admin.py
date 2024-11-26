@@ -106,6 +106,12 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.email = obj.username
+            obj.work_email = obj.username
+        super().save_model(request, obj, form, change)
+
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
         if obj:
