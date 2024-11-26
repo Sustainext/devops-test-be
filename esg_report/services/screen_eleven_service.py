@@ -7,6 +7,7 @@ from esg_report.utils import (
     collect_data_by_raw_response_and_index,
     collect_data_and_differentiate_by_location,
     forward_request_with_jwt,
+    get_management_materiality_topics,
 )
 from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
     CommunicationTrainingAnalyzeView,
@@ -59,6 +60,11 @@ class ScreenElevenService:
             30: "gri-economic_confirmed_incidents_of_corruption_and_actions_taken-205-3c-s3",
             31: "gri-economic-public_legal_cases-205-3d",
             32: "gri-economic-climate_realted_opportunities-202-2a-report",
+            33: "gri_collect_economic_performance_management_material_topic",  # 11.1.1
+            34: "gri_collect_indirect_economic_impacts_management_material_topic",  # 11.2.1
+            35: "gri_collect_risks_and_opportunities_management_material_topic",  # 11.3.1
+            36: "gri_collect_tax_management_material_topic",  # 11.4.1
+            37: "gri_collect_anti_corruption_management_material_topic",  # 11.5.1
         }
 
     def set_data_points(self):
@@ -540,6 +546,21 @@ class ScreenElevenService:
         )
         response_data["202_2a"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[32])
+        )
+        response_data["3-3cde_11-1-1"] = get_management_materiality_topics(
+            self.report, self.slugs[33]
+        )
+        response_data["3-3cde_11-1-2"] = get_management_materiality_topics(
+            self.report, self.slugs[34]
+        )
+        response_data["3-3cde_11-1-3"] = get_management_materiality_topics(
+            self.report, self.slugs[35]
+        )
+        response_data["3-3cde_11-1-4"] = get_management_materiality_topics(
+            self.report, self.slugs[36]
+        )
+        response_data["3-3cde_11-1-5"] = get_management_materiality_topics(
+            self.report, self.slugs[37]
         )
         return response_data
 
