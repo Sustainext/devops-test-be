@@ -7,6 +7,7 @@ from datametric.models import RawResponse
 from sustainapp.models import Corporateentity
 from logging import getLogger
 from collections import defaultdict
+from common.utils.value_types import safe_divide
 
 logger = getLogger("error.log")
 
@@ -43,13 +44,10 @@ class CommunicationTrainingAnalyzeView(APIView):
                             "Total number of governance body members"
                         ]
                     append_res["percentage"] = (
-                        (
-                            float(append_res["total_communicated"])
-                            / float(append_res["total_region"])
+                        safe_divide(
+                            append_res["total_communicated"], append_res["total_region"]
                         )
                         * 100
-                        if float(append_res["total_region"]) != 0
-                        else 0
                     )
                     res.append(append_res)
                 except Exception as e:
@@ -110,13 +108,11 @@ class CommunicationTrainingAnalyzeView(APIView):
                         for item in cleaned_dict[key]:
                             try:
                                 item["percentage"] = (
-                                    (
-                                        float(item["Totalnumberemployees"])
-                                        / float(item["Totalemployeeinthisregion"])
+                                    safe_divide(
+                                        float(item["Totalnumberemployees"]),
+                                        float(item["Totalemployeeinthisregion"]),
                                     )
                                     * 100
-                                    if float(item["Totalemployeeinthisregion"]) != 0
-                                    else 0
                                 )
                             except Exception as e:
                                 logger.error(

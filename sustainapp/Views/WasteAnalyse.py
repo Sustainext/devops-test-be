@@ -10,6 +10,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 from django.db.models import Prefetch
 from rest_framework import serializers
 from sustainapp.models import Location, Corporateentity
+from common.utils.value_types import safe_divide, format_decimal_places
 
 
 class GetWasteAnalysis(APIView):
@@ -102,18 +103,18 @@ class GetWasteAnalysis(APIView):
 
         # Calculate contributions
         for key, value in waste_generated_dict.items():
-            waste_generated_dict[key]["contribution"] = round(
-                ((value["total_waste"] / total_waste_generated) * 100), 2
+            waste_generated_dict[key]["contribution"] = (
+                safe_divide(value["total_waste"], total_waste_generated) * 100
             )
 
         for key, value in waste_generated_location.items():
-            waste_generated_location[key]["contribution"] = round(
-                ((value["total_waste"] / total_waste_generated) * 100), 2
+            waste_generated_location[key]["contribution"] = (
+                safe_divide(value["total_waste"], total_waste_generated) * 100
             )
 
         for key, value in waste_generated_by_category.items():
-            waste_generated_by_category[key]["contribution"] = round(
-                ((value["total_waste"] / total_waste_generated) * 100), 2
+            waste_generated_by_category[key]["contribution"] = (
+                safe_divide(value["total_waste"], total_waste_generated) * 100
             )
 
         waste_generated = list(waste_generated_dict.values())

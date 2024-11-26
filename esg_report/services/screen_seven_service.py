@@ -4,8 +4,11 @@ from esg_report.Serializer.AboutTheReportSerializer import (
 )
 from sustainapp.models import Report
 from datametric.models import RawResponse
+from esg_report.utils import get_raw_responses_as_per_report
 
 
+# TODO: We have to unify this service with report api response.
+#! Possible errors can come.
 class AboutTheReportService:
     @staticmethod
     def get_about_the_report_data(report_id, user):
@@ -40,11 +43,7 @@ class AboutTheReportService:
         ]
 
         # Retrieve raw responses based on slug and report date range
-        raw_responses = (
-            RawResponse.objects.filter(path__slug__in=slugs)
-            .filter(year__range=(report.start_date.year, report.end_date.year))
-            .filter(client=user.client)
-        )
+        raw_responses = get_raw_responses_as_per_report(report=report)
 
         # Map slug responses to response data with default handling
         response_data["2-3-a"] = (

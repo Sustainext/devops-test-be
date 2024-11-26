@@ -27,6 +27,9 @@ from authentication.models import CustomUser
 import json
 from threading import Thread
 from esg_report.utils import generate_disclosure_status
+import logging
+
+logger = logging.getLogger("user_logger")
 
 
 def convert_keys(obj):
@@ -73,13 +76,11 @@ class ESGReportPDFView(View):
 
         def get_about_the_company():
             service = ScreenTwoService(user)
-            about_the_company_service, is_new = service.fetch_about_company(
-                results["report"]
-            )
-            about_the_company = service.get_about_company_data(
-                about_the_company_service, results["report"], request
-            )
+
+            about_the_company = service.get_screen_two_data(pk, request)
+
             results["about_the_company"] = convert_keys(about_the_company)
+            logger.info(results["about_the_company"])
 
         def get_mission_vision_values():
             mission_vision_values = (
@@ -94,6 +95,7 @@ class ESGReportPDFView(View):
             results["sustainability_roadmap"] = convert_keys(sustainability_roadmap)
 
         def get_awards_and_recognition():
+            # TODO: Implement raw_responses logic in this method, should be same as ScreenTwo API View.
             awards_and_recognition = (
                 AwardsAndRecognitionService.get_awards_and_recognition_by_report_id(pk)
             )
@@ -300,7 +302,7 @@ class ESGReportPDFView(View):
             "content_index_data": content_index_data,
             "pk": pk,  # Pass the report ID to the template
         }
-
+        logger.info(context)
         template_path = "esg_report.html"
         try:
             # Get the template and render HTML

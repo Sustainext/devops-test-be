@@ -1,5 +1,5 @@
 <!-- sustainability_journey.html -->
-{% if screen_ten_data %}
+{% load custom_tags%}
 <h2>10. Sustainability Journey</h2>
 {% if screen_ten_data.company_sustainability_statement %}
 <p>{{screen_ten_data.company_sustainability_statement}}</p>
@@ -51,7 +51,7 @@
             with which improvements were agreed upon as a result of assessment: 
             <span style="color: #495059;">
                 {% if screen_ten_data.gri_308_2d and screen_ten_data.gri_308_2d|length > 0 %}
-                {{ screen_ten_data.gri_308_2d.0.percentage|default:"No data available."|floatformat:6 }}
+                {{ screen_ten_data.gri_308_2d.0.percentage|default:"No data available."|round_to:2 }}
               {% else %}
                 No data available.
               {% endif %}
@@ -62,7 +62,7 @@
             whose relationship was terminated: 
             <span style="color: #495059;">
                 {% if screen_ten_data.gri_308_2e and screen_ten_data.gri_308_2e|length > 0 %}
-                    {{ screen_ten_data.gri_308_2e.0.percentage|default:"No data available."|floatformat:6 }}
+                    {{ screen_ten_data.gri_308_2e.0.percentage|default:"No data available."|round_to:2 }}
                     {% else %}
                     No data available.
                     {% endif %}
@@ -71,8 +71,8 @@
         </li>
         <li style="margin-bottom: 10px;">Number of suppliers screened using social criteria: 
             <span style="color: #495059;">
-                {% if screen_ten_data.gri_308_1a and screen_ten_data.gri_308_1a|length > 0 %}
-                    {{ screen_ten_data.gri_308_1a.0.percentage|default:"No data available."|floatformat:6 }}
+                {% if screen_ten_data.414_1a_collect and screen_ten_data.414_1a_collect|length > 0 %}
+                    {{ screen_ten_data.414_1a_collect.Q1|default:"No data available."|round_to:2 }}
                     {% else %}
                     No data available.
                     {% endif %}
@@ -81,7 +81,7 @@
         </li>
         <li style="margin-bottom: 10px;">Percentage of suppliers screened using social criteria:
             <span style="color: #495059;">
-                {{ screen_ten_data.414_1a_analyse.new_suppliers_that_were_screened_using_social_criteria.percentage|default:"No data available."|floatformat:6 }}
+                {{ screen_ten_data.414_1a_analyse.new_suppliers_that_were_screened_using_social_criteria.percentage|default:"No data available."|round_to:2 }}
             </span>
         </li>
     </ul>
@@ -107,4 +107,3 @@
         <!-- Add more rows as necessary -->
     </tbody>
 </table>
-{% endif %}

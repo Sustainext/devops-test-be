@@ -169,6 +169,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # JWT Configuration
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "EXCEPTION_HANDLER": "sustainapp.utils.custom_exception_handler",
@@ -314,9 +315,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
 DEFAULT_FILE_STORAGE = "azureproject.azure_storage.AzureMediaStorage"
 STATICFILES_STORAGE = "azureproject.azure_storage.AzureStaticStorage"
-AZURE_STORAGE_CONNECTION_STRING = os.environ.get(
-    "AZURE_STORAGE_CONNECTION_STRING"
-)
+AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 STATIC_LOCATION = "static"
 MEDIA_LOCATION = "media"
 AZURE_ACCOUNT_NAME = os.getenv("AZURE_STORAGE_ACCOUNT_NAME", None)
@@ -327,7 +326,7 @@ MEDIA_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
 
 AUTH_USER_MODEL = "authentication.CustomUser"
 
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", False)
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", False) == "True"
 
 FIXTURE_DIRS = [
     BASE_DIR / "fixtures",
@@ -342,6 +341,8 @@ if DEVELOPMENT_MODE:
     MIDDLEWARE = [
         "silk.middleware.SilkyMiddleware",
     ] + MIDDLEWARE
+    STATIC_URL = "/static/"
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 AZURE_POWERBI_USERNAME = os.environ.get("AZURE_POWERBI_USERNAME")
 AZURE_POWERBI_PASSWORD = os.environ.get("AZURE_POWERBI_PASSWORD")

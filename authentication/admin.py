@@ -10,6 +10,9 @@ from authentication.models import (
 )
 from authentication.AdminSite.ClientAdmin import client_admin_site
 from django.contrib.auth.admin import UserAdmin
+from sustainapp.models import Location, Corporateentity, Organization
+from authentication.AdminForm.CustomUserCreationForm import CustomUserCreationForm
+from django import forms
 
 
 # Register your models here.
@@ -39,18 +42,27 @@ class LoginCounterAdmin(admin.ModelAdmin):
 
 
 class CustomUserAdmin(UserAdmin):
+    add_form = CustomUserCreationForm
     model = CustomUser
-    list_display = ["username", "email", "roles", "client", "custom_role", "is_staff"]
+    list_display = [
+        "username",
+        "email",
+        "work_email",
+        "roles",
+        "client",
+        "custom_role",
+        "is_staff",
+    ]
     list_filter = ("client", "roles")
     fieldsets = UserAdmin.fieldsets + (
         (
             "Custom Fields",
             {
                 "fields": (
-                    "roles",
                     "custom_role",
                     "is_client_admin",
                     "admin",
+                    "work_email",
                     "client",
                     "collect",
                     "analyse",
@@ -64,17 +76,78 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
-    add_fieldsets = UserAdmin.add_fieldsets + (
+    add_fieldsets = (
         (
-            "Custom Fields",
-            {"fields": ("roles", "custom_role", "is_client_admin", "admin", "client")},
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "client",
+                    "username",
+                    "first_name",
+                    "last_name",
+                    "job_title",
+                    "department",
+                    "admin",
+                    "is_client_admin",
+                    "password1",
+                    "password2",
+                    "custom_role",
+                    "collect",
+                    "analyse",
+                    "report",
+                    "track",
+                    "optimise",
+                    "orgs",
+                    "corps",
+                    "locs",
+                ),
+            },
         ),
     )
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.email = obj.username
+            obj.work_email = obj.username
+        super().save_model(request, obj, form, change)
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if obj:
+            org_ids = obj.orgs.values_list("id", flat=True)
+            corp_ids = obj.corps.values_list("id", flat=True)
+            loc_ids = obj.locs.values_list("id", flat=True)
+
+            form.base_fields["orgs"].initial = org_ids
+            form.base_fields["corps"].initial = corp_ids
+            form.base_fields["locs"].initial = loc_ids
+
+            form.base_fields["orgs"].widget.attrs["data-selected"] = ",".join(
+                map(str, org_ids)
+            )
+            form.base_fields["corps"].widget.attrs["data-selected"] = ",".join(
+                map(str, corp_ids)
+            )
+            form.base_fields["locs"].widget.attrs["data-selected"] = ",".join(
+                map(str, loc_ids)
+            )
+        else:
+            kwargs["form"] = self.add_form
+        return form
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "client":
             kwargs["initial"] = Client.get_default_client()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    class Media:
+        js = (
+            "https://code.jquery.com/jquery-3.6.0.min.js",
+            "authentication/js/filter_orgs.js",
+            "authentication/js/password_autofill.js",
+            "authentication/js/auto_set_custom_role.js",
+        )
 
 
 class UserProfileAdmin(admin.ModelAdmin):
