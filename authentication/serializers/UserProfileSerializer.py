@@ -6,6 +6,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     first_name = serializers.ReadOnlyField(source="user.first_name")
     last_name = serializers.ReadOnlyField(source="user.last_name")
+    designation = serializers.ReadOnlyField(source="user.job_title")
+    department = serializers.ReadOnlyField(source="user.department")
     user_id = serializers.ReadOnlyField(source="user.id")
 
     class Meta:
@@ -21,4 +23,3 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "profile_picture",
             "user_id",
         )
-
