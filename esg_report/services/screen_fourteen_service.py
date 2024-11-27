@@ -60,7 +60,7 @@ class ScreenFourteenService:
             self.data_points.filter(path__slug=self.slugs[0])
         )
         response_data["413_1a_analyse"] = self.get_413_1a()
-        response_data["3_3cde"] = (
+        response_data["3_c_d_e_in_material_topics"] = (
             # None  # TODO: Complete when materiality assessment screen is ready.
             get_management_materiality_topics(self.report, self.slugs[1])
         )
