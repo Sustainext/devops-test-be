@@ -83,6 +83,14 @@ class FieldValidationView(APIView):
         ]
 
     def get(self, request, report_id):
+        """Handle GET request to validate fields.
+        Checked if the report exists.
+        checks If model has data related to  the report.
+        If the model has data related to the report, it filters the data based on the JSON fields.
+        It then processes the results and formats them for the response.
+        If the model does not have data related to the report, it returns dummy responses.
+        """
+
         # if not Report.objects.filter(id=report_id).exists():
         #     return Response({"error": "Report not found"}, status=404)
 
