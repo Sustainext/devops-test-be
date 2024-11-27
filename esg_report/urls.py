@@ -17,6 +17,7 @@ from esg_report.Views.ScreenFourteen import ScreenFourteenAPIView
 from esg_report.Views.EsgReportPDF import ESGReportPDFView
 from esg_report.Views.ScreenFifteen import ScreenFifteenAPIView
 from esg_report.Views.ContentIndex import GetContentIndex, StatementOfUseAPI
+from esg_report.Views.FieldValidation import FieldValidationView
 
 router = DefaultRouter()
 
@@ -107,6 +108,10 @@ urlpatterns = [
         StatementOfUseAPI.as_view(),
         name="statement_of_use",
     ),
-
+    path(
+        "get_field_validation/<int:report_id>/",
+        FieldValidationView.as_view(),
+        name="get_field_validation",
+    ),
 ]
 urlpatterns += router.urls
