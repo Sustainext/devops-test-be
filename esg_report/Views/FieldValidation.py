@@ -13,6 +13,7 @@ from esg_report.models.ScreenTwelve import ScreenTwelve
 from esg_report.models.ScreenThirteen import ScreenThirteen
 from esg_report.models.ScreenFourteen import ScreenFourteen
 from esg_report.models.ScreenFifteen import ScreenFifteenModel
+from esg_report.Views.DummyValidationResponse import dummy_response_data
 from rest_framework.views import APIView
 from django.db.models import Q
 from rest_framework.response import Response
@@ -86,27 +87,7 @@ class FieldValidationView(APIView):
         #     return Response({"error": "Report not found"}, status=404)
 
         combined_results = []
-        dummy_responses = {
-            "screen_one": [
-                {
-                    "page": "screen_one",
-                    "label": "Default Message from CEO",
-                    "subLabel": "This is a default response for screen one.",
-                    "type": "richTextarea",
-                    "content": "",
-                }
-            ],
-            "screen_two": [
-                {
-                    "page": "screen_two",
-                    "label": "Default About the Company",
-                    "subLabel": "This is a default response for screen two.",
-                    "type": "richTextarea",
-                    "content": "",
-                }
-            ],
-            # Add default responses for other screens as needed
-        }
+        dummy_responses = dummy_response_data
 
         screens = {
             "screen_one": {
@@ -175,13 +156,13 @@ class FieldValidationView(APIView):
             model = screen_data["model"]
             json_fields = screen_data["fields"]
 
-            results = self.filter_screen_data(model, report_id, json_fields)
-            if results.exists():
-                combined_results.extend(
-                    self.process_screen_results(results, json_fields)
-                )
+            if model.objects.filter(report__id=report_id).exists():
+                results = self.filter_screen_data(model, report_id, json_fields)
+                if results.exists():
+                    combined_results.extend(
+                        self.process_screen_results(results, json_fields)
+                    )
             else:
-                # Add dummy response if no data exists
                 if screen_name in dummy_responses:
                     combined_results.extend(dummy_responses[screen_name])
 
