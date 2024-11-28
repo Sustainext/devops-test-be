@@ -92,7 +92,7 @@ class CustomerHealthAnalyzeView(APIView):
                 "number_of_products_category": temp_req_data_2["Q2"],
                 "number_of_products_category_imporved": temp_req_data_2["Q3"],
                 "percentage": (
-                    safe_divide(int(temp_req_data_2["Q3"]) / int(temp_req_data_2["Q2"]))
+                    safe_divide(int(temp_req_data_2["Q3"]),int(temp_req_data_2["Q2"]))
                     * 100
                 ),
             }
