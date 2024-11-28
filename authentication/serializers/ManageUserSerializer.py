@@ -107,6 +107,13 @@ class ManageUserSerializer(serializers.ModelSerializer):
         if custom_role is not None:
             instance.custom_role = custom_role
 
+        if custom_role.name == "Admin":
+            instance.admin = True
+        elif custom_role.name == "Manager":
+            instance.admin = False
+        else:
+            instance.admin = False
+
         # Save the instance after updating
         instance.save()
 
