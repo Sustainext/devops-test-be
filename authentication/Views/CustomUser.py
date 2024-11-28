@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from authentication.serializers.CustomUserSerializer import CustomUserSerializer
 from authentication.serializers.CustomUserListSerializer import CustomUserListSerializer
 from sustainapp.models import Userorg, Organization
+from django.db import IntegrityError
 
 CustomUser = get_user_model()
 
@@ -25,37 +26,24 @@ class CreateCustomUserView(APIView):
             user = serializer.save()
 
             # Set additional fields
-            user.client = request.user.client
+            user.client = request.user.clien
             user.is_client_admin = False
-            user.admin = False
 
             # Validate and set roles: only "manager" or "employee" are allowed
             allowed_roles = ["manager", "employee"]
             user.roles = mutable_data.get("roles", "employee")
             if user.roles not in allowed_roles:
                 user.roles = "employee"
-
             user.save()
             # Add a new email address to user.emailaddress_set
             email_address = user.emailaddress_set.create(
-                email=mutable_data.get(
-                    "email"
-                ),  # Assuming 'email' is in the request data
-                primary=True,  # Set the email as the primary email
-                verified=True,  # Initially set as unverified
+                email=mutable_data.get("email"),
+                primary=True,
+                verified=True,
             )
-            if organization_ids:
-                # Create or retrieve Userorg instance
-                userorg, created = Userorg.objects.get_or_create(
-                    user=user, client=user.client
-                )
-
-                # Fetch organizations based on provided IDs
-                organizations = Organization.objects.filter(id__in=organization_ids)
-
-                # Link organizations to the Userorg instance
-                userorg.organization.set(organizations)
-                userorg.save()
+            user_org = Userorg.objects.get(user=user)
+            user_org.client = request.user.client
+            user_org.save()
 
             return Response(
                 {"message": "User Created Successfully"}, status=status.HTTP_201_CREATED
