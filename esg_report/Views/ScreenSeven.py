@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.utils import get_raw_responses_as_per_report
 
+
 class ScreenSevenAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -44,33 +45,39 @@ class ScreenSevenAPIView(APIView):
         raw_responses = get_raw_responses_as_per_report(report)
         response_data["2-3-a"] = (
             raw_responses.filter(path__slug=slugs[0]).order_by("year").first().data[0]
-            if raw_responses.filter(path__slug=slugs[0]).order_by("year").first() is not None
+            if raw_responses.filter(path__slug=slugs[0]).order_by("year").first()
+            is not None
             else None
         )
         response_data["2-3d"] = (
             raw_responses.filter(path__slug=slugs[1]).order_by("year").first().data[0]
-            if raw_responses.filter(path__slug=slugs[1]).order_by("year").first() is not None
+            if raw_responses.filter(path__slug=slugs[1]).order_by("year").first()
+            is not None
             else None
         )
         response_data["2-4-a"] = (
             raw_responses.filter(path__slug=slugs[2]).order_by("year").first().data[0]
-            if raw_responses.filter(path__slug=slugs[2]).order_by("year").first() is not None
+            if raw_responses.filter(path__slug=slugs[2]).order_by("year").first()
+            is not None
             else None
         )
         response_data["2-5-a"] = {}
         response_data["2-5-a"]["assurance-policy"] = (
             raw_responses.filter(path__slug=slugs[3]).order_by("year").first().data[0]
-            if raw_responses.filter(path__slug=slugs[3]).order_by("year").first() is not None
+            if raw_responses.filter(path__slug=slugs[3]).order_by("year").first()
+            is not None
             else None
         )
         response_data["2-5-a"]["assurance-highest"] = (
             raw_responses.filter(path__slug=slugs[4]).order_by("year").first().data[0]
-            if raw_responses.filter(path__slug=slugs[4]).order_by("year").first() is not None
+            if raw_responses.filter(path__slug=slugs[4]).order_by("year").first()
+            is not None
             else None
         )
         response_data["2-5-b"] = (
             raw_responses.filter(path__slug=slugs[5]).order_by("year").first().data[0]
-            if raw_responses.filter(path__slug=slugs[5]).order_by("year").first() is not None
+            if raw_responses.filter(path__slug=slugs[5]).order_by("year").first()
+            is not None
             else None
         )
 
@@ -85,14 +92,16 @@ class ScreenSevenAPIView(APIView):
             )
         try:
             about_the_report: AboutTheReport = report.about_the_report
-            about_the_report.delete()
+            serializer = AboutTheReportSerializer(
+                about_the_report,
+                data=request.data,
+                partial=True,
+                context={"request": request},
+            )
         except ObjectDoesNotExist:
-            # * If the About The Report does not exist, create a new one
-            pass
-
-        serializer = AboutTheReportSerializer(
-            data=request.data, context={"request": request}
-        )
+            serializer = AboutTheReportSerializer(
+                data=request.data, context={"request": request}
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         return Response(serializer.data)

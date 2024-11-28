@@ -172,12 +172,24 @@ class FieldValidationView(APIView):
             model = screen_data["model"]
             json_fields = screen_data["fields"]
 
-            if model.objects.filter(report__id=report_id).exists():
-                results = self.filter_screen_data(model, report_id, json_fields)
-                if results.exists():
-                    combined_results.extend(
-                        self.process_screen_results(results, json_fields)
-                    )
+            results = model.objects.filter(report__id=report_id)
+
+            if results.exists():
+                processed_results = self.process_screen_results(results, json_fields)
+
+                for field in json_fields:
+                    if not model.objects.filter(
+                        report__id=report_id, **{f"{field}__isnull": False}
+                    ).exists():
+                        if screen_name in dummy_responses:
+                            dummy_field_data = [
+                                d
+                                for d in dummy_responses[screen_name]
+                                if d["field"] == field
+                            ]
+                            processed_results.extend(dummy_field_data)
+
+                combined_results.extend(processed_results)
             else:
                 if screen_name in dummy_responses:
                     combined_results.extend(dummy_responses[screen_name])
