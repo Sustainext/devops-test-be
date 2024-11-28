@@ -6,7 +6,6 @@ from django.contrib.auth import get_user_model
 from authentication.serializers.CustomUserSerializer import CustomUserSerializer
 from authentication.serializers.CustomUserListSerializer import CustomUserListSerializer
 from sustainapp.models import Userorg, Organization
-from django.db import IntegrityError
 
 CustomUser = get_user_model()
 
