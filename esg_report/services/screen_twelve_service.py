@@ -9,6 +9,7 @@ from esg_report.utils import (
     get_data_by_raw_response_and_index,
     forward_request_with_jwt,
     get_emission_analysis_as_per_report,
+    get_management_materiality_topics,
 )
 from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
@@ -64,6 +65,11 @@ class ScreenTwelveService:
             32: "gri-environment-water-303-1b-1c-1d-interaction_with_water",
             33: "gri-environment-water-303-2a-profile_receiving_waterbody",
             34: "gri-environment-water-303-2a-management_water_discharge",
+            35: "gri_collect_emission_management_material_topic",  # 12.1.1
+            36: "gri_collect_water_and_effluents_management_material_topic",  # 12.3.1
+            37: "gri_collect_energy_management_material_topic",  # 12.4.1
+            38: "gri_collect_waste_management_material_topic",  # 12.5.1
+            # TODO : 12.2.1
         }
 
     def set_raw_responses(self):
@@ -278,6 +284,18 @@ class ScreenTwelveService:
         )
         response_data["301_2a"] = self.get_301_2a()
         response_data["301_3a_3b"] = self.get_301_3a_3b()
+        response_data["3-3cde_12-1-1"] = get_management_materiality_topics(
+            self.report, self.slugs[35]
+        )
+        response_data["3-3cde_12-3-1"] = get_management_materiality_topics(
+            self.report, self.slugs[36]
+        )
+        response_data["3-3cde_12-4-1"] = get_management_materiality_topics(
+            self.report, self.slugs[37]
+        )
+        response_data["3-3cde_12-5-1"] = get_management_materiality_topics(
+            self.report, self.slugs[38]
+        )
         response_data.update(
             {
                 "306_5e": get_data_by_raw_response_and_index(
