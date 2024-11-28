@@ -472,12 +472,11 @@ class WaterAnalyseByDataPoints(APIView):
             total_discharge += discharge_ml
 
         result = []
-        for (source, waterstress, watertype), discharge in groups.items():
+        for (waterstress, watertype), discharge in groups.items():
             contribution = safe_divide(discharge, total_discharge) * 100
 
             result.append(
                 {
-                    "source": source,
                     "water_stress": waterstress,
                     "water_type": watertype,
                     "total_discharge": discharge,
@@ -513,16 +512,16 @@ class WaterAnalyseByDataPoints(APIView):
             total_discharge += discharge_ml
 
         result = []
-        for (source, waterstress, watertype), discharge in groups.items():
+        for (business_operation, waterstress), discharge in groups.items():
             contribution = safe_divide(discharge, total_discharge) * 100
 
             result.append(
                 {
-                    "source": source,
                     "water_stress": waterstress,
-                    "water_type": watertype,
+                    "business_operation": business_operation,
                     "total_discharge": discharge,
                     "contribution": format_decimal_places(contribution),
+                    "unit": "Megalitre",
                 }
             )
         return result
@@ -580,7 +579,11 @@ class WaterAnalyseByDataPoints(APIView):
                     "volume": self.convert_to_megalitres(
                         entry["Volume"], entry["Unit"]
                     ),
-                    "contribution": safe_divide(entry["volume"], total_volume) * 100,
+                    "contribution": safe_divide(
+                        self.convert_to_megalitres(entry["Volume"], entry["Unit"]),
+                        total_volume,
+                    )
+                    * 100,
                     "Unit": "Megalitre",
                 }
             )
@@ -677,7 +680,7 @@ class WaterAnalyseByDataPoints(APIView):
         for entry in data:
             result.append(
                 {
-                    "Unit": entry["Unit"],
+                    "Unit": "Megalitre",
                     "change_in_water_storage": self.convert_to_megalitres(
                         entry["Reporting1"], entry["Unit"]
                     )
