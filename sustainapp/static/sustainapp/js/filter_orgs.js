@@ -4,9 +4,6 @@
     let currentClientId = $("#id_client").val();
     console.log("Initial client ID:", currentClientId);
 
-    // Ensure no change event is fired programmatically on initial load
-    let preventProgrammaticChange = true;
-
     // Function to populate organizations based on selected client
     function populateOrganizations(clientId, clearSelected = false) {
       console.log("Populating organizations for client:", clientId);
@@ -28,13 +25,21 @@
         success: function (data) {
           console.log("Organizations fetched successfully:", data);
 
-          // Retrieve preselected organizations only if clearSelected is false
+          // Retrieve preselected organizations
           var orgSelect = $("#id_organization");
           var selectedOrgs = clearSelected
             ? [] // Clear selection if the client changes
             : orgSelect.data("selected") // Use preselected values if available
-            ? orgSelect.data("selected").toString().split(",")
+            ? orgSelect.data("selected").toString().split(",") // Convert to array
             : [];
+
+          console.log("Preselected organization IDs:", selectedOrgs);
+
+          // Temporary map to retain current selection
+          let currentSelection = {};
+          orgSelect.find("option:selected").each(function () {
+            currentSelection[$(this).val()] = true; // Store currently selected orgs
+          });
 
           // Clear existing options
           orgSelect.empty();
@@ -42,8 +47,11 @@
           // Populate new options
           data.orgs.forEach(function (org) {
             var option = $("<option>").val(org.id).text(org.name);
-            if (selectedOrgs.includes(org.id.toString())) {
-              option.prop("selected", true); // Set selected if preselected
+
+            // Check both preselected IDs and temporary current selection
+            if (selectedOrgs.includes(org.id.toString()) || currentSelection[org.id]) {
+              option.prop("selected", true); // Retain selected state
+              console.log("Preselecting organization:", org.name);
             }
             orgSelect.append(option);
           });
@@ -61,11 +69,11 @@
       });
     }
 
-    // Populate organizations if a client is pre-selected on page load
-    if (currentClientId && !preventProgrammaticChange) {
-      populateOrganizations(currentClientId); // Load with preselected values
+    // Populate organizations for the initial client ID on page load
+    if (currentClientId) {
+      console.log("Fetching organizations for initial client ID:", currentClientId);
+      populateOrganizations(currentClientId); // Fetch and render organizations
     }
-    preventProgrammaticChange = false;
 
     // Populate organizations on client change
     $("#id_client").change(function () {

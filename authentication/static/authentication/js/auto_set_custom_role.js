@@ -10,7 +10,7 @@
       var trackSelect = $("#id_track");
       var optimizeSelect = $("#id_optimise");
 
-      var roleName = isClientAdminChecked ? "ClientAdmin" : isAdminChecked ? "Admin" : "Employee";
+      var roleName = isClientAdminChecked ? "ClientAdmin" : isAdminChecked ? "Admin" : roleName;
 
       customRoleSelect.find("option").each(function () {
         if ($(this).text() === roleName) {
@@ -28,9 +28,9 @@
         customRoleSelect.prop("disabled", false);
         collectSelect.prop("disabled", false);
         analyzeSelect.prop("disabled", false);
-        reportSelect.prop("disabled", false).prop("checked", false);
-        trackSelect.prop("disabled", false).prop("checked", false);
-        optimizeSelect.prop("disabled", false).prop("checked", false);
+        reportSelect.prop("disabled", false);
+        trackSelect.prop("disabled", false);
+        optimizeSelect.prop("disabled", false);
       }
     }
 
