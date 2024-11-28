@@ -25,7 +25,7 @@ class CreateCustomUserView(APIView):
             user = serializer.save()
 
             # Set additional fields
-            user.client = request.user.clien
+            user.client = request.user.client
             user.is_client_admin = False
 
             # Validate and set roles: only "manager" or "employee" are allowed
