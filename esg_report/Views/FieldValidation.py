@@ -35,6 +35,7 @@ class FieldValidationView(APIView):
             [
                 Q(**{f"{field}__content__isnull": True})
                 | Q(**{f"{field}__content": ""})
+                | Q(**{f"{field}__isSkipped": False})
                 for field in json_fields
             ],
         )
@@ -60,8 +61,13 @@ class FieldValidationView(APIView):
         for result in results:
             for field in json_fields:
                 field_data = getattr(result, field, None)
-                if field_data and (
-                    field_data.get("content") is None or field_data.get("content") == ""
+                if (
+                    field_data
+                    and field_data.get("isSkipped") == False
+                    and (
+                        field_data.get("content") is None
+                        or field_data.get("content") == ""
+                    )
                 ):
                     formatted_results.append(
                         {
@@ -70,6 +76,8 @@ class FieldValidationView(APIView):
                             "subLabel": field_data.get("subLabel", ""),
                             "type": field_data.get("type", ""),
                             "content": field_data.get("content", ""),
+                            "field": field_data.get("field", ""),
+                            "isSkipped": field_data.get("isSkipped", ""),
                         }
                     )
         return formatted_results
