@@ -77,6 +77,11 @@ class Command(BaseCommand):
                 "name": "SUSTAINALYTICS",
                 "Image": "images/rating/SUSTAINALYTICS.png",
             },
+            {
+                "id": 4,
+                "name": "ECOVADIS",
+                "Image": "images/rating/ecovadis-vector.png",
+            },
         ]
         for rating in ratings:
             Rating.objects.update_or_create(id=rating["id"], defaults=rating)
@@ -91,6 +96,7 @@ class Command(BaseCommand):
                 "Image": "images/regulation/Bill_S-211.png",
             },
             {"id": 4, "name": "GHGRP", "Image": "images/regulation/GHGRP.png"},
+            {"id": 5, "name": "B-BBEE", "Image": "images/regulation/BBBEE.png"},
         ]
         for regulation in regulations:
             Regulation.objects.update_or_create(
