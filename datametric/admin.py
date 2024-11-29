@@ -70,7 +70,8 @@ class DataPointAdmin(admin.ModelAdmin):
         "year",
         "month",
     )
-    search_fields = ["path__slug"]
+    search_fields = ["path__slug", "metric_name", "raw_response__id", "index"]
+    list_filter = ("index",)
 
 
 admin.site.register(DataPoint, DataPointAdmin)
