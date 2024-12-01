@@ -17,8 +17,6 @@ from esg_report.Views.DummyValidationResponse import dummy_response_data
 from rest_framework.views import APIView
 from django.db.models import Q
 from rest_framework.response import Response
-from sustainapp.models import Report
-from collections import defaultdict
 from functools import reduce
 from operator import or_
 from django.db.models import JSONField
@@ -63,7 +61,7 @@ class FieldValidationView(APIView):
                 field_data = getattr(result, field, None)
                 if (
                     field_data
-                    and field_data.get("isSkipped") == False
+                    and not field_data.get("isSkipped")
                     and (
                         field_data.get("content") is None
                         or field_data.get("content") == ""

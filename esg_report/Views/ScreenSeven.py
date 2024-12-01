@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from esg_report.models.ScreenSeven import AboutTheReport
 from sustainapp.models import Report
-from datametric.models import RawResponse
 from esg_report.Serializer.AboutTheReportSerializer import (
     AboutTheReportSerializer,
 )
