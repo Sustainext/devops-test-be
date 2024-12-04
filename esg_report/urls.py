@@ -17,6 +17,7 @@ from esg_report.Views.ScreenFourteen import ScreenFourteenAPIView
 from esg_report.Views.EsgReportPDF import ESGReportPDFView
 from esg_report.Views.ScreenFifteen import ScreenFifteenAPIView
 from esg_report.Views.ContentIndex import GetContentIndex, StatementOfUseAPI
+from esg_report.Views.ContentIndexExcelAPI import ContentIndexExcelAPI
 
 router = DefaultRouter()
 
@@ -107,6 +108,10 @@ urlpatterns = [
         StatementOfUseAPI.as_view(),
         name="statement_of_use",
     ),
-
+    path(
+        "content_index_excel/<int:report_id>/",
+        ContentIndexExcelAPI.as_view(),
+        name="content_index_excel",
+    ),
 ]
 urlpatterns += router.urls
