@@ -156,6 +156,10 @@ class User_client(AbstractModel):
 
 
 class Organization(models.Model):
+    # TODO : Remove the redundant and unnecessary fields
+    # type_corporate_entity, type_of_corporate_entity
+    # employeecount, no_of_employees
+    # subindustry, sub_industry
     client = models.ForeignKey(
         Client,
         on_delete=models.CASCADE,
