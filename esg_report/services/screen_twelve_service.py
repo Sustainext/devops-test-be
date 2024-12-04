@@ -206,8 +206,8 @@ class ScreenTwelveService:
     def get_301_123_analyse(self):
         def convert_kg_to_tonne_for_emission_analysis(scope_contribution: list):
             for contribution_dict in scope_contribution:
-                contribution = contribution_dict["contribution"] / 1000
-                contribution_dict["contribution"] = contribution
+                total = contribution_dict["total"] / 1000
+                contribution_dict["total"] = total
             return scope_contribution
 
         locations = set_locations_data(
