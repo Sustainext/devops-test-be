@@ -40,14 +40,16 @@ def extract_from_diversity_employee(serialized_raw_response, **kwargs):
             "totalCareerDevelopment": 0,
         }
 
-        # if raw_response:
-        dps = DataPoint.objects.filter(**kwargs, metric_name="category").values_list(
-            "value", flat=True
+        dps = (
+            DataPoint.objects.filter(**kwargs, metric_name="category")
+            .values_list("value", flat=True)
+            .order_by("id")
         )
+        # Check if datapoints are there and if any new categories are added to employement
         if dps and serialized_raw_response.data:
             for dp in dps:
                 if dp not in categories:
-                    print(resp)
+                    # print(resp)
                     resp.append(
                         {
                             "category": dp,
@@ -55,7 +57,9 @@ def extract_from_diversity_employee(serialized_raw_response, **kwargs):
                             "careerDevelopment": "",
                         }
                     )
-            return resp
+            serialized_raw_response.data[0]["data"] = resp
+            return serialized_raw_response.data
+        # if there are datapoints but no raw response, means that we need to initilize categories
         if dps and not serialized_raw_response.data:
             for category in dps:
                 response["employeeCategories"].append(
@@ -65,6 +69,6 @@ def extract_from_diversity_employee(serialized_raw_response, **kwargs):
                         "careerDevelopment": "",
                     }
                 )
-            return response
+            return [response]
     except Exception as e:
         print(e)
