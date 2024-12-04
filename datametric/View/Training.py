@@ -68,15 +68,3 @@ def extract_from_diversity_employee(serialized_raw_response, **kwargs):
             return response
     except Exception as e:
         print(e)
-
-
-# DataPoint.objects.filter(
-#                     path__slug="gri-social-diversity_of_board-405-1b-number_of_employee",
-#                     client_id=client_instance.id,
-#                     locale=locale,
-#                     corporate=corporate,
-#                     organization=organisation,
-#                     year=year,
-#                     month=month,, metric_name="category")
-
-# http://127.0.0.1:8000/datametric/get-fieldgroups?path_slug=gri-social-diversity_of_board-405-1b-number_of_employee&client_id=1&user_id=1&location=71&year=2024&month=1
