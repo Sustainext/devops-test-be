@@ -8,6 +8,7 @@ from esg_report.utils import (
     forward_request_with_jwt,
     calling_analyse_view_with_params,
     calling_analyse_view_with_params_for_same_year,
+    get_management_materiality_topics,
 )
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.test import APIRequestFactory
@@ -108,7 +109,15 @@ class ScreenThirteenService:
             82: "gri-social-ohs-403-8a-number_of_employees",
             83: "gri-social-notice_period-402-1a-minimum",  #
             84: "gri-social-notice_period-402-1a-collective_bargaining",
+            85: "gri_collect_employment_management_material_topic",  # 13.1.1
+            86: "gri_collect_labor_management_material_topic",  # 13.2.1
+            87: "gri_collect_child_labor_management_material_topic",  # 13.3.1
+            88: "gri_collect_diversity_equal_opportunity_management_material_topic",  # 13.4.1
+            89: "gri_collect_training_and_development_management_material_topic",  # 13.5.1
+            90: "gri_collect_ohs_management_material_topic",  # 13.6.1
+            91: "gri_collect_non_discrimination_management_material_topic",  # 13.8.1
         }
+        # TODO: Add new points for 13.6.7
 
     def get_403_2a_process_for_hazard(self):
         local_raw_responses = self.raw_responses.filter(path__slug=self.slugs[34])
@@ -445,10 +454,12 @@ class ScreenThirteenService:
             report=self.report,
             request=self.request,
         )
-        response_data["408_1a_1b_analyse"] = calling_analyse_view_with_params(
-            view_url="get_child_labor_analysis",
-            report=self.report,
-            request=self.request,
+        response_data["408_1a_1b_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_child_labor_analysis",
+                report=self.report,
+                request=self.request,
+            )
         )
         response_data["406_1a"] = collect_data_and_differentiate_by_location(
             data_points=self.data_points.filter(path__slug=self.slugs[53])
@@ -601,10 +612,12 @@ class ScreenThirteenService:
                 request=self.request,
             )
         )
-        response_data["409_1a_analyse"] = calling_analyse_view_with_params(
-            view_url="get_forced_labor_analysis",
-            report=self.report,
-            request=self.request,
+        response_data["409_1a_analyse"] = (
+            calling_analyse_view_with_params_for_same_year(
+                view_url="get_forced_labor_analysis",
+                report=self.report,
+                request=self.request,
+            )
         )
         response_data["2_8_a"] = collect_data_by_raw_response_and_index(
             data_points=self.data_points.filter(path__slug=self.slugs[79])
@@ -622,6 +635,27 @@ class ScreenThirteenService:
             collect_data_and_differentiate_by_location(
                 data_points=self.data_points.filter(path__slug=self.slugs[83])
             )
+        )
+        response_data["3-3cde_13-1-1"] = get_management_materiality_topics(
+            self.report, self.slugs[85]
+        )
+        response_data["3-3cde_13-2-1"] = get_management_materiality_topics(
+            self.report, self.slugs[86]
+        )
+        response_data["3-3cde_13-3-1"] = get_management_materiality_topics(
+            self.report, self.slugs[87]
+        )
+        response_data["3-3cde_13-4-1"] = get_management_materiality_topics(
+            self.report, self.slugs[88]
+        )
+        response_data["3-3cde_13-5-1"] = get_management_materiality_topics(
+            self.report, self.slugs[89]
+        )
+        response_data["3-3cde_13-6-1"] = get_management_materiality_topics(
+            self.report, self.slugs[90]
+        )
+        response_data["3-3cde_13-8-1"] = get_management_materiality_topics(
+            self.report, self.slugs[91]
         )
         return response_data
 

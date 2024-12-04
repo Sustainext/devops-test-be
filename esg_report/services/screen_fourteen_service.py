@@ -5,6 +5,7 @@ from esg_report.utils import (
     collect_data_by_raw_response_and_index,
     collect_data_and_differentiate_by_location,
     forward_request_with_jwt,
+    get_management_materiality_topics,
 )
 from django.core.exceptions import ObjectDoesNotExist
 from sustainapp.Utilities.community_engagement_analysis import (
@@ -19,7 +20,10 @@ class ScreenFourteenService:
     def __init__(self, report_id, request):
         self.report = Report.objects.get(id=report_id)
         self.request = request
-        self.slugs = {0: "gri-social-impact_on_community-407-1a-operations"}
+        self.slugs = {
+            0: "gri-social-impact_on_community-407-1a-operations",
+            1: "gri_collect_human_rights_management_material_topic",
+        }
 
     def set_data_points(self):
         self.data_points = get_data_points_as_per_report(self.report)
@@ -56,8 +60,9 @@ class ScreenFourteenService:
             self.data_points.filter(path__slug=self.slugs[0])
         )
         response_data["413_1a_analyse"] = self.get_413_1a()
-        response_data["3_3cde"] = (
-            None  # TODO: Complete when materiality assessment screen is ready.
+        response_data["3_c_d_e_in_material_topics"] = (
+            # None  # TODO: Complete when materiality assessment screen is ready.
+            get_management_materiality_topics(self.report, self.slugs[1])
         )
         return response_data
 

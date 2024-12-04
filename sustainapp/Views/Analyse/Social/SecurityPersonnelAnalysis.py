@@ -9,6 +9,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 from datametric.utils.analyse import filter_by_start_end_dates
 from collections import defaultdict
 from logging import getLogger
+from common.utils.value_types import safe_divide
 
 logger = getLogger("error.log")
 
@@ -56,17 +57,11 @@ class SecurityPersonnelAnalysisView(APIView):
                     grouped_data.append(
                         {
                             "sp_in_org": (
-                                round((organization / securitypersonnel) * 100, 3)
-                                if securitypersonnel
-                                else 0
+                                safe_divide(organization, securitypersonnel) * 100
                             ),
                             "sp_3rd_org": (
-                                round(
-                                    (thirdpartyorganizations / securitypersonnel) * 100,
-                                    3,
-                                )
-                                if securitypersonnel
-                                else 0
+                                safe_divide(thirdpartyorganizations, securitypersonnel)
+                                * 100,
                             ),
                         }
                     )

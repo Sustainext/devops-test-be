@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
 from sustainapp.models import Corporateentity
 from logging import getLogger
+from common.utils.value_types import safe_divide
 
 logger = getLogger("error.log")
 
@@ -71,13 +72,10 @@ class MarketingLabelingAnalyzeView(APIView):
                                 ],
                                 "number_of_products_category": temp_req_data_2["Q1"],
                                 "percentage": (
-                                    (
-                                        temp_req_data_2["Q2"]
-                                        / temp_req_data_2["Q1"]
-                                        * 100
+                                    safe_divide(
+                                        temp_req_data_2["Q2"], temp_req_data_2["Q1"]
                                     )
-                                    if temp_req_data_2["Q1"] != 0
-                                    else 0
+                                    * 100
                                 ),
                             }
                         )
@@ -92,9 +90,7 @@ class MarketingLabelingAnalyzeView(APIView):
                 "number_of_products_with_procedurs": temp_req_data["Q2"],
                 "number_of_products_category": temp_req_data["Q1"],
                 "percentage": (
-                    (temp_req_data["Q2"] / temp_req_data["Q1"] * 100)
-                    if temp_req_data["Q1"] != 0
-                    else 0
+                    safe_divide(temp_req_data["Q2"], temp_req_data["Q1"]) * 100
                 ),
             }
         ]

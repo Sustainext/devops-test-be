@@ -10,9 +10,10 @@ from .serializers import (
     RawResponseSerializer,
     FieldGroupGetSerializer,
     GetClimatiqComputedSerializer,
+    UpdateFieldGroupSerializer,
 )
 from authentication.models import CustomUser, Client
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from sustainapp.models import Organization, Corporateentity, Location
 from logging import getLogger
 import traceback
@@ -73,8 +74,6 @@ class FieldGroupListView(APIView):
             resp_data["form"] = serialized_field_groups.data
             resp_data["form_data"] = serialized_raw_responses.data
 
-
-
             return Response(resp_data)
         except Exception as e:
             return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
@@ -129,7 +128,7 @@ class CreateOrUpdateFieldGroup(APIView):
             if not created:
                 # If the RawResponse already exists, update its data
                 raw_response.data = form_data
-                #? Should we also update the user field on who has latest updated the data?
+                # ? Should we also update the user field on who has latest updated the data?
                 raw_response.save()
 
             logger.info("status check")
@@ -159,7 +158,7 @@ class CreateOrUpdateFieldGroup(APIView):
             # Log detailed information about the error
             logger.error(
                 f"An unexpected error occurred in {filename} at line {line_number}: {e}",
-                exc_info=True
+                exc_info=True,
             )
             logger.debug(f"Exception type: {exc_type.__name__}")
             logger.debug(f"Stack trace: {stack_trace}")
@@ -209,10 +208,39 @@ class GetComputedClimatiqValue(APIView):
                 resp_data["result"].extend(values)
             return Response(resp_data, status=status.HTTP_200_OK)
         except Exception as e:
-            logger.error(f"Exception occurred: {e}",exc_info=True)
+            logger.error(f"Exception occurred: {e}", exc_info=True)
             return Response(
                 {
                     "message": "An unexpected error occurred for GetComputedClimatiqValue "
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class UpdateFieldGroupView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request):
+        serializer = UpdateFieldGroupSerializer(data=request.data)
+        if serializer.is_valid():
+            path_name = serializer.validated_data["path_name"]
+            field_group = FieldGroup.objects.filter(path__slug=path_name).first()
+
+            if not field_group:
+                return Response(
+                    {"error": f"FieldGroup with path name {path_name} not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            if "schema" in serializer.validated_data:
+                field_group.schema = serializer.validated_data["schema"]
+            if "ui_schema" in serializer.validated_data:
+                field_group.ui_schema = serializer.validated_data["ui_schema"]
+
+            field_group.save()
+            return Response(
+                {"message": "FieldGroup updated successfully"},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

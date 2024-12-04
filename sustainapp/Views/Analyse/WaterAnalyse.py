@@ -20,6 +20,7 @@ from collections import defaultdict
 from django.db.models.expressions import RawSQL
 from django.db.models import Q, Func, Value
 import datetime
+from common.utils.value_types import safe_divide, format_decimal_places
 
 
 class WaterAnalyse(APIView):
@@ -127,29 +128,14 @@ class WaterAnalyse(APIView):
             total_discharge = data[discharge_literal]
             total_withdrawal = data[withdrawal_literal]
             total_consumed = data[consumed_literal]
-            consumption_percentage = round(
-                (
-                    (total_consumed / complete_total_consumption) * 100
-                    if complete_total_consumption != 0
-                    else 0
-                ),
-                3,
+            consumption_percentage = (
+                safe_divide(total_consumed, complete_total_consumption) * 100
             )
-            withdrawal_percentage = round(
-                (
-                    (total_withdrawal / complete_total_withdrawal) * 100
-                    if complete_total_withdrawal != 0
-                    else 0
-                ),
-                3,
+            withdrawal_percentage = (
+                safe_divide(total_withdrawal, complete_total_withdrawal) * 100
             )
-            discharge_percentage = round(
-                (
-                    (total_discharge / complete_total_discharge) * 100
-                    if complete_total_consumption != 0
-                    else 0
-                ),
-                3,
+            discharge_percentage = (
+                safe_divide(total_discharge, complete_total_discharge) * 100
             )
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
@@ -212,13 +198,8 @@ class WaterAnalyse(APIView):
         result = []
         for group, data in grouped_data.items():
             total_withdrawal = data[withdrawal_literal]
-            withdrawal_percentage = round(
-                (
-                    (total_withdrawal / complete_total_withdrawal) * 100
-                    if complete_total_withdrawal != 0
-                    else 0
-                ),
-                3,
+            withdrawal_percentage = (
+                safe_divide(total_withdrawal, complete_total_withdrawal) * 100
             )
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
@@ -263,13 +244,8 @@ class WaterAnalyse(APIView):
         result = []
         for group, data in grouped_data.items():
             total_discharge = data[discharge_literal]
-            discharge_percentage = round(
-                (
-                    (total_discharge / complete_total_discharge) * 100
-                    if complete_total_discharge != 0
-                    else 0
-                ),
-                3,
+            discharge_percentage = (
+                safe_divide(total_discharge, complete_total_discharge) * 100
             )
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
@@ -287,7 +263,7 @@ class WaterAnalyse(APIView):
         value = float(value)
         unit = unit.lower()
         if unit in self.CONVERSION_FACTORS:
-            return value * self.CONVERSION_FACTORS[unit]
+            return format_decimal_places(value * self.CONVERSION_FACTORS[unit])
         else:
             raise ValidationError(f"Unknown unit: {unit}")
 
@@ -438,19 +414,13 @@ class WaterAnalyse(APIView):
                 total_consumption = sum(record["consumed"] for record in records)
 
                 discharge_contribution = (
-                    (total_discharge / overall_discharge) * 100
-                    if overall_discharge > 0
-                    else 0
+                    safe_divide(total_discharge, overall_discharge) * 100
                 )
                 withdrawal_contribution = (
-                    (total_withdrawal / overall_withdrawal) * 100
-                    if overall_withdrawal > 0
-                    else 0
+                    safe_divide(total_withdrawal, overall_withdrawal) * 100
                 )
                 consumption_contribution = (
-                    (total_consumption / overall_consumption) * 100
-                    if overall_consumption > 0
-                    else 0
+                    safe_divide(total_consumption, overall_consumption) * 100
                 )
 
                 result.append(
@@ -663,63 +633,3 @@ class WaterAnalyse(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-class WaterAnalyseByDataPoints(APIView):
-
-    def __init__(self):
-        super().__init__()
-        self.slugs = {
-            0: "gri-environment-water-303-1b-1c-1d-interaction_with_water",
-            1: "gri-environment-water-303-2a-management_water_discharge",
-            2: "gri-environment-water-303-2a-profile_receiving_waterbody",
-            3: "gri-environment-water-303-3a-3b-3c-3d-water_withdrawal/discharge_all_areas",
-            4: "gri-environment-water-303-4a-third_party",
-            5: "gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress",
-            6: "gri-environment-water-303-3b-water_withdrawal_areas_water_stress",
-            7: "gri-environment-water-303-4d-substances_of_concern",
-            8: "gri-environment-water-303-3d-4e-sma",
-            9: "gri-environment-water-303-5c-change_in_water_storage",
-            10: "gri-environment-water-303-5d-sma",
-        }
-
-    def get_total_water_consumption(self):
-        slug = self.slugs[3]
-        water_consumption_data = get_location_wise_dictionary_data(
-            self.data_points.filter(path__slug=slug)
-        )
-        slug = self.slugs[5]
-        water_consumption_data_with_water_stress_areas = (
-            get_location_wise_dictionary_data(
-                self.data_points.filter(path__slug=slug)
-            )
-        )
-
-        return water_consumption_data_with_water_stress_areas
-
-    def set_data_points(self):
-        self.data_points = (
-            DataPoint.objects.filter(path__slug__in=list(self.slugs.values()))
-            .filter(client_id=self.request.user.client.id)
-            .filter(
-                get_raw_response_filters(
-                    corporate=self.corporate,
-                    organisation=self.organisation,
-                    location=self.location,
-                )
-            )
-            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
-        ).order_by("locale")
-
-    def get(self, request, format=None):
-        serializer = CheckAnalysisViewSerializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-        self.start = serializer.validated_data["start"]
-        self.end = serializer.validated_data["end"]
-        self.corporate = serializer.validated_data.get(
-            "corporate"
-        )  # * This is optional
-        self.organisation = serializer.validated_data.get("organisation")
-        self.location = serializer.validated_data.get("location")  # * This is optional
-        self.set_data_points()
-        response_data = {}
-        response_data["total_water_consumption"] = self.get_total_water_consumption()
-        return Response(response_data, status=status.HTTP_200_OK)

@@ -118,17 +118,6 @@ urlpatterns = [
     path("user_org", views.UserOrgDetails, name="UserOrgDetails"),
     path("get_org", views.get_org, name="get_org"),
     path("analyseview", views.AnalyseView, name="AnalyseView"),
-    # swagger started
-    path(
-        "swagger<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"
-    ),
-    path(
-        "swagger/",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
-    ),
-    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
-    # swagger ended
     path("user_profile_update/", views.UserOrgUpdateView, name="userorg_update_view"),
     path(
         "select_preference/", PreferencesView.TypeOfPreference, name="TypeOfPreference"
@@ -147,4 +136,21 @@ urlpatterns = [
     path("refresh_token/", TokenRefreshView.as_view(), name="refresh_token"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEVELOPMENT_MODE:
-    urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]
+    urlpatterns += [
+        path("silk/", include("silk.urls", namespace="silk")),
+        # swagger started
+        path(
+            "swagger<format>/",
+            schema_view.without_ui(cache_timeout=0),
+            name="schema-json",
+        ),
+        path(
+            "swagger/",
+            schema_view.with_ui("swagger", cache_timeout=0),
+            name="schema-swagger-ui",
+        ),
+        path(
+            "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+        ),
+        # swagger ended
+    ]

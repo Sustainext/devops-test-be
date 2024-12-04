@@ -4,6 +4,7 @@ from .views import (
     FieldGroupListView,
     CreateOrUpdateFieldGroup,
     GetComputedClimatiqValue,
+    UpdateFieldGroupView,
 )
 
 urlpatterns = [
@@ -20,5 +21,8 @@ urlpatterns = [
         "get-climatiq-score",
         GetComputedClimatiqValue.as_view(),
         name="get-computed-climatiq-view",
+    ),
+    path(
+        "update-field-group-with-path/", UpdateFieldGroupView.as_view(), name="update-field-group"
     ),
 ]

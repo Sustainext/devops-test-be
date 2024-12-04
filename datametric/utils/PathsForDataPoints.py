@@ -48,6 +48,8 @@ type1_paths = {
     "gri-governance-chair_of_board-2-11-b-chair": "",
     "gri-economic-climate_related_risks-202-2a-physical_risk": "",
     "gri-economic-climate_related_risks-202-2a-transition_risk": "",
+    "gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress": "",
+    "gri-environment-water-303-5c-change_in_water_storage": "",
 }
 
 type2_paths = {

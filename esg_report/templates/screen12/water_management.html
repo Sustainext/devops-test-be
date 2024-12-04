@@ -38,13 +38,13 @@
     <tr>
       <td>{{ operation.Businessoperations|default:"N/A" }}</td>
       <td>{{ operation.consumption_percentage|default:"N/A" }}%</td>
-      <td>{% if operation|get_item:"Total Withdrawal" %} {{ operation|get_item:"Total Withdrawal" }} {% else %} {{ operation|get_item:"Total" }} {% endif %}</td>
+      <td>{% if operation|get_item:"Total Withdrawal" %} {{ operation|get_item:"Total Withdrawal"|round_to:2 }} {% else %} {{ operation|get_item:"Total"|round_to:2 }} {% endif %}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_fresh_water_withdrawal_by_business_operation|last as last_operation %}
     <tr>
       <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -73,14 +73,14 @@
       <td>{{ operation.Source|default:"N/A" }}</td>
       <td>{{ operation.WaterStress|default:"N/A" }}</td>
       <td>{{ operation.WaterType|default:"N/A" }}</td>
-      <td>{{ operation.consumption_percentage|default:"N/A" }}%</td>
-      <td>{{ operation|get_item:"Total Withdrawal" }}</td>
+      <td>{{ operation.consumption_percentage|default:"N/A"|round_to:2 }}%</td>
+      <td>{{ operation|get_item:"Total Withdrawal"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_fresh_water_withdrawal_by_source_from_water_stress_area|last as last_operation %}
     <tr>
       <td colspan="4"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -105,14 +105,14 @@
     {% for operation in screen_twelve_data.water_analyse.total_fresh_water_withdrawal_by_location_country %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.location|default:"N/A" }}</td>
-      <td>{{ operation.consumption_contribution|default:"N/A" }}%</td>
-      <td>{{ operation.total_withdrawal }}</td>
+      <td>{{ operation.withdrawal_contribution|default:"0"|round_to:2 }}%</td>
+      <td>{{ operation.total_withdrawal|round_to:2 }}</td>
       <td>{{ operation.unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_fresh_water_withdrawal_by_location_country|last as last_operation %}
     <tr>
       <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -139,14 +139,14 @@
     <tr>
       <td>{{ operation.Watertype|default:"N/A" }}</td>
       <td>{{ operation.Source|default:"N/A" }}%</td>
-      <td>{{ operation.withdrawal_percentage }}</td>
-      <td>{{ operation|get_item:"Total Withdrawal" }}</td>
+      <td>{{ operation.withdrawal_percentage|round_to:2 }}</td>
+      <td>{{ operation|get_item:"Total Withdrawal"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_withdrawal_by_water_type|last as last_operation %}
     <tr>
       <td colspan="3"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -171,14 +171,14 @@
     {% for operation in screen_twelve_data.water_analyse.water_withdrawal_from_third_parties %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.Source|default:"N/A" }}</td>
-      <td>{{ operation.withdrawal_percentage|default:"N/A" }}%</td>
-      <td>{{ operation|get_item:"Total Withdrawal" }}</td>
+      <td>{{ operation.withdrawal_percentage|default:"N/A"|round_to:2 }}%</td>
+      <td>{{ operation|get_item:"Total Withdrawal"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.water_withdrawal_from_third_parties|last as last_operation %}
     <tr>
       <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -206,14 +206,14 @@
     {% for operation in screen_twelve_data.water_analyse.total_water_discharge_by_location %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.location|default:"N/A" }}</td>
-      <td>{{ operation.discharge_contribution|default:"N/A" }}%</td>
-      <td>{{ operation|get_item:"total_discharge" }}</td>
+      <td>{{ operation.discharge_contribution|default:"N/A"|round_to:2 }}%</td>
+      <td>{{ operation|get_item:"total_discharge"|round_to:2 }}</td>
       <td>{{ operation.unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_discharge_by_location|last as last_operation %}
     <tr>
       <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -240,14 +240,14 @@
     <tr>
       <td>{{ operation.Source|default:"N/A" }}</td>
       <td>{{ operation.Watertype|default:"N/A" }}</td>
-      <td>{{ operation.discharge_percentage|default:"0" }}%</td>
-      <td>{{ operation|get_item:"total_consumed" }}</td>
+      <td>{{ operation.discharge_percentage|default:"0"|round_to:2 }}%</td>
+      <td>{{ operation|get_item:"total_consumed"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_discharge_by_source_and_type_of_water|last as last_operation %}
     <tr>
       <td colspan="3"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -274,14 +274,14 @@
     <tr>
       <td>{{ operation.WaterStress|default:"N/A" }}</td>
       <td>{{ operation.Businessoperations|default:"N/A" }}</td>
-      <td>{{ operation.discharge_percentage|default:"0" }}%</td>
-      <td>{{ operation|get_item:"Total Discharge" }}</td>
+      <td>{{ operation.discharge_percentage|default:"0"|round_to:2 }}%</td>
+      <td>{{ operation|get_item:"Total Discharge"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_discharge_from_water_stress_area_by_business_operation|last as last_operation %}
     <tr>
       <td colspan="3"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -306,14 +306,14 @@
     {% for operation in screen_twelve_data.water_analyse.total_water_discharge_by_business_operation %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.Businessoperations|default:"N/A" }}</td>
-      <td>{{ operation.discharge_percentage|default:"0" }}%</td>
-      <td>{{ operation|get_item:"Total Withdrawal" }}</td>
+      <td>{{ operation.discharge_percentage|default:"0"|round_to:2 }}%</td>
+      <td>{{ operation|get_item:"Total Withdrawal"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_discharge_by_business_operation|last as last_operation %}
     <tr>
       <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -340,14 +340,14 @@
     <tr>
       <td>{{ operation.WaterStress|default:"N/A" }}</td>
       <td>{{ operation.WaterType|default:"N/A" }}</td>
-      <td>{{ operation.discharge_percentage|default:"0" }}%</td>
-      <td>{{ operation|get_item:"Total Discharge" }}</td>
+      <td>{{ operation.discharge_percentage|default:"0"|round_to:2 }}%</td>
+      <td>{{ operation|get_item:"Total Discharge"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_discharge_by_water_type_from_water_stress_area|last as last_operation %}
     <tr>
       <td colspan="3"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -370,8 +370,8 @@
   <tbody>
     {% for operation in screen_twelve_data.water_analyse.third_party_water_discharge_sent_to_use_for_other_organizations %}
     <tr>
-      <td>{{ operation.Volume|default:"N/A" }}</td>
-      <td>{{ operation|get_item:"Discharge Percentage" }}</td>
+      <td>{{ operation.Volume|default:"N/A"|round_to:2 }}</td>
+      <td>{{ operation|get_item:"Discharge Percentage"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endfor %}
@@ -413,8 +413,8 @@
   <tbody>
     {% for operation in screen_twelve_data.water_analyse.total_water_consumption %}
     <tr>
-      <td>{{ operation.total_water_consumption|default:"N/A" }}</td>
-      <td>{{ operation.water_consumption_from_areas_with_water_stress|default:"N/A" }}</td>
+      <td>{{ operation.total_water_consumption|default:"N/A"|round_to:2 }}</td>
+      <td>{{ operation.water_consumption_from_areas_with_water_stress|default:"N/A"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endfor %}
@@ -439,14 +439,14 @@
     {% for operation in screen_twelve_data.water_analyse.total_water_consumption_by_business_operation %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.Businessoperations|default:"N/A" }}</td>
-      <td>{{ operation.consumption_percentage|default:"N/A" }}%</td>
-      <td>{{ operation.total_consumed|default:"0" }}</td>
+      <td>{{ operation.consumption_percentage|default:"N/A"|round_to:2 }}%</td>
+      <td>{{ operation.total_consumed|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_consumption_by_business_operation|last as last_operation %}
     <tr>
       <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -471,14 +471,14 @@
     {% for operation in screen_twelve_data.water_analyse.total_water_consumption_by_location %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.location|default:"N/A" }}</td>
-      <td>{{ operation.consumption_contribution|default:"0" }}%</td>
-      <td>{{ operation.total_consumption|default:"0" }}</td>
+      <td>{{ operation.consumption_contribution|default:"0"|round_to:2 }}%</td>
+      <td>{{ operation.total_consumption|default:"0"|round_to:2 }}</td>
       <td>{{ operation.unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_consumption_by_location|last as last_operation %}
     <tr>
       <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -505,14 +505,14 @@
     <tr>
       <td>{{ operation.Source|default:"N/A" }}</td>
       <td>{{ operation.WaterType|default:"N/A" }}</td>
-      <td>{{ operation.consumption_percentage|default:"0" }}%</td>
-      <td>{{ operation.total_consumed|default:"0" }}</td>
+      <td>{{ operation.consumption_percentage|default:"0"|round_to:2 }}%</td>
+      <td>{{ operation.total_consumed|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Units|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_consumption_by_source|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="3"><strong>Total Water Withdrawal</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Units }}</td>
     </tr>
     {% endwith %}
@@ -535,7 +535,7 @@
     {% for operation in screen_twelve_data.water_analyse.change_in_water_storage %}
     <tr>
       <td>{{ operation.Unit|default:"N/A" }}</td>
-      <td>{{ operation.WaterStorage|default:"N/A" }}</td>
+      <td>{{ operation.WaterStorage|default:"N/A"|round_to:2 }}</td>
     </tr>
     {% endfor %}
   </tbody>

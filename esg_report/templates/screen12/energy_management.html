@@ -1,5 +1,5 @@
 <!-- energy_management.html -->
-
+{% load custom_tags %}
 <h3>12.4. Energy</h3>
 
 <h4>12.4.1. Management of Material Topic</h4>
@@ -27,13 +27,13 @@
     <tr>
       <td>{{ operation.Energy_type|default:"N/A" }}</td>
       <td>{{ operation.Source|default:"N/A" }}</td>
-      <td>{{ operation.Quantity|default:"0" }}</td>
+      <td>{{ operation.Quantity|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.fuel_consumption_from_renewable|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="2"><strong>Total Energy Consumption</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -59,13 +59,13 @@
     <tr>
       <td>{{ operation.Energy_type|default:"N/A" }}</td>
       <td>{{ operation.Source|default:"N/A" }}</td>
-      <td>{{ operation.Quantity|default:"0" }}</td>
+      <td>{{ operation.Quantity|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.fuel_consumption_from_non_renewable|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="2"><strong>Total Non-renewable Energy consumption</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -89,13 +89,13 @@
     {% for operation in screen_twelve_data.energy_analyse.energy_consumption_within_the_org %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.type_of_energy_consumed|default:"N/A" }}</td>
-      <td>{{ operation.consumption|default:"0" }}</td>
+      <td>{{ operation.consumption|default:"0"|round_to:2 }}</td>
       <td>{{ operation.unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.energy_consumption_within_the_org|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="2"><strong>Total Energy Consumption Within the organization</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.unit }}</td>
     </tr>
     {% endwith %}
@@ -123,13 +123,13 @@
       <td>{{ operation.Energy_type|default:"N/A" }}</td>
       <td>{{ operation.Source|default:"N/A" }}</td>
       <td>{{ operation.Purpose|default:"N/A" }}</td>
-      <td>{{ operation.Quantity|default:"0" }}</td>
+      <td>{{ operation.Quantity|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.direct_purchased_from_renewable|last as last_operation %}
     <tr>
-      <td colspan="3"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="3"><strong>Total Energy Consumption Within the organization</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -157,13 +157,13 @@
       <td>{{ operation.Energy_type|default:"N/A" }}</td>
       <td>{{ operation.Source|default:"N/A" }}</td>
       <td>{{ operation.Purpose|default:"N/A" }}</td>
-      <td>{{ operation.Quantity|default:"0" }}</td>
+      <td>{{ operation.Quantity|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.direct_purchased_from_non_renewable|last as last_operation %}
     <tr>
-      <td colspan="3"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="3"><strong>Total Energy Consumption Within the organization</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -189,13 +189,13 @@
     <tr>
       <td>{{ operation.Energy_type|default:"N/A" }}</td>
       <td>{{ operation.Source|default:"N/A" }}</td>
-      <td>{{ operation.Quantity|default:"0" }}</td>
+      <td>{{ operation.Quantity|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.self_generated_from_renewable|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="2"><strong>Total Energy Consumption Within the organization</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -221,13 +221,13 @@
     <tr>
       <td>{{ operation.Energy_type|default:"N/A" }}</td>
       <td>{{ operation.Source|default:"N/A" }}</td>
-      <td>{{ operation.Quantity|default:"0" }}</td>
+      <td>{{ operation.Quantity|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.self_generated_from_non_renewable|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="2"><strong>Total Self Generated Electricity (not consumed or sold)</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -257,13 +257,13 @@
       <td>{{ operation.Source|default:"N/A" }}</td>
       <td>{{ operation.Entity_type|default:"N/A" }}</td>
       <td>{{ operation.Entity_name|default:"N/A" }}</td>
-      <td>{{ operation.Quantity|default:"0" }}</td>
+      <td>{{ operation.Quantity|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.energy_sold_from_renewable|last as last_operation %}
     <tr>
-      <td colspan="4"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="4"><strong>Total Self Generated Electricity (not consumed or sold)</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -293,13 +293,13 @@
       <td>{{ operation.Source|default:"N/A" }}</td>
       <td>{{ operation.Entity_type|default:"N/A" }}</td>
       <td>{{ operation.Entity_name|default:"N/A" }}</td>
-      <td>{{ operation.Quantity|default:"0" }}</td>
+      <td>{{ operation.Quantity|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.energy_sold_from_non_renewable|last as last_operation %}
     <tr>
-      <td colspan="4"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="4"><strong>Total Energy Sold</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -327,13 +327,13 @@
     <tr>
       <td>{{ operation.Energy_type|default:"N/A" }}</td>
       <td>{{ operation.Purpose|default:"N/A" }}</td>
-      <td>{{ operation.Quantity|default:"0" }}</td>
+      <td>{{ operation.Quantity|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.energy_consumption_outside_the_org|last as last_operation %}
     <tr>
-      <td colspan="2"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td colspan="2"><strong>Total Energy Consumption outside of the organization</strong></td>
+      <td><strong>{{ last_operation.Total|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit }}</td>
     </tr>
     {% endwith %}
@@ -363,9 +363,9 @@
     <tr>
       <td>{{ operation.Energy_quantity|default:"N/A" }}</td>
       <td>{{ operation.Organization_metric|default:"N/A" }}</td>
-      <td>{{ operation.Energy_intensity1|default:"0" }}</td>
+      <td>{{ operation.Energy_intensity1|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit1|default:"N/A" }}</td>
-      <td>{{ operation.Energy_intensity2|default:"0" }}</td>
+      <td>{{ operation.Energy_intensity2|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit2|default:"N/A" }}</td>
     </tr>
     {% endfor %}
@@ -402,17 +402,17 @@
       <td>{{ operation.Energy_reduction|default:"N/A" }}</td>
       <td>{{ operation.Base_year|default:"N/A" }}</td>
       <td>{{ operation.Methodology|default:"N/A" }}</td>
-      <td>{{ operation.Quantity1|default:"0" }}</td>
+      <td>{{ operation.Quantity1|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit1|default:"N/A" }}</td>
-      <td>{{ operation.Quantity2|default:"0" }}</td>
+      <td>{{ operation.Quantity2|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit2|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.reduction_of_ene_consump|last as last_operation %}
     <tr>
-      <td colspan="5"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total1 }}</strong></td>
+      <td colspan="5"><strong>Reduction in energy consumption total	</strong></td>
+      <td><strong>{{ last_operation.Total1|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit1 }}</td>
-      <td><strong>{{ last_operation.Total2 }}</strong></td>
+      <td><strong>{{ last_operation.Total2|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit2 }}</td>
     </tr>
     {% endwith %}
@@ -438,17 +438,17 @@
     {% for operation in screen_twelve_data.energy_analyse.reduction_of_ene_prod_and_services %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.Product|default:"N/A" }}</td>
-      <td>{{ operation.Quantity1|default:"0" }}</td>
+      <td>{{ operation.Quantity1|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit1|default:"N/A" }}</td>
-      <td>{{ operation.Quantity2|default:"0" }}</td>
+      <td>{{ operation.Quantity2|default:"0"|round_to:2 }}</td>
       <td>{{ operation.Unit2|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.energy_analyse.reduction_of_ene_prod_and_services|last as last_operation %}
     <tr>
-      <td colspan="1"><strong>Total Water Withdrawal</strong></td>
-      <td><strong>{{ last_operation.Total1 }}</strong></td>
+      <td colspan="1"><strong>Total reduction in energy requirements of products and services	</strong></td>
+      <td><strong>{{ last_operation.Total1|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit1 }}</td>
-      <td><strong>{{ last_operation.Total2 }}</strong></td>
+      <td><strong>{{ last_operation.Total2|round_to:2 }}</strong></td>
       <td>{{ last_operation.Unit2 }}</td>
     </tr>
     {% endwith %}

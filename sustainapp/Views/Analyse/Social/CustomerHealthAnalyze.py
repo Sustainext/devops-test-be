@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
 from sustainapp.models import Corporateentity
 from datametric.utils.analyse import filter_by_start_end_dates
+from common.utils.value_types import safe_divide
 from logging import getLogger
 
 logger = getLogger("error.log")
@@ -75,13 +76,11 @@ class CustomerHealthAnalyzeView(APIView):
                                     "Q3"
                                 ],
                                 "percentage": (
-                                    (
-                                        int(temp_req_data["Q3"])
-                                        / int(temp_req_data["Q2"])
-                                        * 100
+                                    safe_divide(
+                                        int(temp_req_data["Q3"]),
+                                        int(temp_req_data["Q2"]),
                                     )
-                                    if int(temp_req_data["Q2"]) != 0
-                                    else 0
+                                    * 100
                                 ),
                             }
                         )
@@ -93,9 +92,8 @@ class CustomerHealthAnalyzeView(APIView):
                 "number_of_products_category": temp_req_data_2["Q2"],
                 "number_of_products_category_imporved": temp_req_data_2["Q3"],
                 "percentage": (
-                    (int(temp_req_data_2["Q3"]) / int(temp_req_data_2["Q2"]) * 100)
-                    if int(temp_req_data_2["Q2"]) != 0
-                    else 0
+                    safe_divide(int(temp_req_data_2["Q3"]),int(temp_req_data_2["Q2"]))
+                    * 100
                 ),
             }
         ]

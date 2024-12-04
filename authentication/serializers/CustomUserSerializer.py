@@ -44,6 +44,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "report",
             "optimise",
             "track",
+            "admin",
         ]
         extra_kwargs = {
             "client": {"read_only": True},
@@ -84,6 +85,16 @@ class CustomUserSerializer(serializers.ModelSerializer):
         org_list = validated_data.pop("orgs", [])
         corp_list = validated_data.pop("corps", [])
         loc_list = validated_data.pop("locs", [])
+
+        # Check and update the `admin` field if `custom_role` is "Admin"
+        custom_role = validated_data.get("custom_role").name
+        if custom_role == "Admin":
+            validated_data["admin"] = True
+            validated_data["collect"] = True
+            validated_data["analyse"] = True
+            validated_data["report"] = True
+            validated_data["optimise"] = True
+            validated_data["track"] = True
 
         try:
             # Create a new user instance

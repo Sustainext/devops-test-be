@@ -1,5 +1,5 @@
-from sustainapp.models import Report
-from datametric.models import RawResponse, DataPoint
+from sustainapp.models import Report, Corporateentity
+from datametric.models import RawResponse, DataPoint, EmissionAnalysis
 from materiality_dashboard.models import MaterialityAssessment
 from esg_report.models.ContentIndexRequirementOmissionReason import (
     ContentIndexRequirementOmissionReason,
@@ -100,7 +100,10 @@ def get_data_points_as_per_report(report: Report):
     data_points = DataPoint.objects.filter(client_id=report.client.id)
     if report.corporate:
         data_points = data_points.filter(
-            Q(corporate=report.corporate) | Q(organization=report.organization) | Q(locale__in=report.corporate.location.all()) | Q(locale=None)
+            Q(corporate=report.corporate)
+            | Q(organization=report.organization)
+            | Q(locale__in=report.corporate.location.all())
+            | Q(locale=None)
         )
     elif report.organization:
         data_points = data_points.filter(
@@ -113,6 +116,17 @@ def get_data_points_as_per_report(report: Report):
         )
 
     return data_points.filter(year=get_maximum_months_year(report))
+
+
+def get_emission_analysis_as_per_report(report: Report):
+    """
+    Get EmissionAnalysis Objects as per report.
+    """
+    emission_analysis_objects = EmissionAnalysis.objects.filter(
+        raw_response__in=get_raw_responses_as_per_report(report)
+    )
+
+    return emission_analysis_objects
 
 
 def get_materiality_assessment(report):
@@ -158,6 +172,7 @@ def get_materiality_assessment(report):
             return materiality_assessment.first()
         else:
             return None
+
 
 def collect_data_by_raw_response_and_index(data_points):
     # Create a dictionary where the key is raw_response and the value is another dictionary
@@ -256,6 +271,7 @@ def forward_request_with_jwt(view_class, original_request, url, query_params):
         # Step 5: Return the response from the internal view
         return temp.data
     except Exception as e:
+        logger.error(e, exc_info=True)
         return None
 
 
@@ -306,7 +322,7 @@ def calling_analyse_view_with_params(view_url, request, report):
         return {"detail": str(e)}
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}", exec_info=True)
-        return {"detail": f"An error occurred: {str(e)}"}
+        return None
 
 
 def creating_material_topic_and_disclosure():
@@ -428,7 +444,7 @@ def calling_analyse_view_with_params_for_same_year(view_url, request, report):
         return {"detail": str(e)}
     except Exception as e:
         logger.warning(f"An error occurred: {str(e)}", exc_info=True)
-        return {"detail": f"An error occurred: {str(e)}"}
+        return None
 
 
 def get_which_general_disclosure_is_empty(report: Report):
@@ -497,3 +513,87 @@ def generate_disclosure_status(report: Report):
             }
         )
     return result
+
+
+def management_materiality_topics_common_code(dps, org_or_corp_name):
+    necessary = {"GRI33cd": "", "GRI33e": ""}
+    indexed_data = {}
+    for dp in dps:
+        if dp.raw_response.id not in indexed_data:
+            indexed_data[dp.raw_response.id] = {}
+        if dp.metric_name in necessary:
+            if dp.index not in indexed_data[dp.raw_response.id]:
+                indexed_data[dp.raw_response.id][dp.index] = {}
+            indexed_data[dp.raw_response.id][dp.index][dp.metric_name] = dp.value
+        else:
+            logger.info(
+                f"Materiality Management Topic : The metric name {dp.metric_name} is not in the necessary list"
+            )
+
+    grouped_data = []
+    for i_key, i_val in indexed_data.items():
+        for k, v in i_val.items():
+            temp_data = {
+                "GRI33cd": v.get("GRI33cd", ""),
+                "GRI33e": v.get("GRI33e", ""),
+                "org_or_corp": org_or_corp_name,
+            }
+            if temp_data not in grouped_data:
+                grouped_data.append(temp_data)
+
+    return grouped_data
+
+
+def get_management_materiality_topics(report: Report, path):
+    """
+    This is specifically designed to get the Management Materiality Topics.
+    It assumes that every Management Materiality Topic contains the data points
+    with the metrics names : GRI33cd and GRI33e
+    If only Organization is selected for reporting, then we check the organization
+    for the data points, if no data is available, we check and return all the
+    data for the corresponding corporate entites.
+    If the Organization and Corporate is selected for reporting, then we check the
+    organization and corporate.
+    """
+    year = get_maximum_months_year(report)
+
+    mmt_dps = DataPoint.objects.filter(
+        organization=report.organization,
+        corporate=report.corporate,
+        # locale=report.locale if report.locale else None,
+        client_id=report.client.id,
+        path__slug=path,
+        year=year,
+    )
+
+    if not mmt_dps:
+        logger.error(
+            f"No DataPoints found for path :{path} in organiztion {report.organization} and corporate {report.corporate}"
+        )
+
+        if not report.corporate:
+            corps_of_org = Corporateentity.objects.filter(
+                organization=report.organization
+            )
+            if not corps_of_org:
+                logger.error(
+                    f"No Corporate Entities found for organiztion {report.organization}"
+                )
+                return []
+            res = []
+            for a_corp in corps_of_org:
+                dps = DataPoint.objects.filter(
+                    organization=report.organization,
+                    corporate=a_corp,
+                    # locale=report.locale if report.locale else None,
+                    client_id=report.client.id,
+                    path__slug=path,
+                    year=year,
+                )
+                if dps:
+                    res.extend(
+                        management_materiality_topics_common_code(dps, a_corp.name)
+                    )
+            return res
+
+    return management_materiality_topics_common_code(mmt_dps, report.organization.name)

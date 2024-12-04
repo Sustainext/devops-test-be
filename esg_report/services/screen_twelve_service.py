@@ -8,6 +8,8 @@ from esg_report.utils import (
     collect_data_and_differentiate_by_location,
     get_data_by_raw_response_and_index,
     forward_request_with_jwt,
+    get_emission_analysis_as_per_report,
+    get_management_materiality_topics,
 )
 from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
@@ -20,6 +22,7 @@ from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.Serializer.ScreenTwelveSerializer import ScreenTwelveSerializer
+from common.utils.value_types import format_decimal_places
 
 
 class ScreenTwelveService:
@@ -39,8 +42,8 @@ class ScreenTwelveService:
             9: "gri-environment-energy-302-1c-1e-consumed_fuel",
             10: "gri-environment-energy-302-1-self_generated",
             11: "gri-environment-energy-302-1d-energy_sold",
-            12: "gri-environment-energy-302-1f-smac",
-            13: "gri-environment-energy-302-1g-conversion_factor",
+            12: "gri-environment-energy-302-1f-2b-4d-5c-smac",
+            13: "gri-environment-energy-302-1g-2c-conversion_factor",
             14: "gri-environment-energy-302-2a-energy_consumption_outside_organization",
             15: "gri-environment-energy-302-2b-smac",
             16: "gri-environment-energy-302-2c-conversion_factor",
@@ -62,6 +65,11 @@ class ScreenTwelveService:
             32: "gri-environment-water-303-1b-1c-1d-interaction_with_water",
             33: "gri-environment-water-303-2a-profile_receiving_waterbody",
             34: "gri-environment-water-303-2a-management_water_discharge",
+            35: "gri_collect_emission_management_material_topic",  # 12.1.1
+            36: "gri_collect_water_and_effluents_management_material_topic",  # 12.3.1
+            37: "gri_collect_energy_management_material_topic",  # 12.4.1
+            38: "gri_collect_waste_management_material_topic",  # 12.5.1
+            # TODO : 12.2.1
         }
 
     def set_raw_responses(self):
@@ -172,16 +180,36 @@ class ScreenTwelveService:
 
     def get_301_123_collect(self):
         slugs = [self.slugs[0], self.slugs[1], self.slugs[2]]
-        data_points = self.data_points.filter(path__slug__in=slugs)
+        emission_analysis_objects = get_emission_analysis_as_per_report(
+            report=self.report
+        )
+        slugs_dict = {
+            "Scope-1": "gri-environment-emissions-301-a-scope-1",
+            "Scope-2": "gri-environment-emissions-301-a-scope-2",
+            "Scope-3": "gri-environment-emissions-301-a-scope-3",
+        }
         slug_data = defaultdict(list)
-        for slug in slugs:
-            response_data = defaultdict(list)
-            for data_point in data_points.filter(path__slug=slug):
-                response_data[data_point.data_metric.name] = data_point.value
-            slug_data[slug] = response_data
+        for emission_analyse_object in emission_analysis_objects:
+            slug_data[slugs_dict[emission_analyse_object.scope]].append(
+                {
+                    "category": emission_analyse_object.category,
+                    "subcategory": emission_analyse_object.subcategory,
+                    "activity": emission_analyse_object.activity,
+                    "activity_value": format_decimal_places(
+                        emission_analyse_object.consumption
+                    ),
+                    "activity_unit": emission_analyse_object.unit,
+                }
+            )
         return slug_data
 
     def get_301_123_analyse(self):
+        def convert_kg_to_tonne_for_emission_analysis(scope_contribution: list):
+            for contribution_dict in scope_contribution:
+                total = contribution_dict["total"] / 1000
+                contribution_dict["total"] = total
+            return scope_contribution
+
         locations = set_locations_data(
             organisation=self.report.organization,
             corporate=self.report.corporate,
@@ -190,7 +218,7 @@ class ScreenTwelveService:
         top_emission_by_scope, top_emission_by_source, top_emission_by_location = (
             get_top_emission_by_scope(
                 locations=locations,
-                user=self.request.user,
+                user=self.report.user,
                 start=self.report.start_date,
                 end=self.report.end_date,
                 path_slug={
@@ -203,14 +231,26 @@ class ScreenTwelveService:
 
         # * Prepare response data
         response_data = dict()
-        response_data["all_emission_by_scope"] = calculate_scope_contribution(
-            key_name="scope", scope_total_values=top_emission_by_scope
+        response_data["all_emission_by_scope"] = (
+            convert_kg_to_tonne_for_emission_analysis(
+                calculate_scope_contribution(
+                    key_name="scope", scope_total_values=top_emission_by_scope
+                )
+            )
         )
-        response_data["all_emission_by_source"] = calculate_scope_contribution(
-            key_name="source", scope_total_values=top_emission_by_source
+        response_data["all_emission_by_source"] = (
+            convert_kg_to_tonne_for_emission_analysis(
+                calculate_scope_contribution(
+                    key_name="source", scope_total_values=top_emission_by_source
+                )
+            )
         )
-        response_data["all_emission_by_location"] = calculate_scope_contribution(
-            key_name="location", scope_total_values=top_emission_by_location
+        response_data["all_emission_by_location"] = (
+            convert_kg_to_tonne_for_emission_analysis(
+                calculate_scope_contribution(
+                    key_name="location", scope_total_values=top_emission_by_location
+                )
+            )
         )
         response_data["top_5_emisson_by_source"] = response_data[
             "all_emission_by_source"
@@ -262,6 +302,18 @@ class ScreenTwelveService:
         )
         response_data["301_2a"] = self.get_301_2a()
         response_data["301_3a_3b"] = self.get_301_3a_3b()
+        response_data["3-3cde_12-1-1"] = get_management_materiality_topics(
+            self.report, self.slugs[35]
+        )
+        response_data["3-3cde_12-3-1"] = get_management_materiality_topics(
+            self.report, self.slugs[36]
+        )
+        response_data["3-3cde_12-4-1"] = get_management_materiality_topics(
+            self.report, self.slugs[37]
+        )
+        response_data["3-3cde_12-5-1"] = get_management_materiality_topics(
+            self.report, self.slugs[38]
+        )
         response_data.update(
             {
                 "306_5e": get_data_by_raw_response_and_index(

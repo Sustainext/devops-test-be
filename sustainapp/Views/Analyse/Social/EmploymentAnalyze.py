@@ -20,7 +20,7 @@ from common.utils.get_data_points_as_raw_responses import (
 )
 from rest_framework.exceptions import APIException
 from django.db.models import Max
-from datametric.utils.analyse import safe_divide
+from datametric.utils.analyse import safe_divide_percentage
 import logging
 
 logger = logging.getLogger("django")
@@ -311,22 +311,22 @@ class EmploymentAnalyzeView(APIView):
             + get_value(ne_nb_permanent_qs["number_holder__sum"])
         )
 
-        ne_per_male_percent = safe_divide(
+        ne_per_male_percent = safe_divide_percentage(
             get_value(ne_male_permanent_qs["number_holder__sum"]), total_permanent
         )
-        ne_per_female_percent = safe_divide(
+        ne_per_female_percent = safe_divide_percentage(
             get_value(ne_female_permanent_qs["number_holder__sum"]), total_permanent
         )
-        ne_per_nb_percent = safe_divide(
+        ne_per_nb_percent = safe_divide_percentage(
             get_value(ne_nb_permanent_qs["number_holder__sum"]), total_permanent
         )
-        ne_permanent_30_pc = safe_divide(
+        ne_permanent_30_pc = safe_divide_percentage(
             get_value(ne_permanent_30_qs["number_holder__sum"]), total_permanent
         )
-        ne_permanent_30_50_pc = safe_divide(
+        ne_permanent_30_50_pc = safe_divide_percentage(
             get_value(ne_permanent_30_50_qs["number_holder__sum"]), total_permanent
         )
-        ne_permanent_50_pc = safe_divide(
+        ne_permanent_50_pc = safe_divide_percentage(
             get_value(ne_permanent_50_qs["number_holder__sum"]), total_permanent
         )
 
@@ -386,22 +386,22 @@ class EmploymentAnalyzeView(APIView):
             + get_value(ne_nb_temporary_qs["number_holder__sum"])
         )
 
-        ne_temp_male_percent = safe_divide(
+        ne_temp_male_percent = safe_divide_percentage(
             get_value(ne_male_temporary_qs["number_holder__sum"]), total_temporary
         )
-        ne_temp_female_percent = safe_divide(
+        ne_temp_female_percent = safe_divide_percentage(
             get_value(ne_female_temporary_qs["number_holder__sum"]), total_temporary
         )
-        ne_temp_nb_percent = safe_divide(
+        ne_temp_nb_percent = safe_divide_percentage(
             get_value(ne_nb_temporary_qs["number_holder__sum"]), total_temporary
         )
-        ne_temp_30_pc = safe_divide(
+        ne_temp_30_pc = safe_divide_percentage(
             get_value(ne_temporary_30_qs["number_holder__sum"]), total_temporary
         )
-        ne_temp_30_50_pc = safe_divide(
+        ne_temp_30_50_pc = safe_divide_percentage(
             get_value(ne_temporary_30_50_qs["number_holder__sum"]), total_temporary
         )
-        ne_temp_50_pc = safe_divide(
+        ne_temp_50_pc = safe_divide_percentage(
             get_value(ne_temporary_50_qs["number_holder__sum"]), total_temporary
         )
 
@@ -457,22 +457,22 @@ class EmploymentAnalyzeView(APIView):
             + get_value(ne_nb_ng_qs["number_holder__sum"])
         )
 
-        ne_ng_male_percent = safe_divide(
+        ne_ng_male_percent = safe_divide_percentage(
             get_value(ne_male_ng_qs["number_holder__sum"]), total_ng
         )
-        ne_ng_female_percent = safe_divide(
+        ne_ng_female_percent = safe_divide_percentage(
             get_value(ne_female_ng_qs["number_holder__sum"]), total_ng
         )
-        ne_ng_nb_percent = safe_divide(
+        ne_ng_nb_percent = safe_divide_percentage(
             get_value(ne_nb_ng_qs["number_holder__sum"]), total_ng
         )
-        ne_ng_30_pc = safe_divide(
+        ne_ng_30_pc = safe_divide_percentage(
             get_value(ne_ng_30_qs["number_holder__sum"]), total_ng
         )
-        ne_ng_30_50_pc = safe_divide(
+        ne_ng_30_50_pc = safe_divide_percentage(
             get_value(ne_ng_30_50_qs["number_holder__sum"]), total_ng
         )
-        ne_ng_50_pc = safe_divide(
+        ne_ng_50_pc = safe_divide_percentage(
             get_value(ne_ng_50_qs["number_holder__sum"]), total_ng
         )
 
@@ -532,22 +532,22 @@ class EmploymentAnalyzeView(APIView):
             + get_value(ne_nb_ft_qs["number_holder__sum"])
         )
 
-        ne_ft_male_percent = safe_divide(
+        ne_ft_male_percent = safe_divide_percentage(
             get_value(ne_male_ft_qs["number_holder__sum"]), total_ft
         )
-        ne_ft_female_percent = safe_divide(
+        ne_ft_female_percent = safe_divide_percentage(
             get_value(ne_female_ft_qs["number_holder__sum"]), total_ft
         )
-        ne_ft_nb_percent = safe_divide(
+        ne_ft_nb_percent = safe_divide_percentage(
             get_value(ne_nb_ft_qs["number_holder__sum"]), total_ft
         )
-        ne_ft_30_pc = safe_divide(
+        ne_ft_30_pc = safe_divide_percentage(
             get_value(ne_ft_30_qs["number_holder__sum"]), total_ft
         )
-        ne_ft_30_50_pc = safe_divide(
+        ne_ft_30_50_pc = safe_divide_percentage(
             get_value(ne_ft_30_50_qs["number_holder__sum"]), total_ft
         )
-        ne_ft_50_pc = safe_divide(
+        ne_ft_50_pc = safe_divide_percentage(
             get_value(ne_ft_50_qs["number_holder__sum"]), total_ft
         )
 
@@ -603,22 +603,22 @@ class EmploymentAnalyzeView(APIView):
             + get_value(ne_nb_pt_qs["number_holder__sum"])
         )
 
-        ne_pt_male_percent = safe_divide(
+        ne_pt_male_percent = safe_divide_percentage(
             get_value(ne_male_pt_qs["number_holder__sum"]), total_pt
         )
-        ne_pt_female_percent = safe_divide(
+        ne_pt_female_percent = safe_divide_percentage(
             get_value(ne_female_pt_qs["number_holder__sum"]), total_pt
         )
-        ne_pt_nb_percent = safe_divide(
+        ne_pt_nb_percent = safe_divide_percentage(
             get_value(ne_nb_pt_qs["number_holder__sum"]), total_pt
         )
-        ne_pt_30_pc = safe_divide(
+        ne_pt_30_pc = safe_divide_percentage(
             get_value(ne_pt_30_qs["number_holder__sum"]), total_pt
         )
-        ne_pt_30_50_pc = safe_divide(
+        ne_pt_30_50_pc = safe_divide_percentage(
             get_value(ne_pt_30_50_qs["number_holder__sum"]), total_pt
         )
-        ne_pt_50_pc = safe_divide(
+        ne_pt_50_pc = safe_divide_percentage(
             get_value(ne_pt_50_qs["number_holder__sum"]), total_pt
         )
 
@@ -711,25 +711,25 @@ class EmploymentAnalyzeView(APIView):
             + get_value(et_nb_permanent_qs)
         )
 
-        et_per_male_percent = safe_divide(
+        et_per_male_percent = safe_divide_percentage(
             get_value(et_male_permanent_qs),
             total_permanent_eto,
         )
-        et_per_female_percent = safe_divide(
+        et_per_female_percent = safe_divide_percentage(
             get_value(et_female_permanent_qs),
             total_permanent_eto,
         )
-        et_per_nb_percent = safe_divide(
+        et_per_nb_percent = safe_divide_percentage(
             get_value(et_nb_permanent_qs), total_permanent_eto
         )
-        et_permanent_30_pc = safe_divide(
+        et_permanent_30_pc = safe_divide_percentage(
             get_value(et_permanent_30_qs["number_holder__sum"]), total_permanent_eto
         )
-        et_permanent_30_50_pc = safe_divide(
+        et_permanent_30_50_pc = safe_divide_percentage(
             get_value(et_permanent_30_50_qs["number_holder__sum"]),
             total_permanent_eto,
         )
-        et_permanent_50_pc = safe_divide(
+        et_permanent_50_pc = safe_divide_percentage(
             get_value(et_permanent_50_qs["number_holder__sum"]), total_permanent_eto
         )
 
@@ -821,25 +821,25 @@ class EmploymentAnalyzeView(APIView):
             + get_value(et_nb_temporary_qs)
         )
 
-        et_temp_male_percent = safe_divide(
+        et_temp_male_percent = safe_divide_percentage(
             get_value(et_male_temporary_qs),
             total_temporary_eto,
         )
-        et_temp_female_percent = safe_divide(
+        et_temp_female_percent = safe_divide_percentage(
             get_value(et_female_temporary_qs),
             total_temporary_eto,
         )
-        et_temp_nb_percent = safe_divide(
+        et_temp_nb_percent = safe_divide_percentage(
             get_value(et_nb_temporary_qs), total_temporary_eto
         )
-        et_temp_30_pc = safe_divide(
+        et_temp_30_pc = safe_divide_percentage(
             get_value(et_temporary_30_qs["number_holder__sum"]), total_temporary_eto
         )
-        et_temp_30_50_pc = safe_divide(
+        et_temp_30_50_pc = safe_divide_percentage(
             get_value(et_temporary_30_50_qs["number_holder__sum"]),
             total_temporary_eto,
         )
-        et_temp_50_pc = safe_divide(
+        et_temp_50_pc = safe_divide_percentage(
             get_value(et_temporary_50_qs["number_holder__sum"]), total_temporary_eto
         )
 
@@ -931,16 +931,20 @@ class EmploymentAnalyzeView(APIView):
             + get_value(et_nb_ng_qs)
         )
 
-        et_ng_male_percent = safe_divide(get_value(et_male_ng_qs), total_ng_eto)
-        et_ng_female_percent = safe_divide(get_value(et_female_ng_qs), total_ng_eto)
-        et_ng_nb_percent = safe_divide(get_value(et_nb_ng_qs), total_ng_eto)
-        et_ng_30_pc = safe_divide(
+        et_ng_male_percent = safe_divide_percentage(
+            get_value(et_male_ng_qs), total_ng_eto
+        )
+        et_ng_female_percent = safe_divide_percentage(
+            get_value(et_female_ng_qs), total_ng_eto
+        )
+        et_ng_nb_percent = safe_divide_percentage(get_value(et_nb_ng_qs), total_ng_eto)
+        et_ng_30_pc = safe_divide_percentage(
             get_value(et_ng_30_qs["number_holder__sum"]), total_ng_eto
         )
-        et_ng_30_50_pc = safe_divide(
+        et_ng_30_50_pc = safe_divide_percentage(
             get_value(et_ng_30_50_qs["number_holder__sum"]), total_ng_eto
         )
-        et_ng_50_pc = safe_divide(
+        et_ng_50_pc = safe_divide_percentage(
             get_value(et_ng_50_qs["number_holder__sum"]), total_ng_eto
         )
 
@@ -1031,16 +1035,20 @@ class EmploymentAnalyzeView(APIView):
             + get_value(et_nb_ft_qs)
         )
 
-        et_ft_male_percent = safe_divide(get_value(et_male_ft_qs), total_ft_eto)
-        et_ft_female_percent = safe_divide(get_value(et_female_ft_qs), total_ft_eto)
-        et_ft_nb_percent = safe_divide(get_value(et_nb_ft_qs), total_ft_eto)
-        et_ft_30_pc = safe_divide(
+        et_ft_male_percent = safe_divide_percentage(
+            get_value(et_male_ft_qs), total_ft_eto
+        )
+        et_ft_female_percent = safe_divide_percentage(
+            get_value(et_female_ft_qs), total_ft_eto
+        )
+        et_ft_nb_percent = safe_divide_percentage(get_value(et_nb_ft_qs), total_ft_eto)
+        et_ft_30_pc = safe_divide_percentage(
             get_value(et_ft_30_qs["number_holder__sum"]), total_ft_eto
         )
-        et_ft_30_50_pc = safe_divide(
+        et_ft_30_50_pc = safe_divide_percentage(
             get_value(et_ft_30_50_qs["number_holder__sum"]), total_ft_eto
         )
-        et_ft_50_pc = safe_divide(
+        et_ft_50_pc = safe_divide_percentage(
             get_value(et_ft_50_qs["number_holder__sum"]), total_ft_eto
         )
 
@@ -1129,16 +1137,20 @@ class EmploymentAnalyzeView(APIView):
             + get_value(et_nb_pt_qs)
         )
 
-        et_pt_male_percent = safe_divide(get_value(et_male_pt_qs), total_pt_eto)
-        et_pt_female_percent = safe_divide(get_value(et_female_pt_qs), total_pt_eto)
-        et_pt_nb_percent = safe_divide(get_value(et_nb_pt_qs), total_pt_eto)
-        et_pt_30_pc = safe_divide(
+        et_pt_male_percent = safe_divide_percentage(
+            get_value(et_male_pt_qs), total_pt_eto
+        )
+        et_pt_female_percent = safe_divide_percentage(
+            get_value(et_female_pt_qs), total_pt_eto
+        )
+        et_pt_nb_percent = safe_divide_percentage(get_value(et_nb_pt_qs), total_pt_eto)
+        et_pt_30_pc = safe_divide_percentage(
             get_value(et_pt_30_qs["number_holder__sum"]), total_pt_eto
         )
-        et_pt_30_50_pc = safe_divide(
+        et_pt_30_50_pc = safe_divide_percentage(
             get_value(et_pt_30_50_qs["number_holder__sum"]), total_pt_eto
         )
-        et_pt_50_pc = safe_divide(
+        et_pt_50_pc = safe_divide_percentage(
             get_value(et_pt_50_qs["number_holder__sum"]), total_pt_eto
         )
 
@@ -1762,12 +1774,12 @@ class EmploymentAnalyzeView(APIView):
         return_to_work_rate = {}
         return_to_work_rate["employee_category"] = "Return to work rate"
         # * Return to work rate = (Total number of employees that did return to work after parental leave)/(Total number of employees due to return to work after taking parental leave)
-        return_to_work_rate["male"] = safe_divide(
+        return_to_work_rate["male"] = safe_divide_percentage(
             parental_leave_response_table["return_to_post_work_male"],
             parental_leave_response_table["taking_total"],
         )
 
-        return_to_work_rate["female"] = safe_divide(
+        return_to_work_rate["female"] = safe_divide_percentage(
             parental_leave_response_table["return_to_post_work_female"],
             parental_leave_response_table["taking_total"],
         )
@@ -1775,11 +1787,11 @@ class EmploymentAnalyzeView(APIView):
 
         retention_rate = {}
         retention_rate["employee_category"] = "Retention rate"
-        retention_rate["male"] = safe_divide(
+        retention_rate["male"] = safe_divide_percentage(
             parental_leave_response_table["retained_12_mts_male"],
             parental_leave_response_table["return_to_post_work_total"],
         )
-        retention_rate["female"] = safe_divide(
+        retention_rate["female"] = safe_divide_percentage(
             parental_leave_response_table["retained_12_mts_female"],
             parental_leave_response_table["return_to_post_work_total"],
         )
