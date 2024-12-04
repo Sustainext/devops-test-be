@@ -69,7 +69,9 @@ class ContentIndexExcelAPI(APIView):
 
         # * Adding data to the dataframe
         response = HttpResponse(content_type="application/vnd.ms-excel")
-        response["Content-Disposition"] = 'attachment; filename="dataframe.xlsx"'
+        response["Content-Disposition"] = (
+            f'attachment; filename="{report.name}-Content Index.xlsx"'
+        )
         buffer = io.BytesIO()
 
         with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
