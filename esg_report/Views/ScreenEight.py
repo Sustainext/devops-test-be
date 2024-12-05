@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from sustainapp.models import Report
-from datametric.models import RawResponse
 from esg_report.utils import get_materiality_assessment
 from materiality_dashboard.models import MaterialityAssessment
 from materiality_dashboard.Serializers.MaterialityImpactSerializer import (
