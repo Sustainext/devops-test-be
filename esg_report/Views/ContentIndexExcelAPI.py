@@ -67,10 +67,12 @@ class ContentIndexExcelAPI(APIView):
             "" if "Unnamed" in str(column) else column for column in df.columns
         ]
 
+        disposition = "attachment" if "download" in request.GET else "inline"
+
         # * Adding data to the dataframe
         response = HttpResponse(content_type="application/vnd.ms-excel")
         response["Content-Disposition"] = (
-            f'attachment; filename="{report.name}-Content Index.xlsx"'
+            f'{disposition}; filename="{report.name}-Content Index.xlsx"'
         )
         buffer = io.BytesIO()
 
