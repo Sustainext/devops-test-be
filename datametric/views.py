@@ -15,7 +15,9 @@ from .serializers import (
 from authentication.models import CustomUser, Client
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from logging import getLogger
-from datametric.View.Training import extract_from_diversity_employee
+from datametric.View.Training_EmpPerfCareerDvlpmnt import (
+    extract_from_diversity_employee,
+)
 import traceback
 import sys
 

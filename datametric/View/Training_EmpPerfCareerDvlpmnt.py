@@ -1,34 +1,46 @@
 from datametric.models import DataPoint, RawResponse
+from logging import getLogger
 
+logger = getLogger("error.log")
 """
 Employment > Diversity of Employee : Is where we have to get the categories from
 Training and Development > Employee Performance and career development: is where we show the cattegories
 """
 
 
-def get_categories_serilalized_raw_response(resp):
+def get_categories_serilalized_raw_response(resp, dps):
     """
     This function takes in a serialized raw response and returns a list of categories
     """
+    categories_of_rawresp = []
     categories = {}
-    for item in resp:
-        if item["category"] not in categories:
-            categories.update({item["category"]: ""})
-    return categories
+    for item in resp[0]["employeeCategories"]:
+        if item["category"] in dps:
+            categories.update({item["category"]: item})
+            categories_of_rawresp.append(item)
+    return categories, categories_of_rawresp
 
 
 def extract_from_diversity_employee(serialized_raw_response, **kwargs):
-    # lets say we have already fetched a the categories form employment, then they work update the data.
-    # what if they add a new category later?
-    # Solution : may be we need to fetch from the raw response everytime??
-
-    # What if they have data, in the present code we are always fetching data and over writing the existing data
-    # what if they edit the existing categories
+    # TODO: Handle the case wher there is already data in the Training> Employee performance and career development. And the categories are updated under Employment > Diversity of Employee
     try:
-        resp = {}
-        if serialized_raw_response.data:
-            resp = serialized_raw_response.data[0]["data"]
-            categories = get_categories_serilalized_raw_response(resp)
+        dps = (
+            DataPoint.objects.filter(**kwargs, metric_name="category")
+            .values_list("value", flat=True)
+            .order_by("id")
+        )
+
+        resp = (
+            serialized_raw_response.data[0]["data"]
+            if serialized_raw_response.data
+            else {}
+        )
+        categories, categories_of_rawresp = {}, []
+        if resp:
+            categories, categories_of_rawresp = get_categories_serilalized_raw_response(
+                resp, dps
+            )
+
         response = {
             "employeeCategories": [],
             "genders": [
@@ -39,25 +51,21 @@ def extract_from_diversity_employee(serialized_raw_response, **kwargs):
             "totalPerformance": 0,
             "totalCareerDevelopment": 0,
         }
-
-        dps = (
-            DataPoint.objects.filter(**kwargs, metric_name="category")
-            .values_list("value", flat=True)
-            .order_by("id")
-        )
         # Check if datapoints are there and if any new categories are added to employement
         if dps and serialized_raw_response.data:
             for dp in dps:
                 if dp not in categories:
                     # print(resp)
-                    resp.append(
+                    categories_of_rawresp.append(
                         {
                             "category": dp,
                             "performance": "",
                             "careerDevelopment": "",
                         }
                     )
-            serialized_raw_response.data[0]["data"] = resp
+            serialized_raw_response.data[0]["data"][0]["employeeCategories"] = (
+                categories_of_rawresp
+            )
             return serialized_raw_response.data
         # if there are datapoints but no raw response, means that we need to initilize categories
         if dps and not serialized_raw_response.data:
@@ -69,6 +77,11 @@ def extract_from_diversity_employee(serialized_raw_response, **kwargs):
                         "careerDevelopment": "",
                     }
                 )
-            return [response]
+            return [{"data": response}]
+
+        if not dps and not serialized_raw_response.data:
+            return [{"data": response}]
     except Exception as e:
-        print(e)
+        logger.error(
+            f"the following exception occrured for the get field groups > from the function extract_from_diversity_employee : {e} "
+        )
