@@ -239,7 +239,7 @@ GENERAL_DISCLOSURES_AND_PATHS = {
         "subindicators": [
             (
                 "Are critical concerns communicated to the highest governance body.",
-                "gri-governance-critical_concerns-2-16-a-communication",
+                "gri-governance-critical_concerns-2-16-a-critical_concerns",
             ),
             (
                 "Report the total number of critical concerns that were communicated to the highest governance body",
