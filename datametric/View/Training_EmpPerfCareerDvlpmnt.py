@@ -77,10 +77,10 @@ def extract_from_diversity_employee(serialized_raw_response, **kwargs):
                         "careerDevelopment": "",
                     }
                 )
-            return [{"data": response}]
+            return [{"data": [response]}]
 
         if not dps and not serialized_raw_response.data:
-            return [{"data": response}]
+            return [{"data": [response]}]
     except Exception as e:
         logger.error(
             f"the following exception occrured for the get field groups > from the function extract_from_diversity_employee : {e} "
