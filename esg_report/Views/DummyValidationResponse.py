@@ -635,7 +635,7 @@ dummy_response_data = {
             "subLabel": "Add statement about company’s community engagement",
             "type": "textarea",
             "content": "",
-            "field": "community_engagement_statement",
+            "field": "community_engagement",
             "isSkipped": False,
         },
         {
@@ -653,7 +653,7 @@ dummy_response_data = {
             "subLabel": "Add statement about company’s Corporate Social Responsibility policies",
             "type": "richTextarea",
             "content": "",
-            "field": "csr_statement",
+            "field": "csr_policies",
             "isSkipped": False,
         },
     ],
