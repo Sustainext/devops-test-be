@@ -214,6 +214,10 @@ class ScreenThirteenService:
             )
         self.set_data_points()
         self.set_raw_responses()
+        response_data["organisation_id"] = self.report.organization.id
+        response_data["corporate_id"] = (
+            self.report.corporate.id if self.report.corporate else None
+        )
         response_data["2_7_a_b_permanent_employee"] = (
             collect_data_by_raw_response_and_index(
                 data_points=self.data_points.filter(path__slug=self.slugs[0])

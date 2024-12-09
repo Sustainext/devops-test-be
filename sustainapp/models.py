@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 import os
 from django.core.files.storage import default_storage
 from django.conf import settings
-
+from authentication.models import CustomUser, Client
 import re
 from common.models.AbstractModel import AbstractModel
 from common.Validators.validate_future_date import validate_future_date
@@ -156,6 +156,10 @@ class User_client(AbstractModel):
 
 
 class Organization(models.Model):
+    # TODO : Remove the redundant and unnecessary fields
+    # type_corporate_entity, type_of_corporate_entity
+    # employeecount, no_of_employees
+    # subindustry, sub_industry
     client = models.ForeignKey(
         Client,
         on_delete=models.CASCADE,
@@ -1010,9 +1014,6 @@ class AnalysisData2(models.Model):
         return f"AnalysisData2 - Report ID: {self.report_id}"
 
     objects = ClientFiltering()
-
-
-from authentication.models import CustomUser, Client
 
 
 class ClientTaskDashboard(AbstractModel):

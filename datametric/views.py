@@ -14,8 +14,10 @@ from .serializers import (
 )
 from authentication.models import CustomUser, Client
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from sustainapp.models import Organization, Corporateentity, Location
 from logging import getLogger
+from datametric.View.Training_EmpPerfCareerDvlpmnt import (
+    extract_from_diversity_employee,
+)
 import traceback
 import sys
 
@@ -72,7 +74,22 @@ class FieldGroupListView(APIView):
             serialized_raw_responses = RawResponseSerializer(raw_responses, many=True)
             resp_data = {}
             resp_data["form"] = serialized_field_groups.data
-            resp_data["form_data"] = serialized_raw_responses.data
+            if (
+                path_slug
+                == "gri-social-performance_and_career-414-2b-number_of_suppliers"
+            ):
+                resp_data["form_data"] = extract_from_diversity_employee(
+                    serialized_raw_responses,
+                    path__slug="gri-social-diversity_of_board-405-1b-number_of_employee",
+                    client_id=client_instance.id,
+                    locale=locale,
+                    corporate=corporate,
+                    organization=organisation,
+                    year=year,
+                    month=month,
+                )
+            else:
+                resp_data["form_data"] = serialized_raw_responses.data
 
             return Response(resp_data)
         except Exception as e:
