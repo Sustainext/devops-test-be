@@ -7,7 +7,14 @@
 <h3>11.1 Highlights</h3>
 
 <h4>11.1.1 Management of Material Topics</h4>
-<p>No data available</p>
+{% if screen_eleven_data.3_3cde_11_1_1 and screen_eleven_data.3_3cde_11_1_1|length > 0 %}
+    {% for val in screen_eleven_data.3_3cde_11_1_1 %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}
  
 <h4>11.1.2 Economic Value Creation</h4>
 <p>{{ screen_eleven_data.introduction_to_economic_value_creation.content |default:"No data available" }}</p>
@@ -141,7 +148,14 @@
 {% endfor %}
  
 <h4>11.2.1. Material Management of Topic</h4>
-<p>No data available.</p>
+{% if screen_eleven_data.3_3cde_11_2_1 and screen_eleven_data.3_3cde_11_2_1|length > 0 %}
+    {% for val in screen_eleven_data.3_3cde_11_2_1 %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}
  
 <h4>11.2.2. Indirect Economic Impacts</h4>
 {% for item in screen_eleven_data.203_2a %}

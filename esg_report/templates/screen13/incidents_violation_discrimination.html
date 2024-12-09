@@ -71,7 +71,14 @@
 </table>
 
 <h4>13.8.1. Management of Material Topic</h4>
-<p>No data available.</p>
+{% if screen_thirteen_data.3_3cde_13_8_1 and screen_thirteen_data.3_3cde_13_8_1|length > 0 %}
+    {% for val in screen_thirteen_data.3_3cde_13_8_1 %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}
 
 <h4>13.8.2. Incidents of Violation of Rights of Indigenous People</h4>
 <p>{{screen_thirteen_data.indigenous_rights_policy.content|default:"No data available."}}</p>

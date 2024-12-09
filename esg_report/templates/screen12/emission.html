@@ -9,7 +9,14 @@
 <p>{{screen_twelve_data.emissions.content|default:"No data available."}}</p>
 
 <h4>12.1.1. Management of Material Topic</h4>
-<p>No data available</p>
+{% if screen_twelve_data.3_3cde_12_1_1 and screen_twelve_data.3_3cde_12_1_1|length > 0 %}
+    {% for val in screen_twelve_data.3_3cde_12_1_1 %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}
 
 <h4>12.1.2. Scope 1 GHG Emissions</h4>
 <p>{{screen_twelve_data.scope_one_emissions.content|default:"No data available."}}</p>

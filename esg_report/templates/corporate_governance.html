@@ -189,10 +189,13 @@
 <p><span style="color: #000;">The definition used for "significant locations of operation":</span> {{screen_nine_data.202_2d|default:"No data available."}}</p>
 
 <h4>9.2.4 Management of Material Topics</h4>
-{% if screen_nine_data.3_3_c_d_e_in_material_topics %}
-<p>{{screen_nine_data.3_c_d_e_in_material_topics}}</p>
+{% if screen_nine_data.3_c_d_e_in_material_topics and screen_nine_data.3_c_d_e_in_material_topics|length > 0 %}
+    {% for val in screen_nine_data.3_c_d_e_in_material_topics %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
 {% else %}
-<p>No material topics identified.</p>
+    <p>No material topics available.</p>
 {% endif %}
 
 <h3>9.3. Responsibility, Evaluation, and Remuneration of the Board</h3>
@@ -523,10 +526,7 @@
 
 <h3>9.6 Policy</h3>
 
-<h4>9.6.1 Management of Material Topics</h4>
-<p>No data available.</p>
-
-<h3>9.6.2 Embedding Policy Commitment</h3>
+<h3>9.6.1 Embedding Policy Commitment</h3>
 <p>
   {{ ceo_message.company_name|default:"[Company Name]" }} is committed to integrating sustainable development into our core business strategy. Our approach focuses on reducing environmental impact,
   enhancing social value, and maintaining strong governance. We aim to create long-term value for our stakeholders while contributing to a more sustainable future.
@@ -630,7 +630,7 @@ The categories of stakeholders, including at-risk or vulnerable groups, that the
   </tbody>
 </table>
 
-<h4>9.6.3. Anti-trust, Anti-competitive Behavior, Monopoly Practices</h4>
+<h4>9.6.2. Anti-trust, Anti-competitive Behavior, Monopoly Practices</h4>
 
 <p>{{ screen_nine_data.206_1a.legal_actions_anti_competitive_behavior }}</p>
 
@@ -681,7 +681,7 @@ The categories of stakeholders, including at-risk or vulnerable groups, that the
   </tbody>
 </table>
 
-<h4>9.6.4 Defined Benefit Plan Obligations and Other Retirement Plans</h4>
+<h4>9.6.3 Defined Benefit Plan Obligations and Other Retirement Plans</h4>
 <p>The extent to which the scheme’s liabilities are estimated to be covered by the assets that have been set aside to meet them:</p>
 <p>{{ screen_nine_data.201_3b.liabilities_coverage_extent|default:"No data available" }}</p>
 
