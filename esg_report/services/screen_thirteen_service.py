@@ -149,6 +149,11 @@ class ScreenThirteenService:
         if local_raw_responses is not None:
             return local_raw_responses.data[0]
 
+    def get_403_2b_hazard_reporting(self, slug):
+        local_raw_responses = self.raw_responses.filter(path__slug=slug).first()
+        if local_raw_responses is not None:
+            return local_raw_responses.data[0]
+
     def get_403(self):
         data = forward_request_with_jwt(
             view_class=IllnessAnalysisView,
@@ -663,10 +668,8 @@ class ScreenThirteenService:
         response_data["3-3cde_13-8-1"] = get_management_materiality_topics(
             self.report, self.slugs[91]
         )
-        response_data["403-2b-hazard_reporting"] = (
-            collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[92])
-            )
+        response_data["403-2b-hazard_reporting"] = self.get_403_2b_hazard_reporting(
+            slug=self.slugs[92]
         )
 
         return response_data
