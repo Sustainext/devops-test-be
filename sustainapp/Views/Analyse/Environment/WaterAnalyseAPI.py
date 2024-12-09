@@ -110,7 +110,7 @@ class WaterAnalyseByDataPoints(APIView):
                             unit=data["Unit"],
                         ),
                         "water_type": data["Watertype"],
-                        "unit": "Megalitre",
+                        "Unit": "Megalitre",
                     }
                 )
                 total_consumption += self.calculate_water_consumption(
@@ -249,7 +249,7 @@ class WaterAnalyseByDataPoints(APIView):
                             unit=data["Unit"],
                         ),
                         "water_type": data["Watertype"],
-                        "unit": "Megalitre",
+                        "Unit": "Megalitre",
                     }
                 )
                 total_water_consumption += self.calculate_water_consumption(
@@ -330,7 +330,7 @@ class WaterAnalyseByDataPoints(APIView):
                     "water_consumption_water_stress": water_consumption_water_stres_total_consumption.get(
                         location, 0
                     ),
-                    "unit": "Megalitre",
+                    "Unit": "Megalitre",
                 }
             )
         return response_list
@@ -362,7 +362,7 @@ class WaterAnalyseByDataPoints(APIView):
                     "total_water_consumption": water_consumption_total_consumption[
                         location
                     ],
-                    "unit": "Megalitre",
+                    "Unit": "Megalitre",
                 }
             )
             total_water_consumption += water_consumption_total_consumption[location]
@@ -412,7 +412,7 @@ class WaterAnalyseByDataPoints(APIView):
                     "source": key[0],
                     "watertype": key[1],
                     "consumption": value["consumption"],
-                    "unit": value["Unit"],
+                    "Unit": value["Unit"],
                     "contribution": safe_divide(
                         value["consumption"], self.total_water_consumption
                     )
@@ -459,7 +459,7 @@ class WaterAnalyseByDataPoints(APIView):
                 {
                     "business_operation": key,
                     field_to_be_calculated: value[field_to_be_calculated],
-                    "unit": value["Unit"],
+                    "Unit": value["Unit"],
                     "contribution": safe_divide(
                         value[field_to_be_calculated], total_calculated_ml
                     )
@@ -509,7 +509,7 @@ class WaterAnalyseByDataPoints(APIView):
                     "water_type": watertype,
                     "total_withdrawal": withdrawal,
                     "contribution": format_decimal_places(contribution),
-                    "unit": "Megalitre",
+                    "Unit": "Megalitre",
                 }
             )
             total_withdrawal_ml += withdrawal
@@ -554,7 +554,7 @@ class WaterAnalyseByDataPoints(APIView):
                     "water_type": watertype,
                     "total_discharge": discharge,
                     "contribution": format_decimal_places(contribution),
-                    "unit": "Megalitre",
+                    "Unit": "Megalitre",
                 }
             )
             total_discharge_ml += discharge
@@ -602,7 +602,7 @@ class WaterAnalyseByDataPoints(APIView):
                     "business_operation": business_operation,
                     "total_discharge": discharge,
                     "contribution": format_decimal_places(contribution),
-                    "unit": "Megalitre",
+                    "Unit": "Megalitre",
                 }
             )
             total_discharge_ml += discharge
@@ -769,7 +769,7 @@ class WaterAnalyseByDataPoints(APIView):
                 {
                     "source": source,
                     "quantity": format_decimal_places(quantity),
-                    "unit": "Megalitre",
+                    "Unit": "Megalitre",
                     "contribution": f"{format_decimal_places(contribution)}%",
                 }
             )
