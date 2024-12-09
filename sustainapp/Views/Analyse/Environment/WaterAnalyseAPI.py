@@ -123,7 +123,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_consumption,
                 "Unit": "Megalitre",
             }
-        )
+        ) if response_list != [] else None
         return response_list
 
     def get_total_fresh_water_withdrawal_by_field_name(
@@ -173,7 +173,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_withdrawal,
                 "Unit": "Megalitre",
             }
-        )
+        ) if response_list != [] else None
         return response_list
 
     def get_total_water_withdrawal_in_water_stress_areas_by_field_name(
@@ -262,7 +262,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Unit": "Megalitre",
                 "Total": total_water_consumption,
             }
-        )
+        ) if response_list != [] else None
         return response_list
 
     def convert_to_megalitres(self, value, unit):
@@ -371,7 +371,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_water_consumption,
                 "Unit": "Megalitre",
             }
-        )
+        ) if response_list != [] else None
         return response_list
 
     def get_total_water_consumption_by_source(self):
@@ -425,7 +425,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_water_consumption,
                 "Unit": "Megalitre",
             }
-        )
+        ) if response_list != [] else None
         return response_list
 
     def get_total_fresh_water_calculated_field_by_business_operation(
@@ -472,7 +472,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_field_calculated,
                 "Unit": "Megalitre",
             }
-        )
+        ) if response_list != [] else None
         return response_list
 
     def get_total_fresh_water_withdrawal_by_source_water_stress_area(self):
@@ -518,7 +518,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_withdrawal_ml,
                 "Unit": "Megalitre",
             }
-        )
+        ) if result != [] else None
         return result
 
     def get_total_water_discharge_by_water_type_from_water_stress_area(self):
@@ -563,7 +563,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_discharge_ml,
                 "Unit": "Megalitre",
             }
-        )
+        ) if result != [] else None
         return result
 
     def get_total_fresh_water_discharge_by_source_water_stress_area(self):
@@ -611,7 +611,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_discharge_ml,
                 "Unit": "Megalitre",
             }
-        )
+        ) if result != [] else None
         return result
 
     def get_total_fresh_water_calculate_field_by_location_country(
@@ -655,7 +655,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_field_calculation,
                 "Unit": "Megalitre",
             }
-        )
+        ) if results != [] else None
 
         return results
 
@@ -735,7 +735,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_calculated_field_ml,
                 "Unit": "Megalitre",
             }
-        )
+        ) if response != [] else None
         return response
 
     def get_water_withdrawal_from_third_parties(self):
@@ -779,7 +779,7 @@ class WaterAnalyseByDataPoints(APIView):
                 "Total": total_quantity_ml,
                 "Unit": "Megalitre",
             }
-        )
+        ) if result != [] else None
         return result
 
     def get_change_in_water_storage(self):
