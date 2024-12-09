@@ -121,7 +121,7 @@ class WaterAnalyseByDataPoints(APIView):
         response_list.append(
             {
                 "Total": total_consumption,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return response_list
@@ -171,7 +171,7 @@ class WaterAnalyseByDataPoints(APIView):
         response_list.append(
             {
                 "Total": total_withdrawal,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return response_list
@@ -259,7 +259,7 @@ class WaterAnalyseByDataPoints(APIView):
                 )
         response_list.append(
             {
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
                 "Total": total_water_consumption,
             }
         )
@@ -369,7 +369,7 @@ class WaterAnalyseByDataPoints(APIView):
         response_list.append(
             {
                 "Total": total_water_consumption,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return response_list
@@ -423,7 +423,7 @@ class WaterAnalyseByDataPoints(APIView):
         response_list.append(
             {
                 "Total": total_water_consumption,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return response_list
@@ -470,7 +470,7 @@ class WaterAnalyseByDataPoints(APIView):
         response_list.append(
             {
                 "Total": total_field_calculated,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return response_list
@@ -516,7 +516,7 @@ class WaterAnalyseByDataPoints(APIView):
         result.append(
             {
                 "Total": total_withdrawal_ml,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return result
@@ -561,7 +561,7 @@ class WaterAnalyseByDataPoints(APIView):
         result.append(
             {
                 "Total": total_discharge_ml,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return result
@@ -609,7 +609,7 @@ class WaterAnalyseByDataPoints(APIView):
         result.append(
             {
                 "Total": total_discharge_ml,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return result
@@ -653,7 +653,7 @@ class WaterAnalyseByDataPoints(APIView):
         results.append(
             {
                 "Total": total_field_calculation,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
 
@@ -733,7 +733,7 @@ class WaterAnalyseByDataPoints(APIView):
         response.append(
             {
                 "Total": total_calculated_field_ml,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return response
@@ -777,7 +777,7 @@ class WaterAnalyseByDataPoints(APIView):
         result.append(
             {
                 "Total": total_quantity_ml,
-                "unit": "Megalitre",
+                "Unit": "Megalitre",
             }
         )
         return result
