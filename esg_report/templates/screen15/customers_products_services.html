@@ -3,7 +3,7 @@
 <h2>15. Customers, Products & Services</h2>
 
 <h4>15.1. Products and Services</h4>
-<p>{{screen_fifteen_data.commitment_statement|default:"No data available"}}</p>
+<p>{{screen_fifteen_data.commitment_statement.content|default:"No data available"}}</p>
 
 <h5>15.1.1. Management of Material Topics</h5>
 <p>No data available</p>
@@ -34,7 +34,7 @@
 <p><span style = "color: #000;">Non-compliance with regulations and/or voluntary codes:</span> {{screen_fifteen_data.417_2b.0.Q1}}</p>
 
 <h3>15.2. Product and Service Information and Labelling</h3>
-<p>{{screen_fifteen_data.product_info_labelling|default:"No data available"}}</p>
+<p>{{screen_fifteen_data.product_info_labelling.content|default:"No data available"}}</p>
 {% if screen_fifteen_data.417_1a.data.0.Q1 == 'Yes' %}
 <h5>Product and Service Information and Labeling</h5>
 <p><span style = "color: #000;">Source of Components:</span> {{screen_fifteen_data.417_1a.data.0.Q2}}</p>
@@ -65,7 +65,7 @@
 <p>No data available</p>
 
 <h4>15.2.2. Marketing</h4>
-<p>{{screen_fifteen_data.marketing_practices|default:"No data available"}}</p>
+<p>{{screen_fifteen_data.marketing_practices.content|default:"No data available"}}</p>
 
 <ul>
   <li style="margin-bottom: 10px;">Number of incidents of non-compliance with regulations resulting in a fine or penalty: <span style="color: #495059">{{ screen_fifteen_data.417_3a.data.0.Q1|default:"No data available." }}</span></li>
@@ -121,7 +121,7 @@
 
 <h4>Conclusion</h4>
 {% if screen_fifteen_data.conclusion %}
-<p>{{screen_fifteen_data.conclusion|safe|default:"No data available"}}</p>
+<p>{{screen_fifteen_data.conclusion.content|safe|default:"No data available"}}</p>
 {% else %}
 <p>No data available</p>
 {% endif %}

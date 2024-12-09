@@ -54,7 +54,7 @@
 {% endif %}
 
 <h4>13.6.4. Worker Participation, Consultation, and Communication on OHS</h4>
-<p>{{ screen_thirteen_data.ohs_policies|default:"No data available." }}</p>
+<p>{{ screen_thirteen_data.ohs_policies.content|default:"No data available." }}</p>
 
 {% if screen_thirteen_data.403_4a_ohs_system_1 and screen_thirteen_data.403_4a_ohs_system_1.data and screen_thirteen_data.403_4a_ohs_system_1.data|length > 0 %}
   <p>{{ screen_thirteen_data.403_4a_ohs_system_1.data.0.Q1|default:"No data available" }}</p>
@@ -150,7 +150,7 @@
 
 
 <h4>13.6.7. Hazard, Risk Identification and Investigation</h4>
-<p>{{screen_thirteen_data.hazard_risk_assessment}}</p>
+<p>{{screen_thirteen_data.hazard_risk_assessment.content|default:"No data available."}}</p>
 
 <h5>Process for hazard identification:</h5>
 {% if screen_thirteen_data.403_2a_process_for_hazard and screen_thirteen_data.403_2a_process_for_hazard.Q3 %}
@@ -233,7 +233,7 @@
 {% endif %}
 
 <h4>13.6.8. Work-Related Ill-Health & Injuries</h4>
-<p>{{screen_thirteen_data.work_related_health_injuries|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.work_related_health_injuries.content|default:"No data available."}}</p>
 
 <h5>
     Work-related hazards that pose a risk of high-consequence injury
@@ -558,7 +558,7 @@
 </table>
 
 <h4>13.6.9. Safety Training</h4>
-<p>{{screen_thirteen_data.safety_training|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.safety_training.content|default:"No data available."}}</p>
 
 <h5>Occupational Health and Safety Training</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
@@ -585,7 +585,7 @@
 </table>
 
 <h4>13.6.10. Workers Covered by OHS Management System</h4>
-<p>{{screen_thirteen_data.ohs_management_system|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.ohs_management_system.content|default:"No data available."}}</p>
 
 <h5>
     Workers excluded & type of workers excluded

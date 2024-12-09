@@ -1,7 +1,7 @@
 <!-- corporate_governance.html -->
 <h2>9. Corporate Governance</h2>
 {% if screen_nine_data.statement %}
-<p>{{screen_nine_data.statement|safe}}</p>
+<p>{{screen_nine_data.statement.content|safe|default:"No data available."}}</p>
 {% else %}
 <p>No statement provided.</p>
 {% endif %}
@@ -10,7 +10,7 @@
 
 <h4>9.1.1 Governance Structure and Composition</h4>
 
-<p>{{screen_nine_data.board_gov_statement|default:"No data available."}}</p>
+<p>{{screen_nine_data.board_gov_statement.content|default:"No data available."}}</p>
 
 <h5>Describe the governance structure, including the committees of the highest governance body</h5>
 {% if screen_nine_data.2_9_a %}
@@ -330,7 +330,7 @@
 <p>{{screen_nine_data.2_18_c|default:"No data available."}}</p>
 
 <h4>9.3.7 Remuneration Policies & Process to Determine Remuneration</h4>
-<p>{{ screen_nine_data.remuneration_policies|default:"No data available." }}</p>
+<p>{{ screen_nine_data.remuneration_policies.content|default:"No data available." }}</p>
 
 <h5>Fixed pay & variable pay:</h5>
 <p>{{ screen_nine_data.2_19_a.remuneration_policy_fixed_and_variable_pay.text|default:"No data available" }}</p>
@@ -603,7 +603,7 @@ The categories of stakeholders, including at-risk or vulnerable groups, that the
 <p>
   {{ screen_nine_data.2_23_c.please_provide_links_to_the_policy_commitments|default:"No data available" }}
 </p>
-<p>{{screen_nine_data.policy_not_public_reason|default:"No data available." }}</p>
+<p>{{screen_nine_data.policy_not_public_reason.content|default:"No data available." }}</p>
 
 <h5>Level of approval: Policy commitments</h5>
 <table

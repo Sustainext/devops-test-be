@@ -2,7 +2,7 @@
 {% load custom_tags %}
 <h2>13. People</h2>
 
-<p>{{screen_thirteen_data.employee_policies_statement|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.employee_policies_statement.content|default:"No data available."}}</p>
 
 <h4>13.1. Employees</h4>
 
@@ -10,7 +10,7 @@
 <p>No data available.</p>
 
 <h4>13.1.2. Employee Hire and Turnover</h4>
-<p>{{screen_thirteen_data.workforce_hire_retention_statement|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.workforce_hire_retention_statement.content|default:"No data available."}}</p>
 
 <h5>Methodologies and Assumptions used</h5>
 {% if screen_thirteen_data.2_7_c_methodologies|length > 0 %}
@@ -175,7 +175,7 @@
 </table>
 
 <h4>13.1.4. Parental Leave</h4>
-<p>{{screen_thirteen_data.parental_leaves|default:"No data available"}}</p>
+<p>{{screen_thirteen_data.parental_leaves.content|default:"No data available"}}</p>
 
 <h5>Parental Leave Data</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
@@ -220,7 +220,7 @@
 </table>
 
 <h4>13.1.5. Standard Wage</h4>
-<p>{{screen_thirteen_data.standard_wage|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.standard_wage.content|default:"No data available."}}</p>
 
 <p>{{ screen_thirteen_data.202_1b.0.Q3|default:"No data available" }}</p>
 <p>{{ screen_thirteen_data.202_1c.0.Currency|default:"No data available" }}</p>
@@ -293,7 +293,7 @@
 </table>
 
 <h4>13.1.6. Performance and Career Development Reviews of Employees (GRI 404-3-a)</h4>
-<p>{{screen_thirteen_data.performance_review_process|default:"No data available" }}</p>
+<p>{{screen_thirteen_data.performance_review_process.content|default:"No data available" }}</p>
 
 <h5>Percentage of Employees Receiving Regular Performance and Career Development Reviews</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
