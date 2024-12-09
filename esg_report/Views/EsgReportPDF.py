@@ -1,11 +1,9 @@
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.template.loader import get_template
 from django.views import View
 from sustainapp.models import Report
 import time
 from weasyprint import HTML
-from xhtml2pdf import pisa
 from esg_report.services.screen_one_service import CeoMessageService
 from esg_report.services.screen_two_service import ScreenTwoService
 from esg_report.services.screen_three_service import MissionVisionValuesService
@@ -21,10 +19,8 @@ from esg_report.services.screen_twelve_service import ScreenTwelveService
 from esg_report.services.screen_thirteen_service import ScreenThirteenService
 from esg_report.services.screen_fourteen_service import ScreenFourteenService
 from esg_report.services.screen_fifteen_service import ScreenFifteenService
-from esg_report.services.content_index_service import StatementOfUseService
+# from esg_report.services.content_index_service import StatementOfUseService
 from django.forms import model_to_dict
-from authentication.models import CustomUser
-import json
 from threading import Thread
 from esg_report.utils import generate_disclosure_status
 import logging
@@ -63,7 +59,7 @@ class ESGReportPDFView(View):
                 results["error"] = HttpResponse(
                     f"No report found with ID={pk}", status=404
                 )
-            except Exception as e:
+            except Exception:
                 results["error"] = HttpResponse(
                     "An unexpected error occurred while retrieving the report.",
                     status=500,
@@ -193,7 +189,7 @@ class ESGReportPDFView(View):
         if content_index_only:
             # Generate content index data only
             content_index_data = generate_disclosure_status(report=results["report"])
-            statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
+            # statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
 
             # Prepare context for content index only
             context = {
@@ -235,7 +231,7 @@ class ESGReportPDFView(View):
                 )
 
         content_index_data = generate_disclosure_status(report=results["report"])
-        statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
+        # statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
 
         # Create context for rendering
         context = {
