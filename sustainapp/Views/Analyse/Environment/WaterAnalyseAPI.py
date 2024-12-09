@@ -1,4 +1,4 @@
-from datametric.models import RawResponse, DataPoint, Path, DataMetric
+from datametric.models import DataPoint
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.serializers import ValidationError
@@ -20,6 +20,7 @@ from common.utils.value_types import safe_divide, format_decimal_places
 
 
 class WaterAnalyseByDataPoints(APIView):
+    permission_classes = [IsAuthenticated]
 
     def __init__(self):
         super().__init__()
@@ -108,6 +109,7 @@ class WaterAnalyseByDataPoints(APIView):
                             unit=data["Unit"],
                         ),
                         "water_type": data["Watertype"],
+                        "unit": "Megalitre",
                     }
                 )
         return response_list
@@ -223,6 +225,7 @@ class WaterAnalyseByDataPoints(APIView):
                             unit=data["Unit"],
                         ),
                         "water_type": data["Watertype"],
+                        "unit": "Megalitre",
                     }
                 )
         return response_list
@@ -292,6 +295,7 @@ class WaterAnalyseByDataPoints(APIView):
                     "water_consumption_water_stress": water_consumption_water_stres_total_consumption.get(
                         location, 0
                     ),
+                    "unit": "Megalitre",
                 }
             )
         return response_list
@@ -322,6 +326,7 @@ class WaterAnalyseByDataPoints(APIView):
                     "total_water_consumption": water_consumption_total_consumption[
                         location
                     ],
+                    "unit": "Megalitre",
                 }
             )
         return response_list
@@ -564,7 +569,6 @@ class WaterAnalyseByDataPoints(APIView):
         return results
 
     def get_third_party_water_discharge_sent_to_use_for_other_organizations(self):
-
         slug = self.slugs[4]
         data = collect_data_by_raw_response_and_index(
             data_points=self.data_points.filter(path__slug=slug)

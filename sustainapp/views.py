@@ -449,18 +449,17 @@ def organizationonly(request):
         validation_org_input(request_data)
 
         temp_framework = request_data.get("framework")
-        if temp_framework == "GRI":
-            temp_framework = "GRI: With reference to"
-        else:
-            return Response(
-                {"error": "Please select/pass a valid GRI name"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        frameworks = Framework.objects.filter(name=temp_framework)
-    except frameworks.DoesNotExist:
-        return Response(
-            {"error": "Framework not found"}, status=status.HTTP_404_NOT_FOUND
-        )
+        if temp_framework:
+            if temp_framework == "GRI":
+                temp_framework = "GRI: With reference to"
+            else:
+                return Response(
+                    {"error": "Please select/pass a valid GRI name"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            frameworks = Framework.objects.filter(name=temp_framework)
+    except Exception as e:
+        return Response({"error": e}, status=status.HTTP_404_NOT_FOUND)
 
     input_data = copy.deepcopy(request_data)
     input_data.pop("framework", None)
@@ -472,7 +471,7 @@ def organizationonly(request):
     regulation = input_data.pop("regulation", None)
     try:
         organization_data = Organization.objects.create(**input_data)
-        organization_data.framework.set(frameworks)
+        organization_data.framework.set(frameworks) if temp_framework else None
         organization_data.sdg.set(Sdg.objects.filter(name=sdg)) if sdg else None
         (
             organization_data.rating.set(Rating.objects.filter(name=rating))

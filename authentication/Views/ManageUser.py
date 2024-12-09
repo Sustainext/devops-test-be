@@ -13,7 +13,8 @@ class ManageUserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         client_id = self.request.user.client.id
-        queryset = CustomUser.objects.filter(client_id=client_id)
+        user = self.request.user
+        queryset = CustomUser.objects.filter(client_id=client_id).exclude(id=user.id)
         return queryset
 
     def create(self, request, *args, **kwargs):

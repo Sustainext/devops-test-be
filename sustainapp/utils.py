@@ -106,32 +106,20 @@ def validation_get_emission(data):
 def validation_org_input(data):
     required_fields = [
         "name",
-        "owner",
         "countryoperation",
-        "employeecount",
         "website",
-        "active",
         "type_corporate_entity",
         "location_of_headquarters",
         "phone",
-        "mobile",
-        "fax",
         "sector",
-        "revenue",
         "subindustry",
         "address",
         "state",
         "city",
-        "date_format",
         "currency",
-        "timezone",
-        "language",
-        "from_date",
-        "to_date",
-        "framework",
         "client",
     ]
-    missing_fields = [field for field in required_fields if field not in data]
+    missing_fields = [field for field in required_fields if not data.get(field)]
 
     if missing_fields:
         raise ValidationError(f"Missing fields: {', '.join(missing_fields)}")

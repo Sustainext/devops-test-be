@@ -1,25 +1,16 @@
-from datametric.models import DataPoint, Path, DataMetric, RawResponse
-from sustainapp.models import Organization, Corporateentity, Location
+from datametric.models import DataPoint
 from rest_framework.views import APIView
-from collections import defaultdict
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from operator import itemgetter
-
-from django.db.models import Prefetch
-from rest_framework import serializers
-from django.db.models import QuerySet
 from django.db.models import Sum
 from datametric.utils.analyse import filter_by_start_end_dates, get_raw_response_filters
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
 )
-from rest_framework.exceptions import APIException
-from django.db.models import Max
 from datametric.utils.analyse import safe_divide_percentage
 import logging
 
@@ -260,7 +251,6 @@ class EmploymentAnalyzeView(APIView):
         dp_employ_non_guaranteed = []
         dp_employ_part_time = []
         dp_employ_permanent_qs = []
-        total_new_employs = len(new_employ_dps)
 
         for dp in new_employ_dps:
             if dp.path.slug == self.new_employee_paths["permanent"]:
@@ -1174,7 +1164,6 @@ class EmploymentAnalyzeView(APIView):
         )
 
         benefits_dps = benefits_data_points
-        parental_leave_dps = parental_leave_data_points
 
         # parental leave first
 
