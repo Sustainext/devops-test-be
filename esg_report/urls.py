@@ -113,7 +113,8 @@ urlpatterns = [
         "get_field_validation/<int:report_id>/",
         FieldValidationView.as_view(),
         name="get_field_validation",
-    ),    path(
+    ),    
+    path(
         "content_index_excel/<int:report_id>/",
         ContentIndexExcelAPI.as_view(),
         name="content_index_excel",
