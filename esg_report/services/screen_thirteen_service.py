@@ -152,7 +152,7 @@ class ScreenThirteenService:
     def get_403_2b_hazard_reporting(self, slug):
         local_raw_responses = self.raw_responses.filter(path__slug=slug).first()
         if local_raw_responses is not None:
-            return local_raw_responses.data[0]
+            return local_raw_responses.data
 
     def get_403(self):
         data = forward_request_with_jwt(
