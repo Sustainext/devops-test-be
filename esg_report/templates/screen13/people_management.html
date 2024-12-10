@@ -1,4 +1,36 @@
 <!-- people_management.html -->
+<style>
+    .checkmark {
+        display: inline-block;
+        width: 10px; /* Reduced from 12px to 10px */
+        height: 10px; /* Reduced from 12px to 10px */
+        border: 2px solid #22c55e;
+        border-radius: 2px;
+        background-color: #22c55e;
+        position: relative;
+    }
+    .checkmark::after {
+        content: '';
+        position: absolute;
+        width: 3px; /* Reduced from 4px to 3px */
+        height: 6px; /* Reduced from 8px to 6px */
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        top: -0.5px; /* Adjusted for proper alignment with reduced size */
+        left: 2px; /* Adjusted for proper alignment with reduced size */
+    }
+    .crossmark {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border: 2px solid #9ca3af;
+        border-radius: 2px;
+        background-color: #fff;
+        position: relative;
+    }
+</style>
+
 {% load custom_tags %}
 <h2>13. People</h2>
 
@@ -158,28 +190,90 @@
 <h5>Minimum number of weeks’ notice</h5>
 <p> {{screen_thirteen_data.402_1a_minimum_number_of_weeks.data.0.Q1}} </p>
 
-<h5>Benefits Provided to Employees by Location</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
+<h5>Benefits provided to full-time employees by location</h5>
+<table border="1" cellspacing="0" cellpadding="5">
     <thead>
         <tr>
-            <th>Benefit</th>
-            <th>Full-Time Employees</th>
-            <th>Part-Time Employees</th>
-            <th>Temporary Employees</th>
-            <th>Significant Location</th>
+            <th>Significant location of operation</th>
+            {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_full_time_employees %}
+                <th>{{ benefit.name }}</th>
+            {% endfor %}
         </tr>
     </thead>
     <tbody>
-        {% for benefit in screen_thirteen_data.401_2a_benefits_provided.data %}
-        <tr>
-            <td>{{ benefit.benefits|default:"No data available" }}</td>
-            <td>{{ benefit.fulltime|default:"No data available" }}</td>
-            <td>{{ benefit.parttime|default:"No data available" }}</td>
-            <td>{{ benefit.temporary|default:"No data available" }}</td>
-            <td>{{ benefit.significantlocation|default:"No data available" }}</td>
+        {% for location_id in screen_thirteen_data.401_social_analyse.data.benefits.benefits_full_time_employees|map:"selectedLocations_name"|flatten|unique %}
+            <tr>
+                <td>{{ location_id }}</td>
+                {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_full_time_employees %}
+                    <td style="text-align: center;">
+                        {% if benefit.selected and location_id in benefit.selectedLocations_name %}
+                        <span class="checkmark"></span> <!-- Checkmark -->
+                        {% else %}
+                        <span class="crossmark"></span> <!-- Cross -->
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<h5>Benefits provided to part-time employees by location</h5>
+<table border="1" cellspacing="0" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Significant location of operation</th>
+            {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_part_time_employees %}
+                <th>{{ benefit.name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for location_id in screen_thirteen_data.401_social_analyse.data.benefits.benefits_part_time_employees|map:"selectedLocations_name"|flatten|unique %}
+            <tr>
+                <td>{{ location_id }}</td>
+                {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_part_time_employees %}
+                    <td style="text-align: center;">
+                        {% if benefit.selected and location_id in benefit.selectedLocations_name %}
+                        <span class="checkmark"></span> <!-- Checkmark -->
+                        {% else %}
+                        <span class="crossmark"></span> <!-- Cross -->
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h5>Benefits provided to temporary employees by location</h5>
+<table border="1" cellspacing="0" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Significant location of operation</th>
+            {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_temporary_employees %}
+                <th>{{ benefit.name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for location_id in screen_thirteen_data.401_social_analyse.data.benefits.benefits_temporary_employees|map:"selectedLocations_name"|flatten|unique %}
+            <tr>
+                <td>{{ location_id }}</td>
+                {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_temporary_employees %}
+                    <td style="text-align: center;">
+                        {% if benefit.selected and location_id in benefit.selectedLocations_name %}
+                        <span class="checkmark"></span> <!-- Checkmark -->
+                        {% else %}
+                        <span class="crossmark"></span> <!-- Cross -->
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 
 <h4>13.1.4. Parental Leave</h4>
 <p>{{screen_thirteen_data.parental_leaves.content|default:"No data available"}}</p>
