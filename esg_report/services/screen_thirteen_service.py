@@ -116,6 +116,7 @@ class ScreenThirteenService:
             89: "gri_collect_training_and_development_management_material_topic",  # 13.5.1
             90: "gri_collect_ohs_management_material_topic",  # 13.6.1
             91: "gri_collect_non_discrimination_management_material_topic",  # 13.8.1
+            92: "gri-social-ohs-403-2b-hazard_reporting-new",
         }
         # TODO: Add new points for 13.6.7
 
@@ -146,7 +147,12 @@ class ScreenThirteenService:
             path__slug=self.slugs[34]
         ).first()
         if local_raw_responses is not None:
-            return local_raw_responses.data[0]
+            return local_raw_responses.data
+
+    def get_403_2b_hazard_reporting(self, slug):
+        local_raw_responses = self.raw_responses.filter(path__slug=slug).first()
+        if local_raw_responses is not None:
+            return local_raw_responses.data
 
     def get_403(self):
         data = forward_request_with_jwt(
@@ -381,11 +387,12 @@ class ScreenThirteenService:
         response_data["403-2a-process_for_hazard"] = (
             self.get_403_2a()
         )  # TODO: Redo it with data points after data metrics get fixed.
-        response_data["403-2b-quality_assurance"] = (
+        response_data["403-2a-quality_assurance"] = (
             collect_data_and_differentiate_by_location(
                 data_points=self.data_points.filter(path__slug=self.slugs[35])
             )
         )
+
         response_data["403-2c-worker_right"] = (
             collect_data_and_differentiate_by_location(
                 data_points=self.data_points.filter(path__slug=self.slugs[36])
@@ -661,6 +668,10 @@ class ScreenThirteenService:
         response_data["3-3cde_13-8-1"] = get_management_materiality_topics(
             self.report, self.slugs[91]
         )
+        response_data["403-2b-hazard_reporting"] = self.get_403_2b_hazard_reporting(
+            slug=self.slugs[92]
+        )
+
         return response_data
 
     def get_report_response(self):
