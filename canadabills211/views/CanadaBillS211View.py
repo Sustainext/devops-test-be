@@ -1,10 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from sustainapp.ModelsForSustainapp.CanadaBillS211 import (
+from canadabills211.models.CanadaBillS211 import (
     IdentifyingInformation,
 )
-from sustainapp.Serializers.CanadaBillS211Serializer import (
+from canadabills211.Serializers.CanadaBillS211Serializer import (
     IISerializer,
 )
 from rest_framework.permissions import IsAuthenticated

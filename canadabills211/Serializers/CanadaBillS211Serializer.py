@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from sustainapp.ModelsForSustainapp.CanadaBillS211 import (
+from canadabills211.models.CanadaBillS211 import (
     IdentifyingInformation,
 )
 from sustainapp.models import Organization, Corporateentity
