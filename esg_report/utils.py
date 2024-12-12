@@ -475,7 +475,11 @@ def generate_disclosure_status(report: Report):
             slugs.append(slug)
 
         # Check if any slug has data
-        is_filled = all(data_points.filter(path__slug=slug).exists() for slug in slugs)
+        # * Check data point is not having value = ""
+        is_filled = all(
+            data_points.filter(path__slug=slug).exclude(value="").exists()
+            for slug in slugs
+        )
 
         # Set page_number and gri_sector_no to None as per your requirements
         page_number = None
