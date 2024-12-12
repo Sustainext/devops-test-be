@@ -2,7 +2,7 @@
 
 <h3>12.7. Air Quality</h3>
 {% if screen_twelve_data.air_quality_protection_commitment %}
-<p>{{screen_twelve_data.air_quality_protection_commitment|safe}}</p>
+<p>{{screen_twelve_data.air_quality_protection_commitment.content|safe|default:"No data available."}}</p>
 {% else %}
 <p>No data available for this section.</p>
 {% endif %}

@@ -4,7 +4,14 @@
 <h3>13.6. Occupational Health and Safety</h3>
 
 <h4>13.6.1. Management of Material Topic</h4>
-<p>Need to add data from material topic</p>
+{% if screen_thirteen_data.3_3cde_13_6_1 and screen_thirteen_data.3_3cde_13_6_1|length > 0 %}
+    {% for val in screen_thirteen_data.3_3cde_13_6_1 %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}
 
 <h4>13.6.2. OHS Management System</h4>
 
@@ -54,7 +61,7 @@
 {% endif %}
 
 <h4>13.6.4. Worker Participation, Consultation, and Communication on OHS</h4>
-<p>{{ screen_thirteen_data.ohs_policies|default:"No data available." }}</p>
+<p>{{ screen_thirteen_data.ohs_policies.content|default:"No data available." }}</p>
 
 {% if screen_thirteen_data.403_4a_ohs_system_1 and screen_thirteen_data.403_4a_ohs_system_1.data and screen_thirteen_data.403_4a_ohs_system_1.data|length > 0 %}
   <p>{{ screen_thirteen_data.403_4a_ohs_system_1.data.0.Q1|default:"No data available" }}</p>
@@ -150,7 +157,160 @@
 
 
 <h4>13.6.7. Hazard, Risk Identification and Investigation</h4>
-<p>{{screen_thirteen_data.hazard_risk_assessment}}</p>
+<p>{{screen_thirteen_data.hazard_risk_assessment.content|default:"No data available."}}</p>
+
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Routine Hazard Identification & Risk Assessment</th>
+            <th>Non-Routine Hazard Identification & Risk Assessment</th>
+            <th>Process for hazard identification</th>
+            <th>Hierarchy of controls</th>
+            <th>Legal or guideline basis</th>
+            <th>List of legal requirements</th>
+            <th>List of Standards/Guidelines</th>
+            <th>Vulnerable Workers</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in screen_thirteen_data.403_2a_process_for_hazard %}
+        <tr>
+          <td>
+            {% if item.RoutineHazard %} {{ item.RoutineHazard}} {% if item.RoutineHazard_others %}, {{ item.RoutineHazard_others }}{% endif %} {% else %} {{ item.RoutineHazard_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>
+            {% if item.NonRoutineHazard %} {{ item.NonRoutineHazard|join:", " }} {% if item.NonRoutineHazard_others %}, {{ item.NonRoutineHazard_others }}{% endif %} {% else %} {{ item.NonRoutineHazard_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>
+            {% if item.Processforhazard %} {{ item.Processforhazard|join:", " }} {% if item.Processforhazard_others %}, {{ item.Processforhazard_others }}{% endif %} {% else %} {{ item.Processforhazard_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>
+            {% if item.Hierarchycontrols %} {{ item.Hierarchycontrols|join:", " }} {% if item.Hierarchycontrols_others %}, {{ item.Hierarchycontrols_others }}{% endif %} {% else %} {{ item.Hierarchycontrols_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>{{ item.Legalguideline|default:"N/A" }}</td>
+          <td>{{ item.Listlegal|default:"N/A" }}</td>
+          <td>{{ item.ListStandards|default:"N/A" }}</td>
+          <td>
+            {% if item.VulnerableWorkers %} {{ item.VulnerableWorkers|join:", " }} {% if item.VulnerableWorkers_others %}, {{ item.VulnerableWorkers_others }}{% endif %} {% else %} {{ item.VulnerableWorkers_others|default:"N/A" }} {% endif %}
+          </td>
+         </tr>
+        {% endfor %}
+      </tbody>
+</table>
+
+<h5>Quality Assurance and system improvement</h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Process Quality Assurance</th>
+            <th>Personnel Competency Assurance</th>
+            <th>Results Utilization and Improvement</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in screen_thirteen_data.403_2a_quality_assurance.data %}
+        <tr>
+          <td>{{ item.Processquality|default:"N/A" }}</td>
+          <td>{{ item.Personnelcompetency|default:"N/A" }}</td>
+          <td>{{ item.Resultsutilization|default:"N/A" }}</td>
+         </tr>
+        {% endfor %}
+      </tbody>
+</table>
+
+<h5>Work related incident investigation:</h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Description of Incident</th>
+            <th>Incident Reporting Personnel</th>
+            <th>Investigation team</th>
+            <th>Investigation Methods</th>
+            <th>Hazard Identification & Risk Assessment</th>
+            <th>Corrective Actions</th>
+            <th>System Improvement</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in screen_thirteen_data.403_2d.data %}
+        <tr>
+          <td>
+            {{ item.Descriptionincident|default:"N/A" }}
+          </td>
+          <td>
+            {% if item.Incidentreporting %} {{ item.Incidentreporting|join:", " }} {% if item.Incidentreporting_others %}, {{ item.Incidentreporting_others }}{% endif %} {% else %} {{ item.Incidentreporting_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>
+            {% if item.Investigationteam %} {{ item.Investigationteam|join:", " }} {% if item.Investigationteam_others %}, {{ item.Investigationteam_others }}{% endif %} {% else %} {{ item.Investigationteam_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>
+            {% if item.InvestigationMethods %} {{ item.InvestigationMethods|join:", " }} {% if item.InvestigationMethods_others %}, {{ item.InvestigationMethods_others }}{% endif %} {% else %} {{ item.InvestigationMethods_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>{{ item.HazardIdentification|default:"N/A" }}</td>
+          <td>
+            {% if item.CorrectiveActions %} {{ item.CorrectiveActions|join:", " }} {% if item.CorrectiveActions_others %}, {{ item.CorrectiveActions_others }}{% endif %} {% else %} {{ item.CorrectiveActions_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>{{ item.SystemImprovement|default:"N/A" }}</td>
+         </tr>
+        {% endfor %}
+      </tbody>
+</table>
+
+<h5>Hazard reporting and workers protection</h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Reporting channels</th>
+            <th>Reporting Processes</th>
+            <th>Reporting encouragement</th>
+            <th>Reprisal Protection Measures </th>
+            <th>Feedback and Communication</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in screen_thirteen_data.403_2b_hazard_reporting %}
+        <tr>
+          <td>
+            {% if item.Reportingchannels %} {{ item.Reportingchannels}} {% if item.Reportingchannels_others %}, {{ item.Reportingchannels_others }}{% endif %} {% else %} {{ item.Reportingchannels_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>
+            {% if item.ReportingProcesses %} {{ item.ReportingProcesses|join:", " }} {% if item.ReportingProcesses_others %}, {{ item.ReportingProcesses_others }}{% endif %} {% else %} {{ item.ReportingProcesses_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>
+            {% if item.Reportingencouragement %} {{ item.Reportingencouragement|join:", " }} {% if item.Reportingencouragement_others %}, {{ item.Reportingencouragement_others }}{% endif %} {% else %} {{ item.Reportingencouragement_others|default:"N/A" }} {% endif %}
+          </td>
+          <td>{{ item.ReprisalProtection|default:"N/A" }}</td>
+          <td>
+            {% if item.FeedbackCommunication %} {{ item.FeedbackCommunication|join:", " }} {% if item.FeedbackCommunication_others %}, {{ item.FeedbackCommunication_others }}{% endif %} {% else %} {{ item.FeedbackCommunication_others|default:"N/A" }} {% endif %}
+          </td>
+         </tr>
+        {% endfor %}
+      </tbody>
+</table>
+
+<h5>Worker right to refuse unsafe work</h5>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Right to refuse unsafe work</th>
+            <th>Policy and Process</th>
+            <th>Protection from Reprisals </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in screen_thirteen_data.403_2c_worker_right.data %}
+        <tr>
+          <td>{{ item.Rightrefuse|default:"N/A" }}</td>
+          <td>{{ item.PolicyProcess|default:"N/A" }}</td>
+          <td>
+            {% if item.Protectionreprisals %} {{ item.Protectionreprisals|join:", " }} {% if item.Protectionreprisals_others %}, {{ item.Protectionreprisals_others }}{% endif %} {% else %} {{ item.Protectionreprisals_others|default:"N/A" }} {% endif %}
+          </td>
+         </tr>
+        {% endfor %}
+      </tbody>
+</table>
 
 <h5>Process for hazard identification:</h5>
 {% if screen_thirteen_data.403_2a_process_for_hazard and screen_thirteen_data.403_2a_process_for_hazard.Q3 %}
@@ -233,7 +393,7 @@
 {% endif %}
 
 <h4>13.6.8. Work-Related Ill-Health & Injuries</h4>
-<p>{{screen_thirteen_data.work_related_health_injuries|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.work_related_health_injuries.content|default:"No data available."}}</p>
 
 <h5>
     Work-related hazards that pose a risk of high-consequence injury
@@ -558,7 +718,7 @@
 </table>
 
 <h4>13.6.9. Safety Training</h4>
-<p>{{screen_thirteen_data.safety_training|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.safety_training.content|default:"No data available."}}</p>
 
 <h5>Occupational Health and Safety Training</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
@@ -585,7 +745,7 @@
 </table>
 
 <h4>13.6.10. Workers Covered by OHS Management System</h4>
-<p>{{screen_thirteen_data.ohs_management_system|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.ohs_management_system.content|default:"No data available."}}</p>
 
 <h5>
     Workers excluded & type of workers excluded

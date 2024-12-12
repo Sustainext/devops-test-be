@@ -63,3 +63,33 @@ def get_wage(wages, location):
     # Replace any hyphens with underscores to match the data structure
     location_key = location.replace("-", "_")
     return wages.get(location_key, {})
+
+@register.filter
+def map(value, arg):
+    """
+    Mimics Python's map function.
+    Extracts the specified field (arg) from a list of dictionaries.
+    Example:
+        {{ my_list|map:"field_name" }}
+    """
+    try:
+        return [item[arg] for item in value if arg in item]
+    except (TypeError, KeyError):
+        return []
+
+@register.filter
+def flatten(value):
+    """Flattens a list of lists into a single list."""
+    try:
+        return [item for sublist in value for item in sublist]
+    except TypeError:
+        return []
+
+@register.filter
+def unique(value):
+    """Removes duplicates from a list."""
+    try:
+        return list(set(value))
+    except TypeError:
+        return value
+

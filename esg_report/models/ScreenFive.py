@@ -8,7 +8,7 @@ class AwardAndRecognition(AbstractModel, HistoricalModelMixin):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="award_recognition"
     )
-    description = models.TextField(blank=True, null=True)
+    description = models.JSONField(blank=True, null=True)
     file = models.TextField(blank=True, null=True)
 
     def __str__(self):

@@ -1,7 +1,7 @@
 <!-- about_the_company.html -->
 
 <h2>2. About the Company and Operations</h2>
-<p>{{about_the_company.about_the_company|safe}}</p>
+<p>{{about_the_company.about_the_company.content|safe}}</p>
 
 <p><span style="color: black;">• Nature of ownership and legal form:</span>
     {% if about_the_company.2_1 and about_the_company.2_1.nature_of_ownership_and_legal_form %}
@@ -29,7 +29,7 @@
 <h3>2.1. Business Model and Impact</h3>
 
 <h4>2.1.1 Activities, Value Chain, and Other Business Relationships</h4>
-<p>{{ about_the_company.entities_included|safe }}</p>
+<p>{{ about_the_company.entities_included.content|safe }}</p>
 
 <p>In the current reporting period, we observed the following significant changes in these categories:</p>
 
@@ -66,10 +66,10 @@
 </p>
 <p>Each entity adheres to our comprehensive sustainability framework, ensuring consistent ESG practices across our
     entire organization.</p>
-<p>{% if about_the_company.business_relations %}{{about_the_company.business_relations | safe}}{% else %} No data added
+<p>{% if about_the_company.business_relations %}{{about_the_company.business_relations.content | safe}}{% else %} No data added
     {% endif %} </p>
 
 <h3>2.2. Supply Chain</h3>
-<p> {% if about_the_company.supply_chain_description %}{{about_the_company.supply_chain_description|safe}}{% else %} No
+<p> {% if about_the_company.supply_chain_description %}{{about_the_company.supply_chain_description.content|safe}}{% else %} No
     data
     added. {% endif %} </p>

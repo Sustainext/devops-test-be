@@ -2,7 +2,7 @@
 {% load custom_tags%}
 <h2>10. Sustainability Journey</h2>
 {% if screen_ten_data.company_sustainability_statement %}
-<p>{{screen_ten_data.company_sustainability_statement}}</p>
+<p>{{screen_ten_data.company_sustainability_statement.content|default:"No data available."}}</p>
 {% else %}
 <p>No sustainability statement provided.</p>
 {% endif %}
@@ -10,27 +10,34 @@
 
 <h3>10.1. Management Approach for Sustainability/ESG Topics</h3>
 {% if screen_ten_data.approach_for_sustainability %}
-<p>{{screen_ten_data.approach_for_sustainability}}</p>
+<p>{{screen_ten_data.approach_for_sustainability.content|default:"No data available."}}</p>
 {% else %}
 <p>No approach provided.</p>
 {% endif %}
 
 <h3>10.2. Company’s Sustainability Goals</h3>
 {% if screen_ten_data.sustainability_goals %}
-<p>{{screen_ten_data.sustainability_goals}}</p>
+<p>{{screen_ten_data.sustainability_goals.content|default:"No data available."}}</p>
 {% else %}
 <p>No sustainability goals provided.</p>
 {% endif %}
 
 <h3>10.3. Supply Chain Sustainability</h3>
 {% if screen_ten_data.approach_to_supply_chain_sustainability %}
-<p>{{screen_ten_data.approach_to_supply_chain_sustainability}}</p>
+<p>{{screen_ten_data.approach_to_supply_chain_sustainability.content|default:"No data available."}}</p>
 {% else %}
 <p>No approach provided.</p>
 {% endif %}
 
 <h4>10.3.1. Management of Material Topics</h4>
-<p>No Data available</p>
+{% if screen_ten_data.3_c_d_e_in_material_topics and screen_ten_data.3_c_d_e_in_material_topics|length > 0 %}
+    {% for val in screen_ten_data.3_c_d_e_in_material_topics %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}
 
 <h4>10.3.2. Local Suppliers</h4>
 <ul>

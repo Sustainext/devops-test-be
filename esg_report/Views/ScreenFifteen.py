@@ -25,9 +25,16 @@ class ScreenFifteenAPIView(APIView):
         response_data = {}
         try:
             screen_fifteen: ScreenFifteenModel = self.report.screen_fifteen
-            serializer = ScreenFifteenSerializer(screen_fifteen, data=request.data)
+            serializer = ScreenFifteenSerializer(
+                screen_fifteen,
+                data=request.data,
+                partial=True,
+                context={"request": request},
+            )
         except ObjectDoesNotExist:
-            serializer = ScreenFifteenSerializer(data=request.data)
+            serializer = ScreenFifteenSerializer(
+                data=request.data, context={"request": request}
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=self.report)
         response_data.update(serializer.data)

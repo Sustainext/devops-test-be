@@ -26,13 +26,16 @@ class ScreenElevenAPIView(APIView):
         response_data: dict[str, Any] = {}
         try:
             screen_eleven: ScreenEleven = report.screen_eleven
-            screen_eleven.delete()
+            serializer = ScreenElevenSerializer(
+                instance=screen_eleven,
+                data=request.data,
+                partial=True,
+                context={"request": request},
+            )
         except ObjectDoesNotExist:
-            # * If the ScreenEleven does not exist, create a new one
-            pass
-        serializer = ScreenElevenSerializer(
-            data=request.data, context={"request": request}
-        )
+            serializer = ScreenElevenSerializer(
+                data=request.data, context={"request": request}
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
         response_data.update(serializer.data)

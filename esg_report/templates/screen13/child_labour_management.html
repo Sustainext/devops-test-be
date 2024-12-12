@@ -30,7 +30,7 @@
     </tbody>
 </table>
 
-<p> {{screen_thirteen_data.child_labor_position|default:"No data available"}} </p>
+<p> {{screen_thirteen_data.child_labor_position.content|default:"No data available"}} </p>
 
 <h4>Operations considered to have significant risk of child labor</h4>
 <table cellpadding="5" cellspacing="0" width="100%">
@@ -93,4 +93,11 @@
 </table>
 
 <h4>13.3.1. Management of Material Topic</h4>
-<p>Need to add data here from material topic</p>
+{% if screen_thirteen_data.3_3cde_13_3_1 and screen_thirteen_data.3_3cde_13_3_1|length > 0 %}
+    {% for val in screen_thirteen_data.3_3cde_13_3_1 %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}

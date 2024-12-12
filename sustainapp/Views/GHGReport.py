@@ -35,9 +35,18 @@ from django.core.files.storage import default_storage
 from datametric.utils.analyse import filter_by_start_end_dates
 from esg_report.utils import create_validation_method_for_report_creation
 from azure.storage.blob import BlobClient
+from datetime import datetime
 
 
 logger = logging.getLogger()
+
+
+def format_created_at(created_at):
+    """Format the created_at field into '19 Nov 2024 10:40:45 am'."""
+    if created_at:
+        dt_object = datetime.fromisoformat(created_at)
+        return dt_object.strftime("%d %b %Y %I:%M:%S %p").lower()
+    return None
 
 
 def calculate_contributions(self, emission_by_scope, total_emissions):
@@ -644,6 +653,7 @@ class GHGReportView(generics.CreateAPIView):
                     "report_by": report_by,
                     "message": analysis_data.data["message"],
                     "report_type": serializer.validated_data["report_type"],
+                    "created_at": format_created_at(serializer.data.get("created_at")),
                 },
                 status=analysis_data.status_code,
             )
