@@ -547,7 +547,7 @@ class CorporateViewset(viewsets.ModelViewSet):
         temp_framework = request.data.get("framework")
         try:
             framework = Framework.objects.get(name=temp_framework)
-        except Framework.DoesNotExist:
+        except Exception as e:
             framework = Framework.objects.get(name="GRI: With reference to")
             request.data["framework"] = framework.pk
 
