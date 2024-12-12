@@ -136,13 +136,14 @@
     <tbody>
         {% for hire in screen_thirteen_data.401_social_analyse.data.new_employee_hires %}
         <tr>
-            <td>{{ hire.type_of_employee }}</td>
-            <td>{{ hire.percentage_of_male_employee }}%</td>
-            <td>{{ hire.percentage_of_female_employee }}%</td>
-            <td>{{ hire.percentage_of_non_binary_employee }}%</td>
-            <td>{{ hire.yearsold30 }}%</td>
-            <td>{{ hire.yearsold30to50 }}%</td>
-            <td>{{ hire.yearsold50 }}%</td>
+            <!-- Format till 2 decimals -->
+            <td>{{ hire.type_of_employee|floatformat:2  }}</td>
+            <td>{{ hire.percentage_of_male_employee|floatformat:2 }}%</td>
+            <td>{{ hire.percentage_of_female_employee|floatformat:2 }}%</td>
+            <td>{{ hire.percentage_of_non_binary_employee|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold30|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold30to50|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold50|floatformat:2 }}%</td>
             
         </tr>
         {% endfor %}
@@ -165,13 +166,13 @@
     <tbody>
         {% for hire in screen_thirteen_data.401_social_analyse.data.employee_turnover %}
         <tr>
-            <td>{{ hire.type_of_employee }}</td>
-            <td>{{ hire.percentage_of_male_employee }}%</td>
-            <td>{{ hire.percentage_of_female_employee }}%</td>
-            <td>{{ hire.percentage_of_non_binary_employee }}%</td>
-            <td>{{ hire.yearsold30 }}%</td>
-            <td>{{ hire.yearsold30to50 }}%</td>
-            <td>{{ hire.yearsold50 }}%</td>
+            <td>{{ hire.type_of_employee|floatformat:2 }}</td>
+            <td>{{ hire.percentage_of_male_employee|floatformat:2 }}%</td>
+            <td>{{ hire.percentage_of_female_employee|floatformat:2 }}%</td>
+            <td>{{ hire.percentage_of_non_binary_employee|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold30|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold30to50|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold50|floatformat:2 }}%</td>
             
         </tr>
         {% endfor %}
@@ -313,8 +314,8 @@
         {% for parental_leave in screen_thirteen_data.401_social_analyse.data.return_to_work_rate_and_retention_rate_of_employee %}
         <tr>
             <td>{{ parental_leave.employee_category }}</td>
-            <td>{{ parental_leave.male }}</td>
-            <td>{{ parental_leave.female }}</td>
+            <td>{{ parental_leave.male|floatformat:2 }}</td>
+            <td>{{ parental_leave.female|floatformat:2 }}</td>
         </tr>
         {% endfor %}
     </tbody>

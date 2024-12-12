@@ -130,9 +130,11 @@ def get_emission_analysis_as_per_report(report: Report):
 
 
 def get_materiality_assessment(report):
-    materiality_assessment = MaterialityAssessment.objects.filter(
-        client=report.client
-    ).exclude(status="outdated")
+    materiality_assessment = (
+        MaterialityAssessment.objects.filter(client=report.client)
+        .exclude(status="outdated")
+        .filter(approach__icontains="accordance")
+    )
     if report.corporate:
         materiality_assessment = materiality_assessment.filter(
             Q(corporate=report.corporate) | Q(organization=report.organization)
@@ -359,13 +361,6 @@ def creating_material_topic_and_disclosure():
             Disclosure.objects.get_or_create(topic=material_topic_obj, description=dis)[
                 0
             ].save()
-
-
-def getting_all_general_sections(report: Report):
-    """
-    Retrieves all general sections for a given report.
-    """
-    data_points = get_data_points_as_per_report(report=report)
 
 
 def create_validation_method_for_report_creation(report: Report):
