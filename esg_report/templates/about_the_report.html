@@ -1,7 +1,7 @@
 <!-- about_the_report.html -->
 <h2>7. About the Report</h2>
 
-<p>{{about_the_report.description}}</p>
+<p>{{about_the_report.description.content|default:"No data available"}}</p>
 
 <h3>7.1. Reporting Period, Frequency, and Point of Contact</h3>
 
@@ -37,7 +37,7 @@
 </p>
 
 <h3>7.2. Frameworks</h3>
-<p>{{about_the_report.framework_description}}</p>
+<p>{{about_the_report.framework_description.content|default:"No data available"}}</p>
 <!-- <p>This report has been prepared in accordance with the GRI Standards, the leading global framework for sustainability
     reporting. We also align our reporting with other relevant frameworks and guidelines, including:</p>
 <ul>
@@ -46,7 +46,7 @@
 </ul> -->
 
 <h3>7.3. External Assurance (optional section)</h3>
-<p>{{about_the_report.external_assurance}}</p>
+<p>{{about_the_report.external_assurance.content|default:"No data available"}}</p>
 <p>To ensure the credibility and reliability of our ESG disclosures, we have engaged an independent third-party
     assurance provider to verify selected information in this report. The scope of the assurance includes:</p>
 

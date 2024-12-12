@@ -29,7 +29,10 @@ class ScreenFourteenAPIView(APIView):
         try:
             screen_fourteen: ScreenFourteen = self.report.screen_fourteen
             serializer = ScreenFourteenSerializer(
-                screen_fourteen, data=request.data, context={"request": request}
+                screen_fourteen,
+                data=request.data,
+                partial=True,
+                context={"request": request},
             )
         except ObjectDoesNotExist:
             serializer = ScreenFourteenSerializer(

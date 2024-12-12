@@ -3,7 +3,7 @@
 <h2>14. Community</h2>
 
 <h3>14.1. Community Engagement</h3>
-<p>{{screen_fourteen_data.community_engagement|default:"No data available."}}</p>
+<p>{{screen_fourteen_data.community_engagement.content|default:"No data available."}}</p>
 
 <h5>Percentage of Operations Implemented by Engaging Local Communities</h5>
 <table
@@ -28,7 +28,7 @@
 </table>
 
 <h5>Impact Assessment</h5>
-<p>{{screen_fourteen_data.impact_assessment|default:"No data available."}}</p>
+<p>{{screen_fourteen_data.impact_assessment.content|default:"No data available."}}</p>
 
 <h5>Operations with Significant Actual and Potential Negative Impacts</h5>
 <table
@@ -57,7 +57,14 @@
 </table>
 
 <h4>14.1.1. Management of Material Topics</h4>
-<p>No data available for this section.</p>
+{% if screen_fourteen_data.3_c_d_e_in_material_topics and screen_fourteen_data.3_c_d_e_in_material_topics|length > 0 %}
+    {% for val in screen_fourteen_data.3_c_d_e_in_material_topics %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}
 
 <h3>14.2. Corporate Social Responsibility (CSR)</h3>
-<p>{{screen_fourteen_data.csr_policies|safe|default:"No data available."}}</p>
+<p>{{screen_fourteen_data.csr_policies.content|safe|default:"No data available."}}</p>
