@@ -23,9 +23,16 @@ class ScreenTwelveAPIView(APIView):
         response_data = {}
         try:
             screen_twelve: ScreenTwelve = self.report.screen_twelve
-            serializer = ScreenTwelveSerializer(screen_twelve, data=request.data)
+            serializer = ScreenTwelveSerializer(
+                screen_twelve,
+                data=request.data,
+                partial=True,
+                context={"request": request},
+            )
         except ObjectDoesNotExist:
-            serializer = ScreenTwelveSerializer(data=request.data)
+            serializer = ScreenTwelveSerializer(
+                data=request.data, context={"request": request}
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=self.report)
         response_data.update(serializer.data)

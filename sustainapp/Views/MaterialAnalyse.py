@@ -1,27 +1,24 @@
-from datametric.models import DataPoint, RawResponse, Path, DataMetric
-from sustainapp.models import Location, Organization, Corporateentity
+from datametric.models import RawResponse
+from sustainapp.models import Location, Corporateentity
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
 from collections import defaultdict
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from django.db.models import Prefetch
-from rest_framework import serializers
+from common.utils.value_types import format_decimal_places, safe_divide
+from decimal import Decimal
+import logging
+
+logger = logging.getLogger("django.log")
 
 
 class GetMaterialAnalysis(APIView):
-
-    def get_material_data(
-        self, location, start_year, end_year, start_month, end_month, path_slug
-    ):
-        """Function to gather data from table renewable and non-renewable materials,
-        and convert them to the highest unit within their respective categories."""
-
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         # Define conversion factors and unit hierarchy
-        conversion_factors = {
+        self.conversion_factors = {
             "Milligram": 1e-3,  # to grams (g)
             "Gram": 1,  # grams is the base unit for weight
             "Kilogram Kg": 1e3,  # to grams (g)
@@ -40,7 +37,7 @@ class GetMaterialAnalysis(APIView):
             "Cubic foot ft3": 28316.8,  # to cubic centimeters (cm³)
         }
 
-        unit_hierarchy = {
+        self.unit_hierarchy = {
             "weight": [
                 "Milligram",
                 "Gram",
@@ -66,7 +63,8 @@ class GetMaterialAnalysis(APIView):
         }
 
         # To identify unit categories
-        unit_categories = {
+
+        self.unit_categories = {
             "Milligram": "weight",
             "Gram": "weight",
             "Kilogram Kg": "weight",
@@ -85,6 +83,37 @@ class GetMaterialAnalysis(APIView):
             "Cubic foot ft3": "cubic_volume",
         }
 
+    def convert_to_cubic_cm(self, value, from_unit):
+        """
+        Convert any volume unit to cubic centimeters (cm³)
+
+        Args:
+            value (float): The value to convert
+            from_unit (str): The source unit
+
+        Returns:
+            float: Value in cubic centimeters
+            None: If conversion not possible
+        """
+        try:
+            if from_unit not in self.conversion_factors:
+                raise ValueError(f"Invalid unit: {from_unit}")
+
+            # Convert directly to cubic centimeters using conversion factor
+            return format_decimal_places(
+                value * Decimal(self.conversion_factors[from_unit])
+            )
+
+        except TypeError as e:
+            logger.error(f"Conversion error: {str(e)}")
+            return 0
+
+    def get_material_data(
+        self, location, start_year, end_year, start_month, end_month, path_slug
+    ):
+        """Function to gather data from table renewable and non-renewable materials,
+        and convert them to the highest unit within their respective categories."""
+
         raw_responses = RawResponse.objects.filter(
             path__slug=path_slug,
             year__range=(start_year, end_year),
@@ -98,7 +127,7 @@ class GetMaterialAnalysis(APIView):
                 "material_type": "",
                 "material_category": "",
                 "source": "",
-                "total_quantity": 0.0,
+                "total_quantity": Decimal(0.0),
                 "units": "",
                 "data_source": "",
             }
@@ -116,7 +145,7 @@ class GetMaterialAnalysis(APIView):
                 data_source = data.get("Datasource", "")
                 total_quantity = data.get("Totalweight", 0)
                 try:
-                    total_quantity = float(total_quantity)
+                    total_quantity = Decimal(total_quantity)
                 except ValueError:
                     # If total_waste cannot be converted to float, skip this data entry
                     continue
@@ -131,7 +160,7 @@ class GetMaterialAnalysis(APIView):
                 renewable_materials_dict[key]["total_quantity"] += total_quantity
 
                 # Identify unit category
-                category = unit_categories.get(units)
+                category = self.unit_categories.get(units)
                 if category:
                     all_units[category].add(units)
                 else:
@@ -159,21 +188,23 @@ class GetMaterialAnalysis(APIView):
                 continue
 
             # Determine categories for all units in this group
-            categories = set(unit_categories.get(un) for un in relevant_units)
+            categories = set(self.unit_categories.get(un) for un in relevant_units)
 
             # Initialize a list to store results for each category
             grouped_results = []
 
             for category in categories:
                 if not category:
-                    print(f"Warning: No category found for units {relevant_units}")
+                    logger.warning(
+                        f"Warning: No category found for units {relevant_units}"
+                    )
                     continue
 
                 # Filter units by category
                 category_units = [
                     units
                     for units in relevant_units
-                    if unit_categories.get(units) == category
+                    if self.unit_categories.get(units) == category
                 ]
 
                 # Ensure there's at least one unit for this category
@@ -186,12 +217,13 @@ class GetMaterialAnalysis(APIView):
                 # Determine the highest unit for this category
                 try:
                     highest_unit = max(
-                        category_units, key=lambda u: unit_hierarchy[category].index(u)
+                        category_units,
+                        key=lambda u: self.unit_hierarchy[category].index(u),
                     )
                 except ValueError as ve:
-                    print(f"Error: {ve}")
-                    print(f"Relevant units: {category_units}")
-                    print(f"Unit hierarchy: {unit_hierarchy[category]}")
+                    logger.error(f"Error: {ve}")
+                    logger.error(f"Relevant units: {category_units}")
+                    logger.error(f"Unit hierarchy: {self.unit_hierarchy[category]}")
                     continue
 
                 # Initialize group key with highest unit
@@ -210,7 +242,7 @@ class GetMaterialAnalysis(APIView):
                 # Mark group_key as processed
                 processed_keys.add(group_key)
 
-                total_quantity_converted = 0.0
+                total_quantity_converted = Decimal(0.0)
 
                 # Sum up quantities for all relevant units converted to highest unit
                 for key, sub_value in renewable_materials_dict.items():
@@ -226,16 +258,20 @@ class GetMaterialAnalysis(APIView):
 
                         # Convert to the highest unit
                         if (
-                            units in conversion_factors
-                            and highest_unit in conversion_factors
+                            units in self.conversion_factors
+                            and highest_unit in self.conversion_factors
                         ):
-                            total_quantity_converted += (
-                                total_quantity
-                                * conversion_factors[units]
-                                / conversion_factors[highest_unit]
+                            total_quantity_converted += format_decimal_places(
+                                (
+                                    Decimal(total_quantity)
+                                    * Decimal(self.conversion_factors[units])
+                                    / Decimal(self.conversion_factors[highest_unit])
+                                )
                             )
                         else:
-                            total_quantity_converted += total_quantity
+                            total_quantity_converted += format_decimal_places(
+                                total_quantity
+                            )
 
                 # Store the grouped material information for this category
                 grouped_results.append(
@@ -245,7 +281,9 @@ class GetMaterialAnalysis(APIView):
                         "source": source,
                         "units": highest_unit,
                         "data_source": data_source,
-                        "total_quantity": round(total_quantity_converted, 3),
+                        "total_quantity": format_decimal_places(
+                            total_quantity_converted
+                        ),
                     }
                 )
 
@@ -275,22 +313,27 @@ class GetMaterialAnalysis(APIView):
                 "type_of_product": "",
                 "product_code": "",
                 "product_name": "",
-                "total_quantity": 0.0,
+                "total_quantity": Decimal(0.0),
                 "percentage_of_reclaimed_products": "",
             }
         )
-        total_product_packaging = 0.0
+        total_product_packaging = Decimal(0.0)
         for rw in raw_responses:
             for data in rw.data:
                 type_of_product = data["Typesofproducts"]
                 product_code = data["Productcode"]
                 product_name = data["Productname"]
-                total_quantity = data["Amountsproduct"]
+                total_quantity = data["Amountofproducts"]
+                total_quantity_unit = data["Unit"]
                 total_amount_of_product_packaging = data["Amountsproduct"]
+                total_amount_of_product_packaging_unit = data["Unit2"]
                 try:
-                    total_quantity = float(total_quantity)
-                    total_amount_of_product_packaging = float(
-                        total_amount_of_product_packaging
+                    total_quantity = self.convert_to_cubic_cm(
+                        Decimal(total_quantity), from_unit=total_quantity_unit
+                    )
+                    total_amount_of_product_packaging = self.convert_to_cubic_cm(
+                        Decimal(total_amount_of_product_packaging),
+                        from_unit=total_amount_of_product_packaging_unit,
                     )
                 except ValueError:
                     # If total_waste cannot be converted to float, skip this data entry
@@ -299,14 +342,17 @@ class GetMaterialAnalysis(APIView):
                 key = (type_of_product, product_code, product_name)
 
                 reclaimed_materials_dict[key]["type_of_product"] = type_of_product
+
                 reclaimed_materials_dict[key]["product_code"] = product_code
                 reclaimed_materials_dict[key]["product_name"] = product_name
-                reclaimed_materials_dict[key]["total_quantity"] += total_quantity
+                reclaimed_materials_dict[key]["total_quantity"] += Decimal(
+                    total_quantity
+                )
                 total_product_packaging += total_amount_of_product_packaging
 
         for key, value in reclaimed_materials_dict.items():
-            value["percentage_of_reclaimed_products"] = round(
-                (value["total_quantity"] / total_product_packaging) * 100, 2
+            value["percentage_of_reclaimed_products"] = format_decimal_places(
+                safe_divide(value["total_quantity"], total_product_packaging) * 100
             )
         reclaimed_materials = list(reclaimed_materials_dict.values())
         return reclaimed_materials
@@ -329,47 +375,54 @@ class GetMaterialAnalysis(APIView):
         recycled_materials_dict = defaultdict(
             lambda: {
                 "type_of_recycled_material_used": "",
-                "total_recycled_input_materials_used": 0.0,
-                "percentage_of_recycled_input_materials_used": 0.0,
+                "total_recycled_input_materials_used": Decimal(0.0),
+                "percentage_of_recycled_input_materials_used": Decimal(0.0),
             }
         )
-        total_material_recycled = 0.0
+        total_material_recycled = Decimal(0.0)
         for rw in raw_responses:
             for data in rw.data:
                 type_of_recycled_material = data["Typeofrecycledmaterialused"]
                 recycled_input_material_used = data["Amountofrecycledinputmaterialused"]
+                recycled_input_material_used_unit = data["Unit"]
                 material_recycled = data["Amountofmaterialrecycled"]
+                material_recycled_unit = data["Unit2"]
                 try:
-                    recycled_input_material_used = float(recycled_input_material_used)
-                    material_recycled = float(material_recycled)
+                    recycled_input_material_used = self.convert_to_cubic_cm(
+                        Decimal(recycled_input_material_used),
+                        from_unit=recycled_input_material_used_unit,
+                    )
+                    material_recycled = self.convert_to_cubic_cm(
+                        Decimal(material_recycled), from_unit=material_recycled_unit
+                    )
                 except ValueError:
                     # If total_waste cannot be converted to float, skip this data entry
                     continue
                 total_material_recycled += material_recycled
 
                 key = type_of_recycled_material
-                recycled_materials_dict[key][
-                    "type_of_recycled_material_used"
-                ] = type_of_recycled_material
-                recycled_materials_dict[key][
-                    "total_recycled_input_materials_used"
-                ] += recycled_input_material_used
+                recycled_materials_dict[key]["type_of_recycled_material_used"] = (
+                    type_of_recycled_material
+                )
+                recycled_materials_dict[key]["total_recycled_input_materials_used"] += (
+                    recycled_input_material_used
+                )
 
         for key, values in recycled_materials_dict.items():
-            values["percentage_of_recycled_input_materials_used"] = round(
-                (
-                    values["total_recycled_input_materials_used"]
-                    / total_material_recycled
+            values["percentage_of_recycled_input_materials_used"] = (
+                format_decimal_places(
+                    safe_divide(
+                        values["total_recycled_input_materials_used"],
+                        Decimal(total_material_recycled),
+                    )
                 )
-                * 100,
-                2,
+                * 100
             )
 
         recycled_materials = list(recycled_materials_dict.values())
         return recycled_materials
 
     def get(self, request, format=None):
-
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 

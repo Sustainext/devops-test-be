@@ -8,10 +8,17 @@
 {% endif %}
 
 <h4>13.4.1. Management of Material Topic</h4>
-<p> Need to add data here from material topic </p>
+{% if screen_thirteen_data.3_3cde_13_4_1 and screen_thirteen_data.3_3cde_13_4_1|length > 0 %}
+    {% for val in screen_thirteen_data.3_3cde_13_4_1 %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}
 
 <h4>13.4.2. Diversity of Governance Bodies and Employees</h4>
-<p>{{screen_thirteen_data.employee_diversity_position|default:"No data added."}}</p>
+<p>{{screen_thirteen_data.employee_diversity_position.content|default:"No data added."}}</p>
 
 <h4>Governance Bodies</h4>
 <h5>Diversity Representation in Governance Bodies</h5>
@@ -80,7 +87,7 @@
 
 
 <h4>13.4.3. Remuneration</h4>
-<p>{{screen_thirteen_data.remuneration_practices|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.remuneration_practices.content|default:"No data available."}}</p>
 
 <h5>Ratio of Basic Salary of Women to Men</h5>
 <table>

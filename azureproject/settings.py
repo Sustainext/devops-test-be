@@ -49,6 +49,7 @@ PROJECT_APPS = [
     "analysis.apps.AnalysisConfig",
     "materiality_dashboard.apps.MaterialityDashboardConfig",
     "esg_report.apps.EsgReportConfig",
+    "canadabills211.apps.Canadabills211Config",
 ]
 
 THIRD_PARTY = [

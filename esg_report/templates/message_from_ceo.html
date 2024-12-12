@@ -8,10 +8,8 @@
 
 
 
-  <p>{{ ceo_message.message | safe |default:"No data available." }}</p>
-  {% if ceo_message.message %}
-  {% endif %}
-  <p>{{ ceo_message.ceo_name|default:"No data available." }}<br />Chief Executive
+  <p>{{ ceo_message.message.content | safe |default:"No data available." }}</p>
+  <p>{{ ceo_message.ceo_name.content|default:"No data available." }}<br />Chief Executive
     Officer<br />{{ ceo_message.company_name|default:"No data available." }}</p>
   <img src="{{ ceo_message.signature_image }}" alt=""
     style="max-width: 100px; height: 100px; object-fit: cover; border-radius: 10px; margin: 0 auto;" />

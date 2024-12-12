@@ -130,9 +130,11 @@ def get_emission_analysis_as_per_report(report: Report):
 
 
 def get_materiality_assessment(report):
-    materiality_assessment = MaterialityAssessment.objects.filter(
-        client=report.client
-    ).exclude(status="outdated")
+    materiality_assessment = (
+        MaterialityAssessment.objects.filter(client=report.client)
+        .exclude(status="outdated")
+        .filter(approach__icontains="accordance")
+    )
     if report.corporate:
         materiality_assessment = materiality_assessment.filter(
             Q(corporate=report.corporate) | Q(organization=report.organization)
@@ -361,13 +363,6 @@ def creating_material_topic_and_disclosure():
             ].save()
 
 
-def getting_all_general_sections(report: Report):
-    """
-    Retrieves all general sections for a given report.
-    """
-    data_points = get_data_points_as_per_report(report=report)
-
-
 def create_validation_method_for_report_creation(report: Report):
     """
     Creates a validation method for report creation.
@@ -475,7 +470,11 @@ def generate_disclosure_status(report: Report):
             slugs.append(slug)
 
         # Check if any slug has data
-        is_filled = all(data_points.filter(path__slug=slug).exists() for slug in slugs)
+        # * Check data point is not having value = ""
+        is_filled = all(
+            data_points.filter(path__slug=slug).exclude(value="").exists()
+            for slug in slugs
+        )
 
         # Set page_number and gri_sector_no to None as per your requirements
         page_number = None

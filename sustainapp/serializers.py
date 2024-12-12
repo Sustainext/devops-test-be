@@ -428,6 +428,7 @@ class ReportRetrieveSerializer(serializers.ModelSerializer):
     )
     corporate_name = serializers.ReadOnlyField(source="corporate.name")
     last_report_date = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Report
@@ -442,6 +443,7 @@ class ReportRetrieveSerializer(serializers.ModelSerializer):
             "organization_name",
             "corporate_name",
             "organization_country",
+            "created_at",
         ]
 
     def get_last_report_date(self, obj):
@@ -458,6 +460,12 @@ class ReportRetrieveSerializer(serializers.ModelSerializer):
             return data
         else:
             return None
+
+    def get_created_at(self, obj):
+        """Format created_at into '19 Nov 2024 10:40:45 am'."""
+        if obj.created_at:
+            return obj.created_at.strftime("%d %b %Y %I:%M:%S %p").lower()
+        return None
 
 
 class ReportUpdateSerializer(serializers.ModelSerializer):
