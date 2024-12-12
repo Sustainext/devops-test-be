@@ -87,11 +87,15 @@ from sustainapp.Views.Analyse.Social.SecurityPersonnelAnalysis import (
     SecurityPersonnelAnalysisView,
 )
 from sustainapp.Views.DepartmentViewset import DepartmentViewSet
-
+from sustainapp.Views.CanadaBillS211View import IIScreenViewset
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
 router.register(r"ghgreport", ReportViewSet, basename="ReportUpdate")
 router.register(r"department", DepartmentViewSet, basename="Department")
+router.register(
+    r"identifying-information", IIScreenViewset, basename="Identifying_Information"
+)
+
 urlpatterns = [
     path("", include(router.urls)),
     path("subcategories/", SubCategoriesAPIView.as_view(), name="subcategories"),
