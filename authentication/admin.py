@@ -10,9 +10,8 @@ from authentication.models import (
 )
 from authentication.AdminSite.ClientAdmin import client_admin_site
 from django.contrib.auth.admin import UserAdmin
-from sustainapp.models import Location, Corporateentity, Organization
 from authentication.AdminForm.CustomUserCreationForm import CustomUserCreationForm
-from django import forms
+from authentication.forms import CustomAdminPasswordChangeForm
 
 
 # Register your models here.
@@ -43,6 +42,7 @@ class LoginCounterAdmin(admin.ModelAdmin):
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
+    change_password_form = CustomAdminPasswordChangeForm
     model = CustomUser
     list_display = [
         "username",

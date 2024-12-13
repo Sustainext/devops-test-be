@@ -1,0 +1,20 @@
+{% extends "admin/login.html" %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector('form');
+            const passwordField = document.querySelector('input[name="password"]');
+
+            form.addEventListener('submit', function (e) {
+                // Convert password to SHA-256
+                if (passwordField.value) {
+                    const hashedPassword = CryptoJS.SHA256(passwordField.value).toString(CryptoJS.enc.Hex);
+                    passwordField.value = hashedPassword; // Replace the plain password with hashed value
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -22,6 +22,7 @@ from sustainapp.models import ClientTaskDashboard
 # from django.utils.html import strip_tags
 from allauth.account.signals import user_signed_up
 from django.contrib.auth.models import update_last_login
+import hashlib
 from authentication.models import LoginCounter
 from authentication.models import UserProfile, CustomUser
 import logging
@@ -32,14 +33,13 @@ user_log = logging.getLogger("user_logger")
 # Signals to send Activation mail
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def send_welcome_email(sender, instance, created, **kwargs):
-
     if created and not instance.is_superuser:
         user_profile_exists = hasattr(instance, "user_profile")
         # Generate a random password
         password = "".join(random.choices(string.ascii_letters + string.digits, k=12))
-
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
         # Set the generated password for the user
-        instance.set_password(password)
+        instance.set_password(hashed_password)
         instance.save()
 
         # Use if need in future(
