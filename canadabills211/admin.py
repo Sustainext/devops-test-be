@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import IdentifyingInformation
+from .models.CanadaBillS211 import IdentifyingInformation, AnnualReport
 
 
 @admin.register(IdentifyingInformation)
@@ -86,5 +86,124 @@ class IdentifyingInformationAdmin(admin.ModelAdmin):
         (
             "Screen 7: Location",
             {"fields": ("country_10", "province_or_territory_10_1")},
+        ),
+    )
+
+@admin.register(AnnualReport)
+class AnnualReportAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "client",
+        "organization",
+        "corporate",
+        "year",
+        "steps_taken_1",
+        "structure_3",
+        "policies_in_place_6",
+        "risk_identified_8",
+        "measures_remediate_activaties_11",
+        "training_provided_15",
+        "policies_procedures_assess_17",
+    )
+    list_filter = (
+        "year",
+        "client",
+        "organization",
+        "corporate",
+        "policies_in_place_6",
+        "risk_identified_8",
+        "training_provided_15",
+    )
+    search_fields = ("client__name", "organization__name", "corporate__name", "year")
+    ordering = ("-year",)
+
+    fieldsets = (
+        (
+            "General Information",
+            {"fields": ("client", "user", "organization", "corporate", "year")},
+        ),
+        (
+            "Screen 1",
+            {
+                "fields": (
+                    "steps_taken_1",
+                    "steps_taken_description_1",
+                    "additional_information_2",
+                )
+            },
+        ),
+        (
+            "Screen 2",
+            {
+                "fields": (
+                    "structure_3",
+                    "categorization_4",
+                    "additional_information_entity_5",
+                )
+            },
+        ),
+        (
+            "Screen 3",
+            {
+                "fields": (
+                    "policies_in_place_6",
+                    "elements_implemented_6_1",
+                    "additional_info_policies_7",
+                )
+            },
+        ),
+        (
+            "Screen 4",
+            {
+                "fields": (
+                    "risk_identified_8",
+                    "risk_aspects_8_1",
+                    "risk_aspects_description_8_1",
+                    "risk_activaties_9",
+                    "risk_activaties_description_9",
+                    "additional_info_entity_10",
+                )
+            },
+        ),
+        (
+            "Screen 5",
+            {
+                "fields": (
+                    "measures_remediate_activaties_11",
+                    "remediation_measures_taken_11_1",
+                    "remediation_measures_taken_description_11_1",
+                    "remediation_measures_12",
+                )
+            },
+        ),
+        (
+            "Screen 6",
+            {
+                "fields": (
+                    "measures_taken_loss_income_13",
+                    "additional_info_loss_income_14",
+                )
+            },
+        ),
+        (
+            "Screen 7",
+            {
+                "fields": (
+                    "training_provided_15",
+                    "training_mandatory_15_1",
+                    "additional_info_training_16",
+                )
+            },
+        ),
+        (
+            "Screen 8",
+            {
+                "fields": (
+                    "policies_procedures_assess_17",
+                    "assessment_method_17_1",
+                    "assessment_method_description_17_1",
+                    "additional_info_assessment_18",
+                )
+            },
         ),
     )
