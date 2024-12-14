@@ -13,9 +13,7 @@ from datametric.utils.analyse import (
 from datametric.models import RawResponse, DataPoint
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
-    collect_data_segregated_by_location,
 )
-from common.utils.value_types import safe_divide
 
 
 class DiversityAndInclusionAnalyse(APIView):
