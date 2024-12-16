@@ -23,7 +23,7 @@ class ClimatiqDataAPIView(APIView):
 
         # Headers for the Climatiq API request
         headers = {
-            "Authorization": f"Bearer {os.getenv("CLIMATIQ_AUTH_TOKEN")}",
+            "Authorization": f"Bearer {os.getenv('CLIMATIQ_AUTH_TOKEN')}",
             "User-Agent": "Apidog/1.0.0 (https://apidog.com)",
             "Accept": "*/*",
         }
