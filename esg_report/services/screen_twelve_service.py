@@ -194,10 +194,10 @@ class ScreenTwelveService:
                     "category": emission_analyse_object.category,
                     "subcategory": emission_analyse_object.subcategory,
                     "activity": emission_analyse_object.activity,
-                    "activity_value": format_decimal_places(
+                    "emission": format_decimal_places(
                         emission_analyse_object.co2e_total / 1000
                     ),
-                    "activity_unit": "tCO2e",
+                    "emission_unit": "tCO2e",
                 }
             )
         return slug_data
