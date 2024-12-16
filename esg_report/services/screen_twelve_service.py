@@ -194,8 +194,8 @@ class ScreenTwelveService:
                     "category": emission_analyse_object.category,
                     "subcategory": emission_analyse_object.subcategory,
                     "activity": emission_analyse_object.activity,
-                    "emission": str(
-                        format_decimal_places(emission_analyse_object.co2e_total / 1000)
+                    "emission": format_decimal_places(
+                        emission_analyse_object.co2e_total / 1000
                     ),
                     "emission_unit": "tCO2e",
                 }
