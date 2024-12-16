@@ -32,7 +32,7 @@
       <th>Category</th>
       <th>Sub Category</th>
       <th>Activity</th>
-      <th>Value</th>
+      <th>Emission(tC02e)</th>
     </tr>
   </thead>
   <tbody>
@@ -41,7 +41,7 @@
       <td>{{ data.category }}</td>
       <td>{{ data.subcategory }}</td>
       <td>{{ data.activity }}</td>
-      <td>{{ data.activity_value|round_to:2 }} {{ data.activity_unit }}</td>
+      <td>{{ data.emission|round_to:2 }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -61,7 +61,7 @@
       <th>Category</th>
       <th>Sub Category</th>
       <th>Activity</th>
-      <th>Value</th>
+      <th>Emission(tC02e)</th>
     </tr>
   </thead>
   <tbody>
@@ -70,7 +70,7 @@
       <td>{{ data.category }}</td>
       <td>{{ data.subcategory }}</td>
       <td>{{ data.activity }}</td>
-      <td>{{ data.activity_value|round_to:2 }} {{ data.activity_unit }}</td>
+      <td>{{ data.emission|round_to:2 }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -90,7 +90,7 @@
       <th>Category</th>
       <th>Sub Category</th>
       <th>Activity</th>
-      <th>Value</th>
+      <th>Emission(tC02e)</th>
     </tr>
   </thead>
   <tbody>
@@ -99,7 +99,7 @@
       <td>{{ data.category }}</td>
       <td>{{ data.subcategory }}</td>
       <td>{{ data.activity }}</td>
-      <td>{{ data.activity_value|round_to:2 }} {{ data.activity_unit }}</td>
+      <td>{{ data.emission|round_to:2 }}</td>
     </tr>
     {% endfor %}
   </tbody>
