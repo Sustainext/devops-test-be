@@ -2,7 +2,6 @@ from django.urls import path, include
 from sustainapp.Views.SubCategoriesAPIView import SubCategoriesAPIView
 from sustainapp.Views.ScopeCategoriesAPIView import ScopeCategoriesAPIView
 from sustainapp.Views.ReportWordDownloadAPI import ReportWordDownloadAPI
-from sustainapp.Views.OrganisationTaskList import OrganisationTaskDashboardView
 from sustainapp.Views.ClientTaskView import UserClientViewset
 from sustainapp.Views.OrganisationTaskList import UserTaskDashboardView
 from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
@@ -87,6 +86,8 @@ from sustainapp.Views.Analyse.Social.SecurityPersonnelAnalysis import (
     SecurityPersonnelAnalysisView,
 )
 from sustainapp.Views.DepartmentViewset import DepartmentViewSet
+from sustainapp.Views.ClimatiqCalling import ClimatiqDataAPIView
+
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
 router.register(r"ghgreport", ReportViewSet, basename="ReportUpdate")
@@ -273,5 +274,10 @@ urlpatterns = [
         "get_analysis_security_personnel/",
         SecurityPersonnelAnalysisView.as_view(),
         name="get_analysis_security_personnel",
+    ),
+    path(
+        "get_climatiq_data/",
+        ClimatiqDataAPIView.as_view(),
+        name="get_climatiq_data",
     ),
 ]
