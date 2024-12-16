@@ -179,7 +179,6 @@ class ScreenTwelveService:
         return collect_data_by_raw_response_and_index(data_points=local_data_points)
 
     def get_301_123_collect(self):
-        slugs = [self.slugs[0], self.slugs[1], self.slugs[2]]
         emission_analysis_objects = get_emission_analysis_as_per_report(
             report=self.report
         )
@@ -196,9 +195,9 @@ class ScreenTwelveService:
                     "subcategory": emission_analyse_object.subcategory,
                     "activity": emission_analyse_object.activity,
                     "activity_value": format_decimal_places(
-                        emission_analyse_object.consumption
+                        emission_analyse_object.co2e_total / 1000
                     ),
-                    "activity_unit": emission_analyse_object.unit,
+                    "activity_unit": "tCO2e",
                 }
             )
         return slug_data
