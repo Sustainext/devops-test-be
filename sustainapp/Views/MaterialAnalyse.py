@@ -340,6 +340,7 @@ class GetMaterialAnalysis(APIView):
             }
         )
         total_product_packaging = defaultdict(lambda: Decimal("0.0"))
+        response_list = list()
         for rw in raw_responses:
             for data in rw.data:
                 type_of_product = data["Typesofproducts"]
@@ -380,11 +381,18 @@ class GetMaterialAnalysis(APIView):
                 total_product_packaging[key] += total_amount_of_product_packaging
 
         for key, value in reclaimed_materials_dict.items():
-            value["percentage_of_reclaimed_products"] = format_decimal_places(
+            temp = format_decimal_places(
                 safe_divide(value["total_quantity"], total_product_packaging[key]) * 100
             )
-        reclaimed_materials = list(reclaimed_materials_dict.values())
-        return reclaimed_materials
+            response_list.append(
+                {
+                    "total_quantity": f"{temp}%",
+                    "type_of_product": value["type_of_product"],
+                    "product_code": value["product_code"],
+                    "product_name": value["product_name"],
+                }
+            )
+        return response_list
 
     def get_recycled_materials(
         self, location, start_year, end_year, start_month, end_month, path_slug
