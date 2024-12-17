@@ -90,6 +90,7 @@ class ClimatiqDataAPIView(APIView):
         """
         all_results = []
         current_page = 1
+        self.total_pages += 1
 
         # Get first page to determine total pages
         params["page"] = current_page
@@ -125,9 +126,9 @@ class ClimatiqDataAPIView(APIView):
             },
             url=self.URL,
         ).json()
-        print(f"URL: {self.URL}")
-        print(f"Params: {params}")
-        print(f"Response: {response}")
+        logger.info(f"URL: {self.URL}")
+        logger.info(f"Params: {params}")
+        logger.info(f"Response: {response}")
         return response
 
     def send_response(self):
