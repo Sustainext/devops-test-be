@@ -17,7 +17,10 @@ logger = logging.getLogger("custom_logger")
 
 
 class ClimatiqDataAPIView(APIView):
-    # TODO: Add logs on params and each climatiq call.
+    """
+    This view is used to fetch the data from Climatiq Search API.
+    """
+
     permission_classes = [AllowAny]
 
     def __init__(self, **kwargs):
@@ -45,6 +48,7 @@ class ClimatiqDataAPIView(APIView):
             }
         )
         self.loop_condition = True
+        self.total_pages = 0
 
     def set_condition_for_continueing_loop(self):
         if len(self.results) < 5:
@@ -107,6 +111,7 @@ class ClimatiqDataAPIView(APIView):
 
             if response and response.get("results"):
                 self.updating_response(response)
+            self.total_pages = self.total_pages + 1
 
         return all_results
 
@@ -128,11 +133,10 @@ class ClimatiqDataAPIView(APIView):
     def send_response(self):
         return Response(
             {
-                "current_page": 1,
-                "last_page": 1,
+                "total_pages": self.total_pages,
                 "total_results": len(self.results),
                 "results": self.results,
-                "possible_filters": self.climatiq_data,
+                "filters": self.climatiq_data,
             },
             status=status.HTTP_200_OK,
         )

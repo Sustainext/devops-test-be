@@ -9,6 +9,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from common.utils.value_types import format_decimal_places, safe_divide
 from decimal import Decimal
+from collections import defaultdict
 import logging
 
 logger = logging.getLogger("django.log")
@@ -61,52 +62,74 @@ class GetMaterialAnalysis(APIView):
                 "Cubic foot ft3",
             ],
         }
-
-        # To identify unit categories
-
         self.unit_categories = {
+            # Weight units
             "Milligram": "weight",
             "Gram": "weight",
             "Kilogram Kg": "weight",
             "Metric ton": "weight",
             "Pound Lb": "weight",
             "US short ton (tn)": "weight",
+            # Volume units
             "Milliliter": "volume",
             "Liter": "volume",
             "Fluid Ounce fl Oz": "volume",
             "Quart Qt": "volume",
             "Gallon Gal": "volume",
             "Pint Pt": "volume",
+            # Cubic volume units
             "Cubic centimeter cm3": "cubic_volume",
             "Cubic decimeter dm3": "cubic_volume",
             "Cubic meter m3": "cubic_volume",
             "Cubic foot ft3": "cubic_volume",
         }
 
-    def convert_to_cubic_cm(self, value, from_unit):
+        self.STANDARD_UNITS = {
+            "weight": "Gram",  # Base unit for weight
+            "volume": "Milliliter",  # Base unit for volume
+            "cubic_volume": "Cubic centimeter cm3",  # Base unit for cubic volume
+        }
+
+        self.CONVERSION_TO_STANDARD = {
+            "weight": {
+                "Milligram": 1e-3,
+                "Gram": 1,
+                "Kilogram Kg": 1e3,
+                "Metric ton": 1e6,
+                "Pound Lb": 453.592,
+                "US short ton (tn)": 907184.74,
+            },
+            "volume": {
+                "Milliliter": 1,
+                "Liter": 1e3,
+                "Fluid Ounce fl Oz": 29.5735,
+                "Quart Qt": 946.353,
+                "Gallon Gal": 3785.41,
+                "Pint Pt": 473.176,
+            },
+            "cubic_volume": {
+                "Cubic centimeter cm3": 1,
+                "Cubic decimeter dm3": 1e3,
+                "Cubic meter m3": 1e6,
+                "Cubic foot ft3": 28316.8,
+            },
+        }
+
+    def check_unit_categories(self, unit1, unit2):
         """
-        Convert any volume unit to cubic centimeters (cm³)
-
-        Args:
-            value (float): The value to convert
-            from_unit (str): The source unit
-
-        Returns:
-            float: Value in cubic centimeters
-            None: If conversion not possible
+        Check if the units belong to the same category.
         """
-        try:
-            if from_unit not in self.conversion_factors:
-                raise ValueError(f"Invalid unit: {from_unit}")
+        return self.unit_categories.get(
+            unit1, "something1"
+        ) != self.unit_categories.get(unit2, "something1")
 
-            # Convert directly to cubic centimeters using conversion factor
-            return format_decimal_places(
-                value * Decimal(self.conversion_factors[from_unit])
-            )
-
-        except TypeError as e:
-            logger.error(f"Conversion error: {str(e)}")
-            return 0
+    def convert_to_standard(self, value, from_unit):
+        """
+        Convert a value from a given unit to the standard unit for its category.
+        """
+        return Decimal(value) * Decimal(
+            self.CONVERSION_TO_STANDARD[self.unit_categories[from_unit]][from_unit]
+        )
 
     def get_material_data(
         self, location, start_year, end_year, start_month, end_month, path_slug
@@ -328,10 +351,17 @@ class GetMaterialAnalysis(APIView):
                 total_amount_of_product_packaging = data["Amountsproduct"]
                 total_amount_of_product_packaging_unit = data["Unit2"]
                 try:
-                    total_quantity = self.convert_to_cubic_cm(
+                    if self.check_unit_categories(
+                        total_quantity_unit, total_amount_of_product_packaging_unit
+                    ):
+                        logger.info(
+                            f"Following data has been skipped: {data} because of unit mismatch"
+                        )
+                        continue
+                    total_quantity = self.convert_to_standard(
                         Decimal(total_quantity), from_unit=total_quantity_unit
                     )
-                    total_amount_of_product_packaging = self.convert_to_cubic_cm(
+                    total_amount_of_product_packaging = self.convert_to_standard(
                         Decimal(total_amount_of_product_packaging),
                         from_unit=total_amount_of_product_packaging_unit,
                     )
@@ -370,7 +400,6 @@ class GetMaterialAnalysis(APIView):
             year__range=(start_year, end_year),
             month__range=(start_month, end_month),
             locale__in=location,
-            # location__in=location,
         )
         recycled_materials_dict = defaultdict(
             lambda: {
@@ -379,7 +408,7 @@ class GetMaterialAnalysis(APIView):
                 "percentage_of_recycled_input_materials_used": Decimal(0.0),
             }
         )
-        total_material_recycled = Decimal(0.0)
+        total_material_recycled = defaultdict(Decimal(0.0))
         for rw in raw_responses:
             for data in rw.data:
                 type_of_recycled_material = data["Typeofrecycledmaterialused"]
@@ -388,17 +417,24 @@ class GetMaterialAnalysis(APIView):
                 material_recycled = data["Amountofmaterialrecycled"]
                 material_recycled_unit = data["Unit2"]
                 try:
-                    recycled_input_material_used = self.convert_to_cubic_cm(
+                    if self.check_unit_categories(
+                        recycled_input_material_used_unit, material_recycled_unit
+                    ):
+                        logger.info(
+                            f"Following data has been skipped: {data} because of unit mismatch"
+                        )
+                        continue
+                    recycled_input_material_used = self.convert_to_standard(
                         Decimal(recycled_input_material_used),
                         from_unit=recycled_input_material_used_unit,
                     )
-                    material_recycled = self.convert_to_cubic_cm(
+                    material_recycled = self.convert_to_standard(
                         Decimal(material_recycled), from_unit=material_recycled_unit
                     )
                 except ValueError:
                     # If total_waste cannot be converted to float, skip this data entry
                     continue
-                total_material_recycled += material_recycled
+                total_material_recycled[type_of_recycled_material] += material_recycled
 
                 key = type_of_recycled_material
                 recycled_materials_dict[key]["type_of_recycled_material_used"] = (
