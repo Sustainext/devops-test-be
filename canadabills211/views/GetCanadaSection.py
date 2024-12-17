@@ -40,7 +40,7 @@ class GetCanadaSection(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
-class CorporateListCanadata(APIView):
+class CorporateListCanadaData(APIView):
     def get(self, request, *args, **kwargs):
         org_id = self.request.query_params.get("org_id")
         corp_list = []
