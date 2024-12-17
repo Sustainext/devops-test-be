@@ -3,7 +3,6 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from sustainapp.models import Organization, Corporateentity, Location
 from django.http import JsonResponse
-from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 
