@@ -1,6 +1,10 @@
 from django.urls import path, include
 from canadabills211.views.CanadaBillS211View import IIScreenViewset, ARScreenViewset
 from rest_framework import routers
+from canadabills211.views.GetCanadaSection import (
+    GetCanadaSection,
+    CorporateListCanadata,
+)
 
 router = routers.DefaultRouter()
 router.register(
@@ -9,4 +13,6 @@ router.register(
 router.register(r"annual-report", ARScreenViewset, basename="Annual_Report")
 urlpatterns = [
     path("", include(router.urls)),
+    path("canada_section/", GetCanadaSection.as_view(), name="canada_section"),
+    path("corporate_list/", CorporateListCanadata.as_view(), name="corporate_list"),
 ]
