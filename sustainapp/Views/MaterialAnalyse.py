@@ -9,7 +9,6 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 )
 from common.utils.value_types import format_decimal_places, safe_divide
 from decimal import Decimal
-from collections import defaultdict
 import logging
 
 logger = logging.getLogger("django.log")
@@ -340,7 +339,7 @@ class GetMaterialAnalysis(APIView):
                 "percentage_of_reclaimed_products": "",
             }
         )
-        total_product_packaging = Decimal(0.0)
+        total_product_packaging = defaultdict(lambda: Decimal("0.0"))
         for rw in raw_responses:
             for data in rw.data:
                 type_of_product = data["Typesofproducts"]
@@ -378,11 +377,11 @@ class GetMaterialAnalysis(APIView):
                 reclaimed_materials_dict[key]["total_quantity"] += Decimal(
                     total_quantity
                 )
-                total_product_packaging += total_amount_of_product_packaging
+                total_product_packaging[key] += total_amount_of_product_packaging
 
         for key, value in reclaimed_materials_dict.items():
             value["percentage_of_reclaimed_products"] = format_decimal_places(
-                safe_divide(value["total_quantity"], total_product_packaging) * 100
+                safe_divide(value["total_quantity"], total_product_packaging[key]) * 100
             )
         reclaimed_materials = list(reclaimed_materials_dict.values())
         return reclaimed_materials
@@ -408,7 +407,8 @@ class GetMaterialAnalysis(APIView):
                 "percentage_of_recycled_input_materials_used": Decimal(0.0),
             }
         )
-        total_material_recycled = defaultdict(Decimal(0.0))
+        total_material_recycled = defaultdict(lambda: Decimal("0.0"))
+
         for rw in raw_responses:
             for data in rw.data:
                 type_of_recycled_material = data["Typeofrecycledmaterialused"]
@@ -434,9 +434,17 @@ class GetMaterialAnalysis(APIView):
                 except ValueError:
                     # If total_waste cannot be converted to float, skip this data entry
                     continue
-                total_material_recycled[type_of_recycled_material] += material_recycled
+                total_material_recycled[
+                    (
+                        type_of_recycled_material,
+                        self.unit_categories[recycled_input_material_used_unit],
+                    )
+                ] += material_recycled
 
-                key = type_of_recycled_material
+                key = (
+                    type_of_recycled_material,
+                    self.unit_categories[recycled_input_material_used_unit],
+                )
                 recycled_materials_dict[key]["type_of_recycled_material_used"] = (
                     type_of_recycled_material
                 )
@@ -449,7 +457,7 @@ class GetMaterialAnalysis(APIView):
                 format_decimal_places(
                     safe_divide(
                         values["total_recycled_input_materials_used"],
-                        Decimal(total_material_recycled),
+                        Decimal(total_material_recycled[key]),
                     )
                 )
                 * 100
