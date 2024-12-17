@@ -79,7 +79,7 @@ class RawResponse(AbstractModel):
     Stores Response of the User on the field groups.
     """
 
-    data = OrderedJSONField(default=list)  # models.JSONField(default=list)
+    data = OrderedJSONField(default=list)
     path = models.ForeignKey(Path, on_delete=models.PROTECT)
     user = models.ForeignKey(
         CustomUser,
