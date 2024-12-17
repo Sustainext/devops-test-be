@@ -5,24 +5,15 @@ from rest_framework.views import APIView
 
 
 class GetCanadaSection(APIView):
+    """
+    Get Canada Section based on orgs
+    Validate orgs and return enable_section and org_list
+    """
+
     def validate_org(self, request):
-        orgs = request.user.orgs.all()
-        corps = request.user.corps.all()
+        orgs = request.user.orgs.all().filter(countryoperation="CA")
         enable_section = False
-        org_list = []
-        corp_list = []
-
-        for org in orgs:
-            if org.countryoperation == "CA":
-                org_list.append({"id": org.id, "name": org.name})
-            else:
-                continue
-
-        for corp in corps:
-            if corp.Country == "CA":
-                corp_list.append({"id": corp.id, "name": corp.name})
-            else:
-                continue
+        org_list = list(orgs.values("id", "name"))
 
         if org_list:
             enable_section = True
@@ -32,7 +23,6 @@ class GetCanadaSection(APIView):
         return {
             "enable_section": enable_section,
             "org_list": org_list,
-            "corp_list": corp_list,
         }
 
     def get(self, request, *args, **kwargs):
@@ -41,6 +31,8 @@ class GetCanadaSection(APIView):
 
 
 class CorporateListCanadaData(APIView):
+    """Fetches Coporated based on organization id that has country as canada"""
+
     def get(self, request, *args, **kwargs):
         org_id = self.request.query_params.get("org_id")
         corp_list = []
