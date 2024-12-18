@@ -269,7 +269,9 @@ class WaterAnalyseByDataPoints(APIView):
         value = Decimal(value)
         unit = unit.lower()
         if unit in self.CONVERSION_FACTORS:
-            return format_decimal_places(value * Decimal(self.CONVERSION_FACTORS[unit]))
+            return Decimal(
+                format_decimal_places(value * Decimal(self.CONVERSION_FACTORS[unit]))
+            )
         else:
             raise ValidationError(f"Unknown unit: {unit}")
 

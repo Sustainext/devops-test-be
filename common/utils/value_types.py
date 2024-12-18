@@ -34,16 +34,16 @@ def format_decimal_places(value):
     try:
         decimal_value = Decimal(str(value))
         if abs(decimal_value) < 1:
-            return round(decimal_value, 4)
-        return round(decimal_value, 2)
+            return str(round(decimal_value, 4))
+        return str(round(decimal_value, 2))
     except (ValueError, TypeError):
         logger.info(f"Error formatting decimal places: {value}", exc_info=True)
-        return Decimal("0")
+        return str(Decimal("0"))
 
 
 def safe_divide(numerator, denominator):
     return format_decimal_places(
-        ((Decimal(numerator) / Decimal(denominator))) if denominator != 0 else 0
+        (Decimal(numerator) / Decimal(denominator)) if denominator != 0 else 0
     )
 
 def safe_percentage(numerator, denominator):
