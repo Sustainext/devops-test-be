@@ -15,6 +15,8 @@ class BaseDynamicScreenSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
 
         # Dynamically select fields based on screen number
+        # TODO: Make sure to get the screen number and if it's not there it should
+        # take all the fields.
         if screen_number and screen_number in self.screen_fields_mapping:
             self.fields = {
                 field: self.fields.get(field)
