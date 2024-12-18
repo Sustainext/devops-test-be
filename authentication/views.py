@@ -1,14 +1,10 @@
-from django.shortcuts import render
-
 # Create your views here.
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from sustainapp.models import Organization, Corporateentity, Location
 from django.http import JsonResponse
-from authentication.Permissions.isSuperuserAndClientAdmin import (
-    SuperuserAndClientAdminRequired,
-)
-from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 
 def email_confirm_redirect(request, key):
@@ -21,27 +17,35 @@ def password_reset_confirm_redirect(request, uidb64, token):
     )
 
 
-@api_view(["GET"])
-@permission_classes([SuperuserAndClientAdminRequired])
+@login_required
+@csrf_protect
 def get_orgs_by_client(request, client_id):
-    orgs = Organization.objects.filter(client_id=client_id)
-    data = list(orgs.values("id", "name"))
-    return JsonResponse({"orgs": data})
+    if request.method == "GET":
+        orgs = Organization.objects.filter(client_id=client_id)
+        data = list(orgs.values("id", "name"))
+        return JsonResponse({"orgs": data})
+    return JsonResponse({"error": "Invalid request method"}, status=400)
 
 
-@api_view(["GET"])
-@permission_classes([SuperuserAndClientAdminRequired])
+@login_required
+@csrf_protect
 def get_corps_by_orgs(request):
-    org_ids = request.GET.getlist("org_ids")
-    corps = Corporateentity.objects.filter(organization_id__in=org_ids).values(
-        "id", "name"
-    )
-    return JsonResponse({"corps": list(corps)})
+    if request.method == "GET":
+        org_ids = request.GET.getlist("org_ids")
+        corps = Corporateentity.objects.filter(organization_id__in=org_ids).values(
+            "id", "name"
+        )
+        return JsonResponse({"corps": list(corps)})
+    return JsonResponse({"error": "Invalid request method"}, status=400)
 
 
-@api_view(["GET"])
-@permission_classes([SuperuserAndClientAdminRequired])
+@login_required
+@csrf_protect
 def get_locs_by_corps(request):
-    corp_ids = request.GET.getlist("corp_ids")
-    locs = Location.objects.filter(corporateentity_id__in=corp_ids).values("id", "name")
-    return JsonResponse({"locs": list(locs)})
+    if request.method == "GET":
+        corp_ids = request.GET.getlist("corp_ids")
+        locs = Location.objects.filter(corporateentity_id__in=corp_ids).values(
+            "id", "name"
+        )
+        return JsonResponse({"locs": list(locs)})
+    return JsonResponse({"error": "Invalid request method"}, status=400)
