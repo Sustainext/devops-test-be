@@ -7,7 +7,7 @@ from collections import defaultdict
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from common.utils.value_types import format_decimal_places, safe_divide
+from common.utils.value_types import format_decimal_places, safe_percentage
 from decimal import Decimal
 import logging
 
@@ -283,16 +283,18 @@ class GetMaterialAnalysis(APIView):
                             units in self.conversion_factors
                             and highest_unit in self.conversion_factors
                         ):
-                            total_quantity_converted += format_decimal_places(
-                                (
-                                    Decimal(total_quantity)
-                                    * Decimal(self.conversion_factors[units])
-                                    / Decimal(self.conversion_factors[highest_unit])
+                            total_quantity_converted += Decimal(
+                                format_decimal_places(
+                                    (
+                                        Decimal(total_quantity)
+                                        * Decimal(self.conversion_factors[units])
+                                        / Decimal(self.conversion_factors[highest_unit])
+                                    )
                                 )
                             )
                         else:
-                            total_quantity_converted += format_decimal_places(
-                                total_quantity
+                            total_quantity_converted += Decimal(
+                                format_decimal_places(total_quantity)
                             )
 
                 # Store the grouped material information for this category
@@ -382,7 +384,7 @@ class GetMaterialAnalysis(APIView):
 
         for key, value in reclaimed_materials_dict.items():
             temp = format_decimal_places(
-                safe_divide(value["total_quantity"], total_product_packaging[key]) * 100
+                safe_percentage(value["total_quantity"], total_product_packaging[key])
             )
             response_list.append(
                 {
@@ -463,12 +465,11 @@ class GetMaterialAnalysis(APIView):
         for key, values in recycled_materials_dict.items():
             values["percentage_of_recycled_input_materials_used"] = (
                 format_decimal_places(
-                    safe_divide(
+                    safe_percentage(
                         values["total_recycled_input_materials_used"],
                         Decimal(total_material_recycled[key]),
                     )
                 )
-                * 100
             )
 
         recycled_materials = list(recycled_materials_dict.values())
