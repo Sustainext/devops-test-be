@@ -645,9 +645,9 @@
     <tbody>
         {% for ill_health in screen_thirteen_data.get_403_analyse.rate_of_injuries_for_all_employees %}
         <tr>
-            <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury|round_to:2 }}</td>
-            <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities|round_to:2 }}</td>
-            <td>{{ ill_health.rate_of_recordable_work_related_injuries|round_to:2 }}</td>
+            <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury }}</td>
+            <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities }}</td>
+            <td>{{ ill_health.rate_of_recordable_work_related_injuries }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -665,9 +665,9 @@
     <tbody>
         {% for ill_health in screen_thirteen_data.get_403_analyse.rate_of_injuries_for_not_included_in_company_employees %}
         <tr>
-            <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury|round_to:2 }}</td>
-            <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities|round_to:2 }}</td>
-            <td>{{ ill_health.rate_of_recordable_work_related_injuries|round_to:2 }}</td>
+            <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury }}</td>
+            <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities }}</td>
+            <td>{{ ill_health.rate_of_recordable_work_related_injuries }}</td>
         </tr>
         {% endfor %}
     </tbody>
