@@ -73,6 +73,7 @@ class CanadaBillS211Viewset(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         request.data["user_id"] = request.user.id
+        request.data["client_id"] = request.user.client.id
         queryset = self.get_queryset()
         if not queryset:
             # If instance does not exist, create a new instance
