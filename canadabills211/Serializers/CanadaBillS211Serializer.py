@@ -44,7 +44,7 @@ class BaseDynamicScreenSerializer(serializers.ModelSerializer):
         corporate_id = self.initial_data.get("corporate_id")
         user_id = self.initial_data.get("user_id")
         year = self.initial_data.get("year")
-
+        client = self.initial_data.get("client_id")
         if not organization_id or not year:
             raise serializers.ValidationError(
                 {"error": "organization_id and Year are required."}
@@ -65,6 +65,7 @@ class BaseDynamicScreenSerializer(serializers.ModelSerializer):
         validated_data["user_id"] = user_id
         validated_data["organization_id"] = organization_id
         validated_data["corporate_id"] = corporate_id
+        validated_data["client_id"] = client
         return super().create(validated_data)
 
 
