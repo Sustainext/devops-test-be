@@ -20,7 +20,7 @@ from collections import defaultdict
 from django.db.models.expressions import RawSQL
 from django.db.models import Q, Func, Value
 import datetime
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import safe_percentage, format_decimal_places, safe_divide
 from decimal import Decimal
 
 

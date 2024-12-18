@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
 from sustainapp.models import Corporateentity
 from datametric.utils.analyse import filter_by_start_end_dates
-from common.utils.value_types import safe_divide
+from common.utils.value_types import safe_percentage
 from logging import getLogger
 
 logger = getLogger("error.log")
@@ -20,7 +20,6 @@ class CustomerHealthAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def process_customer_health(self, path, filter_by):
-
         cust = DataPoint.objects.filter(
             **filter_by,
             path__slug=path,
@@ -75,12 +74,9 @@ class CustomerHealthAnalyzeView(APIView):
                                 "number_of_products_category_imporved": temp_req_data[
                                     "Q3"
                                 ],
-                                "percentage": (
-                                    safe_divide(
-                                        int(temp_req_data["Q3"]),
-                                        int(temp_req_data["Q2"]),
-                                    )
-                                    * 100
+                                "percentage": safe_percentage(
+                                    int(temp_req_data["Q3"]),
+                                    int(temp_req_data["Q2"]),
                                 ),
                             }
                         )
@@ -91,9 +87,8 @@ class CustomerHealthAnalyzeView(APIView):
                 "org_or_corp": self.corp.name if self.corp else self.org.name,
                 "number_of_products_category": temp_req_data_2["Q2"],
                 "number_of_products_category_imporved": temp_req_data_2["Q3"],
-                "percentage": (
-                    safe_divide(int(temp_req_data_2["Q3"]),int(temp_req_data_2["Q2"]))
-                    * 100
+                "percentage": safe_percentage(
+                    int(temp_req_data_2["Q3"]), int(temp_req_data_2["Q2"])
                 ),
             }
         ]

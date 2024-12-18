@@ -1,7 +1,7 @@
 import logging
 from sustainapp.models import Corporateentity
 from datametric.models import RawResponse
-from common.utils.value_types import safe_divide
+from common.utils.value_types import safe_percentage
 
 logger = logging.getLogger("error.log")
 
@@ -10,12 +10,12 @@ def calculate_percentage(org_name, corp_name, q1, q2=None, filter_for_corp=False
     if not filter_for_corp:
         return {
             "org_or_corp": org_name if not corp_name else corp_name,
-            "percentage": safe_divide(q1, q2) * 100 if q2 != 0 else 0,
+            "percentage": safe_percentage(q1, q2) if q2 != 0 else 0,
         }
     else:
         return {
             "org_or_corp": corp_name,
-            "percentage": safe_divide(q1, q2) * 100 if q2 != 0 else 0,
+            "percentage": safe_percentage(q1, q2) if q2 != 0 else 0,
         }
 
 

@@ -1,7 +1,7 @@
 from collections import defaultdict
 from operator import itemgetter
 from datametric.utils.analyse import filter_by_start_end_dates
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import format_decimal_places, safe_percentage
 from datametric.models import DataPoint
 
 
@@ -10,7 +10,7 @@ def calculate_scope_contribution(key_name, scope_total_values):
     scope_contributions = []
     for scope_name, scope_value in scope_total_values.items():
         try:
-            contribution = safe_divide(scope_value, total_emissions) * 100
+            contribution = safe_percentage(scope_value, total_emissions)
         except ZeroDivisionError:
             contribution = 0
         scope_contributions.append(

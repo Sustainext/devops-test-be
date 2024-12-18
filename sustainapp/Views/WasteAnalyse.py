@@ -10,11 +10,10 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 from django.db.models import Prefetch
 from rest_framework import serializers
 from sustainapp.models import Location, Corporateentity
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import safe_percentage
 
 
 class GetWasteAnalysis(APIView):
-
     def get_waste_data(
         self, location, start_year, end_year, start_month, end_month, path_slug
     ):
@@ -94,27 +93,27 @@ class GetWasteAnalysis(APIView):
 
                 # Update waste by category (table 3)
                 waste_category = data["Wastecategory"]
-                waste_generated_by_category[waste_category][
-                    "material_type"
-                ] = waste_category
-                waste_generated_by_category[waste_category][
-                    "total_waste"
-                ] += total_waste
+                waste_generated_by_category[waste_category]["material_type"] = (
+                    waste_category
+                )
+                waste_generated_by_category[waste_category]["total_waste"] += (
+                    total_waste
+                )
 
         # Calculate contributions
         for key, value in waste_generated_dict.items():
-            waste_generated_dict[key]["contribution"] = (
-                safe_divide(value["total_waste"], total_waste_generated) * 100
+            waste_generated_dict[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_generated
             )
 
         for key, value in waste_generated_location.items():
-            waste_generated_location[key]["contribution"] = (
-                safe_divide(value["total_waste"], total_waste_generated) * 100
+            waste_generated_location[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_generated
             )
 
         for key, value in waste_generated_by_category.items():
-            waste_generated_by_category[key]["contribution"] = (
-                safe_divide(value["total_waste"], total_waste_generated) * 100
+            waste_generated_by_category[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_generated
             )
 
         waste_generated = list(waste_generated_dict.values())
@@ -229,12 +228,12 @@ class GetWasteAnalysis(APIView):
                         ] += total_waste
 
                     # Update hazardous waste diverted (table 6)
-                    hazardous_waste_diverted_from_data[waste_key][
-                        "material_type"
-                    ] = waste_type
-                    hazardous_waste_diverted_from_data[waste_key][
-                        "total_waste"
-                    ] += total_waste
+                    hazardous_waste_diverted_from_data[waste_key]["material_type"] = (
+                        waste_type
+                    )
+                    hazardous_waste_diverted_from_data[waste_key]["total_waste"] += (
+                        total_waste
+                    )
                     hazardous_waste_diverted_from_data[waste_key]["site"] = site
                 else:
                     if recovery_operation == "Preparation for reuse":
@@ -451,12 +450,12 @@ class GetWasteAnalysis(APIView):
                         ] += total_waste
 
                     # Update hazardous waste diverted (table 6)
-                    hazardous_waste_directed_to_data[waste_key][
-                        "material_type"
-                    ] = waste_type
-                    hazardous_waste_directed_to_data[waste_key][
-                        "total_waste"
-                    ] += total_waste
+                    hazardous_waste_directed_to_data[waste_key]["material_type"] = (
+                        waste_type
+                    )
+                    hazardous_waste_directed_to_data[waste_key]["total_waste"] += (
+                        total_waste
+                    )
                     hazardous_waste_directed_to_data[waste_key]["site"] = site
                 else:
                     if (
@@ -484,12 +483,12 @@ class GetWasteAnalysis(APIView):
                         ] += total_waste
 
                     # Update hazardous waste diverted (table 6)
-                    non_hazardous_waste_directed_to_data[waste_key][
-                        "material_type"
-                    ] = waste_type
-                    non_hazardous_waste_directed_to_data[waste_key][
-                        "total_waste"
-                    ] += total_waste
+                    non_hazardous_waste_directed_to_data[waste_key]["material_type"] = (
+                        waste_type
+                    )
+                    non_hazardous_waste_directed_to_data[waste_key]["total_waste"] += (
+                        total_waste
+                    )
                     non_hazardous_waste_directed_to_data[waste_key]["site"] = site
 
         for key, value in waste_diverted_from_data.items():
