@@ -376,9 +376,9 @@ class GetMaterialAnalysis(APIView):
                 reclaimed_materials_dict[key]["product_code"] = product_code
                 reclaimed_materials_dict[key]["product_name"] = product_name
                 reclaimed_materials_dict[key]["total_quantity"] += Decimal(
-                    total_quantity
+                    total_amount_of_product_packaging
                 )
-                total_product_packaging[key] += total_amount_of_product_packaging
+                total_product_packaging[key] += total_quantity
 
         for key, value in reclaimed_materials_dict.items():
             temp = format_decimal_places(
