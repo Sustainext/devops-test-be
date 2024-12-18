@@ -283,11 +283,13 @@ class GetMaterialAnalysis(APIView):
                             units in self.conversion_factors
                             and highest_unit in self.conversion_factors
                         ):
-                            total_quantity_converted += format_decimal_places(
-                                (
-                                    Decimal(total_quantity)
-                                    * Decimal(self.conversion_factors[units])
-                                    / Decimal(self.conversion_factors[highest_unit])
+                            total_quantity_converted += Decimal(
+                                format_decimal_places(
+                                    (
+                                        Decimal(total_quantity)
+                                        * Decimal(self.conversion_factors[units])
+                                        / Decimal(self.conversion_factors[highest_unit])
+                                    )
                                 )
                             )
                         else:

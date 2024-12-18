@@ -34,7 +34,10 @@ def sum_values(data, key):
 @register.filter
 def round_to(value, decimal_places):
     try:
-        return round(float(value), int(decimal_places))
+        rounded_value = round(float(value), int(decimal_places))
+        if rounded_value == int(rounded_value):
+            return int(rounded_value)
+        return f"{rounded_value:.{decimal_places}f}"
     except (ValueError, TypeError):
         return value
 
@@ -64,6 +67,7 @@ def get_wage(wages, location):
     location_key = location.replace("-", "_")
     return wages.get(location_key, {})
 
+
 @register.filter
 def map(value, arg):
     """
@@ -77,6 +81,7 @@ def map(value, arg):
     except (TypeError, KeyError):
         return []
 
+
 @register.filter
 def flatten(value):
     """Flattens a list of lists into a single list."""
@@ -85,6 +90,7 @@ def flatten(value):
     except TypeError:
         return []
 
+
 @register.filter
 def unique(value):
     """Removes duplicates from a list."""
@@ -92,4 +98,3 @@ def unique(value):
         return list(set(value))
     except TypeError:
         return value
-
