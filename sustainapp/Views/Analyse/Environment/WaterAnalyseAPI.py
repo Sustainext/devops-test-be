@@ -16,7 +16,7 @@ from common.utils.get_data_points_as_raw_responses import (
     get_location_wise_dictionary_data,
 )
 from decimal import Decimal
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import format_decimal_places, safe_percentage
 
 
 class WaterAnalyseByDataPoints(APIView):
@@ -59,12 +59,9 @@ class WaterAnalyseByDataPoints(APIView):
     def get_consumption_contribution(
         self, withdrawal, discharge, unit, total_water_consumption
     ):
-        return (
-            safe_divide(
-                self.calculate_water_consumption(withdrawal, discharge, unit),
-                total_water_consumption,
-            )
-            * 100
+        return safe_percentage(
+            self.calculate_water_consumption(withdrawal, discharge, unit),
+            total_water_consumption,
         )
 
     def get_total_water_consumption_in_water_stress_areas_by_field(
@@ -152,13 +149,12 @@ class WaterAnalyseByDataPoints(APIView):
                     {
                         "location": location_name,
                         f"{response_field_name}": data[field_name],
-                        "contribution": safe_divide(
+                        "contribution": safe_percentage(
                             self.convert_to_megalitres(
                                 data["withdrawal"], data["Unit"]
                             ),
                             total_water_withdrawal[location_name],
-                        )
-                        * 100,
+                        ),
                         "withdrawal": self.convert_to_megalitres(
                             data["withdrawal"], data["Unit"]
                         ),
@@ -203,13 +199,12 @@ class WaterAnalyseByDataPoints(APIView):
                         "location": location_name,
                         f"{response_field_name}": data[field_name],
                         "water_stress_area": data["waterstress"],
-                        "contribution": safe_divide(
+                        "contribution": safe_percentage(
                             self.convert_to_megalitres(
                                 data["Waterwithdrawal"], data["Unit"]
                             ),
                             total_water_withdrawal[location_name],
-                        )
-                        * 100,
+                        ),
                         "withdrawal": self.convert_to_megalitres(
                             data["Waterwithdrawal"], data["Unit"]
                         ),
@@ -269,7 +264,9 @@ class WaterAnalyseByDataPoints(APIView):
         value = Decimal(value)
         unit = unit.lower()
         if unit in self.CONVERSION_FACTORS:
-            return format_decimal_places(value * Decimal(self.CONVERSION_FACTORS[unit]))
+            return Decimal(
+                format_decimal_places(value * Decimal(self.CONVERSION_FACTORS[unit]))
+            )
         else:
             raise ValidationError(f"Unknown unit: {unit}")
 
@@ -354,11 +351,10 @@ class WaterAnalyseByDataPoints(APIView):
             response_list.append(
                 {
                     "location": location,
-                    "contribution": safe_divide(
+                    "contribution": safe_percentage(
                         water_consumption_total_consumption[location],
                         self.total_water_consumption,
-                    )
-                    * 100,
+                    ),
                     "total_water_consumption": water_consumption_total_consumption[
                         location
                     ],
@@ -413,10 +409,9 @@ class WaterAnalyseByDataPoints(APIView):
                     "watertype": key[1],
                     "consumption": value["consumption"],
                     "Unit": value["Unit"],
-                    "contribution": safe_divide(
+                    "contribution": safe_percentage(
                         value["consumption"], self.total_water_consumption
-                    )
-                    * 100,
+                    ),
                 }
             )
             total_water_consumption += value["consumption"]
@@ -460,10 +455,9 @@ class WaterAnalyseByDataPoints(APIView):
                     "business_operation": key,
                     field_to_be_calculated: value[field_to_be_calculated],
                     "Unit": value["Unit"],
-                    "contribution": safe_divide(
+                    "contribution": safe_percentage(
                         value[field_to_be_calculated], total_calculated_ml
-                    )
-                    * 100,
+                    ),
                 }
             )
             total_field_calculated += value[field_to_be_calculated]
@@ -500,7 +494,7 @@ class WaterAnalyseByDataPoints(APIView):
         result = []
         total_withdrawal_ml = 0
         for (source, waterstress, watertype), withdrawal in groups.items():
-            contribution = safe_divide(withdrawal, total_withdrawal) * 100
+            contribution = safe_percentage(withdrawal, total_withdrawal)
 
             result.append(
                 {
@@ -546,7 +540,7 @@ class WaterAnalyseByDataPoints(APIView):
         result = []
         total_discharge_ml = 0
         for (waterstress, watertype), discharge in groups.items():
-            contribution = safe_divide(discharge, total_discharge) * 100
+            contribution = safe_percentage(discharge, total_discharge)
 
             result.append(
                 {
@@ -594,7 +588,7 @@ class WaterAnalyseByDataPoints(APIView):
         result = []
         total_discharge_ml = 0
         for (business_operation, waterstress), discharge in groups.items():
-            contribution = safe_divide(discharge, total_discharge) * 100
+            contribution = safe_percentage(discharge, total_discharge)
 
             result.append(
                 {
@@ -640,7 +634,7 @@ class WaterAnalyseByDataPoints(APIView):
         results = []
         total_field_calculation = 0
         for location, calculated_field in location_totals.items():
-            contribution = safe_divide(calculated_field, total_calculation) * 100
+            contribution = safe_percentage(calculated_field, total_calculation)
             results.append(
                 {
                     "location": location,
@@ -674,11 +668,10 @@ class WaterAnalyseByDataPoints(APIView):
                     "volume": self.convert_to_megalitres(
                         entry["Volume"], entry["Unit"]
                     ),
-                    "contribution": safe_divide(
+                    "contribution": safe_percentage(
                         self.convert_to_megalitres(entry["Volume"], entry["Unit"]),
                         total_volume,
-                    )
-                    * 100,
+                    ),
                     "Unit": "Megalitre",
                 }
             )
@@ -719,7 +712,7 @@ class WaterAnalyseByDataPoints(APIView):
         response = []
         total_calculated_field_ml = 0
         for (water_type, source), calculated_field in grouped_data.items():
-            contribution = safe_divide(calculated_field, total_calculated_field) * 100
+            contribution = safe_percentage(calculated_field, total_calculated_field)
             response.append(
                 {
                     "water_type": water_type,
@@ -761,9 +754,8 @@ class WaterAnalyseByDataPoints(APIView):
 
         # Second pass - format results with percentages
         result = []
-        total_quantity_ml = 0
         for source, quantity in grouped_data.items():
-            contribution = safe_divide(quantity, total_quantity) * 100
+            contribution = safe_percentage(quantity, total_quantity)
 
             result.append(
                 {
@@ -773,13 +765,6 @@ class WaterAnalyseByDataPoints(APIView):
                     "contribution": f"{format_decimal_places(contribution)}%",
                 }
             )
-            total_quantity_ml += quantity
-        result.append(
-            {
-                "Total": total_quantity_ml,
-                "Unit": "Megalitre",
-            }
-        ) if result != [] else None
         return result
 
     def get_change_in_water_storage(self):
@@ -828,9 +813,11 @@ class WaterAnalyseByDataPoints(APIView):
                 total_discharge += discharge
 
             # Store the results in the summary dictionary
-            summary[location] = format_decimal_places(
-                self.calculate_water_consumption(
-                    total_withdrawal, total_discharge, unit="Megalitre"
+            summary[location] = Decimal(
+                format_decimal_places(
+                    self.calculate_water_consumption(
+                        total_withdrawal, total_discharge, unit="Megalitre"
+                    )
                 )
             )
 

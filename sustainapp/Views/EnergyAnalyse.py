@@ -88,7 +88,6 @@ class EnergyAnalyzeView(APIView):
         }
 
         for item in data:
-
             if "Purpose" in item:
                 item["Purpose"] = item["Purpose"].capitalize()
             elif "Nameofentity" in item:
@@ -252,9 +251,7 @@ class EnergyAnalyzeView(APIView):
             )
 
     def get(self, request):
-
         try:
-
             serializer = CheckAnalysisViewSerializer(data=request.query_params)
             serializer.is_valid(raise_exception=True)
 

@@ -9,13 +9,12 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 from datametric.utils.analyse import filter_by_start_end_dates
 from collections import defaultdict
 from logging import getLogger
-from common.utils.value_types import safe_divide
+from common.utils.value_types import safe_percentage
 
 logger = getLogger("error.log")
 
 
 class SecurityPersonnelAnalysisView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def analyse_security_perrsonnel(self, start_date, end_date, location, path):
@@ -57,11 +56,12 @@ class SecurityPersonnelAnalysisView(APIView):
                     grouped_data.append(
                         {
                             "sp_in_org": (
-                                safe_divide(organization, securitypersonnel) * 100
+                                safe_percentage(organization, securitypersonnel)
                             ),
                             "sp_3rd_org": (
-                                safe_divide(thirdpartyorganizations, securitypersonnel)
-                                * 100,
+                                safe_percentage(
+                                    thirdpartyorganizations, securitypersonnel
+                                )
                             ),
                         }
                     )
@@ -72,7 +72,6 @@ class SecurityPersonnelAnalysisView(APIView):
         return grouped_data
 
     def get(self, request):
-
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         try:

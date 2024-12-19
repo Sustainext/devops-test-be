@@ -1,4 +1,5 @@
 <!-- people_management.html -->
+{%load custom_tags%}
 <style>
     .checkmark {
         display: inline-block;
@@ -343,9 +344,9 @@
         {% for wage_ratio in screen_thirteen_data.202_1a_analyse.marketing_presence%}
         <tr>
             <td>{{ wage_ratio.Location |default:"No data available." }}</td>
-            <td>{{ wage_ratio.Male |default:"No data available." }}</td>
-            <td>{{ wage_ratio.Female |default:"No data available." }}</td>
-            <td>{{ wage_ratio|get_item:"Non_binary" |default:"No data available." }}</td>
+            <td>{{ wage_ratio.Male |default:"No data available."|round_to:2 }}</td>
+            <td>{{ wage_ratio.Female |default:"No data available."|round_to:2 }}</td>
+            <td>{{ wage_ratio|get_item:"Non_binary" |default:"No data available."|round_to:2 }}</td>
         </tr>
         {% endfor %}
     </tbody>
