@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
 from sustainapp.models import Corporateentity
 from logging import getLogger
-from common.utils.value_types import safe_divide
+from common.utils.value_types import safe_percentage
 
 logger = getLogger("error.log")
 
@@ -19,7 +19,6 @@ class OperationsAssessedAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def process_operations_assessed(self, path, filter_by):
-
         oa_data = DataPoint.objects.filter(
             **filter_by,
             path__slug=path,
@@ -71,11 +70,8 @@ class OperationsAssessedAnalyzeView(APIView):
                                     "Q1"
                                 ],
                                 "number_of_operations": temp_req_data_2["Q2"],
-                                "percentage": (
-                                    safe_divide(
-                                        temp_req_data_2["Q1"], temp_req_data_2["Q2"]
-                                    )
-                                    * 100
+                                "percentage": safe_percentage(
+                                    temp_req_data_2["Q1"], temp_req_data_2["Q2"]
                                 ),
                             }
                         )
@@ -89,9 +85,7 @@ class OperationsAssessedAnalyzeView(APIView):
                 "org_or_corp": self.corp.name if self.corp else self.org.name,
                 "total_number_of_operations_assesed": temp_req_data["Q1"],
                 "number_of_operations": temp_req_data["Q2"],
-                "percentage": (
-                    safe_divide(temp_req_data["Q1"], temp_req_data["Q2"]) * 100
-                ),
+                "percentage": safe_percentage(temp_req_data["Q1"], temp_req_data["Q2"]),
             }
         ]
 

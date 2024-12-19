@@ -11,6 +11,7 @@ from datametric.utils.analyse import filter_by_start_end_dates, get_raw_response
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
 )
+from math import floor
 from datametric.utils.analyse import safe_divide_percentage
 import logging
 
@@ -108,6 +109,126 @@ class EmploymentAnalyzeView(APIView):
         "end": "end",
         "beginning": "beginning",
     }
+
+    def get_employment_turnover(self, employment_turnover_data_points):
+        def get_average(data_points):
+            # * Check if data points are there in January and if yes, then calculate the average of beginning and end
+            jan_data_points = data_points.filter(month=1)
+            jan_data = collect_data_by_raw_response_and_index(
+                data_points=jan_data_points
+            )
+            total_beginning = sum(point.get("beginning", 0) for point in jan_data)
+            total_end = sum(point.get("end", 0) for point in jan_data)
+            return floor((total_beginning + total_end) / 2)
+
+        employee_turnover_paths = {
+            "Permanent employee": self.employee_turnover_path_slugs[0],
+            "Temporary employee": self.employee_turnover_path_slugs[1],
+            "Non Guaranteed employee": self.employee_turnover_path_slugs[2],
+            "Full time employee": self.employee_turnover_path_slugs[3],
+            "Part time employee": self.employee_turnover_path_slugs[4],
+        }
+        local_response_data = []
+        for key in employee_turnover_paths:
+            local_response_dict = {}
+            employee_turnover_key_jan_data_points = (
+                employment_turnover_data_points.filter(
+                    path__slug=employee_turnover_paths[key], month=1
+                )
+            )
+            employee_turnover_key_data_points = employment_turnover_data_points.filter(
+                path__slug=employee_turnover_paths[key]
+            )
+            key_average = get_average(employee_turnover_key_jan_data_points)
+            percentage_of_male_employee = safe_divide_percentage(
+                sum(
+                    [
+                        sum(d.values())
+                        for d in collect_data_by_raw_response_and_index(
+                            employee_turnover_key_data_points.filter(
+                                path__slug=employee_turnover_paths[key], index=0
+                            ).exclude(data_metric__name__in=["end", "beginning"])
+                        )
+                    ]
+                ),
+                key_average,
+            )
+            percentage_of_female_employee = safe_divide_percentage(
+                sum(
+                    [
+                        sum(d.values())
+                        for d in collect_data_by_raw_response_and_index(
+                            employee_turnover_key_data_points.filter(
+                                path__slug=employee_turnover_paths[key], index=1
+                            ).exclude(data_metric__name__in=["end", "beginning"])
+                        )
+                    ]
+                ),
+                key_average,
+            )
+            percentage_of_non_binary_employee = safe_divide_percentage(
+                sum(
+                    [
+                        sum(d.values())
+                        for d in collect_data_by_raw_response_and_index(
+                            employee_turnover_key_data_points.filter(
+                                path__slug=employee_turnover_paths[key], index=2
+                            ).exclude(data_metric__name__in=["end", "beginning"])
+                        )
+                    ]
+                ),
+                key_average,
+            )
+            yearsold30 = safe_divide_percentage(
+                sum(
+                    [
+                        sum(d.values())
+                        for d in collect_data_by_raw_response_and_index(
+                            employee_turnover_key_data_points.filter(
+                                path__slug=employee_turnover_paths[key]
+                            ).filter(data_metric__name="yearsold30")
+                        )
+                    ]
+                ),
+                key_average,
+            )
+            yearsold50 = safe_divide_percentage(
+                sum(
+                    [
+                        sum(d.values())
+                        for d in collect_data_by_raw_response_and_index(
+                            employee_turnover_key_data_points.filter(
+                                path__slug=employee_turnover_paths[key]
+                            ).filter(data_metric__name="yearsold50")
+                        )
+                    ]
+                ),
+                key_average,
+            )
+            yearsold30to50 = safe_divide_percentage(
+                sum(
+                    [
+                        sum(d.values())
+                        for d in collect_data_by_raw_response_and_index(
+                            employee_turnover_key_data_points.filter(
+                                path__slug=employee_turnover_paths[key]
+                            ).filter(data_metric__name="yearsold30to50")
+                        )
+                    ]
+                ),
+                key_average,
+            )
+            local_response_dict = {
+                "type_of_employee": key,
+                "percentage_of_male_employee": percentage_of_male_employee,
+                "percentage_of_female_employee": percentage_of_female_employee,
+                "percentage_of_non_binary_employee": percentage_of_non_binary_employee,
+                "yearsold30": yearsold30,
+                "yearsold50": yearsold50,
+                "yearsold30to50": yearsold30to50,
+            }
+            local_response_data.append(local_response_dict)
+        return local_response_data
 
     def get_response_dictionaries(self):
         new_employee_reponse_table = {
@@ -1447,7 +1568,7 @@ class EmploymentAnalyzeView(APIView):
         # pushing for processing
         (
             new_employee_reponse_table,
-            employee_turnover_reponse_table,
+            _,
             benefits_response_table,
             parental_leave_response_table,
         ) = self.process_dataPoints(
@@ -1572,140 +1693,6 @@ class EmploymentAnalyzeView(APIView):
         ]
         response_data["new_employee_hires"].append(new_employee_part_time)
 
-        response_data["employee_turnover"] = []
-
-        employee_turnover_permanent = {}
-        employee_turnover_permanent["type_of_employee"] = "Permanent employee"
-        employee_turnover_permanent["percentage_of_male_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_permanent_male_percent"]
-        )
-        employee_turnover_permanent["percentage_of_female_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_permanent_female_percent"
-            ]
-        )
-        employee_turnover_permanent["percentage_of_non_binary_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_permanent_non_binary_percent"
-            ]
-        )
-        employee_turnover_permanent["yearsold30"] = employee_turnover_reponse_table[
-            "employee_turnover_permanent_30_percent"
-        ]
-        employee_turnover_permanent["yearsold50"] = employee_turnover_reponse_table[
-            "employee_turnover_permanent_50_percent"
-        ]
-        employee_turnover_permanent["yearsold30to50"] = employee_turnover_reponse_table[
-            "employee_turnover_permanent_50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_permanent)
-
-        employee_turnover_temporary = {}
-        employee_turnover_temporary["type_of_employee"] = "Temporary employee"
-        employee_turnover_temporary["percentage_of_male_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_temporary_male_percent"]
-        )
-        employee_turnover_temporary["percentage_of_female_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_temporary_female_percent"
-            ]
-        )
-        employee_turnover_temporary["percentage_of_non_binary_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_temporary_non_binary_percent"
-            ]
-        )
-        employee_turnover_temporary["yearsold30"] = employee_turnover_reponse_table[
-            "employee_turnover_temporary_30_percent"
-        ]
-        employee_turnover_temporary["yearsold50"] = employee_turnover_reponse_table[
-            "employee_turnover_temporary_50_percent"
-        ]
-        employee_turnover_temporary["yearsold30to50"] = employee_turnover_reponse_table[
-            "employee_turnover_temporary_30-50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_temporary)
-
-        employee_turnover_ng = {}
-        employee_turnover_ng["type_of_employee"] = "Non Guaranteed employee"
-        employee_turnover_ng["percentage_of_male_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_non_guaranteed_male_percent"
-            ]
-        )
-        employee_turnover_ng["percentage_of_female_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_non_guaranteed_female_percent"
-            ]
-        )
-        employee_turnover_ng["percentage_of_non_binary_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_non_guaranteed_non_binary_percent"
-            ]
-        )
-        employee_turnover_ng["yearsold30"] = employee_turnover_reponse_table[
-            "employee_turnover_non_guaranteed_30_percent"
-        ]
-        employee_turnover_ng["yearsold50"] = employee_turnover_reponse_table[
-            "employee_turnover_non_guaranteed_50_percent"
-        ]
-        employee_turnover_ng["yearsold30to50"] = employee_turnover_reponse_table[
-            "employee_turnover_non_guaranteed_30-50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_ng)
-
-        employee_turnover_ft = {}
-        employee_turnover_ft["type_of_employee"] = "Full time employee"
-        employee_turnover_ft["percentage_of_male_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_full_time_male_percent"]
-        )
-        employee_turnover_ft["percentage_of_female_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_full_time_female_percent"
-            ]
-        )
-        employee_turnover_ft["percentage_of_non_binary_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_full_time_non_binary_percent"
-            ]
-        )
-        employee_turnover_ft["yearsold30"] = employee_turnover_reponse_table[
-            "employee_turnover_full_time_30_percent"
-        ]
-        employee_turnover_ft["yearsold50"] = employee_turnover_reponse_table[
-            "employee_turnover_full_time_50_percent"
-        ]
-        employee_turnover_ft["yearsold30to50"] = employee_turnover_reponse_table[
-            "employee_turnover_full_time_30-50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_ft)
-
-        employee_turnover_pt = {}
-        employee_turnover_pt["type_of_employee"] = "Part time employee"
-        employee_turnover_pt["percentage_of_male_employee"] = (
-            employee_turnover_reponse_table["employee_turnover_part_time_male_percent"]
-        )
-        employee_turnover_pt["percentage_of_female_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_part_time_female_percent"
-            ]
-        )
-        employee_turnover_pt["percentage_of_non_binary_employee"] = (
-            employee_turnover_reponse_table[
-                "employee_turnover_part_time_non_binary_percent"
-            ]
-        )
-        employee_turnover_pt["yearsold30"] = employee_turnover_reponse_table[
-            "employee_turnover_part_time_30_percent"
-        ]
-        employee_turnover_pt["yearsold50"] = employee_turnover_reponse_table[
-            "employee_turnover_part_time_50_percent"
-        ]
-        employee_turnover_pt["yearsold30to50"] = employee_turnover_reponse_table[
-            "employee_turnover_part_time_30-50_percent"
-        ]
-        response_data["employee_turnover"].append(employee_turnover_pt)
-
         all_benefits = {
             "benefits_full_time_employees": [],
             "benefits_part_time_employees": [],
@@ -1720,6 +1707,9 @@ class EmploymentAnalyzeView(APIView):
         )
         all_benefits["benefits_temporary_employees"].extend(
             benefits_response_table["benefits_temporary_employees"]
+        )
+        response_data["employee_turnover"] = self.get_employment_turnover(
+            employment_turnover_data_points=emp_turnover_data_points
         )
 
         response_data["benefits"] = all_benefits

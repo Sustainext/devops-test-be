@@ -2,19 +2,15 @@ from datametric.models import RawResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
 from collections import defaultdict
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from django.db.models import Prefetch
-from rest_framework import serializers
 from sustainapp.models import Location, Corporateentity
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import safe_percentage
 
 
 class GetWasteAnalysis(APIView):
-
     def get_waste_data(
         self, location, start_year, end_year, start_month, end_month, path_slug
     ):
@@ -94,27 +90,27 @@ class GetWasteAnalysis(APIView):
 
                 # Update waste by category (table 3)
                 waste_category = data["Wastecategory"]
-                waste_generated_by_category[waste_category][
-                    "material_type"
-                ] = waste_category
-                waste_generated_by_category[waste_category][
-                    "total_waste"
-                ] += total_waste
+                waste_generated_by_category[waste_category]["material_type"] = (
+                    waste_category
+                )
+                waste_generated_by_category[waste_category]["total_waste"] += (
+                    total_waste
+                )
 
         # Calculate contributions
         for key, value in waste_generated_dict.items():
-            waste_generated_dict[key]["contribution"] = (
-                safe_divide(value["total_waste"], total_waste_generated) * 100
+            waste_generated_dict[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_generated
             )
 
         for key, value in waste_generated_location.items():
-            waste_generated_location[key]["contribution"] = (
-                safe_divide(value["total_waste"], total_waste_generated) * 100
+            waste_generated_location[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_generated
             )
 
         for key, value in waste_generated_by_category.items():
-            waste_generated_by_category[key]["contribution"] = (
-                safe_divide(value["total_waste"], total_waste_generated) * 100
+            waste_generated_by_category[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_generated
             )
 
         waste_generated = list(waste_generated_dict.values())
@@ -229,12 +225,12 @@ class GetWasteAnalysis(APIView):
                         ] += total_waste
 
                     # Update hazardous waste diverted (table 6)
-                    hazardous_waste_diverted_from_data[waste_key][
-                        "material_type"
-                    ] = waste_type
-                    hazardous_waste_diverted_from_data[waste_key][
-                        "total_waste"
-                    ] += total_waste
+                    hazardous_waste_diverted_from_data[waste_key]["material_type"] = (
+                        waste_type
+                    )
+                    hazardous_waste_diverted_from_data[waste_key]["total_waste"] += (
+                        total_waste
+                    )
                     hazardous_waste_diverted_from_data[waste_key]["site"] = site
                 else:
                     if recovery_operation == "Preparation for reuse":
@@ -260,21 +256,21 @@ class GetWasteAnalysis(APIView):
                     non_hazardous_waste_diverted_from_data[waste_key]["site"] = site
 
         for key, value in waste_diverted_from_data.items():
-            waste_diverted_from_data[key]["contribution"] = round(
-                ((value["total_waste"] / total_waste_diverted) * 100), 2
+            waste_diverted_from_data[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_diverted
             )
 
         for key, value in hazardous_waste_diverted_from_data.items():
             quantity = value["total_waste"]
             if quantity > 0:
-                hazardous_waste_diverted_from_data[key]["recycled_percentage"] = round(
-                    (value["recycled_quantity"] / quantity) * 100, 2
+                hazardous_waste_diverted_from_data[key]["recycled_percentage"] = (
+                    safe_percentage(value["recycled_quantity"], quantity)
                 )
                 hazardous_waste_diverted_from_data[key][
                     "preparation_of_reuse_percentage"
-                ] = round((value["preparation_of_reuse_quantity"] / quantity) * 100, 2)
-                hazardous_waste_diverted_from_data[key]["other_percentage"] = round(
-                    (value["other_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(value["preparation_of_reuse_quantity"], quantity)
+                hazardous_waste_diverted_from_data[key]["other_percentage"] = (
+                    safe_percentage(value["other_quantity"], quantity)
                 )
             # Deleting those values which were used for calculation, as we dont want to show this on API
             del hazardous_waste_diverted_from_data[key]["recycled_quantity"]
@@ -285,13 +281,13 @@ class GetWasteAnalysis(APIView):
             quantity = value["total_waste"]
             if quantity > 0:
                 non_hazardous_waste_diverted_from_data[key]["recycled_percentage"] = (
-                    round((value["recycled_quantity"] / quantity) * 100, 2)
+                    safe_percentage(value["recycled_quantity"], quantity)
                 )
                 non_hazardous_waste_diverted_from_data[key][
                     "preparation_of_reuse_percentage"
-                ] = round((value["preparation_of_reuse_quantity"] / quantity) * 100, 2)
-                non_hazardous_waste_diverted_from_data[key]["other_percentage"] = round(
-                    (value["other_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(value["preparation_of_reuse_quantity"], quantity)
+                non_hazardous_waste_diverted_from_data[key]["other_percentage"] = (
+                    safe_percentage((value["other_quantity"], quantity))
                 )
             # Deleting those values which were used for calculation, as we dont want to show this on API
             del non_hazardous_waste_diverted_from_data[key]["recycled_quantity"]
@@ -451,12 +447,12 @@ class GetWasteAnalysis(APIView):
                         ] += total_waste
 
                     # Update hazardous waste diverted (table 6)
-                    hazardous_waste_directed_to_data[waste_key][
-                        "material_type"
-                    ] = waste_type
-                    hazardous_waste_directed_to_data[waste_key][
-                        "total_waste"
-                    ] += total_waste
+                    hazardous_waste_directed_to_data[waste_key]["material_type"] = (
+                        waste_type
+                    )
+                    hazardous_waste_directed_to_data[waste_key]["total_waste"] += (
+                        total_waste
+                    )
                     hazardous_waste_directed_to_data[waste_key]["site"] = site
                 else:
                     if (
@@ -484,17 +480,17 @@ class GetWasteAnalysis(APIView):
                         ] += total_waste
 
                     # Update hazardous waste diverted (table 6)
-                    non_hazardous_waste_directed_to_data[waste_key][
-                        "material_type"
-                    ] = waste_type
-                    non_hazardous_waste_directed_to_data[waste_key][
-                        "total_waste"
-                    ] += total_waste
+                    non_hazardous_waste_directed_to_data[waste_key]["material_type"] = (
+                        waste_type
+                    )
+                    non_hazardous_waste_directed_to_data[waste_key]["total_waste"] += (
+                        total_waste
+                    )
                     non_hazardous_waste_directed_to_data[waste_key]["site"] = site
 
         for key, value in waste_diverted_from_data.items():
-            waste_diverted_from_data[key]["contribution"] = round(
-                ((value["total_waste"] / total_waste_diverted) * 100), 2
+            waste_diverted_from_data[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_diverted
             )
 
         for key, value in hazardous_waste_directed_to_data.items():
@@ -502,25 +498,24 @@ class GetWasteAnalysis(APIView):
             if quantity > 0:
                 hazardous_waste_directed_to_data[key][
                     "inceneration_with_energy_percentage"
-                ] = round(
-                    (value["inceneration_with_energy_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(
+                    value["inceneration_with_energy_quantity"], quantity
                 )
                 hazardous_waste_directed_to_data[key][
                     "inceneration_without_energy_percentage"
-                ] = round(
-                    (value["inceneration_without_energy_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(
+                    value["inceneration_without_energy_quantity"], quantity
                 )
 
-                hazardous_waste_directed_to_data[key]["landfill_percentage"] = round(
-                    (value["landfill_quantity"] / quantity) * 100, 2
+                hazardous_waste_directed_to_data[key]["landfill_percentage"] = (
+                    safe_percentage((value["landfill_quantity"], quantity))
                 )
-
-                hazardous_waste_directed_to_data[key]["external_percentage"] = round(
-                    (value["external_quantity"] / quantity) * 100, 2
+                hazardous_waste_directed_to_data[key]["external_percentage"] = (
+                    safe_percentage(value["external_quantity"], quantity)
                 )
 
                 hazardous_waste_directed_to_data[key]["other_disposal_percentage"] = (
-                    round((value["other_disposal_quantity"] / quantity) * 100, 2)
+                    safe_percentage(value["other_disposal_quantity"], quantity)
                 )
             del hazardous_waste_directed_to_data[key][
                 "inceneration_with_energy_quantity"
@@ -539,26 +534,26 @@ class GetWasteAnalysis(APIView):
             if quantity > 0:
                 non_hazardous_waste_directed_to_data[key][
                     "inceneration_with_energy_percentage"
-                ] = round(
-                    (value["inceneration_with_energy_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(
+                    (value["inceneration_with_energy_quantity"], quantity)
                 )
                 non_hazardous_waste_directed_to_data[key][
                     "inceneration_without_energy_percentage"
-                ] = round(
-                    (value["inceneration_without_energy_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(
+                    (value["inceneration_without_energy_quantity"], quantity)
                 )
 
                 non_hazardous_waste_directed_to_data[key]["landfill_percentage"] = (
-                    round((value["landfill_quantity"] / quantity) * 100, 2)
+                    safe_percentage(value["landfill_quantity"], quantity)
                 )
 
                 non_hazardous_waste_directed_to_data[key]["external_percentage"] = (
-                    round((value["external_quantity"] / quantity) * 100, 2)
+                    safe_percentage(value["external_quantity"], quantity)
                 )
 
                 non_hazardous_waste_directed_to_data[key][
                     "other_disposal_percentage"
-                ] = round((value["other_disposal_quantity"] / quantity) * 100, 2)
+                ] = safe_percentage(value["other_disposal_quantity"], quantity)
             del non_hazardous_waste_directed_to_data[key][
                 "inceneration_with_energy_quantity"
             ]

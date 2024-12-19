@@ -7,7 +7,7 @@ from datametric.models import RawResponse
 from sustainapp.models import Corporateentity
 from logging import getLogger
 from collections import defaultdict
-from common.utils.value_types import safe_divide
+from common.utils.value_types import safe_percentage
 
 logger = getLogger("error.log")
 
@@ -16,7 +16,6 @@ class CommunicationTrainingAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def process_205_2a_2d(self, path, filter_by):
-
         def format_data(self, lst):
             res = []
             for obj in lst:
@@ -43,11 +42,8 @@ class CommunicationTrainingAnalyzeView(APIView):
                         append_res["total_region"] = obj[
                             "Total number of governance body members"
                         ]
-                    append_res["percentage"] = (
-                        safe_divide(
-                            append_res["total_communicated"], append_res["total_region"]
-                        )
-                        * 100
+                    append_res["percentage"] = safe_percentage(
+                        append_res["total_communicated"], append_res["total_region"]
                     )
                     res.append(append_res)
                 except Exception as e:
@@ -90,11 +86,9 @@ class CommunicationTrainingAnalyzeView(APIView):
             return []
 
     def process_205_2b_2c_2d(self, path, filter_by):
-
         def format_data_2b_2c_2d(self, raw_dict):
             cleaned_dict = {}
             for key, value in raw_dict.items():
-
                 if value:
                     filtered_items = [
                         item
@@ -107,12 +101,9 @@ class CommunicationTrainingAnalyzeView(APIView):
                         cleaned_dict[key] = filtered_items
                         for item in cleaned_dict[key]:
                             try:
-                                item["percentage"] = (
-                                    safe_divide(
-                                        float(item["Totalnumberemployees"]),
-                                        float(item["Totalemployeeinthisregion"]),
-                                    )
-                                    * 100
+                                item["percentage"] = safe_percentage(
+                                    float(item["Totalnumberemployees"]),
+                                    float(item["Totalemployeeinthisregion"]),
                                 )
                             except Exception as e:
                                 logger.error(

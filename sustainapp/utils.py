@@ -13,7 +13,6 @@ from docx.shared import Inches, Pt, RGBColor
 from sustainapp.models import Report, AnalysisData2
 from sustainapp.report import (
     generate_and_cache_donut_chart,
-    generate_colors,
     generate_and_cache_donut_chart_source,
     generate_and_cache_donut_chart_location,
     extract_location_data,
@@ -31,16 +30,11 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.staticfiles import finders
 import pycountry
-import datetime
 import json
 from docx import Document
-from docx.shared import Inches
-from django.core.files import File
-from azure.storage.blob import BlobServiceClient
 from django.core.files.storage import default_storage
-import os
 import io
-from django.http import StreamingHttpResponse, HttpResponse
+from django.http import HttpResponse
 from html.parser import HTMLParser
 from htmldocx import HtmlToDocx
 import logging
@@ -48,17 +42,15 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import PermissionDenied
-from django.conf import settings
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from common.utils.value_types import get_decimal, safe_divide
+from common.utils.value_types import get_decimal, safe_divide, safe_percentage
 
 logger = logging.getLogger(__name__)
 
 
 def client_request_data(data, client_obj):
-
     data["client_id"] = client_obj.id
     data["client"] = client_obj
 
@@ -66,7 +58,6 @@ def client_request_data(data, client_obj):
 
 
 def client_request_data_modelviewset(data, client_obj):
-
     data["client_id"] = client_obj.id
     data["client"] = client_obj.id
 
@@ -378,20 +369,15 @@ def generate_report_data(pk, request):
                 }
             else:
                 combined_scopes[scope_name]["total_co2e"] += float(scope["total_co2e"])
-                combined_scopes[scope_name]["combined_percentage"] = (
-                    safe_divide(
-                        float(combined_scopes[scope_name]["total_co2e"]),
-                        total_co2e_combined,
-                    )
-                    * 100
-                    if total_co2e_combined != 0
-                    else 0
+                combined_scopes[scope_name]["combined_percentage"] = safe_percentage(
+                    float(combined_scopes[scope_name]["total_co2e"]),
+                    total_co2e_combined,
                 )
 
         # After updating total_co2e for all scopes in the current corporate, calculate combined_percentage
         for scope_name, scope_data in combined_scopes.items():
-            scope_data["combined_percentage"] = (
-                safe_divide(scope_data["total_co2e"], total_co2e_combined) * 100
+            scope_data["combined_percentage"] = safe_percentage(
+                scope_data["total_co2e"], total_co2e_combined
             )
             # Convert the combined scopes back to a list if necessary
             combined_scopes_list = list(combined_scopes.values())

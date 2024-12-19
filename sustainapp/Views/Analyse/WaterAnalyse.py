@@ -20,7 +20,8 @@ from collections import defaultdict
 from django.db.models.expressions import RawSQL
 from django.db.models import Q, Func, Value
 import datetime
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import safe_percentage, format_decimal_places, safe_divide
+from decimal import Decimal
 
 
 class WaterAnalyse(APIView):
@@ -263,7 +264,7 @@ class WaterAnalyse(APIView):
         value = float(value)
         unit = unit.lower()
         if unit in self.CONVERSION_FACTORS:
-            return format_decimal_places(value * self.CONVERSION_FACTORS[unit])
+            return Decimal(format_decimal_places(value * self.CONVERSION_FACTORS[unit]))
         else:
             raise ValidationError(f"Unknown unit: {unit}")
 
@@ -440,7 +441,6 @@ class WaterAnalyse(APIView):
         return result
 
     def process_water_data_by_location(self, data):
-
         for location_data in data:
             for location, entries in location_data.items():
                 location_data[location] = list(
@@ -631,5 +631,3 @@ class WaterAnalyse(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
-
-
