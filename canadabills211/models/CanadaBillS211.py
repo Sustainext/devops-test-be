@@ -43,7 +43,7 @@ class IdentifyingInformation(AbstractModel):
         help_text="1. This report is for which of the following?",
     )
     reporting_legal_name_2 = models.CharField(
-        max_length=128,
+        max_length=2048,
         blank=False,
         null=True,
         help_text="2.Legal name of reporting entity",
@@ -67,7 +67,6 @@ class IdentifyingInformation(AbstractModel):
         help_text="4.1 If yes, identify the date the original report was submitted.",
     )
     changes_description_4_2 = models.TextField(
-        max_length=1500,
         blank=True,
         null=True,
         help_text="4.2 Describe the changes made to the original report, including by listing the questions or sections that were revised (1,500 character limit)",
@@ -95,7 +94,6 @@ class IdentifyingInformation(AbstractModel):
         blank=True, null=True, help_text="7.1 If yes, indicate the applicable law(s)"
     )
     other_laws_description_7_1 = models.TextField(
-        max_length=1500,
         blank=True,
         null=True,
         help_text="7.1 Description for applicable law(s)",
@@ -112,7 +110,6 @@ class IdentifyingInformation(AbstractModel):
         help_text="9. Which of the following sectors or industries does the entity operate in?",
     )
     sectors_or_industries_description_9 = models.TextField(
-        max_length=1500,
         blank=True,
         null=True,
         help_text="9. Other sector or industries",
@@ -174,10 +171,9 @@ class AnnualReport(AbstractModel):
         help_text="1. What steps has the entity taken in the previous financial year to prevent and reduce the risk that forced labour or child labour is used at any step of the production of goods in Canada or elsewhere by the entity or of goods imported into Canada by the entity? Select all that apply",
     )
     steps_taken_description_1 = models.TextField(
-        max_length=1500, null=True, blank=True, help_text="1. Other, please specify"
+        null=True, blank=True, help_text="1. Other, please specify"
     )
     additional_information_2 = models.TextField(
-        max_length=1500,
         null=True,
         blank=False,
         help_text="2. Please provide additional information describing the steps taken (if applicable)",
@@ -195,7 +191,6 @@ class AnnualReport(AbstractModel):
         help_text="4. Which of the following categorizations applies to the entity?",
     )
     additional_information_entity_5 = models.TextField(
-        max_length=1500,
         null=True,
         blank=False,
         help_text="5. Please provide additional information on the entity’s structure, activities and supply chains",
@@ -213,7 +208,6 @@ class AnnualReport(AbstractModel):
         help_text="6.1 If yes, which of the following elements of the due diligence process has the entity implemented in relation to forced labour and/or child labour?Select all that apply",
     )
     additional_info_policies_7 = models.TextField(
-        max_length=1500,
         null=True,
         blank=False,
         help_text="7. Please provide additional information on the entity’s policies and due diligence processes in relation to forced labour and child labour (if applicable)",
@@ -231,7 +225,7 @@ class AnnualReport(AbstractModel):
         help_text="8.1 If yes, has the entity identified forced labour or child labour risks related to any of the following aspects of its activities and supply chains? Select all that apply",
     )
     risk_aspects_description_8_1 = models.TextField(
-        max_length=255, null=True, blank=True, help_text="8.1 Other, please specify"
+        null=True, blank=True, help_text="8.1 Other, please specify"
     )
     risk_activaties_9 = models.JSONField(
         null=True,
@@ -239,17 +233,15 @@ class AnnualReport(AbstractModel):
         help_text="9. Has the entity identified forced labour or child labour risks in its activities and supply chains related to any of the following sectors and industries? Select all that apply",
     )
     risk_activaties_description_9 = models.TextField(
-        max_length=255, null=True, blank=True, help_text="9. Other, please specify"
+        null=True, blank=True, help_text="9. Other, please specify"
     )
-    additional_info_entity_10 = models.CharField(
-        max_length=1500,
+    additional_info_entity_10 = models.TextField(
         null=True,
         blank=False,
         help_text="10. Please provide additional information on the parts of the entity’s activities and supply chains that carry a risk of forced labour or child labour being used, as well as the steps that the entity has taken to assess and manage that risk (if applicable)",
     )
     # screen 5
     measures_remediate_activaties_11 = models.TextField(
-        max_length=255,
         null=True,
         blank=False,
         help_text="11. Has the entity taken any measures to remediate any forced labour or child labour in its activities and supply chains?",
@@ -260,10 +252,9 @@ class AnnualReport(AbstractModel):
         help_text="11.1 If yes, which remediation measures has the entity taken? Select all that apply",
     )
     remediation_measures_taken_description_11_1 = models.TextField(
-        max_length=1500, null=True, blank=True, help_text="11.1 Other, please specify"
+        null=True, blank=True, help_text="11.1 Other, please specify"
     )
-    remediation_measures_12 = models.CharField(
-        max_length=255,
+    remediation_measures_12 = models.TextField(
         null=True,
         blank=False,
         help_text="12. Please provide additional information on any measures the entity has taken to remediate any forced labour or child labour (if applicable)",
@@ -276,7 +267,6 @@ class AnnualReport(AbstractModel):
         help_text="13. Has the entity taken any measures to remediate the loss of income to the most vulnerable families that results from any measure taken to eliminate the use of forced labour or child labour in its activities and supply chains?",
     )
     additional_info_loss_income_14 = models.TextField(
-        max_length=255,
         null=True,
         blank=False,
         help_text="14. Please provide additional information on any measures the entity has taken to remediate the loss of income to the most vulnerable families that results from any measure taken to eliminate the use of forced labour or child labour in its activities and supply chains (if applicable)",
@@ -295,7 +285,6 @@ class AnnualReport(AbstractModel):
         help_text="15.1 If yes, is the training mandatory?",
     )
     additional_info_training_16 = models.TextField(
-        max_length=1500,
         null=True,
         blank=False,
         help_text="16. Please provide additional information on any measures the entity has taken to remediate the loss of income to the most vulnerable families that results from any measure taken to eliminate the use of forced labour or child labour in its activities and supply chains (if applicable)",
@@ -313,10 +302,9 @@ class AnnualReport(AbstractModel):
         help_text="17.1 If yes, what method does the entity use to assess its effectiveness? Select all that apply",
     )
     assessment_method_description_17_1 = models.TextField(
-        max_length=1500, null=True, blank=True, help_text="17.1 Other, please specify"
+        null=True, blank=True, help_text="17.1 Other, please specify"
     )
     additional_info_assessment_18 = models.TextField(
-        max_length=1500,
         null=True,
         blank=False,
         help_text="18. Please provide additional information on how the entity assesses its effectiveness in ensuring that forced labour and child labour are not being used in its activities and supply chains (if applicable)",
