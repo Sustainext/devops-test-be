@@ -10,17 +10,12 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 from datametric.utils.analyse import (
     set_locations_data,
     filter_by_start_end_dates,
-    get_raw_response_filters,
 )
-from common.utils.get_data_points_as_raw_responses import (
-    collect_data_by_raw_response_and_index,
-    get_location_wise_dictionary_data,
-)
+
 from collections import defaultdict
 from django.db.models.expressions import RawSQL
-from django.db.models import Q, Func, Value
-import datetime
-from common.utils.value_types import safe_percentage, format_decimal_places, safe_divide
+from django.db.models import Value
+from common.utils.value_types import safe_percentage, format_decimal_places
 from decimal import Decimal
 
 
@@ -129,14 +124,14 @@ class WaterAnalyse(APIView):
             total_discharge = data[discharge_literal]
             total_withdrawal = data[withdrawal_literal]
             total_consumed = data[consumed_literal]
-            consumption_percentage = (
-                safe_divide(total_consumed, complete_total_consumption) * 100
+            consumption_percentage = safe_percentage(
+                total_consumed, complete_total_consumption
             )
-            withdrawal_percentage = (
-                safe_divide(total_withdrawal, complete_total_withdrawal) * 100
+            withdrawal_percentage = safe_percentage(
+                total_withdrawal, complete_total_withdrawal
             )
-            discharge_percentage = (
-                safe_divide(total_discharge, complete_total_discharge) * 100
+            discharge_percentage = safe_percentage(
+                total_discharge, complete_total_discharge
             )
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
@@ -199,8 +194,8 @@ class WaterAnalyse(APIView):
         result = []
         for group, data in grouped_data.items():
             total_withdrawal = data[withdrawal_literal]
-            withdrawal_percentage = (
-                safe_divide(total_withdrawal, complete_total_withdrawal) * 100
+            withdrawal_percentage = safe_percentage(
+                total_withdrawal, complete_total_withdrawal
             )
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
@@ -245,8 +240,8 @@ class WaterAnalyse(APIView):
         result = []
         for group, data in grouped_data.items():
             total_discharge = data[discharge_literal]
-            discharge_percentage = (
-                safe_divide(total_discharge, complete_total_discharge) * 100
+            discharge_percentage = safe_percentage(
+                total_discharge, complete_total_discharge
             )
             group_dict = {group_by_keys[i]: group[i] for i in range(len(group_by_keys))}
             group_dict.update(
@@ -414,14 +409,14 @@ class WaterAnalyse(APIView):
                 total_withdrawal = sum(record["withdrawal"] for record in records)
                 total_consumption = sum(record["consumed"] for record in records)
 
-                discharge_contribution = (
-                    safe_divide(total_discharge, overall_discharge) * 100
+                discharge_contribution = safe_percentage(
+                    total_discharge, overall_discharge
                 )
-                withdrawal_contribution = (
-                    safe_divide(total_withdrawal, overall_withdrawal) * 100
+                withdrawal_contribution = safe_percentage(
+                    total_withdrawal, overall_withdrawal
                 )
-                consumption_contribution = (
-                    safe_divide(total_consumption, overall_consumption) * 100
+                consumption_contribution = safe_percentage(
+                    total_consumption, overall_consumption
                 )
 
                 result.append(
