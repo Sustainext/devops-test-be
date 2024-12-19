@@ -388,7 +388,7 @@ class GetMaterialAnalysis(APIView):
             )
             response_list.append(
                 {
-                    "total_quantity": f"{temp}%",
+                    "total_quantity": f"{temp}",
                     "type_of_product": value["type_of_product"],
                     "product_code": value["product_code"],
                     "product_name": value["product_name"],

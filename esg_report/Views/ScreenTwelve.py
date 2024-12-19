@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from sustainapp.models import Report
-from datametric.models import RawResponse
 from esg_report.Serializer.ScreenTwelveSerializer import ScreenTwelveSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.services.screen_twelve_service import ScreenTwelveService
