@@ -11,7 +11,7 @@ def custom_exception_handler(exc, context):
     if response is None:
         return Response(
             {
-                "error": "Unfortunately, An unexpected error occurred. (https://imgur.com/a/6YCEJJ3)",
+                "error": "Unfortunately, An unexpected error occurred.",
                 "details": "Please contact support if this issue persists.",
             },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
