@@ -813,9 +813,11 @@ class WaterAnalyseByDataPoints(APIView):
                 total_discharge += discharge
 
             # Store the results in the summary dictionary
-            summary[location] = format_decimal_places(
-                self.calculate_water_consumption(
-                    total_withdrawal, total_discharge, unit="Megalitre"
+            summary[location] = Decimal(
+                format_decimal_places(
+                    self.calculate_water_consumption(
+                        total_withdrawal, total_discharge, unit="Megalitre"
+                    )
                 )
             )
 
