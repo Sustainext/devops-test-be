@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
 from sustainapp.models import Corporateentity
 from logging import getLogger
-from common.utils.value_types import safe_divide
+from common.utils.value_types import safe_percentage
 
 logger = getLogger("error.log")
 
@@ -19,7 +19,6 @@ class CollectiveBargainingAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def process_collective_bargaining(self, path, filter_by):
-
         cb_data = DataPoint.objects.filter(
             **filter_by,
             path__slug=path,
@@ -73,10 +72,9 @@ class CollectiveBargainingAnalyzeView(APIView):
                                 ],
                                 "percentage": round(
                                     (
-                                        safe_divide(
+                                        safe_percentage(
                                             temp_req_data_2["Q1"], temp_req_data_2["Q2"]
                                         )
-                                        * 100
                                         if temp_req_data_2["Q2"] != 0
                                         else 0
                                     ),
@@ -94,9 +92,7 @@ class CollectiveBargainingAnalyzeView(APIView):
                 "org_or_corp": self.corp.name if self.corp else self.org.name,
                 "total_number_of_emps_in_org": temp_req_data["Q2"],
                 "number_of_employees_collective_bargaining": temp_req_data["Q1"],
-                "percentage": round(
-                    safe_divide(temp_req_data["Q1"], temp_req_data["Q2"]) * 100, 2
-                ),
+                "percentage": safe_percentage(temp_req_data["Q1"], temp_req_data["Q2"]),
             }
         ]
 

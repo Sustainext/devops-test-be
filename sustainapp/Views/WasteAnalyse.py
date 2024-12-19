@@ -2,28 +2,25 @@ from datametric.models import RawResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
 from collections import defaultdict
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from django.db.models import Prefetch
-from rest_framework import serializers
 from sustainapp.models import Location, Corporateentity
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import safe_percentage, format_decimal_places
+from decimal import Decimal
 
 
 class GetWasteAnalysis(APIView):
-
     def get_waste_data(
         self, location, start_year, end_year, start_month, end_month, path_slug
     ):
         self.conversion_factors = {
-            "Kgs": 0.001,
-            "lbs": 0.00045359237,
-            "ton (US short ton)": 0.90718474,
-            "g": 0.000001,
-            "t (metric tons)": 1,
+            "Kgs": Decimal(0.001),
+            "lbs": Decimal(0.00045359237),
+            "ton (US short ton)": Decimal(0.90718474),
+            "g": Decimal(0.000001),
+            "t (metric tons)": Decimal(1),
         }
         """Function to gather data from table waste, it distinguish data by path slug send on function arguments"""
         raw_responses = RawResponse.objects.filter(
@@ -37,8 +34,8 @@ class GetWasteAnalysis(APIView):
         waste_generated_dict = defaultdict(
             lambda: {
                 "material_type": "",
-                "contribution": 0.0,
-                "total_waste": 0.0,
+                "contribution": Decimal(0.0),
+                "total_waste": Decimal(0.0),
                 "units": "t (metric tons)",
             }
         )
@@ -46,21 +43,21 @@ class GetWasteAnalysis(APIView):
             lambda: {
                 "location": "",
                 "material_type": "",
-                "contribution": 0.0,
-                "total_waste": 0.0,
+                "contribution": Decimal(0.0),
+                "total_waste": Decimal(0.0),
                 "units": "t (metric tons)",
             }
         )
         waste_generated_by_category = defaultdict(
             lambda: {
                 "material_type": "",
-                "contribution": 0.0,
-                "total_waste": 0.0,
+                "contribution": Decimal(0.0),
+                "total_waste": Decimal(0.0),
                 "units": "t (metric tons)",
             }
         )
 
-        total_waste_generated = 0.0
+        total_waste_generated = Decimal(0.0)
 
         for rw in raw_responses:
             location = rw.locale.name
@@ -70,12 +67,12 @@ class GetWasteAnalysis(APIView):
                 total_waste = data["Wastegenerated"]
                 units = data["Unit"]
                 try:
-                    total_waste = float(total_waste)
+                    total_waste = Decimal(total_waste)
                 except ValueError:
-                    # If total_waste cannot be converted to float, skip this data entry
+                    # If total_waste cannot be converted to Decimal, skip this data entry
                     continue
                 if units in self.conversion_factors:
-                    total_waste *= self.conversion_factors[units]
+                    total_waste *= Decimal(str(self.conversion_factors[units]))
                 else:
                     raise ValueError(f"Unsupported unit: {units}")
 
@@ -84,7 +81,9 @@ class GetWasteAnalysis(APIView):
 
                 # Update waste by material type (table 1)
                 waste_generated_dict[material_type]["material_type"] = material_type
-                waste_generated_dict[material_type]["total_waste"] += total_waste
+                waste_generated_dict[material_type]["total_waste"] += Decimal(
+                    format_decimal_places(total_waste)
+                )
 
                 # Update waste by location and material type (table 2)
                 location_key = f"{location}-{material_type}"
@@ -94,35 +93,40 @@ class GetWasteAnalysis(APIView):
 
                 # Update waste by category (table 3)
                 waste_category = data["Wastecategory"]
-                waste_generated_by_category[waste_category][
-                    "material_type"
-                ] = waste_category
-                waste_generated_by_category[waste_category][
-                    "total_waste"
-                ] += total_waste
+                waste_generated_by_category[waste_category]["material_type"] = (
+                    waste_category
+                )
+                waste_generated_by_category[waste_category]["total_waste"] += (
+                    total_waste
+                )
 
         # Calculate contributions
         for key, value in waste_generated_dict.items():
-            waste_generated_dict[key]["contribution"] = (
-                safe_divide(value["total_waste"], total_waste_generated) * 100
+            waste_generated_dict[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_generated
             )
+            value["total_waste"] = format_decimal_places(value["total_waste"])
 
         for key, value in waste_generated_location.items():
-            waste_generated_location[key]["contribution"] = (
-                safe_divide(value["total_waste"], total_waste_generated) * 100
+            waste_generated_location[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_generated
             )
+            value["total_waste"] = format_decimal_places(value["total_waste"])
 
         for key, value in waste_generated_by_category.items():
-            waste_generated_by_category[key]["contribution"] = (
-                safe_divide(value["total_waste"], total_waste_generated) * 100
+            waste_generated_by_category[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_generated
             )
+            value["total_waste"] = format_decimal_places(value["total_waste"])
 
         waste_generated = list(waste_generated_dict.values())
         waste_generated_location_list = list(waste_generated_location.values())
         waste_generated_by_category_list = list(waste_generated_by_category.values())
 
         # Add total waste generated to the end of the list
-        total_waste = {"total_waste_generated": total_waste_generated}
+        total_waste = {
+            "total_waste_generated": format_decimal_places(total_waste_generated)
+        }
         waste_generated.append(total_waste)
         waste_generated_location_list.append(total_waste)
         waste_generated_by_category_list.append(total_waste)
@@ -148,41 +152,41 @@ class GetWasteAnalysis(APIView):
             lambda: {
                 "recovery_operation": "",
                 "material_type": "",
-                "total_waste": 0.0,
-                "contribution": 0.0,
+                "total_waste": Decimal(0.0),
+                "contribution": Decimal(0.0),
                 "units": "t (metric tons)",
             }
         )
         hazardous_waste_diverted_from_data = defaultdict(
             lambda: {
                 "material_type": "",
-                "total_waste": 0.0,
+                "total_waste": Decimal(0.0),
                 "units": "t (metric tons)",
-                "recycled_quantity": 0.0,
-                "preparation_of_reuse_quantity": 0.0,
-                "other_quantity": 0.0,
-                "recycled_percentage": 0.0,
-                "preparation_of_reuse_percentage": 0.0,
-                "other_percentage": 0.0,
+                "recycled_quantity": Decimal(0.0),
+                "preparation_of_reuse_quantity": Decimal(0.0),
+                "other_quantity": Decimal(0.0),
+                "recycled_percentage": Decimal(0.0),
+                "preparation_of_reuse_percentage": Decimal(0.0),
+                "other_percentage": Decimal(0.0),
                 "site": "",
             }
         )
         non_hazardous_waste_diverted_from_data = defaultdict(
             lambda: {
                 "material_type": "",
-                "total_waste": 0.0,
+                "total_waste": Decimal(0.0),
                 "units": "t (metric tons)",
-                "recycled_quantity": 0.0,
-                "preparation_of_reuse_quantity": 0.0,
-                "other_quantity": 0.0,
-                "recycled_percentage": 0.0,
-                "preparation_of_reuse_percentage": 0.0,
-                "other_percentage": 0.0,
+                "recycled_quantity": Decimal(0.0),
+                "preparation_of_reuse_quantity": Decimal(0.0),
+                "other_quantity": Decimal(0.0),
+                "recycled_percentage": Decimal(0.0),
+                "preparation_of_reuse_percentage": Decimal(0.0),
+                "other_percentage": Decimal(0.0),
                 "site": "",
             }
         )
 
-        total_waste_diverted = 0.0
+        total_waste_diverted = Decimal(0.0)
 
         for rw in raw_responses:
             for data in rw.data:
@@ -191,12 +195,12 @@ class GetWasteAnalysis(APIView):
                 total_waste = data["Wastediverted"]
                 units = data["Unit"]
                 try:
-                    total_waste = float(total_waste)
+                    total_waste = Decimal(total_waste)
                 except ValueError:
-                    # If total_waste cannot be converted to float, skip this data entry
+                    # If total_waste cannot be converted to Decimal, skip this data entry
                     continue
                 if units in self.conversion_factors:
-                    total_waste *= self.conversion_factors[units]
+                    total_waste *= Decimal(self.conversion_factors[units])
                 else:
                     raise ValueError(f"Unsupported unit: {units}")
 
@@ -229,12 +233,12 @@ class GetWasteAnalysis(APIView):
                         ] += total_waste
 
                     # Update hazardous waste diverted (table 6)
-                    hazardous_waste_diverted_from_data[waste_key][
-                        "material_type"
-                    ] = waste_type
-                    hazardous_waste_diverted_from_data[waste_key][
-                        "total_waste"
-                    ] += total_waste
+                    hazardous_waste_diverted_from_data[waste_key]["material_type"] = (
+                        waste_type
+                    )
+                    hazardous_waste_diverted_from_data[waste_key]["total_waste"] += (
+                        total_waste
+                    )
                     hazardous_waste_diverted_from_data[waste_key]["site"] = site
                 else:
                     if recovery_operation == "Preparation for reuse":
@@ -260,22 +264,24 @@ class GetWasteAnalysis(APIView):
                     non_hazardous_waste_diverted_from_data[waste_key]["site"] = site
 
         for key, value in waste_diverted_from_data.items():
-            waste_diverted_from_data[key]["contribution"] = round(
-                ((value["total_waste"] / total_waste_diverted) * 100), 2
+            waste_diverted_from_data[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_diverted
             )
+            value["total_waste"] = format_decimal_places(value["total_waste"])
 
         for key, value in hazardous_waste_diverted_from_data.items():
             quantity = value["total_waste"]
             if quantity > 0:
-                hazardous_waste_diverted_from_data[key]["recycled_percentage"] = round(
-                    (value["recycled_quantity"] / quantity) * 100, 2
+                hazardous_waste_diverted_from_data[key]["recycled_percentage"] = (
+                    safe_percentage(value["recycled_quantity"], quantity)
                 )
                 hazardous_waste_diverted_from_data[key][
                     "preparation_of_reuse_percentage"
-                ] = round((value["preparation_of_reuse_quantity"] / quantity) * 100, 2)
-                hazardous_waste_diverted_from_data[key]["other_percentage"] = round(
-                    (value["other_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(value["preparation_of_reuse_quantity"], quantity)
+                hazardous_waste_diverted_from_data[key]["other_percentage"] = (
+                    safe_percentage(value["other_quantity"], quantity)
                 )
+                value["total_waste"] = format_decimal_places(value["total_waste"])
             # Deleting those values which were used for calculation, as we dont want to show this on API
             del hazardous_waste_diverted_from_data[key]["recycled_quantity"]
             del hazardous_waste_diverted_from_data[key]["preparation_of_reuse_quantity"]
@@ -285,14 +291,15 @@ class GetWasteAnalysis(APIView):
             quantity = value["total_waste"]
             if quantity > 0:
                 non_hazardous_waste_diverted_from_data[key]["recycled_percentage"] = (
-                    round((value["recycled_quantity"] / quantity) * 100, 2)
+                    safe_percentage(value["recycled_quantity"], quantity)
                 )
                 non_hazardous_waste_diverted_from_data[key][
                     "preparation_of_reuse_percentage"
-                ] = round((value["preparation_of_reuse_quantity"] / quantity) * 100, 2)
-                non_hazardous_waste_diverted_from_data[key]["other_percentage"] = round(
-                    (value["other_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(value["preparation_of_reuse_quantity"], quantity)
+                non_hazardous_waste_diverted_from_data[key]["other_percentage"] = (
+                    safe_percentage(value["other_quantity"], quantity)
                 )
+                value["total_waste"] = format_decimal_places(value["total_waste"])
             # Deleting those values which were used for calculation, as we dont want to show this on API
             del non_hazardous_waste_diverted_from_data[key]["recycled_quantity"]
             del non_hazardous_waste_diverted_from_data[key][
@@ -309,24 +316,30 @@ class GetWasteAnalysis(APIView):
         )
 
         # Adding Total Waste Generated at the end
-        total_waste = {"total_waste_generated": total_waste_diverted}
+        total_waste = {
+            "total_waste_generated": format_decimal_places(total_waste_diverted)
+        }
         waste_diverted_from_data_list.append(total_waste)
 
-        total_hazardeous_waste_generated = 0.0
+        total_hazardeous_waste_generated = Decimal(0.0)
         for waste in hazardous_waste_diverted_from_data_list:
-            total_hazardeous_waste_generated += float(waste["total_waste"])
+            total_hazardeous_waste_generated += Decimal(waste["total_waste"])
 
         total_hazardeous_waste = {
-            "total_waste_generated": total_hazardeous_waste_generated
+            "total_waste_generated": format_decimal_places(
+                total_hazardeous_waste_generated
+            )
         }
         hazardous_waste_diverted_from_data_list.append(total_hazardeous_waste)
 
-        total_non_hazardeous_waste_generated = 0.0
+        total_non_hazardeous_waste_generated = Decimal(0.0)
         for waste in non_hazardous_waste_diverted_from_data_list:
-            total_non_hazardeous_waste_generated += float(waste["total_waste"])
+            total_non_hazardeous_waste_generated += Decimal(waste["total_waste"])
 
         total_non_hazardeous_waste = {
-            "total_waste_generated": total_non_hazardeous_waste_generated
+            "total_waste_generated": format_decimal_places(
+                total_non_hazardeous_waste_generated
+            )
         }
         non_hazardous_waste_diverted_from_data_list.append(total_non_hazardeous_waste)
 
@@ -351,49 +364,49 @@ class GetWasteAnalysis(APIView):
             lambda: {
                 "disposal_method": "",
                 "material_type": "",
-                "total_waste": 0.0,
-                "contribution": 0.0,
+                "total_waste": Decimal(0.0),
+                "contribution": Decimal(0.0),
                 "units": "t (metric tons)",
             }
         )
         hazardous_waste_directed_to_data = defaultdict(
             lambda: {
                 "material_type": "",
-                "total_waste": 0.0,
+                "total_waste": Decimal(0.0),
                 "units": "t (metric tons)",
-                "inceneration_with_energy_quantity": 0.0,
-                "inceneration_without_energy_quantity": 0.0,
-                "landfill_quantity": 0.0,
-                "other_disposal_quantity": 0.0,
-                "external_quantity": 0.0,
-                "inceneration_with_energy_percentage": 0.0,
-                "inceneration_without_energy_percentage": 0.0,
-                "landfill_percentage": 0.0,
-                "other_disposal_percentage": 0.0,
-                "external_percentage": 0.0,
+                "inceneration_with_energy_quantity": Decimal(0.0),
+                "inceneration_without_energy_quantity": Decimal(0.0),
+                "landfill_quantity": Decimal(0.0),
+                "other_disposal_quantity": Decimal(0.0),
+                "external_quantity": Decimal(0.0),
+                "inceneration_with_energy_percentage": Decimal(0.0),
+                "inceneration_without_energy_percentage": Decimal(0.0),
+                "landfill_percentage": Decimal(0.0),
+                "other_disposal_percentage": Decimal(0.0),
+                "external_percentage": Decimal(0.0),
                 "site": "",
             }
         )
         non_hazardous_waste_directed_to_data = defaultdict(
             lambda: {
                 "material_type": "",
-                "total_waste": 0.0,
+                "total_waste": Decimal(0.0),
                 "units": "t (metric tons)",
-                "inceneration_with_energy_quantity": 0.0,
-                "inceneration_without_energy_quantity": 0.0,
-                "landfill_quantity": 0.0,
-                "other_disposal_quantity": 0.0,
-                "external_quantity": 0.0,
-                "inceneration_with_energy_percentage": 0.0,
-                "inceneration_without_energy_percentage": 0.0,
-                "landfill_percentage": 0.0,
-                "other_disposal_percentage": 0.0,
-                "external_percentage": 0.0,
+                "inceneration_with_energy_quantity": Decimal(0.0),
+                "inceneration_without_energy_quantity": Decimal(0.0),
+                "landfill_quantity": Decimal(0.0),
+                "other_disposal_quantity": Decimal(0.0),
+                "external_quantity": Decimal(0.0),
+                "inceneration_with_energy_percentage": Decimal(0.0),
+                "inceneration_without_energy_percentage": Decimal(0.0),
+                "landfill_percentage": Decimal(0.0),
+                "other_disposal_percentage": Decimal(0.0),
+                "external_percentage": Decimal(0.0),
                 "site": "",
             }
         )
 
-        total_waste_diverted = 0.0
+        total_waste_diverted = Decimal(0.0)
 
         for rw in raw_responses:
             for data in rw.data:
@@ -402,12 +415,12 @@ class GetWasteAnalysis(APIView):
                 total_waste = data["Wastedisposed"]
                 units = data["Unit"]
                 try:
-                    total_waste = float(total_waste)
+                    total_waste = Decimal(total_waste)
                 except ValueError:
-                    # If total_waste cannot be converted to float, skip this data entry
+                    # If total_waste cannot be converted to Decimal, skip this data entry
                     continue
                 if units in self.conversion_factors:
-                    total_waste *= self.conversion_factors[units]
+                    total_waste *= Decimal(self.conversion_factors[units])
                 else:
                     raise ValueError(f"Unsupported unit: {units}")
 
@@ -451,12 +464,12 @@ class GetWasteAnalysis(APIView):
                         ] += total_waste
 
                     # Update hazardous waste diverted (table 6)
-                    hazardous_waste_directed_to_data[waste_key][
-                        "material_type"
-                    ] = waste_type
-                    hazardous_waste_directed_to_data[waste_key][
-                        "total_waste"
-                    ] += total_waste
+                    hazardous_waste_directed_to_data[waste_key]["material_type"] = (
+                        waste_type
+                    )
+                    hazardous_waste_directed_to_data[waste_key]["total_waste"] += (
+                        total_waste
+                    )
                     hazardous_waste_directed_to_data[waste_key]["site"] = site
                 else:
                     if (
@@ -484,44 +497,45 @@ class GetWasteAnalysis(APIView):
                         ] += total_waste
 
                     # Update hazardous waste diverted (table 6)
-                    non_hazardous_waste_directed_to_data[waste_key][
-                        "material_type"
-                    ] = waste_type
-                    non_hazardous_waste_directed_to_data[waste_key][
-                        "total_waste"
-                    ] += total_waste
+                    non_hazardous_waste_directed_to_data[waste_key]["material_type"] = (
+                        waste_type
+                    )
+                    non_hazardous_waste_directed_to_data[waste_key]["total_waste"] += (
+                        total_waste
+                    )
                     non_hazardous_waste_directed_to_data[waste_key]["site"] = site
 
         for key, value in waste_diverted_from_data.items():
-            waste_diverted_from_data[key]["contribution"] = round(
-                ((value["total_waste"] / total_waste_diverted) * 100), 2
+            waste_diverted_from_data[key]["contribution"] = safe_percentage(
+                value["total_waste"], total_waste_diverted
             )
+            value["total_waste"] = format_decimal_places(value["total_waste"])
 
         for key, value in hazardous_waste_directed_to_data.items():
             quantity = value["total_waste"]
             if quantity > 0:
                 hazardous_waste_directed_to_data[key][
                     "inceneration_with_energy_percentage"
-                ] = round(
-                    (value["inceneration_with_energy_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(
+                    value["inceneration_with_energy_quantity"], quantity
                 )
                 hazardous_waste_directed_to_data[key][
                     "inceneration_without_energy_percentage"
-                ] = round(
-                    (value["inceneration_without_energy_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(
+                    value["inceneration_without_energy_quantity"], quantity
                 )
 
-                hazardous_waste_directed_to_data[key]["landfill_percentage"] = round(
-                    (value["landfill_quantity"] / quantity) * 100, 2
+                hazardous_waste_directed_to_data[key]["landfill_percentage"] = (
+                    safe_percentage(value["landfill_quantity"], quantity)
                 )
-
-                hazardous_waste_directed_to_data[key]["external_percentage"] = round(
-                    (value["external_quantity"] / quantity) * 100, 2
+                hazardous_waste_directed_to_data[key]["external_percentage"] = (
+                    safe_percentage(value["external_quantity"], quantity)
                 )
 
                 hazardous_waste_directed_to_data[key]["other_disposal_percentage"] = (
-                    round((value["other_disposal_quantity"] / quantity) * 100, 2)
+                    safe_percentage(value["other_disposal_quantity"], quantity)
                 )
+                value["total_waste"] = format_decimal_places(quantity)
             del hazardous_waste_directed_to_data[key][
                 "inceneration_with_energy_quantity"
             ]
@@ -539,26 +553,27 @@ class GetWasteAnalysis(APIView):
             if quantity > 0:
                 non_hazardous_waste_directed_to_data[key][
                     "inceneration_with_energy_percentage"
-                ] = round(
-                    (value["inceneration_with_energy_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(
+                    value["inceneration_with_energy_quantity"], quantity
                 )
                 non_hazardous_waste_directed_to_data[key][
                     "inceneration_without_energy_percentage"
-                ] = round(
-                    (value["inceneration_without_energy_quantity"] / quantity) * 100, 2
+                ] = safe_percentage(
+                    value["inceneration_without_energy_quantity"], quantity
                 )
 
                 non_hazardous_waste_directed_to_data[key]["landfill_percentage"] = (
-                    round((value["landfill_quantity"] / quantity) * 100, 2)
+                    safe_percentage(value["landfill_quantity"], quantity)
                 )
 
                 non_hazardous_waste_directed_to_data[key]["external_percentage"] = (
-                    round((value["external_quantity"] / quantity) * 100, 2)
+                    safe_percentage(value["external_quantity"], quantity)
                 )
 
                 non_hazardous_waste_directed_to_data[key][
                     "other_disposal_percentage"
-                ] = round((value["other_disposal_quantity"] / quantity) * 100, 2)
+                ] = safe_percentage(value["other_disposal_quantity"], quantity)
+                value["total_waste"] = format_decimal_places(quantity)
             del non_hazardous_waste_directed_to_data[key][
                 "inceneration_with_energy_quantity"
             ]
@@ -580,24 +595,30 @@ class GetWasteAnalysis(APIView):
         )
 
         # Adding Total Waste Generated at the end
-        total_waste = {"total_waste_generated": total_waste_diverted}
+        total_waste = {
+            "total_waste_generated": format_decimal_places(total_waste_diverted)
+        }
         waste_diverted_from_data_list.append(total_waste)
 
-        total_hazardeous_waste_generated = 0.0
+        total_hazardeous_waste_generated = Decimal(0.0)
         for waste in hazardous_waste_diverted_from_data_list:
-            total_hazardeous_waste_generated += float(waste["total_waste"])
+            total_hazardeous_waste_generated += Decimal(waste["total_waste"])
 
         total_hazardeous_waste = {
-            "total_waste_generated": total_hazardeous_waste_generated
+            "total_waste_generated": format_decimal_places(
+                total_hazardeous_waste_generated
+            )
         }
         hazardous_waste_diverted_from_data_list.append(total_hazardeous_waste)
 
-        total_non_hazardeous_waste_generated = 0.0
+        total_non_hazardeous_waste_generated = Decimal(0.0)
         for waste in non_hazardous_waste_diverted_from_data_list:
-            total_non_hazardeous_waste_generated += float(waste["total_waste"])
+            total_non_hazardeous_waste_generated += Decimal(waste["total_waste"])
 
         total_non_hazardeous_waste = {
-            "total_waste_generated": total_non_hazardeous_waste_generated
+            "total_waste_generated": format_decimal_places(
+                total_non_hazardeous_waste_generated
+            )
         }
         non_hazardous_waste_diverted_from_data_list.append(total_non_hazardeous_waste)
 

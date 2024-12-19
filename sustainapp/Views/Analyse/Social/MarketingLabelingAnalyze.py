@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckOrgCorpDateSerializer import CheckOrgCoprDateSerializer
 from sustainapp.models import Corporateentity
 from logging import getLogger
-from common.utils.value_types import safe_divide
+from common.utils.value_types import safe_percentage
 
 logger = getLogger("error.log")
 
@@ -19,7 +19,6 @@ class MarketingLabelingAnalyzeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def process_marketing_labeling(self, path, filter_by):
-
         cust = DataPoint.objects.filter(
             **filter_by,
             path__slug=path,
@@ -71,11 +70,8 @@ class MarketingLabelingAnalyzeView(APIView):
                                     "Q2"
                                 ],
                                 "number_of_products_category": temp_req_data_2["Q1"],
-                                "percentage": (
-                                    safe_divide(
-                                        temp_req_data_2["Q2"], temp_req_data_2["Q1"]
-                                    )
-                                    * 100
+                                "percentage": safe_percentage(
+                                    temp_req_data_2["Q2"], temp_req_data_2["Q1"]
                                 ),
                             }
                         )
@@ -89,9 +85,7 @@ class MarketingLabelingAnalyzeView(APIView):
                 "org_or_corp": self.corp.name if self.corp else self.org.name,
                 "number_of_products_with_procedurs": temp_req_data["Q2"],
                 "number_of_products_category": temp_req_data["Q1"],
-                "percentage": (
-                    safe_divide(temp_req_data["Q2"], temp_req_data["Q1"]) * 100
-                ),
+                "percentage": safe_percentage(temp_req_data["Q2"], temp_req_data["Q1"]),
             }
         ]
 

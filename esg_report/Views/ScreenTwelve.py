@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from sustainapp.models import Report
-from datametric.models import RawResponse
 from esg_report.Serializer.ScreenTwelveSerializer import ScreenTwelveSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.services.screen_twelve_service import ScreenTwelveService
@@ -23,9 +22,16 @@ class ScreenTwelveAPIView(APIView):
         response_data = {}
         try:
             screen_twelve: ScreenTwelve = self.report.screen_twelve
-            serializer = ScreenTwelveSerializer(screen_twelve, data=request.data)
+            serializer = ScreenTwelveSerializer(
+                screen_twelve,
+                data=request.data,
+                partial=True,
+                context={"request": request},
+            )
         except ObjectDoesNotExist:
-            serializer = ScreenTwelveSerializer(data=request.data)
+            serializer = ScreenTwelveSerializer(
+                data=request.data, context={"request": request}
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=self.report)
         response_data.update(serializer.data)

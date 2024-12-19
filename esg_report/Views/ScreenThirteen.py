@@ -23,9 +23,16 @@ class ScreenThirteenView(APIView):
             )
         try:
             screen_thirteen = ScreenThirteen.objects.get(report=self.report)
-            serializer = ScreenThirteenSerializer(screen_thirteen, data=request.data)
+            serializer = ScreenThirteenSerializer(
+                screen_thirteen,
+                data=request.data,
+                partial=True,
+                context={"request": request},
+            )
         except ScreenThirteen.DoesNotExist:
-            serializer = ScreenThirteenSerializer(data=request.data)
+            serializer = ScreenThirteenSerializer(
+                data=request.data, context={"request": request}
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=self.report)
         return Response(serializer.data, status=status.HTTP_200_OK)

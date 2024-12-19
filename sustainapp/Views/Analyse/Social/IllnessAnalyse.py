@@ -13,8 +13,9 @@ from datametric.utils.analyse import (
 from datametric.models import RawResponse
 from django.db.models.expressions import RawSQL
 from django.db.models import Q, Func, Value
+from decimal import Decimal
 import re
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import safe_percentage, safe_divide, format_decimal_places
 
 
 class IllnessAnalysisView(APIView):
@@ -74,58 +75,32 @@ class IllnessAnalysisView(APIView):
                 [int(_["internallyaudited"]) for _ in entry]
             )
             temp = {}
-            temp["percentage_of_all_employees_covered_by_the_system"] = (
-                format_decimal_places(
-                    safe_divide(
-                        int(entry[0]["coveredbythesystem"]),
-                        total_number_of_employees_covered_by_the_system,
-                    )
-                    * 100
-                )
+            temp["percentage_of_all_employees_covered_by_the_system"] = safe_percentage(
+                int(entry[0]["coveredbythesystem"]),
+                total_number_of_employees_covered_by_the_system,
             )
-            temp["percentage_of_internally_audited_workers"] = format_decimal_places(
-                safe_divide(
-                    int(entry[0]["internallyaudited"]),
-                    total_number_of_internally_audited_workers,
-                )
-                * 100
+            temp["percentage_of_internally_audited_workers"] = safe_percentage(
+                int(entry[0]["internallyaudited"]),
+                total_number_of_internally_audited_workers,
             )
-            temp["percentage_of_all_employees_internally_audited"] = (
-                format_decimal_places(
-                    safe_divide(
-                        int(entry[1]["coveredbythesystem"]),
-                        total_number_of_employees_covered_by_the_system,
-                    )
-                    * 100
-                )
+            temp["percentage_of_all_employees_internally_audited"] = safe_percentage(
+                int(entry[1]["coveredbythesystem"]),
+                total_number_of_employees_covered_by_the_system,
             )
             temp["percentage_of_workers_who_are_not_emplyees_internally_audited"] = (
-                format_decimal_places(
-                    round(
-                        safe_divide(
-                            int(entry[1]["internallyaudited"]),
-                            total_number_of_internally_audited_workers,
-                        )
-                        * 100
-                    )
+                safe_percentage(
+                    int(entry[1]["internallyaudited"]),
+                    total_number_of_internally_audited_workers,
                 )
             )
-            temp["percentage_of_all_employees_externally_audited"] = (
-                format_decimal_places(
-                    safe_divide(
-                        int(entry[2]["coveredbythesystem"]),
-                        total_number_of_employees_covered_by_the_system,
-                    )
-                    * 100
-                )
+            temp["percentage_of_all_employees_externally_audited"] = safe_percentage(
+                int(entry[2]["coveredbythesystem"]),
+                total_number_of_employees_covered_by_the_system,
             )
             temp["percentage_of_workers_who_are_not_emplyees_externally_audited"] = (
-                format_decimal_places(
-                    safe_divide(
-                        int(entry[2]["internallyaudited"]),
-                        total_number_of_internally_audited_workers,
-                    )
-                    * 100
+                safe_percentage(
+                    int(entry[2]["internallyaudited"]),
+                    total_number_of_internally_audited_workers,
                 )
             )
             local_response_data.append(temp)
@@ -160,8 +135,10 @@ class IllnessAnalysisView(APIView):
 
             entry["rate_of_fatalities_as_a_result_of_work_related_injury"] = (
                 format_decimal_places(
-                    safe_divide(
-                        int(entry["fatalities"]), int(entry["numberofhoursworked"])
+                    Decimal(
+                        safe_divide(
+                            int(entry["fatalities"]), int(entry["numberofhoursworked"])
+                        )
                     )
                     * number_of_hours
                 )
@@ -169,15 +146,19 @@ class IllnessAnalysisView(APIView):
             entry[
                 "rate_of_high_consequence_work_related_injuries_excluding_fatalities"
             ] = format_decimal_places(
-                safe_divide(
-                    int(entry["highconsequence"]), int(entry["numberofhoursworked"])
+                Decimal(
+                    safe_divide(
+                        int(entry["highconsequence"]), int(entry["numberofhoursworked"])
+                    )
                 )
                 * number_of_hours
             )
             entry["rate_of_recordable_work_related_injuries"] = format_decimal_places(
-                safe_divide(
-                    int(entry["recordable"]),
-                    int(entry["numberofhoursworked"]),
+                Decimal(
+                    safe_divide(
+                        int(entry["recordable"]),
+                        int(entry["numberofhoursworked"]),
+                    )
                 )
                 * number_of_hours
             )
@@ -220,9 +201,11 @@ class IllnessAnalysisView(APIView):
                 number_of_hours = 1000000
             entry["rate_of_fatalities_as_a_result_of_work_related_injury"] = (
                 format_decimal_places(
-                    safe_divide(
-                        int(entry["fatalities"]),
-                        int(entry["numberofhoursworked"]),
+                    Decimal(
+                        safe_divide(
+                            int(entry["fatalities"]),
+                            int(entry["numberofhoursworked"]),
+                        )
                     )
                     * number_of_hours
                 )
@@ -230,16 +213,20 @@ class IllnessAnalysisView(APIView):
             entry[
                 "rate_of_high_consequence_work_related_injuries_excluding_fatalities"
             ] = format_decimal_places(
-                safe_divide(
-                    int(entry["highconsequence"]),
-                    int(entry["numberofhoursworked"]),
+                Decimal(
+                    safe_divide(
+                        int(entry["highconsequence"]),
+                        int(entry["numberofhoursworked"]),
+                    )
                 )
                 * number_of_hours
             )
             entry["rate_of_recordable_work_related_injuries"] = format_decimal_places(
-                safe_divide(
-                    int(entry["recordable"]),
-                    int(entry["numberofhoursworked"]),
+                Decimal(
+                    safe_divide(
+                        int(entry["recordable"]),
+                        int(entry["numberofhoursworked"]),
+                    )
                 )
                 * number_of_hours
             )

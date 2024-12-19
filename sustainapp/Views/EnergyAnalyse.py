@@ -1,4 +1,4 @@
-from datametric.models import DataPoint, RawResponse, Path, DataMetric
+from datametric.models import RawResponse
 from sustainapp.models import Organization, Corporateentity, Location
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,11 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-
-from django.db.models import Prefetch
 from rest_framework import serializers
 from datametric.utils.analyse import filter_by_start_end_dates
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import safe_divide
 
 
 class EnergyAnalyzeView(APIView):
@@ -90,7 +88,6 @@ class EnergyAnalyzeView(APIView):
         }
 
         for item in data:
-
             if "Purpose" in item:
                 item["Purpose"] = item["Purpose"].capitalize()
             elif "Nameofentity" in item:
@@ -254,9 +251,7 @@ class EnergyAnalyzeView(APIView):
             )
 
     def get(self, request):
-
         try:
-
             serializer = CheckAnalysisViewSerializer(data=request.query_params)
             serializer.is_valid(raise_exception=True)
 
