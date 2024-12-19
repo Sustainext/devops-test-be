@@ -472,7 +472,14 @@ def generate_disclosure_status(report: Report):
         # Check if any slug has data
         # * Check data point is not having value = ""
         is_filled = all(
-            data_points.filter(path__slug=slug).exclude(value="").exists()
+            data_points.filter(path__slug=slug)
+            .exclude(value="")
+            .exclude(
+                Q(value__contains=[[""]])
+                | Q(value__contains=[[]])
+                | Q(value__isnull=True)
+            )
+            .exists()
             for slug in slugs
         )
 
