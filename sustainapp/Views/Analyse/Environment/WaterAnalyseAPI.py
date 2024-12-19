@@ -754,7 +754,6 @@ class WaterAnalyseByDataPoints(APIView):
 
         # Second pass - format results with percentages
         result = []
-        total_quantity_ml = 0
         for source, quantity in grouped_data.items():
             contribution = safe_percentage(quantity, total_quantity)
 
@@ -766,13 +765,6 @@ class WaterAnalyseByDataPoints(APIView):
                     "contribution": f"{format_decimal_places(contribution)}%",
                 }
             )
-            total_quantity_ml += quantity
-        result.append(
-            {
-                "Total": total_quantity_ml,
-                "Unit": "Megalitre",
-            }
-        ) if result != [] else None
         return result
 
     def get_change_in_water_storage(self):
@@ -821,9 +813,11 @@ class WaterAnalyseByDataPoints(APIView):
                 total_discharge += discharge
 
             # Store the results in the summary dictionary
-            summary[location] = format_decimal_places(
-                self.calculate_water_consumption(
-                    total_withdrawal, total_discharge, unit="Megalitre"
+            summary[location] = Decimal(
+                format_decimal_places(
+                    self.calculate_water_consumption(
+                        total_withdrawal, total_discharge, unit="Megalitre"
+                    )
                 )
             )
 
