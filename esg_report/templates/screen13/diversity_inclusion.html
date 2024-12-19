@@ -73,13 +73,13 @@
         {% for employee_category in screen_thirteen_data.405_2a_analyse.number_of_employee_per_employee_category %}
         <tr>
             <td>{{employee_category.Category }}</td>
-            <td>{{employee_category.percentage_of_male_with_org_governance|round_to:2 }}</td>
-            <td>{{employee_category.percentage_of_female_with_org_governance|round_to:2 }}</td>
-            <td>{{employee_category.percentage_of_non_binary_with_org_governance|round_to:2 }}</td>
-            <td>{{employee_category.percentage_of_employees_within_30_age_group|round_to:2 }}</td>
-            <td>{{employee_category.percentage_of_employees_within_30_to_50_age_group|round_to:2 }}</td>
-            <td>{{employee_category.percentage_of_employees_more_than_50_age_group|round_to:2 }}</td>
-            <td>{{employee_category.percentage_of_employees_in_minority_group|round_to:2 }}</td>
+            <td>{{employee_category.percentage_of_male_with_org_governance }}</td>
+            <td>{{employee_category.percentage_of_female_with_org_governance }}</td>
+            <td>{{employee_category.percentage_of_non_binary_with_org_governance }}</td>
+            <td>{{employee_category.percentage_of_employees_within_30_age_group }}</td>
+            <td>{{employee_category.percentage_of_employees_within_30_to_50_age_group }}</td>
+            <td>{{employee_category.percentage_of_employees_more_than_50_age_group }}</td>
+            <td>{{employee_category.percentage_of_employees_in_minority_group }}</td>
         </tr>
         {% endfor %}
     </tbody>

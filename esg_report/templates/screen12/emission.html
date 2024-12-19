@@ -41,7 +41,7 @@
       <td>{{ data.category }}</td>
       <td>{{ data.subcategory }}</td>
       <td>{{ data.activity }}</td>
-      <td>{{ data.emission|round_to:2 }}</td>
+      <td>{{ data.emission }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -70,7 +70,7 @@
       <td>{{ data.category }}</td>
       <td>{{ data.subcategory }}</td>
       <td>{{ data.activity }}</td>
-      <td>{{ data.emission|round_to:2 }}</td>
+      <td>{{ data.emission }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -99,7 +99,7 @@
       <td>{{ data.category }}</td>
       <td>{{ data.subcategory }}</td>
       <td>{{ data.activity }}</td>
-      <td>{{ data.emission|round_to:2 }}</td>
+      <td>{{ data.emission }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -123,8 +123,8 @@
     {% for data in screen_twelve_data.305_123_analyse.all_emission_by_source%}
     <tr>
       <td>{{data.source}}</td>
-      <td>{{data.contribution|round_to:2}}</td>
-      <td>{{data.total|round_to:2}}</td>
+      <td>{{data.contribution}}</td>
+      <td>{{data.total}}</td>
       <td>{{data.Units}}</td>
     </tr>
     {% endfor %}
@@ -149,8 +149,8 @@
     {% for data in screen_twelve_data.305_123_analyse.all_emission_by_location%}
     <tr>
       <td>{{data.location}}</td>
-      <td>{{data.contribution|round_to:2}}</td>
-      <td>{{data.total|round_to:2}}</td>
+      <td>{{data.contribution}}</td>
+      <td>{{data.total}}</td>
       <td>{{data.Units}}</td>
     </tr>
     {% endfor %}
@@ -175,8 +175,8 @@
     {% for data in screen_twelve_data.305_123_analyse.all_emission_by_scope%}
     <tr>
       <td>{{data.scope}}</td>
-      <td>{{data.contribution|round_to:2}}</td>
-      <td>{{data.total|round_to:2}}</td>
+      <td>{{data.contribution}}</td>
+      <td>{{data.total}}</td>
       <td>{{data.Units}}</td>
     </tr>
     {% endfor %}

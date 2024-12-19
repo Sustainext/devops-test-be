@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.views import View
-from sustainapp.models import Report,Location
+from sustainapp.models import Report, Location
 import time
 from weasyprint import HTML
 from esg_report.services.screen_one_service import CeoMessageService
@@ -19,6 +19,7 @@ from esg_report.services.screen_twelve_service import ScreenTwelveService
 from esg_report.services.screen_thirteen_service import ScreenThirteenService
 from esg_report.services.screen_fourteen_service import ScreenFourteenService
 from esg_report.services.screen_fifteen_service import ScreenFifteenService
+
 # from esg_report.services.content_index_service import StatementOfUseService
 from django.forms import model_to_dict
 from threading import Thread
@@ -42,14 +43,21 @@ def convert_keys(obj):
     else:
         return obj
 
+
 def process_benefits(benefits_key, screen_thirteen_data, location_name_map):
     """
     Processes benefits for a specific key (e.g., full-time, part-time, temporary employees).
     Enriches the data with location names based on the selectedLocations.
     """
-    benefits = screen_thirteen_data.get("401_social_analyse", {}).get("data", {}).get("benefits", {}).get(
-        benefits_key, []
-    )
+    if screen_thirteen_data.get("401_social_analyse") is not None:
+        benefits = (
+            screen_thirteen_data.get("401_social_analyse", {})
+            .get("data", {})
+            .get("benefits", {})
+            .get(benefits_key, [])
+        )
+    else:
+        benefits = []
 
     for benefit in benefits:
         benefit["selectedLocations_name"] = [
@@ -57,6 +65,8 @@ def process_benefits(benefits_key, screen_thirteen_data, location_name_map):
             for loc_id in benefit.get("selectedLocations", [])
         ]
     return benefits
+
+
 class ESGReportPDFView(View):
     def get(self, request, *args, **kwargs):
         start_time = time.time()
@@ -161,20 +171,34 @@ class ESGReportPDFView(View):
             ]
 
             for benefit_type in benefit_types:
-                benefits = screen_thirteen_data.get("401_social_analyse", {}).get("data", {}).get("benefits", {}).get(
-                    benefit_type, []
-                )
+                if screen_thirteen_data.get("401_social_analyse") is not None:
+                    benefits = (
+                        screen_thirteen_data.get("401_social_analyse", {})
+                        .get("data", {})
+                        .get("benefits", {})
+                        .get(benefit_type, [])
+                    )
+                else:
+                    benefits = []
                 for benefit in benefits:
                     all_location_ids.update(benefit.get("selectedLocations", []))
 
             # Fetch location names from the database
-            location_names = Location.objects.filter(id__in=all_location_ids).values("id", "name")
+            location_names = Location.objects.filter(id__in=all_location_ids).values(
+                "id", "name"
+            )
             location_name_map = {loc["id"]: loc["name"] for loc in location_names}
 
             # Process each category of benefits
-            process_benefits("benefits_full_time_employees", screen_thirteen_data, location_name_map)
-            process_benefits("benefits_part_time_employees", screen_thirteen_data, location_name_map)
-            process_benefits("benefits_temporary_employees", screen_thirteen_data, location_name_map)
+            process_benefits(
+                "benefits_full_time_employees", screen_thirteen_data, location_name_map
+            )
+            process_benefits(
+                "benefits_part_time_employees", screen_thirteen_data, location_name_map
+            )
+            process_benefits(
+                "benefits_temporary_employees", screen_thirteen_data, location_name_map
+            )
 
             # Update the results dictionary
             results["screen_thirteen_data"] = convert_keys(screen_thirteen_data)
