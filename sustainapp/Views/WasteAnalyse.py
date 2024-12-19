@@ -287,7 +287,7 @@ class GetWasteAnalysis(APIView):
                     "preparation_of_reuse_percentage"
                 ] = safe_percentage(value["preparation_of_reuse_quantity"], quantity)
                 non_hazardous_waste_diverted_from_data[key]["other_percentage"] = (
-                    safe_percentage((value["other_quantity"], quantity))
+                    safe_percentage(value["other_quantity"], quantity)
                 )
             # Deleting those values which were used for calculation, as we dont want to show this on API
             del non_hazardous_waste_diverted_from_data[key]["recycled_quantity"]
@@ -508,7 +508,7 @@ class GetWasteAnalysis(APIView):
                 )
 
                 hazardous_waste_directed_to_data[key]["landfill_percentage"] = (
-                    safe_percentage((value["landfill_quantity"], quantity))
+                    safe_percentage(value["landfill_quantity"], quantity)
                 )
                 hazardous_waste_directed_to_data[key]["external_percentage"] = (
                     safe_percentage(value["external_quantity"], quantity)
@@ -535,12 +535,12 @@ class GetWasteAnalysis(APIView):
                 non_hazardous_waste_directed_to_data[key][
                     "inceneration_with_energy_percentage"
                 ] = safe_percentage(
-                    (value["inceneration_with_energy_quantity"], quantity)
+                    value["inceneration_with_energy_quantity"], quantity
                 )
                 non_hazardous_waste_directed_to_data[key][
                     "inceneration_without_energy_percentage"
                 ] = safe_percentage(
-                    (value["inceneration_without_energy_quantity"], quantity)
+                    value["inceneration_without_energy_quantity"], quantity
                 )
 
                 non_hazardous_waste_directed_to_data[key]["landfill_percentage"] = (
