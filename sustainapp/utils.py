@@ -46,6 +46,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from common.utils.value_types import get_decimal, safe_divide, safe_percentage
+from decimal import Decimal
 
 logger = logging.getLogger(__name__)
 
@@ -369,16 +370,16 @@ def generate_report_data(pk, request):
                 }
             else:
                 combined_scopes[scope_name]["total_co2e"] += float(scope["total_co2e"])
-                combined_scopes[scope_name]["combined_percentage"] = safe_percentage(
+                combined_scopes[scope_name]["combined_percentage"] = Decimal(safe_percentage(
                     float(combined_scopes[scope_name]["total_co2e"]),
                     total_co2e_combined,
-                )
+                ))
 
         # After updating total_co2e for all scopes in the current corporate, calculate combined_percentage
         for scope_name, scope_data in combined_scopes.items():
-            scope_data["combined_percentage"] = safe_percentage(
+            scope_data["combined_percentage"] = Decimal(safe_percentage(
                 scope_data["total_co2e"], total_co2e_combined
-            )
+            ))
             # Convert the combined scopes back to a list if necessary
             combined_scopes_list = list(combined_scopes.values())
 
@@ -541,7 +542,7 @@ def adjust_paragraphs(doc_stream):
 
 
 def word_docx_report(pk: int):
-    blob_name = blob_name = "files/report/report_demo_v2.docx"
+    blob_name = "report_demo_v2.docx"
     blob_object = default_storage.open(blob_name, "rb")
     blob_stream = io.BytesIO(blob_object.read())
     tpl = DocxTemplate(blob_stream)
