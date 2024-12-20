@@ -459,6 +459,9 @@ def get_which_general_disclosure_is_empty(report: Report):
 
 def generate_disclosure_status(report: Report):
     data_points = get_data_points_as_per_report(report=report)
+    special_slugs = [
+        ""
+    ]
     result = []
     for section_title, data in GENERAL_DISCLOSURES_AND_PATHS.items():
         indicator = data["indicator"]
@@ -474,11 +477,6 @@ def generate_disclosure_status(report: Report):
         is_filled = all(
             data_points.filter(path__slug=slug)
             .exclude(value="")
-            .exclude(
-                Q(value__contains=[[""]])
-                | Q(value__contains=[[]])
-                | Q(value__isnull=True)
-            )
             .exists()
             for slug in slugs
         )
