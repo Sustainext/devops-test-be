@@ -143,7 +143,7 @@ def get_analysis_data_by_location(self, data_points, locations):
             "location_name": emission_data["location_name"],
             "location_address": emission_data["location_address"],
             "location_type": emission_data["location_type"],
-            "total_co2e": round(emission_data["total_co2e"], 2),
+            "total_co2e": round(emission_data["total_co2e"] / 1000, 2),
             "contribution_scope": round(emission_data["contribution_scope"], 2),
         }
         for emission_data in emission_by_location.values()
@@ -451,12 +451,12 @@ def process_corporate_data(
             # Aggregate everything under Scope-3
             emission_by_scope["Scope-3"]["total_co2e"] += scope_co2e
             emission_by_scope["Scope-3"]["co2e_unit"] = co2e_unit
-            emission_by_scope["Scope-3"]["activity_data"][
-                "activity_unit"
-            ] = activity_unit
-            emission_by_scope["Scope-3"]["activity_data"][
-                "activity_value"
-            ] += activity_value
+            emission_by_scope["Scope-3"]["activity_data"]["activity_unit"] = (
+                activity_unit
+            )
+            emission_by_scope["Scope-3"]["activity_data"]["activity_value"] += (
+                activity_value
+            )
 
             # Aggregate the CO2e values by source
             emission_by_source["investment_source"]["total_co2e"] += scope_co2e
@@ -534,12 +534,12 @@ def process_corporate_data(
                 emission_by_scope[scope_name]["unit2"] = ""
                 emission_by_scope[scope_name]["unit_type"] = ""
 
-            emission_by_scope[scope_name]["activity_data"][
-                "activity_unit"
-            ] = activity_unit
-            emission_by_scope[scope_name]["activity_data"][
-                "activity_value"
-            ] += activity_value
+            emission_by_scope[scope_name]["activity_data"]["activity_unit"] = (
+                activity_unit
+            )
+            emission_by_scope[scope_name]["activity_data"]["activity_value"] += (
+                activity_value
+            )
             emission_by_scope[scope_name]["entries"].extend(data.json_holder)
 
         total_emissions = sum([v["total_co2e"] for v in emission_by_scope.values()])
@@ -664,7 +664,6 @@ class GHGReportView(generics.CreateAPIView):
 
 
 class AnalysisData2APIView(APIView):
-
     def get(self, request, report_id):
         try:
             instance = AnalysisData2.objects.get(report_id=report_id)
