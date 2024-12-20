@@ -1,16 +1,56 @@
 <!-- people_management.html -->
+{%load custom_tags%}
+<style>
+    .checkmark {
+        display: inline-block;
+        width: 10px; /* Reduced from 12px to 10px */
+        height: 10px; /* Reduced from 12px to 10px */
+        border: 2px solid #22c55e;
+        border-radius: 2px;
+        background-color: #22c55e;
+        position: relative;
+    }
+    .checkmark::after {
+        content: '';
+        position: absolute;
+        width: 3px; /* Reduced from 4px to 3px */
+        height: 6px; /* Reduced from 8px to 6px */
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        top: -0.5px; /* Adjusted for proper alignment with reduced size */
+        left: 2px; /* Adjusted for proper alignment with reduced size */
+    }
+    .crossmark {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border: 2px solid #9ca3af;
+        border-radius: 2px;
+        background-color: #fff;
+        position: relative;
+    }
+</style>
+
 {% load custom_tags %}
 <h2>13. People</h2>
 
-<p>{{screen_thirteen_data.employee_policies_statement|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.employee_policies_statement.content|default:"No data available."}}</p>
 
 <h4>13.1. Employees</h4>
 
 <h4>13.1.1. Management of Material Topic</h4>
-<p>No data available.</p>
+{% if screen_thirteen_data.3_3cde_13_1_1 and screen_thirteen_data.3_3cde_13_1_1|length > 0 %}
+    {% for val in screen_thirteen_data.3_3cde_13_1_1 %}
+        <p>{{ val.GRI33cd|default:"No data available" }}</p>
+        <p>{{ val.GRI33e|default:"No data available" }}</p>
+    {% endfor %}
+{% else %}
+    <p>No material topics available.</p>
+{% endif %}
 
 <h4>13.1.2. Employee Hire and Turnover</h4>
-<p>{{screen_thirteen_data.workforce_hire_retention_statement|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.workforce_hire_retention_statement.content|default:"No data available."}}</p>
 
 <h5>Methodologies and Assumptions used</h5>
 {% if screen_thirteen_data.2_7_c_methodologies|length > 0 %}
@@ -97,13 +137,14 @@
     <tbody>
         {% for hire in screen_thirteen_data.401_social_analyse.data.new_employee_hires %}
         <tr>
-            <td>{{ hire.type_of_employee }}</td>
-            <td>{{ hire.percentage_of_male_employee }}%</td>
-            <td>{{ hire.percentage_of_female_employee }}%</td>
-            <td>{{ hire.percentage_of_non_binary_employee }}%</td>
-            <td>{{ hire.yearsold30 }}%</td>
-            <td>{{ hire.yearsold30to50 }}%</td>
-            <td>{{ hire.yearsold50 }}%</td>
+            <!-- Format till 2 decimals -->
+            <td>{{ hire.type_of_employee  }}</td>
+            <td>{{ hire.percentage_of_male_employee|floatformat:2 }}%</td>
+            <td>{{ hire.percentage_of_female_employee|floatformat:2 }}%</td>
+            <td>{{ hire.percentage_of_non_binary_employee|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold30|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold30to50|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold50|floatformat:2 }}%</td>
             
         </tr>
         {% endfor %}
@@ -127,12 +168,12 @@
         {% for hire in screen_thirteen_data.401_social_analyse.data.employee_turnover %}
         <tr>
             <td>{{ hire.type_of_employee }}</td>
-            <td>{{ hire.percentage_of_male_employee }}%</td>
-            <td>{{ hire.percentage_of_female_employee }}%</td>
-            <td>{{ hire.percentage_of_non_binary_employee }}%</td>
-            <td>{{ hire.yearsold30 }}%</td>
-            <td>{{ hire.yearsold30to50 }}%</td>
-            <td>{{ hire.yearsold50 }}%</td>
+            <td>{{ hire.percentage_of_male_employee|floatformat:2 }}%</td>
+            <td>{{ hire.percentage_of_female_employee|floatformat:2 }}%</td>
+            <td>{{ hire.percentage_of_non_binary_employee|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold30|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold30to50|floatformat:2 }}%</td>
+            <td>{{ hire.yearsold50|floatformat:2 }}%</td>
             
         </tr>
         {% endfor %}
@@ -151,31 +192,93 @@
 <h5>Minimum number of weeks’ notice</h5>
 <p> {{screen_thirteen_data.402_1a_minimum_number_of_weeks.data.0.Q1}} </p>
 
-<h5>Benefits Provided to Employees by Location</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
+<h5>Benefits provided to full-time employees by location</h5>
+<table border="1" cellspacing="0" cellpadding="5">
     <thead>
         <tr>
-            <th>Benefit</th>
-            <th>Full-Time Employees</th>
-            <th>Part-Time Employees</th>
-            <th>Temporary Employees</th>
-            <th>Significant Location</th>
+            <th>Significant location of operation</th>
+            {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_full_time_employees %}
+                <th>{{ benefit.name }}</th>
+            {% endfor %}
         </tr>
     </thead>
     <tbody>
-        {% for benefit in screen_thirteen_data.401_2a_benefits_provided.data %}
-        <tr>
-            <td>{{ benefit.benefits|default:"No data available" }}</td>
-            <td>{{ benefit.fulltime|default:"No data available" }}</td>
-            <td>{{ benefit.parttime|default:"No data available" }}</td>
-            <td>{{ benefit.temporary|default:"No data available" }}</td>
-            <td>{{ benefit.significantlocation|default:"No data available" }}</td>
+        {% for location_id in screen_thirteen_data.401_social_analyse.data.benefits.benefits_full_time_employees|map:"selectedLocations_name"|flatten|unique %}
+            <tr>
+                <td>{{ location_id }}</td>
+                {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_full_time_employees %}
+                    <td style="text-align: center;">
+                        {% if benefit.selected and location_id in benefit.selectedLocations_name %}
+                        <span class="checkmark"></span> <!-- Checkmark -->
+                        {% else %}
+                        <span class="crossmark"></span> <!-- Cross -->
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
         {% endfor %}
     </tbody>
 </table>
 
+<h5>Benefits provided to part-time employees by location</h5>
+<table border="1" cellspacing="0" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Significant location of operation</th>
+            {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_part_time_employees %}
+                <th>{{ benefit.name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for location_id in screen_thirteen_data.401_social_analyse.data.benefits.benefits_part_time_employees|map:"selectedLocations_name"|flatten|unique %}
+            <tr>
+                <td>{{ location_id }}</td>
+                {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_part_time_employees %}
+                    <td style="text-align: center;">
+                        {% if benefit.selected and location_id in benefit.selectedLocations_name %}
+                        <span class="checkmark"></span> <!-- Checkmark -->
+                        {% else %}
+                        <span class="crossmark"></span> <!-- Cross -->
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h5>Benefits provided to temporary employees by location</h5>
+<table border="1" cellspacing="0" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Significant location of operation</th>
+            {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_temporary_employees %}
+                <th>{{ benefit.name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for location_id in screen_thirteen_data.401_social_analyse.data.benefits.benefits_temporary_employees|map:"selectedLocations_name"|flatten|unique %}
+            <tr>
+                <td>{{ location_id }}</td>
+                {% for benefit in screen_thirteen_data.401_social_analyse.data.benefits.benefits_temporary_employees %}
+                    <td style="text-align: center;">
+                        {% if benefit.selected and location_id in benefit.selectedLocations_name %}
+                        <span class="checkmark"></span> <!-- Checkmark -->
+                        {% else %}
+                        <span class="crossmark"></span> <!-- Cross -->
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
 <h4>13.1.4. Parental Leave</h4>
-<p>{{screen_thirteen_data.parental_leaves|default:"No data available"}}</p>
+<p>{{screen_thirteen_data.parental_leaves.content|default:"No data available"}}</p>
 
 <h5>Parental Leave Data</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
@@ -212,15 +315,15 @@
         {% for parental_leave in screen_thirteen_data.401_social_analyse.data.return_to_work_rate_and_retention_rate_of_employee %}
         <tr>
             <td>{{ parental_leave.employee_category }}</td>
-            <td>{{ parental_leave.male }}</td>
-            <td>{{ parental_leave.female }}</td>
+            <td>{{ parental_leave.male|floatformat:2 }}</td>
+            <td>{{ parental_leave.female|floatformat:2 }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <h4>13.1.5. Standard Wage</h4>
-<p>{{screen_thirteen_data.standard_wage|default:"No data available."}}</p>
+<p>{{screen_thirteen_data.standard_wage.content|default:"No data available."}}</p>
 
 <p>{{ screen_thirteen_data.202_1b.0.Q3|default:"No data available" }}</p>
 <p>{{ screen_thirteen_data.202_1c.0.Currency|default:"No data available" }}</p>
@@ -293,7 +396,7 @@
 </table>
 
 <h4>13.1.6. Performance and Career Development Reviews of Employees (GRI 404-3-a)</h4>
-<p>{{screen_thirteen_data.performance_review_process|default:"No data available" }}</p>
+<p>{{screen_thirteen_data.performance_review_process.content|default:"No data available" }}</p>
 
 <h5>Percentage of Employees Receiving Regular Performance and Career Development Reviews</h5>
 <table cellpadding="5" cellspacing="0" width="100%">

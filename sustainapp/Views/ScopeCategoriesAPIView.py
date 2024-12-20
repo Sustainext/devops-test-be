@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from sustainapp.Serializers.ScopeCategoriesSerializer import ScopeCategoriesSerializer
 from common.enums.ScopeCategories import (
-    Missing_SubCategories,
+    CategoryMappings,
 )
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -45,9 +45,9 @@ class ScopeCategoriesAPIView(APIView):
         self.last_page = 1
 
     def special_categories_request(self, sub_category: str):
-        if Missing_SubCategories.get(sub_category) is None:
+        if CategoryMappings.get(sub_category) is None:
             return
-        source_and_year_list = Missing_SubCategories[sub_category]
+        source_and_year_list = CategoryMappings[sub_category]
         for source_and_year_dict in source_and_year_list:
             self.params["year"] = source_and_year_dict["year"]
             self.params["source"] = source_and_year_dict["source"]
@@ -151,7 +151,6 @@ class ScopeCategoriesAPIView(APIView):
         return Response(self.response_data, status=status.HTTP_200_OK)
 
     def get(self, request, format=None):
-
         serializer = ScopeCategoriesSerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
         sub_category = serializer.validated_data["sub_category"]

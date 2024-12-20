@@ -49,6 +49,7 @@ PROJECT_APPS = [
     "analysis.apps.AnalysisConfig",
     "materiality_dashboard.apps.MaterialityDashboardConfig",
     "esg_report.apps.EsgReportConfig",
+    "canadabills211.apps.Canadabills211Config",
 ]
 
 THIRD_PARTY = [
@@ -92,7 +93,7 @@ ROOT_URLCONF = "azureproject.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -170,7 +171,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
     ],
     "EXCEPTION_HANDLER": "sustainapp.utils.custom_exception_handler",
     "DEFAULT_PERMISSION_CLASSES": [

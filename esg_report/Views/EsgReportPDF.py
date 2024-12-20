@@ -1,11 +1,9 @@
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.template.loader import get_template
 from django.views import View
-from sustainapp.models import Report
+from sustainapp.models import Report, Location
 import time
 from weasyprint import HTML
-from xhtml2pdf import pisa
 from esg_report.services.screen_one_service import CeoMessageService
 from esg_report.services.screen_two_service import ScreenTwoService
 from esg_report.services.screen_three_service import MissionVisionValuesService
@@ -21,10 +19,9 @@ from esg_report.services.screen_twelve_service import ScreenTwelveService
 from esg_report.services.screen_thirteen_service import ScreenThirteenService
 from esg_report.services.screen_fourteen_service import ScreenFourteenService
 from esg_report.services.screen_fifteen_service import ScreenFifteenService
-from esg_report.services.content_index_service import StatementOfUseService
+
+# from esg_report.services.content_index_service import StatementOfUseService
 from django.forms import model_to_dict
-from authentication.models import CustomUser
-import json
 from threading import Thread
 from esg_report.utils import generate_disclosure_status
 import logging
@@ -47,6 +44,29 @@ def convert_keys(obj):
         return obj
 
 
+def process_benefits(benefits_key, screen_thirteen_data, location_name_map):
+    """
+    Processes benefits for a specific key (e.g., full-time, part-time, temporary employees).
+    Enriches the data with location names based on the selectedLocations.
+    """
+    if screen_thirteen_data.get("401_social_analyse") is not None:
+        benefits = (
+            screen_thirteen_data.get("401_social_analyse", {})
+            .get("data", {})
+            .get("benefits", {})
+            .get(benefits_key, [])
+        )
+    else:
+        benefits = []
+
+    for benefit in benefits:
+        benefit["selectedLocations_name"] = [
+            location_name_map.get(loc_id, f"Unknown ID: {loc_id}")
+            for loc_id in benefit.get("selectedLocations", [])
+        ]
+    return benefits
+
+
 class ESGReportPDFView(View):
     def get(self, request, *args, **kwargs):
         start_time = time.time()
@@ -63,7 +83,7 @@ class ESGReportPDFView(View):
                 results["error"] = HttpResponse(
                     f"No report found with ID={pk}", status=404
                 )
-            except Exception as e:
+            except Exception:
                 results["error"] = HttpResponse(
                     "An unexpected error occurred while retrieving the report.",
                     status=500,
@@ -139,9 +159,49 @@ class ESGReportPDFView(View):
             screen_thirteen_service = ScreenThirteenService(
                 report_id=pk, request=request
             )
-            results["screen_thirteen_data"] = convert_keys(
-                screen_thirteen_service.get_report_response()
+            screen_thirteen_data = screen_thirteen_service.get_report_response()
+
+            # Extract all unique location IDs from selectedLocations for all benefit types
+            all_location_ids = set()
+
+            benefit_types = [
+                "benefits_full_time_employees",
+                "benefits_part_time_employees",
+                "benefits_temporary_employees",
+            ]
+
+            for benefit_type in benefit_types:
+                if screen_thirteen_data.get("401_social_analyse") is not None:
+                    benefits = (
+                        screen_thirteen_data.get("401_social_analyse", {})
+                        .get("data", {})
+                        .get("benefits", {})
+                        .get(benefit_type, [])
+                    )
+                else:
+                    benefits = []
+                for benefit in benefits:
+                    all_location_ids.update(benefit.get("selectedLocations", []))
+
+            # Fetch location names from the database
+            location_names = Location.objects.filter(id__in=all_location_ids).values(
+                "id", "name"
             )
+            location_name_map = {loc["id"]: loc["name"] for loc in location_names}
+
+            # Process each category of benefits
+            process_benefits(
+                "benefits_full_time_employees", screen_thirteen_data, location_name_map
+            )
+            process_benefits(
+                "benefits_part_time_employees", screen_thirteen_data, location_name_map
+            )
+            process_benefits(
+                "benefits_temporary_employees", screen_thirteen_data, location_name_map
+            )
+
+            # Update the results dictionary
+            results["screen_thirteen_data"] = convert_keys(screen_thirteen_data)
 
         def get_screen_fourteen_data():
             screen_fourteen_service = ScreenFourteenService(
@@ -193,7 +253,7 @@ class ESGReportPDFView(View):
         if content_index_only:
             # Generate content index data only
             content_index_data = generate_disclosure_status(report=results["report"])
-            statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
+            # statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
 
             # Prepare context for content index only
             context = {
@@ -235,7 +295,7 @@ class ESGReportPDFView(View):
                 )
 
         content_index_data = generate_disclosure_status(report=results["report"])
-        statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
+        # statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
 
         # Create context for rendering
         context = {

@@ -41,11 +41,7 @@ def process_json(json_obj, path, raw_response):
                     data structure in RawResponse data field when
                     compared to other environment modules.
                     """
-                    if type(first_value) in [
-                        int,
-                        str,
-                        bool,
-                    ]:
+                    if type(first_value) in [int, str, bool, type(None)]:
 
                         process_raw_response_data(
                             data_point_dict=item,

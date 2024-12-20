@@ -3,7 +3,7 @@ from django.db.models import Prefetch
 from rest_framework import serializers
 from datetime import date, timedelta
 from django.db.models import Q
-from common.utils.value_types import safe_divide
+from common.utils.value_types import safe_divide, safe_percentage
 
 
 def set_locations_data(organisation, corporate, location):
@@ -67,12 +67,12 @@ def filter_by_start_end_dates(start_date, end_date):
 
 
 def safe_divide_percentage(numerator, denominator):
-    return safe_divide(numerator, denominator) * 100
+    return safe_percentage(numerator, denominator)
 
 
 def safe_integer_divide(numerator, denominator, decimal_places=2):
     try:
-        return safe_divide(int(numerator), int(denominator)) * 100
+        return safe_percentage(int(numerator), int(denominator))
     except (ZeroDivisionError, ValueError):
         return 0
 

@@ -2,7 +2,7 @@
 
 <h3>12.2. Materials</h3>
 
-<p>{{screen_twelve_data.material_management_strategy|default:"No data available."}}</p>
+<p>{{screen_twelve_data.material_management_strategy.content|default:"No data available."}}</p>
 
 <h5>Non-Renewable Materials Used</h5>
 <table
@@ -25,7 +25,7 @@
       <td>{{ material.material_type }}</td>
       <td>{{ material.material_category }}</td>
       <td>{{ material.source }}</td>
-      <td>{{ material.total_quantity|round_to:2 }}</td>
+      <td>{{ material.total_quantity }}</td>
       <td>{{ material.units }}</td>
     </tr>
     {% endfor %}
@@ -53,7 +53,7 @@
       <td>{{ material.material_type }}</td>
       <td>{{ material.material_category }}</td>
       <td>{{ material.source }}</td>
-      <td>{{ material.total_quantity|round_to:2 }}</td>
+      <td>{{ material.total_quantity }}</td>
       <td>{{ material.units }}</td>
     </tr>
     {% endfor %}
@@ -64,7 +64,7 @@
 <p>No data available</p>
 
 <h4>12.2.2. Recycled Input Materials Used</h4>
-<p>{{screen_twelve_data.recycling_process|default:"No data available."}}</p>
+<p>{{screen_twelve_data.recycling_process.content|default:"No data available."}}</p>
 
 <h5>Non-Renewable Materials Used</h5>
 <table
@@ -82,14 +82,14 @@
     {% for material in screen_twelve_data.material_analyse.recycled_materials %}
     <tr>
       <td>{{ material.type_of_recycled_material_used }}</td>
-      <td>{{ material.percentage_of_recycled_input_materials_used|round_to:2 }}%</td>
+      <td>{{ material.percentage_of_recycled_input_materials_used }}%</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 
 <h4>12.2.3. Reclaimed Products and Their Packaging Materials</h4>
-<p>{{screen_twelve_data.reclamation_recycling_process|default:"No data available."}}</p>
+<p>{{screen_twelve_data.reclamation_recycling_process.content|default:"No data available."}}</p>
 
 <table
   cellpadding="5"
@@ -110,7 +110,7 @@
       <td>{{ product.type_of_product }}</td>
       <td>{{ product.product_code }}</td>
       <td>{{ product.product_name }}</td>
-      <td>{{ product.percentage_of_reclaimed_products|round_to:2 }}%</td>
+      <td>{{ product.total_quantity }}%</td>
     </tr>
     {% endfor %}
   </tbody>

@@ -11,7 +11,7 @@
 <p>No data available</p>
 <h4>12.6.2. Habitat Protected and Restored</h4>
 {%if screen_twelve_data.habitat_protection_restoration_commitment %}
-<p>{{screen_twelve_data.habitat_protection_restoration_commitment|safe}}</p>
+<p>{{screen_twelve_data.habitat_protection_restoration_commitment.content|safe|default:"No data available."}}</p>
 {% else %}
 <p>No data available for this section.</p>
 {% endif %}

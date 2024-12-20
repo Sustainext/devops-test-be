@@ -8,10 +8,10 @@ class ScreenTen(AbstractModel, HistoricalModelMixin):
     report = models.OneToOneField(
         Report, on_delete=models.CASCADE, related_name="screen_ten"
     )
-    company_sustainability_statement = models.TextField(null=True, blank=True)
-    approach_for_sustainability = models.TextField(null=True, blank=True)
-    sustainability_goals = models.TextField(null=True, blank=True)
-    approach_to_supply_chain_sustainability = models.TextField(null=True, blank=True)
+    company_sustainability_statement = models.JSONField(null=True, blank=True)
+    approach_for_sustainability = models.JSONField(null=True, blank=True)
+    sustainability_goals = models.JSONField(null=True, blank=True)
+    approach_to_supply_chain_sustainability = models.JSONField(null=True, blank=True)
 
     class Meta:
         db_table = "screen_ten"

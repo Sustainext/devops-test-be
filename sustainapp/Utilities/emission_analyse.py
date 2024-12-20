@@ -1,7 +1,7 @@
 from collections import defaultdict
 from operator import itemgetter
 from datametric.utils.analyse import filter_by_start_end_dates
-from common.utils.value_types import safe_divide, format_decimal_places
+from common.utils.value_types import format_decimal_places, safe_percentage
 from datametric.models import DataPoint
 
 
@@ -10,14 +10,14 @@ def calculate_scope_contribution(key_name, scope_total_values):
     scope_contributions = []
     for scope_name, scope_value in scope_total_values.items():
         try:
-            contribution = safe_divide(scope_value, total_emissions) * 100
+            contribution = safe_percentage(scope_value, total_emissions)
         except ZeroDivisionError:
             contribution = 0
         scope_contributions.append(
             {
                 key_name: scope_name,
                 "total": format_decimal_places(scope_value),
-                "contribution": round(contribution, 3),
+                "contribution": contribution,
                 "Units": "tC02e",
             }
         )
@@ -53,8 +53,8 @@ def get_top_emission_by_scope(locations, user, start, end, path_slug):
         for emission_request, climatiq_response in zip(
             data_point.raw_response.data, data_point.json_holder
         ):
-            top_emission_by_source[
-                emission_request["Emission"]["Category"]
-            ] += climatiq_response.get("co2e", 0)
+            top_emission_by_source[emission_request["Emission"]["Category"]] += (
+                climatiq_response.get("co2e", 0)
+            )
 
     return top_emission_by_scope, top_emission_by_source, top_emission_by_location

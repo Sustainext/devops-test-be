@@ -23,6 +23,7 @@ from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.Serializer.ScreenTwelveSerializer import ScreenTwelveSerializer
 from common.utils.value_types import format_decimal_places
+from decimal import Decimal
 
 
 class ScreenTwelveService:
@@ -179,7 +180,6 @@ class ScreenTwelveService:
         return collect_data_by_raw_response_and_index(data_points=local_data_points)
 
     def get_301_123_collect(self):
-        slugs = [self.slugs[0], self.slugs[1], self.slugs[2]]
         emission_analysis_objects = get_emission_analysis_as_per_report(
             report=self.report
         )
@@ -195,10 +195,10 @@ class ScreenTwelveService:
                     "category": emission_analyse_object.category,
                     "subcategory": emission_analyse_object.subcategory,
                     "activity": emission_analyse_object.activity,
-                    "activity_value": format_decimal_places(
-                        emission_analyse_object.consumption
+                    "emission": str(
+                        format_decimal_places(emission_analyse_object.co2e_total / 1000)
                     ),
-                    "activity_unit": emission_analyse_object.unit,
+                    "emission_unit": "tCO2e",
                 }
             )
         return slug_data
@@ -206,8 +206,8 @@ class ScreenTwelveService:
     def get_301_123_analyse(self):
         def convert_kg_to_tonne_for_emission_analysis(scope_contribution: list):
             for contribution_dict in scope_contribution:
-                total = contribution_dict["total"] / 1000
-                contribution_dict["total"] = total
+                total = Decimal(contribution_dict["total"]) / 1000
+                contribution_dict["total"] = format_decimal_places(total)
             return scope_contribution
 
         locations = set_locations_data(
