@@ -35,7 +35,6 @@ from sustainapp.Views.GetLocationAsPerCorporate import (
 )
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
-from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
 from sustainapp.Views.Analyse.Environment.WaterAnalyseAPI import (
     WaterAnalyseByDataPoints,
 )
@@ -150,11 +149,6 @@ urlpatterns = [
         "get_waste_analysis/",
         GetWasteAnalysis.as_view(),
         name="get_waste_analysis",
-    ),
-    path(
-        "get_water_analysis/",
-        WaterAnalyse.as_view(),
-        name="get_water_analysis",
     ),
     path(
         "get_water_analysis_api/",
