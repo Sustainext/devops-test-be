@@ -18,7 +18,6 @@ from sustainapp.Utilities.emission_analyse import (
     calculate_scope_contribution,
 )
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
-from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from django.core.exceptions import ObjectDoesNotExist
