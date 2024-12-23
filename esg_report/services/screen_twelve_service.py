@@ -10,6 +10,7 @@ from esg_report.utils import (
     forward_request_with_jwt,
     get_emission_analysis_as_per_report,
     get_management_materiality_topics,
+    calling_analyse_view_with_params,
 )
 from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
@@ -118,21 +119,10 @@ class ScreenTwelveService:
         return data
 
     def get_water_analyse(self):
-        data = forward_request_with_jwt(
-            view_class=WaterAnalyse,
-            original_request=self.request,
-            url="/sustainapp/get_water_analysis/",
-            query_params={
-                "organisation": f"{self.report.organization.id}",
-                "corporate": (
-                    self.report.corporate.id
-                    if self.report.corporate is not None
-                    else ""
-                ),  # Empty string as per your URL
-                "location": "",  # Empty string
-                "start": self.report.start_date.strftime("%Y-%m-%d"),
-                "end": self.report.end_date.strftime("%Y-%m-%d"),
-            },
+        data = calling_analyse_view_with_params(
+            view_url="get_water_analysis_api",
+            report=self.report,
+            request=self.request,
         )
         return data
 
