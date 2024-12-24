@@ -46,6 +46,9 @@ from materiality_dashboard.Views.MaterialityAssessmentProcessAPIViews import (
 from materiality_dashboard.Views.GetMaterialityDashboardwithDisclosures import (
     GetMaterialityDashboardwithDisclosures,
 )
+from materiality_dashboard.Views.MaterialityDashboardStatusView import (
+    MaterialityDashboardStatusView,
+)
 
 router = DefaultRouter()
 router.register(
@@ -179,6 +182,11 @@ urlpatterns = [
         "get_material_topics_with_disclosures_with_path_slugs/",
         GetMaterialityDashboardwithDisclosures.as_view(),
         name="get_material_topics_with_disclosures_with_path_slugs",
-    )
+    ),
+    path(
+        "get_materiality_dashboard_status/",
+        MaterialityDashboardStatusView.as_view(),
+        name="get_materiality_dashboard_status",
+    ),
 ]
 urlpatterns += router.urls
