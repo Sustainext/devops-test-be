@@ -220,21 +220,21 @@ class ESGReportPDFView(View):
         fetch_report()
         # List of threads to run
         threads = [
-            # Thread(target=get_ceo_message),
-            # Thread(target=get_about_the_company),
-            # Thread(target=get_mission_vision_values),
-            # Thread(target=get_sustainability_roadmap),
-            # Thread(target=get_awards_and_recognition),
-            # Thread(target=get_stakeholder_engagement),
-            # Thread(target=get_about_the_report),
-            # Thread(target=get_materiality),
-            # Thread(target=get_screen_nine_data),
-            # Thread(target=get_screen_ten_data),
-            # Thread(target=get_screen_eleven_data),
-            # Thread(target=get_screen_twelve_data),
+            Thread(target=get_ceo_message),
+            Thread(target=get_about_the_company),
+            Thread(target=get_mission_vision_values),
+            Thread(target=get_sustainability_roadmap),
+            Thread(target=get_awards_and_recognition),
+            Thread(target=get_stakeholder_engagement),
+            Thread(target=get_about_the_report),
+            Thread(target=get_materiality),
+            Thread(target=get_screen_nine_data),
+            Thread(target=get_screen_ten_data),
+            Thread(target=get_screen_eleven_data),
+            Thread(target=get_screen_twelve_data),
             Thread(target=get_screen_thirteen_data),
-            # Thread(target=get_screen_fourteen_data),
-            # Thread(target=get_screen_fifteen_data),
+            Thread(target=get_screen_fourteen_data),
+            Thread(target=get_screen_fifteen_data),
         ]
 
         # Start all threads
