@@ -24,12 +24,11 @@ class MaterialityDashboardStatusView(APIView):
         """
         Retrieves the status of the materiality dashboard.
         """
+        # ? How to add user based organisation and corporate in the filter?
         try:
             materiality_dashboard = MaterialityAssessment.objects.get(
                 id=materiality_id,
                 client=self.request.user.client,
-                organization__in=self.request.user.orgs.all(),
-                corporate__in=self.request.user.corps.all(),
             )
         except MaterialityAssessment.DoesNotExist:
             return Response(
