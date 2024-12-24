@@ -1,17 +1,13 @@
 from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
-    get_data_by_raw_response_and_index,
     collect_data_by_raw_response_and_index,
     collect_data_and_differentiate_by_location,
-    get_data_by_raw_response_and_index,
     forward_request_with_jwt,
     calling_analyse_view_with_params,
     calling_analyse_view_with_params_for_same_year,
     get_management_materiality_topics,
 )
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.test import APIRequestFactory
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
 from sustainapp.Views.Analyse.Social.TrainingAnalyse import TrainingSocial
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
@@ -569,13 +565,25 @@ class ScreenThirteenService:
             report=self.report,
             request=self.request,
         )
-        response_data["405_1a_analyse"] = (
-            calling_analyse_view_with_params_for_same_year(
-                view_url="get_diversity_inclusion_analysis",
-                report=self.report,
-                request=self.request,
-            )
-        )
+        response_data["405_1a_analyse"] = {
+            **(
+                calling_analyse_view_with_params_for_same_year(
+                    view_url="get_diversity_inclusion_analysis",
+                    report=self.report,
+                    request=self.request,
+                )
+                or {}
+            ),
+            **(
+                calling_analyse_view_with_params_for_same_year(
+                    view_url="get_diversity_inclusion_second_screen_analyse",
+                    report=self.report,
+                    request=self.request,
+                )
+                or {}
+            ),
+        }
+
         response_data["410-1b-training_requirements"] = (
             collect_data_and_differentiate_by_location(
                 data_points=self.data_points.filter(path__slug=self.slugs[74])
