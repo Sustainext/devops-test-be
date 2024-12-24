@@ -11,6 +11,7 @@ from materiality_dashboard.models import (
     MaterialityImpact,
     ManagementApproachQuestion,
 )
+from django.db.models import Q
 
 
 class MaterialityDashboardStatusView(APIView):
@@ -45,9 +46,15 @@ class MaterialityDashboardStatusView(APIView):
             and MaterialityChangeConfirmation.objects.filter(
                 assessment=materiality_dashboard
             ).exists()
+            # * If in MaterialityAssessmentProcess field selected_stakeholders is empty and stakeholder_others is also empty then it will not be considered as completed
             and MaterialityAssessmentProcess.objects.filter(
-                assessment=materiality_dashboard
-            ).exists()
+                assessment=materiality_dashboard,
+            )
+            .filter(
+                Q(selected_stakeholders__isnull=True),
+                Q(stakeholder_others__isnull=True),
+            )
+            .exists()
             and MaterialityImpact.objects.filter(
                 assessment=materiality_dashboard
             ).exists()
