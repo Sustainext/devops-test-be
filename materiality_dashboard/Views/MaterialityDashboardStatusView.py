@@ -56,9 +56,5 @@ class MaterialityDashboardStatusView(APIView):
             ).exists()
         )
         return Response(
-            {
-                "status": "completed"
-                if condition_for_completion
-                else materiality_dashboard.status
-            }
+            {"status": "completed" if condition_for_completion else "in_progress"}
         )
