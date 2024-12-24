@@ -51,10 +51,8 @@ class MaterialityDashboardStatusView(APIView):
                 assessment=materiality_dashboard,
             )
             .filter(
-                Q(selected_stakeholders__isnull=False, stakeholder_others__isnull=True)
-                | Q(
-                    stakeholder_others__isnull=False, selected_stakeholders__isnull=True
-                )
+                Q(selected_stakeholders__isnull=False, stakeholder_others__isnull="")
+                | Q(stakeholder_others__isnull="", selected_stakeholders__isnull=True)
             )
             .exists()
             and MaterialityImpact.objects.filter(
