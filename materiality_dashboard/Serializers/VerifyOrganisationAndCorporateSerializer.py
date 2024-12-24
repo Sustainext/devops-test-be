@@ -9,6 +9,9 @@ class VerifyOrganisationAndCorporateSerializer(serializers.Serializer):
     corporate = serializers.PrimaryKeyRelatedField(
         queryset=Corporateentity.objects.all(), required=False
     )
+    # * Add a start and end date
+    start_date = serializers.DateField(required=True)
+    end_date = serializers.DateField(required=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
