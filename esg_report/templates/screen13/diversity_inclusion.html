@@ -21,40 +21,47 @@
 <p>{{screen_thirteen_data.employee_diversity_position.content|default:"No data added."}}</p>
 
 <h4>Governance Bodies</h4>
-<h5>Diversity Representation in Governance Bodies</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
+<h5>Percentage of individuals within the organization’s governance bodies by diversity categories.</h5>
+<table>
     <thead>
         <tr>
-            <th>Percentage of female within organisation's governance bodies</th>
-            <th>Percentage of male within organisation's governance bodies</th>
-            <th>Percentage of Non-binary within organisation's governance bodies</th>
-            <th>Percentage of employee within age group of (under 30 years old) organisation's governance bodies</th>
-            <th>Percentage of employee within age group of (30-50 years old) organisation's governance bodies</th>
-            <th>Percentage of employee within age group of (over 50 years old) organisation's governance bodies</th>
-            <th>Percentage of employee in minority group</th>
-            
+            <th colspan="3">Gender</th>
+            <th colspan="3">Age Group</th>
+            <th colspan="2">Diversity groups</th>
+        </tr>
+        <tr>
+            <th>Male</th>
+            <th>Female</th>
+            <th>Non-Binary</th>
+            <th>&lt;30 years</th>
+            <th>30-50 years</th>
+            <th>&gt;50 years</th>
+            <th>Minority group</th>
+            <th>Vulnerable Communities</th>
         </tr>
     </thead>
     <tbody>
-        {% for governance_bodies in screen_thirteen_data.405_2a_analyse.percentage_of_employees_within_government_bodies %}
-        <tr>
-            <td>{{ governance_bodies.percentage_of_female_with_org_governance }}</td>
-            <td>{{ governance_bodies.percentage_of_male_with_org_governance }}</td>
-            <td>{{ governance_bodies.percentage_of_non_binary_with_org_governance }}</td>
-            <td>{{ governance_bodies.percentage_of_employees_within_30_age_group }}</td>
-            <td>{{ governance_bodies.percentage_of_employees_within_30_to_50_age_group }}</td>
-            <td>{{ governance_bodies.percentage_of_employees_more_than_50_age_group }}</td>
-            <td>{{ governance_bodies.percentage_of_employees_in_minority_group }}</td>
-        </tr>
-        {% endfor %}
+        {% for data in screen_thirteen_data.405_1a_analyse.percentage_of_employees_within_government_bodies %}
+                <tr>
+                    <td>{{ data.male|default:"0" }}</td>
+                    <td>{{ data.female|default:"0" }}</td>
+                    <td>{{ data.nonBinary|default:"0" }}</td>
+                    <td>{{ data.lessThan30|default:"0" }}</td>
+                    <td>{{ data.between30and50|default:"0" }}</td>
+                    <td>{{ data.moreThan50|default:"0" }}</td>
+                    <td>{{ data.minorityGroup|default:"0" }}</td>
+                    <td>{{ data.vulnerableCommunities|default:"0" }}</td>
+                </tr>
+            {% endfor %}
     </tbody>
+    
 </table>
 
 <h5>Percentage of Employees per employee category </h5>
 <table>
     <thead>
         <tr>
-            <th rowspan="2">Type of Employees</th>
+            <th rowspan="2">Employee Category</th>
             <th colspan="3">Gender</th>
             <th colspan="3">Age Group</th>
             <th rowspan="2">Diversity Groups</th>

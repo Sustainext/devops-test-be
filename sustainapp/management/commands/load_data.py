@@ -1,13 +1,24 @@
 from django.core.management.base import BaseCommand
 from sustainapp.models import Framework, Sdg, Certification, Regulation, Rating, Target
+from analysis.models.Social.Gender import Gender
+from authentication.models import CustomRole, CustomPermission
 
 
 class Command(BaseCommand):
     # help = 'Loads initial data into the database'
 
     def handle(self, *args, **kwargs):
-
-        models_to_check = [Certification, Framework, Rating, Regulation, Sdg, Target]
+        models_to_check = [
+            Certification,
+            Framework,
+            Rating,
+            Regulation,
+            Sdg,
+            Target,
+            Gender,
+            CustomRole,
+            CustomPermission,
+        ]
 
         for model in models_to_check:
             if model.objects.exists():
@@ -21,6 +32,9 @@ class Command(BaseCommand):
         self.update_or_create_regulations()
         self.update_or_create_sdgs()
         self.update_or_create_targets()
+        self.update_or_create_genders()
+        self.update_or_create_custom_permissions()
+        self.update_or_create_custom_role()
 
         self.stdout.write(self.style.SUCCESS("Data Updated successfully"))
 
@@ -235,3 +249,42 @@ class Command(BaseCommand):
         ]
         for target in targets:
             Target.objects.update_or_create(id=target["id"], defaults=target)
+
+    def update_or_create_genders(self):
+        genders = [
+            {"id": 1, "name": "male"},
+            {"id": 2, "name": "memale"},
+            {"id": 3, "name": "other"},
+        ]
+        for gender in genders:
+            Gender.objects.update_or_create(id=gender["id"], defaults=gender)
+
+    def update_or_create_custom_permissions(self):
+        permissions = [
+            {"id": 1, "name": "Manage Collect", "slug": "manage_collect"},
+            {"id": 2, "name": "Manage Analyze", "slug": "manage_analyze"},
+            {"id": 3, "name": "Manage Track", "slug": "manage_track"},
+            {"id": 4, "name": "Manage Optimize", "slug": "manage_optimize"},
+            {"id": 5, "name": "Manage Report", "slug": "manage_report"},
+        ]
+        for permission in permissions:
+            CustomPermission.objects.update_or_create(
+                id=permission["id"], defaults=permission
+            )
+
+    def update_or_create_custom_role(self):
+        roles = [
+            {"id": 1, "name": "ClientAdmin", "view_permissions": [1, 2, 3, 4, 5]},
+            {"id": 2, "name": "Manager", "view_permissions": [1, 2, 3, 4, 5]},
+            {"id": 3, "name": "Employee", "view_permissions": [1, 2]},
+            {"id": 4, "name": "Admin", "view_permissions": [1, 2, 3, 4, 5]},
+        ]
+        # This is how we make script for models with ManytoMany fields
+        for r in roles:
+            role, created = CustomRole.objects.update_or_create(
+                id=r["id"], defaults={"name": r["name"]}
+            )
+
+            # Update the ManyToMany field
+            if "view_permissions" in r:
+                role.view_permissions.set(r["view_permissions"])

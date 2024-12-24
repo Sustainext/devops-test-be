@@ -10,6 +10,7 @@ from esg_report.utils import (
     forward_request_with_jwt,
     get_emission_analysis_as_per_report,
     get_management_materiality_topics,
+    calling_analyse_view_with_params,
 )
 from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
@@ -17,7 +18,6 @@ from sustainapp.Utilities.emission_analyse import (
     calculate_scope_contribution,
 )
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
-from sustainapp.Views.Analyse.WaterAnalyse import WaterAnalyse
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from django.core.exceptions import ObjectDoesNotExist
@@ -118,21 +118,10 @@ class ScreenTwelveService:
         return data
 
     def get_water_analyse(self):
-        data = forward_request_with_jwt(
-            view_class=WaterAnalyse,
-            original_request=self.request,
-            url="/sustainapp/get_water_analysis/",
-            query_params={
-                "organisation": f"{self.report.organization.id}",
-                "corporate": (
-                    self.report.corporate.id
-                    if self.report.corporate is not None
-                    else ""
-                ),  # Empty string as per your URL
-                "location": "",  # Empty string
-                "start": self.report.start_date.strftime("%Y-%m-%d"),
-                "end": self.report.end_date.strftime("%Y-%m-%d"),
-            },
+        data = calling_analyse_view_with_params(
+            view_url="get_water_analysis_api",
+            report=self.report,
+            request=self.request,
         )
         return data
 
@@ -195,8 +184,8 @@ class ScreenTwelveService:
                     "category": emission_analyse_object.category,
                     "subcategory": emission_analyse_object.subcategory,
                     "activity": emission_analyse_object.activity,
-                    "emission": str(
-                        format_decimal_places(emission_analyse_object.co2e_total / 1000)
+                    "emission": format_decimal_places(
+                        emission_analyse_object.co2e_total / 1000
                     ),
                     "emission_unit": "tCO2e",
                 }
@@ -204,12 +193,6 @@ class ScreenTwelveService:
         return slug_data
 
     def get_301_123_analyse(self):
-        def convert_kg_to_tonne_for_emission_analysis(scope_contribution: list):
-            for contribution_dict in scope_contribution:
-                total = Decimal(contribution_dict["total"]) / 1000
-                contribution_dict["total"] = format_decimal_places(total)
-            return scope_contribution
-
         locations = set_locations_data(
             organisation=self.report.organization,
             corporate=self.report.corporate,
@@ -231,26 +214,14 @@ class ScreenTwelveService:
 
         # * Prepare response data
         response_data = dict()
-        response_data["all_emission_by_scope"] = (
-            convert_kg_to_tonne_for_emission_analysis(
-                calculate_scope_contribution(
-                    key_name="scope", scope_total_values=top_emission_by_scope
-                )
-            )
+        response_data["all_emission_by_scope"] = calculate_scope_contribution(
+            key_name="scope", scope_total_values=top_emission_by_scope
         )
-        response_data["all_emission_by_source"] = (
-            convert_kg_to_tonne_for_emission_analysis(
-                calculate_scope_contribution(
-                    key_name="source", scope_total_values=top_emission_by_source
-                )
-            )
+        response_data["all_emission_by_source"] = calculate_scope_contribution(
+            key_name="source", scope_total_values=top_emission_by_source
         )
-        response_data["all_emission_by_location"] = (
-            convert_kg_to_tonne_for_emission_analysis(
-                calculate_scope_contribution(
-                    key_name="location", scope_total_values=top_emission_by_location
-                )
-            )
+        response_data["all_emission_by_location"] = calculate_scope_contribution(
+            key_name="location", scope_total_values=top_emission_by_location
         )
         response_data["top_5_emisson_by_source"] = response_data[
             "all_emission_by_source"

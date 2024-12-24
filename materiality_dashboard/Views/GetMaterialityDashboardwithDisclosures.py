@@ -23,6 +23,8 @@ class GetMaterialityDashboardwithDisclosures(APIView):
 
         organization = serializer.validated_data["organization"]
         corporate = serializer.validated_data.get("corporate")
+        start = serializer.validated_data["start"]
+        end = serializer.validated_data["end"]
         client = request.user.client
 
         # Retrieve the materiality assessment
@@ -31,6 +33,8 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                 "client": client,
                 "organization": organization,
                 "approach": "GRI: In accordance with",
+                "start_date__gte": start,
+                "end_date__lte": end,
             }
             if corporate:
                 query_params["corporate"] = corporate

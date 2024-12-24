@@ -386,12 +386,12 @@ class EnergyAnalyzeView(APIView):
             energy_consumption_within_the_org = [
                 {
                     "type_of_energy_consumed": "Non-renewable fuel consumed",
-                    "consumption": consumed_total_renewable_gj,
+                    "consumption": consumed_total_non_renewable_gj,
                     "unit": "GJ",
                 },
                 {
                     "type_of_energy_consumed": "Renewable fuel consumed",
-                    "consumption": consumed_total_non_renewable_gj,
+                    "consumption": consumed_total_renewable_gj,
                     "unit": "GJ",
                 },
                 {
