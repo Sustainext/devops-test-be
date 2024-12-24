@@ -184,7 +184,7 @@ urlpatterns = [
         name="get_material_topics_with_disclosures_with_path_slugs",
     ),
     path(
-        "get_materiality_dashboard_status/",
+        "get_materiality_dashboard_status/<int:materiality_id>/",
         MaterialityDashboardStatusView.as_view(),
         name="get_materiality_dashboard_status",
     ),
