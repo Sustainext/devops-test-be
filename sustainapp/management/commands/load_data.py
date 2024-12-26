@@ -1,4 +1,5 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+from django.core.management import call_command
 from sustainapp.models import Framework, Sdg, Certification, Regulation, Rating, Target
 from analysis.models.Social.Gender import Gender
 from authentication.models import CustomRole, CustomPermission
@@ -35,6 +36,7 @@ class Command(BaseCommand):
         self.update_or_create_genders()
         self.update_or_create_custom_permissions()
         self.update_or_create_custom_role()
+        self.load_fixtures()
 
         self.stdout.write(self.style.SUCCESS("Data Updated successfully"))
 
@@ -70,13 +72,18 @@ class Command(BaseCommand):
             {"id": 7, "name": "UNPRI", "Image": "images/framework/UNPRI.png"},
             {
                 "id": 8,
-                "name": "GRI: In accordance With",
-                "Image": "images/framework/GRI.png",
+                "name": "CSRD",
+                "Image": "images/framework/CSRD.png",
             },
             {
                 "id": 9,
-                "name": "GRI: with reference to",
-                "Image": "images/framework/GRI.png",
+                "name": "IFRS",
+                "Image": "images/framework/IFRS.png",
+            },
+            {
+                "id": 10,
+                "name": "TNFD",
+                "Image": "images/framework/TNFD.png",
             },
         ]
         for framework in frameworks:
@@ -95,6 +102,11 @@ class Command(BaseCommand):
                 "id": 4,
                 "name": "ECOVADIS",
                 "Image": "images/rating/ecovadis-vector.png",
+            },
+            {
+                "id": 5,
+                "name": "Sedex",
+                "Image": "images/rating/Sedex.png",
             },
         ]
         for rating in ratings:
@@ -288,3 +300,22 @@ class Command(BaseCommand):
             # Update the ManyToMany field
             if "view_permissions" in r:
                 role.view_permissions.set(r["view_permissions"])
+
+    def load_fixtures(self):
+        fixture_paths = [
+            "datametric/fixtures/paths.json",
+            "datametric/fixtures/fields_group.json",
+            "datametric/fixtures/datametric.json",
+            "materiality_dashboard/fixtures/material_topic.json",
+            "materiality_dashboard/fixtures/disclosure.json",
+            "materiality_dashboard/fixtures/stakeholder.json",
+        ]
+
+        for fixture in fixture_paths:
+            try:
+                self.stdout.write(self.style.SUCCESS(f"Loading fixture: {fixture}"))
+                call_command("loaddata", fixture)
+            except CommandError as e:
+                self.stderr.write(
+                    self.style.ERROR(f"Error loading fixture {fixture}: {e}")
+                )
