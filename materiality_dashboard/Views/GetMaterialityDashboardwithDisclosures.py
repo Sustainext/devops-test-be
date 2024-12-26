@@ -132,20 +132,25 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                 },
             )
 
+            # * Create a set that checks for duplicates in disclosures
+            added_disclosures = {list(d.keys())[0] for d in topic_dict["disclosures"]}
             # Append the disclosure data
             if topic.id in material_disclosure_map:
                 # If the topic is already in the material_disclosure_map, add those disclosures
                 for material_disclosure in material_disclosure_map[topic.id]:
-                    topic_dict["disclosures"].append(
-                        {
-                            material_disclosure["disclosure_id"]: material_disclosure[
-                                "slugs"
-                            ],
-                            "is_material_topic": material_disclosure[
-                                "is_material_topic"
-                            ],  # Material flag for selected disclosures
-                        }
-                    )
+                    material_id = material_disclosure["disclosure_id"]
+                    if material_id not in added_disclosures:
+                        topic_dict["disclosures"].append(
+                            {
+                                material_disclosure[
+                                    "disclosure_id"
+                                ]: material_disclosure["slugs"],
+                                "is_material_topic": material_disclosure[
+                                    "is_material_topic"
+                                ],  # Material flag for selected disclosures
+                            }
+                        )
+                        added_disclosures.add(material_id)
             else:
                 # Non-material disclosure
                 topic_dict["disclosures"].append(
