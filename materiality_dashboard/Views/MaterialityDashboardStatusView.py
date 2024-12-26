@@ -61,7 +61,9 @@ class MaterialityDashboardStatusView(APIView):
                 assessment=materiality_dashboard
             ).exists()
             and ManagementApproachQuestion.objects.filter(
-                assessment=materiality_dashboard
+                assessment=materiality_dashboard,
+                negative_impact_involvement_description__isnull=False,
+                stakeholder_engagement_effectiveness_description__isnull=False,
             ).exists()
         )
         return Response(
