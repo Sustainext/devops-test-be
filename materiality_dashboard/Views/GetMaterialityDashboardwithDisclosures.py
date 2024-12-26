@@ -104,7 +104,12 @@ class GetMaterialityDashboardwithDisclosures(APIView):
         )
 
         # Initialize the response data structure
-        response_data = {"environment": {}, "social": {}, "governance": {}}
+        response_data = {
+            "environment": {},
+            "social": {},
+            "governance": {},
+            "general": {},
+        }
 
         # Process all disclosures and categorize them
         for disclosure in all_disclosures:
