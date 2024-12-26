@@ -762,7 +762,7 @@ class WaterAnalyseByDataPoints(APIView):
                     "source": source,
                     "quantity": format_decimal_places(quantity),
                     "Unit": "Megalitre",
-                    "contribution": f"{format_decimal_places(contribution)}%",
+                    "contribution": f"{format_decimal_places(contribution)}",
                 }
             )
         return result

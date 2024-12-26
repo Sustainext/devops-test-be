@@ -23,8 +23,8 @@ class GetMaterialityDashboardwithDisclosures(APIView):
 
         organization = serializer.validated_data["organization"]
         corporate = serializer.validated_data.get("corporate")
-        start = serializer.validated_data["start"]
-        end = serializer.validated_data["end"]
+        start = serializer.validated_data["start_date"]
+        end = serializer.validated_data["end_date"]
         client = request.user.client
 
         # Retrieve the materiality assessment
@@ -35,6 +35,7 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                 "approach": "GRI: In accordance with",
                 "start_date__gte": start,
                 "end_date__lte": end,
+                "status": "completed",
             }
             if corporate:
                 query_params["corporate"] = corporate
@@ -104,7 +105,12 @@ class GetMaterialityDashboardwithDisclosures(APIView):
         )
 
         # Initialize the response data structure
-        response_data = {"environment": {}, "social": {}, "governance": {}}
+        response_data = {
+            "environment": {},
+            "social": {},
+            "governance": {},
+            "general": {},
+        }
 
         # Process all disclosures and categorize them
         for disclosure in all_disclosures:
