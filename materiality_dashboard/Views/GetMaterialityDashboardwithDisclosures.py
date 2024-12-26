@@ -35,6 +35,7 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                 "approach": "GRI: In accordance with",
                 "start_date__gte": start,
                 "end_date__lte": end,
+                "status": "completed",
             }
             if corporate:
                 query_params["corporate"] = corporate
