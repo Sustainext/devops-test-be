@@ -45,10 +45,40 @@ class Command(BaseCommand):
             {"id": 1, "name": "BCORP", "Image": "images/certifications/BCorp.png"},
             {
                 "id": 2,
-                "name": "ISO 14001",
+                "name": "ISO 14001 Environmental Management",
                 "Image": "images/certifications/ISO_14001.png",
             },
             {"id": 3, "name": "UNGC", "Image": "images/certifications/UNGC.png"},
+            {
+                "id": 4,
+                "name": "ISO 14064 Greenhouse Gases",
+                "Image": "images/certifcations/ISO_14064_9u3e3Y4.png",
+            },
+            {
+                "id": 5,
+                "name": "ISO 20121 Sustainable Events",
+                "Image": "images/certifcations/ISO_20121.png",
+            },
+            {
+                "id": 6,
+                "name": "ISO 26000 Social Responsibility",
+                "Image": "images/certifcations/ISO_26000.png",
+            },
+            {
+                "id": 7,
+                "name": "ISO 37001 Anti-bribery Management",
+                "Image": "images/certifcations/ISO_37001.png",
+            },
+            {
+                "id": 8,
+                "name": "ISO 45001 Occupational Health and Safety",
+                "Image": "images/certifcations/ISO_45001.png",
+            },
+            {
+                "id": 9,
+                "name": "ISO 50001 Energy Management",
+                "Image": "images/certifcations/ISO_50001.png",
+            },
         ]
         for cert in certifications:
             Certification.objects.update_or_create(id=cert["id"], defaults=cert)
