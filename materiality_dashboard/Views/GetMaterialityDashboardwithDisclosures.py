@@ -23,8 +23,8 @@ class GetMaterialityDashboardwithDisclosures(APIView):
 
         organization = serializer.validated_data["organization"]
         corporate = serializer.validated_data.get("corporate")
-        start = serializer.validated_data["start"]
-        end = serializer.validated_data["end"]
+        start = serializer.validated_data["start_date"]
+        end = serializer.validated_data["end_date"]
         client = request.user.client
 
         # Retrieve the materiality assessment
