@@ -55,14 +55,21 @@ class MaterialityDashboardStatusView(APIView):
                 | ~Q(stakeholder_others="", selected_stakeholders__isnull=True)
             )
             .filter(process_description__isnull=False)
+            .exclude(process_description="")
             .filter(impact_assessment_process__isnull=False)
+            .exclude(impact_assessment_process="")
             .exists()
             and MaterialityImpact.objects.filter(
                 assessment=materiality_dashboard
             ).exists()
             and ManagementApproachQuestion.objects.filter(
-                assessment=materiality_dashboard
-            ).exists()
+                assessment=materiality_dashboard,
+                negative_impact_involvement_description__isnull=False,
+                stakeholder_engagement_effectiveness_description__isnull=False,
+            )
+            .exclude(negative_impact_involvement_description="")
+            .exclude(stakeholder_engagement_effectiveness_description="")
+            .exists()
         )
         return Response(
             {"status": "completed" if condition_for_completion else "in_progress"}
