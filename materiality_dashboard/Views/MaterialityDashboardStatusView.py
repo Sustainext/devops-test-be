@@ -57,7 +57,7 @@ class MaterialityDashboardStatusView(APIView):
             .filter(process_description__isnull=False)
             .exclude(process_description="")
             .filter(impact_assessment_process__isnull=False)
-            .filter(impact_assessment_process="")
+            .exclude(impact_assessment_process="")
             .exists()
             and MaterialityImpact.objects.filter(
                 assessment=materiality_dashboard
