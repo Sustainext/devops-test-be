@@ -1,12 +1,12 @@
 """
-For type1 : 
-Include all the paths here where the data points are created but they are 
+For type1 :
+Include all the paths here where the data points are created but they are
 begin overwritten creating DataPoits only the last dictionary in the list.
 
-For the below example the data points wil be created for 1st dictionary but 
+For the below example the data points wil be created for 1st dictionary but
 will be overwritten by the 2nd dictionary and this continues till the end of
 the list we will be only left with data ponits being created for the last dictionary.
-Example : 
+Example :
 [
   {
     "benefits": [
@@ -35,7 +35,7 @@ Example :
   }
 ]
 
-There are some more cases handled here Please check the "Discrepancies in DataPoints.xlsx" or 
+There are some more cases handled here Please check the "Discrepancies in DataPoints.xlsx" or
 check with the developers/team lead to get the excel file.
 """
 
@@ -50,6 +50,7 @@ type1_paths = {
     "gri-economic-climate_related_risks-202-2a-transition_risk": "",
     "gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress": "",
     "gri-environment-water-303-5c-change_in_water_storage": "",
+    "gri-social-performance_and_career-414-2b-number_of_suppliers": "",
 }
 
 type2_paths = {
@@ -62,4 +63,10 @@ type3_paths = {
 
 type4_path = {"gri-general-org_details_2-1a-1b-1c-1d": ""}
 
-all_type_paths = {**type1_paths, **type2_paths, **type3_paths, **type4_path}
+
+all_type_paths = {
+    **type1_paths,
+    **type2_paths,
+    **type3_paths,
+    **type4_path,
+}
