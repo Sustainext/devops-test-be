@@ -222,11 +222,16 @@ class TrainingAnalyzeAPI(APIView):
             self.get_avg_hrs_by_category(self.organized_data)
         )
         percentage_of_employees = self.get_percentage_of_employees()
-        data["average_hrs_of_training_provided_to_employees"] = (
+        # * Table name: Average hours of training provided to employees
+        data["average_hours_of_training_provided_to_employees"] = (
             average_hrs_of_training_provided_to_employees
         )
-        data["average_hrs_of_training_provided_to_employees_per_category"] = (
+        # * Table name: Average hours of training provided to employees per category
+        data["average_hours_of_training_provided_to_employees_per_category"] = (
             average_hrs_of_training_provided_to_employees_per_category
         )
-        data["percentage_of_employees"] = percentage_of_employees
+        # * Table name: Percentage of employees receiving regular performance and career development reviews
+        data[
+            "percentage_of_employees_receiving_regular_performance_and_career_development_reviews"
+        ] = percentage_of_employees
         return Response(data, status=status.HTTP_200_OK)
