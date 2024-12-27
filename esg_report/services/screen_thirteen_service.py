@@ -9,7 +9,9 @@ from esg_report.utils import (
     get_management_materiality_topics,
 )
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
-from sustainapp.Views.Analyse.Social.TrainingAnalyse import TrainingSocial
+from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
+    TrainingAnalyzeAPI,
+)
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 from esg_report.Serializer.ScreenThirteenSerializer import ScreenThirteenSerializer
 from sustainapp.models import Report
@@ -171,7 +173,7 @@ class ScreenThirteenService:
 
     def get_404_social(self):
         data = forward_request_with_jwt(
-            view_class=TrainingSocial,
+            view_class=TrainingAnalyzeAPI,
             original_request=self.request,
             url="/sustainapp/get_training_social_analysis/",
             query_params={

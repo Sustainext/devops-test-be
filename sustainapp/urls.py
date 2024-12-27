@@ -50,7 +50,6 @@ from sustainapp.Views.Analyse.Social.DiversityAndInclusionSecondScreen import (
 from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
     SupplierSocialAssessmentView,
 )
-from sustainapp.Views.Analyse.Social.TrainingAnalyse import TrainingSocial
 from sustainapp.Views.Analyse.Social.NonDiscrimationAnalysis import (
     SocialNonDiscrimationAnalysis,
 )
@@ -86,6 +85,9 @@ from sustainapp.Views.Analyse.Social.SecurityPersonnelAnalysis import (
 )
 from sustainapp.Views.DepartmentViewset import DepartmentViewSet
 from sustainapp.Views.ClimatiqCalling import ClimatiqDataAPIView
+from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
+    TrainingAnalyzeAPI,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -192,7 +194,7 @@ urlpatterns = [
     ),
     path(
         "get_training_social_analysis/",
-        TrainingSocial.as_view(),
+        TrainingAnalyzeAPI.as_view(),
         name="get_training_social_analysis",
     ),
     path(

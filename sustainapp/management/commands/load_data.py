@@ -107,7 +107,7 @@ class Command(BaseCommand):
             },
             {
                 "id": 9,
-                "name": "IFRS",
+                "name": "IFRS S1 + S2",
                 "Image": "images/framework/IFRS.png",
             },
             {
