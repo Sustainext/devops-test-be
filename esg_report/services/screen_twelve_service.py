@@ -70,6 +70,8 @@ class ScreenTwelveService:
             36: "gri_collect_water_and_effluents_management_material_topic",  # 12.3.1
             37: "gri_collect_energy_management_material_topic",  # 12.4.1
             38: "gri_collect_waste_management_material_topic",  # 12.5.1
+            39: "gri-environment-water-303-4d-substances_of_concern",
+            40: "gri-environment-water-303-3d-4e-sma",
             # TODO : 12.2.1
         }
 
@@ -375,6 +377,12 @@ class ScreenTwelveService:
                 ),
                 "303-2a-management_water_discharge": collect_data_and_differentiate_by_location(
                     data_points=self.data_points.filter(path__slug=self.slugs[34])
+                ),
+                "303_4d_substances_of_concern": collect_data_by_raw_response_and_index(
+                    data_points=self.data_points.filter(path__slug=self.slugs[39])
+                ),
+                "303_3d_4e_sma": collect_data_and_differentiate_by_location(
+                    data_points=self.data_points.filter(path__slug=self.slugs[40])
                 ),
             }
         )
