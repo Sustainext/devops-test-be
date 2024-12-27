@@ -1,4 +1,4 @@
-from datametric.models import DataPoint, RawResponse
+from datametric.models import DataPoint
 from logging import getLogger
 
 logger = getLogger("error.log")
@@ -44,9 +44,9 @@ def extract_from_diversity_employee(serialized_raw_response, **kwargs):
         response = {
             "employeeCategories": [],
             "genders": [
-                {"gender": "Male", "performance": "", "careerDevelopment": ""},
-                {"gender": "Female", "performance": "", "careerDevelopment": ""},
-                {"gender": "Non-Binary", "performance": "", "careerDevelopment": ""},
+                {"gender": "Male", "performance1": "", "careerDevelopment1": ""},
+                {"gender": "Female", "performance1": "", "careerDevelopment1": ""},
+                {"gender": "Non-Binary", "performance1": "", "careerDevelopment1": ""},
             ],
             "totalPerformance": 0,
             "totalCareerDevelopment": 0,
