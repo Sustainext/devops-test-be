@@ -318,7 +318,9 @@ def calling_analyse_view_with_params(view_url, request, report):
         if response.status_code == 200:
             return response.data
         else:
-            return {"detail": f"Error calling {view_url}: {response.status_code}"}
+            return {
+                "detail": f"Error calling {view_url}: {response.status_code}: {response.data}"
+            }
 
     except ValidationError as e:
         return {"detail": str(e)}
@@ -459,9 +461,7 @@ def get_which_general_disclosure_is_empty(report: Report):
 
 def generate_disclosure_status(report: Report):
     data_points = get_data_points_as_per_report(report=report)
-    special_slugs = [
-        ""
-    ]
+    special_slugs = [""]
     result = []
     for section_title, data in GENERAL_DISCLOSURES_AND_PATHS.items():
         indicator = data["indicator"]
@@ -475,9 +475,7 @@ def generate_disclosure_status(report: Report):
         # Check if any slug has data
         # * Check data point is not having value = ""
         is_filled = all(
-            data_points.filter(path__slug=slug)
-            .exclude(value="")
-            .exists()
+            data_points.filter(path__slug=slug).exclude(value="").exists()
             for slug in slugs
         )
 
