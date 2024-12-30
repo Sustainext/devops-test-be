@@ -188,4 +188,7 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             if materiality_dashboard is not None
             else None
         )
+        response_data["status"] = (
+            materiality_dashboard.status if materiality_dashboard is not None else None
+        )
         return Response(response_data)
