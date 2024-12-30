@@ -6,66 +6,48 @@ from materiality_dashboard.models import (
     AssessmentDisclosureSelection,
     Disclosure,
 )
-from materiality_dashboard.Serializers.VerifyOrganisationAndCorporateSerializer import (
-    VerifyOrganisationAndCorporateSerializer,
-)
+from sustainapp.models import Framework
 
 
 class GetMaterialityDashboardwithDisclosures(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # Validate the query parameters
-        serializer = VerifyOrganisationAndCorporateSerializer(
-            data=request.query_params, context={"request": request}
-        )
-        serializer.is_valid(raise_exception=True)
-
-        organization = serializer.validated_data["organization"]
-        corporate = serializer.validated_data.get("corporate")
-        start = serializer.validated_data["start_date"]
-        end = serializer.validated_data["end_date"]
         client = request.user.client
 
         # Retrieve the materiality assessment
         try:
             query_params = {
                 "client": client,
-                "organization": organization,
                 "approach": "GRI: In accordance with",
-                "start_date__gte": start,
-                "end_date__lte": end,
                 "status": "completed",
             }
-            if corporate:
-                query_params["corporate"] = corporate
 
             materiality_dashboard = MaterialityAssessment.objects.filter(
                 **query_params
-            ).latest("id")
+            ).latest("created_at")
         except MaterialityAssessment.DoesNotExist:
-            return Response(
-                {
-                    "message": "Materiality Assessment not found for the given Organization and Corporate"
-                },
-                status=400,
-            )
+            materiality_dashboard = None
 
         # Fetch selected disclosures with topic details and related paths in one query
         selected_disclosures = (
-            AssessmentDisclosureSelection.objects.filter(
-                topic_selection__assessment=materiality_dashboard
+            (
+                AssessmentDisclosureSelection.objects.filter(
+                    topic_selection__assessment=materiality_dashboard
+                )
+                .select_related(
+                    "topic_selection__topic",  # Access topic details efficiently
+                    "disclosure",  # Access disclosure details
+                )
+                .prefetch_related("disclosure__paths")
+                .only(
+                    "disclosure__identifier",
+                    "disclosure__paths__slug",
+                    "topic_selection__topic__id",
+                )
             )
-            .select_related(
-                "topic_selection__topic",  # Access topic details efficiently
-                "disclosure",  # Access disclosure details
-            )
-            .prefetch_related("disclosure__paths")
-            .only(
-                "disclosure__identifier",
-                "disclosure__paths__slug",
-                "topic_selection__topic__id",
-            )
+            if materiality_dashboard is not None
+            else AssessmentDisclosureSelection.objects.none()
         )
 
         # Collect selected topic ids and disclosures into dictionaries to avoid redundant queries
@@ -89,10 +71,14 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                     "is_material_topic": True,  # Mark as material since it's a selected disclosure
                 }
             )
-
+        framework = (
+            materiality_dashboard.framework
+            if materiality_dashboard is not None
+            else Framework.objects.get(id=1)
+        )
         # Fetch all disclosures (including both material and non-material) in one go
         all_disclosures = (
-            Disclosure.objects.filter(topic__framework=materiality_dashboard.framework)
+            Disclosure.objects.filter(topic__framework=framework)
             .select_related("topic")
             .prefetch_related("paths")
             .only(
@@ -159,5 +145,26 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                         "is_material_topic": False,  # Mark as non-material
                     }
                 )
-
+        # * Add Organisation, Corporate and year of materiality dashboard to the response data
+        response_data["organisation"] = (
+            materiality_dashboard.organization.id
+            if (
+                (materiality_dashboard is not None)
+                and (materiality_dashboard.organization is not None)
+            )
+            else None
+        )
+        response_data["corporate"] = (
+            materiality_dashboard.corporate.id
+            if (
+                (materiality_dashboard is not None)
+                and (materiality_dashboard.corporate is not None)
+            )
+            else None
+        )
+        response_data["year"] = (
+            materiality_dashboard.start_date.year
+            if materiality_dashboard is not None
+            else None
+        )
         return Response(response_data)
