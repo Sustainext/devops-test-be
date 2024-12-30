@@ -10,6 +10,11 @@ from sustainapp.models import Framework
 
 
 class GetMaterialityDashboardwithDisclosures(APIView):
+    """
+    If there is an materiality assessment of the user, the latest one, return that object,
+    If not, then return everything false.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
