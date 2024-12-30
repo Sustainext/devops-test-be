@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from datametric.utils.analyse import filter_by_start_end_dates
+from datametric.utils.analyse import filter_by_start_end_dates, set_locations_data
 from collections import defaultdict
 from logging import getLogger
 from common.utils.value_types import safe_percentage
@@ -20,7 +20,7 @@ class SecurityPersonnelAnalysisView(APIView):
     def analyse_security_perrsonnel(self, start_date, end_date, location, path):
         # get all data points for the given path
         data_points = DataPoint.objects.filter(
-            locale=location,
+            locale__in=self.locations,
             path__slug=path,
             client_id=self.request.user.client.id,
         ).filter(filter_by_start_end_dates(start_date=start_date, end_date=end_date))
@@ -78,7 +78,9 @@ class SecurityPersonnelAnalysisView(APIView):
             start_date = serializer.validated_data["start"]
             end_date = serializer.validated_data["end"]
             location = serializer.validated_data["location"]
-
+            corporate = serializer.validated_data.get("corporate")
+            organisation = serializer.validated_data.get("organisation")
+            self.locations = set_locations_data(location, corporate, organisation)
             security_personnel = self.analyse_security_perrsonnel(
                 start_date,
                 end_date,
