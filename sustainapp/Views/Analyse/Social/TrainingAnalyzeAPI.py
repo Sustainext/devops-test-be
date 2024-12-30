@@ -96,6 +96,8 @@ class TrainingAnalyzeAPI(APIView):
         return result
 
     def get_average_training_hours_provided_to_employess(self, organized_data):
+        if not organized_data:
+            return []
         average_hrs_of_training_provided_to_employees = safe_divide(
             sum(data["total_hrs"] for data in organized_data),
             sum(data["total_employees"] for data in organized_data),
@@ -215,23 +217,16 @@ class TrainingAnalyzeAPI(APIView):
         self.set_data_points()
         self.organized_data = self.set_organized_data()
         data = {}
-        average_hrs_of_training_provided_to_employees = (
-            self.get_average_training_hours_provided_to_employess(self.organized_data)
-        )
-        average_hrs_of_training_provided_to_employees_per_category = (
-            self.get_avg_hrs_by_category(self.organized_data)
-        )
-        percentage_of_employees = self.get_percentage_of_employees()
         # * Table name: Average hours of training provided to employees
         data["average_hours_of_training_provided_to_employees"] = (
-            average_hrs_of_training_provided_to_employees
+            self.get_average_training_hours_provided_to_employess(self.organized_data)
         )
         # * Table name: Average hours of training provided to employees per category
         data["average_hours_of_training_provided_to_employees_per_category"] = (
-            average_hrs_of_training_provided_to_employees_per_category
+            self.get_avg_hrs_by_category(self.organized_data)
         )
         # * Table name: Percentage of employees receiving regular performance and career development reviews
         data[
             "percentage_of_employees_receiving_regular_performance_and_career_development_reviews"
-        ] = percentage_of_employees
+        ] = self.get_percentage_of_employees()
         return Response(data, status=status.HTTP_200_OK)

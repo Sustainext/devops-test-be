@@ -45,7 +45,7 @@ class Command(BaseCommand):
             {"id": 1, "name": "BCORP", "Image": "images/certifications/BCorp.png"},
             {
                 "id": 2,
-                "name": "ISO 14001 Environmental Management",
+                "name": "ISO 14001 Environmental Management systems",
                 "Image": "images/certifications/ISO_14001.png",
             },
             {"id": 3, "name": "UNGC", "Image": "images/certifications/UNGC.png"},
