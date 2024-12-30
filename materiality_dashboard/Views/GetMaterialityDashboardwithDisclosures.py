@@ -154,8 +154,24 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             )
             else None
         )
+        response_data["organisation_name"] = (
+            materiality_dashboard.organization.name
+            if (
+                (materiality_dashboard is not None)
+                and (materiality_dashboard.organization is not None)
+            )
+            else None
+        )
         response_data["corporate"] = (
             materiality_dashboard.corporate.id
+            if (
+                (materiality_dashboard is not None)
+                and (materiality_dashboard.corporate is not None)
+            )
+            else None
+        )
+        response_data["corporate_name"] = (
+            materiality_dashboard.corporate.name
             if (
                 (materiality_dashboard is not None)
                 and (materiality_dashboard.corporate is not None)
