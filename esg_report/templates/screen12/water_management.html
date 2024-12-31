@@ -379,6 +379,60 @@
   </tbody>
 </table>
 
+<h5>Substances of concern</h5>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Do you discharge any substances of concern</th>
+      <th>Substances of concern</th>
+      <th>Method used to define priority substances of concern</th>
+      <th>No. of non-compliance incidents</th>
+      <th>Approach for setting discharge limits for priority substances of concern</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for operation in screen_twelve_data.303_4d_substances_of_concern %}
+    {% if operation.Discharge == "Yes" %}
+    <tr>
+      <td>{{ operation.Discharge|default:"No data available." }}</td>
+      <td>{{ operation.Substanceconcern|default:"No data available." }}</td>
+      <td>{{ operation.Priority|default:"No data available." }}</td>
+      <td>{{ operation.Noncompliance|default:"No data available." }}</td>
+      <td>{{ operation.Approach|default:"No data available." }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+
+<h5>Standards, methodologies, and assumptions used</h5>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Standards Used</th>
+      <th>Methodologies used</th>
+      <th>Assumptions considered</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for operation in screen_twelve_data.303_3d_4e_sma.data %}
+    <tr>
+      <td>{{ operation.StandardsUsed|default:"No data available." }}</td>
+      <td>{{ operation.Methodologiesused|default:"No data available." }}</td>
+      <td>{{ operation.Assumptionsconsidered|default:"No data available." }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% if screen_twelve_data.303_2a_management_water_discharge and screen_twelve_data.303_2a_management_water_discharge.data and screen_twelve_data.303_2a_management_water_discharge.data|length > 0 %}
   <p style="color:#000;">Discharge Standard used:</p>
   <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q1|default:"No data available" }}</p>
