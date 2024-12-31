@@ -18,19 +18,7 @@
 <p>{{screen_thirteen_data.404_1a_analyse.average_hours_of_training_provided_to_employees.0.average_training_hours_per_male_employee|default:"No data available." }}</p>
 <p></p>
 
-<h5>Average training hours per other employee:</h5>
-<p>{{screen_thirteen_data.404_1a_analyse.average_hours_of_training_provided_to_employees.0.average_training_hours_per_non_binary_employee|default:"No data available." }}</p>
-<p></p>
-
-<h5>Percentage of security personnel who have received formal training in the organisation:</h5>
-<p>{{screen_thirteen_data.security_personnel_internal_training.content|default:"No data available." }}</p>
-<p></p>
-
-<h5>Percentage of security personnel who have received formal training from third-party organisation:</h5>
-<p>{{screen_thirteen_data.security_personnel_external_training.content|default:"No data available." }}</p>
-<p></p>
-
-<h5>Average hours of training provided to employees</h5>
+<h5>Average hours of training provided to employees by category</h5>
 <table>
   <thead>
     <tr>
@@ -42,13 +30,32 @@
     </tr>
   </thead>
   <tbody>
-    {% for category in screen_thirteen_data.404_social_analyse.average_training_hours_per_employee_category %}
+    {% for category in screen_thirteen_data.404_social_analyse.average_hours_of_training_provided_to_employees_per_category %}
     <tr>
       <td>{{ category.category }}</td>
-      <td>{{ category.average_training_hours_per_employee }}</td>
-      <td>{{ category.average_training_hours_per_male_employee }}</td>
-      <td>{{ category.average_training_hours_per_female_employee }}</td>
-      <td>{{ category.average_training_hours_per_non_binary_employee }}</td>
+      <td>{{ category.avg_training_hrs_per_employee }}</td>
+      <td>{{ category.avg_training_hrs_male_employee }}</td>
+      <td>{{ category.avg_training_hrs_female_employee }}</td>
+      <td>{{ category.avg_training_hrs_other_employee }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h5>Security personnel trained in human rights policies or procedures</h5>
+<p>Percentage of security personnel who have received formal training</p>
+<table>
+  <thead>
+    <tr>
+      <th>Security Personnel (in organisation)</th>
+      <th>Security Personnel (from third-party organisation)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for category in screen_thirteen_data.analysis_security_personnel.security_personnel %}
+    <tr>
+      <td>{{ category.sp_in_org }}</td>
+      <td>{{ category.sp_3rd_org }}</td>
     </tr>
     {% endfor %}
   </tbody>
