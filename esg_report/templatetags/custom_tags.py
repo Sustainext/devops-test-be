@@ -98,3 +98,15 @@ def unique(value):
         return list(set(value))
     except TypeError:
         return value
+
+
+@register.filter
+def count_categories(reviews):
+    """Count the number of items with a 'category' key."""
+    return sum(1 for review in reviews if "category" in review)
+
+
+@register.filter
+def count_genders(reviews):
+    """Count the number of items with a 'gender' key."""
+    return sum(1 for review in reviews if "gender" in review)

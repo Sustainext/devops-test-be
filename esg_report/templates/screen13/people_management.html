@@ -399,21 +399,44 @@
 <p>{{screen_thirteen_data.performance_review_process.content|default:"No data available" }}</p>
 
 <h5>Percentage of Employees Receiving Regular Performance and Career Development Reviews</h5>
-<table cellpadding="5" cellspacing="0" width="100%">
+<table>
     <thead>
         <tr>
-            <th>Employee Category</th>
-            <th>Percentage of employees who received regular performance review</th>
-            <th>Percentage of employees who received regular career development review</th>
+            <th></th>
+            <th></th>
+            <th>Number of Employees Who Received Regular Performance Review</th>
+            <th>Number of Employees Who Received Regular Career Development Review</th>
         </tr>
     </thead>
     <tbody>
-        {% for performance_review in screen_thirteen_data.404_social_analyse.percentage_of_employees_receiving_regular_performance_and_career_development_reviews %}
+        <!-- Dynamic Categories -->
+        {% with screen_thirteen_data.404_social_analyse.percentage_of_employees_receiving_regular_performance_and_career_development_reviews|count_categories as category_count %}
+        {% for review in screen_thirteen_data.404_social_analyse.percentage_of_employees_receiving_regular_performance_and_career_development_reviews %}
+            {% if review.category %}
+            <tr>
+                {% if forloop.first %}
+                <td rowspan="{{ category_count }}">Employee Category</td>
+                {% endif %}
+                <td>{{ review.category }}</td>
+                <td>{{ review.performance_percentage }}</td>
+                <td>{{ review.career_development_percentage }}</td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+        {% endwith %}
+
+        <!-- Fixed Gender Rows -->
+        {% with screen_thirteen_data.404_social_analyse.percentage_of_employees_receiving_regular_performance_and_career_development_reviews|slice:"-3:" as genders %}
+        {% for review in genders %}
         <tr>
-            <td>{{ performance_review.Category }}</td>
-            <td>{{ performance_review.percentage_of_employees_who_received_regular_performance_reviews }}</td>
-            <td>{{ performance_review.percentage_of_employees_who_received_regular_career_development_reviews }}</td>
+            {% if forloop.first %}
+            <td rowspan="3">Gender</td>
+            {% endif %}
+            <td>{{ review.gender }}</td>
+            <td>{{ review.performance_percentage }}</td>
+            <td>{{ review.career_development_percentage }}</td>
         </tr>
         {% endfor %}
+        {% endwith %}
     </tbody>
 </table>
