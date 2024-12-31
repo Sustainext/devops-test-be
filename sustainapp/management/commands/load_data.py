@@ -56,7 +56,7 @@ class Command(BaseCommand):
             },
             {
                 "id": 5,
-                "name": "ISO 20121 Sustainable Events",
+                "name": "ISO 20121 Event sustainability management systems",
                 "Image": "images/certifcations/ISO_20121.png",
             },
             {
@@ -66,12 +66,12 @@ class Command(BaseCommand):
             },
             {
                 "id": 7,
-                "name": "ISO 37001 Anti-bribery Management",
+                "name": "ISO 37001 Anti-bribery Management systems",
                 "Image": "images/certifcations/ISO_37001.png",
             },
             {
                 "id": 8,
-                "name": "ISO 45001 Occupational Health and Safety",
+                "name": "ISO 45001 Occupational Health and Safety Management system",
                 "Image": "images/certifcations/ISO_45001.png",
             },
             {
