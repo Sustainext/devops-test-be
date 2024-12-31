@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from datametric.models import DataPoint, RawResponse
+from datametric.models import DataPoint
 from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
@@ -17,7 +17,7 @@ logger = getLogger("error.log")
 class SecurityPersonnelAnalysisView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def analyse_security_perrsonnel(self, start_date, end_date, location, path):
+    def analyse_security_perrsonnel(self, start_date, end_date, path):
         # get all data points for the given path
         data_points = DataPoint.objects.filter(
             locale__in=self.locations,
@@ -77,20 +77,22 @@ class SecurityPersonnelAnalysisView(APIView):
         try:
             start_date = serializer.validated_data["start"]
             end_date = serializer.validated_data["end"]
-            location = serializer.validated_data["location"]
+            location = serializer.validated_data.get("location")
             corporate = serializer.validated_data.get("corporate")
             organisation = serializer.validated_data.get("organisation")
-            self.locations = set_locations_data(location, corporate, organisation)
+            self.locations = set_locations_data(organisation, corporate, location)
             security_personnel = self.analyse_security_perrsonnel(
                 start_date,
                 end_date,
-                location,
                 "gri-social-human_rights-410-1a-security_personnel",
             )
 
             return Response(
                 {"security_personnel": security_personnel}, status=status.HTTP_200_OK
             )
-
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            logger.error(f"Error occrued while analyzing Security Personnel : {e}")
+            return Response(
+                {"error": f"An error occurred while analyzing Security Personnel:{e}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
