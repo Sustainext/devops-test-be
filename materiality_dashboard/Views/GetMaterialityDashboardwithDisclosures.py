@@ -10,6 +10,11 @@ from sustainapp.models import Framework
 
 
 class GetMaterialityDashboardwithDisclosures(APIView):
+    """
+    If there is an materiality assessment of the user, the latest one, return that object,
+    If not, then return everything false.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -154,8 +159,24 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             )
             else None
         )
+        response_data["organisation_name"] = (
+            materiality_dashboard.organization.name
+            if (
+                (materiality_dashboard is not None)
+                and (materiality_dashboard.organization is not None)
+            )
+            else None
+        )
         response_data["corporate"] = (
             materiality_dashboard.corporate.id
+            if (
+                (materiality_dashboard is not None)
+                and (materiality_dashboard.corporate is not None)
+            )
+            else None
+        )
+        response_data["corporate_name"] = (
+            materiality_dashboard.corporate.name
             if (
                 (materiality_dashboard is not None)
                 and (materiality_dashboard.corporate is not None)
@@ -166,5 +187,8 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             materiality_dashboard.start_date.year
             if materiality_dashboard is not None
             else None
+        )
+        response_data["status"] = (
+            materiality_dashboard.status if materiality_dashboard is not None else None
         )
         return Response(response_data)
