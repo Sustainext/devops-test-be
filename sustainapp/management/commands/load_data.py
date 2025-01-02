@@ -45,7 +45,7 @@ class Command(BaseCommand):
             {"id": 1, "name": "BCORP", "Image": "images/certifications/BCorp.png"},
             {
                 "id": 2,
-                "name": "ISO 14001 Environmental Management",
+                "name": "ISO 14001 Environmental Management systems",
                 "Image": "images/certifications/ISO_14001.png",
             },
             {"id": 3, "name": "UNGC", "Image": "images/certifications/UNGC.png"},
@@ -56,7 +56,7 @@ class Command(BaseCommand):
             },
             {
                 "id": 5,
-                "name": "ISO 20121 Sustainable Events",
+                "name": "ISO 20121 Event sustainability management systems",
                 "Image": "images/certifcations/ISO_20121.png",
             },
             {
@@ -66,12 +66,12 @@ class Command(BaseCommand):
             },
             {
                 "id": 7,
-                "name": "ISO 37001 Anti-bribery Management",
+                "name": "ISO 37001 Anti-bribery Management systems",
                 "Image": "images/certifcations/ISO_37001.png",
             },
             {
                 "id": 8,
-                "name": "ISO 45001 Occupational Health and Safety",
+                "name": "ISO 45001 Occupational Health and Safety Management system",
                 "Image": "images/certifcations/ISO_45001.png",
             },
             {
@@ -107,7 +107,7 @@ class Command(BaseCommand):
             },
             {
                 "id": 9,
-                "name": "IFRS",
+                "name": "IFRS S1 + S2",
                 "Image": "images/framework/IFRS.png",
             },
             {

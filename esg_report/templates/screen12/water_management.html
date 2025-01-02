@@ -44,8 +44,8 @@
     {% for operation in screen_twelve_data.water_analyse.total_fresh_water_withdrawal_by_business_operation %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.business_operation|default:"N/A" }}</td>
-      <td>{{ operation.contribution|default:"N/A" }}%</td>
-      <td>{{ operation.withdrawal|default:"N/A" }}%</td>
+      <td>{{ operation.contribution|default:"0" }}%</td>
+      <td>{{ operation.withdrawal|default:"0" }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_fresh_water_withdrawal_by_business_operation|last as last_operation %}
@@ -175,14 +175,14 @@
     </tr>
   </thead>
   <tbody>
-    {% for operation in screen_twelve_data.water_analyse.water_withdrawal_from_third_parties %} {% if not forloop.last %}
+    {% for operation in screen_twelve_data.water_analyse.water_withdrawal_from_third_parties %}
     <tr>
       <td>{{ operation.source|default:"N/A" }}</td>
-      <td>{{ operation.contribution|default:"N/A" }}%</td>
-      <td>{{ operation.quantity|default:"N/A" }}</td>
+      <td>{{ operation.contribution|default:"0" }}%</td>
+      <td>{{ operation.quantity|default:"0" }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
-    {% endif %} {% endfor %}
+    {% endfor %}
   </tbody>
 </table>
 
@@ -207,8 +207,8 @@
     {% for operation in screen_twelve_data.water_analyse.get_total_fresh_water_discharge_by_location_country %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.location|default:"N/A" }}</td>
-      <td>{{ operation.contribution|default:"N/A" }}%</td>
-      <td>{{ operation.total_water_discharge|default:"N/A" }}%</td>
+      <td>{{ operation.contribution|default:"0" }}%</td>
+      <td>{{ operation.total_water_discharge|default:"0" }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.get_total_fresh_water_discharge_by_location_country|last as last_operation %}
@@ -379,6 +379,60 @@
   </tbody>
 </table>
 
+<h5>Substances of concern</h5>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Do you discharge any substances of concern</th>
+      <th>Substances of concern</th>
+      <th>Method used to define priority substances of concern</th>
+      <th>No. of non-compliance incidents</th>
+      <th>Approach for setting discharge limits for priority substances of concern</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for operation in screen_twelve_data.303_4d_substances_of_concern %}
+    {% if operation.Discharge == "Yes" %}
+    <tr>
+      <td>{{ operation.Discharge|default:"No data available." }}</td>
+      <td>{{ operation.Substanceconcern|default:"No data available." }}</td>
+      <td>{{ operation.Priority|default:"No data available." }}</td>
+      <td>{{ operation.Noncompliance|default:"No data available." }}</td>
+      <td>{{ operation.Approach|default:"No data available." }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+
+<h5>Standards, methodologies, and assumptions used</h5>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Standards Used</th>
+      <th>Methodologies used</th>
+      <th>Assumptions considered</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for operation in screen_twelve_data.303_3d_4e_sma.data %}
+    <tr>
+      <td>{{ operation.StandardsUsed|default:"No data available." }}</td>
+      <td>{{ operation.Methodologiesused|default:"No data available." }}</td>
+      <td>{{ operation.Assumptionsconsidered|default:"No data available." }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% if screen_twelve_data.303_2a_management_water_discharge and screen_twelve_data.303_2a_management_water_discharge.data and screen_twelve_data.303_2a_management_water_discharge.data|length > 0 %}
   <p style="color:#000;">Discharge Standard used:</p>
   <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q1|default:"No data available" }}</p>
@@ -414,11 +468,43 @@
   <tbody>
     {% for operation in screen_twelve_data.water_analyse.total_water_consumption %}
     <tr>
-      <td>{{ operation.water_consumption|default:"N/A" }}</td>
-      <td>{{ operation.water_consumption_water_stress|default:"N/A" }}</td>
+      <td>{{ operation.water_consumption|default:"0" }}</td>
+      <td>{{ operation.water_consumption_water_stress|default:"0" }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endfor %}
+  </tbody>
+</table>
+
+<h5>Total water consumption in water stress areas</h5>
+<table
+  cellpadding="5"
+  cellspacing="0"
+  width="100%"
+>
+  <thead>
+    <tr>
+      <th>Business Operation</th>
+      <th>Contribution %</th>
+      <th>Total Water Consumption</th>
+      <th>Unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for operation in screen_twelve_data.water_analyse.total_water_consumption_in_water_stress_areas_by_area %} {% if not forloop.last %}
+    <tr>
+      <td>{{ operation.water_stress_area|default:"N/A" }}</td>
+      <td>{{ operation.contribution|default:"0" }}%</td>
+      <td>{{ operation.consumption|default:"0" }}</td>
+      <td>{{ operation.Unit|default:"N/A" }}</td>
+    </tr>
+    {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_consumption_in_water_stress_areas_by_area|last as last_operation %}
+    <tr>
+      <td colspan="2"><strong>Total Water Consumption</strong></td>
+      <td><strong>{{ last_operation.Total }}</strong></td>
+      <td>{{ last_operation.Unit }}</td>
+    </tr>
+    {% endwith %}
   </tbody>
 </table>
 

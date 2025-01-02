@@ -6,6 +6,7 @@ from materiality_dashboard.models import (
     AssessmentDisclosureSelection,
     Disclosure,
 )
+from sustainapp.models import Framework
 from materiality_dashboard.Serializers.VerifyOrganisationAndCorporateSerializer import (
     VerifyOrganisationAndCorporateSerializer,
 )
@@ -15,41 +16,44 @@ class GetMaterialityDashboardwithDisclosures(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # Validate the query parameters
+        client = request.user.client
         serializer = VerifyOrganisationAndCorporateSerializer(
             data=request.query_params, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
-
-        organization = serializer.validated_data["organization"]
+        organization = serializer.validated_data.get("organization")
         corporate = serializer.validated_data.get("corporate")
-        start = serializer.validated_data["start_date"]
-        end = serializer.validated_data["end_date"]
-        client = request.user.client
+        start = serializer.validated_data.get("start_date")
+        end = serializer.validated_data.get("end_date")
+
+        params_given = (
+            organization is not None and start is not None and end is not None
+        )
 
         # Retrieve the materiality assessment
         try:
-            query_params = {
-                "client": client,
-                "organization": organization,
-                "approach": "GRI: In accordance with",
-                "start_date__gte": start,
-                "end_date__lte": end,
-                "status": "completed",
-            }
-            if corporate:
-                query_params["corporate"] = corporate
+            if not params_given:
+                query_params = {
+                    "client": client,
+                    "approach": "GRI: In accordance with",
+                    "status": "completed",
+                }
+            else:
+                query_params = {
+                    "client": client,
+                    "approach": "GRI: In accordance with",
+                    "status": "completed",
+                    "organization": organization,
+                    "corporate": corporate,
+                    "start_date__gte": start,
+                    "end_date__lte": end,
+                }
 
             materiality_dashboard = MaterialityAssessment.objects.filter(
                 **query_params
-            ).latest("id")
+            ).latest("created_at")
         except MaterialityAssessment.DoesNotExist:
-            return Response(
-                {
-                    "message": "Materiality Assessment not found for the given Organization and Corporate"
-                },
-                status=400,
-            )
+            materiality_dashboard = None
 
         # Fetch selected disclosures with topic details and related paths in one query
         selected_disclosures = (
@@ -57,54 +61,43 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                 topic_selection__assessment=materiality_dashboard
             )
             .select_related(
-                "topic_selection__topic",  # Access topic details efficiently
-                "disclosure",  # Access disclosure details
+                "topic_selection__topic",
+                "disclosure",
             )
             .prefetch_related("disclosure__paths")
-            .only(
-                "disclosure__identifier",
-                "disclosure__paths__slug",
-                "topic_selection__topic__id",
-            )
+            if materiality_dashboard is not None
+            else AssessmentDisclosureSelection.objects.none()
         )
 
-        # Collect selected topic ids and disclosures into dictionaries to avoid redundant queries
+        # Create sets and maps for tracking selections
         selected_topic_ids = set()
+        selected_disclosure_ids = set()  # Track which disclosures are selected
         material_disclosure_map = {}
 
+        # Process selected disclosures first
         for selected_disclosure in selected_disclosures:
             topic_id = selected_disclosure.topic_selection.topic.id
             selected_topic_ids.add(topic_id)
 
-            disclosure_identifier = selected_disclosure.disclosure.identifier
-            slugs = [path.slug for path in selected_disclosure.disclosure.paths.all()]
+            disclosure = selected_disclosure.disclosure
+            disclosure_identifier = disclosure.identifier
+            selected_disclosure_ids.add(disclosure.id)  # Track selected disclosure IDs
 
             if topic_id not in material_disclosure_map:
-                material_disclosure_map[topic_id] = []
+                material_disclosure_map[topic_id] = (
+                    set()
+                )  # Use a set to avoid duplicates
 
-            material_disclosure_map[topic_id].append(
-                {
-                    "disclosure_id": disclosure_identifier,
-                    "slugs": slugs,
-                    "is_material_topic": True,  # Mark as material since it's a selected disclosure
-                }
-            )
+            slugs = [path.slug for path in disclosure.paths.all()]
+            material_disclosure_map[topic_id].add((disclosure_identifier, tuple(slugs)))
 
-        # Fetch all disclosures (including both material and non-material) in one go
-        all_disclosures = (
-            Disclosure.objects.filter(topic__framework=materiality_dashboard.framework)
-            .select_related("topic")
-            .prefetch_related("paths")
-            .only(
-                "identifier",
-                "topic__id",
-                "topic__esg_category",
-                "topic__identifier",
-                "paths__slug",
-            )
+        framework = (
+            materiality_dashboard.framework
+            if materiality_dashboard is not None
+            else Framework.objects.get(id=1)
         )
 
-        # Initialize the response data structure
+        # Initialize response structure
         response_data = {
             "environment": {},
             "social": {},
@@ -112,47 +105,113 @@ class GetMaterialityDashboardwithDisclosures(APIView):
             "general": {},
         }
 
-        # Process all disclosures and categorize them
+        # Fetch and process all disclosures
+        all_disclosures = (
+            Disclosure.objects.filter(topic__framework=framework)
+            .select_related("topic")
+            .prefetch_related("paths")
+        )
+
+        # Track processed topics to avoid duplicates
+        processed_topics = set()
+
         for disclosure in all_disclosures:
             topic = disclosure.topic
+
+            # Skip if we've already processed this topic
+            if topic.id in processed_topics:
+                continue
+
+            processed_topics.add(topic.id)
+
             esg_category = topic.esg_category
             topic_identifier = topic.identifier
-            disclosure_identifier = disclosure.identifier
 
-            # Get all related path slugs for the disclosure
-            slugs = [path.slug for path in disclosure.paths.all()]
-
-            # Initialize topic in the response structure if not present
+            # Initialize topic in response structure
             topic_dict = response_data[esg_category].setdefault(
                 topic_identifier,
                 {
-                    "disclosures": [],  # List to hold the disclosures
-                    "is_material_topic": topic.id
-                    in selected_topic_ids,  # Check if material
+                    "disclosures": [],
+                    "is_material_topic": topic.id in selected_topic_ids,
                 },
             )
 
-            # Append the disclosure data
-            if topic.id in material_disclosure_map:
-                # If the topic is already in the material_disclosure_map, add those disclosures
-                for material_disclosure in material_disclosure_map[topic.id]:
+            # Get all disclosures for this topic
+            topic_disclosures = Disclosure.objects.filter(topic=topic).prefetch_related(
+                "paths"
+            )
+
+            if topic.id in selected_topic_ids:  # This is a material topic
+                # First add the selected disclosures
+                for disclosure_id, slugs in material_disclosure_map.get(
+                    topic.id, set()
+                ):
                     topic_dict["disclosures"].append(
                         {
-                            material_disclosure["disclosure_id"]: material_disclosure[
-                                "slugs"
-                            ],
-                            "is_material_topic": material_disclosure[
-                                "is_material_topic"
-                            ],  # Material flag for selected disclosures
+                            disclosure_id: list(slugs),
+                            "is_disclosure_selected": True,
                         }
                     )
+
+                # Then add the non-selected disclosures for this material topic
+                for disc in topic_disclosures:
+                    if (
+                        disc.id not in selected_disclosure_ids
+                    ):  # Only add if not already selected
+                        slugs = [path.slug for path in disc.paths.all()]
+                        topic_dict["disclosures"].append(
+                            {
+                                disc.identifier: slugs,
+                                "is_disclosure_selected": False,  # These are non-selected disclosures
+                            }
+                        )
             else:
-                # Non-material disclosure
-                topic_dict["disclosures"].append(
-                    {
-                        disclosure_identifier: slugs,
-                        "is_material_topic": False,  # Mark as non-material
-                    }
-                )
+                # For non-material topics, add all disclosures as non-material
+                for disc in topic_disclosures:
+                    slugs = [path.slug for path in disc.paths.all()]
+                    topic_dict["disclosures"].append(
+                        {
+                            disc.identifier: slugs,
+                            "is_disclosure_selected": False,
+                        }
+                    )
+
+        # Add additional response data
+        if not params_given:
+            response_data.update(
+                {
+                    "organisation": (
+                        materiality_dashboard.organization.id
+                        if materiality_dashboard and materiality_dashboard.organization
+                        else None
+                    ),
+                    "organisation_name": (
+                        materiality_dashboard.organization.name
+                        if materiality_dashboard and materiality_dashboard.organization
+                        else None
+                    ),
+                    "corporate": (
+                        materiality_dashboard.corporate.id
+                        if materiality_dashboard and materiality_dashboard.corporate
+                        else None
+                    ),
+                    "corporate_name": (
+                        materiality_dashboard.corporate.name
+                        if materiality_dashboard and materiality_dashboard.corporate
+                        else None
+                    ),
+                    "year": (
+                        materiality_dashboard.start_date.year
+                        if materiality_dashboard
+                        else None
+                    ),
+                    "start_date": materiality_dashboard.start_date.strftime("%Y-%m-%d"),
+                    "end_date": materiality_dashboard.end_date.strftime("%Y-%m-%d"),
+                }
+            )
+
+        response_data["status"] = (
+            materiality_dashboard.status if materiality_dashboard else None
+        )
 
         return Response(response_data)
