@@ -202,7 +202,7 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                     ),
                     "year": (
                         materiality_dashboard.start_date.year
-                        if materiality_dashboard
+                        if materiality_dashboard and materiality_dashboard.start_date
                         else None
                     ),
                 }
