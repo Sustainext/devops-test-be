@@ -12,10 +12,11 @@ from django.core.exceptions import ValidationError
 from rest_framework.test import APIRequestFactory
 from django.urls import reverse, resolve
 from common.enums.GeneralTopicDisclosuresAndPaths import GENERAL_DISCLOSURES_AND_PATHS
-import random
 from collections import defaultdict
 import datetime
 import logging
+from django.db.models import Prefetch
+from materiality_dashboard.Views.SDGMapping import SDG
 
 logger = logging.getLogger("error.log")
 
@@ -599,3 +600,53 @@ def get_management_materiality_topics(report: Report, path):
             return res
 
     return management_materiality_topics_common_code(mmt_dps, report.organization.name)
+
+
+def get_materiality_dashbaord(organization_id, start_date, end_date, client_id):
+    """
+    Retrieves materiality dashboard data based on the provided start and end dates.
+    """
+    try:
+        materiality_data = MaterialityAssessment.objects.get(
+            client_id=client_id,
+            start_date__gte=start_date,
+            end_date__lte=end_date,
+            organization_id=organization_id,
+        )
+    except MaterialityAssessment.DoesNotExist:
+        return []
+    if materiality_data:
+        selected_material_topics = materiality_data.selected_topics.prefetch_related(
+            Prefetch(
+                "topic__disclosure_set",  # Accessing disclosures for each topic
+                to_attr="prefetched_disclosures",  # Store the result in a prefetched attribute
+            )
+        ).select_related("topic")
+        grouped_by_esg_category = defaultdict(list)
+
+        # Iterate and bifurcate by esg_category
+        for selected_material_topic in selected_material_topics:
+            item = {
+                "name": selected_material_topic.topic.name,
+                "esg_category": selected_material_topic.topic.esg_category,
+                "identifier": selected_material_topic.topic.identifier,
+                "disclosure": [
+                    {
+                        "name": disclosure.description.split(" ")[0],
+                        "category": disclosure.category,
+                        "show_on_table": disclosure.category
+                        != "topic_management_dislcosure",
+                        "relevent_sdg": SDG.get(disclosure.description.split(" ")[0]),
+                    }
+                    for disclosure in selected_material_topic.topic.prefetched_disclosures
+                ],
+            }
+            # Group by esg_category
+            grouped_by_esg_category[selected_material_topic.topic.esg_category].append(
+                item
+            )
+
+        grouped_by_esg_category = dict(grouped_by_esg_category)
+    else:
+        grouped_by_esg_category = []
+    return grouped_by_esg_category
