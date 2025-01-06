@@ -149,7 +149,7 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                     topic_dict["disclosures"].append(
                         {
                             disclosure_id: list(slugs),
-                            "is_material_topic": True,
+                            "is_disclosure_selected": True,
                         }
                     )
 
@@ -162,7 +162,7 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                         topic_dict["disclosures"].append(
                             {
                                 disc.identifier: slugs,
-                                "is_material_topic": False,  # These are non-selected disclosures
+                                "is_disclosure_selected": False,  # These are non-selected disclosures
                             }
                         )
             else:
@@ -172,7 +172,7 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                     topic_dict["disclosures"].append(
                         {
                             disc.identifier: slugs,
-                            "is_material_topic": False,
+                            "is_disclosure_selected": False,
                         }
                     )
 
@@ -205,6 +205,8 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                         if materiality_dashboard and materiality_dashboard.start_date
                         else None
                     ),
+                    "start_date": materiality_dashboard.start_date.strftime("%Y-%m-%d"),
+                    "end_date": materiality_dashboard.end_date.strftime("%Y-%m-%d"),
                 }
             )
 
