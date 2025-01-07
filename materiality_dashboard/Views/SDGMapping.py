@@ -98,4 +98,11 @@ SDG = {
     "417-1": get_sdg_details(["SDG-12"]),
     "417-2": get_sdg_details(["SDG-16"]),
     "418-1": get_sdg_details(["SDG-16"]),
+    "2-9": get_sdg_details(["SDG-5", "SDG-16"]),
+    "2-10": get_sdg_details(["SDG-5", "SDG-16"]),
+    "2-11": get_sdg_details(["SDG-16"]),
+    "2-12": get_sdg_details(["SDG-16"]),
+    "2-15": get_sdg_details(["SDG-16"]),
+    "2-23": get_sdg_details(["SDG-16"]),
+    "2-26": get_sdg_details(["SDG-16"]),
 }
