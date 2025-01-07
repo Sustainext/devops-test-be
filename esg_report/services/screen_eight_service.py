@@ -3,8 +3,7 @@ from esg_report.Serializer.MaterialityStatementSerializer import (
     MaterialityStatementSerializer,
 )
 from sustainapp.models import Report
-from esg_report.utils import get_materiality_assessment
-from materiality_dashboard.models import MaterialityAssessment
+from esg_report.utils import get_materiality_assessment, get_materiality_dashbaord
 from materiality_dashboard.Serializers.MaterialityImpactSerializer import (
     MaterialityImpactSerializer,
 )
@@ -76,5 +75,12 @@ class MaterialityService:
             )
         except (ObjectDoesNotExist, AttributeError):
             response_data["3-3b"] = None
+
+        response_data["8_1_1"] = get_materiality_dashbaord(
+            report.organization.id,
+            report.start_date,
+            report.end_date,
+            report.user.client.id,
+        )
 
         return response_data

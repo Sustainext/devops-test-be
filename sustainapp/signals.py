@@ -158,18 +158,67 @@ def store_original_details(sender, instance, **kwargs):
 @receiver(post_save, sender=ClientTaskDashboard)
 def send_task_assigned_email(sender, instance, created, **kwargs):
     cache_key_task_status = f"original_task_status_{instance.pk}"
+    cache_key_assigned_to = f"original_assigned_to_{instance.pk}"
 
     original_task_status = cache.get(cache_key_task_status)
+    original_assigned_to = cache.get(cache_key_assigned_to)
 
     # Build common email variables
-    first_name = instance.assigned_to.first_name.capitalize()
-    task_name = instance.task_name
-    platform_link = settings.EMAIL_REDIRECT
-    from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [instance.assigned_to.email]
+    if instance.assigned_to is not None:
+        first_name = instance.assigned_to.first_name.capitalize()
+        task_name = instance.task_name
+        platform_link = settings.EMAIL_REDIRECT
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [instance.assigned_to.email]
 
-    if created and instance.roles != 3:
-        subject = "New Emission Task Assigned"
+        if created and instance.roles != 3:
+            subject = "New Emission Task Assigned"
+            html_message = render_to_string(
+                "sustainapp/task_assigned.html",
+                {
+                    "first_name": first_name,
+                    "task_name": task_name,
+                    "platform_link": platform_link,
+                    "deadline": instance.deadline,
+                    "assigned_by": instance.assigned_by.first_name.capitalize(),
+                    "location": instance.location,
+                    "category": instance.category,
+                    "subcategory": instance.subcategory,
+                    "scope": instance.scope,
+                    "month": instance.month,
+                    "year": instance.year,
+                },
+            )
+            send_mail(
+                subject, "", from_email, recipient_list, html_message=html_message
+            )
+
+        elif (
+            original_task_status is not None
+            and original_task_status != instance.task_status
+            and instance.task_status == "approved"
+        ):
+            subject = "Emission Task Approved"
+            html_message = render_to_string(
+                "sustainapp/task_approved.html",
+                {
+                    "first_name": first_name,
+                    "task_name": task_name,
+                    "platform_link": platform_link,
+                },
+            )
+            send_mail(
+                subject, "", from_email, recipient_list, html_message=html_message
+            )
+    # Handle case where assigned_to changes from None to a user
+    if original_assigned_to is None and instance.assigned_to is not None:
+        first_name = instance.assigned_to.first_name.capitalize()
+        task_name = instance.task_name
+        platform_link = settings.EMAIL_REDIRECT
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [instance.assigned_to.email]
+
+        subject = "New Emission Task Assigned to You"
         html_message = render_to_string(
             "sustainapp/task_assigned.html",
             {
@@ -188,22 +237,6 @@ def send_task_assigned_email(sender, instance, created, **kwargs):
         )
         send_mail(subject, "", from_email, recipient_list, html_message=html_message)
 
-    elif (
-        original_task_status is not None
-        and original_task_status != instance.task_status
-        and instance.task_status == "approved"
-    ):
-        subject = "Emission Task Approved"
-        html_message = render_to_string(
-            "sustainapp/task_approved.html",
-            {
-                "first_name": first_name,
-                "task_name": task_name,
-                "platform_link": platform_link,
-            },
-        )
-        send_mail(subject, "", from_email, recipient_list, html_message=html_message)
-
 
 @receiver(task_status_changed)
 def send_task_update_email(sender, instance, comments, **kwargs):
@@ -211,7 +244,6 @@ def send_task_update_email(sender, instance, comments, **kwargs):
     cache_key_task_status = f"original_task_status_{instance.pk}"
     original_task_status = cache.get(cache_key_task_status)
     original_assigned_to = cache.get(cache_key_assigned_to)
-    current_assigned_to_id = instance.assigned_to_id
 
     first_name = instance.assigned_to.first_name.capitalize()
     task_name = instance.task_name
