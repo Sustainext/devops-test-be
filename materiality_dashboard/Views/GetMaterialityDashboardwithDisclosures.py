@@ -36,22 +36,24 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                 query_params = {
                     "client": client,
                     "approach": "GRI: In accordance with",
-                    "status": "completed",
                 }
             else:
                 query_params = {
                     "client": client,
                     "approach": "GRI: In accordance with",
-                    "status": "completed",
                     "organization": organization,
                     "corporate": corporate,
                     "start_date__gte": start,
                     "end_date__lte": end,
                 }
+            query_params["selected_topics__isnull"] = False
+            query_params["selected_topics__selected_disclosures__isnull"] = False
 
-            materiality_dashboard = MaterialityAssessment.objects.filter(
-                **query_params
-            ).latest("created_at")
+            materiality_dashboard = (
+                MaterialityAssessment.objects.filter(**query_params)
+                .distinct()
+                .latest("created_at")
+            )
         except MaterialityAssessment.DoesNotExist:
             materiality_dashboard = None
 
