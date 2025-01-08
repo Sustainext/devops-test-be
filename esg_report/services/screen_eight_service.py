@@ -76,11 +76,6 @@ class MaterialityService:
         except (ObjectDoesNotExist, AttributeError):
             response_data["3-3b"] = None
 
-        response_data["8_1_1"] = get_materiality_dashbaord(
-            report.organization.id,
-            report.start_date,
-            report.end_date,
-            report.user.client.id,
-        )
+        response_data["8_1_1"] = get_materiality_dashbaord(report)
 
         return response_data

@@ -16,3 +16,4 @@ from .ScreenFourteen import ScreenFourteen
 from .ScreenFifteen import ScreenFifteenModel
 from .StatementOfUse import StatementOfUseModel
 from .ContentIndexRequirementOmissionReason import ContentIndexRequirementOmissionReason
+from .ReportAssessment import ReportAssessment
