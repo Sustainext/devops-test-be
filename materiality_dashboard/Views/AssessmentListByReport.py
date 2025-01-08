@@ -31,7 +31,7 @@ class GetAssessmentListForReport(APIView):
                         end_date__lte=end_date,
                         organization_id=organization_id,
                         corporate_id=corporate_id,
-                        approach="accordance",
+                        approach__icontains="accordance",
                     )
                 elif report_by == "Corporate" and corporate_id is None:
                     return Response({"message": "corporate_id is required"}, status=200)
