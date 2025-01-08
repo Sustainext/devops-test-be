@@ -36,6 +36,7 @@ from datametric.utils.analyse import filter_by_start_end_dates
 from esg_report.utils import create_validation_method_for_report_creation
 from azure.storage.blob import BlobClient
 from datetime import datetime
+from esg_report.models.ReportAssessment import ReportAssessment
 
 
 logger = logging.getLogger()
@@ -598,9 +599,8 @@ class GHGReportView(generics.CreateAPIView):
         report_by = serializer.validated_data.get("report_by")
         report_type = serializer.validated_data.get("report_type")
         investment_corporates = serializer.validated_data.get("investment_corporates")
+        assessment_id = request.data.get("assessment_id")
         organization_id = organization.id
-
-        print(report_by)
 
         if corporate_id and organization_id:
             # If multiple corporate names are provided, pass the list of names
@@ -638,6 +638,12 @@ class GHGReportView(generics.CreateAPIView):
             common_name = organization.name
         else:
             common_name = corporate_id.name
+
+        if report_type == "GRI Report: In accordance With" and assessment_id:
+            ReportAssessment.objects.create(
+                report_id=report_id,
+                materiality_assessment_id=assessment_id,
+            ).save()
 
         if isinstance(analysis_data, Response):
             status_check = analysis_data.status_code

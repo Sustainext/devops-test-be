@@ -1,13 +1,10 @@
 from sustainapp.models import Report, Corporateentity
 from datametric.models import RawResponse, DataPoint, EmissionAnalysis
-from materiality_dashboard.models import MaterialityAssessment
 from esg_report.models.ContentIndexRequirementOmissionReason import (
     ContentIndexRequirementOmissionReason,
 )
 from rest_framework.exceptions import ValidationError as DRFValidationError
-from django.db.models import Q, F, ExpressionWrapper, DurationField
-from datetime import timedelta
-from django.db.models.functions import Greatest, Least
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from rest_framework.test import APIRequestFactory
 from django.urls import reverse, resolve
@@ -17,6 +14,7 @@ import datetime
 import logging
 from django.db.models import Prefetch
 from materiality_dashboard.Views.SDGMapping import SDG
+from esg_report.models.ReportAssessment import ReportAssessment
 
 logger = logging.getLogger("error.log")
 
@@ -131,50 +129,11 @@ def get_emission_analysis_as_per_report(report: Report):
 
 
 def get_materiality_assessment(report):
-    materiality_assessment = (
-        MaterialityAssessment.objects.filter(client=report.client)
-        .exclude(status="outdated")
-        .filter(approach__icontains="accordance")
-    )
-    if report.corporate:
-        materiality_assessment = materiality_assessment.filter(
-            Q(corporate=report.corporate) | Q(organization=report.organization)
-        )
-    elif report.organization:
-        materiality_assessment = materiality_assessment.filter(
-            Q(organization=report.organization)
-            | Q(corporate__in=report.organization.corporatenetityorg.all())
-        )
-    start_date = report.start_date
-    end_date = report.end_date
-
-    # Check if the report falls within any materiality assessment period
-    within_assessment = materiality_assessment.filter(
-        start_date__lte=end_date, end_date__gte=start_date
-    ).order_by("-end_date")
-
-    if within_assessment.exists():
-        return within_assessment.first()
-    else:
-        # Calculate the overlap duration in days for each materiality assessment
-        materiality_assessment = (
-            materiality_assessment.annotate(
-                overlap_start=Greatest(F("start_date"), start_date),
-                overlap_end=Least(F("end_date"), end_date),
-            )
-            .annotate(
-                overlap_duration=ExpressionWrapper(
-                    F("overlap_end") - F("overlap_start"), output_field=DurationField()
-                )
-            )
-            .filter(overlap_duration__gt=timedelta(days=0))
-            .order_by("-overlap_duration", "-end_date")
-        )
-
-        if materiality_assessment.exists():
-            return materiality_assessment.first()
-        else:
-            return None
+    """This now uses ReportAssessment Model to fetch linked materiality assessment"""
+    try:
+        return ReportAssessment.objects.get(report=report).materiality_assessment
+    except ReportAssessment.DoesNotExist:
+        return None
 
 
 def collect_data_by_raw_response_and_index(data_points):
@@ -602,18 +561,15 @@ def get_management_materiality_topics(report: Report, path):
     return management_materiality_topics_common_code(mmt_dps, report.organization.name)
 
 
-def get_materiality_dashbaord(organization_id, start_date, end_date, client_id):
+def get_materiality_dashbaord(report):
     """
-    Retrieves materiality dashboard data based on the provided start and end dates.
+    Retrieves materiality dashboard linked to an report.
     """
     try:
-        materiality_data = MaterialityAssessment.objects.get(
-            client_id=client_id,
-            start_date__gte=start_date,
-            end_date__lte=end_date,
-            organization_id=organization_id,
-        )
-    except MaterialityAssessment.DoesNotExist:
+        materiality_data = ReportAssessment.objects.get(
+            report=report
+        ).materiality_assessment
+    except ReportAssessment.DoesNotExist:
         return []
     if materiality_data:
         selected_material_topics = materiality_data.selected_topics.prefetch_related(
