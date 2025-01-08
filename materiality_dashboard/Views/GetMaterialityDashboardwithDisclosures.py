@@ -207,8 +207,12 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                         if materiality_dashboard and materiality_dashboard.start_date
                         else None
                     ),
-                    "start_date": materiality_dashboard.start_date.strftime("%Y-%m-%d"),
-                    "end_date": materiality_dashboard.end_date.strftime("%Y-%m-%d"),
+                    "start_date": materiality_dashboard.start_date.strftime("%Y-%m-%d")
+                    if materiality_dashboard and materiality_dashboard.start_date
+                    else None,
+                    "end_date": materiality_dashboard.end_date.strftime("%Y-%m-%d")
+                    if materiality_dashboard and materiality_dashboard.end_date
+                    else None,
                 }
             )
 
