@@ -12,7 +12,6 @@ class GetAssessmentListForReport(APIView):
         end_date = request.query_params.get("end_date")
         organization_id = request.query_params.get("organization_id")
         corporate_id = request.query_params.get("corporate_id")
-        report_type = request.query_params.get("report_type")
         report_by = request.query_params.get("report_by")
         try:
             if report_by == "Organization":
@@ -22,7 +21,7 @@ class GetAssessmentListForReport(APIView):
                     end_date__lte=end_date,
                     organization_id=organization_id,
                     corporate_id__isnull=True,
-                    approach=report_type,
+                    approach__icontains="accordance",
                 )
             else:
                 if corporate_id:
@@ -32,10 +31,12 @@ class GetAssessmentListForReport(APIView):
                         end_date__lte=end_date,
                         organization_id=organization_id,
                         corporate_id=corporate_id,
-                        approach=report_type,
+                        approach="accordance",
                     )
-                else:
+                elif report_by == "Corporate" and corporate_id is None:
                     return Response({"message": "corporate_id is required"}, status=200)
+                else:
+                    return Response([])
             serializer = MaterialityAssessmentSerializer(
                 materiality_assessments, many=True
             )
