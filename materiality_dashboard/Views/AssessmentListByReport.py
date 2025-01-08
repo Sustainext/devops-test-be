@@ -39,9 +39,7 @@ class GetAssessmentListForReport(APIView):
             serializer = MaterialityAssessmentSerializer(
                 materiality_assessments, many=True
             )
-            data = serializer.data
-            if len(data) > 1:
-                return Response(data)
-            return Response([])
+
+            return Response(serializer.data)
         except MaterialityAssessment.DoesNotExist:
             return Response({"message": "Materiality assessment not found"}, status=404)
