@@ -36,22 +36,24 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                 query_params = {
                     "client": client,
                     "approach": "GRI: In accordance with",
-                    "status": "completed",
                 }
             else:
                 query_params = {
                     "client": client,
                     "approach": "GRI: In accordance with",
-                    "status": "completed",
                     "organization": organization,
                     "corporate": corporate,
                     "start_date__gte": start,
                     "end_date__lte": end,
                 }
+            query_params["selected_topics__isnull"] = False
+            query_params["selected_topics__selected_disclosures__isnull"] = False
 
-            materiality_dashboard = MaterialityAssessment.objects.filter(
-                **query_params
-            ).latest("created_at")
+            materiality_dashboard = (
+                MaterialityAssessment.objects.filter(**query_params)
+                .distinct()
+                .latest("created_at")
+            )
         except MaterialityAssessment.DoesNotExist:
             materiality_dashboard = None
 
@@ -205,8 +207,12 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                         if materiality_dashboard and materiality_dashboard.start_date
                         else None
                     ),
-                    "start_date": materiality_dashboard.start_date.strftime("%Y-%m-%d"),
-                    "end_date": materiality_dashboard.end_date.strftime("%Y-%m-%d"),
+                    "start_date": materiality_dashboard.start_date.strftime("%Y-%m-%d")
+                    if materiality_dashboard and materiality_dashboard.start_date
+                    else None,
+                    "end_date": materiality_dashboard.end_date.strftime("%Y-%m-%d")
+                    if materiality_dashboard and materiality_dashboard.end_date
+                    else None,
                 }
             )
 
