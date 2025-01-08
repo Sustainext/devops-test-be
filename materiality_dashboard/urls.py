@@ -49,6 +49,9 @@ from materiality_dashboard.Views.GetMaterialityDashboardwithDisclosures import (
 from materiality_dashboard.Views.MaterialityDashboardStatusView import (
     MaterialityDashboardStatusView,
 )
+from materiality_dashboard.Views.AssessmentListByReport import (
+    GetAssessmentListForReport,
+)
 
 router = DefaultRouter()
 router.register(
@@ -187,6 +190,11 @@ urlpatterns = [
         "get_materiality_dashboard_status/<int:materiality_id>/",
         MaterialityDashboardStatusView.as_view(),
         name="get_materiality_dashboard_status",
+    ),
+    path(
+        "get_materiality_assessment_for_report/",
+        GetAssessmentListForReport.as_view(),
+        name="get_materiality_assessment_for_report",
     ),
 ]
 urlpatterns += router.urls

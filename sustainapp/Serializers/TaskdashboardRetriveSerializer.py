@@ -25,7 +25,7 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClientTaskDashboard
-        exclude = ["created_at", "updated_at"]
+        fields = "__all__"
 
     def update(self, instance, validated_data):
         comments = self.context["request"].data.get(
@@ -50,7 +50,7 @@ class TaskDashboardCustomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClientTaskDashboard
-        exclude = ["created_at", "updated_at"]
+        fields = "__all__"
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
