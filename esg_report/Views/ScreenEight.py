@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from sustainapp.models import Report
-from esg_report.utils import get_materiality_assessment
+from esg_report.utils import get_materiality_assessment, get_materiality_dashbaord
 from materiality_dashboard.models import MaterialityAssessment
 from materiality_dashboard.Serializers.MaterialityImpactSerializer import (
     MaterialityImpactSerializer,
@@ -105,5 +105,7 @@ class ScreenEightAPIView(APIView):
             )
         except (ObjectDoesNotExist, AttributeError):
             response_data["3-3b"] = None
+
+        response_data["8_1_1"] = get_materiality_dashbaord(report)
 
         return Response(response_data, status=status.HTTP_200_OK)

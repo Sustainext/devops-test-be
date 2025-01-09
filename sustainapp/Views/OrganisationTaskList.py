@@ -34,7 +34,8 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
         # Organize your tasks based on some attributes
         tasks = {
             "upcoming": queryset.filter(
-                task_status__in=["in_progress", "reject"], assigned_to=request.user
+                Q(task_status__in=["in_progress", "reject"], assigned_to=request.user)
+                | Q(assigned_by=request.user, assigned_to__isnull=True)
             ).exclude(deadline__lt=timezone.now()),
             "overdue": queryset.filter(
                 task_status="in_progress",

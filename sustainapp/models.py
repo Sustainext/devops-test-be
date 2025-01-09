@@ -1025,7 +1025,7 @@ class ClientTaskDashboard(AbstractModel):
         validators=[validate_future_date],
     )
     assigned_to = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name="task"
+        CustomUser, on_delete=models.CASCADE, related_name="task", null=True, blank=True
     )
     assigned_by = models.ForeignKey(
         CustomUser,

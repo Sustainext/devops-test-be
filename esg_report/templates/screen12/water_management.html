@@ -189,6 +189,19 @@
 <h4>12.3.3. Water Discharge & Management of Associated Impacts</h4>
 <p>We manage water discharge to minimize its impact on local ecosystems. This includes treating wastewater to meet regulatory standards and monitoring the quality of discharged water.</p>
 
+{% if screen_twelve_data.303_2a_management_water_discharge and screen_twelve_data.303_2a_management_water_discharge.data and screen_twelve_data.303_2a_management_water_discharge.data|length > 0 %}
+  <p style="color:#000;">Discharge Standard used:</p>
+  <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q1|default:"No data available" }}</p>
+  
+  <p style="color:#000;">Process to determine discharge standards:</p>
+  <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q2|default:"No data available" }}</p>
+  
+  <p style="color:#000;">Internal water quality standards:</p>
+  <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q3|default:"No data available" }}</p>
+{% else %}
+  <p>No data available</p>
+{% endif %}
+
 <h5>Total Water Discharge by Location</h5>
 <table
   cellpadding="5"
@@ -432,20 +445,6 @@
     {% endfor %}
   </tbody>
 </table>
-
-{% if screen_twelve_data.303_2a_management_water_discharge and screen_twelve_data.303_2a_management_water_discharge.data and screen_twelve_data.303_2a_management_water_discharge.data|length > 0 %}
-  <p style="color:#000;">Discharge Standard used:</p>
-  <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q1|default:"No data available" }}</p>
-  
-  <p style="color:#000;">Process to determine discharge standards:</p>
-  <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q2|default:"No data available" }}</p>
-  
-  <p style="color:#000;">Internal water quality standards:</p>
-  <p>{{ screen_twelve_data.303_2a_management_water_discharge.data.0.Q3|default:"No data available" }}</p>
-{% else %}
-  <p>No data available</p>
-{% endif %}
-
 
 <h4>12.3.4. Water Consumption</h4>
 <p>

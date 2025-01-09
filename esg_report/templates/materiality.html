@@ -5,7 +5,7 @@
 
 <h3>8.1.1 List of Material Topics</h3>
 
-<table cellpadding="5" cellspacing="0">
+<table>
     <thead>
         <tr>
             <th>ESG Pillar</th>
@@ -15,13 +15,41 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>NO data available</td>
-            <td>NO data available</td>
-            <td>NO data available</td>
-            <td>NO data available</td>
-        </tr>
-        <!-- Add more rows as necessary -->
+        {% for row in materiality_table_data %}
+            <tr>
+                {# Render ESG Category only if rowspan > 0 #}
+                {% if row.esg_rowspan > 0 %}
+                    <td rowspan="{{ row.esg_rowspan }}" style="vertical-align: middle; text-align: center;">
+                        {{ row.esg_category }}
+                    </td>
+                {% endif %}
+
+                {# Render Material Topic only if rowspan > 0 #}
+                {% if row.topic_rowspan > 0 %}
+                    <td rowspan="{{ row.topic_rowspan }}" style="vertical-align: middle; text-align: center;">
+                        {{ row.material_topic }}
+                    </td>
+                {% endif %}
+
+                {# Render GRI Disclosure Number #}
+                <td style="text-align: center;">{{ row.gri_disclosure_number }}</td>
+
+                {# Render Linked UN SDG Tags #}
+                <td style="text-align: left !important;">
+                    {% if row.linked_sdg %}
+                        {% for sdg in row.linked_sdg %}
+                            <span 
+                                style="width:35px; text-align: center; background-color: {{ sdg.bg_color }}; color: {{ sdg.text_color }}; margin-bottom:5px;
+                                       padding: 4px 4px; border-radius: 4px; margin-right: 4px; display: inline-block;">
+                                {{ sdg.name }}
+                            </span>
+                        {% endfor %}
+                    {% else %}
+                        <span>No SDG Linked</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
     </tbody>
 </table>
 
