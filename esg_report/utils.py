@@ -15,6 +15,9 @@ import logging
 from django.db.models import Prefetch
 from materiality_dashboard.Views.SDGMapping import SDG
 from esg_report.models.ReportAssessment import ReportAssessment
+from materiality_dashboard.models import (
+    AssessmentDisclosureSelection,
+)
 
 logger = logging.getLogger("error.log")
 
@@ -579,7 +582,13 @@ def get_materiality_dashbaord(report):
             )
         ).select_related("topic")
         grouped_by_esg_category = defaultdict(list)
-
+        topic_selection_ids = selected_material_topics.values_list("id", flat=True)
+        selected_disclosures = AssessmentDisclosureSelection.objects.filter(
+            topic_selection__id__in=topic_selection_ids
+        ).select_related("topic_selection", "disclosure")
+        selected_disclosure_ids = set(
+            selected_disclosures.values_list("disclosure_id", flat=True)
+        )
         # Iterate and bifurcate by esg_category
         for selected_material_topic in selected_material_topics:
             item = {
@@ -595,6 +604,7 @@ def get_materiality_dashbaord(report):
                         "relevent_sdg": SDG.get(disclosure.description.split(" ")[0]),
                     }
                     for disclosure in selected_material_topic.topic.prefetched_disclosures
+                    if disclosure.id in selected_disclosure_ids
                 ],
             }
             # Group by esg_category
