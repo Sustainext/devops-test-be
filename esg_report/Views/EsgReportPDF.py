@@ -68,6 +68,54 @@ def process_benefits(benefits_key, screen_thirteen_data, location_name_map):
 
 
 class ESGReportPDFView(View):
+    def preprocess_esg_data(self, data):
+        processed_rows = []
+
+        for esg_category, topics in data.items():
+            # Calculate ESG row span: Sum of all disclosures under the ESG category
+            esg_rowspan = sum(
+                len(
+                    [
+                        disclosure
+                        for disclosure in topic["disclosure"]
+                        if disclosure["show_on_table"]
+                    ]
+                )
+                for topic in topics
+            )
+
+            for topic in topics:
+                # Calculate Material Topic row span: Count disclosures under the topic that should be shown
+                topic_rowspan = len(
+                    [
+                        disclosure
+                        for disclosure in topic["disclosure"]
+                        if disclosure["show_on_table"]
+                    ]
+                )
+
+                for disclosure in topic["disclosure"]:
+                    if disclosure["show_on_table"]:
+                        # Add the row data
+                        processed_rows.append(
+                            {
+                                "esg_category": esg_category.capitalize(),
+                                "esg_rowspan": esg_rowspan
+                                if len(processed_rows) == 0
+                                or processed_rows[-1]["esg_category"]
+                                != esg_category.capitalize()
+                                else 0,  # Only once per ESG category
+                                "material_topic": topic["name"],
+                                "topic_rowspan": topic_rowspan
+                                if len(processed_rows) == 0
+                                or processed_rows[-1]["material_topic"] != topic["name"]
+                                else 0,  # Only once per Material Topic
+                                "gri_disclosure_number": disclosure["name"],
+                                "linked_sdg": disclosure.get("relevent_sdg", None),
+                            }
+                        )
+        return processed_rows
+
     def get(self, request, *args, **kwargs):
         start_time = time.time()
         user = request.user
@@ -296,7 +344,9 @@ class ESGReportPDFView(View):
 
         content_index_data = generate_disclosure_status(report=results["report"])
         # statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
-
+        materiality_table_data = self.preprocess_esg_data(
+            results["materiality"]["8_1_1"]
+        )
         # Create context for rendering
         context = {
             "report": results["report"] if "report" in results else None,
@@ -359,6 +409,7 @@ class ESGReportPDFView(View):
                 if "screen_fifteen_data" in results
                 else None
             ),
+            "materiality_table_data": materiality_table_data,
             "content_index_data": content_index_data,
             "pk": pk,  # Pass the report ID to the template
         }
