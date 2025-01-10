@@ -384,8 +384,8 @@
   <tbody>
     {% for operation in screen_twelve_data.water_analyse.third_party_water_discharge_sent_to_use_for_other_organizations %}
     <tr>
-      <td>{{ operation.volume|default:"N/A" }}</td>
-      <td>{{ operation.contribution|default:"N/A" }}%</td>
+      <td>{{ operation.volume|default:"0" }}</td>
+      <td>{{ operation.contribution|default:"0" }}%</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endfor %}
