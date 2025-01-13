@@ -18,7 +18,6 @@ logger = getLogger("django.log")
 
 def process_json(json_obj, path, raw_response):
     print("process_json - hit")
-    print("path is ", path.slug)
     data_metrics = DataMetric.objects.filter(path=path)
 
     # Create DataPoints for RawResponse where it's failing to create DataPoints
@@ -29,13 +28,12 @@ def process_json(json_obj, path, raw_response):
         create_dp_obj.create_data_points_for_raw_response()
     else:
         for index, item in enumerate(json_obj):
-            print(item)
             if isinstance(item, dict):
                 try:
                     first_key, first_value = next(iter(item.items()))
                     # Print the first key and value
-                    print(f"Field Group Row: {first_key}")
-                    print(f"First Value: {first_value}")
+                    # print(f"Field Group Row: {first_key}")
+                    # print(f"First Value: {first_value}")
                     """
                     This was required since emissions has different
                     data structure in RawResponse data field when
@@ -92,4 +90,5 @@ def create_response_points(sender, instance: RawResponse, created, **kwargs):
     #! Don't save the instance again, goes to non stop recursion.
 
     process_json(instance.data, instance.path, instance)
+    # process_json(json_obj, path, raw_response):
     create_analysis_data(instance)

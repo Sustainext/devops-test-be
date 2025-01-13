@@ -34,18 +34,18 @@ class AzureMonitorQueryView(APIView):
 
         # Example of a valid KQL query
         query = """
-        custom_log_CL_CL
+        AppLogTable_CL
         | where TimeGenerated >= ago(1d)
-        | project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole
+        | project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole, Logs, Organization,IPAddress
         | order by TimeGenerated desc
         """
-
         try:
             response = logs_query_client.query_workspace(
-                workspace_id, query, timespan=timedelta(days=1)
+                workspace_id, query, timespan=timedelta(days=5)
             )
 
             results = []
+            print(response)
             # Process the results
             for table in response.tables:
                 for row in table.rows:

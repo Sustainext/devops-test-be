@@ -16,9 +16,9 @@ workspace_id = "c909637a-b389-4661-af56-e000a6a3bbc6"
 
 # Example of a valid KQL query
 query = """
-custom_log_CL_CL
+AppLogTable_CL
 | where TimeGenerated >= ago(1d)
-| project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole
+| project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole, Logs
 | order by TimeGenerated desc
 """
 

@@ -2,9 +2,10 @@ from datametric.utils.climatiq import Climatiq
 from datametric.models import DataMetric, RawResponse, DataPoint
 import logging
 from django.db.models.signals import post_save
+from logging import getLogger
 
 
-logger = logging.getLogger("custom_logger")
+logger = getLogger("file")
 
 
 def climatiq_data_creation(raw_response: RawResponse):
@@ -42,6 +43,22 @@ def create_or_update_data_points(
         boolean_value = value
 
     try:
+        # Retrieve existing data point if it exists
+        existing_data_point = DataPoint.objects.filter(data_metric=data_metric, index=index).first()
+        
+        # Check existing value for comparison
+        existing_value = None
+        if existing_data_point:
+            if data_metric.response_type == "String":
+                existing_value = existing_data_point.string_holder
+            elif data_metric.response_type in ["Integer", "Float"]:
+                existing_value = existing_data_point.number_holder
+            elif data_metric.response_type in ["Array Of Objects", "Object"]:
+                existing_value = existing_data_point.json_holder
+            elif data_metric.response_type == "Boolean":
+                existing_value = existing_data_point.boolean_holder  # Assuming you have a boolean_holder field
+
+        # Create or update the data point
         data_point, created = DataPoint.objects.update_or_create(
             data_metric=data_metric,
             index=index,
@@ -64,14 +81,25 @@ def create_or_update_data_points(
                 "client_id": raw_response.user.client.id,
             },
         )
+        
+        # Save the updated or created data point
         data_point.save()
+        # print('User role is ',raw_response.user.custom_role )
+        # Log only if there is a change in the value
+        if created or (existing_value != value):
 
-        if created:
-            logger.info("DataPoint created")
+            logger.info("DataPoint created/updated with changes")
         else:
-            logger.info("DataPoint updated")
+            # pass
+            logger.info("DataPoint updated without changes")
+
+            # Upload logs only when there is a change
+            # uploader.upload_logs(log_data)
+
     except Exception as e:
+        # pass
         logger.error(f"An error occurred: {e}", exc_info=True)
+        # pass
 
 
 def process_raw_response_data(
@@ -80,7 +108,7 @@ def process_raw_response_data(
     index: int,
     raw_response: RawResponse,
 ):
+    print(raw_response, ' &&&& is the raw response')
     for key, value in data_point_dict.items():
         data_metric,_ = DataMetric.objects.get_or_create(name=key,path=raw_response.path,defaults={"response_type":"String"})
         create_or_update_data_points(data_metric, value, index, raw_response)
-
