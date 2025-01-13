@@ -88,6 +88,7 @@ from sustainapp.Views.ClimatiqCalling import ClimatiqDataAPIView
 from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
     TrainingAnalyzeAPI,
 )
+from sustainapp.Views.GetOrgLogs import AzureMonitorQueryView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -276,4 +277,5 @@ urlpatterns = [
         ClimatiqDataAPIView.as_view(),
         name="get_climatiq_data",
     ),
+    path("get_org_logs/", AzureMonitorQueryView.as_view(), name="get_org_logs"),
 ]
