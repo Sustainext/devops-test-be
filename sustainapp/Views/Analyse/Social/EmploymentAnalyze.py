@@ -226,8 +226,21 @@ class EmploymentAnalyzeView(APIView):
                 "yearsold30": yearsold30,
                 "yearsold50": yearsold50,
                 "yearsold30to50": yearsold30to50,
+                "total": key_average,
             }
             local_response_data.append(local_response_dict)
+        local_response_data.append(
+            {
+                "type_of_employee": "Total",
+                "total": sum(
+                    [
+                        d["total"]
+                        for d in local_response_data
+                        if d["type_of_employee"] != "Total"
+                    ]
+                ),
+            }
+        )
         return local_response_data
 
     def get_response_dictionaries(self):
@@ -459,6 +472,7 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["new_employee_permanent_50_percent"] = (
             ne_permanent_50_pc
         )
+        new_employee_reponse_table["new_employee_permanent_total"] = total_permanent
 
         # new_employee temporary
 
@@ -530,7 +544,7 @@ class EmploymentAnalyzeView(APIView):
             ne_temp_30_50_pc
         )
         new_employee_reponse_table["new_employee_temporary_50_percent"] = ne_temp_50_pc
-
+        new_employee_reponse_table["new_employee_temporary_total"] = total_temporary
         # new_employee non guaranteed
 
         if dp_employ_non_guaranteed:
@@ -605,6 +619,7 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["new_employee_non_guaranteed_50_percent"] = (
             ne_ng_50_pc
         )
+        new_employee_reponse_table["new_employee_non_guaranteed_total"] = total_ng
 
         # new_employee full time
 
@@ -676,7 +691,7 @@ class EmploymentAnalyzeView(APIView):
             ne_ft_30_50_pc
         )
         new_employee_reponse_table["new_employee_full_time_50_percent"] = ne_ft_50_pc
-
+        new_employee_reponse_table["new_employee_full_time_total"] = total_ft
         # new_employee part time
 
         if dp_employ_part_time:
@@ -747,7 +762,7 @@ class EmploymentAnalyzeView(APIView):
             ne_pt_30_50_pc
         )
         new_employee_reponse_table["new_employee_part_time_50_percent"] = ne_pt_50_pc
-
+        new_employee_reponse_table["new_employee_part_time_total"] = total_pt
         # employee Turnover Response table
 
         dp_employ_to_full_time = []
@@ -862,6 +877,7 @@ class EmploymentAnalyzeView(APIView):
         employee_turnover_reponse_table["employee_turnover_permanent_50_percent"] = (
             et_permanent_50_pc
         )
+        employee_turnover_reponse_table["employee_turnover_total"] = total_permanent_eto
 
         # new_employee_turnover_temporary
 
@@ -971,6 +987,9 @@ class EmploymentAnalyzeView(APIView):
         )
         employee_turnover_reponse_table["employee_turnover_temporary_50_percent"] = (
             et_temp_50_pc
+        )
+        employee_turnover_reponse_table["employee_turnover_temporary_total"] = (
+            total_temporary_eto
         )
 
         # new_employee_turover _non guaranteed
@@ -1181,6 +1200,7 @@ class EmploymentAnalyzeView(APIView):
         employee_turnover_reponse_table["employee_turnover_full_time_50_percent"] = (
             et_ft_50_pc
         )
+        employee_turnover_reponse_table["employee_turnover_total"] = total_ft_eto
 
         # new_employee_turover _parttime
 
@@ -1283,6 +1303,7 @@ class EmploymentAnalyzeView(APIView):
         employee_turnover_reponse_table["employee_turnover_part_time_50_percent"] = (
             et_pt_50_pc
         )
+        employee_turnover_reponse_table["employee_turnover_total"] = total_pt_eto
 
         benefits_dps = benefits_data_points
 
@@ -1603,6 +1624,9 @@ class EmploymentAnalyzeView(APIView):
         new_employee_permanent["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_permanent_30-50_percent"
         ]
+        new_employee_permanent["total"] = new_employee_reponse_table[
+            "new_employee_permanent_total"
+        ]
         response_data["new_employee_hires"].append(new_employee_permanent)
 
         new_employee_temporary = {}
@@ -1624,6 +1648,9 @@ class EmploymentAnalyzeView(APIView):
         ]
         new_employee_temporary["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_temporary_30-50_percent"
+        ]
+        new_employee_temporary["total"] = new_employee_reponse_table[
+            "new_employee_temporary_total"
         ]
         response_data["new_employee_hires"].append(new_employee_temporary)
 
@@ -1647,6 +1674,9 @@ class EmploymentAnalyzeView(APIView):
         new_employee_non_guaranteed["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_temporary_30-50_percent"
         ]
+        new_employee_non_guaranteed["total"] = new_employee_reponse_table[
+            "new_employee_non_guaranteed_total"
+        ]
         response_data["new_employee_hires"].append(new_employee_non_guaranteed)
 
         new_employee_full_time = {}
@@ -1668,6 +1698,9 @@ class EmploymentAnalyzeView(APIView):
         ]
         new_employee_full_time["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_full_time_50_percent"
+        ]
+        new_employee_full_time["total"] = new_employee_reponse_table[
+            "new_employee_full_time_total"
         ]
         response_data["new_employee_hires"].append(new_employee_full_time)
 
@@ -1691,8 +1724,20 @@ class EmploymentAnalyzeView(APIView):
         new_employee_part_time["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_part_time_50_percent"
         ]
+        new_employee_part_time["total"] = new_employee_reponse_table[
+            "new_employee_part_time_total"
+        ]
         response_data["new_employee_hires"].append(new_employee_part_time)
-
+        response_data["new_employee_hires"].append(
+            {
+                "type_of_employee": "Total",
+                "total": new_employee_permanent["total"]
+                + new_employee_temporary["total"]
+                + new_employee_non_guaranteed["total"]
+                + new_employee_full_time["total"]
+                + new_employee_part_time["total"],
+            }
+        )
         all_benefits = {
             "benefits_full_time_employees": [],
             "benefits_part_time_employees": [],
