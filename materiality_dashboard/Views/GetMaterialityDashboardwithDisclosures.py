@@ -43,7 +43,6 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                     "approach": "GRI: In accordance with",
                     "organization": organization,
                     "corporate": corporate,
-                    "start_date__gte": start,
                     "end_date__lte": end,
                 }
             query_params["selected_topics__isnull"] = False
@@ -203,7 +202,7 @@ class GetMaterialityDashboardwithDisclosures(APIView):
                         else None
                     ),
                     "year": (
-                        materiality_dashboard.start_date.year
+                        materiality_dashboard.end_date.year
                         if materiality_dashboard and materiality_dashboard.start_date
                         else None
                     ),
