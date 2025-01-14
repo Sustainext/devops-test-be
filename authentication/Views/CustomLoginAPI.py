@@ -2,17 +2,16 @@ from rest_framework.response import Response
 from rest_framework import status
 from dj_rest_auth.views import LoginView
 from rest_framework_simplejwt.tokens import RefreshToken
-from authentication.serializers.CustomLoginSerializers import (
-    CustomTokenObtainPairSerializer,
-)
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
+from django.utils import timezone
 from datetime import timedelta, datetime
 from django.contrib.auth import get_user_model
-from authentication.utils import handle_failed_login, reset_failed_login_attempts
+from authentication.utils import (
+    handle_failed_login,
+    reset_failed_login_attempts,
+)
+
 
 class CustomLoginView(LoginView):
-
     def get_response(self):
         """Customizing token response format with claims and token_type
         Remember me parameter for making longer validity token, so that we can save it on storage/cookie
@@ -22,9 +21,6 @@ class CustomLoginView(LoginView):
         user = self.user
 
         remember_me = self.request.data.get("remember_me", False)
-        # Use the CustomTokenObtainPairSerializer to generate tokens
-        serializer = CustomTokenObtainPairSerializer()
-        token = serializer.get_token(user)
 
         refresh = RefreshToken.for_user(user)
 
@@ -112,29 +108,77 @@ class CustomLoginView(LoginView):
         return response
 
     def post(self, request, *args, **kwargs):
-        self.serializer = self.get_serializer(data=self.request.data)
+        self.serializer = self.get_serializer(data=request.data)
         user_model = get_user_model()
+
+        # Check if the user exists
+        username = request.data.get("username")
+        if not user_model.objects.filter(username__iexact=username).exists():
+            return Response(
+                {
+                    "message": "Account doesn't exist with the provided email or username."
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if user_model.objects.filter(
+            username__iexact=request.data.get("username"),
+            is_active=False,
+        ).exists():
+            return Response(
+                {"message": "Your account is deactivated. Please contact support."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         if not self.serializer.is_valid():
             user = user_model.objects.filter(
                 username__iexact=request.data.get("username")
             ).first()
             if user:
-                handle_failed_login(user)
-                if user.safelock.is_locked:
-                    return Response(
-                        {"error": "Account locked due to multiple failed attempts"},
-                        status=status.HTTP_403_FORBIDDEN,
-                    )
-            return Response(self.serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                safelock = handle_failed_login(user)
+                if safelock.is_locked:
+                    if safelock.locked_at and (
+                        timezone.now() - safelock.locked_at >= timedelta(hours=2)
+                    ):
+                        safelock.is_locked = False
+                        safelock.failed_login_attempts = 0
+                        safelock.locked_at = None
+                        safelock.last_failed_at = None
+                        safelock.save()
+                    else:
+                        return Response(
+                            {
+                                "message": "Your account has been locked due to multiple failed login attempts. "
+                                "Please reset your password or contact the support team.",
+                            },
+                            status=status.HTTP_403_FORBIDDEN,
+                        )
 
+            return Response(
+                {"message": "Incorrect username or password"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Log in the user
         self.login()
         user = self.user
 
         if user.safelock.is_locked:
-            return Response(
-                {"error": "Account locked"}, status=status.HTTP_403_FORBIDDEN
-            )
+            if user.safelock.locked_at and (
+                timezone.now() - user.safelock.locked_at >= timedelta(hours=2)
+            ):
+                user.safelock.is_locked = False
+                user.safelock.failed_login_attempts = 0
+                user.safelock.locked_at = None
+                user.safelock.last_failed_at = None
+                user.safelock.save()
+            else:
+                return Response(
+                    {
+                        "message": "Your account has been locked due to multiple failed login attempts. "
+                        "Please reset your password or contact the support team.",
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         reset_failed_login_attempts(user)
         return self.get_response()
