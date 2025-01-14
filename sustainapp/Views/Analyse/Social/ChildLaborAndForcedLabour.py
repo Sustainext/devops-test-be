@@ -122,7 +122,7 @@ class ChildLabourAndForcedLabourAnalyzeView(APIView):
                     data.month,
                 )
                 forced_labor_data[key][data.metric_name] = data.value
-        # print(forced_labor_data)
+        
 
         unique_entries = {}
         for entry in forced_labor_data.values():
@@ -187,11 +187,6 @@ class ChildLabourAndForcedLabourAnalyzeView(APIView):
 
             self.clients_id = request.user.client.id
 
-            if self.from_date.year != self.to_date.year:
-                return Response(
-                    "Start and End dates must be in the same year",
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
             operations_childlabor = self.process_childlabor(
                 "gri-social-human_rights-408-1a-1b-operations_risk_child_labour"
