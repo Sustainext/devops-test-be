@@ -130,4 +130,58 @@ SDG = {
     "207-2": get_sdg_details(["SDG-1", "SDG-10", "SDG-17"]),
     "207-3": get_sdg_details(["SDG-1", "SDG-10", "SDG-17"]),
     "207-4": get_sdg_details(["SDG-1", "SDG-10", "SDG-17"]),
+    "GRI-11": get_sdg_details(
+        [
+            "SDG-1",
+            "SDG-3",
+            "SDG-5",
+            "SDG-6",
+            "SDG-7",
+            "SDG-8",
+            "SDG-9",
+            "SDG-11",
+            "SDG-12",
+            "SDG-13",
+            "SDG-15",
+            "SDG-16",
+            "SDG-17",
+        ]
+    ),
+    "GRI-12": get_sdg_details(
+        [
+            "SDG-1",
+            "SDG-3",
+            "SDG-5",
+            "SDG-6",
+            "SDG-7",
+            "SDG-8",
+            "SDG-9",
+            "SDG-11",
+            "SDG-12",
+            "SDG-13",
+            "SDG-15",
+            "SDG-16",
+            "SDG-17",
+        ]
+    ),
+    "GRI-13": get_sdg_details(
+        [
+            "SDG-1",
+            "SDG-2",
+            "SDG-3",
+            "SDG-5",
+            "SDG-6",
+            "SDG-7",
+            "SDG-8",
+            "SDG-9",
+            "SDG-10",
+            "SDG-11",
+            "SDG-12",
+            "SDG-13",
+            "SDG-14",
+            "SDG-15",
+            "SDG-16",
+            "SDG-17",
+        ]
+    ),
 }
