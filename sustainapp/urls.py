@@ -39,7 +39,9 @@ from sustainapp.Views.Analyse.Environment.WaterAnalyseAPI import (
     WaterAnalyseByDataPoints,
 )
 from sustainapp.Views.Analyse.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
-from sustainapp.Views.Analyse.Social.ChildLabor import ChildLabourAnalyzeView
+from sustainapp.Views.Analyse.Social.ChildLaborAndForcedLabour import (
+    ChildLabourAndForcedLabourAnalyzeView,
+)
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
@@ -56,8 +58,8 @@ from sustainapp.Views.Analyse.Social.NonDiscrimationAnalysis import (
 from sustainapp.Views.Analyse.Social.CollectiveBargainingAnalysis import (
     SocialCollectiveBargainingAnalysis,
 )
-from sustainapp.Views.Analyse.Social.CommunityDevelopmentAnalyse import (
-    SocialCommunityDevelopmentAnalysis,
+from sustainapp.Views.Analyse.Social.SocialHumanRightsAndCommunityImpactAnalysis import (
+    SocialHumanRightsAndCommunityImpactAnalysis,
 )
 from sustainapp.Views.Analyse.Social.CustomerPrivacyAnalyze import (
     CustomerPrivacyAnalyzeView,
@@ -80,9 +82,6 @@ from sustainapp.Views.Analyse.SupplierEnvironment.SupplierEnvironment import (
     SupplierEnvAnlayzeView,
 )
 from sustainapp.Views.OrgCorpLocViewset import CorporateListView, LocationListView
-from sustainapp.Views.Analyse.Social.SecurityPersonnelAnalysis import (
-    SecurityPersonnelAnalysisView,
-)
 from sustainapp.Views.DepartmentViewset import DepartmentViewSet
 from sustainapp.Views.ClimatiqCalling import ClimatiqDataAPIView
 from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
@@ -168,8 +167,8 @@ urlpatterns = [
         name="get_forced_labor_analysis",
     ),
     path(
-        "get_child_labor_analysis/",
-        ChildLabourAnalyzeView.as_view(),
+        "get_child_labor_and_forced_labour_analysis/",
+        ChildLabourAndForcedLabourAnalyzeView.as_view(),
         name="get_child_labor_analysis",
     ),
     path(
@@ -208,8 +207,8 @@ urlpatterns = [
         name="get_collective_bargaining_analysis",
     ),
     path(
-        "get_community_development_analysis/",
-        SocialCommunityDevelopmentAnalysis.as_view(),
+        "get_human_rights_and_community_impact_analysis/",
+        SocialHumanRightsAndCommunityImpactAnalysis.as_view(),
         name="get_community_development_analysis",
     ),
     path(
@@ -266,11 +265,6 @@ urlpatterns = [
     ),
     path("roles/corporates/", CorporateListView.as_view(), name="corporates-list"),
     path("roles/locations/", LocationListView.as_view(), name="locations-list"),
-    path(
-        "get_analysis_security_personnel/",
-        SecurityPersonnelAnalysisView.as_view(),
-        name="get_analysis_security_personnel",
-    ),
     path(
         "get_climatiq_data/",
         ClimatiqDataAPIView.as_view(),
