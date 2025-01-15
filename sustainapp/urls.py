@@ -11,9 +11,6 @@ from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.EmissionTask import EmissionTask
 from sustainapp.Views.AssignedEmissionTask import AssignedEmissionTask
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
-from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import (
-    MarketPresenceAnalyseView,
-)
 from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
     CommunicationTrainingAnalyzeView,
 )
@@ -243,11 +240,6 @@ urlpatterns = [
         name="get_general_collective_bargaining_analysis",
     ),
     path("track_dashboards/", TrackDashboardAPIView.as_view(), name="track_dashboards"),
-    path(
-        "get_economic_market_presence/",
-        MarketPresenceAnalyseView.as_view(),
-        name="get_economic_market_presence",
-    ),
     path(
         "get_economic_operations_assessed/",
         OperationsAssessedAnalyzeView.as_view(),
