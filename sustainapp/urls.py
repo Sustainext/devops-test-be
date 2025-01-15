@@ -89,6 +89,7 @@ from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
     TrainingAnalyzeAPI,
 )
 from sustainapp.Views.GetOrgLogs import AzureMonitorQueryView
+from sustainapp.Views.PostOrgLogs import LogUploadView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -278,4 +279,5 @@ urlpatterns = [
         name="get_climatiq_data",
     ),
     path("get_org_logs/", AzureMonitorQueryView.as_view(), name="get_org_logs"),
+    path("post_logs/", LogUploadView.as_view(), name='post-org-logs')
 ]

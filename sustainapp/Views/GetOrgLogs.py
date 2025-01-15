@@ -35,7 +35,7 @@ class AzureMonitorQueryView(APIView):
         # Example of a valid KQL query
         query = """
         AppLogTable_CL
-        | where TimeGenerated >= ago(1d)
+        | where TimeGenerated >= ago(5d)
         | project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole, Logs, Organization,IPAddress
         | order by TimeGenerated desc
         """

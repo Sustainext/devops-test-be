@@ -234,7 +234,7 @@ class CreateOrUpdateFieldGroup(APIView):
             sanitized_result = sanitize_ordered_dict(raw_response.data)
             diff_string = compare_objects( sanitized_result,form_data)
             print(diff_string)
-            action_type = 'Row update'
+            action_type = 'Row create'
             # eventtype-collect, event_details - form_data[0.key]
             # Action - row created, status - Success, user email = , user role
             # User role, date time, IP Address
@@ -245,7 +245,7 @@ class CreateOrUpdateFieldGroup(APIView):
                 raw_response.data = form_data
                 # ? Should we also update the user field on who has latest updated the data?
                 raw_response.save()
-                action_type = 'Row create'
+                action_type = 'Row Update'
 
             logger.info("status check")
             logger.info(f"RawResponse: {raw_response}")
