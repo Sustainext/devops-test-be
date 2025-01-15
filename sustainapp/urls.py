@@ -43,9 +43,7 @@ from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
 )
-from sustainapp.Views.Analyse.Social.DiversityAndInclusionSecondScreen import (
-    DiversityAndInclusionFirstScreenAnalyse,
-)
+
 from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
     SupplierSocialAssessmentView,
 )
@@ -174,14 +172,9 @@ urlpatterns = [
         name="get_ohs_analysis",
     ),
     path(
-        "get_diversity_inclusion_second_screen_analyse/",
+        "get_diversity_inclusion_analyse/",
         DiversityAndInclusionAnalyse.as_view(),
         name="get_diversity_inclusion_analysis",
-    ),
-    path(
-        "get_diversity_inclusion_first_screen_analyse/",
-        DiversityAndInclusionFirstScreenAnalyse.as_view(),
-        name="get_diversity_inclusion_second_screen_analyse",
     ),
     path(
         "get_supplier_social_assessment_analysis/",
