@@ -1,41 +1,41 @@
 # loguploader/views.py
 from django.http import JsonResponse
-from django.views import View
-from azurelogs.azure_log_uploader import AzureLogUploader  # Import your AzureLogUploader class
-import urllib.parse
+from rest_framework.views import APIView
+from azurelogs.azure_log_uploader import (
+    AzureLogUploader,
+)
 
-class LogUploadView(View):
+
+class LogUploadView(APIView):
     def post(self, request):
         try:
-            # Decode and parse the form-encoded data from the request body
-            body_unicode = request.body.decode('utf-8')  # Decode bytes to string
-            body_data = urllib.parse.parse_qs(body_unicode)  # Parse query string
-            
-            # Extract individual fields from parsed data
-            event_type = body_data.get('EventType', [None])[0]
-            time_generated = body_data.get('TimeGenerated', [None])[0]
-            event_details = body_data.get('EventDetails', [None])[0]
-            action_type = body_data.get('Action', [None])[0]
-            status = body_data.get('Status', [None])[0]
-            user_email = body_data.get('UserEmail', [None])[0]
-            user_role = body_data.get('UserRole', [None])[0]
-            logs = body_data.get('Logs', [None])[0]
-            organization = body_data.get('Organization', [None])[0]
-            ip_address = body_data.get('IPAddress', [None])[0]
+            # Extract data from the request
+            event_type = request.data.get("event_type")
+            time_generated = request.data.get("time_generated")
+            event_details = request.data.get("event_details")
+            action_type = request.data.get("action_type")
+            status = request.data.get("status")
+            user_email = request.data.get("user_email")
+            user_role = request.data.get("user_role")
+            logs = request.data.get("logs")
+            organization = request.data.get("organization")
+            ip_address = request.data.get("ip_address")
 
             # Prepare log data for uploading
-            log_data = {
-                "EventType": event_type,
-                "TimeGenerated": time_generated,
-                "EventDetails": event_details,
-                "Action": action_type,
-                "Status": status,
-                "UserEmail": user_email,
-                "UserRole": user_role,
-                "Logs": logs,
-                "Organization": organization,
-                "IPAddress": ip_address,
-            }
+            log_data = [
+                {
+                    "EventType": event_type,
+                    "TimeGenerated": time_generated,
+                    "EventDetails": event_details,
+                    "Action": action_type,
+                    "Status": status,
+                    "UserEmail": user_email,
+                    "UserRole": user_role,
+                    "Logs": logs,
+                    "Organization": organization,
+                    "IPAddress": ip_address,
+                }
+            ]
 
             # Initialize AzureLogUploader and upload logs
             uploader = AzureLogUploader()

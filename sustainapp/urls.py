@@ -279,5 +279,5 @@ urlpatterns = [
         name="get_climatiq_data",
     ),
     path("get_org_logs/", AzureMonitorQueryView.as_view(), name="get_org_logs"),
-    path("post_logs/", LogUploadView.as_view(), name='post-org-logs')
+    path("post_logs/", LogUploadView.as_view(), name="post-org-logs"),
 ]
