@@ -243,6 +243,68 @@ class EmploymentAnalyzeView(APIView):
         )
         return local_response_data
 
+    def get_diversity_of_the_board(self, slug):  # 405-1
+        data_points = (
+            DataPoint.objects.filter(
+                client_id=self.request.user.client.id,
+                path__slug__in=self.slugs,
+            )
+            .filter(filter_by_start_end_dates(self.start, self.end))
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
+            )
+        )
+
+        local_data = collect_data_by_raw_response_and_index(
+            data_points.filter(path__slug=slug)
+        )
+        local_response = list()
+        for category_data in local_data:
+            local_response.append(
+                {
+                    "Category": category_data["category"],
+                    "percentage_of_female_with_org_governance": safe_divide_percentage(
+                        int(category_data["female"]), int(category_data["totalGender"])
+                    ),
+                    "percentage_of_male_with_org_governance": safe_divide_percentage(
+                        int(category_data["male"]), int(category_data["totalGender"])
+                    ),
+                    "percentage_of_non_binary_with_org_governance": safe_divide_percentage(
+                        int(category_data["nonBinary"]),
+                        int(category_data["totalGender"]),
+                    ),
+                    "percentage_of_employees_within_30_age_group": safe_divide_percentage(
+                        int(category_data["lessThan30"]), int(category_data["totalAge"])
+                    ),
+                    "percentage_of_employees_within_30_to_50_age_group": safe_divide_percentage(
+                        int(category_data["between30and50"]),
+                        int(category_data["totalAge"]),
+                    ),
+                    "percentage_of_employees_more_than_50_age_group": safe_divide_percentage(
+                        int(category_data["moreThan50"]), int(category_data["totalAge"])
+                    ),
+                    "percentage_of_employees_in_minority_group": safe_divide_percentage(
+                        int(category_data["minorityGroup"]),
+                        (
+                            int(category_data["vulnerableCommunities"])
+                            + int(category_data["minorityGroup"])
+                        ),
+                    ),
+                    "percentage_of_employees_in_vulnerable_communities": safe_divide_percentage(
+                        int(category_data["vulnerableCommunities"]),
+                        (
+                            int(category_data["vulnerableCommunities"])
+                            + int(category_data["minorityGroup"])
+                        ),
+                    ),
+                }
+            )
+        return local_response
+
     def get_response_dictionaries(self):
         new_employee_reponse_table = {
             # permanent
@@ -1822,6 +1884,11 @@ class EmploymentAnalyzeView(APIView):
         return_to_work_rate_and_retention_rate_of_employee.append(retention_rate)
         response_data["return_to_work_rate_and_retention_rate_of_employee"] = (
             return_to_work_rate_and_retention_rate_of_employee
+        )
+        response_data["number_of_employee_per_employee_category"] = (
+            self.get_diversity_of_the_board(
+                slug="gri-social-diversity_of_board-405-1b-number_of_employee"
+            )
         )
 
         return Response({"data": response_data}, status=status.HTTP_200_OK)

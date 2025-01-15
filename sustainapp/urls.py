@@ -11,9 +11,6 @@ from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.EmissionTask import EmissionTask
 from sustainapp.Views.AssignedEmissionTask import AssignedEmissionTask
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
-from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import (
-    MarketPresenceAnalyseView,
-)
 from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
     CommunicationTrainingAnalyzeView,
 )
@@ -46,9 +43,7 @@ from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
 )
-from sustainapp.Views.Analyse.Social.DiversityAndInclusionSecondScreen import (
-    DiversityAndInclusionFirstScreenAnalyse,
-)
+
 from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
     SupplierSocialAssessmentView,
 )
@@ -177,14 +172,9 @@ urlpatterns = [
         name="get_ohs_analysis",
     ),
     path(
-        "get_diversity_inclusion_second_screen_analyse/",
+        "get_diversity_inclusion_analyse/",
         DiversityAndInclusionAnalyse.as_view(),
         name="get_diversity_inclusion_analysis",
-    ),
-    path(
-        "get_diversity_inclusion_first_screen_analyse/",
-        DiversityAndInclusionFirstScreenAnalyse.as_view(),
-        name="get_diversity_inclusion_second_screen_analyse",
     ),
     path(
         "get_supplier_social_assessment_analysis/",
@@ -243,11 +233,6 @@ urlpatterns = [
         name="get_general_collective_bargaining_analysis",
     ),
     path("track_dashboards/", TrackDashboardAPIView.as_view(), name="track_dashboards"),
-    path(
-        "get_economic_market_presence/",
-        MarketPresenceAnalyseView.as_view(),
-        name="get_economic_market_presence",
-    ),
     path(
         "get_economic_operations_assessed/",
         OperationsAssessedAnalyzeView.as_view(),
