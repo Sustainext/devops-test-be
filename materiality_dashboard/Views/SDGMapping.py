@@ -10,8 +10,8 @@ all_sdgs = [
     {
         "name": "SDG-9",
         "text_color": "#ffffff",
-        "bg_color": "#004c3f",
-    },  # Color not found
+        "bg_color": "#f36d25",
+    },
     {"name": "SDG-10", "text_color": "#ffffff", "bg_color": "#e01a83"},
     {"name": "SDG-11", "text_color": "#ffffff", "bg_color": "#00689d"},
     {"name": "SDG-12", "text_color": "#ffffff", "bg_color": "#ca8a04"},
@@ -22,8 +22,8 @@ all_sdgs = [
     {
         "name": "SDG-17",
         "text_color": "#ffffff",
-        "bg_color": "#00689d",
-    },  # Color not found
+        "bg_color": "#19486a",
+    },
 ]
 
 
