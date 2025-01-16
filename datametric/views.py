@@ -339,7 +339,7 @@ class GetComputedClimatiqValue(APIView):
             year=year,
             locale=location_obj,
             path=path,
-        )
+        ).select_related("raw_response")
         resp_data = {"result": []}
         for datapoints in datapoint:
             values = datapoints.json_holder
