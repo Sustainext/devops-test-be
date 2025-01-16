@@ -355,6 +355,7 @@ class GetComputedClimatiqValue(APIView):
                 resp_data["scope_wise_data"][emission_data.get("scope")] += Decimal(
                     emission_data.get("co2e", 0)
                 )
+            resp_data["total_emission"] = sum(resp_data["scope_wise_data"].values())
         except KeyError as e:
             logger.error(f"KeyError: {e}")
             resp_data["scope_wise_data"] = {"scope_1": 0, "scope_2": 0, "scope_3": 0}
