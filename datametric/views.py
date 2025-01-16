@@ -27,11 +27,11 @@ from collections import OrderedDict
 uploader = AzureLogUploader()
 
 
-
 #             # Upload logs only when there is a change
-#             
+#
 
 logger = getLogger("file")
+
 
 def sanitize_ordered_dict(data):
     if isinstance(data, OrderedDict):
@@ -44,14 +44,15 @@ def sanitize_ordered_dict(data):
         # Return the data as is if it's neither an OrderedDict nor a list
         return data
 
+
 def compare_objects(obj1, obj2):
     """
     Compare two objects and return a string describing their differences.
-    
+
     Args:
         obj1: First object (original data)
         obj2: Second object (new data)
-        
+
     Returns:
         str: A description of the differences found or error message
     """
@@ -67,7 +68,7 @@ def compare_objects(obj1, obj2):
                 return "A new row is created"
             else:
                 return f"{added_rows} new rows are created"
-            
+
         # Handle case where obj2 has lesser length than obj1
         if len(obj2) < len(obj1):
             deleted_rows = len(obj1) - len(obj2)
@@ -75,12 +76,12 @@ def compare_objects(obj1, obj2):
                 return "A row is deleted"
             else:
                 return f"{deleted_rows} rows are deleted"
-            
+
         if not obj2:
             return "Error: Second object is empty"
 
         differences = []
-        
+
         # Iterate through each entry
         for i, (entry1, entry2) in enumerate(zip(obj1, obj2)):
             try:
@@ -88,9 +89,9 @@ def compare_objects(obj1, obj2):
                 for key in entry1.keys():
                     value1 = str(entry1[key])
                     value2 = str(entry2[key])
-                    
+
                     if value1 != value2:
-                        if key == 'Quantity':
+                        if key == "Quantity":
                             differences.append(
                                 f"{key} changed from {value1} {entry1.get('Unit', '')} "
                                 f"to {value2} {entry2.get('Unit', '')}"
@@ -99,19 +100,20 @@ def compare_objects(obj1, obj2):
                             differences.append(
                                 f"{key} changed from '{value1}' to '{value2}'"
                             )
-                            
+
             except KeyError as e:
                 return f"Error: Missing key {str(e)} in objects at index {i}"
             except Exception as e:
                 return f"Error: Invalid object structure at index {i}: {str(e)}"
-        
+
         if not differences:
             return "No differences found between the objects."
-        
+
         return "\n".join(differences)
-        
+
     except Exception as e:
         return f"Error: {str(e)}"
+
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
@@ -230,9 +232,9 @@ class CreateOrUpdateFieldGroup(APIView):
             )
             # Sanitize the data
             sanitized_result = sanitize_ordered_dict(raw_response.data)
-            diff_string = compare_objects( sanitized_result,form_data)
+            diff_string = compare_objects(sanitized_result, form_data)
             print(diff_string)
-            action_type = 'Row create'
+            action_type = "Row create"
             # eventtype-collect, event_details - form_data[0.key]
             # Action - row created, status - Success, user email = , user role
             # User role, date time, IP Address
@@ -243,22 +245,18 @@ class CreateOrUpdateFieldGroup(APIView):
                 raw_response.data = form_data
                 # ? Should we also update the user field on who has latest updated the data?
                 raw_response.save()
-                action_type = 'Row Update'
+                action_type = "Row Update"
 
             logger.info("status check")
             logger.info(f"RawResponse: {raw_response}")
             logger.info(f"created: {created}")
             time_now = get_current_time_ist()
-            event_string = (
-                f"{path}\n"
-                f"New Value: 0\n"
-                f"Old Value: 0\n"
-            )
+            event_string = f"{path}\nNew Value: 0\nOld Value: 0\n"
             role = user_instance.custom_role
-            print(role, ' is the role name')
+            print(role, " is the role name")
             first_item = form_data[0]  # Get the first dictionary
             event_details = list(first_item.keys())[0]
-            print(organisation, ' is organization')
+            print(organisation, " is organization")
             log_data = [
                 {
                     "EventType": "Collect",
@@ -270,7 +268,7 @@ class CreateOrUpdateFieldGroup(APIView):
                     "UserRole": user_instance.custom_role.name,
                     "Logs": diff_string,
                     "Organization": organisation,
-                    "IPAddress": '192.168.1.1'
+                    "IPAddress": "192.168.1.1",
                 },
             ]
             print(log_data)
@@ -347,7 +345,7 @@ class GetComputedClimatiqValue(APIView):
             values = datapoints.json_holder
             for value in values:
                 value["updated_at"] = datapoints.raw_response.updated_at
-                resp_data.append(value)
+                resp_data["result"].append(value)
 
         for data in resp_data["result"]:
             data["co2e"] = safe_divide(data["co2e"], 1000)
