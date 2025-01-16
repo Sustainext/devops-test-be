@@ -156,19 +156,27 @@ class DiversityAndInclusionAnalyse(APIView):
         return res
 
     def process_market_presence(self, path, filter_by):
-        raw_resp_1a = RawResponse.objects.filter(
-            **filter_by,
-            path__slug=path,
-            client_id=self.client_id,
-            year=self.year,
-        ).first()
+        raw_resp_1a = (
+            RawResponse.objects.filter(
+                **filter_by,
+                path__slug=path,
+                client_id=self.client_id,
+                year__range=(self.start.year, self.end.year),
+            )
+            .order_by("-year")
+            .first()
+        )
 
-        raw_resp_1c = RawResponse.objects.filter(
-            **filter_by,
-            path__slug="gri-economic-ratios_of_standard_entry-202-1c-location",
-            client_id=self.client_id,
-            year=self.year,
-        ).first()
+        raw_resp_1c = (
+            RawResponse.objects.filter(
+                **filter_by,
+                path__slug="gri-economic-ratios_of_standard_entry-202-1c-location",
+                client_id=self.client_id,
+                year__range=(self.start.year, self.end.year),
+            )
+            .order_by("-year")
+            .first()
+        )
         if raw_resp_1a and raw_resp_1c:
             if (
                 raw_resp_1a.data[0]["Q4"]
@@ -180,27 +188,37 @@ class DiversityAndInclusionAnalyse(APIView):
             else:
                 raise KeyError("Please add data and also match the currency")
 
-        elif not raw_resp_1a and not raw_resp_1c and self.corp is None:
+        elif not raw_resp_1a and not raw_resp_1c and self.corporate is None:
             logger.error(
-                f"Economic/MarketPresenceAnalyse : There is no data for the organization {self.org} and the path {path} and the year {self.year}, So proceeding to check for its Corporates"
+                f"Economic/MarketPresenceAnalyse : There is no data for the organization {self.organisation} and the path {path} and the year between {self.start.year} and {self.end.year}, So proceeding to check for its Corporates"
             )
-            corps_of_org = Corporateentity.objects.filter(organization__id=self.org.id)
+            corps_of_org = Corporateentity.objects.filter(
+                organization__id=self.organisation.id
+            )
             corp_res = []
             for corp in corps_of_org:
-                raw_resp_1a = RawResponse.objects.filter(
-                    organization__id=self.org.id,
-                    corporate__id=corp.id,
-                    path__slug=path,
-                    client_id=self.client_id,
-                    year=self.year,
-                ).first()
-                raw_resp_1c = RawResponse.objects.filter(
-                    organization__id=self.org.id,
-                    corporate__id=corp.id,
-                    path__slug="gri-economic-ratios_of_standard_entry-202-1c-location",
-                    client_id=self.client_id,
-                    year=self.year,
-                ).first()
+                raw_resp_1a = (
+                    RawResponse.objects.filter(
+                        organization__id=self.organisation.id,
+                        corporate__id=corp.id,
+                        path__slug=path,
+                        client_id=self.client_id,
+                        year__range=(self.start.year, self.end.year),
+                    )
+                    .order_by("-year")
+                    .first()
+                )
+                raw_resp_1c = (
+                    RawResponse.objects.filter(
+                        organization__id=self.organisation.id,
+                        corporate__id=corp.id,
+                        path__slug="gri-economic-ratios_of_standard_entry-202-1c-location",
+                        client_id=self.client_id,
+                        year__range=(self.start.year, self.end.year),
+                    )
+                    .order_by("-year")
+                    .first()
+                )
 
                 if raw_resp_1a and raw_resp_1c:
                     corp_res.extend(
@@ -230,10 +248,10 @@ class DiversityAndInclusionAnalyse(APIView):
 
         filter_by = {}
 
-        filter_by["organization__id"] = self.org.id
+        filter_by["organization__id"] = self.organisation.id
 
-        if self.corp is not None:
-            filter_by["corporate__id"] = self.corp.id
+        if self.corporate is not None:
+            filter_by["corporate__id"] = self.corporate.id
         else:
             filter_by["corporate__id"] = None
 
