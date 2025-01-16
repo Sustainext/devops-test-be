@@ -17,6 +17,7 @@ from datametric.View.Training_EmpPerfCareerDvlpmnt import (
     extract_from_diversity_employee,
 )
 from common.utils.value_types import safe_divide
+from decimal import Decimal
 import traceback
 import sys
 
@@ -218,17 +219,17 @@ class GetComputedClimatiqValue(APIView):
         resp_data = {"result": []}
         for datapoints in datapoint:
             values = datapoints.json_holder
-            resp_data["result"].extend(values)
+            for value in values:
+                value["updated_at"] = datapoints.raw_response.updated_at
+                resp_data.append(value)
+
+        for data in resp_data["result"]:
+            data["co2e"] = safe_divide(data["co2e"], 1000)
         resp_data["scope_wise_data"] = {"scope_1": 0, "scope_2": 0, "scope_3": 0}
         try:
             for emission_data in resp_data["result"]:
-                resp_data["scope_wise_data"][emission_data.get("scope")] += (
+                resp_data["scope_wise_data"][emission_data.get("scope")] += Decimal(
                     emission_data.get("co2e", 0)
-                )
-            for scope in resp_data["scope_wise_data"]:
-                resp_data["scope_wise_data"][scope] = safe_divide(
-                    resp_data["scope_wise_data"][scope],
-                    1000,
                 )
         except KeyError as e:
             logger.error(f"KeyError: {e}")
