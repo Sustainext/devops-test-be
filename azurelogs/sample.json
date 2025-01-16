@@ -1,0 +1,62 @@
+[
+    {
+        "TimeGenerated": "2024-01-06T12:05:00Z",
+        "EventType": "Password Change",
+        "EventDetails": "User changed password successfully",
+        "Action": "Change Password",
+        "Status": "Success",
+        "UserEmail": "user1@example.com",
+        "UserRole": "Admin",
+        "IPAddress": "192.168.1.1",
+        "Logs": "Collect > Environment",
+        "Organization": "Organization A"
+    },
+    {
+        "TimeGenerated": "2024-01-07T09:15:00Z",
+        "EventType": "Login Attempt",
+        "EventDetails": "User logged in successfully",
+        "Action": "Login",
+        "Status": "Success",
+        "UserEmail": "user2@example.com",
+        "UserRole": "User",
+        "IPAddress": "192.168.1.2",
+        "Logs": "Access > Dashboard",
+        "Organization": "Organization B"
+    },
+    {
+        "TimeGenerated": "2024-01-08T11:30:00Z",
+        "EventType": "Profile Update",
+        "EventDetails": "User updated profile information",
+        "Action": "Update Profile",
+        "Status": "Success",
+        "UserEmail": "user3@example.com",
+        "UserRole": "Admin",
+        "IPAddress": "192.168.1.3",
+        "Logs": "<Environment>",
+        "Organization": "Organization C"
+    },
+    {
+      "TimeGenerated": "2024-01-09T10:05:00Z", 
+      "EventType":"Logout", 
+      "EventDetails":"User logged out successfully", 
+      "Action":"Logout", 
+      "Status":"Success", 
+      "UserEmail":"user4@example.com", 
+      "UserRole":"Admin", 
+      "IPAddress":"192.168.1.4", 
+      "Logs":"Access > Logout", 
+      "Organization":"Organization D"
+    },
+    {
+      "TimeGenerated":"2024-01-10T13:20:00Z", 
+      "EventType":"File Upload", 
+      "EventDetails":"User uploaded a file successfully", 
+      "Action":"Upload File", 
+      "Status":"Success", 
+      "UserEmail":"user5@example.com", 
+      "UserRole":"User", 
+      "IPAddress":"192.168.1.5", 
+      "Logs":"Documents > Upload", 
+      "Organization":"Organization E"
+    }
+]

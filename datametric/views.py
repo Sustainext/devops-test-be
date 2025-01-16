@@ -20,9 +20,98 @@ from common.utils.value_types import safe_divide
 from decimal import Decimal
 import traceback
 import sys
+from azurelogs.azure_log_uploader import AzureLogUploader
+from azurelogs.time_utils import get_current_time_ist
+from collections import OrderedDict
+
+uploader = AzureLogUploader()
+
+
+
+#             # Upload logs only when there is a change
+#             
 
 logger = getLogger("file")
 
+def sanitize_ordered_dict(data):
+    if isinstance(data, OrderedDict):
+        # Convert OrderedDict to a regular dict
+        return {k: sanitize_ordered_dict(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        # Recursively sanitize each item in the list
+        return [sanitize_ordered_dict(item) for item in data]
+    else:
+        # Return the data as is if it's neither an OrderedDict nor a list
+        return data
+
+def compare_objects(obj1, obj2):
+    """
+    Compare two objects and return a string describing their differences.
+    
+    Args:
+        obj1: First object (original data)
+        obj2: Second object (new data)
+        
+    Returns:
+        str: A description of the differences found or error message
+    """
+    try:
+        # Check if inputs are valid lists
+        if not isinstance(obj1, list) or not isinstance(obj2, list):
+            return "Error: Both inputs must be lists"
+
+        # Handle case where obj1 is empty or has lesser length
+        if not obj1 or len(obj1) < len(obj2):
+            added_rows = len(obj2) - len(obj1) if obj1 else len(obj2)
+            if added_rows == 1:
+                return "A new row is created"
+            else:
+                return f"{added_rows} new rows are created"
+            
+        # Handle case where obj2 has lesser length than obj1
+        if len(obj2) < len(obj1):
+            deleted_rows = len(obj1) - len(obj2)
+            if deleted_rows == 1:
+                return "A row is deleted"
+            else:
+                return f"{deleted_rows} rows are deleted"
+            
+        if not obj2:
+            return "Error: Second object is empty"
+
+        differences = []
+        
+        # Iterate through each entry
+        for i, (entry1, entry2) in enumerate(zip(obj1, obj2)):
+            try:
+                # Compare each field in the dictionaries
+                for key in entry1.keys():
+                    value1 = str(entry1[key])
+                    value2 = str(entry2[key])
+                    
+                    if value1 != value2:
+                        if key == 'Quantity':
+                            differences.append(
+                                f"{key} changed from {value1} {entry1.get('Unit', '')} "
+                                f"to {value2} {entry2.get('Unit', '')}"
+                            )
+                        else:
+                            differences.append(
+                                f"{key} changed from '{value1}' to '{value2}'"
+                            )
+                            
+            except KeyError as e:
+                return f"Error: Missing key {str(e)} in objects at index {i}"
+            except Exception as e:
+                return f"Error: Invalid object structure at index {i}: {str(e)}"
+        
+        if not differences:
+            return "No differences found between the objects."
+        
+        return "\n".join(differences)
+        
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):
@@ -139,16 +228,53 @@ class CreateOrUpdateFieldGroup(APIView):
                     "user": user_instance,
                 },
             )
-
+            # Sanitize the data
+            sanitized_result = sanitize_ordered_dict(raw_response.data)
+            diff_string = compare_objects( sanitized_result,form_data)
+            print(diff_string)
+            action_type = 'Row create'
+            # eventtype-collect, event_details - form_data[0.key]
+            # Action - row created, status - Success, user email = , user role
+            # User role, date time, IP Address
+            # Logs - Collect -> Environment -> Emissions -> GHG Emissions -> Organization -> Corporate
+            # -> Sub Category -> Activity -> Year -> Month -> Unit
             if not created:
                 # If the RawResponse already exists, update its data
                 raw_response.data = form_data
                 # ? Should we also update the user field on who has latest updated the data?
                 raw_response.save()
+                action_type = 'Row Update'
 
             logger.info("status check")
             logger.info(f"RawResponse: {raw_response}")
             logger.info(f"created: {created}")
+            time_now = get_current_time_ist()
+            event_string = (
+                f"{path}\n"
+                f"New Value: 0\n"
+                f"Old Value: 0\n"
+            )
+            role = user_instance.custom_role
+            print(role, ' is the role name')
+            first_item = form_data[0]  # Get the first dictionary
+            event_details = list(first_item.keys())[0]
+            print(organisation, ' is organization')
+            log_data = [
+                {
+                    "EventType": "Collect",
+                    "TimeGenerated": time_now,
+                    "EventDetails": event_details,
+                    "Action": action_type,
+                    "Status": "Success",
+                    "UserEmail": user_instance.email,
+                    "UserRole": user_instance.custom_role.name,
+                    "Logs": diff_string,
+                    "Organization": organisation,
+                    "IPAddress": '192.168.1.1'
+                },
+            ]
+            print(log_data)
+            uploader.upload_logs(log_data)
             return Response(
                 {"message": "Form data saved successfully."},
                 status=status.HTTP_200_OK,
