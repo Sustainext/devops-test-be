@@ -247,7 +247,7 @@ class EmploymentAnalyzeView(APIView):
         data_points = (
             DataPoint.objects.filter(
                 client_id=self.request.user.client.id,
-                path__slug__in=self.slugs,
+                path__slug=slug,
             )
             .filter(filter_by_start_end_dates(self.start, self.end))
             .filter(
