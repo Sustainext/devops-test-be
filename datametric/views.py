@@ -1,5 +1,3 @@
-from rest_framework import generics
-
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -18,6 +16,7 @@ from logging import getLogger
 from datametric.View.Training_EmpPerfCareerDvlpmnt import (
     extract_from_diversity_employee,
 )
+from common.utils.value_types import safe_divide
 import traceback
 import sys
 
@@ -25,7 +24,6 @@ logger = getLogger("file")
 
 
 class TestView(APIView):
-
     def get(self, request, *args, **kwargs):
         return Response("User created successfully", status=status.HTTP_200_OK)
 
@@ -37,7 +35,6 @@ class FieldGroupListView(APIView):
         validation_serializer = FieldGroupGetSerializer(data=request.query_params)
         validation_serializer.is_valid(raise_exception=True)
         path_slug = validation_serializer.validated_data.get("path_slug")
-        # location = validation_serializer.validated_data.get("location")
         year = validation_serializer.validated_data.get("year")
         month = validation_serializer.validated_data.get("month", None)
 
@@ -211,27 +208,32 @@ class GetComputedClimatiqValue(APIView):
         user_instance: CustomUser = self.request.user
         client_instance = user_instance.client
         path = Path.objects.filter(slug="gri-collect-emissions-scope-combined").first()
+        datapoint = DataPoint.objects.filter(
+            client_id=client_instance.id,
+            month=month,
+            year=year,
+            locale=location_obj,
+            path=path,
+        )
+        resp_data = {"result": []}
+        for datapoints in datapoint:
+            values = datapoints.json_holder
+            resp_data["result"].extend(values)
+        resp_data["scope_wise_data"] = {"scope_1": 0, "scope_2": 0, "scope_3": 0}
         try:
-            datapoint = DataPoint.objects.filter(
-                client_id=client_instance.id,
-                month=month,
-                year=year,
-                locale=location_obj,
-                path=path,
-            )
-            resp_data = {"result": []}
-            for datapoints in datapoint:
-                values = datapoints.json_holder
-                resp_data["result"].extend(values)
-            return Response(resp_data, status=status.HTTP_200_OK)
-        except Exception as e:
-            logger.error(f"Exception occurred: {e}", exc_info=True)
-            return Response(
-                {
-                    "message": "An unexpected error occurred for GetComputedClimatiqValue "
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            for emission_data in resp_data["result"]:
+                resp_data["scope_wise_data"][emission_data.get("scope")] += (
+                    emission_data.get("co2e", 0)
+                )
+            for scope in resp_data["scope_wise_data"]:
+                resp_data["scope_wise_data"][scope] = safe_divide(
+                    resp_data["scope_wise_data"][scope],
+                    1000,
+                )
+        except KeyError as e:
+            logger.error(f"KeyError: {e}")
+            resp_data["scope_wise_data"] = {"scope_1": 0, "scope_2": 0, "scope_3": 0}
+        return Response(resp_data, status=status.HTTP_200_OK)
 
 
 class UpdateFieldGroupView(APIView):

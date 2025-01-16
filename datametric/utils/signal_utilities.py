@@ -1,7 +1,6 @@
 from datametric.utils.climatiq import Climatiq
 from datametric.models import DataMetric, RawResponse, DataPoint
 import logging
-from django.db.models.signals import post_save
 
 
 logger = logging.getLogger("custom_logger")
@@ -62,6 +61,7 @@ def create_or_update_data_points(
                 "month": raw_response.month,
                 "user_id": raw_response.user.id,
                 "client_id": raw_response.user.client.id,
+                "boolean_holder": boolean_value,
             },
         )
         data_point.save()
@@ -81,6 +81,7 @@ def process_raw_response_data(
     raw_response: RawResponse,
 ):
     for key, value in data_point_dict.items():
-        data_metric,_ = DataMetric.objects.get_or_create(name=key,path=raw_response.path,defaults={"response_type":"String"})
+        data_metric, _ = DataMetric.objects.get_or_create(
+            name=key, path=raw_response.path, defaults={"response_type": "String"}
+        )
         create_or_update_data_points(data_metric, value, index, raw_response)
-
