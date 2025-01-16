@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from azure.monitor.query import LogsQueryClient
@@ -12,11 +11,11 @@ class AzureMonitorQueryView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        start_date = request.query_params.get("start_date")
-        end_date = request.query_params.get("end_date")
+        start_date = request.query_params.get("from_date")
+        end_date = request.query_params.get("to_date")
         if not start_date or not end_date:
             return Response(
-                {"error": "Both start date and end date are required."}, status=400
+                {"error": "Both from date and to date are required."}, status=400
             )
         # Retrieve Azure credentials from environment variables
         tenant_id = os.getenv("AZURE_LOG_TENANT_ID")

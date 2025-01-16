@@ -1,5 +1,4 @@
 from datametric.models import DataPoint, RawResponse, Path, DataMetric, EmissionAnalysis
-from authentication.models import CustomUser, Client
 import requests
 import logging
 import os
@@ -8,11 +7,13 @@ from datametric.data_types import ARRAY_OF_OBJECTS
 import decimal
 from django.template.defaultfilters import slugify
 from django.core.mail import EmailMessage
-from rest_framework.exceptions import APIException
+
 from django.conf import settings
 from sustainapp.models import ClientTaskDashboard
+import uuid
 
 logger = logging.getLogger("django")
+
 
 class Climatiq:
     """
@@ -69,7 +70,6 @@ class Climatiq:
             # if a rowType is assigned or rowType is not present
             # we can neglect calculating the emission for it
             if not row_type or row_type in ["default", "approved", "calculated"]:
-
                 if any(not emission.get(field) for field in required_fields):
                     # if the rowType is not present then mark it as default
                     if not row_type:
@@ -309,6 +309,10 @@ class Climatiq:
                 emission_data["Unit2"] = self.refined_raw_resp[index]["Emission"].get(
                     "Unit2"
                 )
+                emission_data["unique_id"] = self.refined_raw_resp[index][
+                    "Emission"
+                ].get("unique_id")
+                emission_data["scope"] = self.refined_raw_resp[index]["Emission"].get("scope")
                 logger.info(f"Emission data: {emission_data}")
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
@@ -327,11 +331,11 @@ class Climatiq:
         for index, emission_data in enumerate(response_data["results"]):
             if "error" in emission_data:
                 details = {
-                    "user":self.raw_response.user.username,
-                    "raw_response_id":self.raw_response.id,
+                    "user": self.raw_response.user.username,
+                    "raw_response_id": self.raw_response.id,
                     "scope": self.raw_response.path.slug,
-                    #* Get the complete folder path.
-                    "instance": os.path.abspath(__file__)
+                    # * Get the complete folder path.
+                    "instance": os.path.abspath(__file__),
                 }
                 # update the  raw_response's emissions to rowType = default where error is present
                 found_index = list(self.index_mapping_to_emissons.items())[index][0]
@@ -340,7 +344,7 @@ class Climatiq:
 
                 self.send_error_email(error_message)
 
-    def round_decimal_or_nulls(self, value, decimal_point=3):
+    def round_decimal_or_nulls(self, value, decimal_point=20):
         if not bool(value):
             return None
         elif isinstance(value, str):
@@ -362,24 +366,24 @@ class Climatiq:
                     "emission_id": emission["emission_factor"]["id"],
                     "activity_id": emission["emission_factor"]["activity_id"],
                     "co2e_total": self.round_decimal_or_nulls(
-                        emission["co2e"], 3
+                        emission["co2e"], 20
                     ),  # * This can also be None
                     "co2": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["co2"], 3
+                        emission["constituent_gases"]["co2"], 20
                     ),
                     "n2o": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["n2o"], 3
+                        emission["constituent_gases"]["n2o"], 20
                     ),
                     "co2e_other": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["co2e_other"], 3
+                        emission["constituent_gases"]["co2e_other"], 20
                     ),  # * This can also be None
                     "ch4": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["ch4"], 3
+                        emission["constituent_gases"]["ch4"], 20
                     ),
                     "calculation_method": emission["co2e_calculation_method"],
                     "category": emission["Category"],
                     "subcategory": emission["SubCategory"],
-                    "activity": f'{emission["Activity"].replace("(","").replace(")","")} - {emission["emission_factor"]["region"]} - {emission["emission_factor"]["year"]} - {emission["emission_factor"]["source_lca_activity"]}',
+                    "activity": f"{emission['Activity'].replace('(', '').replace(')', '')} - {emission['emission_factor']['region']} - {emission['emission_factor']['year']} - {emission['emission_factor']['source_lca_activity']}",
                     "region": emission["emission_factor"]["region"],
                     "name": emission["emission_factor"]["name"],
                     "unit": emission["activity_data"]["activity_unit"],
@@ -391,10 +395,27 @@ class Climatiq:
                     "quantity": self.round_decimal_or_nulls(emission.get("Quantity")),
                     "quantity2": self.round_decimal_or_nulls(emission.get("Quantity2")),
                     "type_of": emission["Activity"].split("-")[-1].strip(),
+                    "unique_id": emission.get("unique_id"),
                 },
             )
             emission_analyse.save()
             # ? What should be filtering factor for update_or_create? Emissions?
+
+    def modify_raw_response_with_uuid_and_scope(self):
+        """
+        Modifies the raw response with the uuid of the emission analysis.
+        """
+        scope_mapping = {
+            "gri-environment-emissions-301-a-scope-1": "scope_1",
+            "gri-environment-emissions-301-a-scope-2": "scope_2",
+            "gri-environment-emissions-301-a-scope-3": "scope_3",
+        }
+        for emission_dict in self.raw_response.data:
+            emission_dict["Emission"]["unique_id"] = str(uuid.uuid4())
+            emission_dict["Emission"]["scope"] = scope_mapping.get(
+                self.raw_response.path.slug
+            )
+        
 
     def create_calculated_data_point(self):
         """
@@ -402,6 +423,8 @@ class Climatiq:
         """
         # Check if the path slug matches the required pattern
         logger.info("Climatiq API Has been called")
+        logger.info("Original Response:")
+        self.modify_raw_response_with_uuid_and_scope()
         logger.info(self.raw_response)
         if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
             return None

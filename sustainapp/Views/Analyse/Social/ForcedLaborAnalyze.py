@@ -12,6 +12,7 @@ from logging import getLogger
 
 logger = getLogger("error.log")
 
+
 class ForcedLaborAnalyzeView(APIView):
 
     def call_common_code(self, path_slug, data_points):

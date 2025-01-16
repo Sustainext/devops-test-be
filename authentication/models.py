@@ -84,6 +84,7 @@ class CustomUser(AbstractUser):
         blank=True,
         default=Client.get_default_client,
     )
+    old_password = models.CharField(max_length=128, blank=True, null=True)
 
     # Fix for the reverse accessor clash
     groups = models.ManyToManyField(
@@ -179,6 +180,7 @@ class UserSafeLock(AbstractModel):
     is_locked = models.BooleanField(default=False)
     failed_login_attempts = models.IntegerField(default=0)
     locked_at = models.DateTimeField(null=True, blank=True)
+    last_failed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"SafeLock for {self.user.username}"

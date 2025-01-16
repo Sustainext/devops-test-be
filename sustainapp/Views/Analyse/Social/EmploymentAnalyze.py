@@ -226,9 +226,84 @@ class EmploymentAnalyzeView(APIView):
                 "yearsold30": yearsold30,
                 "yearsold50": yearsold50,
                 "yearsold30to50": yearsold30to50,
+                "total": key_average,
             }
             local_response_data.append(local_response_dict)
+        local_response_data.append(
+            {
+                "type_of_employee": "Total",
+                "total": sum(
+                    [
+                        d["total"]
+                        for d in local_response_data
+                        if d["type_of_employee"] != "Total"
+                    ]
+                ),
+            }
+        )
         return local_response_data
+
+    def get_diversity_of_the_board(self, slug):  # 405-1
+        data_points = (
+            DataPoint.objects.filter(
+                client_id=self.request.user.client.id,
+                path__slug=slug,
+            )
+            .filter(filter_by_start_end_dates(self.start, self.end))
+            .filter(
+                get_raw_response_filters(
+                    organisation=self.organisation,
+                    corporate=self.corporate,
+                    location=self.location,
+                )
+            )
+        )
+
+        local_data = collect_data_by_raw_response_and_index(
+            data_points.filter(path__slug=slug)
+        )
+        local_response = list()
+        for category_data in local_data:
+            local_response.append(
+                {
+                    "Category": category_data["category"],
+                    "percentage_of_female_with_org_governance": safe_divide_percentage(
+                        int(category_data["female"]), int(category_data["totalGender"])
+                    ),
+                    "percentage_of_male_with_org_governance": safe_divide_percentage(
+                        int(category_data["male"]), int(category_data["totalGender"])
+                    ),
+                    "percentage_of_non_binary_with_org_governance": safe_divide_percentage(
+                        int(category_data["nonBinary"]),
+                        int(category_data["totalGender"]),
+                    ),
+                    "percentage_of_employees_within_30_age_group": safe_divide_percentage(
+                        int(category_data["lessThan30"]), int(category_data["totalAge"])
+                    ),
+                    "percentage_of_employees_within_30_to_50_age_group": safe_divide_percentage(
+                        int(category_data["between30and50"]),
+                        int(category_data["totalAge"]),
+                    ),
+                    "percentage_of_employees_more_than_50_age_group": safe_divide_percentage(
+                        int(category_data["moreThan50"]), int(category_data["totalAge"])
+                    ),
+                    "percentage_of_employees_in_minority_group": safe_divide_percentage(
+                        int(category_data["minorityGroup"]),
+                        (
+                            int(category_data["vulnerableCommunities"])
+                            + int(category_data["minorityGroup"])
+                        ),
+                    ),
+                    "percentage_of_employees_in_vulnerable_communities": safe_divide_percentage(
+                        int(category_data["vulnerableCommunities"]),
+                        (
+                            int(category_data["vulnerableCommunities"])
+                            + int(category_data["minorityGroup"])
+                        ),
+                    ),
+                }
+            )
+        return local_response
 
     def get_response_dictionaries(self):
         new_employee_reponse_table = {
@@ -459,6 +534,7 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["new_employee_permanent_50_percent"] = (
             ne_permanent_50_pc
         )
+        new_employee_reponse_table["new_employee_permanent_total"] = total_permanent
 
         # new_employee temporary
 
@@ -530,7 +606,7 @@ class EmploymentAnalyzeView(APIView):
             ne_temp_30_50_pc
         )
         new_employee_reponse_table["new_employee_temporary_50_percent"] = ne_temp_50_pc
-
+        new_employee_reponse_table["new_employee_temporary_total"] = total_temporary
         # new_employee non guaranteed
 
         if dp_employ_non_guaranteed:
@@ -605,6 +681,7 @@ class EmploymentAnalyzeView(APIView):
         new_employee_reponse_table["new_employee_non_guaranteed_50_percent"] = (
             ne_ng_50_pc
         )
+        new_employee_reponse_table["new_employee_non_guaranteed_total"] = total_ng
 
         # new_employee full time
 
@@ -676,7 +753,7 @@ class EmploymentAnalyzeView(APIView):
             ne_ft_30_50_pc
         )
         new_employee_reponse_table["new_employee_full_time_50_percent"] = ne_ft_50_pc
-
+        new_employee_reponse_table["new_employee_full_time_total"] = total_ft
         # new_employee part time
 
         if dp_employ_part_time:
@@ -747,7 +824,7 @@ class EmploymentAnalyzeView(APIView):
             ne_pt_30_50_pc
         )
         new_employee_reponse_table["new_employee_part_time_50_percent"] = ne_pt_50_pc
-
+        new_employee_reponse_table["new_employee_part_time_total"] = total_pt
         # employee Turnover Response table
 
         dp_employ_to_full_time = []
@@ -862,6 +939,7 @@ class EmploymentAnalyzeView(APIView):
         employee_turnover_reponse_table["employee_turnover_permanent_50_percent"] = (
             et_permanent_50_pc
         )
+        employee_turnover_reponse_table["employee_turnover_total"] = total_permanent_eto
 
         # new_employee_turnover_temporary
 
@@ -971,6 +1049,9 @@ class EmploymentAnalyzeView(APIView):
         )
         employee_turnover_reponse_table["employee_turnover_temporary_50_percent"] = (
             et_temp_50_pc
+        )
+        employee_turnover_reponse_table["employee_turnover_temporary_total"] = (
+            total_temporary_eto
         )
 
         # new_employee_turover _non guaranteed
@@ -1181,6 +1262,7 @@ class EmploymentAnalyzeView(APIView):
         employee_turnover_reponse_table["employee_turnover_full_time_50_percent"] = (
             et_ft_50_pc
         )
+        employee_turnover_reponse_table["employee_turnover_total"] = total_ft_eto
 
         # new_employee_turover _parttime
 
@@ -1283,6 +1365,7 @@ class EmploymentAnalyzeView(APIView):
         employee_turnover_reponse_table["employee_turnover_part_time_50_percent"] = (
             et_pt_50_pc
         )
+        employee_turnover_reponse_table["employee_turnover_total"] = total_pt_eto
 
         benefits_dps = benefits_data_points
 
@@ -1603,6 +1686,9 @@ class EmploymentAnalyzeView(APIView):
         new_employee_permanent["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_permanent_30-50_percent"
         ]
+        new_employee_permanent["total"] = new_employee_reponse_table[
+            "new_employee_permanent_total"
+        ]
         response_data["new_employee_hires"].append(new_employee_permanent)
 
         new_employee_temporary = {}
@@ -1624,6 +1710,9 @@ class EmploymentAnalyzeView(APIView):
         ]
         new_employee_temporary["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_temporary_30-50_percent"
+        ]
+        new_employee_temporary["total"] = new_employee_reponse_table[
+            "new_employee_temporary_total"
         ]
         response_data["new_employee_hires"].append(new_employee_temporary)
 
@@ -1647,6 +1736,9 @@ class EmploymentAnalyzeView(APIView):
         new_employee_non_guaranteed["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_temporary_30-50_percent"
         ]
+        new_employee_non_guaranteed["total"] = new_employee_reponse_table[
+            "new_employee_non_guaranteed_total"
+        ]
         response_data["new_employee_hires"].append(new_employee_non_guaranteed)
 
         new_employee_full_time = {}
@@ -1668,6 +1760,9 @@ class EmploymentAnalyzeView(APIView):
         ]
         new_employee_full_time["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_full_time_50_percent"
+        ]
+        new_employee_full_time["total"] = new_employee_reponse_table[
+            "new_employee_full_time_total"
         ]
         response_data["new_employee_hires"].append(new_employee_full_time)
 
@@ -1691,8 +1786,20 @@ class EmploymentAnalyzeView(APIView):
         new_employee_part_time["yearsold30to50"] = new_employee_reponse_table[
             "new_employee_part_time_50_percent"
         ]
+        new_employee_part_time["total"] = new_employee_reponse_table[
+            "new_employee_part_time_total"
+        ]
         response_data["new_employee_hires"].append(new_employee_part_time)
-
+        response_data["new_employee_hires"].append(
+            {
+                "type_of_employee": "Total",
+                "total": new_employee_permanent["total"]
+                + new_employee_temporary["total"]
+                + new_employee_non_guaranteed["total"]
+                + new_employee_full_time["total"]
+                + new_employee_part_time["total"],
+            }
+        )
         all_benefits = {
             "benefits_full_time_employees": [],
             "benefits_part_time_employees": [],
@@ -1777,6 +1884,11 @@ class EmploymentAnalyzeView(APIView):
         return_to_work_rate_and_retention_rate_of_employee.append(retention_rate)
         response_data["return_to_work_rate_and_retention_rate_of_employee"] = (
             return_to_work_rate_and_retention_rate_of_employee
+        )
+        response_data["number_of_employee_per_employee_category"] = (
+            self.get_diversity_of_the_board(
+                slug="gri-social-diversity_of_board-405-1b-number_of_employee"
+            )
         )
 
         return Response({"data": response_data}, status=status.HTTP_200_OK)
