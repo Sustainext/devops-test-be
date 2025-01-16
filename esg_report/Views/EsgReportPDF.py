@@ -69,6 +69,8 @@ def process_benefits(benefits_key, screen_thirteen_data, location_name_map):
 
 class ESGReportPDFView(View):
     def preprocess_esg_data(self, data):
+        if not data:
+            return {}
         processed_rows = []
 
         for esg_category, topics in data.items():
