@@ -1,30 +1,18 @@
 # django.db.models.signals.post_save
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver, Signal
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 import random
 import string
-from django.conf import settings
-from rest_framework.authtoken.models import Token
 from django.contrib.auth.signals import user_logged_in
 from django.core.cache import cache
-from azureproject.settings import EMAIL_REDIRECT
-from django.conf import settings
 from sustainapp.models import ClientTaskDashboard
-
-# For Making reset password link.
-# from django.contrib.auth.tokens import PasswordResetTokenGenerator
-# from django.utils.encoding import force_bytes
-# from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-# from django.utils.html import strip_tags
 from allauth.account.signals import user_signed_up
 from django.contrib.auth.models import update_last_login
 import hashlib
-from authentication.models import LoginCounter
-from authentication.models import UserProfile, CustomUser
+from authentication.models import LoginCounter, UserProfile
 import logging
 
 user_log = logging.getLogger("user_logger")
@@ -54,7 +42,6 @@ def send_welcome_email(sender, instance, created, **kwargs):
         # )
 
         username = instance.username
-        useremail = instance.email
         first_name = instance.first_name.capitalize()
         subject = "Welcome to Sustainext! Activate your account"
 
@@ -115,18 +102,16 @@ def update_last_login(sender, user, request, **kwargs):
     user_login_counter.save()
 
 
-@receiver(pre_save, sender=settings.AUTH_USER_MODEL)
-def capture_old_password(sender, instance, **kwargs):
-    if instance.pk:
-        old_password = CustomUser.objects.get(pk=instance.pk).password
-        instance._old_password = old_password
-
-
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def check_password_change(sender, instance, created, **kwargs):
-    if not created and hasattr(instance, "_old_password"):
-        if instance._old_password != instance.password:  # Password has changed
-            # Now we update the LoginCounter if it exists
+    if not created and instance.old_password:
+        if instance.old_password != instance.password:
+            instance.safelock.failed_login_attempts = 0
+            instance.safelock.is_locked = False
+            instance.safelock.locked_at = None
+            instance.safelock.last_failed_at = None
+            instance.safelock.save()
+
             if hasattr(instance, "first_login"):
                 login_counter = instance.first_login
 
@@ -135,6 +120,7 @@ def check_password_change(sender, instance, created, **kwargs):
                     login_counter.save()
 
                     send_account_activation_email(instance)
+            instance.old_password = instance.password
 
 
 task_status_changed = Signal()

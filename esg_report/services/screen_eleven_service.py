@@ -12,9 +12,6 @@ from esg_report.utils import (
 from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
     CommunicationTrainingAnalyzeView,
 )
-from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import (
-    MarketPresenceAnalyseView,
-)
 from sustainapp.Views.Analyse.Economic.OperationsAssesedAnalyse import (
     OperationsAssessedAnalyzeView,
 )
@@ -79,25 +76,6 @@ class ScreenElevenService:
             view_class=CommunicationTrainingAnalyzeView,
             original_request=self.request,
             url="sustainapp/get_economic_communication_and_training/",
-            query_params={
-                "organisation": f"{self.report.organization.id}",
-                "corporate": (
-                    self.report.corporate.id
-                    if self.report.corporate is not None
-                    else ""
-                ),  # Empty string as per your URL
-                "location": "",  # Empty string
-                "start": self.report.start_date.strftime("%Y-%m-%d"),
-                "end": self.report.end_date.strftime("%Y-%m-%d"),
-            },
-        )
-        return data
-
-    def get_market_presence_analyze(self):
-        data = forward_request_with_jwt(
-            view_class=MarketPresenceAnalyseView,
-            original_request=self.request,
-            url="sustainapp/get_economic_market_presence/",
             query_params={
                 "organisation": f"{self.report.organization.id}",
                 "corporate": (
@@ -252,7 +230,6 @@ class ScreenElevenService:
             return local_data
 
     def get_201_2a_responses(self):
-
         return {
             "201_2a1": self.get_201_2a1(),
             "201_2a2": self.get_201_2a2(),
@@ -533,15 +510,13 @@ class ScreenElevenService:
             )
         )
         response_data["economic_analyse"] = {}
-        response_data["economic_analyse"][
-            "communication_training_analyze"
-        ] = self.get_communication_training_analyze()
-        response_data["economic_analyse"][
-            "market_presence_analyze"
-        ] = self.get_market_presence_analyze()
-        response_data["economic_analyse"][
-            "operations_assessed_analyze"
-        ] = self.get_operations_assessed_analyze()
+        response_data["economic_analyse"]["communication_training_analyze"] = (
+            self.get_communication_training_analyze()
+        )
+        response_data["economic_analyse"]["market_presence_analyze"] = None
+        response_data["economic_analyse"]["operations_assessed_analyze"] = (
+            self.get_operations_assessed_analyze()
+        )
         response_data["205_3a"] = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[28])
         )

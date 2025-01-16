@@ -11,9 +11,6 @@ from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.EmissionTask import EmissionTask
 from sustainapp.Views.AssignedEmissionTask import AssignedEmissionTask
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
-from sustainapp.Views.Analyse.Economic.MarketPresenseAnalyse import (
-    MarketPresenceAnalyseView,
-)
 from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
     CommunicationTrainingAnalyzeView,
 )
@@ -39,14 +36,14 @@ from sustainapp.Views.Analyse.Environment.WaterAnalyseAPI import (
     WaterAnalyseByDataPoints,
 )
 from sustainapp.Views.Analyse.Social.ForcedLaborAnalyze import ForcedLaborAnalyzeView
-from sustainapp.Views.Analyse.Social.ChildLabor import ChildLabourAnalyzeView
+from sustainapp.Views.Analyse.Social.ChildLaborAndForcedLabour import (
+    ChildLabourAndForcedLabourAnalyzeView,
+)
 from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
 )
-from sustainapp.Views.Analyse.Social.DiversityAndInclusionSecondScreen import (
-    DiversityAndInclusionFirstScreenAnalyse,
-)
+
 from sustainapp.Views.Analyse.Social.SupplierSocialAssessment import (
     SupplierSocialAssessmentView,
 )
@@ -56,8 +53,8 @@ from sustainapp.Views.Analyse.Social.NonDiscrimationAnalysis import (
 from sustainapp.Views.Analyse.Social.CollectiveBargainingAnalysis import (
     SocialCollectiveBargainingAnalysis,
 )
-from sustainapp.Views.Analyse.Social.CommunityDevelopmentAnalyse import (
-    SocialCommunityDevelopmentAnalysis,
+from sustainapp.Views.Analyse.Social.SocialHumanRightsAndCommunityImpactAnalysis import (
+    SocialHumanRightsAndCommunityImpactAnalysis,
 )
 from sustainapp.Views.Analyse.Social.CustomerPrivacyAnalyze import (
     CustomerPrivacyAnalyzeView,
@@ -80,9 +77,6 @@ from sustainapp.Views.Analyse.SupplierEnvironment.SupplierEnvironment import (
     SupplierEnvAnlayzeView,
 )
 from sustainapp.Views.OrgCorpLocViewset import CorporateListView, LocationListView
-from sustainapp.Views.Analyse.Social.SecurityPersonnelAnalysis import (
-    SecurityPersonnelAnalysisView,
-)
 from sustainapp.Views.DepartmentViewset import DepartmentViewSet
 from sustainapp.Views.ClimatiqCalling import ClimatiqDataAPIView
 from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
@@ -168,8 +162,8 @@ urlpatterns = [
         name="get_forced_labor_analysis",
     ),
     path(
-        "get_child_labor_analysis/",
-        ChildLabourAnalyzeView.as_view(),
+        "get_child_labor_and_forced_labour_analysis/",
+        ChildLabourAndForcedLabourAnalyzeView.as_view(),
         name="get_child_labor_analysis",
     ),
     path(
@@ -178,14 +172,9 @@ urlpatterns = [
         name="get_ohs_analysis",
     ),
     path(
-        "get_diversity_inclusion_second_screen_analyse/",
+        "get_diversity_inclusion_analyse/",
         DiversityAndInclusionAnalyse.as_view(),
         name="get_diversity_inclusion_analysis",
-    ),
-    path(
-        "get_diversity_inclusion_first_screen_analyse/",
-        DiversityAndInclusionFirstScreenAnalyse.as_view(),
-        name="get_diversity_inclusion_second_screen_analyse",
     ),
     path(
         "get_supplier_social_assessment_analysis/",
@@ -208,8 +197,8 @@ urlpatterns = [
         name="get_collective_bargaining_analysis",
     ),
     path(
-        "get_community_development_analysis/",
-        SocialCommunityDevelopmentAnalysis.as_view(),
+        "get_human_rights_and_community_impact_analysis/",
+        SocialHumanRightsAndCommunityImpactAnalysis.as_view(),
         name="get_community_development_analysis",
     ),
     path(
@@ -245,11 +234,6 @@ urlpatterns = [
     ),
     path("track_dashboards/", TrackDashboardAPIView.as_view(), name="track_dashboards"),
     path(
-        "get_economic_market_presence/",
-        MarketPresenceAnalyseView.as_view(),
-        name="get_economic_market_presence",
-    ),
-    path(
         "get_economic_operations_assessed/",
         OperationsAssessedAnalyzeView.as_view(),
         name="get_economic_operations_assessed",
@@ -266,11 +250,6 @@ urlpatterns = [
     ),
     path("roles/corporates/", CorporateListView.as_view(), name="corporates-list"),
     path("roles/locations/", LocationListView.as_view(), name="locations-list"),
-    path(
-        "get_analysis_security_personnel/",
-        SecurityPersonnelAnalysisView.as_view(),
-        name="get_analysis_security_personnel",
-    ),
     path(
         "get_climatiq_data/",
         ClimatiqDataAPIView.as_view(),

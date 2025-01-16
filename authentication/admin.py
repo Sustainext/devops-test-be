@@ -155,7 +155,13 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 class UserSafeLockAdmin(admin.ModelAdmin):
-    list_display = ["user", "is_locked", "failed_login_attempts", "locked_at"]
+    list_display = [
+        "user",
+        "is_locked",
+        "failed_login_attempts",
+        "last_failed_at",
+        "locked_at",
+    ]
 
 
 admin.site.register(UserProfile, UserProfileAdmin)

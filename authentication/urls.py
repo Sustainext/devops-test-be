@@ -4,12 +4,11 @@ from dj_rest_auth.registration.views import (
 )
 
 from dj_rest_auth.views import (
-    PasswordResetConfirmView,
     PasswordResetView,
 )
 from authentication.views import email_confirm_redirect, password_reset_confirm_redirect
 from dj_rest_auth.registration.views import RegisterView
-from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
+from dj_rest_auth.views import UserDetailsView
 from django.urls import path, include
 from authentication.Views.CustomLoginAPI import CustomLoginView
 from rest_framework import routers
@@ -31,6 +30,7 @@ from authentication.views import (
     get_locs_by_corps,
 )
 
+from .Views.CustomPasswordResetViewAPI import CustomPasswordResetConfirmView
 
 router = routers.DefaultRouter()
 router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
@@ -66,7 +66,7 @@ urlpatterns = [
     ),
     path(
         "password/reset/confirm/",
-        PasswordResetConfirmView.as_view(),
+        CustomPasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
     path("change_password/", ChangePasswordAPIView.as_view(), name="change_password"),
