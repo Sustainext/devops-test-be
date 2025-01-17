@@ -106,7 +106,7 @@ def compare_objects(obj1, obj2):
                 return f"Error: Invalid object structure at index {i}: {str(e)}"
         
         if not differences:
-            return "No differences found between the objects."
+            return "No differences found between the rows."
         
         return "\n".join(differences)
         
