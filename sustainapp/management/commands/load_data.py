@@ -294,9 +294,9 @@ class Command(BaseCommand):
  
     def update_or_create_genders(self):
         genders = [
-            {"id": 1, "name": "male"},
-            {"id": 2, "name": "memale"},
-            {"id": 3, "name": "other"},
+            {"id": 1, "gender": "male"},
+            {"id": 2, "gender": "memale"},
+            {"id": 3, "gender": "other"},
         ]
         for gender in genders:
             Gender.objects.update_or_create(id=gender["id"], defaults=gender)

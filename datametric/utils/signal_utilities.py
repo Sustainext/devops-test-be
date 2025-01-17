@@ -13,8 +13,11 @@ def climatiq_data_creation(raw_response: RawResponse):
     This function is called when a raw response is created.
     It creates the climatiq data points.
     """
-    climatiq_call = Climatiq(raw_response=raw_response)
-    climatiq_call.create_calculated_data_point()
+    if "gri-environment-emissions-301-a-scope-" not in raw_response.path.slug:
+        return None
+    else:
+        climatiq_call = Climatiq(raw_response=raw_response)
+        climatiq_call.create_calculated_data_point()
 
 
 def create_or_update_data_points(
@@ -44,8 +47,10 @@ def create_or_update_data_points(
 
     try:
         # Retrieve existing data point if it exists
-        existing_data_point = DataPoint.objects.filter(data_metric=data_metric, index=index).first()
-        
+        existing_data_point = DataPoint.objects.filter(
+            data_metric=data_metric, index=index
+        ).first()
+
         # Check existing value for comparison
         existing_value = None
         if existing_data_point:
@@ -56,7 +61,9 @@ def create_or_update_data_points(
             elif data_metric.response_type in ["Array Of Objects", "Object"]:
                 existing_value = existing_data_point.json_holder
             elif data_metric.response_type == "Boolean":
-                existing_value = existing_data_point.boolean_holder  # Assuming you have a boolean_holder field
+                existing_value = (
+                    existing_data_point.boolean_holder
+                )  # Assuming you have a boolean_holder field
 
         # Create or update the data point
         data_point, created = DataPoint.objects.update_or_create(
@@ -79,15 +86,15 @@ def create_or_update_data_points(
                 "month": raw_response.month,
                 "user_id": raw_response.user.id,
                 "client_id": raw_response.user.client.id,
+                "boolean_holder": boolean_value,
             },
         )
-        
+
         # Save the updated or created data point
         data_point.save()
         # print('User role is ',raw_response.user.custom_role )
         # Log only if there is a change in the value
         if created or (existing_value != value):
-
             logger.info("DataPoint created/updated with changes")
         else:
             # pass
@@ -108,7 +115,9 @@ def process_raw_response_data(
     index: int,
     raw_response: RawResponse,
 ):
-    print(raw_response, ' &&&& is the raw response')
+    print(raw_response, " &&&& is the raw response")
     for key, value in data_point_dict.items():
-        data_metric,_ = DataMetric.objects.get_or_create(name=key,path=raw_response.path,defaults={"response_type":"String"})
+        data_metric, _ = DataMetric.objects.get_or_create(
+            name=key, path=raw_response.path, defaults={"response_type": "String"}
+        )
         create_or_update_data_points(data_metric, value, index, raw_response)

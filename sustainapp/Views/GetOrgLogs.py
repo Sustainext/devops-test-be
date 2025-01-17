@@ -1,16 +1,22 @@
 import os
-from datetime import timedelta
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from azure.monitor.query import LogsQueryClient
 from azure.identity import ClientSecretCredential
 from rest_framework.permissions import IsAuthenticated
+from datetime import datetime
 
 
 class AzureMonitorQueryView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        start_date = request.query_params.get("from_date")
+        end_date = request.query_params.get("to_date")
+        if not start_date or not end_date:
+            return Response(
+                {"error": "Both from date and to date are required."}, status=400
+            )
         # Retrieve Azure credentials from environment variables
         tenant_id = os.getenv("AZURE_LOG_TENANT_ID")
         client_id = os.getenv("AZURE_LOG_CLIENT_ID")
@@ -32,16 +38,28 @@ class AzureMonitorQueryView(APIView):
         # Create the LogsQueryClient
         logs_query_client = LogsQueryClient(credential)
 
-        # Example of a valid KQL query
-        query = """
+        start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
+        end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
+
+        start_datetime_start_of_day = start_datetime.replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        end_datetime_end_of_day = end_datetime.replace(
+            hour=23, minute=59, second=59, microsecond=999999
+        )
+
+        start_datetime_iso = start_datetime_start_of_day.isoformat()
+        end_datetime_iso = end_datetime_end_of_day.isoformat()
+
+        query = f"""
         AppLogTable_CL
-        | where TimeGenerated >= ago(5d)
-        | project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole, Logs, Organization,IPAddress
+        | where TimeGenerated >= datetime("{start_datetime_iso}") and TimeGenerated <= datetime("{end_datetime_iso}")
+        | project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole, Logs, Organization, IPAddress
         | order by TimeGenerated desc
         """
         try:
             response = logs_query_client.query_workspace(
-                workspace_id, query, timespan=timedelta(days=5)
+                workspace_id, query, timespan=(end_datetime - start_datetime)
             )
 
             results = []

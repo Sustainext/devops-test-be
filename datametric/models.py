@@ -88,7 +88,10 @@ class RawResponse(AbstractModel):
         related_name="raw_responses",
     )
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE,  related_name="raw_responses",default=Client.get_default_client
+        Client,
+        on_delete=models.CASCADE,
+        related_name="raw_responses",
+        default=Client.get_default_client,
     )
 
     organization = models.ForeignKey(
@@ -181,14 +184,14 @@ class EmissionAnalysis(AbstractModel):
     activity = models.TextField()
     index = models.PositiveIntegerField()
     co2e_total = models.DecimalField(
-        max_digits=20, decimal_places=3, null=True, blank=True
+        max_digits=40, decimal_places=20, null=True, blank=True
     )
-    co2 = models.DecimalField(max_digits=20, decimal_places=3, null=True, blank=True)
-    n2o = models.DecimalField(max_digits=20, decimal_places=3, null=True, blank=True)
+    co2 = models.DecimalField(max_digits=40, decimal_places=20, null=True, blank=True)
+    n2o = models.DecimalField(max_digits=40, decimal_places=20, null=True, blank=True)
     co2e_other = models.DecimalField(
-        max_digits=20, decimal_places=3, null=True, blank=True
+        max_digits=40, decimal_places=20, null=True, blank=True
     )
-    ch4 = models.DecimalField(max_digits=20, decimal_places=3, null=True, blank=True)
+    ch4 = models.DecimalField(max_digits=40, decimal_places=20, null=True, blank=True)
     calculation_method = models.CharField(max_length=10)
     category = models.CharField(max_length=100)
     subcategory = models.CharField(max_length=255)
@@ -201,14 +204,15 @@ class EmissionAnalysis(AbstractModel):
     unit1 = models.CharField(max_length=50, null=True, blank=True)
     unit2 = models.CharField(max_length=50, null=True, blank=True)
     quantity = models.DecimalField(
-        max_digits=20, decimal_places=3, null=True, blank=True
+        max_digits=40, decimal_places=20, null=True, blank=True
     )
     quantity2 = models.DecimalField(
-        max_digits=20, decimal_places=3, null=True, blank=True
+        max_digits=40, decimal_places=20, null=True, blank=True
     )
-    consumption = models.DecimalField(max_digits=20, decimal_places=3)
+    consumption = models.DecimalField(max_digits=40, decimal_places=20)
     raw_response = models.ForeignKey(RawResponse, on_delete=models.CASCADE)
     type_of = models.CharField(max_length=255, db_column="type", null=True, blank=True)
+    unique_id = models.UUIDField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name + str(self.id)
