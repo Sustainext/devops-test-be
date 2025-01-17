@@ -13,8 +13,11 @@ def climatiq_data_creation(raw_response: RawResponse):
     This function is called when a raw response is created.
     It creates the climatiq data points.
     """
-    climatiq_call = Climatiq(raw_response=raw_response)
-    climatiq_call.create_calculated_data_point()
+    if "gri-environment-emissions-301-a-scope-" not in raw_response.path.slug:
+        return None
+    else:
+        climatiq_call = Climatiq(raw_response=raw_response)
+        climatiq_call.create_calculated_data_point()
 
 
 def create_or_update_data_points(
