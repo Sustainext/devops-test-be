@@ -312,7 +312,9 @@ class Climatiq:
                 emission_data["unique_id"] = self.refined_raw_resp[index][
                     "Emission"
                 ].get("unique_id")
-                emission_data["scope"] = self.refined_raw_resp[index]["Emission"].get("scope")
+                emission_data["scope"] = self.refined_raw_resp[index]["Emission"].get(
+                    "scope"
+                )
                 logger.info(f"Emission data: {emission_data}")
                 cleaned_response_data.append(emission_data)
         return cleaned_response_data
@@ -415,19 +417,19 @@ class Climatiq:
             emission_dict["Emission"]["scope"] = scope_mapping.get(
                 self.raw_response.path.slug
             )
-        
 
     def create_calculated_data_point(self):
         """
         Returns the response from the climatiq api.
         """
         # Check if the path slug matches the required pattern
+
+        if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
+            return None
         logger.info("Climatiq API Has been called")
         logger.info("Original Response:")
         self.modify_raw_response_with_uuid_and_scope()
         logger.info(self.raw_response)
-        if "gri-environment-emissions-301-a-scope-" not in self.raw_response.path.slug:
-            return None
         # Get the response data from the climatiq API
         response_data = self.get_climatiq_api_response()
         if response_data is None:
