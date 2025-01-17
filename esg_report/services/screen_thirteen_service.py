@@ -681,6 +681,11 @@ class ScreenThirteenService:
         response_data["403-2b-hazard_reporting"] = self.get_403_2b_hazard_reporting(
             slug=self.slugs[92]
         )
+        response_data["analysis_security_personnel"] = calling_analyse_view_with_params(
+            "get_community_development_analysis",
+            report=self.report,
+            request=self.request,
+        )
 
         return response_data
 
