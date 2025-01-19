@@ -25,7 +25,7 @@ class AzureLogUploader:
             rule_id = os.getenv("AZURE_LOG_RULE_ID")
             stream_name = os.getenv("AZURE_LOG_STREAM_NAME")
             self.client.upload(rule_id=rule_id, stream_name=stream_name, logs=log_data)
-            print("Logs sent successfully!",log_data)
+            # print("Logs sent successfully!",log_data)
         except Exception as e:
             print(f"Failed to send logs: {e}")
 

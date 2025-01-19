@@ -11,8 +11,36 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from sustainapp.models import ClientTaskDashboard
 import uuid
+from datetime import datetime
+from azurelogs.time_utils import get_current_time_ist
+from azurelogs.azure_log_uploader import AzureLogUploader
+
+
+uploader = AzureLogUploader()
 
 logger = logging.getLogger("django")
+
+def process_dynamic_response(response):
+    output = []
+    
+    for entry in response:
+        # Iterate dynamically through all keys and values in the dictionary
+        for key, value in entry.items():
+            if isinstance(value, dict):  # Handle nested dictionaries
+                output.append(f"{key.capitalize()}:")
+                for nested_key, nested_value in value.items():
+                    output.append(f"  {nested_key.replace('_', ' ').capitalize()}: {nested_value}")
+            elif isinstance(value, list):  # Handle lists if present
+                output.append(f"{key.capitalize()}: {', '.join(map(str, value))}")
+            else:  # Handle simple key-value pairs
+                output.append(f"{key.replace('_', ' ').capitalize()}: {value}")
+    
+    # Add current date information
+    current_date = datetime.now().strftime("%A, %B %d, %Y, %I %p %Z")
+    output.append(f"Current Date: {current_date}")
+    
+    # Join the output with vertical splitters
+    return " | ".join(output)
 
 
 class Climatiq:
@@ -211,7 +239,10 @@ class Climatiq:
         payload = self.payload_preparation_for_climatiq_api()
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
         logger.info("Requesting Climatiq API")
-
+        # print(payload, ' is payload for Climatiq')
+        payload_log = process_dynamic_response(payload)
+        org = self.user.orgs.first().name
+        time_now = get_current_time_ist()
         all_response_data = []
         batch_size = 100
 
@@ -224,7 +255,7 @@ class Climatiq:
                 headers=headers,
             )
             response_data = response.json()
-
+            print('&&&&SD&&SD', response_data)
             if response.status_code == 400:
                 self.log_error_climatiq_api(response_data=response_data)
             else:
@@ -238,7 +269,26 @@ class Climatiq:
 
         # Update raw_response.data rowType based on calculated responses
         self.update_row_type_in_raw_response(all_response_data)
+        # print(all_response_data, ' is the response from climatiq')
+        log_data = process_dynamic_response(all_response_data)
 
+
+        log_data = [
+        {
+            "EventType": "Collect",
+            "TimeGenerated": time_now,
+            "EventDetails": "Emissions",
+            "Action": "Calculated",
+            "Status": "Success",
+            "UserEmail": self.user.email,
+            "UserRole": self.user.custom_role.name,
+            "Logs": log_data,
+            "Organization": org,
+            "IPAddress": "192.168.1.1",
+        },
+        ]
+        # orgs = user_instance.orgs
+        uploader.upload_logs(log_data)
         return all_response_data
 
     def update_row_type_in_raw_response(self, response_data):
