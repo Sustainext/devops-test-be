@@ -22,6 +22,9 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
     assign_by_user_name = serializers.CharField(
         source="assigned_by.first_name", required=False, read_only=True
     )
+    location_name = serializers.CharField(
+        source="location.name", required=False, read_only=True
+    )
 
     class Meta:
         model = ClientTaskDashboard

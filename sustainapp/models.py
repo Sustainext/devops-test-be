@@ -5,7 +5,6 @@ from django.contrib.auth.models import (
 )
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Case, Value, When, UniqueConstraint
-from django.utils.translation import gettext_lazy as _
 import os
 from django.core.files.storage import default_storage
 from django.conf import settings
@@ -20,10 +19,6 @@ from sustainapp.Validators.LocationValidators import (
 )
 from sustainapp.Managers.ClientFiltering import ClientFiltering
 from functools import cached_property
-from django.db.models.signals import post_migrate
-from django.dispatch import receiver
-from uuid import uuid4
-from authentication.models import CustomUser, Client
 
 # Create your models here.
 
@@ -1040,9 +1035,10 @@ class ClientTaskDashboard(AbstractModel):
         ("under_review", "under_review"),
         ("completed", "completed"),
         ("reject", "reject"),
+        ("not_started", "not_started"),
     ]
     task_status = models.CharField(
-        max_length=64, choices=STATUS_CHOICES, default="in_progress"
+        max_length=64, choices=STATUS_CHOICES, default="not_started"
     )
     location = models.ForeignKey(
         Location, on_delete=models.CASCADE, null=True, blank=True
@@ -1068,6 +1064,7 @@ class ClientTaskDashboard(AbstractModel):
     )
     activity = models.CharField(max_length=2048, null=True, blank=True)
     region = models.CharField(max_length=1024, null=True, blank=True)
+    comments_assignee = models.TextField(null=True, blank=True)
     objects = ClientFiltering()
 
 
