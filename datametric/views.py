@@ -43,6 +43,51 @@ def sanitize_ordered_dict(data):
     else:
         # Return the data as is if it's neither an OrderedDict nor a list
         return data
+    
+def generate_text_pattern(data):
+    result = []
+
+    for entry in data:
+        # Create a list of key-value pairs in the desired format
+        pairs = [f"'{key}' > '{value}'" for key, value in entry.items()]
+        # Join the pairs with " > "
+        result.append(" > ".join(pairs))
+
+    # Join all entry strings with a newline or any other separator if needed
+    return "\n".join(result)
+
+
+def getLogDetails(user,field_group,form_data,diff_string):
+
+    print(user, ' is the user')
+    orgs = user.orgs.first()
+    corps = user.corps.first()
+    print(orgs, ' is the org')
+    # Collect > Environment > Emissions > GHG Emission > Organisation > Corporate entity > Location > Year > Month > Scope > Category > Sub-category > Activity > Quantity > Unit 
+    # path_prefix - from field_group
+    part_one = "Undefined Audit Log Prefix"
+    try:
+        part_one = field_group.meta_data['audit_log_prefix']
+        print(part_one, ' is part_one')
+    except Exception as e:
+        part_one = "Undefined Audit Log Prefix"
+    
+    organization = user.orgs.first().name
+    corporate = user.corps.first().name
+    
+    part_two = f"{organization} > {corporate}"
+    print(part_two, ' is part two')
+
+    # location, year, month from form_data
+    # print(form_data, ' is form_data')
+    part_three = f"{form_data['location']} > {form_data['year']} > {form_data['month']}"
+    print(part_three, ' is part three')
+    # Scope, category, sub-category, activity , quantity, unit
+    part_four = generate_text_pattern(form_data['form_data'])
+    print(part_four, ' is part four')
+    
+    result_log = f"{part_one} > {part_two} > {part_three} > {diff_string['description']}"
+    return result_log
 
 
 def compare_objects(obj1, obj2):
@@ -56,29 +101,54 @@ def compare_objects(obj1, obj2):
     Returns:
         str: A description of the differences found or error message
     """
+    status_string = 'Row Update'
     try:
         # Check if inputs are valid lists
         if not isinstance(obj1, list) or not isinstance(obj2, list):
-            return "Error: Both inputs must be lists"
-
+            r = dict()
+            status_string = 'Row Update'
+            description = "Unidentified Update"
+            r['status_string'] = status_string
+            r['description'] = description
+            return r
+        
         # Handle case where obj1 is empty or has lesser length
         if not obj1 or len(obj1) < len(obj2):
             added_rows = len(obj2) - len(obj1) if obj1 else len(obj2)
             if added_rows == 1:
-                return "A new row is created"
+                r = dict()
+                status_string = 'Row Create'
+                description = "A new row is created"
+                r['status_string'] = status_string
+                r['description'] = description
+                return r
             else:
-                return f"{added_rows} new rows are created"
+                status_string = 'Row Create'
+                description = f"{added_rows} new rows are created"
+                r = dict()
+                r['status_string'] = status_string
+                r['description'] = description
+                return r
 
         # Handle case where obj2 has lesser length than obj1
         if len(obj2) < len(obj1):
             deleted_rows = len(obj1) - len(obj2)
             if deleted_rows == 1:
-                return "A row is deleted"
+                r = dict()
+                r['status_string'] = "Row Delete"
+                r['description'] = "A row is deleted"
+                return r
             else:
-                return f"{deleted_rows} rows are deleted"
+                r = dict()
+                r['status_string'] = "Row Delete"
+                r['description'] = f"{deleted_rows} rows are deleted"
+                return r                
 
         if not obj2:
-            return "Error: Second object is empty"
+            r = dict()
+            r['status_string'] = "Row Delete"
+            r['description'] = "Error: Second object is empty"
+            return r  
 
         differences = []
 
@@ -102,14 +172,28 @@ def compare_objects(obj1, obj2):
                             )
 
             except KeyError as e:
-                return f"Error: Missing key {str(e)} in objects at index {i}"
+                r = dict()
+                r['status_string'] = "Row Update"
+                r['description'] = f"Error: Missing key {str(e)} in objects at index {i}"
+                return r
             except Exception as e:
-                return f"Error: Invalid object structure at index {i}: {str(e)}"
+                r = dict()
+                r['status_string'] = "Row Update"
+                r['description'] = f"Error: Invalid object structure at index {i}: {str(e)}"
+                return r
 
         if not differences:
-            return "No differences found between the objects."
+            r = dict()
+            r['status_string'] = "Row Update"
+            r['description'] = f"No difference with previous rows saved"
+            return r
 
-        return "\n".join(differences)
+        r = dict()
+        r['status_string'] = "Row Update"
+        # r['differences'] = "\n".join(differences)
+        r['description'] = 'Row values are changed'
+
+        return r
 
     except Exception as e:
         return f"Error: {str(e)}"
@@ -192,8 +276,19 @@ class CreateOrUpdateFieldGroup(APIView):
         serializer = UpdateResponseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
+
         form_data = validated_data["form_data"]
         path = validated_data["path"]
+        path_ins = Path.objects.get(slug=path) 
+            # Get the first FieldGroup associated with this Path
+        field_group_name = 'None'
+
+        try:
+            field_group = FieldGroup.objects.filter(path=path_ins).first()
+            field_group_name = field_group.name
+        except Exception as e:
+            print(e)
+            field_group_name = 'Unidentified'
         # location = validated_data["location"]
         year = validated_data["year"]
         month = validated_data.get("month", None)
@@ -233,13 +328,9 @@ class CreateOrUpdateFieldGroup(APIView):
             # Sanitize the data
             sanitized_result = sanitize_ordered_dict(raw_response.data)
             diff_string = compare_objects(sanitized_result, form_data)
-            print(diff_string)
+            # print(diff_string,' is the diffstring')
+            # print(form_data, ' is form data')
             action_type = "Row create"
-            # eventtype-collect, event_details - form_data[0.key]
-            # Action - row created, status - Success, user email = , user role
-            # User role, date time, IP Address
-            # Logs - Collect -> Environment -> Emissions -> GHG Emissions -> Organization -> Corporate
-            # -> Sub Category -> Activity -> Year -> Month -> Unit
             if not created:
                 # If the RawResponse already exists, update its data
                 raw_response.data = form_data
@@ -251,27 +342,26 @@ class CreateOrUpdateFieldGroup(APIView):
             logger.info(f"RawResponse: {raw_response}")
             logger.info(f"created: {created}")
             time_now = get_current_time_ist()
-            event_string = f"{path}\nNew Value: 0\nOld Value: 0\n"
             role = user_instance.custom_role
-            print(role, " is the role name")
             first_item = form_data[0]  # Get the first dictionary
-            event_details = list(first_item.keys())[0]
-            print(organisation, " is organization")
+            event_details = diff_string['status_string']
+            field_group_obj = FieldGroup.objects.filter(path=path_ins).first()
+            log_text = getLogDetails(user_instance,field_group_obj,validated_data,diff_string)
             log_data = [
                 {
                     "EventType": "Collect",
                     "TimeGenerated": time_now,
-                    "EventDetails": event_details,
-                    "Action": action_type,
+                    "EventDetails": field_group_name,
+                    "Action": event_details,
                     "Status": "Success",
                     "UserEmail": user_instance.email,
                     "UserRole": user_instance.custom_role.name,
-                    "Logs": diff_string,
+                    "Logs": log_text,
                     "Organization": organisation,
                     "IPAddress": "192.168.1.1",
                 },
             ]
-            print(log_data)
+            # orgs = user_instance.orgs
             uploader.upload_logs(log_data)
             return Response(
                 {"message": "Form data saved successfully."},

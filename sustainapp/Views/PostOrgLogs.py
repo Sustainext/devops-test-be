@@ -8,6 +8,7 @@ from azurelogs.azure_log_uploader import (
 
 class LogUploadView(APIView):
     def post(self, request):
+        print('loguploader api hit')
         try:
             # Extract data from the request
             event_type = request.data.get("event_type")
