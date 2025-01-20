@@ -38,7 +38,7 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
                 | Q(assigned_by=request.user, assigned_to__isnull=True)
             ).exclude(deadline__lt=timezone.now()),
             "overdue": queryset.filter(
-                task_status="in_progress",
+                task_status__in=["in_progress", "not_started"],
                 assigned_to=request.user,
                 deadline__lt=timezone.now(),
             ),
