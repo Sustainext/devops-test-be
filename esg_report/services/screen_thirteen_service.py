@@ -682,7 +682,7 @@ class ScreenThirteenService:
             slug=self.slugs[92]
         )
         response_data["analysis_security_personnel"] = calling_analyse_view_with_params(
-            view_url="get_analysis_security_personnel",
+            "get_community_development_analysis",
             report=self.report,
             request=self.request,
         )
