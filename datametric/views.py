@@ -43,7 +43,8 @@ def sanitize_ordered_dict(data):
     else:
         # Return the data as is if it's neither an OrderedDict nor a list
         return data
-    
+
+
 def generate_text_pattern(data):
     result = []
 
@@ -57,36 +58,42 @@ def generate_text_pattern(data):
     return "\n".join(result)
 
 
-def getLogDetails(user,field_group,form_data,diff_string):
-
-    print(user, ' is the user')
+def getLogDetails(user, field_group, form_data, diff_string):
+    print(user, " is the user")
     orgs = user.orgs.first()
     corps = user.corps.first()
-    print(orgs, ' is the org')
-    # Collect > Environment > Emissions > GHG Emission > Organisation > Corporate entity > Location > Year > Month > Scope > Category > Sub-category > Activity > Quantity > Unit 
+    print(orgs, " is the org")
+    # Collect > Environment > Emissions > GHG Emission > Organisation > Corporate entity > Location > Year > Month > Scope > Category > Sub-category > Activity > Quantity > Unit
     # path_prefix - from field_group
     part_one = "Undefined Audit Log Prefix"
     try:
-        part_one = field_group.meta_data['audit_log_prefix']
-        print(part_one, ' is part_one')
+        part_one = field_group.meta_data["audit_log_prefix"]
+        print(part_one, " is part_one")
     except Exception as e:
         part_one = "Undefined Audit Log Prefix"
-    
+
     organization = user.orgs.first().name
     corporate = user.corps.first().name
-    
+
     part_two = f"{organization} > {corporate}"
-    print(part_two, ' is part two')
+    print(part_two, " is part two")
 
     # location, year, month from form_data
     # print(form_data, ' is form_data')
-    part_three = f"{form_data['location']} > {form_data['year']} > {form_data['month']}"
-    print(part_three, ' is part three')
+    try:
+        part_three = (
+            f"{form_data['location']} > {form_data['year']} > {form_data['month']}"
+        )
+        print(part_three, " is part three")
+    except Exception as e:
+        part_three = "No location/Year/Month found"
     # Scope, category, sub-category, activity , quantity, unit
-    part_four = generate_text_pattern(form_data['form_data'])
-    print(part_four, ' is part four')
-    
-    result_log = f"{part_one} > {part_two} > {part_three} > {diff_string['description']}"
+    part_four = generate_text_pattern(form_data["form_data"])
+    print(part_four, " is part four")
+
+    result_log = (
+        f"{part_one} > {part_two} > {part_three} > {diff_string['description']}"
+    )
     return result_log
 
 
@@ -101,33 +108,33 @@ def compare_objects(obj1, obj2):
     Returns:
         str: A description of the differences found or error message
     """
-    status_string = 'Row Update'
+    status_string = "Row Update"
     try:
         # Check if inputs are valid lists
         if not isinstance(obj1, list) or not isinstance(obj2, list):
             r = dict()
-            status_string = 'Row Update'
+            status_string = "Row Update"
             description = "Unidentified Update"
-            r['status_string'] = status_string
-            r['description'] = description
+            r["status_string"] = status_string
+            r["description"] = description
             return r
-        
+
         # Handle case where obj1 is empty or has lesser length
         if not obj1 or len(obj1) < len(obj2):
             added_rows = len(obj2) - len(obj1) if obj1 else len(obj2)
             if added_rows == 1:
                 r = dict()
-                status_string = 'Row Create'
+                status_string = "Row Create"
                 description = "A new row is created"
-                r['status_string'] = status_string
-                r['description'] = description
+                r["status_string"] = status_string
+                r["description"] = description
                 return r
             else:
-                status_string = 'Row Create'
+                status_string = "Row Create"
                 description = f"{added_rows} new rows are created"
                 r = dict()
-                r['status_string'] = status_string
-                r['description'] = description
+                r["status_string"] = status_string
+                r["description"] = description
                 return r
 
         # Handle case where obj2 has lesser length than obj1
@@ -135,20 +142,20 @@ def compare_objects(obj1, obj2):
             deleted_rows = len(obj1) - len(obj2)
             if deleted_rows == 1:
                 r = dict()
-                r['status_string'] = "Row Delete"
-                r['description'] = "A row is deleted"
+                r["status_string"] = "Row Delete"
+                r["description"] = "A row is deleted"
                 return r
             else:
                 r = dict()
-                r['status_string'] = "Row Delete"
-                r['description'] = f"{deleted_rows} rows are deleted"
-                return r                
+                r["status_string"] = "Row Delete"
+                r["description"] = f"{deleted_rows} rows are deleted"
+                return r
 
         if not obj2:
             r = dict()
-            r['status_string'] = "Row Delete"
-            r['description'] = "Error: Second object is empty"
-            return r  
+            r["status_string"] = "Row Delete"
+            r["description"] = "Error: Second object is empty"
+            return r
 
         differences = []
 
@@ -173,25 +180,29 @@ def compare_objects(obj1, obj2):
 
             except KeyError as e:
                 r = dict()
-                r['status_string'] = "Row Update"
-                r['description'] = f"Error: Missing key {str(e)} in objects at index {i}"
+                r["status_string"] = "Row Update"
+                r["description"] = (
+                    f"Error: Missing key {str(e)} in objects at index {i}"
+                )
                 return r
             except Exception as e:
                 r = dict()
-                r['status_string'] = "Row Update"
-                r['description'] = f"Error: Invalid object structure at index {i}: {str(e)}"
+                r["status_string"] = "Row Update"
+                r["description"] = (
+                    f"Error: Invalid object structure at index {i}: {str(e)}"
+                )
                 return r
 
         if not differences:
             r = dict()
-            r['status_string'] = "Row Update"
-            r['description'] = f"No difference with previous rows saved"
+            r["status_string"] = "Row Update"
+            r["description"] = f"No difference with previous rows saved"
             return r
 
         r = dict()
-        r['status_string'] = "Row Update"
+        r["status_string"] = "Row Update"
         # r['differences'] = "\n".join(differences)
-        r['description'] = 'Row values are changed'
+        r["description"] = "Row values are changed"
 
         return r
 
@@ -279,16 +290,16 @@ class CreateOrUpdateFieldGroup(APIView):
 
         form_data = validated_data["form_data"]
         path = validated_data["path"]
-        path_ins = Path.objects.get(slug=path) 
-            # Get the first FieldGroup associated with this Path
-        field_group_name = 'None'
+        path_ins = Path.objects.get(slug=path)
+        # Get the first FieldGroup associated with this Path
+        field_group_name = "None"
 
         try:
             field_group = FieldGroup.objects.filter(path=path_ins).first()
             field_group_name = field_group.name
         except Exception as e:
             print(e)
-            field_group_name = 'Unidentified'
+            field_group_name = "Unidentified"
         # location = validated_data["location"]
         year = validated_data["year"]
         month = validated_data.get("month", None)
@@ -344,9 +355,11 @@ class CreateOrUpdateFieldGroup(APIView):
             time_now = get_current_time_ist()
             role = user_instance.custom_role
             first_item = form_data[0]  # Get the first dictionary
-            event_details = diff_string['status_string']
+            event_details = diff_string["status_string"]
             field_group_obj = FieldGroup.objects.filter(path=path_ins).first()
-            log_text = getLogDetails(user_instance,field_group_obj,validated_data,diff_string)
+            log_text = getLogDetails(
+                user_instance, field_group_obj, validated_data, diff_string
+            )
             log_data = [
                 {
                     "EventType": "Collect",
