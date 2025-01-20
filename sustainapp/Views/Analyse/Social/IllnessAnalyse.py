@@ -258,7 +258,7 @@ class IllnessAnalysisView(APIView):
             + (relativedelta(self.end, self.start).years * 12)
             + 1
         )
-        if months_between <= 12 and months_between > 0:
+        if months_between > 0:
             self.number_of_hours = int(
                 (condition_dictionary[self.injury_rate] / 12) * months_between
             )
