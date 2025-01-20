@@ -140,8 +140,8 @@ class DiversityAndInclusionAnalyse(APIView):
         response_data = []
         response_data.append(
             {
-                "Q2": [],
-                "Q1": [
+                "Q1": [],
+                "Q2": [
                     {
                         "category": i["category"],
                         "locationandoperation": [i["locationandoperation"]],
