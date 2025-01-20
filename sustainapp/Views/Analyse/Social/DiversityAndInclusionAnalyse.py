@@ -138,10 +138,35 @@ class DiversityAndInclusionAnalyse(APIView):
         dps = self.data_points.filter(path__slug=slug).order_by("index")
         data = collect_data_by_raw_response_and_index(dps)
         response_data = []
-        # response_data.append({
-        #     "Q2":[]
-        #     "Q1":
-        # })
+        """
+        [
+        {
+          "category": "Category1",
+          "male": "100",
+          "female": "101",
+          "nonBinary": "102",
+          "locationandoperation": [
+            "Kanpur",
+            "Lucknow"
+          ]
+        }
+        ]
+        """
+        response_data.append(
+            {
+                "Q2": [],
+                "Q1": [
+                    {
+                        "category": i["category"],
+                        "locationandoperation": [i["locationandoperation"]],
+                        "women_to_men": safe_divide(i["female"], i["male"]),
+                        "non_binary_to_men": safe_divide(i["nonBinary"], i["male"]),
+                        "non_binary_to_women": safe_divide(i["nonBinary"], i["female"]),
+                    }
+                    for i in data
+                ],
+            }
+        )
 
     def format_data(self, raw_resp_1a, currency: float) -> list:
         # What if they don't add the values in male and female
