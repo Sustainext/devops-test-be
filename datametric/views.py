@@ -360,6 +360,7 @@ class CreateOrUpdateFieldGroup(APIView):
             log_text = getLogDetails(
                 user_instance, field_group_obj, validated_data, diff_string
             )
+            orgnz = user_instance.orgs.first().name
             log_data = [
                 {
                     "EventType": "Collect",
@@ -370,7 +371,7 @@ class CreateOrUpdateFieldGroup(APIView):
                     "UserEmail": user_instance.email,
                     "UserRole": user_instance.custom_role.name,
                     "Logs": log_text,
-                    "Organization": organisation,
+                    "Organization": orgnz,
                     "IPAddress": "192.168.1.1",
                 },
             ]
