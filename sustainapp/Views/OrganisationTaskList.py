@@ -15,6 +15,7 @@ from sustainapp.Serializers.TaskdashboardRetriveSerializer import (
 from rest_framework.exceptions import ValidationError
 from sustainapp.signals import send_task_assigned_email
 from django.core.cache import cache
+from rest_framework.exceptions import PermissionDenied
 
 
 class OrganisationTaskDashboardView(viewsets.ModelViewSet):
@@ -101,6 +102,12 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
             send_task_assigned_email(None, task, created=True)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.assigned_by != request.user:
+            raise PermissionDenied("You do not have permission to delete this task.")
+        return super().destroy(request, *args, **kwargs)
 
 
 class UserTaskDashboardView(ListAPIView):
