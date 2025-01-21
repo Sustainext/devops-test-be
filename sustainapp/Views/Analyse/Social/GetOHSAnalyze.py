@@ -14,7 +14,6 @@ from datametric.models import RawResponse
 from django.db.models.expressions import RawSQL
 from django.db.models import Value
 from decimal import Decimal
-import re
 from common.utils.value_types import safe_percentage, safe_divide, format_decimal_places
 from dateutil.relativedelta import relativedelta
 
@@ -332,15 +331,17 @@ class GetIllnessAnalysisView(APIView):
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
         injury_rate_serializer = CheckInjuryRateSerializer(data=request.query_params)
-        injury_rate_serializer.is_valid(raise_exception=True)
-        self.injury_rate = injury_rate_serializer.validated_data["injury_rate"]
-        self.set_number_of_hours()
-        self.set_raw_responses()
+        if injury_rate_serializer.is_valid(raise_exception=False):
+            self.injury_rate = injury_rate_serializer.validated_data["injury_rate"]
+            self.set_number_of_hours()
+            self.set_raw_responses()
 
-        return Response(
-            {
-                "rate_of_injuries_for_all_employees": self.get_work_related_ill_health(),
-                "rate_of_injuries_for_not_included_in_company_employees": self.get_rate_of_injuries_who_are_workers_but_not_employees(),
-            },
-            status=status.HTTP_200_OK,
-        )
+            return Response(
+                {
+                    "rate_of_injuries_for_all_employees": self.get_work_related_ill_health(),
+                    "rate_of_injuries_for_not_included_in_company_employees": self.get_rate_of_injuries_who_are_workers_but_not_employees(),
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response([], status=status.HTTP_400_BAD_REQUEST)
