@@ -169,6 +169,7 @@ class OHSAnalysisView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
+        self.set_raw_responses()
 
         response_data = {
             "formal_joint_management": self.get_formal_joint_management(),
