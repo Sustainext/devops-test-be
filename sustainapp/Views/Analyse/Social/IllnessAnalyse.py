@@ -4,18 +4,19 @@ from rest_framework.response import Response
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
+from sustainapp.Serializers.CheckInjuryRate import CheckInjuryRateSerializer
 from rest_framework.permissions import IsAuthenticated
 from datametric.utils.analyse import (
-    set_locations_data,
     filter_by_start_end_dates,
     get_raw_response_filters,
 )
 from datametric.models import RawResponse
 from django.db.models.expressions import RawSQL
-from django.db.models import Q, Func, Value
+from django.db.models import Value
 from decimal import Decimal
 import re
 from common.utils.value_types import safe_percentage, safe_divide, format_decimal_places
+from dateutil.relativedelta import relativedelta
 
 
 class IllnessAnalysisView(APIView):
@@ -117,22 +118,8 @@ class IllnessAnalysisView(APIView):
                 item["month"] = raw_response.month
                 new_data.append(item)
             data.extend(new_data)
-        number_of_hours_worked_responses = self.get_number_of_hours_worked()
-        for entry in data:
-            _ = number_of_hours_worked_responses.filter(
-                year=entry["year"], month=entry["month"]
-            ).first()
-            if _ is not None:
-                number_of_hours = self.process_number_of_hours(
-                    number_of_hours_worked_responses.filter(
-                        year=entry["year"], month=entry["month"]
-                    )
-                    .first()
-                    .data
-                )
-            else:
-                number_of_hours = 1000000
 
+        for entry in data:
             entry["rate_of_fatalities_as_a_result_of_work_related_injury"] = (
                 format_decimal_places(
                     Decimal(
@@ -140,7 +127,7 @@ class IllnessAnalysisView(APIView):
                             int(entry["fatalities"]), int(entry["numberofhoursworked"])
                         )
                     )
-                    * number_of_hours
+                    * self.number_of_hours
                 )
             )
             entry[
@@ -151,7 +138,7 @@ class IllnessAnalysisView(APIView):
                         int(entry["highconsequence"]), int(entry["numberofhoursworked"])
                     )
                 )
-                * number_of_hours
+                * self.number_of_hours
             )
             entry["rate_of_recordable_work_related_injuries"] = format_decimal_places(
                 Decimal(
@@ -160,18 +147,9 @@ class IllnessAnalysisView(APIView):
                         int(entry["numberofhoursworked"]),
                     )
                 )
-                * number_of_hours
+                * self.number_of_hours
             )
         return data
-
-    def process_number_of_hours(self, number_of_hours):
-        if isinstance(number_of_hours, list):
-            pattern = re.compile(r"\d+")
-            matches = pattern.findall(number_of_hours[0]["Q1"])
-            integer_value = int("".join(matches))
-            return integer_value
-        else:
-            return number_of_hours
 
     def get_rate_of_injuries_who_are_workers_but_not_employees(self):
         slug = "gri-social-ohs-403-9b-number_of_injuries_workers"
@@ -184,21 +162,8 @@ class IllnessAnalysisView(APIView):
                 item["month"] = raw_response.month
                 new_data.append(item)
             data.extend(new_data)
-        number_of_hours_worked_responses = self.get_number_of_hours_worked()
+
         for entry in data:
-            _ = number_of_hours_worked_responses.filter(
-                year=entry["year"], month=entry["month"]
-            ).first()
-            if _ is not None:
-                number_of_hours = self.process_number_of_hours(
-                    number_of_hours_worked_responses.filter(
-                        year=entry["year"], month=entry["month"]
-                    )
-                    .first()
-                    .data
-                )
-            else:
-                number_of_hours = 1000000
             entry["rate_of_fatalities_as_a_result_of_work_related_injury"] = (
                 format_decimal_places(
                     Decimal(
@@ -207,7 +172,7 @@ class IllnessAnalysisView(APIView):
                             int(entry["numberofhoursworked"]),
                         )
                     )
-                    * number_of_hours
+                    * self.number_of_hours
                 )
             )
             entry[
@@ -219,7 +184,7 @@ class IllnessAnalysisView(APIView):
                         int(entry["numberofhoursworked"]),
                     )
                 )
-                * number_of_hours
+                * self.number_of_hours
             )
             entry["rate_of_recordable_work_related_injuries"] = format_decimal_places(
                 Decimal(
@@ -228,7 +193,7 @@ class IllnessAnalysisView(APIView):
                         int(entry["numberofhoursworked"]),
                     )
                 )
-                * number_of_hours
+                * self.number_of_hours
             )
         return data
 
@@ -286,6 +251,20 @@ class IllnessAnalysisView(APIView):
 
         return response
 
+    def set_number_of_hours(self):
+        condition_dictionary = {500: 10_00_000, 100: 200_000}
+        months_between = (
+            relativedelta(self.end, self.start).months
+            + (relativedelta(self.end, self.start).years * 12)
+            + 1
+        )
+        if months_between > 0:
+            self.number_of_hours = int(
+                (condition_dictionary[self.injury_rate] / 12) * months_between
+            )
+        else:
+            self.number_of_hours = condition_dictionary[self.injury_rate]
+
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -296,6 +275,10 @@ class IllnessAnalysisView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
+        injury_rate_serializer = CheckInjuryRateSerializer(data=request.query_params)
+        injury_rate_serializer.is_valid(raise_exception=True)
+        self.injury_rate = injury_rate_serializer.validated_data["injury_rate"]
+        self.set_number_of_hours()
         self.set_raw_responses()
 
         response_data = {
