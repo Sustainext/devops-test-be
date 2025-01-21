@@ -80,8 +80,11 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
         # After validation, prepare the task objects to be created
+        user = request.user
         for validated_data in serializer.validated_data:
-            tasks_to_create.append(ClientTaskDashboard(**validated_data))
+            tasks_to_create.append(
+                ClientTaskDashboard(**validated_data, assigned_by=user)
+            )
 
         # Bulk create the tasks
         ClientTaskDashboard.objects.bulk_create(tasks_to_create)

@@ -29,6 +29,14 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientTaskDashboard
         fields = "__all__"
+        read_only_fields = ["assigned_by"]
+
+    # def create(self, validated_data):
+    #     # Get the user making the request
+    #     user = self.request.user
+    #     # Set the assigned_by field to the user making the request
+    #     validated_data["assigned_by"] = user
+    #     return super().create(validated_data)
 
     def update(self, instance, validated_data):
         comments = self.context["request"].data.get(
