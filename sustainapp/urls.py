@@ -39,7 +39,7 @@ from sustainapp.Views.Analyse.Social.ForcedLaborAnalyze import ForcedLaborAnalyz
 from sustainapp.Views.Analyse.Social.ChildLaborAndForcedLabour import (
     ChildLabourAndForcedLabourAnalyzeView,
 )
-from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
+from sustainapp.Views.Analyse.Social.GetOHSAnalyze import OHSAnalysisView
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
 )
@@ -170,7 +170,7 @@ urlpatterns = [
     ),
     path(
         "get_ohs_analysis/",
-        IllnessAnalysisView.as_view(),
+        OHSAnalysisView.as_view(),
         name="get_ohs_analysis",
     ),
     path(
