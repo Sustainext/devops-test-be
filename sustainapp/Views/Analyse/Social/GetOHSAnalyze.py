@@ -169,11 +169,6 @@ class OHSAnalysisView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
-        injury_rate_serializer = CheckInjuryRateSerializer(data=request.query_params)
-        injury_rate_serializer.is_valid(raise_exception=True)
-        self.injury_rate = injury_rate_serializer.validated_data["injury_rate"]
-        self.set_number_of_hours()
-        self.set_raw_responses()
 
         response_data = {
             "formal_joint_management": self.get_formal_joint_management(),
