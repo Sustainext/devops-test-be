@@ -51,6 +51,8 @@ type1_paths = {
     "gri-environment-water-303-3b-4c-water_withdrawal/discharge_areas_water_stress": "",
     "gri-environment-water-303-5c-change_in_water_storage": "",
     "gri-social-performance_and_career-414-2b-number_of_suppliers": "",
+    "gri-social-salary_ratio-405-2a-number_of_individuals": "",
+    "gri-social-salary_ratio-405-2a-ratio_of_remuneration": "",
 }
 
 type2_paths = {

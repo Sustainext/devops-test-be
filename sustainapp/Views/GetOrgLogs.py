@@ -56,6 +56,7 @@ class AzureMonitorQueryView(APIView):
         | where TimeGenerated >= datetime("{start_datetime_iso}") and TimeGenerated <= datetime("{end_datetime_iso}")
         | project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole, Logs, Organization, IPAddress
         | order by TimeGenerated desc
+        | take 200
         """
         try:
             response = logs_query_client.query_workspace(

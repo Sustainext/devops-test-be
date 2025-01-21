@@ -12,7 +12,7 @@ from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeV
 from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
     TrainingAnalyzeAPI,
 )
-from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
+from sustainapp.Views.Analyse.Social.GetOHSAnalyze import OHSAnalysisView
 from esg_report.Serializer.ScreenThirteenSerializer import ScreenThirteenSerializer
 from sustainapp.models import Report
 from esg_report.models.ScreenThirteen import ScreenThirteen
@@ -154,7 +154,7 @@ class ScreenThirteenService:
 
     def get_403(self):
         data = forward_request_with_jwt(
-            view_class=IllnessAnalysisView,
+            view_class=OHSAnalysisView,
             original_request=self.request,
             url="/sustainapp/get_ohs_analysis/",
             query_params={
@@ -682,7 +682,7 @@ class ScreenThirteenService:
             slug=self.slugs[92]
         )
         response_data["analysis_security_personnel"] = calling_analyse_view_with_params(
-            view_url="get_analysis_security_personnel",
+            "get_community_development_analysis",
             report=self.report,
             request=self.request,
         )
