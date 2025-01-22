@@ -15,6 +15,7 @@ from sustainapp.Serializers.TaskdashboardRetriveSerializer import (
 from rest_framework.exceptions import ValidationError
 from sustainapp.signals import send_task_assigned_email
 from django.core.cache import cache
+from rest_framework.exceptions import PermissionDenied
 
 
 class OrganisationTaskDashboardView(viewsets.ModelViewSet):
@@ -34,7 +35,10 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
         # Organize your tasks based on some attributes
         tasks = {
             "upcoming": queryset.filter(
-                Q(task_status__in=["in_progress", "reject"], assigned_to=request.user)
+                Q(
+                    task_status__in=["in_progress", "reject", "not_started"],
+                    assigned_to=request.user,
+                )
                 | Q(assigned_by=request.user, assigned_to__isnull=True)
             ).exclude(deadline__lt=timezone.now()),
             "overdue": queryset.filter(
@@ -77,8 +81,11 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
         # After validation, prepare the task objects to be created
+        user = request.user
         for validated_data in serializer.validated_data:
-            tasks_to_create.append(ClientTaskDashboard(**validated_data))
+            tasks_to_create.append(
+                ClientTaskDashboard(**validated_data, assigned_by=user)
+            )
 
         # Bulk create the tasks
         ClientTaskDashboard.objects.bulk_create(tasks_to_create)
@@ -95,6 +102,12 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
             send_task_assigned_email(None, task, created=True)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.assigned_by != request.user:
+            raise PermissionDenied("You do not have permission to delete this task.")
+        return super().destroy(request, *args, **kwargs)
 
 
 class UserTaskDashboardView(ListAPIView):
