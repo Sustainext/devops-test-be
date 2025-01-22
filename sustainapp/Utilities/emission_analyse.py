@@ -18,7 +18,7 @@ def calculate_scope_contribution(key_name, scope_total_values):
                 key_name: scope_name,
                 "total": format_decimal_places(scope_value / 1000),
                 "contribution": contribution,
-                "Units": "tC02e",
+                "Units": "tCO2e",
             }
         )
     scope_contributions.sort(key=itemgetter("contribution"), reverse=True)
