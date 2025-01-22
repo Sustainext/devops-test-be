@@ -197,7 +197,11 @@ def send_task_assigned_email(sender, instance, created, **kwargs):
                 subject, "", from_email, recipient_list, html_message=html_message
             )
     # Handle case where assigned_to changes from None to a user
-    if original_assigned_to is None and instance.assigned_to is not None:
+    if (
+        not created
+        and original_assigned_to is None
+        and instance.assigned_to is not None
+    ):
         first_name = instance.assigned_to.first_name.capitalize()
         task_name = instance.task_name
         platform_link = settings.EMAIL_REDIRECT

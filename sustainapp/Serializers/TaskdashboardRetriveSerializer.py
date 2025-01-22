@@ -22,10 +22,14 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
     assign_by_user_name = serializers.CharField(
         source="assigned_by.first_name", required=False, read_only=True
     )
+    location_name = serializers.CharField(
+        source="location.name", required=False, read_only=True
+    )
 
     class Meta:
         model = ClientTaskDashboard
         fields = "__all__"
+        read_only_fields = ["assigned_by"]
 
     def update(self, instance, validated_data):
         comments = self.context["request"].data.get(

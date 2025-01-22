@@ -126,6 +126,7 @@
     <thead>
         <tr>
             <th>Type of Employees</th>
+            <th>Total no of employees</th>
             <th>Percentage of Male Employees</th>
             <th>Percentage of Female Employees</th>
             <th>Percentage of Non-Binary Employees</th>
@@ -137,25 +138,56 @@
     <tbody>
         {% for hire in screen_thirteen_data.401_social_analyse.data.new_employee_hires %}
         <tr>
-            <!-- Format till 2 decimals -->
-            <td>{{ hire.type_of_employee  }}</td>
-            <td>{{ hire.percentage_of_male_employee|floatformat:2 }}%</td>
-            <td>{{ hire.percentage_of_female_employee|floatformat:2 }}%</td>
-            <td>{{ hire.percentage_of_non_binary_employee|floatformat:2 }}%</td>
-            <td>{{ hire.yearsold30|floatformat:2 }}%</td>
-            <td>{{ hire.yearsold30to50|floatformat:2 }}%</td>
-            <td>{{ hire.yearsold50|floatformat:2 }}%</td>
-            
+            <td>{{ hire.type_of_employee }}</td>
+            <td>{{ hire.total }}</td>
+
+            <td>
+                {% if hire.percentage_of_male_employee %}
+                  {{ hire.percentage_of_male_employee|floatformat:2 }}%
+                {% endif %}
+            </td>
+
+            <td>
+                {% if hire.percentage_of_female_employee %}
+                {{ hire.percentage_of_female_employee|floatformat:2 }}%
+                {% endif %}
+            </td>
+
+             <td>
+                {% if hire.percentage_of_non_binary_employee %}
+                {{ hire.percentage_of_non_binary_employee|floatformat:2 }}%
+                {% endif %}
+             </td>
+
+             <td>
+                {% if hire.yearsold30 %}
+                {{ hire.yearsold30|floatformat:2 }}%
+                {% endif %}
+             </td>
+
+             <td>
+                {% if hire.yearsold30to50 %}
+                {{ hire.yearsold30to50|floatformat:2 }}%
+                {% endif %}
+             </td>
+
+            <td>
+                {% if hire.yearsold50 %}
+                {{ hire.yearsold50|floatformat:2 }}%
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
 
 <h5>New Employee Turnover</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
             <th>Type of Employees</th>
+            <th>Total no of employees</th>
             <th>Percentage of Male Employees</th>
             <th>Percentage of Female Employees</th>
             <th>Percentage of Non-Binary Employees</th>
@@ -168,13 +200,43 @@
         {% for hire in screen_thirteen_data.401_social_analyse.data.employee_turnover %}
         <tr>
             <td>{{ hire.type_of_employee }}</td>
-            <td>{{ hire.percentage_of_male_employee|floatformat:2 }}%</td>
-            <td>{{ hire.percentage_of_female_employee|floatformat:2 }}%</td>
-            <td>{{ hire.percentage_of_non_binary_employee|floatformat:2 }}%</td>
-            <td>{{ hire.yearsold30|floatformat:2 }}%</td>
-            <td>{{ hire.yearsold30to50|floatformat:2 }}%</td>
-            <td>{{ hire.yearsold50|floatformat:2 }}%</td>
-            
+            <td>{{ hire.total }}</td>
+
+            <td>
+                {% if hire.percentage_of_male_employee %}
+                  {{ hire.percentage_of_male_employee|floatformat:2 }}%
+                {% endif %}
+            </td>
+
+            <td>
+                {% if hire.percentage_of_female_employee %}
+                {{ hire.percentage_of_female_employee|floatformat:2 }}%
+                {% endif %}
+            </td>
+
+             <td>
+                {% if hire.percentage_of_non_binary_employee %}
+                {{ hire.percentage_of_non_binary_employee|floatformat:2 }}%
+                {% endif %}
+             </td>
+
+             <td>
+                {% if hire.yearsold30 %}
+                {{ hire.yearsold30|floatformat:2 }}%
+                {% endif %}
+             </td>
+
+             <td>
+                {% if hire.yearsold30to50 %}
+                {{ hire.yearsold30to50|floatformat:2 }}%
+                {% endif %}
+             </td>
+
+            <td>
+                {% if hire.yearsold50 %}
+                {{ hire.yearsold50|floatformat:2 }}%
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

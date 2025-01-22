@@ -553,7 +553,7 @@
 </p>
 
 
-<h5>Rate of injuries: For all employees</h5>
+<h5>Rate of injuries: Per 100 employees</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
@@ -563,7 +563,29 @@
         </tr>
     </thead>
     <tbody>
-        {% for ill_health in screen_thirteen_data.get_403_analyse.rate_of_injuries_for_all_employees %}
+        {% for ill_health in screen_thirteen_data.illness_analysis.rate_of_injuries_for_all_employees_100_injury_rate %}
+        <tr>
+            <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury }}</td>
+            <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities }}</td>
+            <td>{{ ill_health.rate_of_recordable_work_related_injuries }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h5> Rate of injuries: Per 100 workers</h5>
+
+
+<h4>For all workers who are not employees but whose work and/or workplace is controlled by the organization </h4>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Rate of fatalities as a result of work-related injury </th>
+            <th>Rate of high-consequence work-related injuries (excluding fatalities)</th>
+            <th>Rate of recordable work-related injuries </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ill_health in screen_thirteen_data.illness_analysis.rate_of_injuries_for_not_included_in_company_employees_100_injury_rate %}
         <tr>
             <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury }}</td>
             <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities }}</td>
@@ -573,7 +595,7 @@
     </tbody>
 </table>
 
-<h5>For all workers who are not employees but whose work and/or workplace is controlled by the organization </h5>
+<h5>Rate of injuries: Per 500 employees</h5>
 <table cellpadding="5" cellspacing="0" width="100%">
     <thead>
         <tr>
@@ -583,7 +605,29 @@
         </tr>
     </thead>
     <tbody>
-        {% for ill_health in screen_thirteen_data.get_403_analyse.rate_of_injuries_for_not_included_in_company_employees %}
+        {% for ill_health in screen_thirteen_data.illness_analysis.rate_of_injuries_for_all_employees_500_injury_rate %}
+        <tr>
+            <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury }}</td>
+            <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities }}</td>
+            <td>{{ ill_health.rate_of_recordable_work_related_injuries }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h5> Rate of injuries: Per 500 workers</h5>
+
+
+<h4>For all workers who are not employees but whose work and/or workplace is controlled by the organization </h4>
+<table cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Rate of fatalities as a result of work-related injury </th>
+            <th>Rate of high-consequence work-related injuries (excluding fatalities)</th>
+            <th>Rate of recordable work-related injuries </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ill_health in screen_thirteen_data.illness_analysis.rate_of_injuries_for_not_included_in_company_employees_500_injury_rate %}
         <tr>
             <td>{{ ill_health.rate_of_fatalities_as_a_result_of_work_related_injury }}</td>
             <td>{{ ill_health.rate_of_high_consequence_work_related_injuries_excluding_fatalities }}</td>
