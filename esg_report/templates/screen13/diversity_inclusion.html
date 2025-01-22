@@ -57,7 +57,7 @@
     
 </table>
 
-<h5>Percentage of Employees per employee category </h5>
+<h5>Percentage of Employees per employee category</h5>
 <table>
     <thead>
         <tr>
@@ -76,9 +76,11 @@
             <th>Minority Group</th>
         </tr>
     </thead>
+    
     <tbody>
-        {% for employee_category in screen_thirteen_data.405_2a_analyse.number_of_employee_per_employee_category %}
+        {% for employee_category in screen_thirteen_data.401_social_analyse.data.number_of_employee_per_employee_category %}
         <tr>
+            
             <td>{{employee_category.Category }}</td>
             <td>{{employee_category.percentage_of_male_with_org_governance }}</td>
             <td>{{employee_category.percentage_of_female_with_org_governance }}</td>
