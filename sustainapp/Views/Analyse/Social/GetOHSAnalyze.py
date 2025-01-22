@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from sustainapp.Serializers.CheckInjuryRate import CheckInjuryRateSerializer
 from rest_framework.permissions import IsAuthenticated
 from datametric.utils.analyse import (
     filter_by_start_end_dates,
@@ -311,28 +310,22 @@ class GetIllnessAnalysisView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
-        injury_rate_serializer = CheckInjuryRateSerializer(data=request.query_params)
-        if injury_rate_serializer.is_valid(raise_exception=False):
-            self.injury_rate = injury_rate_serializer.validated_data["injury_rate"]
-            self.set_number_of_hours()
-            self.set_raw_responses()
+        self.set_raw_responses()
 
-            return Response(
-                {
-                    "rate_of_injuries_for_all_employees_100_injury_rate": self.get_work_related_ill_health(
-                        100
-                    ),
-                    "rate_of_injuries_for_not_included_in_company_employees_100_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
-                        100
-                    ),
-                    "rate_of_injuries_for_all_employees_500_injury_rate": self.get_work_related_ill_health(
-                        500
-                    ),
-                    "rate_of_injuries_for_not_included_in_company_employees_500_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
-                        500
-                    ),
-                },
-                status=status.HTTP_200_OK,
-            )
-        else:
-            return Response([], status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "rate_of_injuries_for_all_employees_100_injury_rate": self.get_work_related_ill_health(
+                    100
+                ),
+                "rate_of_injuries_for_not_included_in_company_employees_100_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
+                    100
+                ),
+                "rate_of_injuries_for_all_employees_500_injury_rate": self.get_work_related_ill_health(
+                    500
+                ),
+                "rate_of_injuries_for_not_included_in_company_employees_500_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
+                    500
+                ),
+            },
+            status=status.HTTP_200_OK,
+        )
