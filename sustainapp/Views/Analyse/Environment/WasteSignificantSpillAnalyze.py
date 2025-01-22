@@ -15,11 +15,19 @@ from common.utils.get_data_points_as_raw_responses import (
 
 
 class WasteSignificantSpillAnalyze(APIView):
+    """
+    Analyze the data for waste significant spills
+    Returns a dictionary of the data
+    Calculates the total waste significant spills for the given period
+    Uses the raw data from the database, Stores it in init so that it can be used by other functions
+    """
+
     def __init__(self):
         super().__init__()
         self.slugs = {
             0: "gri_environment_waste_significant_spills_306_3b_3c_q1",
         }
+        self.raw_data = None
 
     def set_data_points(self):
         self.data_points = (
@@ -33,14 +41,13 @@ class WasteSignificantSpillAnalyze(APIView):
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
         )
 
-    def get_data(self):
-        raw_data = collect_data_by_raw_response_and_index(
+    def set_raw_data(self):
+        self.raw_data = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[0])
         )
-        return raw_data
 
     def total_number_and_volume_by_material(self):
-        data_point = self.get_data()
+        data_point = self.raw_data
         data_by_material = {}
 
         for data in data_point:
@@ -59,7 +66,7 @@ class WasteSignificantSpillAnalyze(APIView):
         return result
 
     def total_number_and_volume_by_location(self):
-        data_point = self.get_data()
+        data_point = self.raw_data
         data_by_location = {}
         for data in data_point:
             location = data["Location"]
@@ -78,7 +85,7 @@ class WasteSignificantSpillAnalyze(APIView):
         return result
 
     def total_number_and_volume_significant_spills(self):
-        data_point = self.get_data()
+        data_point = self.raw_data
         data_by_spills = {}
         for data in data_point:
             is_spill = data["SpillSignificant"]
@@ -112,6 +119,7 @@ class WasteSignificantSpillAnalyze(APIView):
         ):  # Using this to get only corporate data and not organisation data
             self.organisation = None
         self.set_data_points()
+        self.set_raw_data()
         result = {
             # Table 1 306-3b by material
             "total_number_and_volume_by_material": self.total_number_and_volume_by_material(),
