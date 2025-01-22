@@ -214,6 +214,10 @@ class TrainingAnalyzeAPI(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
+        if (
+            self.corporate
+        ):  # Using this to get only corporate data and not organisation data
+            self.organisation = None
         self.set_data_points()
         self.organized_data = self.set_organized_data()
         data = {}
