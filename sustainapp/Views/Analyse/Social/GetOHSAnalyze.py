@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from sustainapp.Serializers.CheckInjuryRate import CheckInjuryRateSerializer
 from rest_framework.permissions import IsAuthenticated
 from datametric.utils.analyse import (
     filter_by_start_end_dates,
@@ -15,7 +14,6 @@ from django.db.models.expressions import RawSQL
 from django.db.models import Value
 from decimal import Decimal
 from common.utils.value_types import safe_percentage, safe_divide, format_decimal_places
-from dateutil.relativedelta import relativedelta
 
 
 class OHSAnalysisView(APIView):
@@ -169,10 +167,6 @@ class OHSAnalysisView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
-        injury_rate_serializer = CheckInjuryRateSerializer(data=request.query_params)
-        injury_rate_serializer.is_valid(raise_exception=True)
-        self.injury_rate = injury_rate_serializer.validated_data["injury_rate"]
-        self.set_number_of_hours()
         self.set_raw_responses()
 
         response_data = {
@@ -216,21 +210,7 @@ class GetIllnessAnalysisView(APIView):
             .only("data")
         )
 
-    def set_number_of_hours(self):
-        condition_dictionary = {500: 10_00_000, 100: 200_000}
-        months_between = (
-            relativedelta(self.end, self.start).months
-            + (relativedelta(self.end, self.start).years * 12)
-            + 1
-        )
-        if months_between > 0:
-            self.number_of_hours = int(
-                (condition_dictionary[self.injury_rate] / 12) * months_between
-            )
-        else:
-            self.number_of_hours = condition_dictionary[self.injury_rate]
-
-    def get_work_related_ill_health(self):
+    def get_work_related_ill_health(self, number_of_hours):
         slug = "gri-social-ohs-403-9a-number_of_injuries_emp"
         local_raw_response = self.raw_responses.filter(path__slug=slug)
         data = []
@@ -250,7 +230,7 @@ class GetIllnessAnalysisView(APIView):
                             int(entry["fatalities"]), int(entry["numberofhoursworked"])
                         )
                     )
-                    * self.number_of_hours
+                    * number_of_hours
                 )
             )
             entry[
@@ -261,7 +241,7 @@ class GetIllnessAnalysisView(APIView):
                         int(entry["highconsequence"]), int(entry["numberofhoursworked"])
                     )
                 )
-                * self.number_of_hours
+                * number_of_hours
             )
             entry["rate_of_recordable_work_related_injuries"] = format_decimal_places(
                 Decimal(
@@ -270,11 +250,11 @@ class GetIllnessAnalysisView(APIView):
                         int(entry["numberofhoursworked"]),
                     )
                 )
-                * self.number_of_hours
+                * number_of_hours
             )
         return data
 
-    def get_rate_of_injuries_who_are_workers_but_not_employees(self):
+    def get_rate_of_injuries_who_are_workers_but_not_employees(self, number_of_hours):
         slug = "gri-social-ohs-403-9b-number_of_injuries_workers"
         local_raw_response = self.raw_responses.filter(path__slug=slug)
         data = []
@@ -295,7 +275,7 @@ class GetIllnessAnalysisView(APIView):
                             int(entry["numberofhoursworked"]),
                         )
                     )
-                    * self.number_of_hours
+                    * number_of_hours
                 )
             )
             entry[
@@ -307,7 +287,7 @@ class GetIllnessAnalysisView(APIView):
                         int(entry["numberofhoursworked"]),
                     )
                 )
-                * self.number_of_hours
+                * number_of_hours
             )
             entry["rate_of_recordable_work_related_injuries"] = format_decimal_places(
                 Decimal(
@@ -316,7 +296,7 @@ class GetIllnessAnalysisView(APIView):
                         int(entry["numberofhoursworked"]),
                     )
                 )
-                * self.number_of_hours
+                * number_of_hours
             )
         return data
 
@@ -330,18 +310,22 @@ class GetIllnessAnalysisView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
-        injury_rate_serializer = CheckInjuryRateSerializer(data=request.query_params)
-        if injury_rate_serializer.is_valid(raise_exception=False):
-            self.injury_rate = injury_rate_serializer.validated_data["injury_rate"]
-            self.set_number_of_hours()
-            self.set_raw_responses()
+        self.set_raw_responses()
 
-            return Response(
-                {
-                    "rate_of_injuries_for_all_employees": self.get_work_related_ill_health(),
-                    "rate_of_injuries_for_not_included_in_company_employees": self.get_rate_of_injuries_who_are_workers_but_not_employees(),
-                },
-                status=status.HTTP_200_OK,
-            )
-        else:
-            return Response([], status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "rate_of_injuries_for_all_employees_100_injury_rate": self.get_work_related_ill_health(
+                    100
+                ),
+                "rate_of_injuries_for_not_included_in_company_employees_100_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
+                    100
+                ),
+                "rate_of_injuries_for_all_employees_500_injury_rate": self.get_work_related_ill_health(
+                    500
+                ),
+                "rate_of_injuries_for_not_included_in_company_employees_500_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
+                    500
+                ),
+            },
+            status=status.HTTP_200_OK,
+        )

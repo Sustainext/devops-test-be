@@ -686,6 +686,11 @@ class ScreenThirteenService:
             report=self.report,
             request=self.request,
         )
+        response_data["illness_analysis"] = calling_analyse_view_with_params(
+            "get_illness_analysis",
+            report=self.report,
+            request=self.request,
+        )
 
         return response_data
 
