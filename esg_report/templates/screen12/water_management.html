@@ -80,8 +80,8 @@
       <td>{{ operation.source|default:"N/A" }}</td>
       <td>{{ operation.water_stress|default:"N/A" }}</td>
       <td>{{ operation.water_type|default:"N/A" }}</td>
-      <td>{{ operation.contribution|default:"N/A" }}%</td>
-      <td>{{ operation.total_withdrawal|default:"N/A" }}%</td>
+      <td>{{ operation.contribution|default:"0" }}%</td>
+      <td>{{ operation.total_withdrawal|default:"0" }}%</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_fresh_water_withdrawal_by_source|last as last_operation %}
@@ -113,7 +113,7 @@
     <tr>
       <td>{{ operation.location|default:"N/A" }}</td>
       <td>{{ operation.contribution|default:"0" }}%</td>
-      <td>{{ operation.total_water_withdrawal }}</td>
+      <td>{{ operation.total_water_withdrawal|default:"0" }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.get_total_fresh_water_withdrawal_by_location_country|last as last_operation %}
@@ -146,8 +146,8 @@
     <tr>
       <td>{{ operation.water_type|default:"N/A" }}</td>
       <td>{{ operation.source|default:"N/A" }}%</td>
-      <td>{{ operation.contribution }}</td>
-      <td>{{ operation.total_water_withdrawal }}</td>
+      <td>{{ operation.contribution|default:"0" }}</td>
+      <td>{{ operation.total_water_withdrawal|default:"0" }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_withdrawal_by_water_type|last as last_operation %}
@@ -355,7 +355,7 @@
       <td>{{ operation.water_stress|default:"N/A" }}</td>
       <td>{{ operation.water_type|default:"N/A" }}</td>
       <td>{{ operation.contribution|default:"0" }}%</td>
-      <td>{{ operation.total_discharge|default:"N/A" }}</td>
+      <td>{{ operation.total_discharge|default:"0" }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
     {% endif %} {% endfor %} {% with screen_twelve_data.water_analyse.total_water_discharge_by_water_type_from_water_stress_area|last as last_operation %}
@@ -525,7 +525,7 @@
     {% for operation in screen_twelve_data.water_analyse.total_water_consumption_by_business_operation %} {% if not forloop.last %}
     <tr>
       <td>{{ operation.business_operation|default:"N/A" }}</td>
-      <td>{{ operation.contribution|default:"N/A" }}%</td>
+      <td>{{ operation.contribution|default:"0" }}%</td>
       <td>{{ operation.consumption|default:"0" }}</td>
       <td>{{ operation.Unit|default:"N/A" }}</td>
     </tr>
@@ -621,7 +621,7 @@
     {% for operation in screen_twelve_data.water_analyse.change_in_water_storage %}
     <tr>
       <td>{{ operation.Unit|default:"N/A" }}</td>
-      <td>{{ operation.change_in_water_storage|default:"N/A" }}</td>
+      <td>{{ operation.change_in_water_storage|default:"0" }}</td>
     </tr>
     {% endfor %}
   </tbody>
