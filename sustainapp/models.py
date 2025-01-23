@@ -1038,7 +1038,7 @@ class ClientTaskDashboard(AbstractModel):
         ("not_started", "not_started"),
     ]
     task_status = models.CharField(
-        max_length=64, choices=STATUS_CHOICES, default="not_started"
+        max_length=64, choices=STATUS_CHOICES, default="in_progress"
     )
     location = models.ForeignKey(
         Location, on_delete=models.CASCADE, null=True, blank=True
