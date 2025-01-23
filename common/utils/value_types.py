@@ -42,6 +42,9 @@ def format_decimal_places(value):
 
 
 def safe_divide(numerator, denominator):
+    if numerator is None or denominator is None:
+        logger.info(f"Error safe dividing: {numerator} , {denominator}")
+        return 0
     return format_decimal_places(
         (Decimal(numerator) / Decimal(denominator)) if denominator != 0 else 0
     )
