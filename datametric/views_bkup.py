@@ -23,8 +23,7 @@ import sys
 from azurelogs.azure_log_uploader import AzureLogUploader
 from azurelogs.time_utils import get_current_time_ist
 from collections import OrderedDict
-from deepdiff import DeepDiff
- 
+
 uploader = AzureLogUploader()
 
 
@@ -110,7 +109,7 @@ def compare_objects(obj1, obj2):
         obj2: Second object (new data)
 
     Returns:
-        dict: A dictionary describing the status and differences found or error message
+        str: A description of the differences found or error message
     """
     status_string = "Row Update"
     print(obj1, ' is obj1 ^^^^^')
@@ -119,77 +118,112 @@ def compare_objects(obj1, obj2):
     try:
         # Check if inputs are valid lists
         if not isinstance(obj1, list) or not isinstance(obj2, list):
-            return {
-                "status_string": status_string,
-                "description": "Unidentified Update"
-            }
-
-        # Handle case where obj2 is empty
-        if not obj2:
-            if obj1:  # If obj1 has data and obj2 is empty, all rows are deleted
-                return {
-                    "status_string": "Row Delete",
-                    "description": f"All {len(obj1)} rows are deleted"
-                }
-            else:  # Both obj1 and obj2 are empty
-                return {
-                    "status_string": status_string,
-                    "description": "No data in both objects"
-                }
+            r = dict()
+            status_string = "Row Update"
+            description = "Unidentified Update"
+            r["status_string"] = status_string
+            r["description"] = description
+            print('**** Case 1 ***')
+            return r
 
         # Handle case where obj1 is empty or has lesser length
         if not obj1 or len(obj1) < len(obj2):
             added_rows = len(obj2) - len(obj1) if obj1 else len(obj2)
             if added_rows == 1:
-                return {
-                    "status_string": "Row Create",
-                    "description": "A new row is created"
-                }
+                r = dict()
+                status_string = "Row Create"
+                description = "A new row is created"
+                r["status_string"] = status_string
+                r["description"] = description
+                print('**** Case 2 ***')
+                return r
             else:
-                return {
-                    "status_string": "Row Create",
-                    "description": f"{added_rows} new rows are created"
-                }
+                status_string = "Row Create"
+                description = f"{added_rows} new rows are created"
+                r = dict()
+                r["status_string"] = status_string
+                r["description"] = description
+                print('**** Case 3 ***')
+                return r
 
         # Handle case where obj2 has lesser length than obj1
         if len(obj2) < len(obj1):
             deleted_rows = len(obj1) - len(obj2)
             if deleted_rows == 1:
-                return {
-                    "status_string": "Row Delete",
-                    "description": "A row is deleted"
-                }
+                r = dict()
+                r["status_string"] = "Row Delete"
+                r["description"] = "A row is deleted"
+                print('**** Case 4 ***')
+                return r
             else:
-                return {
-                    "status_string": "Row Delete",
-                    "description": f"{deleted_rows} rows are deleted"
-                }
+                r = dict()
+                r["status_string"] = "Row Delete"
+                r["description"] = f"{deleted_rows} rows are deleted"
+                print('**** Case 5 ***')
+                return r
 
-        # Compare the two lists using DeepDiff
-        diff = DeepDiff(obj1, obj2, ignore_order=True)
+        if not obj2:
+            r = dict()
+            r["status_string"] = "Row Delete"
+            r["description"] = "Error: Second object is empty"
+            print('**** Case 6 ***')
+            return r
 
-        if not diff:
-            return {
-                "status_string": status_string,
-                "description": "No difference with previous rows saved"
-            }
+        differences = []
 
-        # Handle changes in existing rows
-        changes = []
-        for change in diff.get('values_changed', {}).values():
-            old_value = change['old_value']
-            new_value = change['new_value']
-            changes.append(f"Value changed from '{old_value}' to '{new_value}'")
+        # Iterate through each entry
+        for i, (entry1, entry2) in enumerate(zip(obj1, obj2)):
+            try:
+                # Compare each field in the dictionaries
+                for key in entry1.keys():
+                    value1 = str(entry1[key])
+                    value2 = str(entry2[key])
 
-        # Prepare final response
-        if changes:
-            return {
-                "status_string": status_string,
-                "description": f"Row values are changed: {', '.join(changes)}"
-            }
+                    if value1 != value2:
+                        if key == "Quantity":
+                            differences.append(
+                                f"{key} changed from {value1} {entry1.get('Unit', '')} "
+                                f"to {value2} {entry2.get('Unit', '')}"
+                            )
+                        else:
+                            differences.append(
+                                f"{key} changed from '{value1}' to '{value2}'"
+                            )
+
+            except KeyError as e:
+                r = dict()
+                r["status_string"] = "Row Update"
+                r["description"] = (
+                    f"Error: Missing key {str(e)} in objects at index {i}"
+                )
+                print('**** Case 7 ***')
+                return r
+            except Exception as e:
+                r = dict()
+                r["status_string"] = "Row Update"
+                r["description"] = (
+                    f"Error: Invalid object structure at index {i}: {str(e)}"
+                )
+                print('**** Case 8 ***')
+                return r
+
+        if not differences:
+            r = dict()
+            r["status_string"] = "Row Update"
+            r["description"] = f"No difference with previous rows saved"
+            print('**** Case 9 ***')
+            return r
+
+        r = dict()
+        r["status_string"] = "Row Update"
+        # r['differences'] = "\n".join(differences)
+        r["description"] = "Row values are changed"
+        print('**** Case 10 ***')
+
+        return r
 
     except Exception as e:
-        return {"status_string": "Error", "description": str(e)}
+        return f"Error: {str(e)}"
 
 
 class TestView(APIView):
@@ -344,8 +378,7 @@ class CreateOrUpdateFieldGroup(APIView):
             logger.info(f"created: {created}")
             time_now = get_current_time_ist()
             role = user_instance.custom_role
-            # first_item = form_data[0]  # Get the first dictionary
-            print(diff_string)
+            first_item = form_data[0]  # Get the first dictionary
             event_details = diff_string["status_string"]
             field_group_obj = FieldGroup.objects.filter(path=path_ins).first()
             log_text = getLogDetails(
