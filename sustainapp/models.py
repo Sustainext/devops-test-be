@@ -1065,6 +1065,7 @@ class ClientTaskDashboard(AbstractModel):
     activity = models.CharField(max_length=2048, null=True, blank=True)
     region = models.CharField(max_length=1024, null=True, blank=True)
     comments_assignee = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     objects = ClientFiltering()
 
 
