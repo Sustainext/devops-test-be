@@ -337,9 +337,7 @@ class ScreenNineService:
             data = {
                 "are_the_organizations_policy_commitments_publicly_available": raw_response_data[
                     0
-                ][
-                    "Q1"
-                ],
+                ]["Q1"],
                 "please_provide_links_to_the_policy_commitments": raw_response_data[0][
                     "Q2"
                 ],
@@ -362,14 +360,10 @@ class ScreenNineService:
             data = {
                 "the_internationally_recognized_human_rights_that_the_commitment_covers": raw_response_data[
                     0
-                ][
-                    "Disclosed"
-                ],
+                ]["Disclosed"],
                 "the_categories_of_stakeholders_including_at_risk_or_vulnerable_groups_that_the_organization_gives_particular_attention_to_in_the_commitment": raw_response_data[
                     1
-                ][
-                    "Disclosed"
-                ],
+                ]["Disclosed"],
                 "other1": raw_response_data[2]["Disclosed"],
                 "other2": raw_response_data[3]["Disclosed"],
             }
@@ -515,7 +509,10 @@ class ScreenNineService:
             .order_by("-year")
             .first()
         )
-        data = raw_response.data[0] if raw_response is not None else None
+        try:
+            data = raw_response.data[0] if raw_response is not None else None
+        except IndexError:
+            data = None
         return data
 
     def get_2_12_b(self):
@@ -907,15 +904,11 @@ class ScreenNineService:
             "cross_board_membership": raw_response_data[0]["Disclosed"],
             "cross_shareholding_with_suppliers_and_other_stakeholders": raw_response_data[
                 1
-            ][
-                "Disclosed"
-            ],
+            ]["Disclosed"],
             "existence_of_controlling_shareholders": raw_response_data[2]["Disclosed"],
             "related_parties_theri_relationships_transactions_and_outstanding_balances": raw_response_data[
                 3
-            ][
-                "Disclosed"
-            ],
+            ]["Disclosed"],
             "others": raw_response_data[4]["Disclosed"],
         }
         return data
