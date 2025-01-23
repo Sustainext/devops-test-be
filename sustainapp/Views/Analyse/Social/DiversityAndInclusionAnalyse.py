@@ -12,6 +12,7 @@ from datametric.utils.analyse import (
 )
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_segregated_by_location,
+    collect_data_by_raw_response_and_index,
 )
 from datametric.models import RawResponse, DataPoint
 from sustainapp.models import Corporateentity
@@ -134,11 +135,25 @@ class DiversityAndInclusionAnalyse(APIView):
         return response_data
 
     def get_salary_ration(self, slug):  # 405-2
-        local_raw_response = (
-            self.raw_response.only("data").filter(path__slug=slug).first()
+        dps = self.data_points.filter(path__slug=slug).order_by("index")
+        data = collect_data_by_raw_response_and_index(dps)
+        response_data = []
+        response_data.append(
+            {
+                "Q1": [],
+                "Q2": [
+                    {
+                        "category": i["category"],
+                        "locationandoperation": [i["locationandoperation"]],
+                        "women_to_men": safe_divide(i["female"], i["male"]),
+                        "non_binary_to_men": safe_divide(i["nonBinary"], i["male"]),
+                        "non_binary_to_women": safe_divide(i["nonBinary"], i["female"]),
+                    }
+                    for i in data
+                ],
+            }
         )
-        local_data = local_raw_response.data if local_raw_response is not None else []
-        return local_data
+        return response_data
 
     def format_data(self, raw_resp_1a, currency: float) -> list:
         # What if they don't add the values in male and female

@@ -1,13 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from sustainapp.models import ClientTaskDashboard, Location
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_200_OK
 from sustainapp.Serializers.TaskdashboardRetriveSerializer import (
     ClientTaskDashboardSerializer,
 )
-from django.utils import timezone
 
 
 # get assigned by task
@@ -20,7 +18,9 @@ class AssignedEmissionTask(APIView):
             .exclude(
                 roles__in=[3, 4]
             )  # Confirm with the team -> 3 completed, 4 -> the task is calculated
-            .filter(task_status__in=["in_progress", "reject", "under_review"])
+            .filter(
+                task_status__in=["not_started", "in_progress", "reject", "under_review"]
+            )
         )
 
         # STATUS_CHOICES

@@ -39,7 +39,10 @@ from sustainapp.Views.Analyse.Social.ForcedLaborAnalyze import ForcedLaborAnalyz
 from sustainapp.Views.Analyse.Social.ChildLaborAndForcedLabour import (
     ChildLabourAndForcedLabourAnalyzeView,
 )
-from sustainapp.Views.Analyse.Social.IllnessAnalyse import IllnessAnalysisView
+from sustainapp.Views.Analyse.Social.GetOHSAnalyze import (
+    OHSAnalysisView,
+    GetIllnessAnalysisView,
+)
 from sustainapp.Views.Analyse.Social.DiversityAndInclusionAnalyse import (
     DiversityAndInclusionAnalyse,
 )
@@ -84,6 +87,9 @@ from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
 )
 from sustainapp.Views.GetOrgLogs import AzureMonitorQueryView
 from sustainapp.Views.PostOrgLogs import LogUploadView
+from sustainapp.Views.Analyse.Environment.WasteSignificantSpillAnalyze import (
+    WasteSignificantSpillAnalyze,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -170,8 +176,13 @@ urlpatterns = [
     ),
     path(
         "get_ohs_analysis/",
-        IllnessAnalysisView.as_view(),
+        OHSAnalysisView.as_view(),
         name="get_ohs_analysis",
+    ),
+    path(
+        "get_illness_analysis/",
+        GetIllnessAnalysisView.as_view(),
+        name="get_illness_analysis",
     ),
     path(
         "get_diversity_inclusion_analyse/",
@@ -259,4 +270,9 @@ urlpatterns = [
     ),
     path("get_org_logs/", AzureMonitorQueryView.as_view(), name="get_org_logs"),
     path("post_logs/", LogUploadView.as_view(), name="post-org-logs"),
+    path(
+        "get_analyze_waste_significant_spills/",
+        WasteSignificantSpillAnalyze.as_view(),
+        name="get_analyze_waste_significant_spills",
+    ),
 ]
