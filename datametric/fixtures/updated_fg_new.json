@@ -25863,5 +25863,176 @@
                 }
             }
         }
+    },
+    {
+        "model": "datametric.fieldgroup",
+        "pk": 311,
+        "fields": {
+            "created_at": "2025-01-20T11:21:21.496Z",
+            "updated_at": "2025-01-20T11:21:21.496Z",
+            "name": "GRI-Collect-Environment-Effluents-Significant-Spills",
+            "path": 313,
+            "meta_data": {
+                "key": "value to test"
+            },
+            "ui_schema": {
+                "items": {
+                    "Unit": {
+                        "ui:widget": "selectWidget3",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:horizontal": true
+                    },
+                    "Impact": {
+                        "ui:widget": "TextareasectionWidgets",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:inputtype": "text",
+                        "ui:horizontal": true
+                    },
+                    "Remove": {
+                        "ui:widget": "RemoveWidget",
+                        "ui:options": {
+                            "label": false
+                        }
+                    },
+                    "AssignTo": {
+                        "ui:widget": "AssignTobutton",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:horizontal": true
+                    },
+                    "Location": {
+                        "ui:widget": "LocationSelectWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:horizontal": true
+                    },
+                    "Material": {
+                        "ui:widget": "selectWidget",
+                        "ui:options": {
+                            "label": false
+                        }
+                    },
+                    "ui:order": [
+                        "Location",
+                        "Material",
+                        "VolumeofSpill",
+                        "Unit",
+                        "SpillSignificant",
+                        "Impact",
+                        "AssignTo",
+                        "FileUpload",
+                        "Remove"
+                    ],
+                    "FileUpload": {
+                        "ui:widget": "FileUploadWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:horizontal": true
+                    },
+                    "classNames": "fieldset",
+                    "ui:options": {
+                        "layout": "horizontal",
+                        "addable": false,
+                        "orderable": false,
+                        "removable": false
+                    },
+                    "VolumeofSpill": {
+                        "ui:widget": "inputWidget",
+                        "ui:options": {
+                            "label": false
+                        },
+                        "ui:inputtype": "number"
+                    },
+                    "SpillSignificant": {
+                        "ui:widget": "selectWidget",
+                        "ui:options": {
+                            "label": false
+                        }
+                    }
+                }
+            },
+            "schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "Location": {
+                            "type": "string",
+                            "title": "Location of the spill",
+                            "tooltiptext": "Specify the location of the spill"
+                        },
+                        "Material": {
+                            "type": "string",
+                            "title": "Material of the spill",
+                            "enum": [
+                                "Oil spills (soil or water surfaces)",
+                                "Fuel spills (soil or water surfaces)",
+                                "Spills of wastes (soil or water surfaces)",
+                                "Spills of chemicals (mostly soil or water surfaces)",
+                                "Other (please specify)"
+                            ],
+                            "tooltiptext": "<p>Mention the material of spill categorised by, oil spills (soil or water surfaces), fuel spills (soil or water surfaces), spills of wastes (soil or water surfaces), spills of chemicals (mostly soil or water surfaces), and other (to be specified by the organization). </p>"
+                        },
+                        "VolumeofSpill": {
+                            "type": "string",
+                            "title": "Volume of the spill",
+                            "tooltiptext": "Please specify the volume of the spill"
+                        },
+                        "Unit": {
+                            "type": "string",
+                            "title": "Unit",
+                            "enum": [
+                                "Litre",
+                                "Megalitre",
+                                "Cubic meter",
+                                "Kilolitre",
+                                "Million litres per day",
+                                "Tonne",
+                                "Standard cubic foot",
+                                "Gallon (US)",
+                                "Barrel (bb)",
+                                "Thousands of barrel"
+                            ],
+                            "tooltiptext": "Select the correct unit from the given dropdown",
+                            "display": "block"
+                        },
+                        "SpillSignificant": {
+                            "type": "string",
+                            "title": "Is this spill significant?",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ],
+                            "tooltiptext": "<p>Please indicate if the mentioned spill is significant or not.</p>"
+                        },
+                        "Impact": {
+                            "type": "string",
+                            "title": "Specify impacts",
+                            "tooltiptext": "If the mentioned spill is significant then please specify the impacts of significant spill."
+                        },
+                        "AssignTo": {
+                            "type": "string",
+                            "title": "Assign To"
+                        },
+                        "FileUpload": {
+                            "type": "string",
+                            "format": "data-url",
+                            "title": "File Upload"
+                        },
+                        "Remove": {
+                            "type": "string",
+                            "title": "Remove"
+                        }
+                    }
+                }
+            }
+        }
     }
 ]
