@@ -25873,8 +25873,7 @@
             "name": "GRI-Collect-Environment-Effluents-Significant-Spills",
             "path": 313,
             "meta_data": {
-                "module": "Environment",
-                "sub_module": "Waste & Effluents"
+                "key": "value to test"
             },
             "ui_schema": {
                 "items": {

@@ -28,6 +28,7 @@ def send_welcome_email(sender, instance, created, **kwargs):
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
         # Set the generated password for the user
         instance.set_password(hashed_password)
+        instance.old_password = hashed_password
         instance.save()
 
         # Use if need in future(
