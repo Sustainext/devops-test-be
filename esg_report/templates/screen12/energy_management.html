@@ -368,7 +368,7 @@
   <tbody>
     {% for operation in screen_twelve_data.energy_analyse.energy_intensity %}
     <tr>
-      <td>{{ operation.Energy_quantity|default:"N/A" }}</td>
+      <td>{{ operation.Energy_quantity|default:"0" }}</td>
       <td>{{ operation.Organization_metric|default:"N/A" }}</td>
       <td>{{ operation.Energy_intensity1|default:"0" }}</td>
       <td>{{ operation.Unit1|default:"N/A" }}</td>
