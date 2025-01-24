@@ -24,7 +24,10 @@ class AzureMonitorQueryView(APIView):
         workspace_id = os.getenv("AZURE_LOG_WORKSPACE_ID")
         stream_name = os.getenv("AZURE_LOG_STREAM_NAME")
         table_name = stream_name.split("-")[1] if "-" in stream_name else None
-        print(table_name)
+        exclude_email = (
+            os.getenv("EXCLUDE_SUSTAINEXT_EMAIL_LOGS", "False").lower() == "true"
+        )
+        print(exclude_email)
 
         # Check if any of the required credentials are missing
         if not all([tenant_id, client_id, client_secret, workspace_id]):
@@ -64,6 +67,12 @@ class AzureMonitorQueryView(APIView):
         query = f"""
         {table_name}
         | where TimeGenerated >= datetime("{start_datetime_iso}") and TimeGenerated <= datetime("{end_datetime_iso}")
+        """
+        if exclude_email:
+            query += """
+            | where not(UserEmail endswith "@sustainext.ai")
+            """
+        query += """
         | project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole, Logs, Organization, IPAddress
         | order by TimeGenerated desc
         | take 200
