@@ -90,11 +90,13 @@ from sustainapp.Views.PostOrgLogs import LogUploadView
 from sustainapp.Views.Analyse.Environment.WasteSignificantSpillAnalyze import (
     WasteSignificantSpillAnalyze,
 )
+from sustainapp.Views.MygoalOrganizationView import MyGoalOrganizationView
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
 router.register(r"ghgreport", ReportViewSet, basename="ReportUpdate")
 router.register(r"department", DepartmentViewSet, basename="Department")
+router.register(r"my_goal", MyGoalOrganizationView, basename="MyGoalOrganization")
 
 urlpatterns = [
     path("", include(router.urls)),
