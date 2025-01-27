@@ -735,6 +735,8 @@ class GetWasteAnalysis(APIView):
         end = serializer.validated_data.get("end", None)
         self.organisation = organisation
         self.corporate = corporate
+        if self.corporate:
+            self.organisation = None
         self.start = start
         self.end = end
         self.set_data_points()
