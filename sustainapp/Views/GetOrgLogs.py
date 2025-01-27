@@ -22,11 +22,24 @@ class AzureMonitorQueryView(APIView):
         client_id = os.getenv("AZURE_LOG_CLIENT_ID")
         client_secret = os.getenv("AZURE_LOG_CLIENT_SECRET")
         workspace_id = os.getenv("AZURE_LOG_WORKSPACE_ID")
+        stream_name = os.getenv("AZURE_LOG_STREAM_NAME")
+        table_name = stream_name.split("-")[1] if "-" in stream_name else None
+        exclude_email = (
+            os.getenv("EXCLUDE_SUSTAINEXT_EMAIL_LOGS", "False").lower() == "true"
+        )
+        print(exclude_email)
 
         # Check if any of the required credentials are missing
         if not all([tenant_id, client_id, client_secret, workspace_id]):
             return Response(
                 {"error": "Missing environment variables for Azure credentials."},
+                status=400,
+            )
+        if table_name is None:
+            return Response(
+                {
+                    "error": "Invalid stream name."  # Expected format: 'stream-<table_name>'
+                },
                 status=400,
             )
 
@@ -52,8 +65,14 @@ class AzureMonitorQueryView(APIView):
         end_datetime_iso = end_datetime_end_of_day.isoformat()
 
         query = f"""
-        AppLogTable_CL
+        {table_name}
         | where TimeGenerated >= datetime("{start_datetime_iso}") and TimeGenerated <= datetime("{end_datetime_iso}")
+        """
+        if exclude_email:
+            query += """
+            | where not(UserEmail endswith "@sustainext.ai")
+            """
+        query += """
         | project TimeGenerated, EventType, EventDetails, Action, Status, UserEmail, UserRole, Logs, Organization, IPAddress
         | order by TimeGenerated desc
         | take 200
