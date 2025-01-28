@@ -10,19 +10,27 @@ from authentication.Permissions.isSuperuserAndClientAdmin import IsAdmin
 
 
 class MyGoalOrganizationView(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing MyGoalOrganization instances.
+    Pemrissions for this view(Add, Edit, Delete):
+    - Superuser
+    - Admin
+    - ClientAdmin
+    Users linked to an organization will be able to see organization specific goals
+    Only Authenticated users can access this view
+    """
+
     serializer_class = MyGoalsOrganizationSerializer
 
     def get_permissions(self):
-        if self.action == "create":
-            permission_classes = [IsAdmin]
-        elif self.action == "update" or self.action == "partial_update":
-            permission_classes = [IsAdmin]
-        elif self.action == "destroy":
-            permission_classes = [IsAdmin]
+        if (
+            self.action == "list" or self.action == "retrieve"
+        ):  # This will use Global Permissions defined in settings.py
+            return super().get_permissions()
         else:
-            permission_classes = []
-
-        return [permission() for permission in permission_classes]
+            return [
+                permission() for permission in [IsAdmin]
+            ]  # All other actions will use this custom permission(Superuser, Admin, ClientAdmin)
 
     def get_queryset(self):
         client = self.request.user.client
