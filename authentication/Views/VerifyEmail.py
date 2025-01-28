@@ -1,0 +1,42 @@
+from django.core.signing import TimestampSigner
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.conf import settings
+
+User = get_user_model()
+
+
+def generate_verification_token(user):
+    signer = TimestampSigner()
+    return signer.sign(user.email)
+
+
+def verify_token(token, max_age=86400):  # Token expires in 24 hours (86400 seconds)
+    signer = TimestampSigner()
+    try:
+        email = signer.unsign(token, max_age=max_age)
+        return email
+    except Exception:
+        return None
+
+
+def verify_email(request, token):
+    email = verify_token(token)
+    if email:
+        user = User.objects.filter(email=email).first()
+        if user.emailaddress_set.filter(email=email).exists():
+            return redirect(settings.EMAIL_REDIRECT)
+        if user:
+            user.emailaddress_set.create(
+                email=user.email,
+                primary=True,
+                verified=True,
+            )
+            user.save()
+            messages.success(request, "Your email has been verified successfully!")
+        else:
+            messages.error(request, "Invalid user.")
+    else:
+        messages.error(request, "Invalid or expired token.")
+    return redirect(settings.EMAIL_REDIRECT)
