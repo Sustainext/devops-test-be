@@ -6,10 +6,23 @@ from sustainapp.Serializers.MyGoalsOrganizationSerializer import (
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
+from authentication.Permissions.isSuperuserAndClientAdmin import IsAdmin
 
 
 class MyGoalOrganizationView(viewsets.ModelViewSet):
     serializer_class = MyGoalsOrganizationSerializer
+
+    def get_permissions(self):
+        if self.action == "create":
+            permission_classes = [IsAdmin]
+        elif self.action == "update" or self.action == "partial_update":
+            permission_classes = [IsAdmin]
+        elif self.action == "destroy":
+            permission_classes = [IsAdmin]
+        else:
+            permission_classes = []
+
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
         client = self.request.user.client
