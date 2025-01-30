@@ -68,7 +68,7 @@ def calculate_contributions(self, emission_by_scope, total_emissions):
         structured_emission_data.append(
             {
                 "scope_name": values["scope_name"],
-                "total_co2e": values["total_co2e"],
+                "total_co2e": round(values["total_co2e"], 2),
                 "contribution_scope": round(contribution_scope, 2),
                 "co2e_unit": values["co2e_unit"],
                 "unit_type": values["unit_type"],
@@ -207,7 +207,7 @@ def get_analysis_data_by_source(self, data_points):
                 if "Unit2" in emission_request["Emission"]
                 else ""
             )  # Need to find this too
-            total_co2e = climatiq_response.get("co2e", 0)
+            total_co2e = round(climatiq_response.get("co2e", 0), 2)
             total_co2e = total_co2e / 1000  # Convert to tonnes
             co2e_unit = climatiq_response.get("co2e_unit", "")
             activity_data = climatiq_response.get("activity_data", "")
@@ -234,6 +234,7 @@ def get_analysis_data_by_source(self, data_points):
     for scope_dict in grouped_data.values():
         for category_dict in scope_dict.values():
             for entry in category_dict.values():
+                entry["total_co2e"] = round(entry["total_co2e"], 2)
                 if total_co2e_all_sources > 0:
                     entry["contribution_source"] = round(
                         (entry["total_co2e"] / total_co2e_all_sources) * 100, 2
