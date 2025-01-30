@@ -20,25 +20,28 @@ uploader = AzureLogUploader()
 
 logger = logging.getLogger("django")
 
+
 def process_dynamic_response(response):
     output = []
-    
+
     for entry in response:
         # Iterate dynamically through all keys and values in the dictionary
         for key, value in entry.items():
             if isinstance(value, dict):  # Handle nested dictionaries
                 output.append(f"{key.capitalize()}:")
                 for nested_key, nested_value in value.items():
-                    output.append(f"  {nested_key.replace('_', ' ').capitalize()}: {nested_value}")
+                    output.append(
+                        f"  {nested_key.replace('_', ' ').capitalize()}: {nested_value}"
+                    )
             elif isinstance(value, list):  # Handle lists if present
                 output.append(f"{key.capitalize()}: {', '.join(map(str, value))}")
             else:  # Handle simple key-value pairs
                 output.append(f"{key.replace('_', ' ').capitalize()}: {value}")
-    
+
     # Add current date information
     current_date = datetime.now().strftime("%A, %B %d, %Y, %I %p %Z")
     output.append(f"Current Date: {current_date}")
-    
+
     # Join the output with vertical splitters
     return " | ".join(output)
 
@@ -255,7 +258,6 @@ class Climatiq:
                 headers=headers,
             )
             response_data = response.json()
-            print('&&&&SD&&SD', response_data)
             if response.status_code == 400:
                 self.log_error_climatiq_api(response_data=response_data)
             else:
@@ -272,20 +274,19 @@ class Climatiq:
         # print(all_response_data, ' is the response from climatiq')
         log_data = process_dynamic_response(all_response_data)
 
-
         log_data = [
-        {
-            "EventType": "Collect",
-            "TimeGenerated": time_now,
-            "EventDetails": "Emissions",
-            "Action": "Calculated",
-            "Status": "Success",
-            "UserEmail": self.user.email,
-            "UserRole": self.user.custom_role.name,
-            "Logs": log_data,
-            "Organization": org,
-            "IPAddress": "192.168.1.1",
-        },
+            {
+                "EventType": "Collect",
+                "TimeGenerated": time_now,
+                "EventDetails": "Emissions",
+                "Action": "Calculated",
+                "Status": "Success",
+                "UserEmail": self.user.email,
+                "UserRole": self.user.custom_role.name,
+                "Logs": log_data,
+                "Organization": org,
+                "IPAddress": "192.168.1.1",
+            },
         ]
         # orgs = user_instance.orgs
         uploader.upload_logs(log_data)
@@ -332,6 +333,7 @@ class Climatiq:
     def clean_response_data(self, response_data):
         """
         Cleans the response data from the climatiq api.
+        TODO: Create a separate method for adding data.
         """
         cleaned_response_data = []
         self.refined_raw_resp = self.neglect_missing_row(self.raw_response.data)
