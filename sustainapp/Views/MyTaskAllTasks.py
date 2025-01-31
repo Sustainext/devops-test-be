@@ -136,7 +136,9 @@ class UserTaskDashboardView(ListAPIView):
             queryset = queryset.filter(task_status__in=["approved", "completed"])
 
         elif category == "for_review":
-            queryset = queryset.filter(task_status="under_review")
+            queryset = queryset.filter(
+                task_status="under_review", assigned_by=request.user
+            )
         else:
             raise ValidationError(f"Invalid category: {category}")
 
