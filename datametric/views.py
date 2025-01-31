@@ -60,10 +60,6 @@ def generate_text_pattern(data):
 
 
 def getLogDetails(user, field_group, form_data, diff_string):
-    print(user, " is the user")
-    orgs = user.orgs.first()
-    corps = user.corps.first()
-    print(orgs, " is the org")
     # Collect > Environment > Emissions > GHG Emission > Organisation > Corporate entity > Location > Year > Month > Scope > Category > Sub-category > Activity > Quantity > Unit
     # path_prefix - from field_group
     part_one = "Undefined Audit Log Prefix"
@@ -73,31 +69,26 @@ def getLogDetails(user, field_group, form_data, diff_string):
         field_group_submodule = field_group.meta_data["sub_module"]
         field_group_name = field_group.name
         part_one = f"Collect > {field_group_module} > {field_group_submodule} > {field_group_name}"
-        print(part_one, " is part_one")
     except Exception as e:
         print(e)
         part_one = "Undefined Audit Log Prefix"
 
-    organization = user.orgs.first().name
-    corporate = user.corps.first().name
+    organization = form_data.get("organisation", "")
+    corporate = form_data.get("corporate", "")
+    location = form_data.get("location", "")
+    if not organization and not corporate and location:
+        organization = location.corporateentity.organization.name
+        corporate = location.corporateentity.name
 
-    part_two = f"{organization} > {corporate}"
-    print(part_two, " is part two")
-
-    # location, year, month from form_data
-    # print(form_data, ' is form_data')
-    try:
-        part_three = (
-            f"{form_data['location']} > {form_data['year']} > {form_data['month']}"
-        )
-        print(part_three, " is part three")
-    except Exception as e:
-        part_three = "No location/Year/Month found"
-    # Scope, category, sub-category, activity , quantity, unit
-
-    result_log = (
-        f"{part_one} > {part_two} > {part_three} > {diff_string['description']}"
+    part_two = (
+        f"{organization}"
+        + (f" > {corporate}" if corporate else "")
+        + (f" > {location}" if location else "")
+        + (f" > {form_data['year']}" if form_data.get("year") else "")
+        + (f" > {form_data['month']}" if form_data.get("month") else "")
     )
+
+    result_log = f"{part_one} > {part_two} > {diff_string['description']}"
     return result_log
 
 
