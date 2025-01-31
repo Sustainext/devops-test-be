@@ -3,7 +3,7 @@ from sustainapp.Views.SubCategoriesAPIView import SubCategoriesAPIView
 from sustainapp.Views.ScopeCategoriesAPIView import ScopeCategoriesAPIView
 from sustainapp.Views.ReportWordDownloadAPI import ReportWordDownloadAPI
 from sustainapp.Views.ClientTaskView import UserClientViewset
-from sustainapp.Views.OrganisationTaskList import UserTaskDashboardView
+from sustainapp.Views.MyTaskAllTasks import UserTaskDashboardView
 from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis

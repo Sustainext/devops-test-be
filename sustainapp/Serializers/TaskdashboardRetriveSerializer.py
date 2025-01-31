@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.apps import apps
 from django.conf import settings
 from sustainapp.signals import task_status_changed
+from rest_framework.exceptions import ValidationError
 
 # Extracting the User Model
 CustomUser = apps.get_model(settings.AUTH_USER_MODEL)
@@ -51,6 +52,17 @@ class TaskDashboardCustomSerializer(serializers.ModelSerializer):
     assign_to_user_name = serializers.CharField(
         source="assigned_to.first_name", required=False, read_only=True
     )
+    organization_name = serializers.CharField(
+        source="location.corporateentity.organization.name",
+        required=False,
+        read_only=True,
+    )
+    corporate_name = serializers.CharField(
+        source="location.corporateentity.name", required=False, read_only=True
+    )
+    location_name = serializers.CharField(
+        source="location.name", required=False, read_only=True
+    )
 
     class Meta:
         model = ClientTaskDashboard
@@ -61,3 +73,21 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ["id", "email", "username", "client"]
+
+
+class ClientTaskDashboardBulkUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=True)
+
+    class Meta:
+        model = ClientTaskDashboard
+        fields = "__all__"
+        read_only_fields = ["assigned_by"]
+
+    def validate_assigned_to(self, value):
+        """Ensure assigned_to is a valid CustomUser instance."""
+        if value and not isinstance(value, CustomUser):
+            try:
+                return CustomUser.objects.get(id=value)
+            except CustomUser.DoesNotExist:
+                raise ValidationError("User with the given ID does not exist.")
+        return value
