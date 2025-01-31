@@ -222,11 +222,12 @@ class GetIllnessAnalysisView(APIView):
                 new_data.append(item)
             data.extend(new_data)
 
-        total_fatalities = sum(item["fatalities"] for item in data)
-        total_high_consequence = sum(item["highconsequence"] for item in data)
-        total_recordable = sum(item["recordable"] for item in data)
-        total_number_of_hours = sum(item["numberofhoursworked"] for item in data)
-
+        total_fatalities = sum(Decimal(item["fatalities"]) for item in data)
+        total_high_consequence = sum(Decimal(item["highconsequence"]) for item in data)
+        total_recordable = sum(Decimal(item["recordable"]) for item in data)
+        total_number_of_hours = sum(
+            Decimal(item["numberofhoursworked"]) for item in data
+        )
         return {
             "rate_of_fatalities_as_a_result_of_work_related_injury": format_decimal_places(
                 Decimal(safe_divide(total_fatalities, total_number_of_hours))
