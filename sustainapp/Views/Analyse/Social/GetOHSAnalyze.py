@@ -235,8 +235,8 @@ class GetIllnessAnalysisView(APIView):
             ),
             "rate_of_high_consequence_work_related_injuries_excluding_fatalities": format_decimal_places(
                 Decimal(safe_divide(total_high_consequence, total_number_of_hours))
-            )
-            * number_of_hours,
+                * number_of_hours
+            ),
             "rate_of_recordable_work_related_injuries": format_decimal_places(
                 Decimal(safe_divide(total_recordable, total_number_of_hours))
                 * number_of_hours
@@ -267,8 +267,8 @@ class GetIllnessAnalysisView(APIView):
             ),
             "rate_of_high_consequence_work_related_injuries_excluding_fatalities": format_decimal_places(
                 Decimal(safe_divide(total_high_consequence, total_number_of_hours))
-            )
-            * number_of_hours,
+                * number_of_hours
+            ),
             "rate_of_recordable_work_related_injuries": format_decimal_places(
                 Decimal(safe_divide(total_recordable, total_number_of_hours))
                 * number_of_hours
