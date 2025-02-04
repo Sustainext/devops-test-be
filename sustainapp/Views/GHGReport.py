@@ -718,18 +718,13 @@ class ReportListView(generics.ListAPIView):
     serializer_class = ReportRetrieveSerializer
 
     def get_queryset(self):
-        user_id = self.request.user.id
+        user = self.request.user
+        organizations = user.orgs.all()
 
-        if not user_id:
-            # Returning an empty queryset if user_id is not provided
+        if not user:
             return Report.objects.none()
 
-        try:
-            user_id = int(user_id)
-        except ValueError:
-            return Report.objects.none()
-
-        queryset = Report.objects.filter(user=user_id, status=1)
+        queryset = Report.objects.filter(organization__in=organizations, status=1)
         return queryset
 
     def list(self, request, *args, **kwargs):
