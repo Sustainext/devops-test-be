@@ -4,8 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from authentication.serializers.CustomUserSerializer import CustomUserSerializer
-from authentication.serializers.CustomUserListSerializer import CustomUserListSerializer
-from sustainapp.models import Userorg, Organization
+from sustainapp.models import Userorg
 
 CustomUser = get_user_model()
 
@@ -16,12 +15,10 @@ class CreateCustomUserView(APIView):
     def post(self, request):
         mutable_data = request.data.copy()
         mutable_data["client"] = request.user.client.id
-        organization_ids = mutable_data.get("orgs", [])
 
         serializer = CustomUserSerializer(data=mutable_data)
 
         if serializer.is_valid():
-
             user = serializer.save()
 
             # Set additional fields
@@ -34,12 +31,7 @@ class CreateCustomUserView(APIView):
             if user.roles not in allowed_roles:
                 user.roles = "employee"
             user.save()
-            # Add a new email address to user.emailaddress_set
-            email_address = user.emailaddress_set.create(
-                email=mutable_data.get("email"),
-                primary=True,
-                verified=True,
-            )
+
             user_org = Userorg.objects.get(user=user)
             user_org.client = request.user.client
             user_org.save()
@@ -79,7 +71,6 @@ class CheckUserExistsView(APIView):
 
 
 class ClientUsersListView(APIView):
-
     def get(self, request):
         # Get the client of the logged-in user
         client = request.user.client

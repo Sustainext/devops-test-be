@@ -12,7 +12,7 @@ def generate_verification_token(user):
     return signer.sign(user.email)
 
 
-def verify_token(token, max_age=86400):  # Token expires in 24 hours (86400 seconds)
+def verify_token(token, max_age=259200):
     signer = TimestampSigner()
     try:
         email = signer.unsign(token, max_age=max_age)
