@@ -117,7 +117,9 @@ def process_raw_response_data(
 ):
     print(raw_response, " &&&& is the raw response")
     for key, value in data_point_dict.items():
-        data_metric, _ = DataMetric.objects.get_or_create(
+        data_metric, created = DataMetric.objects.get_or_create(
             name=key, path=raw_response.path, defaults={"response_type": "String"}
         )
+        if created:
+            data_metric.save()
         create_or_update_data_points(data_metric, value, index, raw_response)
