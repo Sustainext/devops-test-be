@@ -132,4 +132,6 @@ def process_raw_response_data(
                 data_metrics_to_keep = data_metrics.filter(response_type="String").last()
                 data_metrics.exclude(id=data_metrics_to_keep.id).delete()
                 data_metric = data_metrics_to_keep
+            #* What if other than string duplicate datametrics are there?
+            
         create_or_update_data_points(data_metric, value, index, raw_response)
