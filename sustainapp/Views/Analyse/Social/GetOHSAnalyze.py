@@ -228,20 +228,22 @@ class GetIllnessAnalysisView(APIView):
         total_number_of_hours = sum(
             Decimal(item["numberofhoursworked"]) for item in data
         )
-        return {
-            "rate_of_fatalities_as_a_result_of_work_related_injury": format_decimal_places(
-                Decimal(safe_divide(total_fatalities, total_number_of_hours))
-                * number_of_hours
-            ),
-            "rate_of_high_consequence_work_related_injuries_excluding_fatalities": format_decimal_places(
-                Decimal(safe_divide(total_high_consequence, total_number_of_hours))
-                * number_of_hours
-            ),
-            "rate_of_recordable_work_related_injuries": format_decimal_places(
-                Decimal(safe_divide(total_recordable, total_number_of_hours))
-                * number_of_hours
-            ),
-        }
+        return [
+            {
+                "rate_of_fatalities_as_a_result_of_work_related_injury": format_decimal_places(
+                    Decimal(safe_divide(total_fatalities, total_number_of_hours))
+                    * number_of_hours
+                ),
+                "rate_of_high_consequence_work_related_injuries_excluding_fatalities": format_decimal_places(
+                    Decimal(safe_divide(total_high_consequence, total_number_of_hours))
+                    * number_of_hours
+                ),
+                "rate_of_recordable_work_related_injuries": format_decimal_places(
+                    Decimal(safe_divide(total_recordable, total_number_of_hours))
+                    * number_of_hours
+                ),
+            }
+        ]
 
     def get_rate_of_injuries_who_are_workers_but_not_employees(self, number_of_hours):
         slug = "gri-social-ohs-403-9b-number_of_injuries_workers"
@@ -260,20 +262,22 @@ class GetIllnessAnalysisView(APIView):
         total_number_of_hours = sum(
             Decimal(item["numberofhoursworked"]) for item in data
         )
-        return {
-            "rate_of_fatalities_as_a_result_of_work_related_injury": format_decimal_places(
-                Decimal(safe_divide(total_fatalities, total_number_of_hours))
-                * number_of_hours
-            ),
-            "rate_of_high_consequence_work_related_injuries_excluding_fatalities": format_decimal_places(
-                Decimal(safe_divide(total_high_consequence, total_number_of_hours))
-                * number_of_hours
-            ),
-            "rate_of_recordable_work_related_injuries": format_decimal_places(
-                Decimal(safe_divide(total_recordable, total_number_of_hours))
-                * number_of_hours
-            ),
-        }
+        return [
+            {
+                "rate_of_fatalities_as_a_result_of_work_related_injury": format_decimal_places(
+                    Decimal(safe_divide(total_fatalities, total_number_of_hours))
+                    * number_of_hours
+                ),
+                "rate_of_high_consequence_work_related_injuries_excluding_fatalities": format_decimal_places(
+                    Decimal(safe_divide(total_high_consequence, total_number_of_hours))
+                    * number_of_hours
+                ),
+                "rate_of_recordable_work_related_injuries": format_decimal_places(
+                    Decimal(safe_divide(total_recordable, total_number_of_hours))
+                    * number_of_hours
+                ),
+            }
+        ]
 
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
