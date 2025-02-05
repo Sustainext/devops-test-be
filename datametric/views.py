@@ -103,6 +103,7 @@ def compare_objects(obj1, obj2):
     Returns:
         dict: A dictionary describing the status and differences found or error message
     """
+    print('reached 106')
     status_string = "Row Update"
     print(obj1, " is obj1 ^^^^^")
     print(obj2, " is obj2 ^^^^^")
@@ -129,8 +130,10 @@ def compare_objects(obj1, obj2):
                 }
 
         # Handle case where obj1 is empty or has lesser length
-        if not obj1 or len(obj1) < len(obj2):
+        if not obj1 or len(obj1) < len(obj2) or obj1 == [{}]:
             added_rows = len(obj2) - len(obj1) if obj1 else len(obj2)
+            if obj1 ==[{}]:
+                added_rows = len(obj2)
             if added_rows == 1:
                 return {
                     "status_string": "Row Create",
@@ -321,9 +324,16 @@ class CreateOrUpdateFieldGroup(APIView):
                     "user": user_instance,
                 },
             )
+            if created or raw_response is None:
+                print("A new RawResponse was created.")
+                sanitized_result = sanitize_ordered_dict(raw_response.data)
+                diff_string = compare_objects( [{}],form_data)
+            else:
+                print("The RawResponse already existed.")
+                sanitized_result = sanitize_ordered_dict(raw_response.data)
+                diff_string = compare_objects(sanitized_result, form_data)
             # Sanitize the data
-            sanitized_result = sanitize_ordered_dict(raw_response.data)
-            diff_string = compare_objects(sanitized_result, form_data)
+
             # print(diff_string,' is the diffstring')
             # print(form_data, ' is form data')
             action_type = "Row create"

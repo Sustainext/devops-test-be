@@ -242,57 +242,62 @@ def send_task_update_email(sender, instance, comments, **kwargs):
     original_task_status = cache.get(cache_key_task_status)
     original_assigned_to = cache.get(cache_key_assigned_to)
 
-    first_name = instance.assigned_to.first_name.capitalize()
-    task_name = instance.task_name
-    platform_link = settings.EMAIL_REDIRECT
-    from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [instance.assigned_to.email]
-    print(recipient_list)
+    if instance.assigned_to:
+        first_name = instance.assigned_to.first_name.capitalize()
+        task_name = instance.task_name
+        platform_link = settings.EMAIL_REDIRECT
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [instance.assigned_to.email]
+        print(recipient_list)
 
-    if (
-        original_task_status == "under_review"
-        and instance.task_status == "in_progress"
-        and original_assigned_to
-    ):
-        print("triggered")
-        subject = "Emission Task Re-Assigned"
-        html_message = render_to_string(
-            "sustainapp/task_re_assigned.html",
-            {
-                "first_name": first_name,
-                "task_name": task_name,
-                "platform_link": platform_link,
-                "deadline": instance.deadline,
-                "comments": comments,  # Include comments in the context directly from Payload
-                "assigned_by": instance.assigned_by.first_name.capitalize(),
-                "location": instance.location,
-                "category": instance.category,
-                "subcategory": instance.subcategory,
-                "scope": instance.scope,
-                "month": instance.month,
-                "year": instance.year,
-            },
-        )
-        send_mail(subject, "", from_email, recipient_list, html_message=html_message)
+        if (
+            original_task_status == "under_review"
+            and instance.task_status == "in_progress"
+            and original_assigned_to
+        ):
+            print("triggered")
+            subject = "Emission Task Re-Assigned"
+            html_message = render_to_string(
+                "sustainapp/task_re_assigned.html",
+                {
+                    "first_name": first_name,
+                    "task_name": task_name,
+                    "platform_link": platform_link,
+                    "deadline": instance.deadline,
+                    "comments": comments,  # Include comments in the context directly from Payload
+                    "assigned_by": instance.assigned_by.first_name.capitalize(),
+                    "location": instance.location,
+                    "category": instance.category,
+                    "subcategory": instance.subcategory,
+                    "scope": instance.scope,
+                    "month": instance.month,
+                    "year": instance.year,
+                },
+            )
+            send_mail(
+                subject, "", from_email, recipient_list, html_message=html_message
+            )
 
-    elif (
-        original_task_status is not None
-        and original_task_status != instance.task_status
-        and instance.task_status == "reject"
-    ):
-        print("Reject email trigger", "Task status", instance.task_status)
-        subject = "Emission Task Rejected"
-        html_message = render_to_string(
-            "sustainapp/task_rejected.html",
-            {
-                "first_name": first_name,
-                "task_name": task_name,
-                "platform_link": platform_link,
-                "comments": comments,  # Include comments in the context directly from Payload
-            },
-        )
-        send_mail(subject, "", from_email, recipient_list, html_message=html_message)
+        elif (
+            original_task_status is not None
+            and original_task_status != instance.task_status
+            and instance.task_status == "reject"
+        ):
+            print("Reject email trigger", "Task status", instance.task_status)
+            subject = "Emission Task Rejected"
+            html_message = render_to_string(
+                "sustainapp/task_rejected.html",
+                {
+                    "first_name": first_name,
+                    "task_name": task_name,
+                    "platform_link": platform_link,
+                    "comments": comments,  # Include comments in the context directly from Payload
+                },
+            )
+            send_mail(
+                subject, "", from_email, recipient_list, html_message=html_message
+            )
 
-    # Clean up cache to prevent stale data
-    cache.delete(cache_key_assigned_to)
-    cache.delete(cache_key_task_status)
+        # Clean up cache to prevent stale data
+        cache.delete(cache_key_assigned_to)
+        cache.delete(cache_key_task_status)

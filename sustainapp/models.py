@@ -1065,6 +1065,7 @@ class ClientTaskDashboard(AbstractModel):
     activity = models.CharField(max_length=2048, null=True, blank=True)
     region = models.CharField(max_length=1024, null=True, blank=True)
     comments_assignee = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     objects = ClientFiltering()
 
 
@@ -1111,3 +1112,43 @@ class Department(AbstractModel):
 
     def __str__(self):
         return f"{self.client} - {self.name}"
+
+
+class MyGoalOrganization(AbstractModel):
+    """Creating a relation for My Goals in SustainextHQ/Dashboard"""
+
+    status_choices = [
+        ("in_progress", "In Progress"),
+        ("completed", "Completed"),
+        ("not_started", "Not Started"),
+    ]
+
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        related_name="mygoal_client",
+        default=Client.get_default_client,
+    )
+    title = models.CharField(max_length=1024)
+    description = models.TextField(null=True, blank=True)
+    deadline = models.DateField(
+        help_text="Enter only future dates",
+        validators=[validate_future_date],
+    )
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name="mygoal_organization",
+    )
+    created_by = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="mygoal_created_by",
+    )
+    status = models.CharField(
+        max_length=20, choices=status_choices, default="not_started"
+    )
+
+    class Meta:
+        verbose_name = "My Goal"
+        verbose_name_plural = "My Goals"
