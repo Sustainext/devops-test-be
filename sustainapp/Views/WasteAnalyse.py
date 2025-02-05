@@ -658,9 +658,7 @@ class GetWasteAnalysis(APIView):
 
     def set_raw_data(self):
         self.raw_data = collect_data_by_raw_response_and_index(
-            self.data_points.filter(path__slug=self.slugs[0])
-            .filter(data_metric__name="Location")
-            .filter(
+            self.data_points.filter(path__slug=self.slugs[0]).filter(
                 value__in=list(
                     set_locations_data(
                         self.organisation, self.corporate, self.location
