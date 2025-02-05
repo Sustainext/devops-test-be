@@ -1,6 +1,5 @@
 from django.core.signing import TimestampSigner
 from django.shortcuts import redirect
-from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.conf import settings
 
@@ -34,9 +33,6 @@ def verify_email(request, token):
                 verified=True,
             )
             user.save()
-            messages.success(request, "Your email has been verified successfully!")
-        else:
-            messages.error(request, "Invalid user.")
     else:
-        messages.error(request, "Invalid or expired token.")
+        return redirect(f"{settings.EMAIL_REDIRECT}/token-expired")
     return redirect(settings.EMAIL_REDIRECT)
