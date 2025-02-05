@@ -37,8 +37,8 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
 
     def get_assign_by_user_name(self, obj):
         if obj.assigned_by:
-            first_name = obj.assigned_to.first_name or ""
-            last_name = obj.assigned_to.last_name or ""
+            first_name = obj.assigned_by.first_name or ""
+            last_name = obj.assigned_by.last_name or ""
             return f"{first_name} {last_name}".strip()
         return None
 
