@@ -34,9 +34,9 @@ class UserTaskDashboardView(ListAPIView):
         if not (user.is_client_admin or user.is_superuser):
             raise PermissionDenied("You don't have permission access this")
 
-        queryset = ClientTaskDashboard.objects.filter(location__in=locations).order_by(
-            "-created_at"
-        )
+        queryset = ClientTaskDashboard.objects.filter(
+            (Q(location__in=locations) | Q(location__isnull=True)) & Q(assigned_by=user)
+        ).order_by("-created_at")
         search_query = self.request.query_params.get("search", None)
         if search_query:
             queryset = queryset.filter(

@@ -52,6 +52,12 @@ class TaskDashboardCustomSerializer(serializers.ModelSerializer):
     assign_to_user_name = serializers.CharField(
         source="assigned_to.first_name", required=False, read_only=True
     )
+    assign_by_email = serializers.CharField(
+        source="assigned_by.email", required=False, read_only=True
+    )
+    assign_by_user_name = serializers.CharField(
+        source="assigned_by.first_name", required=False, read_only=True
+    )
     organization_name = serializers.CharField(
         source="location.corporateentity.organization.name",
         required=False,
