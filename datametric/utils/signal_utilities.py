@@ -117,9 +117,21 @@ def process_raw_response_data(
 ):
     print(raw_response, " &&&& is the raw response")
     for key, value in data_point_dict.items():
-        data_metric, created = DataMetric.objects.get_or_create(
-            name=key, path=raw_response.path, defaults={"response_type": "String"}
-        )
-        if created:
-            data_metric.save()
+        try:
+            data_metric = DataMetric.objects.get(name=key, path=raw_response.path)
+        except DataMetric.DoesNotExist:
+                data_metric = DataMetric.objects.create(
+                    name=key, 
+                    path=raw_response.path, 
+                    response_type="String"
+                )
+                data_metric.save()
+        except DataMetric.MultipleObjectsReturned:
+            data_metrics = DataMetric.objects.filter(name=key, path=raw_response.path)
+            if data_metrics.filter(response_type="String").exists():
+                data_metrics_to_keep = data_metrics.filter(response_type="String").last()
+                data_metrics.exclude(id=data_metrics_to_keep.id).delete()
+                data_metric = data_metrics_to_keep
+            #* What if other than string duplicate datametrics are there?
+            
         create_or_update_data_points(data_metric, value, index, raw_response)
