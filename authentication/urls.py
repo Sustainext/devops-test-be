@@ -31,6 +31,7 @@ from authentication.views import (
 )
 
 from .Views.CustomPasswordResetViewAPI import CustomPasswordResetConfirmView
+from .Views.VerifyEmail import verify_email
 
 router = routers.DefaultRouter()
 router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
@@ -89,5 +90,6 @@ urlpatterns = [
     ),
     path("get_corps_by_orgs/", get_corps_by_orgs, name="get_corps_by_orgs"),
     path("get_locs_by_corps/", get_locs_by_corps, name="get_locs_by_corps"),
+    path("verify_email/<str:token>/", verify_email, name="verify_email"),
     path("", include(router.urls)),
 ]
