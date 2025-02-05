@@ -13,6 +13,7 @@ from datametric.models import DataPoint
 from datametric.utils.analyse import (
     filter_by_start_end_dates,
     get_raw_response_filters,
+    set_locations_data,
 )
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
@@ -658,6 +659,14 @@ class GetWasteAnalysis(APIView):
     def set_raw_data(self):
         self.raw_data = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[0])
+            .filter(data_metric__name="Location")
+            .filter(
+                value__in=list(
+                    set_locations_data(
+                        self.organisation, self.corporate, self.location
+                    ).values_list("name", flat=True)
+                )
+            )
         )
 
     def total_number_and_volume_by_material(self):
@@ -735,8 +744,7 @@ class GetWasteAnalysis(APIView):
         end = serializer.validated_data.get("end", None)
         self.organisation = organisation
         self.corporate = corporate
-        if self.corporate:
-            self.organisation = None
+        self.location = location
         self.start = start
         self.end = end
         self.set_data_points()
