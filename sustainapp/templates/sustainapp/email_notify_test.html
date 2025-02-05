@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>Document</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <p>Hi {{first_name}},</p>
-    <p> Welcome to Sustainext!</p>
-    <p> Your account has been created successfully</p>
-    <p>To activate your account, please <a href="{{EMAIL_REDIRECT}}">Click here</a>.
-    </p>
-    <p>Username:<a href="{{username}}">{{username}}</a> </p>
-    <p>Password to access your account is = {{password}} </p>
+    <p>Welcome to Sustainext!</p>
+    <p>Your account has been created successfully</p>
+    <p>To activate your account, please <a href="{{verification_url}}">Click here</a>.</p>
+    <p>Username:<a href="{{username}}">{{username}}</a></p>
+    <p>Password to access your account is = {{password}}</p>
     <!-- <p>To reset your password <a href="{{reset_link}}">Click here</a></p> -->
     <!-- <p>A password will be shared with you shortly along with a reset link.</p> -->
+    <p>Note: The activation link is valid for 72 hours only.</p>
     <p>Thank you for your interest in Sustainext!</p>
-    <p>Sincerely,<br>The Sustainext Team</p>
-</body>
-
+    <p>Sincerely,<br />The Sustainext Team</p>
+  </body>
 </html>
