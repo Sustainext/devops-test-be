@@ -13,16 +13,12 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
     assign_to_email = serializers.CharField(
         source="assigned_to.email", required=False, read_only=True
     )
-    assign_to_user_name = serializers.CharField(
-        source="assigned_to.first_name", required=False, read_only=True
-    )
+    assign_to_user_name = serializers.SerializerMethodField()
 
     assign_by_email = serializers.CharField(
         source="assigned_by.email", required=False, read_only=True
     )
-    assign_by_user_name = serializers.CharField(
-        source="assigned_by.first_name", required=False, read_only=True
-    )
+    assign_by_user_name = serializers.SerializerMethodField()
     location_name = serializers.CharField(
         source="location.name", required=False, read_only=True
     )
@@ -31,6 +27,20 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
         model = ClientTaskDashboard
         fields = "__all__"
         read_only_fields = ["assigned_by"]
+
+    def get_assign_to_user_name(self, obj):
+        if obj.assigned_to:
+            first_name = obj.assigned_to.first_name or ""
+            last_name = obj.assigned_to.last_name or ""
+            return f"{first_name} {last_name}".strip()
+        return None
+
+    def get_assign_by_user_name(self, obj):
+        if obj.assigned_by:
+            first_name = obj.assigned_to.first_name or ""
+            last_name = obj.assigned_to.last_name or ""
+            return f"{first_name} {last_name}".strip()
+        return None
 
     def update(self, instance, validated_data):
         comments = self.context["request"].data.get(
@@ -49,15 +59,11 @@ class TaskDashboardCustomSerializer(serializers.ModelSerializer):
     assign_to_email = serializers.CharField(
         source="assigned_to.email", required=False, read_only=True
     )
-    assign_to_user_name = serializers.CharField(
-        source="assigned_to.first_name", required=False, read_only=True
-    )
+    assign_to_user_name = serializers.SerializerMethodField()
     assign_by_email = serializers.CharField(
         source="assigned_by.email", required=False, read_only=True
     )
-    assign_by_user_name = serializers.CharField(
-        source="assigned_by.first_name", required=False, read_only=True
-    )
+    assign_by_user_name = serializers.SerializerMethodField()
     organization_name = serializers.CharField(
         source="location.corporateentity.organization.name",
         required=False,
@@ -73,6 +79,20 @@ class TaskDashboardCustomSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientTaskDashboard
         fields = "__all__"
+
+    def get_assign_to_user_name(self, obj):
+        if obj.assigned_to:
+            first_name = obj.assigned_to.first_name or ""
+            last_name = obj.assigned_to.last_name or ""
+            return f"{first_name} {last_name}".strip()
+        return None
+
+    def get_assign_by_user_name(self, obj):
+        if obj.assigned_by:
+            first_name = obj.assigned_to.first_name or ""
+            last_name = obj.assigned_to.last_name or ""
+            return f"{first_name} {last_name}".strip()
+        return None
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
