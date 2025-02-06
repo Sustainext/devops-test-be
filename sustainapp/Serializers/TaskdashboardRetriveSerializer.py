@@ -4,6 +4,7 @@ from django.apps import apps
 from django.conf import settings
 from sustainapp.signals import task_status_changed
 from rest_framework.exceptions import ValidationError
+from collections import OrderedDict
 
 # Extracting the User Model
 CustomUser = apps.get_model(settings.AUTH_USER_MODEL)
@@ -28,20 +29,6 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["assigned_by"]
 
-    def get_assign_to_user_name(self, obj):
-        if obj.assigned_to:
-            first_name = obj.assigned_to.first_name or ""
-            last_name = obj.assigned_to.last_name or ""
-            return f"{first_name} {last_name}".strip()
-        return None
-
-    def get_assign_by_user_name(self, obj):
-        if obj.assigned_by:
-            first_name = obj.assigned_by.first_name or ""
-            last_name = obj.assigned_by.last_name or ""
-            return f"{first_name} {last_name}".strip()
-        return None
-
     def update(self, instance, validated_data):
         comments = self.context["request"].data.get(
             "comments", ""
@@ -53,6 +40,41 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
             sender=instance.__class__, instance=instance, comments=comments
         )
         return instance
+
+    def get_assign_to_user_name(self, obj):
+        if isinstance(obj, dict) or isinstance(obj, OrderedDict):
+            # If obj is a dictionary (not a model instance), fetch the data safely
+            assigned_to = obj.get("assigned_to")
+            if assigned_to and isinstance(assigned_to, dict):
+                first_name = assigned_to.get("first_name", "")
+                last_name = assigned_to.get("last_name", "")
+                return f"{first_name} {last_name}".strip()
+            return None
+
+        # Otherwise, assume it's a model instance
+        if obj.assigned_to:
+            first_name = obj.assigned_to.first_name or ""
+            last_name = obj.assigned_to.last_name or ""
+            return f"{first_name} {last_name}".strip()
+
+        return None
+
+    def get_assign_by_user_name(self, obj):
+        if isinstance(obj, dict) or isinstance(obj, OrderedDict):
+            # If obj is a dictionary (not a model instance), fetch the data safely
+            assigned_by = obj.get("assigned_by")
+            print(obj)
+            if assigned_by and isinstance(assigned_by, dict):
+                first_name = assigned_by.get("first_name", "")
+                last_name = assigned_by.get("last_name", "")
+                return f"{first_name} {last_name}".strip()
+            return None
+
+        if obj.assigned_by:
+            first_name = obj.assigned_by.first_name or ""
+            last_name = obj.assigned_by.last_name or ""
+            return f"{first_name} {last_name}".strip()
+        return None
 
 
 class TaskDashboardCustomSerializer(serializers.ModelSerializer):
