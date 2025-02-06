@@ -248,14 +248,12 @@ def send_task_update_email(sender, instance, comments, **kwargs):
         platform_link = settings.EMAIL_REDIRECT
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [instance.assigned_to.email]
-        print(recipient_list)
 
         if (
             original_task_status == "under_review"
             and instance.task_status == "in_progress"
             and original_assigned_to
         ):
-            print("triggered")
             subject = "Emission Task Re-Assigned"
             html_message = render_to_string(
                 "sustainapp/task_re_assigned.html",
@@ -283,7 +281,6 @@ def send_task_update_email(sender, instance, comments, **kwargs):
             and original_task_status != instance.task_status
             and instance.task_status == "reject"
         ):
-            print("Reject email trigger", "Task status", instance.task_status)
             subject = "Emission Task Rejected"
             html_message = render_to_string(
                 "sustainapp/task_rejected.html",
@@ -297,7 +294,27 @@ def send_task_update_email(sender, instance, comments, **kwargs):
             send_mail(
                 subject, "", from_email, recipient_list, html_message=html_message
             )
+        else:
+            logging.info(f"No email conditions met for Task ID {instance.pk}")
 
         # Clean up cache to prevent stale data
         cache.delete(cache_key_assigned_to)
         cache.delete(cache_key_task_status)
+
+
+def send_bulk_approved_emails(sender, instance, **kwargs):
+    first_name = instance.assigned_to.first_name.capitalize()
+    task_name = instance.task_name
+    platform_link = settings.EMAIL_REDIRECT
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [instance.assigned_to.email]
+    subject = "Emission Task Approved"
+    html_message = render_to_string(
+        "sustainapp/task_approved.html",
+        {
+            "first_name": first_name,
+            "task_name": task_name,
+            "platform_link": platform_link,
+        },
+    )
+    send_mail(subject, "", from_email, recipient_list, html_message=html_message)
