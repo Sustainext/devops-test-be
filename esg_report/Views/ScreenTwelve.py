@@ -34,6 +34,8 @@ class ScreenTwelveAPIView(APIView):
             )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=self.report)
+        self.report.last_updated_by = request.user
+        self.report.save()
         response_data.update(serializer.data)
         return Response(response_data, status=status.HTTP_200_OK)
 

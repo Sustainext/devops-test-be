@@ -589,7 +589,10 @@ class GHGReportView(generics.CreateAPIView):
         user_id = request.user.id
 
         new_report = serializer.save(
-            status=status, client_id=client_id, user_id=user_id
+            status=status,
+            client_id=client_id,
+            user_id=user_id,
+            last_updated_by=request.user,
         )
         create_validation_method_for_report_creation(report=new_report)
         report_id = new_report.id
@@ -799,7 +802,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             )
 
     def perform_update(self, serializer):
-        serializer.save()
+        serializer.save(last_updated_by=self.request.user)
 
 
 class ReportPDFView(View):
