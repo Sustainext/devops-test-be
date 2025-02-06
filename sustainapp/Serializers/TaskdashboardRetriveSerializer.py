@@ -63,7 +63,6 @@ class ClientTaskDashboardSerializer(serializers.ModelSerializer):
         if isinstance(obj, dict) or isinstance(obj, OrderedDict):
             # If obj is a dictionary (not a model instance), fetch the data safely
             assigned_by = obj.get("assigned_by")
-            print(obj)
             if assigned_by and isinstance(assigned_by, dict):
                 first_name = assigned_by.get("first_name", "")
                 last_name = assigned_by.get("last_name", "")
