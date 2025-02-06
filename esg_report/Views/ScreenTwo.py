@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework import status
-from datametric.models import RawResponse, Path
 from esg_report.models.ScreenTwo import AboutTheCompanyAndOperations
 from esg_report.Serializer.AboutTheCompanyAndOperationsSerializer import (
     AboutTheCompanyAndOperationsSerializer,
@@ -142,4 +141,6 @@ class ScreenTwo(APIView):
             )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
+        report.last_updated_by = request.user
+        report.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
