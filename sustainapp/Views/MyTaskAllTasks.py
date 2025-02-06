@@ -106,6 +106,11 @@ class UserTaskDashboardView(ListAPIView):
             ]
             queryset = queryset.filter(assigned_to__in=assigned_to_ids)
 
+        status_param = self.request.query_params.get("status")
+        if status_param:
+            status_multi = [status for status in status_param.split(",")]
+            queryset = queryset.filter(task_status__in=status_multi)
+
         # Filter tasks based on assignee or assigner being the current user
         return queryset
 
