@@ -117,7 +117,33 @@ def process_raw_response_data(
 ):
     print(raw_response, " &&&& is the raw response")
     for key, value in data_point_dict.items():
-        data_metric, _ = DataMetric.objects.get_or_create(
-            name=key, path=raw_response.path, defaults={"response_type": "String"}
-        )
+        try:
+            data_metric = DataMetric.objects.get(name=key, path=raw_response.path)
+        except DataMetric.DoesNotExist:
+            data_metric = DataMetric.objects.create(
+                name=key, path=raw_response.path, response_type="String"
+            )
+            data_metric.save()
+        except DataMetric.MultipleObjectsReturned:
+            # *: Handle the case where multiple data metrics with the same name and path exist in a more optimised way.
+            # * I'm ashamed of writing this code. :-(
+            # * Hopefully the MultipleObjectsReturned exception gets less and less common in the future.
+            data_metrics = DataMetric.objects.filter(name=key, path=raw_response.path)
+            if data_metrics.filter(response_type="String").exists():
+                data_metrics_to_keep = (
+                    data_metrics.filter(response_type="String").order_by("id").first()
+                )
+                data_metrics_to_delete = data_metrics.exclude(
+                    id=data_metrics_to_keep.id
+                )
+                # * Change mapping of every data point to last data metric
+                data_points = DataPoint.objects.filter(
+                    data_metric__in=data_metrics_to_delete
+                )
+                for data_point in data_points:
+                    data_point.data_metric = data_metrics_to_keep
+                    data_point.save()
+                data_metrics_to_delete.delete()
+                data_metric = data_metrics_to_keep
+
         create_or_update_data_points(data_metric, value, index, raw_response)

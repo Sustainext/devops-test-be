@@ -14,6 +14,8 @@ from django.contrib.auth.models import update_last_login
 import hashlib
 from authentication.models import LoginCounter, UserProfile
 import logging
+from authentication.Views.VerifyEmail import generate_verification_token
+import os
 
 user_log = logging.getLogger("user_logger")
 
@@ -23,6 +25,9 @@ user_log = logging.getLogger("user_logger")
 def send_welcome_email(sender, instance, created, **kwargs):
     if created and not instance.is_superuser:
         user_profile_exists = hasattr(instance, "user_profile")
+        token = generate_verification_token(instance)
+        backend_url = os.environ.get("BACKEND_URL")
+        verification_url = f"{backend_url}api/auth/verify_email/{token}/"
         # Generate a random password
         password = "".join(random.choices(string.ascii_letters + string.digits, k=12))
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -54,6 +59,7 @@ def send_welcome_email(sender, instance, created, **kwargs):
                 "first_name": first_name,
                 "password": password,
                 "EMAIL_REDIRECT": settings.EMAIL_REDIRECT,
+                "verification_url": verification_url,
             },
         )
 
@@ -90,10 +96,10 @@ def send_account_activation_email(user):
     )
 
 
-@receiver(user_signed_up)
-def disable_confirmation_email(sender, request, user, **kwargs):
-    # Disable email confirmation (mark the email address as verified)
-    user.emailaddress_set.filter(primary=True).update(verified=True)
+# @receiver(user_signed_up)
+# def disable_confirmation_email(sender, request, user, **kwargs):
+#     # Disable email confirmation (mark the email address as verified)
+#     user.emailaddress_set.filter(primary=True).update(verified=True)
 
 
 @receiver(user_logged_in)

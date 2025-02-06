@@ -589,7 +589,10 @@ class GHGReportView(generics.CreateAPIView):
         user_id = request.user.id
 
         new_report = serializer.save(
-            status=status, client_id=client_id, user_id=user_id
+            status=status,
+            client_id=client_id,
+            user_id=user_id,
+            last_updated_by=request.user,
         )
         create_validation_method_for_report_creation(report=new_report)
         report_id = new_report.id
@@ -718,18 +721,13 @@ class ReportListView(generics.ListAPIView):
     serializer_class = ReportRetrieveSerializer
 
     def get_queryset(self):
-        user_id = self.request.user.id
+        user = self.request.user
+        organizations = user.orgs.all()
 
-        if not user_id:
-            # Returning an empty queryset if user_id is not provided
+        if not user:
             return Report.objects.none()
 
-        try:
-            user_id = int(user_id)
-        except ValueError:
-            return Report.objects.none()
-
-        queryset = Report.objects.filter(user=user_id, status=1)
+        queryset = Report.objects.filter(organization__in=organizations, status=1)
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -804,7 +802,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             )
 
     def perform_update(self, serializer):
-        serializer.save()
+        serializer.save(last_updated_by=self.request.user)
 
 
 class ReportPDFView(View):

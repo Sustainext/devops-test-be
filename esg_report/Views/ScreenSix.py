@@ -5,17 +5,14 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.models.ScreenSix import StakeholderEngagement
-from materiality_dashboard.models import MaterialityAssessment
 from esg_report.Serializer.StakeholderEngagementSerializer import (
     StakeholderEngagementSerializer,
 )
 from sustainapp.models import Report
-from datametric.models import RawResponse
 from esg_report.utils import get_materiality_assessment, get_raw_responses_as_per_report
 
 
 class ScreenSixAPIView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request, report_id):
@@ -89,5 +86,7 @@ class ScreenSixAPIView(APIView):
 
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
+        report.last_updated_by = request.user
+        report.save()
         response_data.update(serializer.data)
         return Response(response_data, status=status.HTTP_200_OK)

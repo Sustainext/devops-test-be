@@ -2,13 +2,10 @@ from typing import Any
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from esg_report.models.ScreenNine import ScreenNine
-from datametric.models import RawResponse
 from esg_report.Serializer.ScreenNineSerializer import ScreenNineSerializer
 from sustainapp.models import Report
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
 from esg_report.services.screen_nine_service import ScreenNineService
 
 
@@ -40,6 +37,8 @@ class ScreenNineView(APIView):
             )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=self.report)
+        self.report.last_updated_by = request.user
+        self.report.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request, report_id):

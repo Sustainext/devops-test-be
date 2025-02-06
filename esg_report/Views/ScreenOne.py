@@ -37,6 +37,8 @@ class ScreenOneView(APIView):
             pass
         serializer.is_valid(raise_exception=True)
         serializer.save(report=esg_report)
+        esg_report.last_updated_by = request.user
+        esg_report.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request, esg_report_id):
