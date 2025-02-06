@@ -932,6 +932,13 @@ class Report(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reports"
     )
+    last_updated_by = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        related_name="report_updated_by",
+        null=True,
+        blank=True,
+    )
     org_logo = models.ImageField(upload_to=get_upload_path, blank=True, null=True)
     about_the_organization = models.TextField(null=True, blank=True)
     roles_and_responsibilities = models.TextField(null=True, blank=True)

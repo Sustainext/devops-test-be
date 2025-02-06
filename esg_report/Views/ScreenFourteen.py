@@ -3,7 +3,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from esg_report.models.ScreenFourteen import ScreenFourteen
-from datametric.models import RawResponse, DataMetric, DataPoint
 
 from esg_report.Serializer.ScreenFourteenSerializer import ScreenFourteenSerializer
 from sustainapp.models import Report
@@ -40,6 +39,8 @@ class ScreenFourteenAPIView(APIView):
             )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=self.report)
+        self.report.last_updated_by = request.user
+        self.report.save()
         response_data.update(serializer.data)
         return Response(response_data, status=status.HTTP_200_OK)
 
