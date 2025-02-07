@@ -31,8 +31,8 @@ class UserTaskDashboardView(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         locations = user.locs.all()
-        if not (user.is_client_admin or user.is_superuser):
-            raise PermissionDenied("You don't have permission access this")
+        if not (user.is_client_admin or user.is_superuser or user.admin):
+            raise PermissionDenied("You don't have permission to access this")
 
         queryset = ClientTaskDashboard.objects.filter(
             (Q(location__in=locations) | Q(location__isnull=True)) & Q(assigned_by=user)
