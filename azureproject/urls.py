@@ -130,6 +130,7 @@ urlpatterns = [
         PreferencesView.UpdatePreference,
         name="UpdatePreference",
     ),
+    path("supplier_assessment/", include("apps.supplier_assessment.urls")),
     path("datametric/", include("datametric.urls")),
     path("materiality_dashboard/", include("materiality_dashboard.urls")),
     path("esg_report/", include("esg_report.urls")),

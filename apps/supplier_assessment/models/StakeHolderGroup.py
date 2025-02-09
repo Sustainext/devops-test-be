@@ -21,3 +21,6 @@ class StakeHolderGroup(AbstractModel, HistoricalModelMixin):
 
     def __str__(self):
         return self.name + " - " + self.group_type
+
+    class Meta:
+        unique_together = ("name", "created_by")
