@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class SupplierAssessmentConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'supplier_assessment'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.supplier_assessment"

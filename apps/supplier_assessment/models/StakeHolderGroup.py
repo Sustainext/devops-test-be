@@ -13,7 +13,7 @@ class StakeHolderGroup(AbstractModel, HistoricalModelMixin):
     corporate_entity = models.ManyToManyField(
         Corporateentity, blank=True, default=None, related_name="stake_holder_group"
     )
-    user = models.ForeignKey(
+    created_by = models.ForeignKey(
         "authentication.CustomUser",
         on_delete=models.CASCADE,
         related_name="stake_holder_groups",
