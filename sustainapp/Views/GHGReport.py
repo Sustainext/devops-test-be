@@ -852,12 +852,16 @@ class ReportExistsView(APIView):
         end = self.request.query_params.get("end_date")
         organization = self.request.query_params.get("organization", None)
         corporate = self.request.query_params.get("corporate", None)
+        report_type = self.request.query_params.get("report_type", None)
+        report_by = self.request.query_params.get("report_by", None)
 
         queryset = Report.objects.filter(
             organization=organization if organization else None,
             corporate=corporate if corporate else None,
             start_date=start,
             end_date=end,
+            report_type=report_type,
+            report_by=report_by,
         )
 
         if queryset.exists():
