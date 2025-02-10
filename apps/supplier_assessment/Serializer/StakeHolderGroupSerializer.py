@@ -7,7 +7,15 @@ class CheckStakeHolderGroupSerializer(serializers.Serializer):
     Verifies whether the stakeholder group exists.
     """
 
-    id = serializers.PrimaryKeyRelatedField(queryset=StakeHolderGroup.objects.all())
+    group = serializers.PrimaryKeyRelatedField(queryset=StakeHolderGroup.objects.all())
+
+    def validate_group(self, value):
+        user = self.context["request"].user
+        if value.created_by != user:
+            raise serializers.ValidationError(
+                "You don't have permission to access this group."
+            )
+        return value
 
 
 class StakeHolderGroupSerializer(serializers.ModelSerializer):

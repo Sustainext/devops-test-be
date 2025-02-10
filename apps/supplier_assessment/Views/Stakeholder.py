@@ -4,11 +4,13 @@ from apps.supplier_assessment.models.StakeHolder import StakeHolder
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderSerializer,
 )
+from apps.supplier_assessment.pagination import StakeholderPagination
 
 
 class StakeholderViewSet(viewsets.ModelViewSet):
     serializer_class = StakeHolderSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = StakeholderPagination
 
     def get_queryset(self):
         group_id = self.kwargs.get("group_id")
