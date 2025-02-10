@@ -861,6 +861,26 @@ class ReportExistsView(APIView):
         )
 
         if queryset.exists():
-            return Response({"message": "Report Found"})
+            return Response(
+                {
+                    "message": "Report Found",
+                    "organization": Organization.objects.get(id=organization).name
+                    if organization
+                    else "",
+                    "corporate": Corporateentity.objects.get(id=corporate).name
+                    if corporate
+                    else "",
+                }
+            )
 
-        return Response({"message": "No reports found"})
+        return Response(
+            {
+                "message": "No reports found",
+                "organization": Organization.objects.get(id=organization).name
+                if organization
+                else "",
+                "corporate": Corporateentity.objects.get(id=corporate).name
+                if corporate
+                else "",
+            }
+        )
