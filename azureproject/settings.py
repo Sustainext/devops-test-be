@@ -65,6 +65,7 @@ THIRD_PARTY = [
     "dj_rest_auth.registration",
     "simple_history",
     "storages",
+    "django_filters",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY
