@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from django_filters import rest_framework as filters
 from rest_framework.filters import OrderingFilter
+from django.db.models import OuterRef, Subquery, CharField
 from apps.supplier_assessment.models.StakeHolder import StakeHolder
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderSerializer,
@@ -19,9 +20,33 @@ class StakeholderViewSet(viewsets.ModelViewSet):
     ordering_fields = ["name", "email", "updated_at"]
 
     def get_queryset(self):
-        group_id = self.kwargs.get("group_id")
+        group_id = self.request.GET.get("group_id")
+        qs = StakeHolder.objects.all()
         if group_id:
-            return StakeHolder.objects.filter(
-                group_id=group_id, group__created_by=self.request.user
-            )
-        return StakeHolder.objects.filter(group__created_by=self.request.user)
+            qs = qs.filter(group_id=group_id)
+
+        # Build subqueries for audit fields using django-simple-history.
+        # Latest (most recent) historical record
+        latest_history = StakeHolder.history.filter(id=OuterRef("id")).order_by(
+            "-history_date"
+        )
+        latest_user = Subquery(
+            latest_history.values("history_user__username")[:1],
+            output_field=CharField(),
+        )
+
+        # Oldest historical record (i.e. creation record)
+        oldest_history = StakeHolder.history.filter(id=OuterRef("id")).order_by(
+            "history_date"
+        )
+        oldest_user = Subquery(
+            oldest_history.values("history_user__username")[:1],
+            output_field=CharField(),
+        )
+
+        # Annotate the StakeHolder queryset with audit information
+        qs = qs.annotate(
+            created_by=oldest_user,
+            last_updated_by=latest_user,
+        )
+        return qs

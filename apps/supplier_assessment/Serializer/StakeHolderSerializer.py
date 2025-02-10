@@ -3,9 +3,22 @@ from apps.supplier_assessment.models.StakeHolder import StakeHolder
 
 
 class StakeHolderSerializer(serializers.ModelSerializer):
+    created_by = serializers.CharField(read_only=True)
+    last_updated_by = serializers.CharField(read_only=True)
+
     class Meta:
         model = StakeHolder
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "group",
+            "email",
+            "poc",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "last_updated_by",
+        ]
 
 
 # * A serializer that checks for .csv files
