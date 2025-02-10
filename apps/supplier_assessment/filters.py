@@ -6,7 +6,19 @@ class StakeholderFilter(filters.FilterSet):
     name = filters.CharFilter(lookup_expr="icontains")
     email = filters.CharFilter(lookup_expr="icontains")
     updated_at = filters.DateTimeFilter()
+    updated_at_after = filters.DateTimeFilter(
+        field_name="updated_at", lookup_expr="gte"
+    )
+    updated_at_before = filters.DateTimeFilter(
+        field_name="updated_at", lookup_expr="lte"
+    )
 
     class Meta:
         model = StakeHolder
-        fields = ["name", "email", "updated_at"]
+        fields = [
+            "name",
+            "email",
+            "updated_at",
+            "updated_at_after",
+            "updated_at_before",
+        ]
