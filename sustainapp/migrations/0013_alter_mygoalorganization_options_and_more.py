@@ -13,10 +13,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='mygoalorganization',
-            options={'verbose_name': 'My Goal', 'verbose_name_plural': 'My Goals'},
-        ),
         migrations.AddField(
             model_name='report',
             name='last_updated_by',
