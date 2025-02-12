@@ -100,7 +100,9 @@ class StakeholderGroupEditAPI(APIView):
                 StakeHolderGroup.objects.filter(
                     created_by__client=request.user.client,
                     organization__in=request.user.orgs.all(),
-                    corporate_entity__in=request.user.corps.all(),
+                )
+                .filter(
+                    Q(corporate_entity__in=request.user.corps.all())|Q(corporate_entity__isnull=True)
                 )
                 .distinct()
                 .get(pk=pk)
