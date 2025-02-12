@@ -12,7 +12,7 @@ from apps.supplier_assessment.filters import StakeHolderGroupFilter
 from rest_framework.filters import OrderingFilter
 from apps.supplier_assessment.pagination import SupplierAssessmentPagination
 
-from django.db.models import Count
+from django.db.models import Count, Q
 
 """
 *APIs to create
@@ -48,7 +48,10 @@ class StakeholderGroupAPI(APIView):
             .filter(
                 created_by__client=request.user.client,
                 organization__in=request.user.orgs.all(),
-                corporate_entity__in=request.user.corps.all(),
+            )
+            .filter(
+                Q(corporate_entity__in=request.user.corps.all())
+                | Q(corporate_entity__isnull=True)
             )
             .select_related("organization")
             .prefetch_related("corporate_entity")
