@@ -5,7 +5,7 @@ from sustainapp.models import Organization, Corporateentity
 
 
 class StakeHolderGroup(AbstractModel, HistoricalModelMixin):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, db_index=True)
     group_type = models.CharField(max_length=255)
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, related_name="stake_holder_group"
@@ -23,4 +23,4 @@ class StakeHolderGroup(AbstractModel, HistoricalModelMixin):
         return self.name + " - " + self.group_type
 
     class Meta:
-        unique_together = ("name", "created_by")
+        unique_together = ["name", "organization", "created_by"]

@@ -34,9 +34,13 @@ class StakeHolderGroupSerializer(serializers.ModelSerializer):
                 "You don't have permission for this organization"
             )
 
-        if "corporate" in data and data["corporate"] not in user.corps.all():
+        if (
+            "corporate_entity" in data
+            and not hasattr(data["corporate_entity"], "__iter__")
+            and not user.corps.all().filter(id=data["corporate_entity"].id).exists()
+        ):
             raise serializers.ValidationError(
-                "You don't have permission for this corporate"
+                f"You don't have permission for this corporate entity {data['corporate_entity'].name}"
             )
 
         return data
@@ -51,11 +55,34 @@ class StakeHolderGroupSerializer(serializers.ModelSerializer):
         data["organization_name"] = instance.organization.name
         # * Get all corporates names from the instance
         data["corporate_names"] = [
-            corporate.name for corporate in instance.corporate_entity.all()
+            corporate.name for corporate in instance.corporate_entity.all().only("name")
         ]
+        data["created_by_name"] = instance.created_by.username
+        data["created_by_email"] = instance.created_by.email
         return data
 
     class Meta:
         model = StakeHolderGroup
         fields = "__all__"
         read_only_fields = ("created_by",)
+
+
+class DeleteStakeHolderGroupSerializer(serializers.Serializer):
+    """
+    Serializer for deleting a StakeHolderGroup.
+    """
+
+    groups = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(
+            queryset=StakeHolderGroup.objects.all()
+        )
+    )
+
+    def validate_groups(self, value):
+        user = self.context["request"].user
+        for group in value:
+            if group.created_by.client != user.client:
+                raise serializers.ValidationError(
+                    "You cannot delete a group you are not part of."
+                )
+        return value
