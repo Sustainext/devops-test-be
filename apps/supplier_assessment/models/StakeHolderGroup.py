@@ -23,4 +23,4 @@ class StakeHolderGroup(AbstractModel, HistoricalModelMixin):
         return self.name + " - " + self.group_type
 
     class Meta:
-        unique_together = ["name", "organization", "created_by"]
+        unique_together = ["name", "organization"]
