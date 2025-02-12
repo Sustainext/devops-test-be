@@ -66,7 +66,7 @@ class StakeholderGroupAPI(APIView):
             page, many=True, context={"request": request}
         )
         response_data = serializer.data
-        for index, group in enumerate(stakeholder_groups):
+        for index, group in enumerate(page):
             response_data[index]["stakeholder_count"] = group.stakeholder_count
 
         return paginator.get_paginated_response(response_data)
