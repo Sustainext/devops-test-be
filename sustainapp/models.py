@@ -19,7 +19,7 @@ from sustainapp.Validators.LocationValidators import (
 )
 from sustainapp.Managers.ClientFiltering import ClientFiltering
 from functools import cached_property
-
+from common.models.HistoricalModel import HistoricalModelMixin
 # Create your models here.
 
 
@@ -1121,7 +1121,7 @@ class Department(AbstractModel):
         return f"{self.client} - {self.name}"
 
 
-class MyGoalOrganization(AbstractModel):
+class MyGoalOrganization(AbstractModel, HistoricalModelMixin):
     """Creating a relation for My Goals in SustainextHQ/Dashboard"""
 
     status_choices = [

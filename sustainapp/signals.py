@@ -8,11 +8,11 @@ import random
 import string
 from django.contrib.auth.signals import user_logged_in
 from django.core.cache import cache
-from sustainapp.models import ClientTaskDashboard
+from sustainapp.models import ClientTaskDashboard, MyGoalOrganization
 from allauth.account.signals import user_signed_up
 from django.contrib.auth.models import update_last_login
 import hashlib
-from authentication.models import LoginCounter, UserProfile
+from authentication.models import LoginCounter, UserProfile, CustomUser
 import logging
 from authentication.Views.VerifyEmail import generate_verification_token
 import os
@@ -318,3 +318,105 @@ def send_bulk_approved_emails(sender, instance, **kwargs):
         },
     )
     send_mail(subject, "", from_email, recipient_list, html_message=html_message)
+
+
+def send_account_locked_email(user):
+    first_name = user.first_name.capitalize()
+    """Send an email notifying the user that their account is locked."""
+    subject = "Your Sustainext Account is Locked – Reset Your Password"
+    html_message = render_to_string(
+        "sustainapp/account_deactivation.html",
+        {
+            "first_name": first_name,
+            "forgot_password_url": f"{settings.EMAIL_REDIRECT}/forgot-password",
+        },
+    )
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = user.email
+    send_mail(
+        subject,
+        "",
+        from_email,
+        [to_email],
+        html_message=html_message,
+    )
+
+
+@receiver(post_save, sender=MyGoalOrganization)
+def send_goal_notification(sender, instance, created, **kwargs):
+    # Get all users linked to the organization
+    organization_users = CustomUser.objects.filter(orgs=instance.organization)
+
+    # Define subject and email template based on creation or update
+    if created:
+        subject = f"A New Goal Has Been Set for {instance.organization.name}"
+        email_template = "sustainapp/goals/goals_created.html"
+        # Send email to all users in the organization
+        user_email_list = []
+        for user in organization_users:
+            user_email_list.append(user.email)
+
+        email_context = {
+            "user": user,
+            "goal": instance,
+        }
+
+        # Render email template
+        email_body = render_to_string(email_template, email_context)
+        send_mail(
+            subject=subject,
+            message="",  # Leave plain text empty if using HTML
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=user_email_list,
+            html_message=email_body,
+        )
+    else:
+        # Retrieve the latest historical record before the update
+        history_records = MyGoalOrganization.history.filter(id=instance.id).order_by(
+            "-history_date"
+        )
+
+        if history_records.count() >= 2:
+            last_history = history_records[1]  # Get second most recent
+        else:
+            last_history = None  # No previous history available
+        user_email_list = []
+        for user in organization_users:
+            user_email_list.append(user.email)
+
+        if last_history:
+            # Identify changed fields
+            changed_fields = {}
+            for field in instance._meta.fields:
+                field_name = field.name
+                if (
+                    field_name == "status"
+                    or field_name == "updated_at"
+                    or field_name == "created_at"
+                    or field_name == "created_by"
+                ):
+                    continue  # Ignore status changes
+
+                old_value = getattr(last_history, field_name, None)
+                new_value = getattr(instance, field_name, None)
+
+                if old_value != new_value:
+                    changed_fields[field_name] = {"old": old_value, "new": new_value}
+
+            # If no relevant fields were changed, do not send an email
+            if not changed_fields:
+                return
+
+            # Email for updated goal with specific changes
+            subject = f"Update on the Goal for {instance.organization.name}"
+            email_template = "sustainapp/goals/goals_updated.html"
+            email_context = {"goal": instance, "changed_fields": changed_fields}
+            email_body = render_to_string(email_template, email_context)
+
+            send_mail(
+                subject=subject,
+                message="",  # Leave plain text empty if using HTML
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=user_email_list,
+                html_message=email_body,
+            )
