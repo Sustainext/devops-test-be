@@ -7,14 +7,14 @@ from apps.supplier_assessment.models.StakeHolder import StakeHolder
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderSerializer,
 )
-from apps.supplier_assessment.pagination import StakeholderPagination
+from apps.supplier_assessment.pagination import SupplierAssessmentPagination
 from apps.supplier_assessment.filters import StakeholderFilter
 
 
 class StakeholderViewSet(viewsets.ModelViewSet):
     serializer_class = StakeHolderSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = StakeholderPagination
+    pagination_class = SupplierAssessmentPagination
     filterset_class = StakeholderFilter
     filter_backends = [filters.DjangoFilterBackend, OrderingFilter]
     ordering_fields = ["name", "email", "updated_at"]
