@@ -58,7 +58,7 @@ class StakeholderGroupAPI(APIView):
             )
             .select_related("organization", "created_by")
             .prefetch_related("corporate_entity")
-        ).order_by("id")
+        ).order_by("-created_at")
         filtered_groups = self.filterset_class(
             request.GET, queryset=stakeholder_groups
         ).qs

@@ -22,7 +22,7 @@ urlpatterns = [
         name="stakeholder-group-delete",
     ),
     path(
-        "stakeholder-group/<int:pk>/",
+        "stakeholder-group/<int:pk>/edit/",
         StakeholderGroupEditAPI.as_view(),
         name="stakeholder-group-edit",
     ),
