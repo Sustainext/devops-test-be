@@ -65,24 +65,3 @@ class StakeHolderGroupSerializer(serializers.ModelSerializer):
         model = StakeHolderGroup
         fields = "__all__"
         read_only_fields = ("created_by",)
-
-
-class DeleteStakeHolderGroupSerializer(serializers.Serializer):
-    """
-    Serializer for deleting a StakeHolderGroup.
-    """
-
-    groups = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(
-            queryset=StakeHolderGroup.objects.all()
-        )
-    )
-
-    def validate_groups(self, value):
-        user = self.context["request"].user
-        for group in value:
-            if group.created_by.client != user.client:
-                raise serializers.ValidationError(
-                    "You cannot delete a group you are not part of."
-                )
-        return value

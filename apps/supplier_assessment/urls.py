@@ -18,6 +18,11 @@ urlpatterns = [
     path("stakeholder-group/", StakeholderGroupAPI.as_view(), name="stakeholder-group"),
     path(
         "stakeholder-group/<int:pk>/",
+        StakeholderGroupAPI.as_view(),
+        name="stakeholder-group-delete",
+    ),
+    path(
+        "stakeholder-group/<int:pk>/",
         StakeholderGroupEditAPI.as_view(),
         name="stakeholder-group-edit",
     ),
