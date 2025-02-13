@@ -132,3 +132,29 @@ class StakeholderGroupEditAPI(APIView):
                 {"detail": "Stakeholder group not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+
+class StakeHolderGroupDistinctCreatedByAPI(APIView):
+    """
+    API view that returns a distinct list of emails from the 'created_by' field
+    of all StakeHolderGroup instances for the requesting client's user.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        usernames = (
+            (
+                StakeHolderGroup.objects.filter(
+                    created_by__client=request.user.client,
+                    organization__in=request.user.orgs.all(),
+                ).filter(
+                    Q(corporate_entity__in=request.user.corps.all())
+                    | Q(corporate_entity__isnull=True)
+                )
+            )
+            .values_list("created_by__email", flat=True)
+            .distinct()
+        )
+        # Return the list of usernames.
+        return Response(list(usernames), status=status.HTTP_200_OK)

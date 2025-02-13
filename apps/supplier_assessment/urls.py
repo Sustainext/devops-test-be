@@ -4,6 +4,7 @@ from apps.supplier_assessment.Views.Stakeholder import StakeholderViewSet
 from apps.supplier_assessment.Views.StakeholderGroup import (
     StakeholderGroupAPI,
     StakeholderGroupEditAPI,
+    StakeHolderGroupDistinctCreatedByAPI,
 )
 from apps.supplier_assessment.Views.ImportExportStakeholder import (
     StakeholderUploadAPIView,
@@ -25,6 +26,11 @@ urlpatterns = [
         "stakeholder-group/<int:pk>/edit/",
         StakeholderGroupEditAPI.as_view(),
         name="stakeholder-group-edit",
+    ),
+    path(
+        "stakeholder-group-unique-created-by/",
+        StakeHolderGroupDistinctCreatedByAPI.as_view(),
+        name="stakeholder-group-unquie-created-by",
     ),
     path(
         "import-stakeholder/",
