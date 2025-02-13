@@ -181,6 +181,7 @@ class OHSAnalysisView(APIView):
 
 class GetIllnessAnalysisView(APIView):
     permission_classes = [IsAuthenticated]
+    INJURY_RATE_DICT = {100: 2_00_000, 500: 10_00_000}
 
     def set_raw_responses(self):
         slugs = [
@@ -279,6 +280,15 @@ class GetIllnessAnalysisView(APIView):
             }
         ]
 
+    def get_months_difference(self):
+        """Calculate number of months between start and end dates"""
+        months_difference = (
+            (self.end.year - self.start.year) * 12
+            + (self.end.month - self.start.month)
+            + 1
+        )
+        return months_difference
+
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -290,20 +300,27 @@ class GetIllnessAnalysisView(APIView):
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
         self.set_raw_responses()
+        months_difference = self.get_months_difference()
+        number_of_hours_for_100_injury_rate = round(
+            self.INJURY_RATE_DICT[100] * months_difference / 12
+        )
+        number_of_hours_for_500_injury_rate = round(
+            self.INJURY_RATE_DICT[500] * months_difference / 12
+        )
 
         return Response(
             {
                 "rate_of_injuries_for_all_employees_100_injury_rate": self.get_work_related_ill_health(
-                    100
+                    number_of_hours_for_100_injury_rate
                 ),
                 "rate_of_injuries_for_not_included_in_company_employees_100_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
-                    100
+                    number_of_hours_for_100_injury_rate
                 ),
                 "rate_of_injuries_for_all_employees_500_injury_rate": self.get_work_related_ill_health(
-                    500
+                    number_of_hours_for_500_injury_rate
                 ),
                 "rate_of_injuries_for_not_included_in_company_employees_500_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
-                    500
+                    number_of_hours_for_500_injury_rate
                 ),
             },
             status=status.HTTP_200_OK,
