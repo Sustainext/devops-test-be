@@ -8,7 +8,7 @@ from apps.supplier_assessment.Serializer.StakeHolderGroupSerializer import (
 )
 from django_filters.rest_framework import DjangoFilterBackend
 from apps.supplier_assessment.filters import StakeHolderGroupFilter
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from apps.supplier_assessment.pagination import SupplierAssessmentPagination
 
 from django.db.models import Count, Q, F
@@ -27,9 +27,18 @@ class StakeholderGroupAPI(APIView):
     It requires the user to be authenticated, and uses the StakeHolderGroupSerializer to validate and save the new group, associating it with the requesting user."""
 
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = StakeHolderGroupFilter
     ordering_fields = ["name", "created_at", "organization__name"]
+    search_fields = [
+        "name",
+        "group_type",
+        "created_by___first_name",
+        "created_by__last_name",
+        "organization__name",
+        "created_by__email",
+        "corporate_entity__name",
+    ]
     pagination_class = SupplierAssessmentPagination
 
     def post(self, request):
