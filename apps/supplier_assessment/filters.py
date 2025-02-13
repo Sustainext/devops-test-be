@@ -3,6 +3,11 @@ from apps.supplier_assessment.models.StakeHolder import StakeHolder
 from apps.supplier_assessment.models.StakeHolderGroup import StakeHolderGroup
 
 
+# Create a custom filter to handle multiple email values.
+class CharInFilter(filters.BaseInFilter, filters.CharFilter):
+    pass
+
+
 class StakeholderFilter(filters.FilterSet):
     name = filters.CharFilter(lookup_expr="icontains")
     email = filters.CharFilter(lookup_expr="icontains")
@@ -41,6 +46,10 @@ class StakeHolderGroupFilter(filters.FilterSet):
         field_name="created_by__username", lookup_expr="exact"
     )
     created_by__email = filters.CharFilter(lookup_expr="icontains")
+    created_by__email_in = CharInFilter(
+        field_name="created_by__email", lookup_expr="in"
+    )
+
     created_at_after = filters.DateTimeFilter(
         field_name="created_at", lookup_expr="gte"
     )
@@ -62,6 +71,7 @@ class StakeHolderGroupFilter(filters.FilterSet):
             "created_at_after",
             "created_at_before",
             "created_by__email",
+            "created_by__email_in",
             "created_by__first_name",
             "created_by__last_name",
         ]
