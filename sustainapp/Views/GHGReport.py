@@ -844,3 +844,47 @@ class ReportPDFView(View):
             # Log the exception and prepare an error response
             logger.exception("Unexpected error generating PDF")
             return HttpResponse("Unexpected error occurred", status=500)
+
+
+class ReportExistsView(APIView):
+    def get(self, request):
+        start = self.request.query_params.get("start_date")
+        end = self.request.query_params.get("end_date")
+        organization = self.request.query_params.get("organization", None)
+        corporate = self.request.query_params.get("corporate", None)
+        report_type = self.request.query_params.get("report_type", None)
+        report_by = self.request.query_params.get("report_by", None)
+
+        queryset = Report.objects.filter(
+            organization=organization if organization else None,
+            corporate=corporate if corporate else None,
+            start_date=start,
+            end_date=end,
+            report_type=report_type,
+            report_by=report_by,
+        )
+
+        if queryset.exists():
+            return Response(
+                {
+                    "message": "Report Found",
+                    "organization": Organization.objects.get(id=organization).name
+                    if organization
+                    else "",
+                    "corporate": Corporateentity.objects.get(id=corporate).name
+                    if corporate
+                    else "",
+                }
+            )
+
+        return Response(
+            {
+                "message": "No reports found",
+                "organization": Organization.objects.get(id=organization).name
+                if organization
+                else "",
+                "corporate": Corporateentity.objects.get(id=corporate).name
+                if corporate
+                else "",
+            }
+        )

@@ -50,6 +50,7 @@ PROJECT_APPS = [
     "materiality_dashboard.apps.MaterialityDashboardConfig",
     "esg_report.apps.EsgReportConfig",
     "canadabills211.apps.Canadabills211Config",
+    "apps.supplier_assessment.apps.SupplierAssessmentConfig",
 ]
 
 THIRD_PARTY = [
@@ -64,6 +65,7 @@ THIRD_PARTY = [
     "dj_rest_auth.registration",
     "simple_history",
     "storages",
+    "django_filters",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY

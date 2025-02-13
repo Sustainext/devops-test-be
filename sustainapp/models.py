@@ -161,7 +161,7 @@ class Organization(models.Model):
         related_name="client_Org",
         default=Client.get_default_client,
     )
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, db_index=True)
     type_corporate_entity = models.CharField(max_length=256, null=True, blank=True)
     owner = models.CharField(max_length=256, null=True, blank=True)
     location_of_headquarters = models.CharField(max_length=256, null=True, blank=True)
@@ -323,7 +323,7 @@ class Corporateentity(models.Model):
         related_name="corporatenetityclient",
         default=Client.get_default_client,
     )
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, db_index=True)
     corporatetype = models.CharField(max_length=256, null=True, blank=True)
     ownershipnature = models.CharField(max_length=256, null=True, blank=True)
     location_headquarters = models.CharField(max_length=256, null=True, blank=True)
@@ -413,7 +413,7 @@ class Location(models.Model):
         related_name="locationclient",
         default=Client.get_default_client,
     )
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, db_index=True)
     phone = models.CharField(max_length=256, null=True, blank=True)
     mobile = models.CharField(max_length=256, null=True, blank=True)
     website = models.CharField(max_length=256, null=True, blank=True)
