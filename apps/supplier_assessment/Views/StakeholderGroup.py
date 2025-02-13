@@ -143,7 +143,7 @@ class StakeHolderGroupDistinctCreatedByAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        usernames = (
+        data = (
             (
                 StakeHolderGroup.objects.filter(
                     created_by__client=request.user.client,
@@ -153,8 +153,17 @@ class StakeHolderGroupDistinctCreatedByAPI(APIView):
                     | Q(corporate_entity__isnull=True)
                 )
             )
-            .values_list("created_by__email", flat=True)
+            .select_related("created_by")
             .distinct()
+            .values(
+                "created_by__email", "created_by__first_name", "created_by__last_name"
+            )
         )
-        # Return the list of usernames.
-        return Response(list(usernames), status=status.HTTP_200_OK)
+        data = [
+            {
+                "email": item["created_by__email"],
+                "name": f"{item['created_by__first_name']} {item['created_by__last_name']}",
+            }
+            for item in data
+        ]
+        return Response(data, status=status.HTTP_200_OK)
