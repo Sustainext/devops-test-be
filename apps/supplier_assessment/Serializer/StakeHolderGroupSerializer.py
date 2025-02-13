@@ -57,9 +57,9 @@ class StakeHolderGroupSerializer(serializers.ModelSerializer):
         data["corporate_names"] = [
             corporate.name for corporate in instance.corporate_entity.all().only("name")
         ]
-        data["created_by_name"] = instance.created_by.username
+        data["created_by_name"] = instance.created_by.get_full_name()
         data["created_by_email"] = instance.created_by.email
-        
+
         return data
 
     class Meta:
