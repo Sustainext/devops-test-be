@@ -59,6 +59,7 @@ class StakeHolderGroupSerializer(serializers.ModelSerializer):
         ]
         data["created_by_name"] = instance.created_by.username
         data["created_by_email"] = instance.created_by.email
+        
         return data
 
     class Meta:

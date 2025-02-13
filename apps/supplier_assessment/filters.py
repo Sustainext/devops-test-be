@@ -47,6 +47,8 @@ class StakeHolderGroupFilter(filters.FilterSet):
     created_at_before = filters.DateTimeFilter(
         field_name="created_at", lookup_expr="lte"
     )
+    created_by__first_name = filters.CharFilter(lookup_expr="icontains")
+    created_by__last_name = filters.CharFilter(lookup_expr="icontains")
 
     class Meta:
         model = StakeHolderGroup
@@ -60,4 +62,6 @@ class StakeHolderGroupFilter(filters.FilterSet):
             "created_at_after",
             "created_at_before",
             "created_by__email",
+            "created_by__first_name",
+            "created_by__last_name",
         ]
