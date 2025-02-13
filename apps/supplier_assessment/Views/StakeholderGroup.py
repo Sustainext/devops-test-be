@@ -33,7 +33,7 @@ class StakeholderGroupAPI(APIView):
     search_fields = [
         "name",
         "group_type",
-        "created_by___first_name",
+        "created_by__first_name",
         "created_by__last_name",
         "organization__name",
         "created_by__email",
