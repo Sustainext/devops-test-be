@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django_filters import rest_framework as filters
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -15,6 +16,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models.functions import Concat
 from django.contrib.auth import get_user_model
+import logging
+
+logger = logging.getLogger("django")
 
 
 class StakeholderViewSet(viewsets.ModelViewSet):
@@ -83,24 +87,6 @@ class StakeholderViewSet(viewsets.ModelViewSet):
         )
         return qs
 
-    @action(detail=False, methods=["delete"], url_path="bulk-delete")
-    def bulk_delete(self, request):
-        """
-        Delete multiple StakeHolder objects.
-        Expects a payload like: {"ids": [1, 2, 3]}
-        """
-        serializer = StakeHolderBulkDeleteSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        ids = serializer.validated_data["ids"]
-        queryset = self.get_queryset().filter(id__in=[id.id for id in ids])
-        deleted_count = queryset.count()
-        queryset.delete()
-
-        return Response(
-            {"detail": f"{deleted_count} stakeholder(s) deleted."},
-            status=status.HTTP_204_NO_CONTENT,
-        )
-
     @action(detail=False, methods=["get"], url_path="historical-users")
     def historical_users(self, request):
         """
@@ -131,3 +117,16 @@ class StakeholderViewSet(viewsets.ModelViewSet):
             for user in users
         ]
         return Response(user_data)
+
+
+class StakeholderBulkDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, format=None):
+        serializer = StakeHolderBulkDeleteSerializer(data=self.request.data)
+        logger.info(f"Request data: {request.data}")
+        if serializer.is_valid():
+            ids = serializer.data["ids"]
+            StakeHolder.objects.filter(id__in=ids).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
