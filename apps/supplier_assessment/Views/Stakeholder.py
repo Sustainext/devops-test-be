@@ -122,9 +122,9 @@ class StakeholderViewSet(viewsets.ModelViewSet):
 
 class StakeholderBulkDeleteView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes = [JSONParser]  # This ensures DELETE request bodies are parsed
+    parser_classes = [JSONParser]
 
-    def delete(self, request, format=None):
+    def post(self, request, format=None):
         serializer = StakeHolderBulkDeleteSerializer(data=request.data)
         logger.info(f"Request Data: {request.data}")
         if serializer.is_valid():
