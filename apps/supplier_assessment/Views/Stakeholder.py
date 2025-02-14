@@ -18,7 +18,7 @@ from django.db.models.functions import Concat
 from django.contrib.auth import get_user_model
 import logging
 
-logger = logging.getLogger("django")
+logger = logging.getLogger("custom_logger")
 
 
 class StakeholderViewSet(viewsets.ModelViewSet):
@@ -123,10 +123,18 @@ class StakeholderBulkDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, format=None):
-        serializer = StakeHolderBulkDeleteSerializer(data=self.request.data)
-        logger.info(f"Request data: {request.data}")
+        serializer = StakeHolderBulkDeleteSerializer(data=self.request.query_params)
+        logger.info(f"Request Query Params: {self.request.query_params}")
         if serializer.is_valid():
             ids = serializer.data["ids"]
             StakeHolder.objects.filter(id__in=ids).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+        serializer = StakeHolderBulkDeleteSerializer(data=self.request.data)
+        logger.info(f"Request Data: {self.request.data}")
+        if serializer.is_valid():
+            ids = serializer.data["ids"]
+            StakeHolder.objects.filter(id__in=ids).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
