@@ -30,6 +30,11 @@ class StakeHolderSerializer(serializers.ModelSerializer):
             "oldest_email",
         ]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["id"] = str(instance.id)
+        return data
+
 
 # * A serializer that checks for .csv files
 class StakeHolderCSVSerializer(serializers.Serializer):
