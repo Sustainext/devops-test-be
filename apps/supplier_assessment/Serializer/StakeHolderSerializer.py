@@ -44,3 +44,10 @@ class StakeHolderCSVSerializer(serializers.Serializer):
             raise serializers.ValidationError("The uploaded file is empty")
 
         return value
+
+
+# * A serializer for accepts IDs of Stakeholder Models
+class StakeHolderBulkDeleteSerializer(serializers.Serializer):
+    ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=StakeHolder.objects.all())
+    )

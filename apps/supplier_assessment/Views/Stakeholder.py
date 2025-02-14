@@ -1,11 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from django_filters import rest_framework as filters
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from django.db.models import OuterRef, Subquery, CharField, Value
 from apps.supplier_assessment.models.StakeHolder import StakeHolder
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderSerializer,
+    StakeHolderBulkDeleteSerializer,
 )
 from apps.supplier_assessment.pagination import SupplierAssessmentPagination
 from apps.supplier_assessment.filters import StakeholderFilter
@@ -20,8 +21,9 @@ class StakeholderViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = SupplierAssessmentPagination
     filterset_class = StakeholderFilter
-    filter_backends = [filters.DjangoFilterBackend, OrderingFilter]
+    filter_backends = [filters.DjangoFilterBackend, OrderingFilter, SearchFilter]
     ordering_fields = ["name", "email", "updated_at"]
+    search_fields = ["name", "city", "poc", "email"]
 
     def get_queryset(self):
         group_id = self.request.GET.get("group_id")
@@ -84,14 +86,10 @@ class StakeholderViewSet(viewsets.ModelViewSet):
         Delete multiple StakeHolder objects.
         Expects a payload like: {"ids": [1, 2, 3]}
         """
-        ids = request.data.get("ids")
-        if not ids or not isinstance(ids, list):
-            return Response(
-                {"detail": "Please provide a list of IDs to delete."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        queryset = self.get_queryset().filter(id__in=ids)
+        serializer = StakeHolderBulkDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        ids = serializer.validated_data["ids"]
+        queryset = self.get_queryset().filter(id__in=[id.id for id in ids])
         deleted_count = queryset.count()
         queryset.delete()
 
