@@ -13,6 +13,12 @@ class StakeHolderSerializer(serializers.ModelSerializer):
             "name",
             "group",
             "email",
+            "address",
+            "country",
+            "city",
+            "state",
+            "latitude",
+            "longitude",
             "poc",
             "created_at",
             "updated_at",
@@ -20,6 +26,9 @@ class StakeHolderSerializer(serializers.ModelSerializer):
             "last_updated_by",
         ]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return data
 
 # * A serializer that checks for .csv files
 class StakeHolderCSVSerializer(serializers.Serializer):
