@@ -27,7 +27,7 @@ class StakeholderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         group_id = self.request.GET.get("group_id")
-        qs = StakeHolder.objects.filter(group__created_by=self.request.user)
+        qs = StakeHolder.objects.filter(group__created_by__client=self.request.user.client)
         if group_id:
             qs = qs.filter(group_id=group_id)
 
