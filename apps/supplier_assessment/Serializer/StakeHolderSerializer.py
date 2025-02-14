@@ -3,8 +3,10 @@ from apps.supplier_assessment.models.StakeHolder import StakeHolder
 
 
 class StakeHolderSerializer(serializers.ModelSerializer):
-    created_by = serializers.CharField(read_only=True)
-    last_updated_by = serializers.CharField(read_only=True)
+    latest_name = serializers.CharField(read_only=True)
+    latest_email = serializers.CharField(read_only=True)
+    oldest_name = serializers.CharField(read_only=True)
+    oldest_email = serializers.CharField(read_only=True)
 
     class Meta:
         model = StakeHolder
@@ -22,13 +24,12 @@ class StakeHolderSerializer(serializers.ModelSerializer):
             "poc",
             "created_at",
             "updated_at",
-            "created_by",
-            "last_updated_by",
+            "latest_name",
+            "latest_email",
+            "oldest_name",
+            "oldest_email",
         ]
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        return data
 
 # * A serializer that checks for .csv files
 class StakeHolderCSVSerializer(serializers.Serializer):

@@ -33,7 +33,7 @@ class StakeholderViewSet(viewsets.ModelViewSet):
         latest_history = StakeHolder.history.filter(id=OuterRef("id")).order_by(
             "-history_date"
         )
-        latest_user = Subquery(
+        latest_name = Subquery(
             latest_history.annotate(
                 full_name=Concat(
                     "history_user__first_name",
@@ -44,12 +44,16 @@ class StakeholderViewSet(viewsets.ModelViewSet):
             ).values("full_name")[:1],
             output_field=CharField(),
         )
+        latest_email = Subquery(
+            latest_history.values("history_user__email")[:1],
+            output_field=CharField(),
+        )
 
         # Oldest historical record (creation record)
         oldest_history = StakeHolder.history.filter(id=OuterRef("id")).order_by(
             "history_date"
         )
-        oldest_user = Subquery(
+        oldest_name = Subquery(
             oldest_history.annotate(
                 full_name=Concat(
                     "history_user__first_name",
@@ -60,11 +64,17 @@ class StakeholderViewSet(viewsets.ModelViewSet):
             ).values("full_name")[:1],
             output_field=CharField(),
         )
+        oldest_email = Subquery(
+            oldest_history.values("history_user__email")[:1],
+            output_field=CharField(),
+        )
 
-        # Annotate the StakeHolder queryset with audit information
+        # Annotate the queryset with these subqueries
         qs = qs.annotate(
-            created_by=oldest_user,
-            last_updated_by=latest_user,
+            latest_name=latest_name,
+            latest_email=latest_email,
+            oldest_name=oldest_name,
+            oldest_email=oldest_email,
         )
         return qs
 
