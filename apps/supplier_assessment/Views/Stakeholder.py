@@ -14,6 +14,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models.functions import Concat
+from django.contrib.auth import get_user_model
 
 
 class StakeholderViewSet(viewsets.ModelViewSet):
@@ -27,7 +28,9 @@ class StakeholderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         group_id = self.request.GET.get("group_id")
-        qs = StakeHolder.objects.filter(group__created_by__client=self.request.user.client)
+        qs = StakeHolder.objects.filter(
+            group__created_by__client=self.request.user.client
+        )
         if group_id:
             qs = qs.filter(group_id=group_id)
 
@@ -97,3 +100,34 @@ class StakeholderViewSet(viewsets.ModelViewSet):
             {"detail": f"{deleted_count} stakeholder(s) deleted."},
             status=status.HTTP_204_NO_CONTENT,
         )
+
+    @action(detail=False, methods=["get"], url_path="historical-users")
+    def historical_users(self, request):
+        """
+        Returns a list of distinct users who have updated the StakeHolder model.
+        """
+        # Retrieve distinct historical user IDs from the StakeHolder history
+        stakeholder_qs = self.get_queryset()
+        stakeholder_ids = stakeholder_qs.values_list("id", flat=True)
+        historical_user_ids = (
+            StakeHolder.history.exclude(history_user__isnull=True)
+            .filter(id__in=stakeholder_ids)
+            .values_list("history_user_id", flat=True)
+            .distinct()
+        )
+        # Get the corresponding user objects
+        user_model = get_user_model()
+        users = user_model.objects.filter(id__in=historical_user_ids).only(
+            "id", "first_name", "last_name", "email"
+        )
+
+        # Serialize minimal user data (id, first_name, last_name, email)
+        user_data = [
+            {
+                "id": user.id,
+                "full_name": user.get_full_name(),
+                "email": user.email,
+            }
+            for user in users
+        ]
+        return Response(user_data)
