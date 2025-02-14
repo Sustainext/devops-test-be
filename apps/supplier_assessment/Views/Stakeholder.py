@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models.functions import Concat
 from django.contrib.auth import get_user_model
+from rest_framework.parsers import JSONParser
 import logging
 
 logger = logging.getLogger("custom_logger")
@@ -121,20 +122,13 @@ class StakeholderViewSet(viewsets.ModelViewSet):
 
 class StakeholderBulkDeleteView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser]  # This ensures DELETE request bodies are parsed
 
     def delete(self, request, format=None):
-        serializer = StakeHolderBulkDeleteSerializer(data=self.request.query_params)
-        logger.info(f"Request Query Params: {self.request.query_params}")
+        serializer = StakeHolderBulkDeleteSerializer(data=request.data)
+        logger.info(f"Request Data: {request.data}")
         if serializer.is_valid():
-            ids = serializer.data["ids"]
+            ids = serializer.validated_data["ids"]
             StakeHolder.objects.filter(id__in=ids).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-        serializer = StakeHolderBulkDeleteSerializer(data=self.request.data)
-        logger.info(f"Request Data: {self.request.data}")
-        if serializer.is_valid():
-            ids = serializer.data["ids"]
-            StakeHolder.objects.filter(id__in=ids).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
