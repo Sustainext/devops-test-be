@@ -10,7 +10,10 @@ User = get_user_model()
 
 
 class Assessment(AbstractModel, HistoricalModelMixin):
-    """ """
+    """
+    An assessment created by a client admin.
+    It references a single form that includes all its questions.
+    """
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
