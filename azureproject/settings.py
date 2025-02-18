@@ -260,7 +260,7 @@ LOGGING = {
             "formatter": "detailed",
             "level": "INFO",
         },
-        "climatiq_file": {  # New handler for user.log
+        "climatiq_file": {  # New handler for climatiq.log
             "class": "logging.FileHandler",
             "filename": os.path.join(BASE_DIR, "climatiq.log"),
             "formatter": "detailed",
