@@ -52,7 +52,9 @@ class StakeHolderCSVSerializer(serializers.Serializer):
 
 
 # * A serializer for accepts IDs of Stakeholder Models
-class StakeHolderBulkDeleteSerializer(serializers.Serializer):
+class DeleteIDsSerializer(serializers.Serializer):
     ids = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=StakeHolder.objects.all())
+        child=serializers.IntegerField(),
+        allow_empty=False,
+        help_text="List of IDs to delete.",
     )

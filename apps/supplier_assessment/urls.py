@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from apps.supplier_assessment.Views.Stakeholder import StakeholderViewSet, StakeholderBulkDeleteView
+from apps.supplier_assessment.Views.Stakeholder import StakeholderViewSet
 from apps.supplier_assessment.Views.StakeholderGroup import (
     StakeholderGroupAPI,
     StakeholderGroupEditAPI,
@@ -42,9 +42,4 @@ urlpatterns = [
         StakeholderExportAPIView.as_view(),
         name="export-stakeholder",
     ),
-    path(
-        "stakeholder-bulk-delete/",
-        StakeholderBulkDeleteView.as_view(),
-        name="stakeholder-bulk-delete",
-    )
 ]

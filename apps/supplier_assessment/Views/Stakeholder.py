@@ -7,7 +7,7 @@ from django.db.models import OuterRef, Subquery, CharField, Value
 from apps.supplier_assessment.models.StakeHolder import StakeHolder
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderSerializer,
-    StakeHolderBulkDeleteSerializer,
+    DeleteIDsSerializer,
 )
 from apps.supplier_assessment.pagination import SupplierAssessmentPagination
 from apps.supplier_assessment.filters import StakeholderFilter
@@ -119,16 +119,29 @@ class StakeholderViewSet(viewsets.ModelViewSet):
         ]
         return Response(user_data)
 
+    @action(detail=False, methods=["delete"], url_path="delete-many")
+    def delete_many(self, request, *args, **kwargs):
+        """
+        Delete StakeHolder instances based on a list of IDs provided in the request body.
+        Example request body:
+            {
+                "ids": [1, 2, 3]
+            }
+        """
+        # Validate the incoming data using the serializer
+        serializer = DeleteIDsSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class StakeholderBulkDeleteView(APIView):
-    permission_classes = [IsAuthenticated]
-    parser_classes = [JSONParser]
+        ids = serializer.validated_data["ids"]
+        # Filter the queryset to the objects matching the provided IDs
+        queryset = self.get_queryset().filter(id__in=ids)
+        if not queryset.exists():
+            return Response(
+                {"error": "No matching records found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
-    def post(self, request, format=None):
-        serializer = StakeHolderBulkDeleteSerializer(data=request.data)
-        logger.info(f"Request Data: {request.data}")
-        if serializer.is_valid():
-            ids = serializer.validated_data["ids"]
-            StakeHolder.objects.filter(id__in=ids).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Delete the filtered instances
+        deleted_count, _ = queryset.delete()
+        return Response({"deleted": deleted_count}, status=status.HTTP_200_OK)
