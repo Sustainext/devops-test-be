@@ -3,13 +3,13 @@ import csv
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db import transaction
 from apps.supplier_assessment.models.StakeHolder import StakeHolder
-from django.http import HttpResponse
+from django.http import FileResponse
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderCSVSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
+from io import BytesIO
 from apps.supplier_assessment.Serializer.StakeHolderGroupSerializer import (
     CheckStakeHolderGroupSerializer,
 )
@@ -20,6 +20,7 @@ import datetime
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+
 
 class StakeholderUploadAPIView(APIView):
     """
@@ -38,7 +39,6 @@ class StakeholderUploadAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
         # 1. Validate CSV file presence
         csv_file_serializer = StakeHolderCSVSerializer(data=request.data)
@@ -191,42 +191,71 @@ class StakeholderUploadAPIView(APIView):
 
 class StakeholderExportAPIView(APIView):
     """
-    Exports StakeHolder objects as a CSV:
+    Exports StakeHolder objects as a CSV with the same fields as the import template:
       - 'Stakeholder Name'
       - 'Stakeholder Email'
+      - 'Country'
+      - 'City'
+      - 'State'
       - 'SPOC Name'
-    Filters by 'group' provided by the user, validated the same
-    way your upload API does.
+
+    Filters by 'group' provided by the user (validated similarly to your upload API),
+    and forces the browser to download the CSV file.
     """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # 1) Validate the incoming group param via the same serializer
+        # 1. Validate the incoming group parameter via the serializer.
         serializer = CheckStakeHolderGroupSerializer(
-            data=request.query_params,  # or request.data if you prefer
+            data=request.query_params,  # or request.data if preferred
             context={"request": request},
         )
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=400)
 
-        # 2) Extract the validated group
+        # 2. Extract the validated group.
         group = serializer.validated_data["group"]
 
-        # 3) Filter the StakeHolder objects by group
+        # 3. Filter StakeHolder objects by the validated group.
         stakeholders_qs = StakeHolder.objects.filter(group=group)
 
-        # 4) Create the CSV response
-        #    We'll return an HttpResponse so the browser can download it.
-        response = HttpResponse(content_type="application/octet-stream")
-        response["Content-Disposition"] = 'attachment; filename="stakeholders.csv"'
-
-        writer = csv.writer(response)
-        # Write the CSV header in the same format as your template
-        writer.writerow(["Stakeholder Name", "Stakeholder Email", "SPOC Name"])
-
-        # Write each stakeholder row
+        # 4. Create an in-memory CSV file using BytesIO.
+        output_str = StringIO()
+        writer = csv.writer(output_str)
+        # Write the CSV header matching the import template.
+        writer.writerow(
+            [
+                "Stakeholder Name",
+                "Stakeholder Email",
+                "Country",
+                "City",
+                "State",
+                "SPOC Name",
+            ]
+        )
+        # Write each stakeholder row.
         for stakeholder in stakeholders_qs:
-            writer.writerow([stakeholder.name, stakeholder.email, stakeholder.poc])
+            writer.writerow(
+                [
+                    stakeholder.name,
+                    stakeholder.email,
+                    stakeholder.country or "",
+                    stakeholder.city or "",
+                    stakeholder.state or "",
+                    stakeholder.poc or "",
+                ]
+            )
 
-        return response
+        # Get the CSV content as a string and then encode it into bytes.
+        csv_string = output_str.getvalue()
+        output_bytes = BytesIO(csv_string.encode("utf-8"))
+        output_bytes.seek(0)
+
+        # 5. Return a FileResponse to force the file download.
+        return FileResponse(
+            output_bytes,
+            as_attachment=True,
+            filename="stakeholders.csv",
+            content_type="text/csv",
+        )
