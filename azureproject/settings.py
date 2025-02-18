@@ -263,6 +263,12 @@ LOGGING = {
             "formatter": "detailed",
             "level": "INFO",
         },
+        "climatiq_file": {  # New handler for climatiq.log
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "climatiq.log"),
+            "formatter": "detailed",
+            "level": "INFO",
+        },
         "celery": {
             "class": "logging.FileHandler",
             "filename": os.path.join(BASE_DIR, "celery.log"),
@@ -294,6 +300,11 @@ LOGGING = {
         },
         "user_logger": {  # New logger for user logins
             "handlers": ["user_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "climatiq_logger": {  # New logger for climatiq
+            "handlers": ["climatiq_file"],
             "level": "INFO",
             "propagate": False,
         },

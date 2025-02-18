@@ -3,52 +3,63 @@ import csv
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db import transaction
 from apps.supplier_assessment.models.StakeHolder import StakeHolder
 from django.http import HttpResponse
-from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
-    StakeHolderSerializer,
-)
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderCSVSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
+import io
 from apps.supplier_assessment.Serializer.StakeHolderGroupSerializer import (
     CheckStakeHolderGroupSerializer,
 )
+from io import StringIO
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+import datetime
+import pandas as pd
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 
 
 class StakeholderUploadAPIView(APIView):
     """
-    This endpoint receives a CSV file containing rows with:
-      - 'Stakeholder Name'
-      - 'Stakeholder Email'
-      - 'SPOC Name'
-    Each row MUST have all three fields. If any row fails,
-    we'll return a 400 error with information about the bad rows.
+    This endpoint receives a CSV file containing columns:
+      - 'Stakeholder Name' (required)
+      - 'Stakeholder Email' (required)
+      - 'Country' (optional)
+      - 'City' (optional)
+      - 'State' (optional)
+      - 'SPOC Name' (optional)
+
+    Rows missing Stakeholder Name or Stakeholder Email, or with an invalid email,
+    are collected into a separate CSV file that is uploaded to Azure Data Storage.
+    Valid rows are created in bulk.
     """
 
     permission_classes = [IsAuthenticated]
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
+        # 1. Validate CSV file presence
         csv_file_serializer = StakeHolderCSVSerializer(data=request.data)
         if not csv_file_serializer.is_valid():
             return Response(
                 csv_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
         csv_file = csv_file_serializer.validated_data["csv_file"]
+
+        # 2. Validate StakeHolderGroup presence
         check_stakeholder_group_serializer = CheckStakeHolderGroupSerializer(
             data=request.data, context={"request": request}
         )
-        if check_stakeholder_group_serializer.is_valid():
-            group = check_stakeholder_group_serializer.validated_data["group"]
-        else:
+        if not check_stakeholder_group_serializer.is_valid():
             return Response(
                 check_stakeholder_group_serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # Parse the CSV
+        group = check_stakeholder_group_serializer.validated_data["group"]
+
+        # 3. Parse the CSV file
         try:
             decoded_file = csv_file.read().decode("utf-8").splitlines()
         except Exception as e:
@@ -58,116 +69,190 @@ class StakeholderUploadAPIView(APIView):
             )
 
         reader = csv.DictReader(decoded_file)
-        required_columns = {"Stakeholder Name", "Stakeholder Email", "SPOC Name"}
 
-        # Check that the CSV headers actually contain the required columns
-        if not required_columns.issubset(reader.fieldnames):
+        # We expect at least these columns
+        expected_columns = {
+            "Stakeholder Name",
+            "Stakeholder Email",
+            "Country",
+            "City",
+            "State",
+            "SPOC Name",
+        }
+        missing_columns = [
+            col for col in expected_columns if col not in reader.fieldnames
+        ]
+        if missing_columns:
             return Response(
                 {
-                    "detail": f"CSV must contain the columns {required_columns}. Make sure there's no extra spaces between the Rows and Columns."
+                    "detail": (
+                        "CSV must contain the columns "
+                        f"{list(expected_columns)}. Missing: {missing_columns}"
+                    )
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        rows_to_create = []
-        row_number = 2  # to track line number (row 1 is the header)
-        errors = []
+        # Lists to track valid and invalid rows
+        valid_stakeholders = []
+        incomplete_rows = []
+        created_ids = []
 
+        row_number = 2  # row 1 is the CSV header
+
+        # 4. Validate each row
         for row in reader:
-            # Quick presence check
             stakeholder_name = row.get("Stakeholder Name", "").strip()
             stakeholder_email = row.get("Stakeholder Email", "").strip()
+            country = row.get("Country", "").strip()
+            city = row.get("City", "").strip()
+            state = row.get("State", "").strip()
             spoc_name = row.get("SPOC Name", "").strip()
 
-            if not (stakeholder_name and stakeholder_email and spoc_name):
-                errors.append(
-                    f"Row {row_number}: Missing a required field. "
-                    f"Values were: "
-                    f"Stakeholder Name='{stakeholder_name}', "
-                    f"Stakeholder Email='{stakeholder_email}', "
-                    f"SPOC Name='{spoc_name}'"
-                )
-            else:
-                # If all three fields are present, we can store them
-                rows_to_create.append(
-                    {
-                        "name": stakeholder_name,
-                        "email": stakeholder_email,
-                        "poc": spoc_name,
-                        "group": group.id,  # Assuming group_id is always 1 for now
-                    }
-                )
+            # Check mandatory fields
+            if not stakeholder_name:
+                row["Reason"] = "Stakeholder Name not present"
+                incomplete_rows.append(row)
+                row_number += 1
+                continue
+
+            if not stakeholder_email:
+                row["Reason"] = "Stakeholder Email not present"
+                incomplete_rows.append(row)
+                row_number += 1
+                continue
+
+            # Validate email format
+            try:
+                validate_email(stakeholder_email)
+            except ValidationError:
+                row["Reason"] = "Stakeholder Email not in correct format"
+                incomplete_rows.append(row)
+                row_number += 1
+                continue
+
+            # All mandatory checks pass -> create StakeHolder instance
+            stakeholder_obj = StakeHolder(
+                name=stakeholder_name,
+                email=stakeholder_email,
+                country=country,
+                city=city,
+                state=state,
+                poc=spoc_name,  # 'SPOC Name' maps to 'poc'
+                group=group,
+            )
+            valid_stakeholders.append(stakeholder_obj)
             row_number += 1
 
-        # If we encountered any errors, we fail the entire request
-        if errors:
-            return Response(
-                {"detail": "Some rows had missing fields.", "errors": errors},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # 5. Bulk create valid stakeholders in one query
+        created_objs = StakeHolder.objects.bulk_create(valid_stakeholders)
+        for obj in created_objs:
+            created_ids.append(str(obj.id))
 
-        # Otherwise, attempt to create the rows in the DB
-        created = []
-        for data in rows_to_create:
-            serializer = StakeHolderSerializer(data=data)
-            if serializer.is_valid():
-                obj = serializer.save()
-                created.append(obj.id)
-            else:
-                # If the serializer fails for any row, rollback
-                transaction.set_rollback(True)
-                return Response(
-                    {
-                        "detail": "Validation error while creating stakeholders",
-                        "errors": serializer.errors,
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        # 6. If we have incomplete rows, generate a CSV and upload it to Azure
+        incomplete_file_url = None
+        if incomplete_rows:
+            output = StringIO()
+            fieldnames = [
+                "Stakeholder Name",
+                "Stakeholder Email",
+                "Country",
+                "City",
+                "State",
+                "SPOC Name",
+                "Reason",
+            ]
+            writer = csv.DictWriter(output, fieldnames=fieldnames)
+            writer.writeheader()
+            for bad_row in incomplete_rows:
+                writer.writerow(bad_row)
+            csv_content = output.getvalue()
 
-        return Response(
-            {"detail": "All rows processed successfully!", "created_ids": created},
-            status=status.HTTP_201_CREATED,
-        )
+            # Generate a unique filename using current timestamp
+            now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"incomplete_stakeholders_{now}.csv"
+
+            # Create a ContentFile and save it using the default storage (Azure)
+            content_file = ContentFile(csv_content.encode("utf-8"))
+            file_path = default_storage.save(filename, content_file)
+            incomplete_file_url = default_storage.url(file_path)
+
+        # 7. Construct the response
+        response_data = {
+            "detail": "CSV processed successfully (partial acceptance).",
+            "total_valid_rows": len(created_ids),
+            "total_incomplete_rows": len(incomplete_rows),
+        }
+        if incomplete_file_url:
+            response_data["incomplete_file_url"] = incomplete_file_url
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class StakeholderExportAPIView(APIView):
     """
-    Exports StakeHolder objects as a CSV:
+    Exports StakeHolder objects as a CSV with the same fields as the import template:
       - 'Stakeholder Name'
       - 'Stakeholder Email'
+      - 'Country'
+      - 'City'
+      - 'State'
       - 'SPOC Name'
-    Filters by 'group' provided by the user, validated the same
-    way your upload API does.
+
+    Filters by 'group' provided by the user (validated similarly to your upload API),
+    and forces the browser to download the CSV file.
     """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # 1) Validate the incoming group param via the same serializer
+        # 1) Validate the incoming group parameter via the serializer.
         serializer = CheckStakeHolderGroupSerializer(
-            data=request.query_params,  # or request.data if you prefer
+            data=request.query_params,
             context={"request": request},
         )
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse("Invalid group parameter", status=400)
 
-        # 2) Extract the validated group
+        # 2) Extract the validated group.
         group = serializer.validated_data["group"]
 
-        # 3) Filter the StakeHolder objects by group
+        # 3) Filter the StakeHolder objects by the validated group.
         stakeholders_qs = StakeHolder.objects.filter(group=group)
 
-        # 4) Create the CSV response
-        #    We'll return an HttpResponse so the browser can download it.
-        response = HttpResponse(content_type="text/csv")
+        # 4) Create a DataFrame matching the import template.
+        # Template columns: "Stakeholder Name", "Stakeholder Email", "Country", "City", "State", "SPOC Name"
+        data = []
+        for s in stakeholders_qs:
+            data.append(
+                {
+                    "Stakeholder Name": s.name,
+                    "Stakeholder Email": s.email,
+                    "Country": s.country or "",
+                    "City": s.city or "",
+                    "State": s.state or "",
+                    "SPOC Name": s.poc or "",
+                }
+            )
+        df = pd.DataFrame(
+            data,
+            columns=[
+                "Stakeholder Name",
+                "Stakeholder Email",
+                "Country",
+                "City",
+                "State",
+                "SPOC Name",
+            ],
+        )
+
+        # 5) Write the DataFrame to a CSV in-memory.
+        output = io.StringIO()
+        df.to_csv(output, index=False)
+        csv_data = output.getvalue().encode("utf-8")
+        output.close()
+
+        # 6) Prepare the HttpResponse to force file download.
+        response = HttpResponse(csv_data, content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="stakeholders.csv"'
-
-        writer = csv.writer(response)
-        # Write the CSV header in the same format as your template
-        writer.writerow(["Stakeholder Name", "Stakeholder Email", "SPOC Name"])
-
-        # Write each stakeholder row
-        for stakeholder in stakeholders_qs:
-            writer.writerow([stakeholder.name, stakeholder.email, stakeholder.poc])
-
         return response
