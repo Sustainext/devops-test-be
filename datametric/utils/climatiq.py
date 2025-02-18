@@ -240,6 +240,7 @@ class Climatiq:
         """
         Returns the response from the climatiq api.
         """
+        start_time = time.time()
         CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
         payload = self.payload_preparation_for_climatiq_api()
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
@@ -275,6 +276,9 @@ class Climatiq:
         self.update_row_type_in_raw_response(all_response_data)
         # print(all_response_data, ' is the response from climatiq')
         log_data = process_dynamic_response(all_response_data)
+        climatiq_logger.info(
+            f"Request to Climatiq API took {time.time() - start_time} seconds"
+        )
 
         log_data = [
             {
@@ -292,6 +296,7 @@ class Climatiq:
         ]
         # orgs = user_instance.orgs
         uploader.upload_logs(log_data)
+        climatiq_logger.info(f"Time took to upload logs: {time.time() - start_time}")
         return all_response_data
 
     def update_row_type_in_raw_response(self, response_data):
@@ -398,7 +403,7 @@ class Climatiq:
 
         # Log the summary
         climatiq_logger.info(
-            f"Comparison results: {comparison_results}, Time took to compare: {round((end_time - start_time), 4)} seconds"
+            f"Time took to compare: {round((end_time - start_time), 4)} seconds"
         )
 
         # Return the dictionary with comparison stats
