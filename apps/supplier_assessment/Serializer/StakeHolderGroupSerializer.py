@@ -11,7 +11,7 @@ class CheckStakeHolderGroupSerializer(serializers.Serializer):
 
     def validate_group(self, value):
         user = self.context["request"].user
-        if value.created_by != user:
+        if value.created_by.client != user.client:
             raise serializers.ValidationError(
                 "You don't have permission to access this group."
             )
