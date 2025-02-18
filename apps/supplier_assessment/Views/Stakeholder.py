@@ -16,7 +16,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models.functions import Concat
 from django.contrib.auth import get_user_model
-from rest_framework.parsers import JSONParser
 import logging
 
 logger = logging.getLogger("custom_logger")
@@ -145,3 +144,20 @@ class StakeholderViewSet(viewsets.ModelViewSet):
         # Delete the filtered instances
         deleted_count, _ = queryset.delete()
         return Response({"deleted": deleted_count}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"], url_path="bulk-create")
+    def bulk_create(self, request, *args, **kwargs):
+        # Ensure the incoming data is a list
+        if not isinstance(request.data, list):
+            return Response(
+                {"error": "Expected a list of StakeHolder objects."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = self.get_serializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        created_instances = (
+            serializer.save()
+        )  # Uses bulk_create via the custom ListSerializer.
+        response_serializer = self.get_serializer(created_instances, many=True)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
