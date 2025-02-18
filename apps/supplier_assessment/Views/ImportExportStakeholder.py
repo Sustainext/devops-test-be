@@ -4,12 +4,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from apps.supplier_assessment.models.StakeHolder import StakeHolder
-from django.http import FileResponse
+from django.http import HttpResponse
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderCSVSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
-from io import BytesIO
+import io
 from apps.supplier_assessment.Serializer.StakeHolderGroupSerializer import (
     CheckStakeHolderGroupSerializer,
 )
@@ -17,7 +17,7 @@ from io import StringIO
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 import datetime
-
+import pandas as pd
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
@@ -206,56 +206,53 @@ class StakeholderExportAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # 1. Validate the incoming group parameter via the serializer.
+        # 1) Validate the incoming group parameter via the serializer.
         serializer = CheckStakeHolderGroupSerializer(
-            data=request.query_params,  # or request.data if preferred
+            data=request.query_params,
             context={"request": request},
         )
         if not serializer.is_valid():
-            return Response(serializer.errors, status=400)
+            return HttpResponse("Invalid group parameter", status=400)
 
-        # 2. Extract the validated group.
+        # 2) Extract the validated group.
         group = serializer.validated_data["group"]
 
-        # 3. Filter StakeHolder objects by the validated group.
+        # 3) Filter the StakeHolder objects by the validated group.
         stakeholders_qs = StakeHolder.objects.filter(group=group)
 
-        # 4. Create an in-memory CSV file using BytesIO.
-        output_str = StringIO()
-        writer = csv.writer(output_str)
-        # Write the CSV header matching the import template.
-        writer.writerow(
-            [
+        # 4) Create a DataFrame matching the import template.
+        # Template columns: "Stakeholder Name", "Stakeholder Email", "Country", "City", "State", "SPOC Name"
+        data = []
+        for s in stakeholders_qs:
+            data.append(
+                {
+                    "Stakeholder Name": s.name,
+                    "Stakeholder Email": s.email,
+                    "Country": s.country or "",
+                    "City": s.city or "",
+                    "State": s.state or "",
+                    "SPOC Name": s.poc or "",
+                }
+            )
+        df = pd.DataFrame(
+            data,
+            columns=[
                 "Stakeholder Name",
                 "Stakeholder Email",
                 "Country",
                 "City",
                 "State",
                 "SPOC Name",
-            ]
+            ],
         )
-        # Write each stakeholder row.
-        for stakeholder in stakeholders_qs:
-            writer.writerow(
-                [
-                    stakeholder.name,
-                    stakeholder.email,
-                    stakeholder.country or "",
-                    stakeholder.city or "",
-                    stakeholder.state or "",
-                    stakeholder.poc or "",
-                ]
-            )
 
-        # Get the CSV content as a string and then encode it into bytes.
-        csv_string = output_str.getvalue()
-        output_bytes = BytesIO(csv_string.encode("utf-8"))
-        output_bytes.seek(0)
+        # 5) Write the DataFrame to a CSV in-memory.
+        output = io.StringIO()
+        df.to_csv(output, index=False)
+        csv_data = output.getvalue().encode("utf-8")
+        output.close()
 
-        # 5. Return a FileResponse to force the file download.
-        return FileResponse(
-            output_bytes,
-            as_attachment=True,
-            filename="stakeholders.csv",
-            content_type="text/csv",
-        )
+        # 6) Prepare the HttpResponse to force file download.
+        response = HttpResponse(csv_data, content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="stakeholders.csv"'
+        return response
