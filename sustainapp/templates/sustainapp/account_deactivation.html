@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>Hi {{first_name}},</p>
+
+    <p>We noticed three consecutive unsuccessful login attempts to your Sustainext account. As a security measure, your account has been temporarily locked.</p>
+
+    <p>To regain access, you can reset your password by clicking the link below:</p>
+
+    <a href="{{ forgot_password_url }}">{{ forgot_password_url }}</a>
+
+    <p>If you didn’t attempt to log in or need any further assistance please contact your account Manager for assistance.</p>
+
+    <p>
+      Sincerely,<br />
+      The Sustainext Team
+    </p>
+  </body>
+</html>

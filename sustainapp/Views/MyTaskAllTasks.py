@@ -130,12 +130,22 @@ class UserTaskDashboardView(ListAPIView):
                     task_status__in=["in_progress", "not_started", "reject"],
                     deadline__gte=now,
                 )
-                | Q(assigned_to__isnull=True)
+                | Q(
+                    task_status__in=["in_progress", "reject", "not_started"],
+                    assigned_to__isnull=True,
+                )
             )
         elif category == "overdue":
             queryset = queryset.filter(
-                task_status__in=["in_progress", "not_started"],
-                deadline__lt=now,
+                Q(
+                    task_status__in=["in_progress", "not_started", "reject"],
+                    deadline__lt=now,
+                )
+                | Q(
+                    task_status__in=["in_progress", "not_started", "reject"],
+                    assigned_to__isnull=True,
+                    deadline__lt=now,
+                )
             )
         elif category == "completed":
             queryset = queryset.filter(task_status__in=["approved", "completed"])

@@ -38,15 +38,32 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
                     task_status__in=["in_progress", "reject", "not_started"],
                     assigned_to=request.user,
                 )
-                | Q(assigned_by=request.user, assigned_to__isnull=True)
+                | Q(
+                    task_status__in=["in_progress", "reject", "not_started"],
+                    assigned_by=request.user,
+                    assigned_to__isnull=True,
+                )
             ).exclude(deadline__lt=timezone.now()),
             "overdue": queryset.filter(
-                task_status="in_progress",
-                assigned_to=request.user,
-                deadline__lt=timezone.now(),
+                Q(
+                    task_status__in=["in_progress", "not_started", "reject"],
+                    assigned_to=request.user,
+                    deadline__lt=timezone.now(),
+                )
+                | Q(
+                    task_status__in=["in_progress", "not_started", "reject"],
+                    assigned_by=request.user,
+                    assigned_to__isnull=True,
+                    deadline__lt=timezone.now(),
+                )
             ),
             "completed": queryset.filter(
-                task_status__in=completed_statuses, assigned_to=request.user
+                Q(task_status__in=completed_statuses, assigned_to=request.user)
+                | Q(
+                    task_status__in=completed_statuses,
+                    assigned_by=request.user,
+                    assigned_to__isnull=True,
+                )
             ),
             "for_review": queryset.filter(
                 task_status="under_review", assigned_by=request.user
