@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderCSVSerializer,
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 import io
 from apps.supplier_assessment.Serializer.StakeHolderGroupSerializer import (
     CheckStakeHolderGroupSerializer,
@@ -256,7 +256,7 @@ class StakeholderExportAPIView(APIView):
         # 7. Prepare the HTTP response to force a file download.
         response = HttpResponse(
             output.getvalue(),
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            content_type="application/vnd.ms-excel",
         )
         response["Content-Disposition"] = 'attachment; filename="stakeholders.xlsx"'
         return response
