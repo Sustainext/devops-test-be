@@ -206,7 +206,7 @@ class StakeholderExportAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # 1) Validate the incoming group parameter via the serializer.
+        # 1. Validate the incoming group parameter via the serializer.
         serializer = CheckStakeHolderGroupSerializer(
             data=request.query_params,
             context={"request": request},
@@ -214,14 +214,13 @@ class StakeholderExportAPIView(APIView):
         if not serializer.is_valid():
             return HttpResponse("Invalid group parameter", status=400)
 
-        # 2) Extract the validated group.
+        # 2. Extract the validated group.
         group = serializer.validated_data["group"]
 
-        # 3) Filter the StakeHolder objects by the validated group.
+        # 3. Filter the StakeHolder objects by the validated group.
         stakeholders_qs = StakeHolder.objects.filter(group=group)
 
-        # 4) Create a DataFrame matching the import template.
-        # Template columns: "Stakeholder Name", "Stakeholder Email", "Country", "City", "State", "SPOC Name"
+        # 4. Create a list of dictionaries with the fields matching the import template.
         data = []
         for s in stakeholders_qs:
             data.append(
@@ -234,6 +233,8 @@ class StakeholderExportAPIView(APIView):
                     "SPOC Name": s.poc or "",
                 }
             )
+
+        # 5. Create a DataFrame with the desired columns.
         df = pd.DataFrame(
             data,
             columns=[
@@ -246,13 +247,16 @@ class StakeholderExportAPIView(APIView):
             ],
         )
 
-        # 5) Write the DataFrame to a CSV in-memory.
-        output = io.StringIO()
-        df.to_csv(output, index=False)
-        csv_data = output.getvalue().encode("utf-8")
-        output.close()
+        # 6. Write the DataFrame to an in-memory Excel file.
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+            df.to_excel(writer, index=False, sheet_name="Stakeholders")
+        output.seek(0)
 
-        # 6) Prepare the HttpResponse to force file download.
-        response = HttpResponse(csv_data, content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="stakeholders.csv"'
+        # 7. Prepare the HTTP response to force a file download.
+        response = HttpResponse(
+            output.getvalue(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = 'attachment; filename="stakeholders.xlsx"'
         return response
