@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 from django.apps import apps
 from sustainapp.Serializers.TaskdashboardRetriveSerializer import CustomUserSerializer
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 
 # Extracting the ExtendedUser Model
@@ -12,6 +14,10 @@ User = apps.get_model(settings.AUTH_USER_MODEL)
 
 class UserClientViewset(APIView):
     permission_classes = [IsAuthenticated]
+
+    @method_decorator(cache_page(60 * 5))  # Cache the response for 5 minutes
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, format=None):
         """
