@@ -247,16 +247,15 @@ class StakeholderExportAPIView(APIView):
             ],
         )
 
-        # 6. Write the DataFrame to an in-memory Excel file.
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-            df.to_excel(writer, index=False, sheet_name="Stakeholders")
-        output.seek(0)
-
-        # 7. Prepare the HTTP response to force a file download.
-        response = HttpResponse(
-            output.getvalue(),
-            content_type="application/vnd.ms-excel",
+        response = HttpResponse(content_type="application/vnd.ms-excel")
+        response["Content-Disposition"] = (
+            f'{"attachment"}; filename="stakeholders.xlsx"'
         )
-        response["Content-Disposition"] = 'attachment; filename="stakeholders.xlsx"'
+        buffer = io.BytesIO()
+
+        with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
+            df.to_excel(writer, index=False, sheet_name="Sheet1")
+
+        response.write(buffer.getvalue())
         return response
+
