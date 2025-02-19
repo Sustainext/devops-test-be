@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderCSVSerializer,
 )
+from simple_history.utils import bulk_create_with_history
 from rest_framework.permissions import IsAuthenticated, AllowAny
 import io
 from apps.supplier_assessment.Serializer.StakeHolderGroupSerializer import (
@@ -96,7 +97,6 @@ class StakeholderUploadAPIView(APIView):
         # Lists to track valid and invalid rows
         valid_stakeholders = []
         incomplete_rows = []
-        created_ids = []
 
         row_number = 2  # row 1 is the CSV header
 
@@ -145,9 +145,7 @@ class StakeholderUploadAPIView(APIView):
             row_number += 1
 
         # 5. Bulk create valid stakeholders in one query
-        created_objs = StakeHolder.objects.bulk_create(valid_stakeholders)
-        for obj in created_objs:
-            created_ids.append(str(obj.id))
+        bulk_create_with_history(valid_stakeholders, StakeHolder, batch_size=1000)
 
         # 6. If we have incomplete rows, generate a CSV and upload it to Azure
         incomplete_file_url = None
@@ -180,7 +178,7 @@ class StakeholderUploadAPIView(APIView):
         # 7. Construct the response
         response_data = {
             "detail": "CSV processed successfully (partial acceptance).",
-            "total_valid_rows": len(created_ids),
+            "total_valid_rows": len(valid_stakeholders),
             "total_incomplete_rows": len(incomplete_rows),
         }
         if incomplete_file_url:
