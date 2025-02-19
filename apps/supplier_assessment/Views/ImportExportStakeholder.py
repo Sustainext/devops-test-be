@@ -1,4 +1,3 @@
-# core/views.py
 import csv
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -168,7 +167,7 @@ class StakeholderUploadAPIView(APIView):
 
             # Generate a unique filename using current timestamp
             now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"incomplete_stakeholders_{now}.csv"
+            filename = f"supplier_assessment/incomplete_stakeholders_{now}.csv"
 
             # Create a ContentFile and save it using the default storage (Azure)
             content_file = ContentFile(csv_content.encode("utf-8"))
