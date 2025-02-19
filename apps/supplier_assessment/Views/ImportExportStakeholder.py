@@ -246,11 +246,9 @@ class StakeholderExportAPIView(APIView):
                 "SPOC Name",
             ],
         )
-
+        disposition = "attachment" if "download" in request.GET else "inline"
         response = HttpResponse(content_type="application/vnd.ms-excel")
-        response["Content-Disposition"] = (
-            f'{"attachment"}; filename="stakeholders.xlsx"'
-        )
+        response["Content-Disposition"] = f'{disposition}; filename="stakeholders.xlsx"'
         buffer = io.BytesIO()
 
         with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
@@ -258,4 +256,3 @@ class StakeholderExportAPIView(APIView):
 
         response.write(buffer.getvalue())
         return response
-
