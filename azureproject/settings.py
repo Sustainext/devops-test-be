@@ -327,7 +327,7 @@ REDIS_PORT = os.getenv("REDIS_PORT")
 
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": f"{REDIS_URL}",
     }
 }
