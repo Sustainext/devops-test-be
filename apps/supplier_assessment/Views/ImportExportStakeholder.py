@@ -1,4 +1,3 @@
-# core/views.py
 import csv
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,7 +7,8 @@ from django.http import HttpResponse
 from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderCSVSerializer,
 )
-from rest_framework.permissions import IsAuthenticated
+from simple_history.utils import bulk_create_with_history
+from rest_framework.permissions import IsAuthenticated, AllowAny
 import io
 from apps.supplier_assessment.Serializer.StakeHolderGroupSerializer import (
     CheckStakeHolderGroupSerializer,
@@ -96,7 +96,6 @@ class StakeholderUploadAPIView(APIView):
         # Lists to track valid and invalid rows
         valid_stakeholders = []
         incomplete_rows = []
-        created_ids = []
 
         row_number = 2  # row 1 is the CSV header
 
@@ -145,9 +144,7 @@ class StakeholderUploadAPIView(APIView):
             row_number += 1
 
         # 5. Bulk create valid stakeholders in one query
-        created_objs = StakeHolder.objects.bulk_create(valid_stakeholders)
-        for obj in created_objs:
-            created_ids.append(str(obj.id))
+        bulk_create_with_history(valid_stakeholders, StakeHolder, batch_size=1000)
 
         # 6. If we have incomplete rows, generate a CSV and upload it to Azure
         incomplete_file_url = None
@@ -170,7 +167,7 @@ class StakeholderUploadAPIView(APIView):
 
             # Generate a unique filename using current timestamp
             now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"incomplete_stakeholders_{now}.csv"
+            filename = f"supplier_assessment/incomplete_stakeholders_{now}.csv"
 
             # Create a ContentFile and save it using the default storage (Azure)
             content_file = ContentFile(csv_content.encode("utf-8"))
@@ -180,7 +177,7 @@ class StakeholderUploadAPIView(APIView):
         # 7. Construct the response
         response_data = {
             "detail": "CSV processed successfully (partial acceptance).",
-            "total_valid_rows": len(created_ids),
+            "total_valid_rows": len(valid_stakeholders),
             "total_incomplete_rows": len(incomplete_rows),
         }
         if incomplete_file_url:
@@ -206,7 +203,7 @@ class StakeholderExportAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # 1) Validate the incoming group parameter via the serializer.
+        # 1. Validate the incoming group parameter via the serializer.
         serializer = CheckStakeHolderGroupSerializer(
             data=request.query_params,
             context={"request": request},
@@ -214,14 +211,13 @@ class StakeholderExportAPIView(APIView):
         if not serializer.is_valid():
             return HttpResponse("Invalid group parameter", status=400)
 
-        # 2) Extract the validated group.
+        # 2. Extract the validated group.
         group = serializer.validated_data["group"]
 
-        # 3) Filter the StakeHolder objects by the validated group.
+        # 3. Filter the StakeHolder objects by the validated group.
         stakeholders_qs = StakeHolder.objects.filter(group=group)
 
-        # 4) Create a DataFrame matching the import template.
-        # Template columns: "Stakeholder Name", "Stakeholder Email", "Country", "City", "State", "SPOC Name"
+        # 4. Create a list of dictionaries with the fields matching the import template.
         data = []
         for s in stakeholders_qs:
             data.append(
@@ -234,6 +230,8 @@ class StakeholderExportAPIView(APIView):
                     "SPOC Name": s.poc or "",
                 }
             )
+
+        # 5. Create a DataFrame with the desired columns.
         df = pd.DataFrame(
             data,
             columns=[
@@ -245,14 +243,13 @@ class StakeholderExportAPIView(APIView):
                 "SPOC Name",
             ],
         )
+        disposition = "attachment" if "download" in request.GET else "inline"
+        response = HttpResponse(content_type="application/vnd.ms-excel")
+        response["Content-Disposition"] = f'{disposition}; filename="stakeholders.xlsx"'
+        buffer = io.BytesIO()
 
-        # 5) Write the DataFrame to a CSV in-memory.
-        output = io.StringIO()
-        df.to_csv(output, index=False)
-        csv_data = output.getvalue().encode("utf-8")
-        output.close()
+        with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
+            df.to_excel(writer, index=False, sheet_name="Sheet1")
 
-        # 6) Prepare the HttpResponse to force file download.
-        response = HttpResponse(csv_data, content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="stakeholders.csv"'
+        response.write(buffer.getvalue())
         return response
