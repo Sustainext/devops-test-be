@@ -8,7 +8,7 @@ from apps.supplier_assessment.Serializer.StakeHolderSerializer import (
     StakeHolderCSVSerializer,
 )
 from simple_history.utils import bulk_create_with_history
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 import io
 from apps.supplier_assessment.Serializer.StakeHolderGroupSerializer import (
     CheckStakeHolderGroupSerializer,
@@ -110,13 +110,13 @@ class StakeholderUploadAPIView(APIView):
 
             # Check mandatory fields
             if not stakeholder_name:
-                row["Reason"] = "Stakeholder Name not present"
+                row["Reason"] = "Stakeholder Name is blank"
                 incomplete_rows.append(row)
                 row_number += 1
                 continue
 
             if not stakeholder_email:
-                row["Reason"] = "Stakeholder Email not present"
+                row["Reason"] = "Stakeholder Email is blank"
                 incomplete_rows.append(row)
                 row_number += 1
                 continue
@@ -125,7 +125,7 @@ class StakeholderUploadAPIView(APIView):
             try:
                 validate_email(stakeholder_email)
             except ValidationError:
-                row["Reason"] = "Stakeholder Email not in correct format"
+                row["Reason"] = "Email format is incorrect"
                 incomplete_rows.append(row)
                 row_number += 1
                 continue
