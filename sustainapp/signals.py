@@ -15,6 +15,8 @@ from authentication.Views.VerifyEmail import generate_verification_token
 import os
 from sustainapp.celery_tasks.send_mail import async_send_email
 from django.forms.models import model_to_dict
+from django.db.models.signals import m2m_changed
+from sustainapp.Cache_delete.Location_cache_delete import clear_user_location_cache
 
 user_log = logging.getLogger("user_logger")
 celery_logger = logging.getLogger("celery_logger")
@@ -350,3 +352,13 @@ def send_goal_notification(sender, instance, created, **kwargs):
                     subject, email_template, user.email, email_context
                 )
                 celery_logger.info(f"Email sent to {user.email} for goal update.")
+
+
+@receiver(m2m_changed, sender=CustomUser.locs.through)
+def clear_cache_on_user_location_change(sender, instance, action, **kwargs):
+    """
+    Clears the cached location list for a user when their locations (locs) are updated.
+    Runs asynchronously using Celery.
+    """
+    if action in ["post_add", "post_remove", "post_clear"]:
+        clear_user_location_cache.delay(instance.id)
