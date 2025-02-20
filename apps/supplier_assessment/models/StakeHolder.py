@@ -24,3 +24,6 @@ class StakeHolder(AbstractModel, HistoricalModelMixin):
 
     def __str__(self):
         return self.name + " - " + self.group.name
+
+    class Meta:
+        ordering = ["-created_at"]

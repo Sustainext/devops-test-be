@@ -21,6 +21,9 @@ class StakeholderFilter(filters.FilterSet):
     updated_at_before = filters.DateTimeFilter(
         field_name="updated_at", lookup_expr="lte"
     )
+    oldest_email = filters.CharFilter(
+        field_name="oldest_email", lookup_expr="icontains"
+    )
 
     class Meta:
         model = StakeHolder
@@ -33,6 +36,7 @@ class StakeholderFilter(filters.FilterSet):
             "country",
             "city",
             "state",
+            "oldest_email",
         ]
 
 

@@ -9,6 +9,7 @@ from authentication.utils import (
     handle_failed_login,
     reset_failed_login_attempts,
 )
+from sustainapp.signals import send_account_locked_email
 
 
 class CustomLoginView(LoginView):
@@ -145,6 +146,7 @@ class CustomLoginView(LoginView):
                         safelock.last_failed_at = None
                         safelock.save()
                     else:
+                        send_account_locked_email(user)
                         return Response(
                             {
                                 "message": "Your account has been locked due to multiple failed login attempts. "

@@ -11,7 +11,9 @@ from apps.supplier_assessment.filters import StakeHolderGroupFilter
 from rest_framework.filters import OrderingFilter, SearchFilter
 from apps.supplier_assessment.pagination import SupplierAssessmentPagination
 
-from django.db.models import Count, Q, F
+from django.db.models import Count, Q, F, OuterRef, Subquery, CharField, Value
+from django.db.models.functions import Concat
+
 
 """
 *APIs to create
@@ -51,11 +53,31 @@ class StakeholderGroupAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
+        latest_group_history = StakeHolderGroup.history.filter(
+            id=OuterRef("id")
+        ).order_by("-history_date")
+        latest_updated_by_name = Subquery(
+            latest_group_history.annotate(
+                full_name=Concat(
+                    "history_user__first_name",
+                    Value(" "),
+                    "history_user__last_name",
+                    output_field=CharField(),
+                )
+            ).values("full_name")[:1],
+            output_field=CharField(),
+        )
+        latest_updated_by_email = Subquery(
+            latest_group_history.values("history_user__email")[:1],
+            output_field=CharField(),
+        )
         stakeholder_groups = (
             StakeHolderGroup.objects.annotate(
                 stakeholder_count=Count("stake_holder"),
                 creator_first_name=F("created_by__first_name"),
                 creator_last_name=F("created_by__last_name"),
+                updated_by_name=latest_updated_by_name,
+                updated_by_email=latest_updated_by_email,
             )
             .filter(
                 created_by__client=request.user.client,
@@ -83,6 +105,8 @@ class StakeholderGroupAPI(APIView):
         response_data = serializer.data
         for index, group in enumerate(page):
             response_data[index]["stakeholder_count"] = group.stakeholder_count
+            response_data[index]["updated_by_name"] = group.updated_by_name
+            response_data[index]["updated_by_email"] = group.updated_by_email
 
         return paginator.get_paginated_response(response_data)
 

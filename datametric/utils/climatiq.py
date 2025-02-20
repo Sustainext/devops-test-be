@@ -14,11 +14,13 @@ import uuid
 from datetime import datetime
 from azurelogs.time_utils import get_current_time_ist
 from azurelogs.azure_log_uploader import AzureLogUploader
+import time
 
 
 uploader = AzureLogUploader()
 
 logger = logging.getLogger("django")
+climatiq_logger = logging.getLogger("climatiq_logger")
 
 
 def process_dynamic_response(response):
@@ -238,6 +240,7 @@ class Climatiq:
         """
         Returns the response from the climatiq api.
         """
+        start_time = time.time()
         CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
         payload = self.payload_preparation_for_climatiq_api()
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
@@ -253,7 +256,7 @@ class Climatiq:
             batch_payload = payload[i : i + batch_size]
             response = requests.request(
                 "POST",
-                url="https://api.climatiq.io/batch",
+                url="https://api.climatiq.io/data/v1/estimate/batch",
                 data=json.dumps(batch_payload),
                 headers=headers,
             )
@@ -273,6 +276,9 @@ class Climatiq:
         self.update_row_type_in_raw_response(all_response_data)
         # print(all_response_data, ' is the response from climatiq')
         log_data = process_dynamic_response(all_response_data)
+        climatiq_logger.info(
+            f"Request to Climatiq API took {time.time() - start_time} seconds"
+        )
 
         log_data = [
             {
@@ -290,45 +296,138 @@ class Climatiq:
         ]
         # orgs = user_instance.orgs
         uploader.upload_logs(log_data)
+        climatiq_logger.info(f"Time took to upload logs: {time.time() - start_time}")
         return all_response_data
 
     def update_row_type_in_raw_response(self, response_data):
         """
         Updates rowType to 'calculated' in raw_response.data for successfully calculated emissions.
+        Tracks the number of comparisons and matches for each index.
         """
-        for emission_data in response_data:
-            for idx, object_emission in self.index_mapping_to_emissons.items():
-                # Check for equality across specified fields to identify a matching item
-                emission = object_emission.get("Emission", {})
-                if (
-                    emission.get("Category") == emission_data.get("Category")
-                    and emission.get("Subcategory") == emission_data.get("SubCategory")
-                    and emission.get("Activity") == emission_data.get("Activity")
-                    and emission.get("activity_id")
-                    == emission_data.get("emission_factor").get("activity_id")
-                    and emission.get("Quantity") == emission_data.get("Quantity")
-                    and emission.get("Unit") == emission_data.get("Unit")
-                    and emission.get("Unit2") == emission_data.get("Unit2")
-                    and emission.get("Quantity2") == emission_data.get("Quantity2")
-                ):
-                    # Update rowType to 'calculated' and break out of the loop once matched
-                    # emission["rowType"] = "calculated"
-                    self.raw_response.data[idx]["Emission"]["rowType"] = "calculated"
-                    if object_emission.get("id"):
-                        ctd = ClientTaskDashboard.objects.get(
-                            id=object_emission.get("id")
-                        )
-                        ctd.roles = 4
-                        ctd.task_status = "completed"
-                        ctd.save()
-                    del self.index_mapping_to_emissons[idx]
-                    break  # Stop after finding the first match for efficiency
+        start_time = time.time()
+        # Define the fields to compare
+        fields_to_compare = [
+            ("Category", "Category"),
+            ("Subcategory", "SubCategory"),
+            ("Activity", "Activity"),
+            ("activity_id", "emission_factor.activity_id"),
+            ("Quantity", "Quantity"),
+            ("Unit", "Unit"),
+            ("Unit2", "Unit2"),
+            ("Quantity2", "Quantity2"),
+        ]
 
+        # Initialize a dictionary to track comparison counts
+        comparison_results = {}
+
+        # Helper function to normalize values for comparison
+        def normalize(value):
+            if value is None:
+                return ""
+            if isinstance(value, (int, float)):
+                return str(value)
+            if isinstance(value, str):
+                return value.strip()
+            return str(value)
+
+        climatiq_logger.info(
+            f"Length of response_data: {len(response_data)}, Length of self.index_mapping_to_emissons: {len(self.index_mapping_to_emissons)}"
+        )
+        for emission_data in response_data:
+            for idx, object_emission in list(self.index_mapping_to_emissons.items()):
+                emission = object_emission.get("Emission", {})
+
+                # Initialize counts for this index if not present
+                if idx not in comparison_results:
+                    comparison_results[idx] = {
+                        "total_comparisons": 0,
+                        "matches": 0,
+                        "mismatches": 0,
+                    }
+
+                # Count the comparison
+                comparison_results[idx]["total_comparisons"] += 1
+
+                matches = True
+
+                for field1, field2 in fields_to_compare:
+                    value1 = normalize(emission.get(field1))
+                    value2 = normalize(self._get_nested_value(emission_data, field2))
+
+                    # Treat empty strings and None as equivalent
+                    if (
+                        value1 == ""
+                        and value2 is None
+                        or value2 == ""
+                        and value1 is None
+                    ):
+                        continue
+
+                    # Compare values
+                    if value1 != value2:
+                        matches = False
+
+                if matches:
+                    # Update rowType to 'calculated'
+                    self.raw_response.data[idx]["Emission"]["rowType"] = "calculated"
+
+                    # Update ClientTaskDashboard if 'id' is present
+                    if object_emission.get("id"):
+                        try:
+                            ctd = ClientTaskDashboard.objects.get(
+                                id=object_emission.get("id")
+                            )
+                            ctd.roles = 4
+                            ctd.task_status = "completed"
+                            ctd.save()
+                        except Exception as e:
+                            climatiq_logger.error(
+                                f"Failed to update ClientTaskDashboard for ID {object_emission.get('id')}: {e}"
+                            )
+
+                    # Remove the processed item
+                    del self.index_mapping_to_emissons[idx]
+
+                    # Increment match count
+                    comparison_results[idx]["matches"] += 1
+
+                else:
+                    # Increment mismatch count and log details
+                    comparison_results[idx]["mismatches"] += 1
+
+        # Update the database with the modified raw_response
         RawResponse.objects.filter(id=self.raw_response.id).update(
             data=self.raw_response.data
         )
-        # Save the modified raw_response
-        # self.raw_response.save()
+        end_time = time.time()
+
+        # Log the summary
+        climatiq_logger.info(
+            f"Time took to compare: {round((end_time - start_time), 4)} seconds"
+        )
+
+        # Return the dictionary with comparison stats
+        return comparison_results
+
+    def _get_nested_value(self, data, key):
+        """
+        Helper method to get nested dictionary values using dot notation.
+        Handles missing keys gracefully.
+        """
+        keys = key.split(".")
+        value = data
+        try:
+            for k in keys:
+                if isinstance(value, dict) and k in value:
+                    value = value[k]
+                else:
+                    return None
+            return value
+        except Exception as e:
+            climatiq_logger.error(
+                f"Failed to access nested key '{key}' in data: {data}. Error: {e}"
+            )
+            return None
 
     def clean_response_data(self, response_data):
         """

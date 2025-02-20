@@ -10,11 +10,17 @@ from sustainapp.Serializers.TaskdashboardRetriveSerializer import (
     ClientTaskDashboardBulkUpdateSerializer,
 )
 from rest_framework.exceptions import ValidationError
-from sustainapp.signals import send_task_assigned_email, send_bulk_approved_emails
 from django.core.cache import cache
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
 from sustainapp.signals import task_status_changed
+from sustainapp.celery_tasks.send_mail import (
+    send_bulk_approved_and_reject_emails,
+    send_bulk_task_emails,
+)
+from logging import getLogger
+
+logger = getLogger("celery_logger")
 
 
 class OrganisationTaskDashboardView(viewsets.ModelViewSet):
@@ -38,15 +44,32 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
                     task_status__in=["in_progress", "reject", "not_started"],
                     assigned_to=request.user,
                 )
-                | Q(assigned_by=request.user, assigned_to__isnull=True)
+                | Q(
+                    task_status__in=["in_progress", "reject", "not_started"],
+                    assigned_by=request.user,
+                    assigned_to__isnull=True,
+                )
             ).exclude(deadline__lt=timezone.now()),
             "overdue": queryset.filter(
-                task_status="in_progress",
-                assigned_to=request.user,
-                deadline__lt=timezone.now(),
+                Q(
+                    task_status__in=["in_progress", "not_started", "reject"],
+                    assigned_to=request.user,
+                    deadline__lt=timezone.now(),
+                )
+                | Q(
+                    task_status__in=["in_progress", "not_started", "reject"],
+                    assigned_by=request.user,
+                    assigned_to__isnull=True,
+                    deadline__lt=timezone.now(),
+                )
             ),
             "completed": queryset.filter(
-                task_status__in=completed_statuses, assigned_to=request.user
+                Q(task_status__in=completed_statuses, assigned_to=request.user)
+                | Q(
+                    task_status__in=completed_statuses,
+                    assigned_by=request.user,
+                    assigned_to__isnull=True,
+                )
             ),
             "for_review": queryset.filter(
                 task_status="under_review", assigned_by=request.user
@@ -79,7 +102,6 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
         except ValidationError as e:
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
-        # After validation, prepare the task objects to be created
         user = request.user
         for validated_data in serializer.validated_data:
             tasks_to_create.append(
@@ -87,18 +109,20 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
             )
 
         # Bulk create the tasks
-        ClientTaskDashboard.objects.bulk_create(tasks_to_create)
-        # Manually trigger the post-save-like logic for each created task
-        for task in tasks_to_create:
-            # Retrieve the task with its newly assigned ID
-            task = ClientTaskDashboard.objects.get(pk=task.pk)
+        created_tasks = ClientTaskDashboard.objects.bulk_create(tasks_to_create)
 
-            # Cache the task status, if needed
+        # Fetch created task IDs (Bulk create doesn't return them immediately)
+        created_task_ids = [task.pk for task in created_tasks]
+
+        # Store initial task status in cache
+        for task in created_tasks:
             cache_key_task_status = f"original_task_status_{task.pk}"
             cache.set(cache_key_task_status, task.task_status, timeout=60)
 
-            # Manually trigger the email sending logic
-            send_task_assigned_email(None, task, created=True)
+        logger.info(f"Queuing Celery Email Task for Task IDs: {created_task_ids}")
+
+        # Send all emails asynchronously in one Celery task
+        send_bulk_task_emails.apply_async(args=[created_task_ids], countdown=2)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -144,6 +168,7 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
         }
 
         updated_tasks = []
+        approved_task = []
         for data in validated_data:
             task_id = data.get("id")
             task = tasks.get(task_id)
@@ -187,7 +212,13 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
                     sender=task.__class__, instance=task, comments=comments
                 )
             if task.task_status != previous_status and task.task_status == "approved":
-                send_bulk_approved_emails(task.__class__, task)
+                approved_task.append(task.id)
+
+        if approved_task:
+            logger.info(f"Queuing Celery Email Task for Task IDs: {approved_task}")
+            send_bulk_approved_and_reject_emails.apply_async(
+                args=[approved_task], countdown=2
+            )
 
         # Dynamically get the updatable fields (excluding 'id')
         model_fields = [

@@ -14,6 +14,9 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -260,6 +263,18 @@ LOGGING = {
             "formatter": "detailed",
             "level": "INFO",
         },
+        "climatiq_file": {  # New handler for climatiq.log
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "climatiq.log"),
+            "formatter": "detailed",
+            "level": "INFO",
+        },
+        "celery": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "celery.log"),
+            "formatter": "detailed",
+            "level": "INFO",
+        },
     },
     "loggers": {
         "": {
@@ -288,10 +303,15 @@ LOGGING = {
             "level": "INFO",
             "propagate": False,
         },
-        "": {
-            "handlers": ["file"],
-            "level": "ERROR",
-            "propagate": True,
+        "climatiq_logger": {  # New logger for climatiq
+            "handlers": ["climatiq_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "celery_logger": {
+            "handlers": ["celery"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
     "formatters": {
@@ -301,12 +321,24 @@ LOGGING = {
         },
     },
 }
+REDIS_URL = os.getenv("REDIS_URL")
+REDIS_HOST = os.getenv("REDIS_HOST")
+REDIS_PORT = os.getenv("REDIS_PORT")
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"{REDIS_URL}",
     }
 }
+
+
+CELERY_BROKER_URL = f"redis://127.0.0.1:{REDIS_PORT}/0"
+CELERY_RESULT_BACKEND = f"redis://127.0.0.1:{REDIS_PORT}/0"
+CELERY_TASK_ALWAYS_EAGER = False  # Ensure this is set
+CELERY_TASK_ACKS_LATE = True
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 
 STATIC_URL = "/static/"

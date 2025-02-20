@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>Hi {{first_name}},</p>
+
+    <p>The goal {{goal.title}} for {{goal.organization.name}} on Sustainext has been updated!</p>
+
+    <p>Updated Goal Details:</p>
+    {% if changed_fields.title %}
+    <p>Title: {{changed_fields.title.new}}</p>
+    {% endif %}
+    {% if changed_fields.description %}
+    <p>Description: {{changed_fields.description.new}}</p>
+    {% endif %}
+    {% if changed_fields.deadline %}
+    <p>Deadline: {{changed_fields.deadline.new}}</p>
+    {% endif %}
+    <p>Click here to view the updated goal and track progress:</p>
+
+    <p>Let’s stay aligned and continue working toward this goal!</p>
+
+    <p>
+      Sincerely,<br />
+      The Sustainext Team
+    </p>
+  </body>
+</html>
