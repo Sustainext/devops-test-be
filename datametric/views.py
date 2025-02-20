@@ -252,6 +252,7 @@ class FieldGroupListView(APIView):
                     month=month,
                 )
             elif path_slug == "gri-environment-air-quality-emission-ods":
+                resp_data["form_data"] = serialized_raw_responses.data
                 resp_data["pre_form_data"] = get_prev_form_data(locale, year)
             else:
                 resp_data["form_data"] = serialized_raw_responses.data
