@@ -16,6 +16,7 @@ from logging import getLogger
 from datametric.View.Training_EmpPerfCareerDvlpmnt import (
     extract_from_diversity_employee,
 )
+from datametric.View.EmissionOzone import get_prev_form_data
 from common.utils.value_types import safe_divide
 from decimal import Decimal
 import traceback
@@ -250,6 +251,8 @@ class FieldGroupListView(APIView):
                     year=year,
                     month=month,
                 )
+            elif path_slug == "gri-environment-air-quality-emission-ods":
+                resp_data["pre_form_data"] = get_prev_form_data(locale, year)
             else:
                 resp_data["form_data"] = serialized_raw_responses.data
 
