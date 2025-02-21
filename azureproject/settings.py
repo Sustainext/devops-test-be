@@ -15,6 +15,7 @@ from pathlib import Path
 from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
+import sentry_sdk
 
 load_dotenv()
 
@@ -33,7 +34,19 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOST").split(",")
 
-
+sentry_sdk.init(
+    dsn="https://d560128719879e26ed4a610e18b6a836@o4508850552307712.ingest.us.sentry.io/4508850556108800",
+    # Add data like request headers and IP for users;
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
 # Application definition
 
 DJANGO_APPS = [
