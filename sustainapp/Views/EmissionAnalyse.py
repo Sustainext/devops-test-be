@@ -55,6 +55,7 @@ class GetEmissionAnalysis(APIView):
         for data in form_data:
             initiative_taken = data.get("Q2", None)
             method = data.get("Q3", None)
+            others_method = data.get("customUnit", None)
             base_year_or_base_inline = data.get("Q4", None)
             year_dict = data.get("Q5", None)
             rationale = data.get("Q6", None)
@@ -62,6 +63,9 @@ class GetEmissionAnalysis(APIView):
             scopes = data.get("Q8", None)
             gases_included = data.get("Q9", None)
             assumption_or_calculation = data.get("Q10", None)
+
+            if method == "Other (please specify)":
+                method = others_method
 
             year = f"{year_dict['start']} - {year_dict['end']}" if year_dict else None
             results.append(
