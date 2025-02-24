@@ -18,6 +18,7 @@ from datametric.utils.analyse import (
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
 )
+from common.utils.value_types import safe_divide
 
 
 class GetEmissionAnalysis(APIView):
@@ -32,6 +33,7 @@ class GetEmissionAnalysis(APIView):
         super().__init__()
         self.slugs = {
             0: "gri-environment-emissions-GHG-emission-reduction-initiatives",
+            1: "gri-environment-emissions-GHG emission-intensity",
         }
 
     def set_data_points(self):
@@ -83,6 +85,71 @@ class GetEmissionAnalysis(APIView):
             )
         return results
 
+    def validate_gases_constituent(self):
+        ch4 = n2o = co2 = False
+
+        for data in self.gases_data:
+            if not isinstance(data, dict):
+                continue
+
+            if not ch4 and data.get("ch4", None) is not None and data.get("ch4", 0) > 0:
+                ch4 = True
+            if not n2o and data.get("n2o", None) is not None and data.get("n2o", 0) > 0:
+                n2o = True
+            if not co2 and data.get("co2", None) is not None and data.get("co2", 0) > 0:
+                co2 = True
+
+            # If all gases are found, break early
+            if ch4 and n2o and co2:
+                break
+
+        return ch4, n2o, co2
+
+    def ghg_emission_intensity(self):
+        raw_data = collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[1])
+        )
+        if not self.top_emission_by_scope:
+            return []
+
+        results = []
+        emission = self.top_emission_by_scope
+        total_emission = sum(emission.values())
+        ch4, n2o, co2 = self.validate_gases_constituent()
+        for data in raw_data:
+            organization_metric = data.get("MetricType", None)
+            other_metric = data.get("customMetricType", None)
+            quantity = data.get("Quantity", None)
+            unit = data.get("Units", None)
+            other_metric_unit = data.get("customUnit", None)
+            type_of_ghg = data.get("intensityratio", None)
+            organization_metric = data.get("MetricType", None)
+
+            ghg_emission_intensity = safe_divide(total_emission, quantity)
+
+            if organization_metric == "Other (please specify)":
+                organization_metric = other_metric
+                unit = other_metric_unit
+            ghg_intensity_unit = f"tCO2e/{unit}"
+            results.append(
+                {
+                    "organization_metric": organization_metric,
+                    "quantity": quantity,
+                    "unit": unit,
+                    "type_of_ghg": type_of_ghg,
+                    "ghg_emission_intensity": ghg_emission_intensity,
+                    "ghg_intensity_unit": ghg_intensity_unit,
+                    "ch4": ch4,
+                    "n2o": n2o,
+                    "co2": co2,
+                    "HFCs": False,
+                    "PFCs": False,
+                    "SF6": False,
+                    "NF3": False,
+                }
+            )
+        return results
+
     def get(self, request, format=None):
         """
         Returns a dictionary with keys containing:
@@ -117,16 +184,22 @@ class GetEmissionAnalysis(APIView):
         )
 
         # * Get top emissions by Scope
-        top_emission_by_scope, top_emission_by_source, top_emission_by_location = (
-            get_top_emission_by_scope(
-                locations=locations,
-                user=self.request.user,
-                start=start,
-                end=end,
-                path_slug=self.path_slug,
-            )
+        (
+            top_emission_by_scope,
+            top_emission_by_source,
+            top_emission_by_location,
+            gases_data,
+        ) = get_top_emission_by_scope(
+            locations=locations,
+            user=self.request.user,
+            start=start,
+            end=end,
+            path_slug=self.path_slug,
         )
+        self.top_emission_by_scope = top_emission_by_scope
+        self.gases_data = gases_data
         disclosure_analyze_305_5 = self.disclosure_analyze_305_5()
+        ghg_emission_intensity = self.ghg_emission_intensity()
 
         # * Prepare response data
         response_data = dict()
@@ -146,6 +219,7 @@ class GetEmissionAnalysis(APIView):
             "all_emission_by_location"
         ][0:5]
         response_data["disclosure_analyze_305_5"] = disclosure_analyze_305_5
+        response_data["ghg_emission_intensity"] = ghg_emission_intensity
         response_data["selected_org"] = organisation.name
         response_data["selected_corporate"] = corporate.name if corporate else None
         response_data["selected_location"] = location.name if location else None
