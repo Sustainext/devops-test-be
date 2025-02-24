@@ -82,10 +82,8 @@ def get_raw_response_filters(organisation=None, corporate=None, location=None):
 
     filters = Q()
     if organisation:
-        filters |= Q(organization=organisation)
-
-    if corporate:
-        filters |= Q(corporate=corporate)
+        filters &= Q(organization=organisation)
+    filters &= Q(corporate=corporate)
 
     if locations.exists():
         filters |= Q(locale__in=locations)
