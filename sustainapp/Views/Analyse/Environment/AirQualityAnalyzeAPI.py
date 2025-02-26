@@ -14,6 +14,7 @@ from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
 )
 from collections import defaultdict
+from decimal import Decimal
 
 
 class AirQualityAnalyzeAPIView(APIView):
@@ -26,6 +27,13 @@ class AirQualityAnalyzeAPIView(APIView):
         self.organisation = None
         self.corporate = None
         self.location = None
+        self.conversion_factors = {
+            "Kilograms (kg)": Decimal(1),  # 1 kg = 1 kg
+            "Pound (lb)": Decimal(0.45359237),  # 1 lb = 0.45359237 kg
+            "ton (US short ton)": Decimal(907.18474),  # 1 US short ton = 907.18474 kg
+            "Gram (g)": Decimal(0.001),  # 1 gram = 0.001 kg
+            "tonnes (t)": Decimal(1000),  # 1 metric ton = 1000 kg
+        }
 
     def set_data_points(self, request):
         """Fetch data points based on the request filters."""
@@ -45,7 +53,9 @@ class AirQualityAnalyzeAPIView(APIView):
         )
 
     def air_emission_by_pollution(self):
-        """Compute air pollution emissions, grouping by pollutant and listing sources."""
+        """Compute air pollution emissions, grouping by pollutant and listing sources, converting all units to kg.
+        Also, store emissions in their original ppm or µg/m³ units where applicable.
+        """
         raw_data = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[0])
         )
@@ -53,39 +63,81 @@ class AirQualityAnalyzeAPIView(APIView):
         if not raw_data:
             return []
 
-        total_pollution = sum(float(data.get("Totalemissions", 0)) for data in raw_data)
-        pollutant_data = defaultdict(
+        total_pollution_kg = 0
+        total_pollutant_ppm_or_ugm2 = 0
+        pollutant_data_in_kg = defaultdict(
             lambda: {
-                "total_emission": 0,
+                "total_emission_kg": 0,
                 "contribution": 0,
                 "source_of_emission": set(),
             }
         )
 
+        pollutant_data_in_ppm_or_ugm2 = defaultdict(
+            lambda: {
+                "total_emission": 0,
+                "unit": "",
+                "source_of_emission": set(),
+            }
+        )
+
         for data in raw_data:
+            emission_source = data.get("EmissionSource")
             air_pollutant = data.get("AirPollutant")
             total_emission = float(data.get("Totalemissions", 0))
             source_of_emission = data.get("SourceofEmissionFactorused")
+            unit = data.get("Unit")
 
-            if air_pollutant and source_of_emission:
-                pollutant_data[air_pollutant]["total_emission"] += total_emission
-                pollutant_data[air_pollutant]["source_of_emission"].add(
+            key = (air_pollutant, emission_source)
+
+            # If the unit is convertible to kg, process it in kg
+            conversion_factor = self.conversion_factors.get(unit, None)
+            if conversion_factor is not None:
+                total_emission_kg = total_emission * float(conversion_factor)
+                pollutant_data_in_kg[key]["total_emission_kg"] += total_emission_kg
+                pollutant_data_in_kg[key]["source_of_emission"].add(source_of_emission)
+                total_pollution_kg += total_emission_kg
+
+            # If the unit is in ppm or µg/m³, store it separately
+            else:
+                pollutant_data_in_ppm_or_ugm2[key]["total_emission"] += total_emission
+                pollutant_data_in_ppm_or_ugm2[key]["unit"] = unit
+                pollutant_data_in_ppm_or_ugm2[key]["source_of_emission"].add(
                     source_of_emission
                 )
-        result = [
+                total_pollutant_ppm_or_ugm2 += total_emission
+
+        # Construct result lists
+        result_kg = [
             {
-                "pollutant": pollutant,
-                "total_emission": data["total_emission"],
+                "pollutant": pollutant[0],
+                "total_emission_kg": data["total_emission_kg"],
                 "contribution": safe_percentage(
-                    data["total_emission"], total_pollution
+                    data["total_emission_kg"], total_pollution_kg
                 ),
                 "source_of_emission": list(data["source_of_emission"]),
             }
-            for pollutant, data in pollutant_data.items()
+            for pollutant, data in pollutant_data_in_kg.items()
         ]
 
-        result.append({"pollutant": "Total", "total_emission": total_pollution})
-        return result
+        result_kg.append({"Total": total_pollution_kg})
+
+        result_ppm_or_ugm2 = [
+            {
+                "pollutant": pollutant[0],
+                "total_emission": data["total_emission"],
+                "unit": data["unit"],
+                "source_of_emission": list(data["source_of_emission"]),
+            }
+            for pollutant, data in pollutant_data_in_ppm_or_ugm2.items()
+        ]
+        result_ppm_or_ugm2.append(
+            {
+                "Total": total_pollutant_ppm_or_ugm2,
+            }
+        )
+
+        return result_kg, result_ppm_or_ugm2
 
     def get(self, request, format=None):
         """API GET method to retrieve air quality analysis."""
@@ -99,7 +151,13 @@ class AirQualityAnalyzeAPIView(APIView):
         self.location = serializer.validated_data.get("location")
 
         self.set_data_points(request)
+        air_emission_by_pollution, air_emission_by_pollution_ppm_or_ugm2 = (
+            self.air_emission_by_pollution()
+        )
 
-        response_data = {"air_emission_by_pollution": self.air_emission_by_pollution()}
+        response_data = {
+            "air_emission_by_pollution": air_emission_by_pollution,
+            "air_emission_by_pollution_ppm_or_ugm2": air_emission_by_pollution_ppm_or_ugm2,
+        }
 
         return Response(response_data, status=status.HTTP_200_OK)
