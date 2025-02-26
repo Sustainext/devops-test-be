@@ -89,6 +89,9 @@ from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
 from sustainapp.Views.GetOrgLogs import AzureMonitorQueryView
 from sustainapp.Views.PostOrgLogs import LogUploadView
 from sustainapp.Views.MygoalOrganizationView import MyGoalOrganizationView
+from sustainapp.Views.Analyse.Environment.AirQualityAnalyzeAPI import (
+    AirQualityAnalyzeAPIView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -271,4 +274,9 @@ urlpatterns = [
     path("get_org_logs/", AzureMonitorQueryView.as_view(), name="get_org_logs"),
     path("post_logs/", LogUploadView.as_view(), name="post-org-logs"),
     path("report_exists/", ReportExistsView.as_view(), name="report_exists"),
+    path(
+        "get_air_quality_analyze/",
+        AirQualityAnalyzeAPIView.as_view(),
+        name="air_quality_analyze",
+    ),
 ]

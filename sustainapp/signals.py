@@ -287,6 +287,7 @@ def send_account_locked_email(user):
 def send_goal_notification(sender, instance, created, **kwargs):
     # Get all users linked to the organization
     organization_users = CustomUser.objects.filter(orgs=instance.organization)
+    organization_name = instance.organization.name
 
     # Define subject and email template based on creation or update
     if created:
@@ -298,6 +299,7 @@ def send_goal_notification(sender, instance, created, **kwargs):
             email_context = {
                 "first_name": user.first_name.capitalize(),
                 "goal": instance_data,
+                "organization_name": organization_name,
             }
             async_send_email.delay(subject, email_template, user.email, email_context)
             celery_logger.info(
@@ -325,7 +327,7 @@ def send_goal_notification(sender, instance, created, **kwargs):
                     or field_name == "created_at"
                     or field_name == "created_by"
                 ):
-                    continue  # Ignore status changes
+                    continue  # Ignore above field changes
 
                 old_value = getattr(last_history, field_name, None)
                 new_value = getattr(instance, field_name, None)
@@ -346,6 +348,7 @@ def send_goal_notification(sender, instance, created, **kwargs):
                     "first_name": user.first_name.capitalize(),
                     "goal": instance_data,
                     "changed_fields": changed_fields,
+                    "organization_name": organization_name,
                 }
 
                 async_send_email.delay(

@@ -3,7 +3,7 @@
   <body>
     <p>Hi {{first_name}},</p>
 
-    <p>The goal {{goal.title}} for {{goal.organization.name}} on Sustainext has been updated!</p>
+    <p>The goal {{goal.title}} for {{ organization_name }} on Sustainext has been updated!</p>
 
     <p>Updated Goal Details:</p>
     {% if changed_fields.title %}
