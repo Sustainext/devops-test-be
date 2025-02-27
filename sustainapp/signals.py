@@ -15,6 +15,8 @@ from authentication.Views.VerifyEmail import generate_verification_token
 import os
 from sustainapp.celery_tasks.send_mail import async_send_email
 from django.forms.models import model_to_dict
+from django.db.models.signals import m2m_changed
+from sustainapp.Cache_delete.Location_cache_delete import clear_user_location_cache
 
 user_log = logging.getLogger("user_logger")
 celery_logger = logging.getLogger("celery_logger")
@@ -285,6 +287,7 @@ def send_account_locked_email(user):
 def send_goal_notification(sender, instance, created, **kwargs):
     # Get all users linked to the organization
     organization_users = CustomUser.objects.filter(orgs=instance.organization)
+    organization_name = instance.organization.name
 
     # Define subject and email template based on creation or update
     if created:
@@ -296,6 +299,7 @@ def send_goal_notification(sender, instance, created, **kwargs):
             email_context = {
                 "first_name": user.first_name.capitalize(),
                 "goal": instance_data,
+                "organization_name": organization_name,
             }
             async_send_email.delay(subject, email_template, user.email, email_context)
             celery_logger.info(
@@ -323,7 +327,7 @@ def send_goal_notification(sender, instance, created, **kwargs):
                     or field_name == "created_at"
                     or field_name == "created_by"
                 ):
-                    continue  # Ignore status changes
+                    continue  # Ignore above field changes
 
                 old_value = getattr(last_history, field_name, None)
                 new_value = getattr(instance, field_name, None)
@@ -344,9 +348,20 @@ def send_goal_notification(sender, instance, created, **kwargs):
                     "first_name": user.first_name.capitalize(),
                     "goal": instance_data,
                     "changed_fields": changed_fields,
+                    "organization_name": organization_name,
                 }
 
                 async_send_email.delay(
                     subject, email_template, user.email, email_context
                 )
                 celery_logger.info(f"Email sent to {user.email} for goal update.")
+
+
+@receiver(m2m_changed, sender=CustomUser.locs.through)
+def clear_cache_on_user_location_change(sender, instance, action, **kwargs):
+    """
+    Clears the cached location list for a user when their locations (locs) are updated.
+    Runs asynchronously using Celery.
+    """
+    if action in ["post_add", "post_remove", "post_clear"]:
+        clear_user_location_cache.delay(instance.id)

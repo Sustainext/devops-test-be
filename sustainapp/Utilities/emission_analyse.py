@@ -42,6 +42,7 @@ def get_top_emission_by_scope(locations, user, start, end, path_slug):
     top_emission_by_scope = defaultdict(lambda: 0)
     top_emission_by_source = defaultdict(lambda: 0)
     top_emission_by_location = defaultdict(lambda: 0)
+    gases_data = []
 
     for data_point in data_points:
         top_emission_by_scope[path_slug[data_point.raw_response.path.slug]] += sum(
@@ -56,5 +57,11 @@ def get_top_emission_by_scope(locations, user, start, end, path_slug):
             top_emission_by_source[emission_request["Emission"]["Category"]] += (
                 climatiq_response.get("co2e", 0)
             )
+            gases_data.append(climatiq_response.get("constituent_gases", {}))
 
-    return top_emission_by_scope, top_emission_by_source, top_emission_by_location
+    return (
+        top_emission_by_scope,
+        top_emission_by_source,
+        top_emission_by_location,
+        gases_data,
+    )
