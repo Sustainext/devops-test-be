@@ -114,7 +114,7 @@ class GetEmissionAnalysis(APIView):
 
         results = []
         emission = self.top_emission_by_scope
-        total_emission = sum(emission.values())
+        total_emission = sum(emission.values()) / 1000
         ch4, n2o, co2 = self.validate_gases_constituent()
         for data in raw_data:
             organization_metric = data.get("MetricType", None)
