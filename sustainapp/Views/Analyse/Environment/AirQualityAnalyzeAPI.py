@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
+    get_location_wise_dictionary_data,
 )
 from collections import defaultdict
 from decimal import Decimal
@@ -30,7 +31,7 @@ class AirQualityAnalyzeAPIView(APIView):
         self.conversion_factors = {
             "Kilograms (kg)": Decimal(1),  # 1 kg = 1 kg
             "Pound (lb)": Decimal(0.45359237),  # 1 lb = 0.45359237 kg
-            "ton (US short ton)": Decimal(907.18474),  # 1 US short ton = 907.18474 kg
+            "ton (US Short ton)": Decimal(907.18474),  # 1 US short ton = 907.18474 kg
             "Gram (g)": Decimal(0.001),  # 1 gram = 0.001 kg
             "tonnes (t)": Decimal(1000),  # 1 metric ton = 1000 kg
         }
@@ -52,6 +53,22 @@ class AirQualityAnalyzeAPIView(APIView):
             .select_related("locale", "path")
         )
 
+    def set_data_points_for_location_table(self, request):
+        """Fetch data points based on the request filters."""
+        self.data_points_for_location_wise = (
+            DataPoint.objects.filter(path__slug__in=self.slugs.values())
+            .filter(client_id=request.user.client.id)
+            .filter(
+                get_raw_response_filters(
+                    corporate=self.corporate_for_location,
+                    organisation=self.organisation,
+                )
+            )
+            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+            .order_by("locale")
+            .select_related("locale", "path")
+        )
+
     def air_emission_by_pollution(self):
         """Compute air pollution emissions, grouping by pollutant and listing sources, converting all units to kg.
         Also, store emissions in their original ppm or µg/m³ units where applicable.
@@ -61,7 +78,7 @@ class AirQualityAnalyzeAPIView(APIView):
         )
 
         if not raw_data:
-            return []
+            return [], []
 
         total_pollution_kg = 0
         total_pollutant_ppm_or_ugm2 = 0
@@ -87,7 +104,6 @@ class AirQualityAnalyzeAPIView(APIView):
             total_emission = float(data.get("Totalemissions", 0))
             source_of_emission = data.get("SourceofEmissionFactorused")
             unit = data.get("Unit")
-
             key = (air_pollutant, emission_source)
 
             # If the unit is convertible to kg, process it in kg
@@ -95,6 +111,7 @@ class AirQualityAnalyzeAPIView(APIView):
             if conversion_factor is not None:
                 total_emission_kg = total_emission * float(conversion_factor)
                 pollutant_data_in_kg[key]["total_emission_kg"] += total_emission_kg
+                pollutant_data_in_kg[key]["unit"] = unit
                 pollutant_data_in_kg[key]["source_of_emission"].add(source_of_emission)
                 total_pollution_kg += total_emission_kg
 
@@ -107,29 +124,33 @@ class AirQualityAnalyzeAPIView(APIView):
                 )
                 total_pollutant_ppm_or_ugm2 += total_emission
 
-        # Construct result lists
         result_kg = [
             {
+                "SNO": index + 1,
                 "pollutant": pollutant[0],
                 "total_emission_kg": data["total_emission_kg"],
+                "initial_unit": data["unit"],
+                "converted_unit": "Kilograms (kg)",
                 "contribution": safe_percentage(
                     data["total_emission_kg"], total_pollution_kg
                 ),
                 "source_of_emission": list(data["source_of_emission"]),
             }
-            for pollutant, data in pollutant_data_in_kg.items()
+            for index, (pollutant, data) in enumerate(pollutant_data_in_kg.items())
         ]
-
         result_kg.append({"Total": total_pollution_kg})
 
         result_ppm_or_ugm2 = [
             {
+                "SNO": index + 1,
                 "pollutant": pollutant[0],
                 "total_emission": data["total_emission"],
                 "unit": data["unit"],
                 "source_of_emission": list(data["source_of_emission"]),
             }
-            for pollutant, data in pollutant_data_in_ppm_or_ugm2.items()
+            for index, (pollutant, data) in enumerate(
+                pollutant_data_in_ppm_or_ugm2.items()
+            )
         ]
         result_ppm_or_ugm2.append(
             {
@@ -138,6 +159,163 @@ class AirQualityAnalyzeAPIView(APIView):
         )
 
         return result_kg, result_ppm_or_ugm2
+
+    def percentage_contribution_of_pollutant_by_location(self):
+        """Compute the percentage contribution of each pollutant by location (including user-added pollutants)."""
+
+        required_pollutants = [
+            "NOx",
+            "SOx",
+            "Persistent organic pollutants (POP)",
+            "Volatile organic compounds (VOC)",
+            "Hazardous air pollutants (HAP)",
+            "Particulate matter (PM 10)",
+            "Particulate matter (PM 2.5)",
+            "Carbon Monoxide(CO)",
+        ]
+
+        raw_data = get_location_wise_dictionary_data(
+            self.data_points_for_location_wise.filter(path__slug=self.slugs[0])
+        )
+
+        locations = list(raw_data.keys())
+
+        total_emissions_per_pollutant_kg = defaultdict(float)
+
+        structured_data = defaultdict(lambda: {"location": ""})
+
+        all_pollutants = set(required_pollutants)
+
+        for location in locations:
+            structured_data[location]["location"] = location
+
+            location_data = raw_data[location]
+            for entry in location_data:
+                pollutant = entry["AirPollutant"]
+                emission_value = Decimal(entry["Totalemissions"])
+                unit = entry["Unit"]
+
+                all_pollutants.add(pollutant)
+
+                conversion_factor = self.conversion_factors.get(unit, None)
+                if conversion_factor is not None:
+                    emission_value_kg = emission_value * conversion_factor
+
+                    total_emissions_per_pollutant_kg[pollutant] += float(
+                        emission_value_kg
+                    )
+
+                    if pollutant in structured_data[location]:
+                        structured_data[location][pollutant] += float(emission_value_kg)
+                    else:
+                        structured_data[location][pollutant] = float(emission_value_kg)
+
+        for location in locations:
+            for pollutant in all_pollutants:
+                total_emission_kg = total_emissions_per_pollutant_kg.get(pollutant, 0)
+
+                if pollutant in structured_data[location]:
+                    location_emission_kg = structured_data[location][pollutant]
+                    structured_data[location][pollutant] = safe_percentage(
+                        location_emission_kg, total_emission_kg
+                    )
+                else:
+                    structured_data[location][pollutant] = "0.00"
+
+        final_data = list(structured_data.values())
+        for index, item in enumerate(final_data, start=1):
+            item["SNO"] = index
+
+        if self.location:
+            filtered_data = [
+                item for item in final_data if item["location"] == self.location.name
+            ]
+            return filtered_data if filtered_data else []
+
+        return final_data
+
+    def total_air_pollution_by_location(self):
+        """Compute the total air pollution by location (including user-added pollutants)."""
+
+        required_pollutants = [
+            "NOx",
+            "SOx",
+            "Persistent organic pollutants (POP)",
+            "Volatile organic compounds (VOC)",
+            "Hazardous air pollutants (HAP)",
+            "Particulate matter (PM 10)",
+            "Particulate matter (PM 2.5)",
+            "Carbon Monoxide(CO)",
+        ]
+
+        raw_data = get_location_wise_dictionary_data(
+            self.data_points_for_location_wise.filter(path__slug=self.slugs[0])
+        )
+        if not raw_data:
+            return [], []
+        locations = list(raw_data.keys())
+
+        total_emissions_per_location_kg = defaultdict(float)
+        structured_data_kg = defaultdict(lambda: {"location": ""})
+        structured_data_ppm_or_ugm2 = defaultdict(lambda: {"location": ""})
+
+        all_pollutants = set(required_pollutants)
+
+        for location in locations:
+            structured_data_kg[location]["location"] = location
+            structured_data_ppm_or_ugm2[location]["location"] = location
+
+            location_data = raw_data[location]
+            for entry in location_data:
+                pollutant = entry["AirPollutant"]
+                emission_value = Decimal(entry["Totalemissions"])
+                unit = entry["Unit"]
+
+                all_pollutants.add(pollutant)
+
+                conversion_factor = self.conversion_factors.get(unit, None)
+                if conversion_factor is not None:
+                    emission_value_kg = emission_value * conversion_factor
+
+                    total_emissions_per_location_kg[pollutant] += float(
+                        emission_value_kg
+                    )
+
+                    structured_data_kg[location][pollutant] = structured_data_kg[
+                        location
+                    ].get(pollutant, 0) + float(emission_value_kg)
+
+                else:
+                    structured_data_ppm_or_ugm2[location][pollutant] = (
+                        structured_data_ppm_or_ugm2[location].get(pollutant, 0)
+                        + float(emission_value)
+                    )
+
+        for location in locations:
+            for pollutant in all_pollutants:
+                structured_data_kg[location].setdefault(pollutant, 0)
+                structured_data_ppm_or_ugm2[location].setdefault(pollutant, 0)
+
+        structured_data_kg_filtered = [
+            data
+            for data in structured_data_kg.values()
+            if any(value != 0 for key, value in data.items() if key != "location")
+        ]
+        structured_data_ppm_or_ugm2_filtered = [
+            data
+            for data in structured_data_ppm_or_ugm2.values()
+            if any(value != 0 for key, value in data.items() if key != "location")
+        ]
+        for index, item in enumerate(structured_data_kg_filtered, start=1):
+            item["SNO"] = index
+
+        for index, item in enumerate(structured_data_ppm_or_ugm2_filtered, start=1):
+            item["SNO"] = index
+
+        return (
+            structured_data_kg_filtered or [],
+            structured_data_ppm_or_ugm2_filtered or [],
+        )
 
     def get(self, request, format=None):
         """API GET method to retrieve air quality analysis."""
@@ -149,15 +327,29 @@ class AirQualityAnalyzeAPIView(APIView):
         self.organisation = serializer.validated_data.get("organisation")
         self.corporate = serializer.validated_data.get("corporate")
         self.location = serializer.validated_data.get("location")
+        self.corporate_for_location = self.corporate
+        if self.location:
+            self.corporate_for_location = self.location.corporateentity
 
         self.set_data_points(request)
+        self.set_data_points_for_location_table(request)
         air_emission_by_pollution, air_emission_by_pollution_ppm_or_ugm2 = (
             self.air_emission_by_pollution()
         )
+        percentage_contribution_of_pollutant_by_location = (
+            self.percentage_contribution_of_pollutant_by_location()
+        )
+        (
+            total_air_pollution_by_location_kg,
+            total_air_pollution_by_location_ppm_or_ugm2,
+        ) = self.total_air_pollution_by_location()
 
         response_data = {
             "air_emission_by_pollution": air_emission_by_pollution,
             "air_emission_by_pollution_ppm_or_ugm2": air_emission_by_pollution_ppm_or_ugm2,
+            "percentage_contribution_of_pollutant_by_location": percentage_contribution_of_pollutant_by_location,
+            "total_air_pollution_by_location": total_air_pollution_by_location_kg,
+            "total_air_pollution_by_location_ppm_or_ugm2": total_air_pollution_by_location_ppm_or_ugm2,
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
