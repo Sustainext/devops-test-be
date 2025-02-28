@@ -224,12 +224,18 @@ class AirQualityAnalyzeAPIView(APIView):
 
         final_data = list(structured_data.values())
         for index, item in enumerate(final_data, start=1):
-            item["SNO"] = index
+            item_with_sno_first = {"SNO": index, **item}
+            final_data[index - 1] = item_with_sno_first
 
         if self.location:
             filtered_data = [
                 item for item in final_data if item["location"] == self.location.name
             ]
+
+            # Reassign SNO after filtering
+            for new_index, item in enumerate(filtered_data, start=1):
+                item["SNO"] = new_index
+
             return filtered_data if filtered_data else []
 
         return final_data
@@ -307,10 +313,12 @@ class AirQualityAnalyzeAPIView(APIView):
             if any(value != 0 for key, value in data.items() if key != "location")
         ]
         for index, item in enumerate(structured_data_kg_filtered, start=1):
-            item["SNO"] = index
+            item_with_sno_first = {"SNO": index, **item}
+            structured_data_kg_filtered[index - 1] = item_with_sno_first
 
         for index, item in enumerate(structured_data_ppm_or_ugm2_filtered, start=1):
-            item["SNO"] = index
+            item_with_sno_first = {"SNO": index, **item}
+            structured_data_ppm_or_ugm2_filtered[index - 1] = item_with_sno_first
 
         return (
             structured_data_kg_filtered or [],
