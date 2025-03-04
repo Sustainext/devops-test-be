@@ -336,14 +336,16 @@ class AirQualityAnalyzeAPIView(APIView):
             structured_data_ppm_or_ugm2_filtered[index - 1] = item_with_sno_first
 
         # Calculate total for each pollutant
-        total_kg = {"location": "Total"}
+        total_kg = {
+            "location": "<p className='gradient-text px-4 py-2 border-y text-right font-bold text-[12px]' >Total</p>"
+        }
         for pollutant in all_pollutants:
             total_kg[pollutant] = sum(
                 item.get(pollutant, 0) for item in structured_data_kg_filtered
             )
 
         total_ppm_or_ugm2 = {
-            "location": "Total",
+            "location": "<p className='gradient-text px-4 py-2 border-y text-right font-bold text-[12px]' >Total</p>"
         }
         for pollutant in all_pollutants:
             total_ppm_or_ugm2[pollutant] = sum(
@@ -487,7 +489,7 @@ class AirQualityAnalyzeAPIView(APIView):
             )
         final_data.append(
             {
-                "total_net_ods_emitted": format_decimal_places(total_net_ods_emitted),
+                "Total": format_decimal_places(total_net_ods_emitted),
             }
         )
 
