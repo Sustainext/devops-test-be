@@ -2,7 +2,7 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
 from rest_framework.views import APIView
-from common.utils.value_types import safe_percentage
+from common.utils.value_types import safe_percentage, format_decimal_places
 from datametric.models import DataPoint
 from datametric.utils.analyse import (
     filter_by_start_end_dates,
@@ -16,13 +16,18 @@ from common.utils.get_data_points_as_raw_responses import (
 )
 from collections import defaultdict
 from decimal import Decimal
+from sustainapp.Utilities.air_quality_analyze import ods_potential
 
 
 class AirQualityAnalyzeAPIView(APIView):
     def __init__(self):
         super().__init__()
-        self.slugs = {0: "gri-environment-air-quality-nitrogen-oxide"}
+        self.slugs = {
+            0: "gri-environment-air-quality-nitrogen-oxide",
+            1: "gri-environment-air-quality-emission-ods",
+        }
         self.data_points = None
+        self.data_points_for_location_wise = None
         self.start = None
         self.end = None
         self.organisation = None
@@ -35,6 +40,14 @@ class AirQualityAnalyzeAPIView(APIView):
             "Gram (g)": Decimal(0.001),  # 1 gram = 0.001 kg
             "tonnes (t)": Decimal(1000),  # 1 metric ton = 1000 kg
         }
+        self.conversion_factors_for_ods = {
+            "Kilogram(Kg)": (0.001),  # 1 kg = 0.001 tons
+            "Pound (lb)": (0.00045359237),  # 1 lb = 0.00045359237 tons
+            "ton(US Short ton)": (0.90718474),  # 1 US Short ton = 0.90718474 tons
+            "Gram(g)": (0.000001),  # 1 g = 0.000001 tons
+            "Tons": (1),  # Already in tons, no change needed
+        }
+        self.ods_potential = ods_potential
 
     def set_data_points(self, request):
         """Fetch data points based on the request filters."""
@@ -325,6 +338,113 @@ class AirQualityAnalyzeAPIView(APIView):
             structured_data_ppm_or_ugm2_filtered or [],
         )
 
+    def ozone_depleting_substances(self):
+        """Compute ozone-depleting substances in tons."""
+        raw_data = collect_data_by_raw_response_and_index(
+            self.data_points_for_location_wise.filter(path__slug=self.slugs[1])
+        )
+
+        if not raw_data:
+            return []
+
+        result = {}
+
+        for data in raw_data:
+            source = data.get("EmissionSource", "")
+            ods = data.get("ODS", "")
+
+            # Extract values, defaulting to 0 if missing
+            ods_produced = float(data.get("ODSProduced", 0) or 0)
+            ods_destroyed_by_approved_techniques = float(
+                data.get("ODSDestroyedbyapprovedtechnologies", 0) or 0
+            )
+            ods_as_feedback = float(data.get("ODSUsedasfeedstock", 0) or 0)
+            ods_imported = float(data.get("ODSImported", 0) or 0)
+            ods_exported = float(data.get("ODSExported", 0) or 0)
+            unit = data.get("Unit", "")
+
+            key = (source, ods)
+
+            conversion_factor = self.conversion_factors_for_ods.get(unit, None)
+
+            if conversion_factor is not None:
+                # Convert to tons (Now both are Decimals, avoiding TypeError)
+                ods_produced_ton = ods_produced * conversion_factor
+                ods_destroyed_by_approved_techniques_ton = (
+                    ods_destroyed_by_approved_techniques * conversion_factor
+                )
+                ods_as_feedback_ton = ods_as_feedback * conversion_factor
+                ods_imported_ton = ods_imported * conversion_factor
+                ods_exported_ton = ods_exported * conversion_factor
+
+                if key not in result:
+                    result[key] = {
+                        "source": source,
+                        "ods": ods,
+                        "total_ods_produced_ton": 0,
+                        "total_ods_destroyed_by_approved_techniques_ton": 0,
+                        "total_ods_as_feedback_ton": 0,
+                        "total_ods_imported_ton": 0,
+                        "total_ods_exported_ton": 0,
+                    }
+
+                # Accumulate values
+                result[key]["total_ods_produced_ton"] += ods_produced_ton
+                result[key]["total_ods_destroyed_by_approved_techniques_ton"] += (
+                    ods_destroyed_by_approved_techniques_ton
+                )
+                result[key]["total_ods_as_feedback_ton"] += ods_as_feedback_ton
+                result[key]["total_ods_imported_ton"] += ods_imported_ton
+                result[key]["total_ods_exported_ton"] += ods_exported_ton
+
+        final_data = []
+
+        for index, (key, values) in enumerate(result.items(), start=1):
+            ods_name = values["ods"]
+            net_ods_production_ton = (
+                values["total_ods_produced_ton"]
+                - values["total_ods_destroyed_by_approved_techniques_ton"]
+                - values["total_ods_as_feedback_ton"]
+            )
+            net_ods_emitted = (
+                values["total_ods_produced_ton"] + values["total_ods_imported_ton"]
+            ) - (
+                values["total_ods_destroyed_by_approved_techniques_ton"]
+                + values["total_ods_as_feedback_ton"]
+                + values["total_ods_exported_ton"]
+            )
+            ods_value = self.ods_potential.get(ods_name, 0)
+            net_ods_emitted_with_ods = net_ods_emitted * ods_value
+
+            final_data.append(
+                {
+                    "SNO": index,
+                    "source": values["source"],
+                    "ods": values["ods"],
+                    "total_ods_produced_ton": format_decimal_places(
+                        values["total_ods_produced_ton"]
+                    ),
+                    "total_ods_destroyed_by_approved_techniques_ton": format_decimal_places(
+                        values["total_ods_destroyed_by_approved_techniques_ton"]
+                    ),
+                    "total_ods_as_feedback_ton": format_decimal_places(
+                        values["total_ods_as_feedback_ton"]
+                    ),
+                    "total_ods_imported_ton": format_decimal_places(
+                        values["total_ods_imported_ton"]
+                    ),
+                    "total_ods_exported_ton": format_decimal_places(
+                        values["total_ods_exported_ton"]
+                    ),
+                    "net_ods_production_ton": format_decimal_places(
+                        net_ods_production_ton
+                    ),
+                    "net_ods_emitted": format_decimal_places(net_ods_emitted_with_ods),
+                }
+            )
+
+        return final_data
+
     def get(self, request, format=None):
         """API GET method to retrieve air quality analysis."""
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
@@ -352,12 +472,15 @@ class AirQualityAnalyzeAPIView(APIView):
             total_air_pollution_by_location_ppm_or_ugm2,
         ) = self.total_air_pollution_by_location()
 
+        ozone_depleting_substances = self.ozone_depleting_substances()
+
         response_data = {
             "air_emission_by_pollution": air_emission_by_pollution,
             "air_emission_by_pollution_ppm_or_ugm2": air_emission_by_pollution_ppm_or_ugm2,
             "percentage_contribution_of_pollutant_by_location": percentage_contribution_of_pollutant_by_location,
             "total_air_pollution_by_location": total_air_pollution_by_location_kg,
             "total_air_pollution_by_location_ppm_or_ugm2": total_air_pollution_by_location_ppm_or_ugm2,
+            "ozone_depleting_substances": ozone_depleting_substances,
         }
 
         return Response(response_data, status=status.HTTP_200_OK)

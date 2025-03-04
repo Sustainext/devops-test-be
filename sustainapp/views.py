@@ -618,7 +618,6 @@ def corporateonly(request):
 
 
 class LocationViewset(viewsets.ModelViewSet):
-
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
     permission_classes = [IsAuthenticated]
@@ -708,7 +707,8 @@ def locationview(request):
 def corporategetonly(request):
     try:
         log_call_start()
-        corporate = Corporateentity.objects.filter(client_id=request.client)
+        corps = request.user.corps.all()
+        corporate = Corporateentity.objects.filter(id__in=corps)
         corporate_data = CorporateentityOnlySerializer(corporate, many=True).data
         return Response(corporate_data)
     except Exception as e:
@@ -1296,9 +1296,9 @@ class ColourViewset(viewsets.ModelViewSet):
                     year,
                 )
                 # FOR EVERY MONTH IN BATCH DB WE ARE RETURNING 1
-                result["months"][
-                    each_data["month"]
-                ] = 1  # SHOULD THIS BE CHANGED ( should handle co2e)
+                result["months"][each_data["month"]] = (
+                    1  # SHOULD THIS BE CHANGED ( should handle co2e)
+                )
             logger.info(
                 "Received request for ColourViewset list with location: %s and year: %s",
                 location,
