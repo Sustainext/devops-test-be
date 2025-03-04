@@ -19,6 +19,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.cache import cache
 from django.utils.timezone import now
 import hashlib
+from common.Permissions.IsAdmin import IsAdmin
 from sustainapp.celery_tasks.store_cache import store_cache
 
 
@@ -31,6 +32,7 @@ class CustomPageNumberPagination(PageNumberPagination):
 class UserTaskDashboardView(ListAPIView):
     serializer_class = ClientTaskDashboardSerializer
     pagination_class = CustomPageNumberPagination
+    permission_classes = [IsAdmin]
 
     def get_queryset(self):
         user = self.request.user
