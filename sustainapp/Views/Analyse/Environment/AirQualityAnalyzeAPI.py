@@ -272,6 +272,7 @@ class AirQualityAnalyzeAPIView(APIView):
         )
         if not raw_data:
             return [], []
+
         locations = list(raw_data.keys())
 
         total_emissions_per_location_kg = defaultdict(float)
@@ -325,6 +326,7 @@ class AirQualityAnalyzeAPIView(APIView):
             for data in structured_data_ppm_or_ugm2.values()
             if any(value != 0 for key, value in data.items() if key != "location")
         ]
+
         for index, item in enumerate(structured_data_kg_filtered, start=1):
             item_with_sno_first = {"SNO": index, **item}
             structured_data_kg_filtered[index - 1] = item_with_sno_first
@@ -332,6 +334,35 @@ class AirQualityAnalyzeAPIView(APIView):
         for index, item in enumerate(structured_data_ppm_or_ugm2_filtered, start=1):
             item_with_sno_first = {"SNO": index, **item}
             structured_data_ppm_or_ugm2_filtered[index - 1] = item_with_sno_first
+
+        # Calculate total for each pollutant
+        total_kg = {"location": "Total"}
+        for pollutant in all_pollutants:
+            total_kg[pollutant] = sum(
+                item.get(pollutant, 0) for item in structured_data_kg_filtered
+            )
+
+        total_ppm_or_ugm2 = {
+            "location": "Total",
+        }
+        for pollutant in all_pollutants:
+            total_ppm_or_ugm2[pollutant] = sum(
+                item.get(pollutant, 0) for item in structured_data_ppm_or_ugm2_filtered
+            )
+
+        if any(
+            value != 0
+            for key, value in total_kg.items()
+            if key not in ["SNO", "location"]
+        ):
+            structured_data_kg_filtered.append(total_kg)
+
+        if any(
+            value != 0
+            for key, value in total_ppm_or_ugm2.items()
+            if key not in ["SNO", "location"]
+        ):
+            structured_data_ppm_or_ugm2_filtered.append(total_ppm_or_ugm2)
 
         return (
             structured_data_kg_filtered or [],
@@ -397,6 +428,19 @@ class AirQualityAnalyzeAPIView(APIView):
                 result[key]["total_ods_imported_ton"] += ods_imported_ton
                 result[key]["total_ods_exported_ton"] += ods_exported_ton
 
+        total_net_ods_emitted = sum(
+            (
+                (values["total_ods_produced_ton"] + values["total_ods_imported_ton"])
+                - (
+                    values["total_ods_destroyed_by_approved_techniques_ton"]
+                    + values["total_ods_as_feedback_ton"]
+                    + values["total_ods_exported_ton"]
+                )
+            )
+            * self.ods_potential.get(values["ods"], 0)
+            for values in result.values()
+        )
+
         final_data = []
 
         for index, (key, values) in enumerate(result.items(), start=1):
@@ -416,19 +460,21 @@ class AirQualityAnalyzeAPIView(APIView):
             ods_value = self.ods_potential.get(ods_name, 0)
             net_ods_emitted_with_ods = net_ods_emitted * ods_value
 
+            contribution = (
+                (net_ods_emitted_with_ods / total_net_ods_emitted * 100)
+                if total_net_ods_emitted != 0
+                else 0
+            )
+
             final_data.append(
                 {
                     "SNO": index,
                     "source": values["source"],
                     "ods": values["ods"],
-                    "total_ods_produced_ton": format_decimal_places(
-                        values["total_ods_produced_ton"]
-                    ),
-                    "total_ods_destroyed_by_approved_techniques_ton": format_decimal_places(
-                        values["total_ods_destroyed_by_approved_techniques_ton"]
-                    ),
-                    "total_ods_as_feedback_ton": format_decimal_places(
-                        values["total_ods_as_feedback_ton"]
+                    "net_ods_emitted": format_decimal_places(net_ods_emitted_with_ods),
+                    "contribution_percentage": format_decimal_places(contribution),
+                    "net_ods_production_ton": format_decimal_places(
+                        net_ods_production_ton
                     ),
                     "total_ods_imported_ton": format_decimal_places(
                         values["total_ods_imported_ton"]
@@ -436,12 +482,14 @@ class AirQualityAnalyzeAPIView(APIView):
                     "total_ods_exported_ton": format_decimal_places(
                         values["total_ods_exported_ton"]
                     ),
-                    "net_ods_production_ton": format_decimal_places(
-                        net_ods_production_ton
-                    ),
-                    "net_ods_emitted": format_decimal_places(net_ods_emitted_with_ods),
+                    "source_of_emission_factor": "Montreal Protocol",
                 }
             )
+        final_data.append(
+            {
+                "total_net_ods_emitted": format_decimal_places(total_net_ods_emitted),
+            }
+        )
 
         return final_data
 
