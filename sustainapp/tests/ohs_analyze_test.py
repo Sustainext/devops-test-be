@@ -81,7 +81,7 @@ class TestIllnessAnalyze:
             year=self.year,
             path=self.number_of_injuries_workers,
             month=self.month,
-        ).save()
+        )
 
     def test_status_code_when_parameter_not_given_properly(self):
         response = self.client.get(

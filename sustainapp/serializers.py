@@ -148,112 +148,42 @@ class LocationOrgstructureSerializer(serializers.ModelSerializer):
         ]
 
 
-class CorporateentitySerializer(serializers.ModelSerializer):
-    location = LocationOrgstructureSerializer(many=True)
-
-    class Meta:
-        model = Corporateentity
-        fields = [
-            "id",
-            "name",
-            "location",
-            "corporatetype",
-            "ownershipnature",
-            "legalform",
-            "ownership",
-            "employeecount",
-            "sector",
-            "subindustry",
-            "revenue",
-            "Country",
-            "state",
-            "city",
-            "currency",
-            "date_format",
-            "timezone",
-            "language",
-            "location_headquarters",
-            "phone",
-            "mobile",
-            "website",
-            "fax",
-            "address",
-            "Country",
-            "state",
-            "city",
-            "zipcode",
-            "date_format",
-            "currency",
-            "timezone",
-            "language",
-            "from_date",
-            "to_date",
-            "framework",
-            "legalform",
-            "ownership",
-            "group",
-            "location_of_headquarters",
-            "amount",
-            "type_of_business_activities",
-            "type_of_product",
-            "type_of_services",
-            "type_of_business_relationship",
-        ]
-
-
-class OrganizationSerializer(serializers.ModelSerializer):
-    corporatenetityorg = CorporateentitySerializer(many=True)
-
-    class Meta:
-        model = Organization
-        fields = [
-            "id",
-            "name",
-            "type_corporate_entity",
-            "owner",
-            "location_of_headquarters",
-            "phone",
-            "mobile",
-            "website",
-            "fax",
-            "employeecount",
-            "sector",
-            "revenue",
-            "subindustry",
-            "address",
-            "countryoperation",
-            "state",
-            "city",
-            "date_format",
-            "currency",
-            "timezone",
-            "language",
-            "from_date",
-            "to_date",
-            "sdg",
-            "rating",
-            "certification",
-            "target",
-            "framework",
-            "no_of_employees",
-            "active",
-            "amount",
-            "ownership_and_legal_form",
-            "group",
-            "type_of_corporate_entity",
-            "location_of_headquarters",
-            "sub_industry",
-            "type_of_business_activities",
-            "type_of_product",
-            "type_of_services",
-            "corporatenetityorg",
-        ]
-
-
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = "__all__"
+
+
+class CorporateentitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Corporateentity
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        user = self.context["request"].user
+        data = super().to_representation(instance)
+        data["location"] = LocationSerializer(
+            instance.location.filter(id__in=user.locs.all()), many=True
+        ).data
+        return data
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        user = self.context["request"].user
+        data = super().to_representation(instance)
+        data["corporate"] = CorporateentitySerializer(
+            instance.corporatenetityorg.filter(id__in=user.corps.all()).select_related(
+                "location"
+            ),
+            many=True,
+            context={"request": self.context["request"]},
+        ).data
+        return data
 
 
 class CorporateentityOnlySerializer(serializers.ModelSerializer):
