@@ -324,7 +324,7 @@ class StructureList(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        organization = user.orgs.all().select_related("corporatenetityorg")
+        organization = user.orgs.all().prefetch_related("corporatenetityorg")
         return organization
 
     def list(self, request):

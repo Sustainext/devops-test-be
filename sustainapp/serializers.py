@@ -177,7 +177,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         data = super().to_representation(instance)
         data["corporate"] = CorporateentitySerializer(
-            instance.corporatenetityorg.filter(id__in=user.corps.all()).select_related(
+            instance.corporatenetityorg.filter(id__in=user.corps.all()).prefetch_related(
                 "location"
             ),
             many=True,
