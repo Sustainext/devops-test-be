@@ -9,11 +9,14 @@ from datametric.utils.analyse import (
     filter_by_start_end_dates,
     get_raw_response_filters,
 )
-from datametric.models import RawResponse
+from datametric.models import RawResponse, DataPoint
 from django.db.models.expressions import RawSQL
 from django.db.models import Value
 from decimal import Decimal
 from common.utils.value_types import safe_percentage, safe_divide, format_decimal_places
+from common.utils.get_data_points_as_raw_responses import (
+    collect_data_by_raw_response_and_index,
+)
 
 
 class OHSAnalysisView(APIView):
@@ -183,20 +186,10 @@ class GetIllnessAnalysisView(APIView):
     permission_classes = [IsAuthenticated]
     INJURY_RATE_DICT = {100: 2_00_000, 500: 10_00_000}
 
-    def set_raw_responses(self):
-        slugs = [
-            "gri-social-ohs-403-9b-number_of_injuries_workers",
-            "gri-social-ohs-403-9e-number_of_hours",
-            "gri-social-ohs-403-8a-number_of_employees",
-            "gri-social-ohs-403-9a-number_of_injuries_emp",
-            "gri-social-ohs-403-10a-ill_health_emp",
-            "gri-social-ohs-403-10b-ill_health_workers",
-            "gri-social-ohs-403-4d-formal_joint",
-        ]
-        self.raw_responses = (
-            RawResponse.objects.filter(
-                path__slug__in=slugs,
-                client=self.request.user.client,
+    def set_data_points(self):
+        self.data_points = (
+            DataPoint.objects.filter(
+                client_id=self.request.user.client.id,
             )
             .filter(
                 get_raw_response_filters(
@@ -206,79 +199,39 @@ class GetIllnessAnalysisView(APIView):
                 )
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
-            .annotate(json_data=RawSQL("CAST(data AS JSONB)", []))
-            .exclude(json_data=Value("[]"))
-            .only("data")
         )
 
-    def get_work_related_ill_health(self, number_of_hours):
-        slug = "gri-social-ohs-403-9a-number_of_injuries_emp"
-        local_raw_response = self.raw_responses.filter(path__slug=slug)
-        data = []
-        for raw_response in local_raw_response:
-            new_data = []
-            for item in raw_response.data:
-                item["year"] = raw_response.year
-                item["month"] = raw_response.month
-                new_data.append(item)
-            data.extend(new_data)
-
-        total_fatalities = sum(Decimal(item["fatalities"]) for item in data)
-        total_high_consequence = sum(Decimal(item["highconsequence"]) for item in data)
-        total_recordable = sum(Decimal(item["recordable"]) for item in data)
-        total_number_of_hours = sum(
-            Decimal(item["numberofhoursworked"]) for item in data
-        )
-        return [
+    def get_work_related_ill_health(self, number_of_hours, slug):
+        local_data_points = self.data_points.filter(path__slug=slug)
+        data = collect_data_by_raw_response_and_index(local_data_points)
+        total = {
+            "fatalities": 0,
+            "numberofhoursworked": 0,
+            "recordable": 0,
+            "highconsequence": 0,
+        }
+        for i in data:
+            total["fatalities"] += Decimal(i.get("fatalities", 0))
+            total["numberofhoursworked"] += Decimal(i.get("numberofhoursworked", 0))
+            total["recordable"] += Decimal(i.get("recordable", 0))
+            total["highconsequence"] += Decimal(i.get("highconsequence", 0))
+        local_response = [
             {
-                "rate_of_fatalities_as_a_result_of_work_related_injury": format_decimal_places(
-                    Decimal(safe_divide(total_fatalities, total_number_of_hours))
-                    * number_of_hours
+                "rate_of_fatalities_as_a_result_of_work_related_injury": safe_divide(
+                    (total["fatalities"] * number_of_hours),
+                    total["numberofhoursworked"],
                 ),
-                "rate_of_high_consequence_work_related_injuries_excluding_fatalities": format_decimal_places(
-                    Decimal(safe_divide(total_high_consequence, total_number_of_hours))
-                    * number_of_hours
+                "rate_of_high_consequence_work_related_injuries_excluding_fatalities": safe_divide(
+                    (total["recordable"] * number_of_hours),
+                    total["numberofhoursworked"],
                 ),
-                "rate_of_recordable_work_related_injuries": format_decimal_places(
-                    Decimal(safe_divide(total_recordable, total_number_of_hours))
-                    * number_of_hours
+                "rate_of_recordable_work_related_injuries": safe_divide(
+                    (total["highconsequence"] * number_of_hours),
+                    total["numberofhoursworked"],
                 ),
             }
         ]
-
-    def get_rate_of_injuries_who_are_workers_but_not_employees(self, number_of_hours):
-        slug = "gri-social-ohs-403-9b-number_of_injuries_workers"
-        local_raw_response = self.raw_responses.filter(path__slug=slug)
-        data = []
-        for raw_response in local_raw_response:
-            new_data = []
-            for item in raw_response.data:
-                item["year"] = raw_response.year
-                item["month"] = raw_response.month
-                new_data.append(item)
-            data.extend(new_data)
-        total_fatalities = sum(Decimal(item["fatalities"]) for item in data)
-        total_high_consequence = sum(Decimal(item["highconsequence"]) for item in data)
-        total_recordable = sum(Decimal(item["recordable"]) for item in data)
-        total_number_of_hours = sum(
-            Decimal(item["numberofhoursworked"]) for item in data
-        )
-        return [
-            {
-                "rate_of_fatalities_as_a_result_of_work_related_injury": format_decimal_places(
-                    Decimal(safe_divide(total_fatalities, total_number_of_hours))
-                    * number_of_hours
-                ),
-                "rate_of_high_consequence_work_related_injuries_excluding_fatalities": format_decimal_places(
-                    Decimal(safe_divide(total_high_consequence, total_number_of_hours))
-                    * number_of_hours
-                ),
-                "rate_of_recordable_work_related_injuries": format_decimal_places(
-                    Decimal(safe_divide(total_recordable, total_number_of_hours))
-                    * number_of_hours
-                ),
-            }
-        ]
+        return local_response
 
     def get_months_difference(self):
         """Calculate number of months between start and end dates"""
@@ -299,28 +252,33 @@ class GetIllnessAnalysisView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
-        self.set_raw_responses()
+        self.set_data_points()
         months_difference = self.get_months_difference()
-        number_of_hours_for_100_injury_rate = round(
+        number_of_hours_for_100_injury_rate = Decimal(
             self.INJURY_RATE_DICT[100] * months_difference / 12
         )
-        number_of_hours_for_500_injury_rate = round(
+
+        number_of_hours_for_500_injury_rate = Decimal(
             self.INJURY_RATE_DICT[500] * months_difference / 12
         )
 
         return Response(
             {
                 "rate_of_injuries_for_all_employees_100_injury_rate": self.get_work_related_ill_health(
-                    number_of_hours_for_100_injury_rate
+                    number_of_hours_for_100_injury_rate,
+                    slug="gri-social-ohs-403-9a-number_of_injuries_emp",
                 ),
-                "rate_of_injuries_for_not_included_in_company_employees_100_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
-                    number_of_hours_for_100_injury_rate
+                "rate_of_injuries_for_not_included_in_company_employees_100_injury_rate": self.get_work_related_ill_health(
+                    number_of_hours_for_100_injury_rate,
+                    slug="gri-social-ohs-403-9b-number_of_injuries_workers",
                 ),
                 "rate_of_injuries_for_all_employees_500_injury_rate": self.get_work_related_ill_health(
-                    number_of_hours_for_500_injury_rate
+                    number_of_hours_for_500_injury_rate,
+                    slug="gri-social-ohs-403-9a-number_of_injuries_emp",
                 ),
-                "rate_of_injuries_for_not_included_in_company_employees_500_injury_rate": self.get_rate_of_injuries_who_are_workers_but_not_employees(
-                    number_of_hours_for_500_injury_rate
+                "rate_of_injuries_for_not_included_in_company_employees_500_injury_rate": self.get_work_related_ill_health(
+                    number_of_hours_for_500_injury_rate,
+                    slug="gri-social-ohs-403-9b-number_of_injuries_workers",
                 ),
             },
             status=status.HTTP_200_OK,

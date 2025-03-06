@@ -55,7 +55,7 @@ schema_view = get_schema_view(
 router = routers.DefaultRouter()
 
 
-router.register(r"structure", views.StructureViewset, basename="Organization")
+# router.register(r"structure", views.StructureViewset, basename="Organization")
 router.register(
     r"stakeholder-group",
     views.StakeholdergroupViewset,
@@ -109,6 +109,7 @@ urlpatterns = [
     path(
         "corporate", views.corporateonly, name="corporateony"
     ),  # * Used for POST Call Only
+    path("structure/", views.StructureList.as_view(), name="structure"),
     path("locationonlyview", views.locationonlyview, name="locationviewonly"),
     path("corporategetonly", views.corporategetonly, name="corporategetonly"),
     path("orggetonly", views.orggetonly, name="orggetonly"),

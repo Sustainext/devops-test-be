@@ -200,18 +200,21 @@ class ScreenTwelveService:
             corporate=self.report.corporate,
             location=None,
         )
-        top_emission_by_scope, top_emission_by_source, top_emission_by_location = (
-            get_top_emission_by_scope(
-                locations=locations,
-                user=self.report.user,
-                start=self.report.start_date,
-                end=self.report.end_date,
-                path_slug={
-                    "gri-environment-emissions-301-a-scope-1": "Scope 1",
-                    "gri-environment-emissions-301-a-scope-2": "Scope 2",
-                    "gri-environment-emissions-301-a-scope-3": "Scope 3",
-                },
-            )
+        (
+            top_emission_by_scope,
+            top_emission_by_source,
+            top_emission_by_location,
+            gases_data,
+        ) = get_top_emission_by_scope(
+            locations=locations,
+            user=self.report.user,
+            start=self.report.start_date,
+            end=self.report.end_date,
+            path_slug={
+                "gri-environment-emissions-301-a-scope-1": "Scope 1",
+                "gri-environment-emissions-301-a-scope-2": "Scope 2",
+                "gri-environment-emissions-301-a-scope-3": "Scope 3",
+            },
         )
 
         # * Prepare response data
