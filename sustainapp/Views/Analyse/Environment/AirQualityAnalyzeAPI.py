@@ -26,8 +26,6 @@ class AirQualityAnalyzeAPIView(APIView):
             0: "gri-environment-air-quality-nitrogen-oxide",
             1: "gri-environment-air-quality-emission-ods",
         }
-        self.data_points = None
-        self.data_points_for_location_wise = None
         self.start = None
         self.end = None
         self.organisation = None
@@ -89,6 +87,10 @@ class AirQualityAnalyzeAPIView(APIView):
         raw_data = collect_data_by_raw_response_and_index(
             self.data_points.filter(path__slug=self.slugs[0])
         )
+        if self.location:
+            raw_data = collect_data_by_raw_response_and_index(
+                self.data_points.filter(locale=self.location)
+            )
 
         if not raw_data:
             return [], []
@@ -111,6 +113,26 @@ class AirQualityAnalyzeAPIView(APIView):
             }
         )
 
+        weight_units = {
+            "Kilograms (kg)",
+            "Pound (lb)",
+            "ton (US Short ton)",
+            "Gram (g)",
+            "tonnes (t)",
+        }
+        concentration_units = {"ppm", "µµg/m³", "µg/m³"}
+
+        units_found = set()
+
+        for data in raw_data:
+            units_found.add(data.get("Unit"))
+
+        # Check if both weight and concentration units exist
+        has_weight_units = any(unit in weight_units for unit in units_found)
+        has_concentration_units = any(
+            unit in concentration_units for unit in units_found
+        )
+        both_units_exist = has_weight_units and has_concentration_units
         for data in raw_data:
             emission_source = data.get("EmissionSource")
             air_pollutant = data.get("AirPollutant")
@@ -141,23 +163,25 @@ class AirQualityAnalyzeAPIView(APIView):
             {
                 "SNO": index + 1,
                 "pollutant": pollutant[0],
-                "total_emission_kg": data["total_emission_kg"],
+                "total_emission_kg": format_decimal_places(data["total_emission_kg"]),
                 "initial_unit": data["unit"],
                 "converted_unit": "Kilograms (kg)",
-                "contribution": safe_percentage(
-                    data["total_emission_kg"], total_pollution_kg
-                ),
+                "contribution": ""
+                if both_units_exist
+                else safe_percentage(data["total_emission_kg"], total_pollution_kg),
                 "source_of_emission": list(data["source_of_emission"]),
             }
             for index, (pollutant, data) in enumerate(pollutant_data_in_kg.items())
         ]
-        result_kg.append({"Total": total_pollution_kg})
+        result_kg.append(
+            {"Total": format_decimal_places(total_pollution_kg)}
+        ) if total_pollution_kg else []
 
         result_ppm_or_ugm2 = [
             {
                 "SNO": index + 1,
                 "pollutant": pollutant[0],
-                "total_emission": data["total_emission"],
+                "total_emission": format_decimal_places(data["total_emission"]),
                 "unit": data["unit"],
                 "source_of_emission": list(data["source_of_emission"]),
             }
@@ -167,9 +191,9 @@ class AirQualityAnalyzeAPIView(APIView):
         ]
         result_ppm_or_ugm2.append(
             {
-                "Total": total_pollutant_ppm_or_ugm2,
+                "Total": format_decimal_places(total_pollutant_ppm_or_ugm2),
             }
-        )
+        ) if total_pollutant_ppm_or_ugm2 else []
 
         return result_kg, result_ppm_or_ugm2
 
@@ -192,17 +216,43 @@ class AirQualityAnalyzeAPIView(APIView):
         )
 
         locations = list(raw_data.keys())
+        weight_units = {
+            "Kilograms (kg)",
+            "Pound (lb)",
+            "ton (US Short ton)",
+            "Gram (g)",
+            "tonnes (t)",
+        }
+        concentration_units = {"ppm", "µµg/m³", "µg/m³"}
+
+        units_found = set()
+
+        for location in locations:
+            if location not in raw_data:
+                continue
+            for entry in raw_data[location]:
+                if "Unit" in entry:
+                    units_found.add(entry["Unit"])
+
+        # Check if both weight and concentration units exist
+        has_weight_units = any(unit in weight_units for unit in units_found)
+        has_concentration_units = any(
+            unit in concentration_units for unit in units_found
+        )
+
+        if has_weight_units and has_concentration_units:
+            return []
 
         total_emissions_per_pollutant_kg = defaultdict(float)
+        total_emissions_per_pollutant_ppm_or_ugm3 = defaultdict(float)
 
         structured_data = defaultdict(lambda: {"location": ""})
-
         all_pollutants = set(required_pollutants)
 
         for location in locations:
             structured_data[location]["location"] = location
-
             location_data = raw_data[location]
+
             for entry in location_data:
                 pollutant = entry["AirPollutant"]
                 emission_value = Decimal(entry["Totalemissions"])
@@ -210,8 +260,8 @@ class AirQualityAnalyzeAPIView(APIView):
 
                 all_pollutants.add(pollutant)
 
-                conversion_factor = self.conversion_factors.get(unit, None)
-                if conversion_factor is not None:
+                if unit in weight_units and unit in self.conversion_factors:
+                    conversion_factor = self.conversion_factors[unit]
                     emission_value_kg = emission_value * conversion_factor
 
                     total_emissions_per_pollutant_kg[pollutant] += float(
@@ -223,15 +273,41 @@ class AirQualityAnalyzeAPIView(APIView):
                     else:
                         structured_data[location][pollutant] = float(emission_value_kg)
 
+                elif unit in concentration_units:
+                    total_emissions_per_pollutant_ppm_or_ugm3[pollutant] += float(
+                        emission_value
+                    )
+
+                    if pollutant in structured_data[location]:
+                        structured_data[location][pollutant] += float(emission_value)
+                    else:
+                        structured_data[location][pollutant] = float(emission_value)
+
         for location in locations:
             for pollutant in all_pollutants:
                 total_emission_kg = total_emissions_per_pollutant_kg.get(pollutant, 0)
+                total_emission_ppm_or_ugm3 = (
+                    total_emissions_per_pollutant_ppm_or_ugm3.get(pollutant, 0)
+                )
 
                 if pollutant in structured_data[location]:
-                    location_emission_kg = structured_data[location][pollutant]
-                    structured_data[location][pollutant] = safe_percentage(
-                        location_emission_kg, total_emission_kg
-                    )
+                    location_emission = structured_data[location][pollutant]
+
+                    if (
+                        total_emission_kg > 0
+                    ):  # Compute percentage for weight-based units
+                        structured_data[location][pollutant] = safe_percentage(
+                            location_emission, total_emission_kg
+                        )
+                    elif (
+                        total_emission_ppm_or_ugm3 > 0
+                    ):  # Compute percentage for ppm/ugm3 units
+                        structured_data[location][pollutant] = safe_percentage(
+                            location_emission, total_emission_ppm_or_ugm3
+                        )
+                    else:
+                        structured_data[location][pollutant] = "0.00"
+
                 else:
                     structured_data[location][pollutant] = "0.00"
 
@@ -361,6 +437,15 @@ class AirQualityAnalyzeAPIView(APIView):
             if key not in ["SNO", "location"]
         ):
             structured_data_ppm_or_ugm2_filtered.append(total_ppm_or_ugm2)
+
+        def format_data(dataset):
+            for item in dataset:
+                for key in item:
+                    if key not in ["SNO", "location"]:  # Format only pollutant values
+                        item[key] = format_decimal_places(item[key])
+
+        format_data(structured_data_kg_filtered)
+        format_data(structured_data_ppm_or_ugm2_filtered)
 
         return (
             structured_data_kg_filtered or [],
