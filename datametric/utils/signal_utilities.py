@@ -1,9 +1,7 @@
 from datametric.utils.climatiq import Climatiq
 from datametric.models import DataMetric, RawResponse, DataPoint
-import logging
-from django.db.models.signals import post_save
 from logging import getLogger
-
+from django.core.cache import cache
 
 logger = getLogger("file")
 
@@ -46,62 +44,31 @@ def create_or_update_data_points(
         boolean_value = value
 
     try:
-        # Retrieve existing data point if it exists
-        existing_data_point = DataPoint.objects.filter(
-            data_metric=data_metric, index=index
-        ).first()
-
-        # Check existing value for comparison
-        existing_value = None
-        if existing_data_point:
-            if data_metric.response_type == "String":
-                existing_value = existing_data_point.string_holder
-            elif data_metric.response_type in ["Integer", "Float"]:
-                existing_value = existing_data_point.number_holder
-            elif data_metric.response_type in ["Array Of Objects", "Object"]:
-                existing_value = existing_data_point.json_holder
-            elif data_metric.response_type == "Boolean":
-                existing_value = (
-                    existing_data_point.boolean_holder
-                )  # Assuming you have a boolean_holder field
-
         # Create or update the data point
-        data_point, created = DataPoint.objects.update_or_create(
+        data_point = DataPoint.objects.create(
             data_metric=data_metric,
             index=index,
             raw_response=raw_response,
-            defaults={
-                "path": path,
-                "response_type": data_metric.response_type,
-                "number_holder": number_value,
-                "string_holder": string_value,
-                "json_holder": json_value,
-                "value": value,
-                "metric_name": metric_name,
-                # "location": raw_response.location,
-                "locale": raw_response.locale,
-                "corporate": raw_response.corporate,
-                "organization": raw_response.organization,
-                "year": raw_response.year,
-                "month": raw_response.month,
-                "user_id": raw_response.user.id,
-                "client_id": raw_response.user.client.id,
-                "boolean_holder": boolean_value,
-            },
+            path=path,
+            response_type=data_metric.response_type,
+            number_holder=number_value,
+            string_holder=string_value,
+            json_holder=json_value,
+            value=value,
+            metric_name=metric_name,
+            # location= raw_response.location,
+            locale=raw_response.locale,
+            corporate=raw_response.corporate,
+            organization=raw_response.organization,
+            year=raw_response.year,
+            month=raw_response.month,
+            user_id=raw_response.user.id,
+            client_id=raw_response.user.client.id,
+            boolean_holder=boolean_value,
         )
 
         # Save the updated or created data point
         data_point.save()
-        # print('User role is ',raw_response.user.custom_role )
-        # Log only if there is a change in the value
-        if created or (existing_value != value):
-            logger.info("DataPoint created/updated with changes")
-        else:
-            # pass
-            logger.info("DataPoint updated without changes")
-
-            # Upload logs only when there is a change
-            # uploader.upload_logs(log_data)
 
     except Exception as e:
         # pass
@@ -115,35 +82,43 @@ def process_raw_response_data(
     index: int,
     raw_response: RawResponse,
 ):
-    print(raw_response, " &&&& is the raw response")
+    DATA_METRIC_CACHE_TIMEOUT = 3600
     for key, value in data_point_dict.items():
-        try:
-            data_metric = DataMetric.objects.get(name=key, path=raw_response.path)
-        except DataMetric.DoesNotExist:
-            data_metric = DataMetric.objects.create(
-                name=key, path=raw_response.path, response_type="String"
-            )
-            data_metric.save()
-        except DataMetric.MultipleObjectsReturned:
-            # *: Handle the case where multiple data metrics with the same name and path exist in a more optimised way.
-            # * I'm ashamed of writing this code. :-(
-            # * Hopefully the MultipleObjectsReturned exception gets less and less common in the future.
-            data_metrics = DataMetric.objects.filter(name=key, path=raw_response.path)
-            if data_metrics.filter(response_type="String").exists():
-                data_metrics_to_keep = (
-                    data_metrics.filter(response_type="String").order_by("id").first()
+        cache_key = f"data_metric:{raw_response.path.id}:{key}"
+        data_metric = cache.get(cache_key)
+        if not data_metric:
+            try:
+                data_metric = DataMetric.objects.get(name=key, path=raw_response.path)
+            except DataMetric.DoesNotExist:
+                data_metric = DataMetric.objects.create(
+                    name=key, path=raw_response.path, response_type="String"
                 )
-                data_metrics_to_delete = data_metrics.exclude(
-                    id=data_metrics_to_keep.id
+                data_metric.save()
+            except DataMetric.MultipleObjectsReturned:
+                # *: Handle the case where multiple data metrics with the same name and path exist in a more optimised way.
+                # * I'm ashamed of writing this code. :-(
+                # * Hopefully the MultipleObjectsReturned exception gets less and less common in the future.
+                data_metrics = DataMetric.objects.filter(
+                    name=key, path=raw_response.path
                 )
-                # * Change mapping of every data point to last data metric
-                data_points = DataPoint.objects.filter(
-                    data_metric__in=data_metrics_to_delete
-                )
-                for data_point in data_points:
-                    data_point.data_metric = data_metrics_to_keep
-                    data_point.save()
-                data_metrics_to_delete.delete()
-                data_metric = data_metrics_to_keep
+                if data_metrics.filter(response_type="String").exists():
+                    data_metrics_to_keep = (
+                        data_metrics.filter(response_type="String")
+                        .order_by("id")
+                        .first()
+                    )
+                    data_metrics_to_delete = data_metrics.exclude(
+                        id=data_metrics_to_keep.id
+                    )
+                    # * Change mapping of every data point to last data metric
+                    data_points = DataPoint.objects.filter(
+                        data_metric__in=data_metrics_to_delete
+                    )
+                    for data_point in data_points:
+                        data_point.data_metric = data_metrics_to_keep
+                        data_point.save()
+                    data_metrics_to_delete.delete()
+                    data_metric = data_metrics_to_keep
+            cache.set(cache_key, data_metric, DATA_METRIC_CACHE_TIMEOUT)
 
         create_or_update_data_points(data_metric, value, index, raw_response)

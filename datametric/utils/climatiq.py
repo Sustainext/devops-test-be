@@ -506,8 +506,9 @@ class Climatiq:
             return round(value, decimal_point)
 
     def create_emission_analysis(self, response_data):
+        emission_analyse_bulk_list = []
         for index, emission in enumerate(response_data):
-            emission_analyse, _ = EmissionAnalysis.objects.update_or_create(
+            emission_analyse = EmissionAnalysis(
                 raw_response=self.raw_response,
                 index=index,
                 year=self.raw_response.year,
@@ -515,44 +516,42 @@ class Climatiq:
                 scope=(
                     "-".join(self.raw_response.path.slug.split("-")[-2:])
                 ).capitalize(),
-                defaults={
-                    "emission_id": emission["emission_factor"]["id"],
-                    "activity_id": emission["emission_factor"]["activity_id"],
-                    "co2e_total": self.round_decimal_or_nulls(
-                        emission["co2e"], 20
-                    ),  # * This can also be None
-                    "co2": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["co2"], 20
-                    ),
-                    "n2o": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["n2o"], 20
-                    ),
-                    "co2e_other": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["co2e_other"], 20
-                    ),  # * This can also be None
-                    "ch4": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["ch4"], 20
-                    ),
-                    "calculation_method": emission["co2e_calculation_method"],
-                    "category": emission["Category"],
-                    "subcategory": emission["SubCategory"],
-                    "activity": f"{emission['Activity'].replace('(', '').replace(')', '')} - {emission['emission_factor']['region']} - {emission['emission_factor']['year']} - {emission['emission_factor']['source_lca_activity']}",
-                    "region": emission["emission_factor"]["region"],
-                    "name": emission["emission_factor"]["name"],
-                    "unit": emission["activity_data"]["activity_unit"],
-                    "consumption": self.round_decimal_or_nulls(
-                        emission["activity_data"]["activity_value"]
-                    ),
-                    "unit1": emission.get("Unit"),
-                    "unit2": emission.get("Unit2"),
-                    "quantity": self.round_decimal_or_nulls(emission.get("Quantity")),
-                    "quantity2": self.round_decimal_or_nulls(emission.get("Quantity2")),
-                    "type_of": emission["Activity"].split("-")[-1].strip(),
-                    "unique_id": emission.get("unique_id"),
-                },
+                emission_id=emission["emission_factor"]["id"],
+                activity_id=emission["emission_factor"]["activity_id"],
+                co2e_total=self.round_decimal_or_nulls(
+                    emission["co2e"], 20
+                ),  # * This can also be None
+                co2=self.round_decimal_or_nulls(
+                    emission["constituent_gases"]["co2"], 20
+                ),
+                n2o=self.round_decimal_or_nulls(
+                    emission["constituent_gases"]["n2o"], 20
+                ),
+                co2e_other=self.round_decimal_or_nulls(
+                    emission["constituent_gases"]["co2e_other"], 20
+                ),  # * This can also be None
+                ch4=self.round_decimal_or_nulls(
+                    emission["constituent_gases"]["ch4"], 20
+                ),
+                calculation_method=emission["co2e_calculation_method"],
+                category=emission["Category"],
+                subcategory=emission["SubCategory"],
+                activity=f"{emission['Activity'].replace('(', '').replace(')', '')} - {emission['emission_factor']['region']} - {emission['emission_factor']['year']} - {emission['emission_factor']['source_lca_activity']}",
+                region=emission["emission_factor"]["region"],
+                name=emission["emission_factor"]["name"],
+                unit=emission["activity_data"]["activity_unit"],
+                consumption=self.round_decimal_or_nulls(
+                    emission["activity_data"]["activity_value"]
+                ),
+                unit1=emission.get("Unit"),
+                unit2=emission.get("Unit2"),
+                quantity=self.round_decimal_or_nulls(emission.get("Quantity")),
+                quantity2=self.round_decimal_or_nulls(emission.get("Quantity2")),
+                type_of=emission["Activity"].split("-")[-1].strip(),
+                unique_id=emission.get("unique_id"),
             )
-            emission_analyse.save()
-            # ? What should be filtering factor for update_or_create? Emissions?
+            emission_analyse_bulk_list.append(emission_analyse)
+        EmissionAnalysis.objects.bulk_create(emission_analyse_bulk_list)
 
     def modify_raw_response_with_uuid_and_scope(self):
         """
@@ -642,7 +641,7 @@ class Climatiq:
         )
         # Update or create the data point
         try:
-            datapoint, created = DataPoint.objects.update_or_create(
+            datapoint = DataPoint.objects.create(
                 path=path_new,
                 raw_response=self.raw_response,
                 response_type=ARRAY_OF_OBJECTS,
@@ -654,15 +653,9 @@ class Climatiq:
                 user_id=self.user.id,
                 client_id=self.user.client.id,
                 metric_name=datametric.name,
-                defaults={
-                    "json_holder": response_data,
-                },
+                json_holder=response_data,
             )
-            if created:
-                datapoint.save()
-            else:
-                print(datapoint.id, datapoint.metric_name, " is the saved datapoint")
-                print("datapoint updated")
+            datapoint.save()
             self.create_emission_analysis(response_data=response_data)
         except Exception as e:
             print(f"An error occurred while creating or updating the data point: {e}")
