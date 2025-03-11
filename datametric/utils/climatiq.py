@@ -268,7 +268,8 @@ class Climatiq:
                     response_data=response_data, payload=payload
                 )
                 cleaned_response_data = self.clean_response_data(
-                    response_data=response_data
+                    batch_raw_response=self.raw_response.data[i : i + batch_size],
+                    response_data=response_data,
                 )
                 all_response_data.extend(cleaned_response_data)
 
@@ -429,13 +430,13 @@ class Climatiq:
             )
             return None
 
-    def clean_response_data(self, response_data):
+    def clean_response_data(self, batch_raw_response, response_data):
         """
         Cleans the response data from the climatiq api.
         TODO: Create a separate method for adding data.
         """
         cleaned_response_data = []
-        self.refined_raw_resp = self.neglect_missing_row(self.raw_response.data)
+        self.refined_raw_resp = self.neglect_missing_row(batch_raw_response)
         for index, emission_data in enumerate(response_data["results"]):
             if "error" not in emission_data.keys():
                 emission_data["Category"] = self.refined_raw_resp[index]["Emission"][
