@@ -128,6 +128,7 @@ DATABASES = {
         "USER": os.environ.get("DBUSER"),
         "PASSWORD": os.environ.get("DBPASS"),
         "PORT": int(os.environ.get("DBPORT")),
+        "TEST": {"NAME": "test_database"},
     }
 }
 
