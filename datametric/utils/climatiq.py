@@ -250,7 +250,7 @@ class Climatiq:
             batch_payload = payload[i : i + batch_size]
             response = requests.request(
                 "POST",
-                url="https://api.climatiq.io/batch",
+                url="https://api.climatiq.io/data/v1/estimate/batch",
                 data=json.dumps(batch_payload),
                 headers=headers,
             )
