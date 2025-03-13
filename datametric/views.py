@@ -26,6 +26,7 @@ from azurelogs.time_utils import get_current_time_ist
 from collections import OrderedDict
 from deepdiff import DeepDiff
 import time
+from datametric.utils.signal_utilities import climatiq_data_creation
 
 uploader = AzureLogUploader()
 
@@ -387,6 +388,8 @@ class CreateOrUpdateFieldGroup(APIView):
             climatiq_logger.info(
                 f"Time taken to upload logs: {time.time() - log_start}"
             )
+            if raw_response.data != [{}]:
+                climatiq_data_creation(raw_response=raw_response)
             return Response(
                 {"message": "Form data saved successfully."},
                 status=status.HTTP_200_OK,

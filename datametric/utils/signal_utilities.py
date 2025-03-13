@@ -37,7 +37,7 @@ def create_or_update_data_points(
     if data_metric.response_type == "String":
         string_value = value
     elif data_metric.response_type in ["Integer", "Float"]:
-        number_value = value
+        number_value = None if value == "" else value
     elif data_metric.response_type in ["Array Of Objects", "Object"]:
         json_value = value
     elif data_metric.response_type == "Boolean":
