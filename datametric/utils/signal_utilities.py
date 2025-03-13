@@ -3,7 +3,7 @@ from datametric.models import DataMetric, RawResponse, DataPoint
 from logging import getLogger
 from django.core.cache import cache
 
-logger = getLogger("file")
+logger = getLogger("django")
 
 
 def climatiq_data_creation(raw_response: RawResponse):
@@ -111,5 +111,7 @@ def process_raw_response_data(
                     data_point.save()
                 data_metrics_to_delete.delete()
                 data_metric = data_metrics_to_keep
-
+        logger.info(
+            f"Data metric : {data_metric.name}, Data Metric Type: {data_metric.response_type}, Value: {value}"
+        )
         create_or_update_data_points(data_metric, value, index, raw_response)
