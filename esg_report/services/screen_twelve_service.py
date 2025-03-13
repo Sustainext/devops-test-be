@@ -16,6 +16,8 @@ from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
     get_top_emission_by_scope,
     calculate_scope_contribution,
+    disclosure_analyze_305_5,
+    ghg_emission_intensity,
 )
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
 from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
@@ -23,7 +25,6 @@ from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.Serializer.ScreenTwelveSerializer import ScreenTwelveSerializer
 from common.utils.value_types import format_decimal_places
-from decimal import Decimal
 
 
 class ScreenTwelveService:
@@ -72,6 +73,8 @@ class ScreenTwelveService:
             38: "gri_collect_waste_management_material_topic",  # 12.5.1
             39: "gri-environment-water-303-4d-substances_of_concern",
             40: "gri-environment-water-303-3d-4e-sma",
+            41: "gri-environment-emissions-GHG-emission-reduction-initiatives",
+            42: "gri-environment-emissions-GHG emission-intensity",
             # TODO : 12.2.1
         }
 
@@ -234,7 +237,24 @@ class ScreenTwelveService:
         response_data["top_5_emisson_by_location"] = response_data[
             "all_emission_by_location"
         ][0:5]
+        response_data["disclosure_analyze_305_5"] = disclosure_analyze_305_5(
+            self.data_points.filter(path__slug=self.slugs[41])
+        )
+        response_data["ghg_emission_intensity"] = ghg_emission_intensity(
+            self.data_points.filter(path__slug=self.slugs[42]),
+            top_emission_by_scope,
+            gases_data,
+        )
         return response_data
+
+    def get_air_quality_analyze(self):
+        data = calling_analyse_view_with_params(
+            view_url="air_quality_analyze",
+            report=self.report,
+            request=self.request,
+        )
+        print(data)
+        return data
 
     def get_305_4abc(self):
         # TODO: Need more clarification from Sakthivel
@@ -268,6 +288,7 @@ class ScreenTwelveService:
         response_data["3_3cde"] = self.get_3_3cde()
         response_data["305_123_collect"] = self.get_301_123_collect()
         response_data["305_123_analyse"] = self.get_301_123_analyse()
+        response_data["air_quality_analyze"] = self.get_air_quality_analyze()
         response_data["305_4abc"] = self.get_305_4abc()
         response_data["305_5abc"] = self.get_305_5abc()
         response_data["301_1a_non_renewable_materials"] = (

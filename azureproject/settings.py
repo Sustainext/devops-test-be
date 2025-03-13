@@ -34,19 +34,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOST").split(",")
 
-sentry_sdk.init(
-    dsn="https://d560128719879e26ed4a610e18b6a836@o4508850552307712.ingest.us.sentry.io/4508850556108800",
-    # Add data like request headers and IP for users;
-    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
-    send_default_pii=True,
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for tracing.
-    traces_sample_rate=1.0,
-    # Set profiles_sample_rate to 1.0 to profile 100%
-    # of sampled transactions.
-    # We recommend adjusting this value in production.
-    profiles_sample_rate=1.0,
-)
+
 # Application definition
 
 DJANGO_APPS = [
@@ -140,6 +128,7 @@ DATABASES = {
         "USER": os.environ.get("DBUSER"),
         "PASSWORD": os.environ.get("DBPASS"),
         "PORT": int(os.environ.get("DBPORT")),
+        "TEST": {"NAME": "test_database"},
     }
 }
 
@@ -374,6 +363,7 @@ MEDIA_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
 AUTH_USER_MODEL = "authentication.CustomUser"
 
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", False) == "True"
+SENTRY_KEY = os.getenv("SENTRY_KEY", None)
 
 FIXTURE_DIRS = [
     BASE_DIR / "fixtures",
@@ -390,6 +380,20 @@ if DEVELOPMENT_MODE:
     ] + MIDDLEWARE
     STATIC_URL = "/static/"
     STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+sentry_sdk.init(
+    dsn=SENTRY_KEY,
+    # Add data like request headers and IP for users;
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
 
 AZURE_POWERBI_USERNAME = os.environ.get("AZURE_POWERBI_USERNAME")
 AZURE_POWERBI_PASSWORD = os.environ.get("AZURE_POWERBI_PASSWORD")
