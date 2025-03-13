@@ -25,7 +25,6 @@ from sustainapp.Views.WasteAnalyse import GetWasteAnalysis
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.Serializer.ScreenTwelveSerializer import ScreenTwelveSerializer
 from common.utils.value_types import format_decimal_places
-from decimal import Decimal
 
 
 class ScreenTwelveService:
@@ -248,6 +247,15 @@ class ScreenTwelveService:
         )
         return response_data
 
+    def get_air_quality_analyze(self):
+        data = calling_analyse_view_with_params(
+            view_url="air_quality_analyze",
+            report=self.report,
+            request=self.request,
+        )
+        print(data)
+        return data
+
     def get_305_4abc(self):
         # TODO: Need more clarification from Sakthivel
         return None
@@ -280,6 +288,7 @@ class ScreenTwelveService:
         response_data["3_3cde"] = self.get_3_3cde()
         response_data["305_123_collect"] = self.get_301_123_collect()
         response_data["305_123_analyse"] = self.get_301_123_analyse()
+        response_data["air_quality_analyze"] = self.get_air_quality_analyze()
         response_data["305_4abc"] = self.get_305_4abc()
         response_data["305_5abc"] = self.get_305_5abc()
         response_data["301_1a_non_renewable_materials"] = (
