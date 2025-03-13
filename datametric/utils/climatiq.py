@@ -62,6 +62,7 @@ class Climatiq:
         self.locale = raw_response.locale
         self.month = raw_response.month
         self.year = raw_response.year
+        self.index_mapping_to_emissons = {}
 
     def send_error_email(self, error_message):
         """
@@ -95,7 +96,6 @@ class Climatiq:
             "Quantity",
         ]
         # mapping the indexes to the emission from raw response
-        self.index_mapping_to_emissons = {}
         for index, emission_data in enumerate(data_to_process):
             row_type = emission_data["Emission"].get("rowType")
             emission = emission_data["Emission"]
