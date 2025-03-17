@@ -253,7 +253,6 @@ class ScreenTwelveService:
             report=self.report,
             request=self.request,
         )
-        print(data)
         return data
 
     def get_305_4abc(self):
