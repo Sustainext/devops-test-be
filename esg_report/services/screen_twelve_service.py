@@ -75,6 +75,9 @@ class ScreenTwelveService:
             40: "gri-environment-water-303-3d-4e-sma",
             41: "gri-environment-emissions-GHG-emission-reduction-initiatives",
             42: "gri-environment-emissions-GHG emission-intensity",
+            43: "gri-environment-air-quality-nitrogen-oxide",
+            44: "gri-environment-air-quality-emission-ods",
+            45: "gri-environment-emissions-base_year",
             # TODO : 12.2.1
         }
 
@@ -247,6 +250,44 @@ class ScreenTwelveService:
         )
         return response_data
 
+    def get_emission_collect(self):
+        base_year_data_points = self.data_points.filter(
+            path__slug=self.slugs[45]
+        ).order_by("index")
+        emission_intensity_data_points = self.data_points.filter(
+            path__slug=self.slugs[42]
+        ).order_by("index")
+        emission_reduction_data_points = self.data_points.filter(
+            path__slug=self.slugs[41]
+        ).order_by("index")
+        data = {}
+        data["base_year"] = collect_data_by_raw_response_and_index(
+            data_points=base_year_data_points
+        )
+        data["emission_intensity"] = collect_data_by_raw_response_and_index(
+            data_points=emission_intensity_data_points
+        )
+        data["emission_reduction"] = collect_data_by_raw_response_and_index(
+            data_points=emission_reduction_data_points
+        )
+        return data
+
+    def air_quality_collect(self):
+        local_data_points = self.data_points.filter(path__slug=self.slugs[43]).order_by(
+            "index"
+        )
+        ods_data_points = self.data_points.filter(path__slug=self.slugs[44]).order_by(
+            "index"
+        )
+        data = {}
+        data["nitrogen_oxide"] = collect_data_by_raw_response_and_index(
+            data_points=local_data_points
+        )
+        data["ods"] = collect_data_by_raw_response_and_index(
+            data_points=ods_data_points
+        )
+        return data
+
     def get_air_quality_analyze(self):
         data = calling_analyse_view_with_params(
             view_url="air_quality_analyze",
@@ -287,6 +328,8 @@ class ScreenTwelveService:
         response_data["3_3cde"] = self.get_3_3cde()
         response_data["305_123_collect"] = self.get_301_123_collect()
         response_data["305_123_analyse"] = self.get_301_123_analyse()
+        response_data["emission_collect"] = self.get_emission_collect()
+        response_data["air_quality_collect"] = self.air_quality_collect()
         response_data["air_quality_analyze"] = self.get_air_quality_analyze()
         response_data["305_4abc"] = self.get_305_4abc()
         response_data["305_5abc"] = self.get_305_5abc()
