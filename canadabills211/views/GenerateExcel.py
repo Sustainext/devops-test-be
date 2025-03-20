@@ -213,7 +213,7 @@ class GenerateExcel(APIView):
             applicable_laws = ii_data.get("applicable_laws_7_1", [])
             ans_7_1 = ",\n".join([ii_7_1_dict.get(val, "") for val in applicable_laws])
             if "other" in applicable_laws:
-                ans_7_1 += ii_data.get("subject_to_supply_chain_legislation_7")
+                ans_7_1 += ii_data.get("other_laws_description_7_1")
         else:
             ans_7_1 = ""
         ws["B13"] = ans_7_1
@@ -284,12 +284,15 @@ class GenerateExcel(APIView):
         steps = ar_data.get("steps_taken_1", [])
         if "Other, please specify:" in steps:
             steps_filtered = [i for i in steps if i != "Other, please specify:"]
-            ws["B2"] = ",\n".join(
-                [
-                    ",\n".join(steps_filtered),
-                    ar_data.get("steps_taken_description_1", ""),
-                ]
-            )
+
+            if steps_filtered:
+                ws["B2"] = ",\n".join(steps_filtered) + (
+                    ",\n" + ar_data.get("steps_taken_description_1", "")
+                    if ar_data.get("steps_taken_description_1")
+                    else ""
+                )
+            else:
+                ws["B2"] = ar_data.get("steps_taken_description_1", "")
         else:
             ws["B2"] = ",\n".join(steps)
 
@@ -297,20 +300,32 @@ class GenerateExcel(APIView):
         ws["B4"] = ar_data.get("structure_3")
 
         categorization = ar_data.get("categorization_4", {})
-        ws["B6"] = categorization.get("Producing_goods", "False")
-        ws["B7"] = categorization.get("ProducinggoodsInCanada", "False")
-        ws["B8"] = categorization.get("ProducinggoodsOutsideCanada", "False")
-        ws["B9"] = categorization.get("Selling_goods", "False")
-        ws["B10"] = categorization.get("SellinggoodsInCanada", "False")
-        ws["B11"] = categorization.get("SellinggoodsOutsideCanada", "False")
-        ws["B12"] = categorization.get("Distributing_goods", "False")
-        ws["B13"] = categorization.get("DistributinggoodsInCanada", "False")
-        ws["B14"] = categorization.get("DistributinggoodsOutsideCanada", "False")
-        ws["B15"] = categorization.get(
-            "Importing_into_Canada_goods_produced_outside_Canada", "False"
+        ws["B6"] = "True" if categorization.get("Producing_goods") else "False"
+        ws["B7"] = "True" if categorization.get("ProducinggoodsInCanada") else "False"
+        ws["B8"] = (
+            "True" if categorization.get("ProducinggoodsOutsideCanada") else "False"
         )
-        ws["B16"] = categorization.get(
-            "Controlling_an_entity_engaged_in_producing", "False"
+        ws["B9"] = "True" if categorization.get("Selling_goods") else "False"
+        ws["B10"] = "True" if categorization.get("SellinggoodsInCanada") else "False"
+        ws["B11"] = (
+            "True" if categorization.get("SellinggoodsOutsideCanada") else "False"
+        )
+        ws["B12"] = "True" if categorization.get("Distributing_goods") else "False"
+        ws["B13"] = (
+            "True" if categorization.get("DistributinggoodsInCanada") else "False"
+        )
+        ws["B14"] = (
+            "True" if categorization.get("DistributinggoodsOutsideCanada") else "False"
+        )
+        ws["B15"] = (
+            "True"
+            if categorization.get("Importing_into_Canada_goods_produced_outside_Canada")
+            else "False"
+        )
+        ws["B16"] = (
+            "True"
+            if categorization.get("Controlling_an_entity_engaged_in_producing")
+            else "False"
         )
 
         ws["B17"] = ar_data.get("additional_information_entity_5")
@@ -325,11 +340,14 @@ class GenerateExcel(APIView):
             aspects_filtered = [
                 i for i in risk_aspects if i != "Other, please specify:"
             ]
-            ws["B22"] = (
-                ",\n".join(aspects_filtered)
-                + ",\n"
-                + ar_data.get("risk_aspects_description_8_1", "")
-            )
+            if aspects_filtered:
+                ws["B22"] = ",\n".join(aspects_filtered) + (
+                    ",\n" + ar_data.get("risk_aspects_description_8_1", "")
+                    if ar_data.get("risk_aspects_description_8_1")
+                    else ""
+                )
+            else:
+                ws["B22"] = ar_data.get("risk_aspects_description_8_1", "")
         else:
             ws["B22"] = ",\n".join(risk_aspects)
 
@@ -338,11 +356,14 @@ class GenerateExcel(APIView):
             activities_filtered = [
                 i for i in risk_activities if i != "Other, please specify:"
             ]
-            ws["B23"] = (
-                ",\n".join(activities_filtered)
-                + ",\n"
-                + ar_data.get("risk_activaties_description_9", "")
-            )
+            if activities_filtered:
+                ws["B23"] = ",\n".join(activities_filtered) + (
+                    ",\n" + ar_data.get("risk_activaties_description_9", "")
+                    if ar_data.get("risk_activaties_description_9")
+                    else ""
+                )
+            else:
+                ws["B23"] = ar_data.get("risk_activaties_description_9", "")
         else:
             ws["B23"] = ",\n".join(risk_activities)
 
@@ -354,11 +375,19 @@ class GenerateExcel(APIView):
             remediation_filtered = [
                 i for i in remediation if i != "Other, please specify:"
             ]
-            ws["B26"] = (
-                ",\n".join(remediation_filtered)
-                + ",\n"
-                + ar_data.get("remediation_measures_taken_description_11_1", "")
-            )
+
+            if remediation_filtered:
+                ws["B26"] = ",\n".join(remediation_filtered) + (
+                    ",\n"
+                    + ar_data.get("remediation_measures_taken_description_11_1", "")
+                    if ar_data.get("remediation_measures_taken_description_11_1")
+                    else ""
+                )
+            else:
+                ws["B26"] = ar_data.get(
+                    "remediation_measures_taken_description_11_1", ""
+                )
+
         else:
             ws["B26"] = ",\n".join(remediation)
 
@@ -378,11 +407,14 @@ class GenerateExcel(APIView):
                 assess_filtered = [
                     i for i in assessment if i != "Other, please specify:"
                 ]
-                ws["B34"] = (
-                    ",\n".join(assess_filtered)
-                    + ",\n"
-                    + ar_data.get("assessment_method_description_17_1", "")
-                )
+                if assess_filtered:
+                    ws["B34"] = ",\n".join(assess_filtered) + (
+                        ",\n" + ar_data.get("assessment_method_description_17_1", "")
+                        if ar_data.get("assessment_method_description_17_1")
+                        else ""
+                    )
+                else:
+                    ws["B34"] = ar_data.get("assessment_method_description_17_1", "")
             else:
                 ws["B34"] = ",\n".join(assessment)
         else:
@@ -445,9 +477,9 @@ class GenerateExcel(APIView):
             if not ii_exist and not ar_exist:
                 return Response(
                     {
-                        "detail": "Please fill in the details for Identifying Information and Annual Report"
+                        "message": "Please fill the mandatory details for Identifying Information and Annual Report"
                     },
-                    status=status.HTTP_404_NOT_FOUND,
+                    status=status.HTTP_200_OK,
                 )
 
             # Validate data (if object exists)
@@ -476,20 +508,20 @@ class GenerateExcel(APIView):
             if ii_exist and not ii_valid and ar_exist and not ar_valid:
                 return Response(
                     {
-                        "detail": "Please fill in the details for Identifying Information and Annual Report"
+                        "message": "Please fill the mandatory details for Identifying Information and Annual Report"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             elif ii_exist and not ii_valid:
                 return Response(
                     {
-                        "detail": "Please fill in the details for Identifying Information"
+                        "message": "Please fill the mandatory details for Identifying Information"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             elif ar_exist and not ar_valid:
                 return Response(
-                    {"detail": "Please fill in the details for Annual Report"},
+                    {"message": "Please fill the mandatory details for Annual Report"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
