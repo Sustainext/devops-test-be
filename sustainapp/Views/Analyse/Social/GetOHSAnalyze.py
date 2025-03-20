@@ -13,7 +13,7 @@ from datametric.models import RawResponse, DataPoint
 from django.db.models.expressions import RawSQL
 from django.db.models import Value
 from decimal import Decimal
-from common.utils.value_types import safe_percentage, safe_divide, format_decimal_places
+from common.utils.value_types import safe_percentage, safe_divide
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
 )
@@ -242,6 +242,18 @@ class GetIllnessAnalysisView(APIView):
         )
         return months_difference
 
+    def are_all_required_months_present_inside_data_points(self):
+        # * Get all the months data inside the data points
+        months_data = self.data_points.values_list("month", flat=True).distinct()
+        # * Get all the months between start and end dates
+        months_between_start_and_end = [
+            i for i in range(self.start.month, self.end.month + 1)
+        ]
+        # * Check if all the months between start and end dates are present in the data points
+        if set(months_between_start_and_end) == set(months_data):
+            return True
+        return False
+
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -252,7 +264,13 @@ class GetIllnessAnalysisView(APIView):
         )  # * This is optional
         self.organisation = serializer.validated_data.get("organisation")
         self.location = serializer.validated_data.get("location")  # * This is optional
+        show_warning = False
         self.set_data_points()
+        if self.are_all_required_months_present_inside_data_points():
+            show_warning = False
+        else:
+            show_warning = True
+
         months_difference = self.get_months_difference()
         number_of_hours_for_100_injury_rate = Decimal(
             self.INJURY_RATE_DICT[100] * months_difference / 12
@@ -261,25 +279,35 @@ class GetIllnessAnalysisView(APIView):
         number_of_hours_for_500_injury_rate = Decimal(
             self.INJURY_RATE_DICT[500] * months_difference / 12
         )
+        normal_response = {
+            "rate_of_injuries_for_all_employees_100_injury_rate": self.get_work_related_ill_health(
+                number_of_hours_for_100_injury_rate,
+                slug="gri-social-ohs-403-9a-number_of_injuries_emp",
+            ),
+            "rate_of_injuries_for_not_included_in_company_employees_100_injury_rate": self.get_work_related_ill_health(
+                number_of_hours_for_100_injury_rate,
+                slug="gri-social-ohs-403-9b-number_of_injuries_workers",
+            ),
+            "rate_of_injuries_for_all_employees_500_injury_rate": self.get_work_related_ill_health(
+                number_of_hours_for_500_injury_rate,
+                slug="gri-social-ohs-403-9a-number_of_injuries_emp",
+            ),
+            "rate_of_injuries_for_not_included_in_company_employees_500_injury_rate": self.get_work_related_ill_health(
+                number_of_hours_for_500_injury_rate,
+                slug="gri-social-ohs-403-9b-number_of_injuries_workers",
+            ),
+        }
 
-        return Response(
-            {
-                "rate_of_injuries_for_all_employees_100_injury_rate": self.get_work_related_ill_health(
-                    number_of_hours_for_100_injury_rate,
-                    slug="gri-social-ohs-403-9a-number_of_injuries_emp",
-                ),
-                "rate_of_injuries_for_not_included_in_company_employees_100_injury_rate": self.get_work_related_ill_health(
-                    number_of_hours_for_100_injury_rate,
-                    slug="gri-social-ohs-403-9b-number_of_injuries_workers",
-                ),
-                "rate_of_injuries_for_all_employees_500_injury_rate": self.get_work_related_ill_health(
-                    number_of_hours_for_500_injury_rate,
-                    slug="gri-social-ohs-403-9a-number_of_injuries_emp",
-                ),
-                "rate_of_injuries_for_not_included_in_company_employees_500_injury_rate": self.get_work_related_ill_health(
-                    number_of_hours_for_500_injury_rate,
-                    slug="gri-social-ohs-403-9b-number_of_injuries_workers",
-                ),
-            },
-            status=status.HTTP_200_OK,
-        )
+        if not show_warning:
+            return Response(
+                normal_response,
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {
+                    "warning": "Only partial data available",
+                    "data": normal_response,
+                },
+                status=status.HTTP_206_PARTIAL_CONTENT,
+            )
