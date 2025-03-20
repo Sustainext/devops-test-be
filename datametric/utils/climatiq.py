@@ -243,6 +243,7 @@ class Climatiq:
         start_time = time.time()
         CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
         payload = self.payload_preparation_for_climatiq_api()
+        print(json.dumps(payload))
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
         logger.info("Requesting Climatiq API")
         # print(payload, ' is payload for Climatiq')

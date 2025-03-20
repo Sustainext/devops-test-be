@@ -75,6 +75,15 @@ class ScreenTwelveService:
             40: "gri-environment-water-303-3d-4e-sma",
             41: "gri-environment-emissions-GHG-emission-reduction-initiatives",
             42: "gri-environment-emissions-GHG emission-intensity",
+            43: "gri-environment-air-quality-standard_methodologies",  # alag karo
+            44: "gri-environment-air-quality-ods_production-standard-methodologies",  # alag karo
+            45: "gri-environment-emissions-base_year",
+            46: "gri-environment-emissions-consolidation_approach_q1",
+            47: "gri-environment-emissions-consolidation_approach_q2",
+            48: "gri-environment-emissions-standards_methodologies",
+            49: "gri-environment-air-quality-management_of_material_topic",
+            50: "gri_collect_materials_management_material_topic",
+            51: "gri-environment-packaging-material-management-of-material-topic",
             # TODO : 12.2.1
         }
 
@@ -247,13 +256,74 @@ class ScreenTwelveService:
         )
         return response_data
 
+    def get_emission_collect(self):
+        base_year_data_points = self.data_points.filter(
+            path__slug=self.slugs[45]
+        ).order_by("index")
+        emission_intensity_data_points = self.data_points.filter(
+            path__slug=self.slugs[42]
+        ).order_by("index")
+        emission_reduction_data_points = self.data_points.filter(
+            path__slug=self.slugs[41]
+        ).order_by("index")
+        consolidation_approach_for_emission_data_points = self.data_points.filter(
+            path__slug=self.slugs[46]
+        ).order_by("index")
+        consolidation_assumption_considered_data_points = self.data_points.filter(
+            path__slug=self.slugs[47]
+        ).order_by("index")
+        standard_methodology_used_data_points = self.data_points.filter(
+            path__slug=self.slugs[48]
+        ).order_by("index")
+        data = {}
+        data["base_year"] = collect_data_by_raw_response_and_index(
+            data_points=base_year_data_points
+        )
+        data["emission_intensity"] = collect_data_by_raw_response_and_index(
+            data_points=emission_intensity_data_points
+        )
+        data["emission_reduction"] = collect_data_by_raw_response_and_index(
+            data_points=emission_reduction_data_points
+        )
+        data["consolidation_approach_for_emission"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=consolidation_approach_for_emission_data_points
+            )
+        )
+        data["consolidation_assumption_considered"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=consolidation_assumption_considered_data_points
+            )
+        )
+        data["standard_methodology_used"] = collect_data_by_raw_response_and_index(
+            data_points=standard_methodology_used_data_points
+        )
+        return data
+
+    def air_quality_collect(self):
+        air_quality_standard_methodology_data_points = self.data_points.filter(
+            path__slug=self.slugs[43]
+        ).order_by("index")
+        ods_standard_methodology_data_points = self.data_points.filter(
+            path__slug=self.slugs[44]
+        ).order_by("index")
+        data = {}
+        data["air_quality_standard_methodology"] = (
+            collect_data_by_raw_response_and_index(
+                data_points=air_quality_standard_methodology_data_points
+            )
+        )
+        data["ods_standard_methodology"] = collect_data_by_raw_response_and_index(
+            data_points=ods_standard_methodology_data_points
+        )
+        return data
+
     def get_air_quality_analyze(self):
         data = calling_analyse_view_with_params(
             view_url="air_quality_analyze",
             report=self.report,
             request=self.request,
         )
-        print(data)
         return data
 
     def get_305_4abc(self):
@@ -288,6 +358,8 @@ class ScreenTwelveService:
         response_data["3_3cde"] = self.get_3_3cde()
         response_data["305_123_collect"] = self.get_301_123_collect()
         response_data["305_123_analyse"] = self.get_301_123_analyse()
+        response_data["emission_collect"] = self.get_emission_collect()
+        response_data["air_quality_collect"] = self.air_quality_collect()
         response_data["air_quality_analyze"] = self.get_air_quality_analyze()
         response_data["305_4abc"] = self.get_305_4abc()
         response_data["305_5abc"] = self.get_305_5abc()
@@ -302,6 +374,12 @@ class ScreenTwelveService:
         response_data["3-3cde_12-1-1"] = get_management_materiality_topics(
             self.report, self.slugs[35]
         )
+        response_data["3-3cde_12-2-1_materials"] = get_management_materiality_topics(
+            self.report, self.slugs[50]
+        )
+        response_data["3-3cde_12-2-1_packaging"] = get_management_materiality_topics(
+            self.report, self.slugs[51]
+        )
         response_data["3-3cde_12-3-1"] = get_management_materiality_topics(
             self.report, self.slugs[36]
         )
@@ -310,6 +388,9 @@ class ScreenTwelveService:
         )
         response_data["3-3cde_12-5-1"] = get_management_materiality_topics(
             self.report, self.slugs[38]
+        )
+        response_data["3-3cde_12-7-1"] = get_management_materiality_topics(
+            self.report, self.slugs[49]
         )
         response_data.update(
             {
