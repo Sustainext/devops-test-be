@@ -308,6 +308,7 @@ class GetIllnessAnalysisView(APIView):
                 {
                     "warning": "Only partial data available",
                     "data": normal_response,
+                    "status": status.HTTP_206_PARTIAL_CONTENT,
                 },
                 status=status.HTTP_206_PARTIAL_CONTENT,
             )
