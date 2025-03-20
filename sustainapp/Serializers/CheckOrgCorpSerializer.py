@@ -4,7 +4,7 @@ from sustainapp.models import Organization, Corporateentity
 
 class CheckOrgCoprSerializer(serializers.Serializer):
     """
-    Checks if the Organization, Corporate and selected date range are valid
+    Checks if the Organization & Corporate are valid
     """
 
     organization = serializers.PrimaryKeyRelatedField(
