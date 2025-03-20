@@ -479,7 +479,7 @@ class GenerateExcel(APIView):
                     {
                         "message": "Please fill the mandatory details for Identifying Information and Annual Report"
                     },
-                    status=status.HTTP_200_OK,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
             # Validate data (if object exists)
