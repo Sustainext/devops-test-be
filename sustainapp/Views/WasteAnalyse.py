@@ -669,7 +669,7 @@ class GetWasteAnalysis(APIView):
             unit = data["Unit"]
             material = data["Material"]
             volume = float(data["VolumeofSpill"])
-            impact = data["Impact"]
+            impact = data["Impact"] if data.get("SpillSignificant") == "Yes" else "N/A"
             key = (material, unit)
             if key in data_by_material:
                 data_by_material[key]["volume_of_spills"] += volume
