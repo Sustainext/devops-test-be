@@ -68,7 +68,7 @@ def calculate_contributions(self, emission_by_scope, total_emissions):
         structured_emission_data.append(
             {
                 "scope_name": values["scope_name"],
-                "total_co2e": values["total_co2e"],
+                "total_co2e": round(values["total_co2e"], 2),
                 "contribution_scope": round(contribution_scope, 2),
                 "co2e_unit": values["co2e_unit"],
                 "unit_type": values["unit_type"],
@@ -207,7 +207,7 @@ def get_analysis_data_by_source(self, data_points):
                 if "Unit2" in emission_request["Emission"]
                 else ""
             )  # Need to find this too
-            total_co2e = climatiq_response.get("co2e", 0)
+            total_co2e = round(climatiq_response.get("co2e", 0), 2)
             total_co2e = total_co2e / 1000  # Convert to tonnes
             co2e_unit = climatiq_response.get("co2e_unit", "")
             activity_data = climatiq_response.get("activity_data", "")
@@ -234,6 +234,7 @@ def get_analysis_data_by_source(self, data_points):
     for scope_dict in grouped_data.values():
         for category_dict in scope_dict.values():
             for entry in category_dict.values():
+                entry["total_co2e"] = round(entry["total_co2e"], 2)
                 if total_co2e_all_sources > 0:
                     entry["contribution_source"] = round(
                         (entry["total_co2e"] / total_co2e_all_sources) * 100, 2
@@ -588,7 +589,10 @@ class GHGReportView(generics.CreateAPIView):
         user_id = request.user.id
 
         new_report = serializer.save(
-            status=status, client_id=client_id, user_id=user_id
+            status=status,
+            client_id=client_id,
+            user_id=user_id,
+            last_updated_by=request.user,
         )
         create_validation_method_for_report_creation(report=new_report)
         report_id = new_report.id
@@ -717,18 +721,13 @@ class ReportListView(generics.ListAPIView):
     serializer_class = ReportRetrieveSerializer
 
     def get_queryset(self):
-        user_id = self.request.user.id
+        user = self.request.user
+        organizations = user.orgs.all()
 
-        if not user_id:
-            # Returning an empty queryset if user_id is not provided
+        if not user:
             return Report.objects.none()
 
-        try:
-            user_id = int(user_id)
-        except ValueError:
-            return Report.objects.none()
-
-        queryset = Report.objects.filter(user=user_id, status=1)
+        queryset = Report.objects.filter(organization__in=organizations, status=1)
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -803,7 +802,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             )
 
     def perform_update(self, serializer):
-        serializer.save()
+        serializer.save(last_updated_by=self.request.user)
 
 
 class ReportPDFView(View):
@@ -845,3 +844,47 @@ class ReportPDFView(View):
             # Log the exception and prepare an error response
             logger.exception("Unexpected error generating PDF")
             return HttpResponse("Unexpected error occurred", status=500)
+
+
+class ReportExistsView(APIView):
+    def get(self, request):
+        start = self.request.query_params.get("start_date")
+        end = self.request.query_params.get("end_date")
+        organization = self.request.query_params.get("organization", None)
+        corporate = self.request.query_params.get("corporate", None)
+        report_type = self.request.query_params.get("report_type", None)
+        report_by = self.request.query_params.get("report_by", None)
+
+        queryset = Report.objects.filter(
+            organization=organization if organization else None,
+            corporate=corporate if corporate else None,
+            start_date=start,
+            end_date=end,
+            report_type=report_type,
+            report_by=report_by,
+        )
+
+        if queryset.exists():
+            return Response(
+                {
+                    "message": "Report Found",
+                    "organization": Organization.objects.get(id=organization).name
+                    if organization
+                    else "",
+                    "corporate": Corporateentity.objects.get(id=corporate).name
+                    if corporate
+                    else "",
+                }
+            )
+
+        return Response(
+            {
+                "message": "No reports found",
+                "organization": Organization.objects.get(id=organization).name
+                if organization
+                else "",
+                "corporate": Corporateentity.objects.get(id=corporate).name
+                if corporate
+                else "",
+            }
+        )

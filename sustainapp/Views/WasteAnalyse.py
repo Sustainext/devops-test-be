@@ -9,9 +9,25 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
 from sustainapp.models import Location, Corporateentity
 from common.utils.value_types import safe_percentage, format_decimal_places
 from decimal import Decimal
+from datametric.models import DataPoint
+from datametric.utils.analyse import (
+    filter_by_start_end_dates,
+    get_raw_response_filters,
+    set_locations_data,
+)
+from common.utils.get_data_points_as_raw_responses import (
+    collect_data_by_raw_response_and_index,
+)
 
 
 class GetWasteAnalysis(APIView):
+    def __init__(self):
+        super().__init__()
+        self.slugs = {
+            0: "gri_environment_waste_significant_spills_306_3b_3c_q1",
+        }
+        self.raw_data = None
+
     def get_waste_data(
         self, location, start_year, end_year, start_month, end_month, path_slug
     ):
@@ -628,6 +644,90 @@ class GetWasteAnalysis(APIView):
             non_hazardous_waste_diverted_from_data_list,
         )
 
+    def set_data_points(self):
+        self.data_points = (
+            DataPoint.objects.filter(path__slug__in=list(self.slugs.values()))
+            .filter(client_id=self.request.user.client.id)
+            .filter(
+                get_raw_response_filters(
+                    corporate=self.corporate, organisation=self.organisation
+                )
+            )
+            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        )
+
+    def set_raw_data(self):
+        data = collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[0])
+        )
+        locations = set_locations_data(self.organisation, self.corporate, self.location)
+        location_names = [location.name for location in locations]
+        filter_data = [
+            spill for spill in data if spill.get("Location") in location_names
+        ]
+        self.raw_data = filter_data
+
+    def total_number_and_volume_by_material(self):
+        data_point = self.raw_data
+        data_by_material = {}
+
+        for data in data_point:
+            unit = data["Unit"]
+            material = data["Material"]
+            volume = float(data["VolumeofSpill"])
+            if unit in data_by_material:
+                data_by_material[unit]["volume_of_spills"] += volume
+            else:
+                data_by_material[unit] = {
+                    "material": material,
+                    "volume_of_spills": volume,
+                    "unit": unit,
+                }
+        result = list(data_by_material.values())
+        return result
+
+    def total_number_and_volume_by_location(self):
+        data_point = self.raw_data
+        data_by_location = {}
+        for data in data_point:
+            location = data["Location"]
+            unit = data["Unit"]
+            volume = float(data["VolumeofSpill"])
+            key = (location, unit)
+            if location and unit in data_by_location:
+                data_by_location[location]["volume_of_spills"] += volume
+            else:
+                data_by_location[key] = {
+                    "location": location,
+                    "volume_of_spills": volume,
+                    "unit": unit,
+                }
+        result = list(data_by_location.values())
+        return result
+
+    def total_number_and_volume_significant_spills(self):
+        data_point = self.raw_data
+        data_by_spills = {}
+        for data in data_point:
+            is_spill = data["SpillSignificant"]
+            if is_spill == "Yes":
+                unit = data["Unit"]
+                volume = float(data["VolumeofSpill"])
+                number_of_significant_spills = 1
+                if unit in data_by_spills:
+                    data_by_spills[unit]["volume_of_spills"] += volume
+                    data_by_spills[unit]["number_of_significant_spills"] += (
+                        number_of_significant_spills
+                    )
+                else:
+                    data_by_spills[unit] = {
+                        "number_of_significant_spills": number_of_significant_spills,
+                        "volume_of_spills": volume,
+                        "unit": unit,
+                    }
+        result = list(data_by_spills.values())
+        return result
+
     def get(self, request):
         """
         Get Waste Analysis API
@@ -640,6 +740,13 @@ class GetWasteAnalysis(APIView):
         location = serializer.validated_data.get("location", None)
         start = serializer.validated_data.get("start", None)
         end = serializer.validated_data.get("end", None)
+        self.organisation = organisation
+        self.corporate = corporate
+        self.location = location
+        self.start = start
+        self.end = end
+        self.set_data_points()
+        self.set_raw_data()
 
         if location:
             locations = Location.objects.filter(pk=location.id)
@@ -703,5 +810,8 @@ class GetWasteAnalysis(APIView):
             "non_hazardeous_waste_diverted_from_disposal": non_hazardeous_waste_diverted_from,
             "hazardeous_waste_directed_to_disposal": hazardeous_waste_directed_to_data,
             "non_hazardeous_waste_directed_to_disposal": non_hazardeous_waste_directed_to_data,
+            "total_number_and_volume_by_material": self.total_number_and_volume_by_material(),
+            "total_number_and_volume_by_location": self.total_number_and_volume_by_location(),
+            "total_number_and_volume_significant_spills": self.total_number_and_volume_significant_spills(),
         }
         return Response(final_response, status=status.HTTP_200_OK)

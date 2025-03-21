@@ -25,30 +25,30 @@ class AzureLogUploader:
             rule_id = os.getenv("AZURE_LOG_RULE_ID")
             stream_name = os.getenv("AZURE_LOG_STREAM_NAME")
             self.client.upload(rule_id=rule_id, stream_name=stream_name, logs=log_data)
-            print("Logs sent successfully!",log_data)
+            # print("Logs sent successfully!",log_data)
         except Exception as e:
             print(f"Failed to send logs: {e}")
 
 
-# Example usage (this part can be in another module)
-if __name__ == "__main__":
-    uploader = AzureLogUploader()
+# # Example usage (this part can be in another module)
+# if __name__ == "__main__":
+#     uploader = AzureLogUploader()
 
-    # Define log data
-    log_data = [
-        {
-            "TimeGenerated": "2024-01-06T12:05:00Z",
-            "EventType": "Password Change",
-            "EventDetails": "User changed password successfully",
-            "Action": "Change Password",
-            "Status": "Success",
-            "UserEmail": "user1@example.com",
-            "UserRole": "Admin",
-        },
-    ]
+#     # Define log data
+#     log_data = [
+#         {
+#             "TimeGenerated": "2024-01-06T12:05:00Z",
+#             "EventType": "Password Change",
+#             "EventDetails": "User changed password successfully",
+#             "Action": "Change Password",
+#             "Status": "Success",
+#             "UserEmail": "user1@example.com",
+#             "UserRole": "Admin",
+#         },
+#     ]
 
-    rule_id = os.getenv("AZURE_LOG_RULE_ID")
-    stream_name = os.getenv("AZURE_LOG_STREAM_NAME")
+#     rule_id = os.getenv("AZURE_LOG_RULE_ID")
+#     stream_name = os.getenv("AZURE_LOG_STREAM_NAME")
 
-    # Upload logs
-    uploader.upload_logs(rule_id, stream_name, log_data)
+#     # Upload logs
+#     uploader.upload_logs(rule_id, stream_name, log_data)

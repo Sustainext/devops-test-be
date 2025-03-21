@@ -148,114 +148,42 @@ class LocationOrgstructureSerializer(serializers.ModelSerializer):
         ]
 
 
-class CorporateentitySerializer(serializers.ModelSerializer):
-    location = LocationOrgstructureSerializer(many=True)
-
-    class Meta:
-        model = Corporateentity
-        fields = [
-            "id",
-            "name",
-            "location",
-            "corporatetype",
-            "ownershipnature",
-            "legalform",
-            "ownership",
-            "employeecount",
-            "sector",
-            "subindustry",
-            "revenue",
-            "Country",
-            "state",
-            "city",
-            "currency",
-            "date_format",
-            "timezone",
-            "language",
-            "location_headquarters",
-            "phone",
-            "mobile",
-            "website",
-            "fax",
-            "address",
-            "Country",
-            "state",
-            "city",
-            "zipcode",
-            "date_format",
-            "currency",
-            "timezone",
-            "language",
-            "from_date",
-            "to_date",
-            "framework",
-            "legalform",
-            "ownership",
-            "group",
-            "location_of_headquarters",
-            "amount",
-            "type_of_business_activities",
-            "type_of_product",
-            "type_of_services",
-            "type_of_business_relationship",
-        ]
-
-
-class OrganizationSerializer(serializers.ModelSerializer):
-
-    corporatenetityorg = CorporateentitySerializer(many=True)
-
-    class Meta:
-        model = Organization
-        fields = [
-            "id",
-            "name",
-            "type_corporate_entity",
-            "owner",
-            "location_of_headquarters",
-            "phone",
-            "mobile",
-            "website",
-            "fax",
-            "employeecount",
-            "sector",
-            "revenue",
-            "subindustry",
-            "address",
-            "countryoperation",
-            "state",
-            "city",
-            "date_format",
-            "currency",
-            "timezone",
-            "language",
-            "from_date",
-            "to_date",
-            "sdg",
-            "rating",
-            "certification",
-            "target",
-            "framework",
-            "no_of_employees",
-            "active",
-            "amount",
-            "ownership_and_legal_form",
-            "group",
-            "type_of_corporate_entity",
-            "location_of_headquarters",
-            "sub_industry",
-            "type_of_business_activities",
-            "type_of_product",
-            "type_of_services",
-            "corporatenetityorg",
-        ]
-
-
 class LocationSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Location
         fields = "__all__"
+
+
+class CorporateentitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Corporateentity
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        user = self.context["request"].user
+        data = super().to_representation(instance)
+        data["location"] = LocationSerializer(
+            instance.location.filter(id__in=user.locs.all()), many=True
+        ).data
+        return data
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        user = self.context["request"].user
+        data = super().to_representation(instance)
+        data["corporatenetityorg"] = CorporateentitySerializer(
+            instance.corporatenetityorg.filter(
+                id__in=user.corps.all()
+            ).prefetch_related("location"),
+            many=True,
+            context={"request": self.context["request"]},
+        ).data
+        return data
 
 
 class CorporateentityOnlySerializer(serializers.ModelSerializer):
@@ -307,7 +235,6 @@ class RowDataSerializer(serializers.ModelSerializer):
 
 
 class RowDataBatchSerializer(serializers.ModelSerializer):
-
     task_rowdatabatch = Task_display_emissionSerializer(many=True)
     subCategory = serializers.CharField(source="category")
     category = serializers.CharField(source="sector")
@@ -427,8 +354,9 @@ class ReportRetrieveSerializer(serializers.ModelSerializer):
         source="organization.countryoperation"
     )
     corporate_name = serializers.ReadOnlyField(source="corporate.name")
-    last_report_date = serializers.SerializerMethodField()
     created_at = serializers.SerializerMethodField()
+    updated_at = serializers.SerializerMethodField()
+    last_updated_by = serializers.SerializerMethodField()
 
     class Meta:
         model = Report
@@ -438,17 +366,14 @@ class ReportRetrieveSerializer(serializers.ModelSerializer):
             "report_type",
             "start_date",
             "end_date",
-            "last_report_date",
             "report_by",
             "organization_name",
             "corporate_name",
             "organization_country",
+            "last_updated_by",
             "created_at",
+            "updated_at",
         ]
-
-    def get_last_report_date(self, obj):
-        # Extract and return the date portion of the last_report datetime field
-        return obj.last_report.date() if obj.last_report else None
 
     def to_representation(self, instance: Report):
         # Override the to_representation method to filter data based on the status
@@ -461,10 +386,22 @@ class ReportRetrieveSerializer(serializers.ModelSerializer):
         else:
             return None
 
+    def get_last_updated_by(self, obj):
+        if obj.last_updated_by:
+            first_name = obj.last_updated_by.first_name or ""
+            last_name = obj.last_updated_by.last_name or ""
+            return f"{first_name} {last_name}".strip()
+
     def get_created_at(self, obj):
         """Format created_at into '19 Nov 2024 10:40:45 am'."""
         if obj.created_at:
             return obj.created_at.strftime("%d %b %Y %I:%M:%S %p").lower()
+        return None
+
+    def get_updated_at(self, obj):
+        """Format created_at into '19 Nov 2024 10:40:45 am'."""
+        if obj.updated_at:
+            return obj.updated_at.strftime("%d %b %Y %I:%M:%S %p").lower()
         return None
 
 

@@ -3,7 +3,7 @@ from sustainapp.Views.SubCategoriesAPIView import SubCategoriesAPIView
 from sustainapp.Views.ScopeCategoriesAPIView import ScopeCategoriesAPIView
 from sustainapp.Views.ReportWordDownloadAPI import ReportWordDownloadAPI
 from sustainapp.Views.ClientTaskView import UserClientViewset
-from sustainapp.Views.OrganisationTaskList import UserTaskDashboardView
+from sustainapp.Views.MyTaskAllTasks import UserTaskDashboardView
 from sustainapp.Views.ZohoInfoModelViewset import ZohoInfoViewset
 from sustainapp.Views.GetLocation import LocationListAPIView
 from sustainapp.Views.EmissionAnalyse import GetEmissionAnalysis
@@ -25,6 +25,7 @@ from sustainapp.Views.GHGReport import (
     ReportViewSet,
     ReportListView,
     ReportPDFView,
+    ReportExistsView,
 )
 from sustainapp.Views.GetLocationAsPerCorporate import (
     GetLocationAsPerCorporate,
@@ -87,14 +88,16 @@ from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
 )
 from sustainapp.Views.GetOrgLogs import AzureMonitorQueryView
 from sustainapp.Views.PostOrgLogs import LogUploadView
-from sustainapp.Views.Analyse.Environment.WasteSignificantSpillAnalyze import (
-    WasteSignificantSpillAnalyze,
+from sustainapp.Views.MygoalOrganizationView import MyGoalOrganizationView
+from sustainapp.Views.Analyse.Environment.AirQualityAnalyzeAPI import (
+    AirQualityAnalyzeAPIView,
 )
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
 router.register(r"ghgreport", ReportViewSet, basename="ReportUpdate")
 router.register(r"department", DepartmentViewSet, basename="Department")
+router.register(r"my_goal", MyGoalOrganizationView, basename="MyGoalOrganization")
 
 urlpatterns = [
     path("", include(router.urls)),
@@ -270,9 +273,10 @@ urlpatterns = [
     ),
     path("get_org_logs/", AzureMonitorQueryView.as_view(), name="get_org_logs"),
     path("post_logs/", LogUploadView.as_view(), name="post-org-logs"),
+    path("report_exists/", ReportExistsView.as_view(), name="report_exists"),
     path(
-        "get_analyze_waste_significant_spills/",
-        WasteSignificantSpillAnalyze.as_view(),
-        name="get_analyze_waste_significant_spills",
+        "get_air_quality_analyze/",
+        AirQualityAnalyzeAPIView.as_view(),
+        name="air_quality_analyze",
     ),
 ]

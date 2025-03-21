@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from esg_report.models.ScreenTen import ScreenTen
 from materiality_dashboard.models import ManagementApproachQuestion
-from datametric.models import RawResponse, DataMetric, DataPoint
+from datametric.models import DataMetric
 from esg_report.utils import (
     get_materiality_assessment,
     get_raw_responses_as_per_report,
@@ -17,7 +17,6 @@ from esg_report.Serializer.ScreenTenSerializer import ScreenTenSerializer
 from sustainapp.models import Report
 from sustainapp.Utilities.supplier_environment_analyse import (
     new_suppliers,
-    calculate_percentage,
 )
 from sustainapp.Utilities.supplier_social_assessment_analyse import (
     get_social_data,
@@ -25,12 +24,9 @@ from sustainapp.Utilities.supplier_social_assessment_analyse import (
     get_data,
     filter_non_zero_values,
 )
-from sustainapp.Serializers.CheckAnalysisViewSerializer import (
-    CheckAnalysisViewSerializer,
-)
+
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
 from logging import getLogger
 
 logger = getLogger("error.log")
@@ -81,6 +77,8 @@ class ScreenTenAPIView(APIView):
             )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
+        report.last_updated_by = request.user
+        report.save()
         response_data.update(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -190,9 +188,9 @@ class ScreenTenAPIView(APIView):
         for data_metric in data_metrics:
             response_data[data_metric.name] = {}
             for data_point in data_points:
-                response_data[data_metric.name][
-                    data_point.locale.name
-                ] = data_point.value
+                response_data[data_metric.name][data_point.locale.name] = (
+                    data_point.value
+                )
         return response_data
 
     def get_204_1abc(self) -> dict[str, Any]:
@@ -237,9 +235,9 @@ class ScreenTenAPIView(APIView):
             response_data["414-1a"][
                 "number_of_new_suppliers_that_were_screened_using_social_criteria"
             ] = raw_responses.first().data[0]["Q1"]
-            response_data["414-1a"][
-                "total_number_of_suppliers"
-            ] = raw_responses.first().data[0]["Q2"]
+            response_data["414-1a"]["total_number_of_suppliers"] = (
+                raw_responses.first().data[0]["Q2"]
+            )
         else:
             response_data["414-1a"][
                 "number_of_new_suppliers_that_were_screened_using_social_criteria"
@@ -318,14 +316,12 @@ class ScreenTenAPIView(APIView):
             )
         response_data["3-3cde"] = {}
         if management_approach_question:
-            response_data["3-3cde"][
-                "negative_impact_involvement_description"
-            ] = management_approach_question.negative_impact_involvement_description
+            response_data["3-3cde"]["negative_impact_involvement_description"] = (
+                management_approach_question.negative_impact_involvement_description
+            )
             response_data["3-3cde"][
                 "stakeholder_engagement_effectiveness_description"
-            ] = (
-                management_approach_question.stakeholder_engagement_effectiveness_description
-            )
+            ] = management_approach_question.stakeholder_engagement_effectiveness_description
         else:
             response_data["3-3cde"]["negative_impact_involvement_description"] = None
             response_data["3-3cde"][

@@ -14,6 +14,10 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
+from dotenv import load_dotenv
+import sentry_sdk
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,6 +54,7 @@ PROJECT_APPS = [
     "materiality_dashboard.apps.MaterialityDashboardConfig",
     "esg_report.apps.EsgReportConfig",
     "canadabills211.apps.Canadabills211Config",
+    "apps.supplier_assessment.apps.SupplierAssessmentConfig",
 ]
 
 THIRD_PARTY = [
@@ -64,6 +69,7 @@ THIRD_PARTY = [
     "dj_rest_auth.registration",
     "simple_history",
     "storages",
+    "django_filters",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY
@@ -122,6 +128,7 @@ DATABASES = {
         "USER": os.environ.get("DBUSER"),
         "PASSWORD": os.environ.get("DBPASS"),
         "PORT": int(os.environ.get("DBPORT")),
+        "TEST": {"NAME": "test_database"},
     }
 }
 
@@ -258,6 +265,18 @@ LOGGING = {
             "formatter": "detailed",
             "level": "INFO",
         },
+        "climatiq_file": {  # New handler for climatiq.log
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "climatiq.log"),
+            "formatter": "detailed",
+            "level": "INFO",
+        },
+        "celery": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "celery.log"),
+            "formatter": "detailed",
+            "level": "INFO",
+        },
     },
     "loggers": {
         "": {
@@ -286,10 +305,15 @@ LOGGING = {
             "level": "INFO",
             "propagate": False,
         },
-        "": {
-            "handlers": ["file"],
-            "level": "ERROR",
-            "propagate": True,
+        "climatiq_logger": {  # New logger for climatiq
+            "handlers": ["climatiq_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "celery_logger": {
+            "handlers": ["celery"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
     "formatters": {
@@ -299,12 +323,23 @@ LOGGING = {
         },
     },
 }
+REDIS_URL = os.getenv("REDIS_URL")
+REDIS_HOST = os.getenv("REDIS_HOST")
+REDIS_PORT = os.getenv("REDIS_PORT")
+REDIS_CELERY_DB_PORT = os.getenv("REDIS_CELERY_DB_PORT")
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"{REDIS_URL}",
     }
 }
+
+
+CELERY_BROKER_URL = f"redis://127.0.0.1:{REDIS_PORT}/{REDIS_CELERY_DB_PORT}"
+CELERY_RESULT_BACKEND = f"redis://127.0.0.1:{REDIS_PORT}/{REDIS_CELERY_DB_PORT}"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 
 STATIC_URL = "/static/"
@@ -327,6 +362,7 @@ MEDIA_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
 AUTH_USER_MODEL = "authentication.CustomUser"
 
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", False) == "True"
+SENTRY_KEY = os.getenv("SENTRY_KEY", None)
 
 FIXTURE_DIRS = [
     BASE_DIR / "fixtures",
@@ -344,12 +380,24 @@ if DEVELOPMENT_MODE:
     STATIC_URL = "/static/"
     STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
+sentry_sdk.init(
+    dsn=SENTRY_KEY,
+    # Add data like request headers and IP for users;
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
+
 AZURE_POWERBI_USERNAME = os.environ.get("AZURE_POWERBI_USERNAME")
 AZURE_POWERBI_PASSWORD = os.environ.get("AZURE_POWERBI_PASSWORD")
 AZURE_POWERBI_APP_ID = os.environ.get("AZURE_POWERBI_APP_ID")
 AZURE_POWERBI_TENANT_ID = os.environ.get("AZURE_POWERBI_TENANT_ID")
-AUTH0_CLIENT_SECRET = (
-    "xgnUcPBtoVvt6NoLlh8zeSmwRqRQZX1aCUkr1zklEoil93fiXlzhfQ9fgutypts9",
-)
-AUTH0_DOMAIN = "https://dev-0biozzwskqs6o65f.us.auth0.com"
-AUTH0_CLIENT_ID = "HM0PdW9MjGEtDTUAOMJo8QsCUT5PThdz"
+AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
+AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")

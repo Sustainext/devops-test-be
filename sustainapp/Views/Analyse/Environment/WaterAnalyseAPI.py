@@ -16,7 +16,10 @@ from common.utils.get_data_points_as_raw_responses import (
     get_location_wise_dictionary_data,
 )
 from decimal import Decimal
-from common.utils.value_types import format_decimal_places, safe_percentage
+from common.utils.value_types import (
+    format_decimal_places,
+    safe_percentage,
+)
 
 
 class WaterAnalyseByDataPoints(APIView):
@@ -74,53 +77,76 @@ class WaterAnalyseByDataPoints(APIView):
             else self.water_stress_data
         )
 
-        total_water_consumption = {}
-        # * Calculate Total Water Consumption Per Location.
-        for location_name in self.water_stress_data:
-            consumption_total = 0
-            for stress_data in self.water_stress_data[location_name]:
-                consumption_total += self.calculate_water_consumption(
-                    stress_data["Waterwithdrawal"],
-                    stress_data["Waterdischarge"],
-                    unit=stress_data["Unit"],
-                )
-            total_water_consumption[location_name] = consumption_total
-        response_list = []
+        total_water_consumption = sum(
+            self.calculate_water_consumption(
+                stress_data["Waterwithdrawal"],
+                stress_data["Waterdischarge"],
+                unit=stress_data["Unit"],
+            )
+            for location_name in self.water_stress_data
+            for stress_data in self.water_stress_data[location_name]
+        )
+        response_dict = {}
         total_consumption = 0
+
         for location_name in self.water_stress_data:
             for data in self.water_stress_data[location_name]:
-                response_list.append(
-                    {
+                key = data[field_name]
+
+                if key not in response_dict:
+                    response_dict[key] = {
                         "location": location_name,
                         f"{response_field_name}": data[field_name],
-                        "contribution": self.get_consumption_contribution(
-                            withdrawal=data["Waterwithdrawal"],
-                            discharge=data["Waterdischarge"],
-                            unit=data["Unit"],
-                            total_water_consumption=total_water_consumption[
-                                location_name
-                            ],
-                        ),
-                        "consumption": self.calculate_water_consumption(
-                            withdrawal=data["Waterwithdrawal"],
-                            discharge=data["Waterdischarge"],
-                            unit=data["Unit"],
-                        ),
-                        "water_type": data["Watertype"],
+                        "contribution": 0.0,
+                        "consumption": 0.0,
+                        "water_type": set(),
                         "Unit": "Megalitre",
                     }
-                )
-                total_consumption += self.calculate_water_consumption(
+
+                consumption = self.calculate_water_consumption(
                     withdrawal=data["Waterwithdrawal"],
                     discharge=data["Waterdischarge"],
                     unit=data["Unit"],
                 )
-        response_list.append(
+
+                contribution = (
+                    safe_percentage(consumption, total_water_consumption)
+                    if total_water_consumption
+                    else 0
+                )
+                contribution = (
+                    float(contribution)
+                    if isinstance(contribution, str)
+                    else contribution
+                )
+                consumption = (
+                    float(consumption)
+                    if isinstance(consumption, Decimal)
+                    else consumption
+                )
+
+                response_dict[key]["contribution"] += contribution
+                response_dict[key]["consumption"] += consumption
+                response_dict[key]["water_type"].add(data["Watertype"])
+
+                total_consumption += consumption
+        response_list = [
             {
-                "Total": total_consumption,
-                "Unit": "Megalitre",
+                **entry,
+                "contribution": format_decimal_places(entry["contribution"]),
+                "consumption": format_decimal_places(entry["consumption"]),
+                "water_type": list(entry["water_type"]),
             }
-        ) if response_list != [] else None
+            for entry in response_dict.values()
+        ]
+        if response_list:
+            response_list.append(
+                {
+                    "Total": format_decimal_places(total_consumption),
+                    "Unit": "Megalitre",
+                }
+            )
+
         return response_list
 
     def get_total_fresh_water_withdrawal_by_field_name(
@@ -224,40 +250,61 @@ class WaterAnalyseByDataPoints(APIView):
             else self.fresh_water_data
         )
 
-        response_list = []
         total_water_consumption = 0
+        response_dict = {}
+
         for location_name in self.fresh_water_data:
             for data in self.fresh_water_data[location_name]:
-                response_list.append(
-                    {
+                key = data[field_name]
+                if key not in response_dict:
+                    response_dict[key] = {
                         "location": location_name,
                         f"{response_field_name}": data[field_name],
-                        "contribution": self.get_consumption_contribution(
-                            withdrawal=data["withdrawal"],
-                            discharge=data["discharge"],
-                            unit=data["Unit"],
-                            total_water_consumption=self.total_water_consumption,
-                        ),
-                        "consumption": self.calculate_water_consumption(
-                            withdrawal=data["withdrawal"],
-                            discharge=data["discharge"],
-                            unit=data["Unit"],
-                        ),
-                        "water_type": data["Watertype"],
+                        "contribution": 0.0,
+                        "consumption": 0.0,
+                        "water_type": set(),
                         "Unit": "Megalitre",
                     }
-                )
-                total_water_consumption += self.calculate_water_consumption(
+
+                # Calculate values
+                consumption = self.calculate_water_consumption(
                     withdrawal=data["withdrawal"],
                     discharge=data["discharge"],
                     unit=data["Unit"],
                 )
-        response_list.append(
+
+                if isinstance(consumption, Decimal):
+                    consumption = float(consumption)
+
+                response_dict[key]["consumption"] += consumption
+                response_dict[key]["water_type"].add(data["Watertype"])
+
+                total_water_consumption += consumption
+
+        if total_water_consumption > 0:
+            for entry in response_dict.values():
+                entry["contribution"] = safe_percentage(
+                    entry["consumption"], total_water_consumption
+                )
+
+        response_list = [
             {
-                "Unit": "Megalitre",
-                "Total": total_water_consumption,
+                **entry,
+                "contribution": format_decimal_places(entry["contribution"]),
+                "consumption": format_decimal_places(entry["consumption"]),
+                "water_type": list(entry["water_type"]),
             }
-        ) if response_list != [] else None
+            for entry in response_dict.values()
+        ]
+
+        if response_list:
+            response_list.append(
+                {
+                    "Unit": "Megalitre",
+                    "Total": format_decimal_places(total_water_consumption),
+                }
+            )
+
         return response_list
 
     def convert_to_megalitres(self, value, unit):

@@ -38,6 +38,7 @@ from sustainapp.models import (
     TrackDashboard,
     CustomUser,
     Department,
+    MyGoalOrganization,
 )
 
 from django.db import migrations
@@ -100,7 +101,6 @@ class LocationAdmin(ClientFilterAdminMixin, admin.ModelAdmin):
 
 
 class UserorgAdmin(admin.ModelAdmin):
-
     list_display = ["id", "user"]
 
     class Media:
@@ -220,9 +220,22 @@ class BatchAdmin(admin.ModelAdmin):
     )
 
 
+# class MygoalAdmin(admin.ModelAdmin):
+#     list_display = ["id", "title", "deadline", "assigned_to", "completed"]
+#     list_filter = ("assigned_to", "completed", "deadline")
+
+
 class MygoalAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "deadline", "assigned_to", "completed"]
-    list_filter = ("assigned_to", "completed", "deadline")
+    list_display = [
+        "id",
+        "title",
+        "deadline",
+        "organization",
+        "created_by",
+        "status",
+    ]
+    list_filter = ("created_by",)
+    search_fields = ["title", "organization"]
 
 
 class TaskDashboardAdmin(admin.ModelAdmin):
@@ -449,10 +462,6 @@ class TrackDashboardAdmin(admin.ModelAdmin):
     list_display = ["id", "table_name", "report_name"]
 
 
-class TrackDashboardAdmin(admin.ModelAdmin):
-    list_display = ["id", "report_name"]
-
-
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ["name", "client"]
     search_fields = ["name"]
@@ -461,43 +470,43 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 UserExtendedModel = apps.get_model(settings.AUTH_USER_MODEL)
 
-admin.site.register(Regulation, RegulationAdmin),
-admin.site.register(Report, ReportAdmin),
-admin.site.register(AnalysisData2, AnalysisReportDataAdmin),
+(admin.site.register(Regulation, RegulationAdmin),)
+(admin.site.register(Report, ReportAdmin),)
+(admin.site.register(AnalysisData2, AnalysisReportDataAdmin),)
 # admin.site.register(UserExtendedModel, UserExtendedAdmin),
-admin.site.register(Batch, BatchAdmin),
-admin.site.register(Client, ClientAdmin),
-admin.site.register(User_client, User_clientAdmin),
-admin.site.register(RowDataBatch, RowDataBatchAdmin),
-admin.site.register(Companyactivities, CompanyactivitiesAdmin),
-admin.site.register(Scope, ScopeAdmin),
-admin.site.register(Task, TaskAdmin),
-admin.site.register(Sector, SectorAdmin),
-admin.site.register(Category, CategoryAdmin),
-admin.site.register(Source, SourceAdmin),
-admin.site.register(Bussinessrelationship, BussinessrelationshipAdmin),
-admin.site.register(Stakeholdergroup, StakeholdergroupAdmin),
-admin.site.register(Organization, OrganizationAdmin),
-admin.site.register(Corporateentity, CorporateentityAdmin),
-admin.site.register(Location, LocationAdmin),
-admin.site.register(Sdg, SdgAdmin),
-admin.site.register(Rating, RatingAdmin),
-admin.site.register(Framework, FrameworkAdmin),
-admin.site.register(Certification, CertificationAdmin),
-admin.site.register(Target, TargetAdmin),
-admin.site.register(Userorg, UserorgAdmin),
-admin.site.register(Mygoal, MygoalAdmin),
-admin.site.register(TaskDashboard, TaskDashboardAdmin),
-admin.site.register(ClientTaskDashboard, ClientTaskDashboardAdmin),
-admin.site.register(ZohoInfo, ZohoInfoAdmin),
-admin.site.register(TrackDashboard, TrackDashboardAdmin),
-admin.site.register(Department, DepartmentAdmin),
+(admin.site.register(Batch, BatchAdmin),)
+(admin.site.register(Client, ClientAdmin),)
+(admin.site.register(User_client, User_clientAdmin),)
+(admin.site.register(RowDataBatch, RowDataBatchAdmin),)
+(admin.site.register(Companyactivities, CompanyactivitiesAdmin),)
+(admin.site.register(Scope, ScopeAdmin),)
+(admin.site.register(Task, TaskAdmin),)
+(admin.site.register(Sector, SectorAdmin),)
+(admin.site.register(Category, CategoryAdmin),)
+(admin.site.register(Source, SourceAdmin),)
+(admin.site.register(Bussinessrelationship, BussinessrelationshipAdmin),)
+(admin.site.register(Stakeholdergroup, StakeholdergroupAdmin),)
+(admin.site.register(Organization, OrganizationAdmin),)
+(admin.site.register(Corporateentity, CorporateentityAdmin),)
+(admin.site.register(Location, LocationAdmin),)
+(admin.site.register(Sdg, SdgAdmin),)
+(admin.site.register(Rating, RatingAdmin),)
+(admin.site.register(Framework, FrameworkAdmin),)
+(admin.site.register(Certification, CertificationAdmin),)
+(admin.site.register(Target, TargetAdmin),)
+(admin.site.register(Userorg, UserorgAdmin),)
+(admin.site.register(MyGoalOrganization, MygoalAdmin),)
+(admin.site.register(TaskDashboard, TaskDashboardAdmin),)
+(admin.site.register(ClientTaskDashboard, ClientTaskDashboardAdmin),)
+(admin.site.register(ZohoInfo, ZohoInfoAdmin),)
+(admin.site.register(TrackDashboard, TrackDashboardAdmin),)
+(admin.site.register(Department, DepartmentAdmin),)
 
 # Clinet_admin site register
-client_admin_site.register(CustomUser, CustomUserAdmin),
-client_admin_site.register(Organization, OrganizationAdmin),
-client_admin_site.register(Corporateentity, CorporateentityAdmin),
-client_admin_site.register(Location, LocationAdmin),
+(client_admin_site.register(CustomUser, CustomUserAdmin),)
+(client_admin_site.register(Organization, OrganizationAdmin),)
+(client_admin_site.register(Corporateentity, CorporateentityAdmin),)
+(client_admin_site.register(Location, LocationAdmin),)
 # client_admin_site.register(Client, ClientAdmin),
 
 # client_admin_site.register(Client,ClientAdmin)

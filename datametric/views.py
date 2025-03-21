@@ -16,6 +16,7 @@ from logging import getLogger
 from datametric.View.Training_EmpPerfCareerDvlpmnt import (
     extract_from_diversity_employee,
 )
+from datametric.View.EmissionOzone import get_prev_form_data
 from common.utils.value_types import safe_divide
 from decimal import Decimal
 import traceback
@@ -24,6 +25,8 @@ from azurelogs.azure_log_uploader import AzureLogUploader
 from azurelogs.time_utils import get_current_time_ist
 from collections import OrderedDict
 from deepdiff import DeepDiff
+import time
+from datametric.utils.signal_utilities import climatiq_data_creation
 
 uploader = AzureLogUploader()
 
@@ -32,6 +35,7 @@ uploader = AzureLogUploader()
 #
 
 logger = getLogger("file")
+climatiq_logger = getLogger("climatiq_logger")
 
 
 def sanitize_ordered_dict(data):
@@ -60,10 +64,6 @@ def generate_text_pattern(data):
 
 
 def getLogDetails(user, field_group, form_data, diff_string):
-    print(user, " is the user")
-    orgs = user.orgs.first()
-    corps = user.corps.first()
-    print(orgs, " is the org")
     # Collect > Environment > Emissions > GHG Emission > Organisation > Corporate entity > Location > Year > Month > Scope > Category > Sub-category > Activity > Quantity > Unit
     # path_prefix - from field_group
     part_one = "Undefined Audit Log Prefix"
@@ -73,31 +73,26 @@ def getLogDetails(user, field_group, form_data, diff_string):
         field_group_submodule = field_group.meta_data["sub_module"]
         field_group_name = field_group.name
         part_one = f"Collect > {field_group_module} > {field_group_submodule} > {field_group_name}"
-        print(part_one, " is part_one")
     except Exception as e:
-        print(e)
+        # print(e)
         part_one = "Undefined Audit Log Prefix"
 
-    organization = user.orgs.first().name
-    corporate = user.corps.first().name
+    organization = form_data.get("organisation", "")
+    corporate = form_data.get("corporate", "")
+    location = form_data.get("location", "")
+    if not organization and not corporate and location:
+        organization = location.corporateentity.organization.name
+        corporate = location.corporateentity.name
 
-    part_two = f"{organization} > {corporate}"
-    print(part_two, " is part two")
-
-    # location, year, month from form_data
-    # print(form_data, ' is form_data')
-    try:
-        part_three = (
-            f"{form_data['location']} > {form_data['year']} > {form_data['month']}"
-        )
-        print(part_three, " is part three")
-    except Exception as e:
-        part_three = "No location/Year/Month found"
-    # Scope, category, sub-category, activity , quantity, unit
-
-    result_log = (
-        f"{part_one} > {part_two} > {part_three} > {diff_string['description']}"
+    part_two = (
+        f"{organization}"
+        + (f" > {corporate}" if corporate else "")
+        + (f" > {location}" if location else "")
+        + (f" > {form_data['year']}" if form_data.get("year") else "")
+        + (f" > {form_data['month']}" if form_data.get("month") else "")
     )
+
+    result_log = f"{part_one} > {part_two} > {diff_string['description']}"
     return result_log
 
 
@@ -112,9 +107,10 @@ def compare_objects(obj1, obj2):
     Returns:
         dict: A dictionary describing the status and differences found or error message
     """
+    # print("reached 106")
     status_string = "Row Update"
-    print(obj1, " is obj1 ^^^^^")
-    print(obj2, " is obj2 ^^^^^")
+    # print(obj1, " is obj1 ^^^^^")
+    # print(obj2, " is obj2 ^^^^^")
 
     try:
         # Check if inputs are valid lists
@@ -138,8 +134,10 @@ def compare_objects(obj1, obj2):
                 }
 
         # Handle case where obj1 is empty or has lesser length
-        if not obj1 or len(obj1) < len(obj2):
+        if not obj1 or len(obj1) < len(obj2) or obj1 == [{}]:
             added_rows = len(obj2) - len(obj1) if obj1 else len(obj2)
+            if obj1 == [{}]:
+                added_rows = len(obj2)
             if added_rows == 1:
                 return {
                     "status_string": "Row Create",
@@ -254,6 +252,9 @@ class FieldGroupListView(APIView):
                     year=year,
                     month=month,
                 )
+            elif path_slug == "gri-environment-air-quality-emission-ods":
+                resp_data["form_data"] = serialized_raw_responses.data
+                resp_data["pre_form_data"] = get_prev_form_data(locale, year)
             else:
                 resp_data["form_data"] = serialized_raw_responses.data
 
@@ -266,6 +267,7 @@ class CreateOrUpdateFieldGroup(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
+        start_time = time.time()
         serializer = UpdateResponseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
@@ -283,7 +285,7 @@ class CreateOrUpdateFieldGroup(APIView):
             field_group_submodule = field_group.meta_data["sub_module"]
             field_group_name = f"{field_group_module}-{field_group_submodule}"
         except Exception as e:
-            print(e)
+            # print(e)
             field_group_name = "Missing Audit_log_prefix"
         # location = validated_data["location"]
         year = validated_data["year"]
@@ -293,7 +295,7 @@ class CreateOrUpdateFieldGroup(APIView):
         organisation = validated_data.get("organisation", None)
         corporate = validated_data.get("corporate", None)
         locale = validated_data.get("location", None)
-        print(locale, " is the location")
+        # print(locale, " is the location")
         location_fetch = Location.objects.filter(name=locale).first()
         if location_fetch:
             corporate_fetch = location_fetch.corporateentity
@@ -301,7 +303,7 @@ class CreateOrUpdateFieldGroup(APIView):
         else:
             corporate_fetch = corporate
             organisation_fetch = organisation
-        print(location_fetch)
+        # print(location_fetch)
         user_instance: CustomUser = self.request.user
         client_instance = user_instance.client
 
@@ -330,9 +332,16 @@ class CreateOrUpdateFieldGroup(APIView):
                     "user": user_instance,
                 },
             )
+            if created or raw_response is None:
+                # print("A new RawResponse was created.")
+                sanitized_result = sanitize_ordered_dict(raw_response.data)
+                diff_string = compare_objects([{}], form_data)
+            else:
+                # print("The RawResponse already existed.")
+                sanitized_result = sanitize_ordered_dict(raw_response.data)
+                diff_string = compare_objects(sanitized_result, form_data)
             # Sanitize the data
-            sanitized_result = sanitize_ordered_dict(raw_response.data)
-            diff_string = compare_objects(sanitized_result, form_data)
+
             # print(diff_string,' is the diffstring')
             # print(form_data, ' is form data')
             action_type = "Row create"
@@ -349,13 +358,17 @@ class CreateOrUpdateFieldGroup(APIView):
             time_now = get_current_time_ist()
             role = user_instance.custom_role
             # first_item = form_data[0]  # Get the first dictionary
-            print(diff_string)
+            # print(diff_string)
             event_details = diff_string["status_string"]
             field_group_obj = FieldGroup.objects.filter(path=path_ins).first()
             log_text = getLogDetails(
                 user_instance, field_group_obj, validated_data, diff_string
             )
             orgnz = user_instance.orgs.first().name
+            climatiq_logger.info(
+                f"Time taken to create or update: {time.time() - start_time}"
+            )
+            log_start = time.time()
             log_data = [
                 {
                     "EventType": "Collect",
@@ -372,6 +385,11 @@ class CreateOrUpdateFieldGroup(APIView):
             ]
             # orgs = user_instance.orgs
             uploader.upload_logs(log_data)
+            climatiq_logger.info(
+                f"Time taken to upload logs: {time.time() - log_start}"
+            )
+            if raw_response.data != [{}]:
+                climatiq_data_creation(raw_response=raw_response)
             return Response(
                 {"message": "Form data saved successfully."},
                 status=status.HTTP_200_OK,

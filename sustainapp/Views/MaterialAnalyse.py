@@ -424,8 +424,8 @@ class GetMaterialAnalysis(APIView):
                 type_of_recycled_material = data["Typeofrecycledmaterialused"]
                 recycled_input_material_used = data["Amountofrecycledinputmaterialused"]
                 recycled_input_material_used_unit = data["Unit"]
-                material_recycled = data["Amountofmaterialrecycled"]
                 material_recycled_unit = data["Unit2"]
+                total_weight = data.get("Totalweight", "")
                 try:
                     if self.check_unit_categories(
                         recycled_input_material_used_unit, material_recycled_unit
@@ -438,8 +438,8 @@ class GetMaterialAnalysis(APIView):
                         Decimal(recycled_input_material_used),
                         from_unit=recycled_input_material_used_unit,
                     )
-                    material_recycled = self.convert_to_standard(
-                        Decimal(material_recycled), from_unit=material_recycled_unit
+                    total_weight = self.convert_to_standard(
+                        Decimal(total_weight), from_unit=material_recycled_unit
                     )
                 except ValueError:
                     # If total_waste cannot be converted to float, skip this data entry
@@ -449,7 +449,7 @@ class GetMaterialAnalysis(APIView):
                         type_of_recycled_material,
                         self.unit_categories[recycled_input_material_used_unit],
                     )
-                ] += material_recycled
+                ] += total_weight
 
                 key = (
                     type_of_recycled_material,

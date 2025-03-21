@@ -34,7 +34,7 @@ admin.site.register(DataMetric, DataMetricAdmin)
 class PathAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ("id", "name", "slug")
     actions = ["export_as_csv"]
-    #* Add search fields
+    # * Add search fields
     search_fields = ["slug"]
 
 
@@ -71,7 +71,6 @@ class DataPointAdmin(admin.ModelAdmin):
         "month",
     )
     search_fields = ["path__slug", "metric_name", "raw_response__id", "index"]
-    list_filter = ("index",)
 
 
 admin.site.register(DataPoint, DataPointAdmin)

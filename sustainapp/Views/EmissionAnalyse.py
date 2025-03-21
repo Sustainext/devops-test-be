@@ -1,15 +1,21 @@
 from rest_framework.views import APIView
-from collections import defaultdict
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
     calculate_scope_contribution,
     get_top_emission_by_scope,
+    disclosure_analyze_305_5,
+    ghg_emission_intensity,
+)
+from datametric.models import DataPoint
+from datametric.utils.analyse import (
+    filter_by_start_end_dates,
+    get_raw_response_filters,
+    set_locations_data,
 )
 
 
@@ -20,6 +26,25 @@ class GetEmissionAnalysis(APIView):
         "gri-environment-emissions-301-a-scope-2": "Scope 2",
         "gri-environment-emissions-301-a-scope-3": "Scope 3",
     }
+
+    def __init__(self):
+        super().__init__()
+        self.slugs = {
+            0: "gri-environment-emissions-GHG-emission-reduction-initiatives",
+            1: "gri-environment-emissions-GHG emission-intensity",
+        }
+
+    def set_data_points(self):
+        self.data_points = (
+            DataPoint.objects.filter(path__slug__in=list(self.slugs.values()))
+            .filter(client_id=self.request.user.client.id)
+            .filter(
+                get_raw_response_filters(
+                    corporate=self.corporate, organisation=self.organization
+                )
+            )
+            .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
+        )
 
     def get(self, request, format=None):
         """
@@ -38,6 +63,14 @@ class GetEmissionAnalysis(APIView):
         corporate = serializer.validated_data.get("corporate")  # * This is optional
         organisation = serializer.validated_data["organisation"]
         location = serializer.validated_data.get("location")  # * This is optional
+        self.organization = organisation
+        self.corporate = corporate
+        self.start = start
+        self.end = end
+        if self.corporate:
+            self.organization = None
+
+        self.set_data_points()
 
         # * Set Locations Queryset
         locations = set_locations_data(
@@ -47,14 +80,26 @@ class GetEmissionAnalysis(APIView):
         )
 
         # * Get top emissions by Scope
-        top_emission_by_scope, top_emission_by_source, top_emission_by_location = (
-            get_top_emission_by_scope(
-                locations=locations,
-                user=self.request.user,
-                start=start,
-                end=end,
-                path_slug=self.path_slug,
-            )
+        (
+            top_emission_by_scope,
+            top_emission_by_source,
+            top_emission_by_location,
+            gases_data,
+        ) = get_top_emission_by_scope(
+            locations=locations,
+            user=self.request.user,
+            start=start,
+            end=end,
+            path_slug=self.path_slug,
+        )
+        self.top_emission_by_scope = top_emission_by_scope
+        disclosure_analyze_305_5_data = disclosure_analyze_305_5(
+            self.data_points.filter(path__slug=self.slugs[0])
+        )
+        ghg_emission_intensity_data = ghg_emission_intensity(
+            self.data_points.filter(path__slug=self.slugs[1]),
+            top_emission_by_scope,
+            gases_data,
         )
 
         # * Prepare response data
@@ -74,6 +119,8 @@ class GetEmissionAnalysis(APIView):
         response_data["top_5_emisson_by_location"] = response_data[
             "all_emission_by_location"
         ][0:5]
+        response_data["disclosure_analyze_305_5"] = disclosure_analyze_305_5_data
+        response_data["ghg_emission_intensity"] = ghg_emission_intensity_data
         response_data["selected_org"] = organisation.name
         response_data["selected_corporate"] = corporate.name if corporate else None
         response_data["selected_location"] = location.name if location else None

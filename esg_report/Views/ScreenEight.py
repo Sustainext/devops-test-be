@@ -37,6 +37,8 @@ class ScreenEightAPIView(APIView):
             )
         serializer.is_valid(raise_exception=True)
         serializer.save(report=report)
+        report.last_updated_by = request.user
+        report.save()
         response_data.update(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -1,16 +1,11 @@
-from django.contrib.auth.views import PasswordResetView
-from django.shortcuts import render
 from django.conf import settings
 from django.db.models import F
-from django.conf import settings
 from rest_framework import viewsets
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework.generics import ListAPIView
 from django.http import JsonResponse
 from rest_framework.response import Response
-from django.core.cache import cache
 from decimal import *
-from rest_framework.authentication import TokenAuthentication
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from authentication.models import CustomUser
 from sustainapp.models import (
     Organization,
@@ -18,10 +13,8 @@ from sustainapp.models import (
     Location,
     Stakeholdergroup,
     Stakeholder,
-    Bussinessrelationship,
     Task,
     Userorg,
-    Scope,
     RowDataBatch,
     Batch,
     Framework,
@@ -35,7 +28,6 @@ from sustainapp.models import (
     Target,
     Regulation,
 )
-import csv
 from rest_framework.permissions import IsAuthenticated
 
 # from django.contrib.auth import get_user_model
@@ -43,13 +35,9 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.core.exceptions import (
     ValidationError,
-    MultipleObjectsReturned,
-    PermissionDenied,
 )
 
-from django.utils import timezone
 from datetime import date
-from itertools import groupby
 
 from sustainapp.serializers import (
     OrganizationSerializer,
@@ -57,50 +45,26 @@ from sustainapp.serializers import (
     StakeholdergroupSerializer,
     StakeholderSerializer,
     TaskSerializer,
-    UserSerializer,
     OrganizationOnlySerializer,
     CorporateentityOnlySerializer,
     ClientSerializer,
-    User_clientSerializer,
-    RowDataBatchSerializer,
-    RowDataSerializer,
     BatchSerializer,
     MygoalSerializer,
     TaskDashboardSerializer,
     UserorgSerializer,
 )
 
-from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework import serializers
-import requests
-from requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
-import json
 from .utils import (
-    validation_corporate_input,
     check_same_client,
-    org_user,
-    location_organization,
-    org_from_location,
     handle_none,
-    validation_location_input,
     validation_org_input,
     client_request_data,
     client_request_data_modelviewset,
 )
-from django.db.models import Sum, Count, Subquery, F, Q
-from django.http import HttpResponse
-from dj_rest_auth.views import LoginView
-from rest_framework_simplejwt.tokens import RefreshToken
-
-
-from rest_framework.exceptions import (
-    MethodNotAllowed,
-    ValidationError as DRFValidationError,
-)
-from rest_framework.generics import CreateAPIView
+from django.db.models import Sum, Q
 
 # Email notification
 # from django.core.mail import send_mail
@@ -108,35 +72,8 @@ from rest_framework.generics import CreateAPIView
 # from django.template.loader import render_to_string
 
 import logging
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
 import copy
 
-# Reports
-from .serializers import (
-    ReportSerializer,
-    ReportRetrieveSerializer,
-    AnalysisData2Serializer,
-    AnalysisDataResponseSerializer,
-    OrglogoSerializer,
-    ReportUpdateSerializer,
-    ReportUpdateSerializer,
-)
-from rest_framework import generics
-from .models import Report, AnalysisData2
-from django.core.serializers.json import DjangoJSONEncoder
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-from .report import *
-from django.views.generic import View
-from django.core.files.base import ContentFile
-import os
-from rest_framework.parsers import MultiPartParser, JSONParser
-import time
-from django.contrib.auth.decorators import login_required
 from authentication.models import LoginCounter
 
 # canada bill s-211 Annual report started from here
@@ -379,16 +316,23 @@ def UserOrgDetails(request):
         )
 
 
-class StructureViewset(viewsets.ModelViewSet):
+class StructureList(ListAPIView):
     """API for getting Organization structure"""
 
-    queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+        organization = user.orgs.all().prefetch_related("corporatenetityorg")
+        return organization
+
     def list(self, request):
-        queryset = Organization.objects.filter(client_id=request.client)
-        serializer = OrganizationSerializer(queryset, many=True)
+        queryset = self.get_queryset()
+        serializer = OrganizationSerializer(
+            queryset, many=True, context={"request": self.request}
+        )
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -618,7 +562,6 @@ def corporateonly(request):
 
 
 class LocationViewset(viewsets.ModelViewSet):
-
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
     permission_classes = [IsAuthenticated]
@@ -708,7 +651,8 @@ def locationview(request):
 def corporategetonly(request):
     try:
         log_call_start()
-        corporate = Corporateentity.objects.filter(client_id=request.client)
+        corps = request.user.corps.all()
+        corporate = Corporateentity.objects.filter(id__in=corps)
         corporate_data = CorporateentityOnlySerializer(corporate, many=True).data
         return Response(corporate_data)
     except Exception as e:
@@ -1296,9 +1240,9 @@ class ColourViewset(viewsets.ModelViewSet):
                     year,
                 )
                 # FOR EVERY MONTH IN BATCH DB WE ARE RETURNING 1
-                result["months"][
-                    each_data["month"]
-                ] = 1  # SHOULD THIS BE CHANGED ( should handle co2e)
+                result["months"][each_data["month"]] = (
+                    1  # SHOULD THIS BE CHANGED ( should handle co2e)
+                )
             logger.info(
                 "Received request for ColourViewset list with location: %s and year: %s",
                 location,

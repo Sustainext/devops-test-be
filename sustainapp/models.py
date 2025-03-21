@@ -19,7 +19,7 @@ from sustainapp.Validators.LocationValidators import (
 )
 from sustainapp.Managers.ClientFiltering import ClientFiltering
 from functools import cached_property
-
+from common.models.HistoricalModel import HistoricalModelMixin
 # Create your models here.
 
 
@@ -161,7 +161,7 @@ class Organization(models.Model):
         related_name="client_Org",
         default=Client.get_default_client,
     )
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, db_index=True)
     type_corporate_entity = models.CharField(max_length=256, null=True, blank=True)
     owner = models.CharField(max_length=256, null=True, blank=True)
     location_of_headquarters = models.CharField(max_length=256, null=True, blank=True)
@@ -323,7 +323,7 @@ class Corporateentity(models.Model):
         related_name="corporatenetityclient",
         default=Client.get_default_client,
     )
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, db_index=True)
     corporatetype = models.CharField(max_length=256, null=True, blank=True)
     ownershipnature = models.CharField(max_length=256, null=True, blank=True)
     location_headquarters = models.CharField(max_length=256, null=True, blank=True)
@@ -413,7 +413,7 @@ class Location(models.Model):
         related_name="locationclient",
         default=Client.get_default_client,
     )
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, db_index=True)
     phone = models.CharField(max_length=256, null=True, blank=True)
     mobile = models.CharField(max_length=256, null=True, blank=True)
     website = models.CharField(max_length=256, null=True, blank=True)
@@ -932,6 +932,13 @@ class Report(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reports"
     )
+    last_updated_by = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        related_name="report_updated_by",
+        null=True,
+        blank=True,
+    )
     org_logo = models.ImageField(upload_to=get_upload_path, blank=True, null=True)
     about_the_organization = models.TextField(null=True, blank=True)
     roles_and_responsibilities = models.TextField(null=True, blank=True)
@@ -1065,6 +1072,7 @@ class ClientTaskDashboard(AbstractModel):
     activity = models.CharField(max_length=2048, null=True, blank=True)
     region = models.CharField(max_length=1024, null=True, blank=True)
     comments_assignee = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     objects = ClientFiltering()
 
 
@@ -1111,3 +1119,43 @@ class Department(AbstractModel):
 
     def __str__(self):
         return f"{self.client} - {self.name}"
+
+
+class MyGoalOrganization(AbstractModel, HistoricalModelMixin):
+    """Creating a relation for My Goals in SustainextHQ/Dashboard"""
+
+    status_choices = [
+        ("in_progress", "In Progress"),
+        ("completed", "Completed"),
+        ("not_started", "Not Started"),
+    ]
+
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        related_name="mygoal_client",
+        default=Client.get_default_client,
+    )
+    title = models.CharField(max_length=1024)
+    description = models.TextField(null=True, blank=True)
+    deadline = models.DateField(
+        help_text="Enter only future dates",
+        validators=[validate_future_date],
+    )
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name="mygoal_organization",
+    )
+    created_by = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="mygoal_created_by",
+    )
+    status = models.CharField(
+        max_length=20, choices=status_choices, default="not_started"
+    )
+
+    class Meta:
+        verbose_name = "My Goal"
+        verbose_name_plural = "My Goals"

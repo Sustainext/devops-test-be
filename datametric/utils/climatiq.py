@@ -14,31 +14,36 @@ import uuid
 from datetime import datetime
 from azurelogs.time_utils import get_current_time_ist
 from azurelogs.azure_log_uploader import AzureLogUploader
+import time
 
 
 uploader = AzureLogUploader()
 
 logger = logging.getLogger("django")
+climatiq_logger = logging.getLogger("climatiq_logger")
+
 
 def process_dynamic_response(response):
     output = []
-    
+
     for entry in response:
         # Iterate dynamically through all keys and values in the dictionary
         for key, value in entry.items():
             if isinstance(value, dict):  # Handle nested dictionaries
                 output.append(f"{key.capitalize()}:")
                 for nested_key, nested_value in value.items():
-                    output.append(f"  {nested_key.replace('_', ' ').capitalize()}: {nested_value}")
+                    output.append(
+                        f"  {nested_key.replace('_', ' ').capitalize()}: {nested_value}"
+                    )
             elif isinstance(value, list):  # Handle lists if present
                 output.append(f"{key.capitalize()}: {', '.join(map(str, value))}")
             else:  # Handle simple key-value pairs
                 output.append(f"{key.replace('_', ' ').capitalize()}: {value}")
-    
+
     # Add current date information
     current_date = datetime.now().strftime("%A, %B %d, %Y, %I %p %Z")
     output.append(f"Current Date: {current_date}")
-    
+
     # Join the output with vertical splitters
     return " | ".join(output)
 
@@ -57,6 +62,7 @@ class Climatiq:
         self.locale = raw_response.locale
         self.month = raw_response.month
         self.year = raw_response.year
+        self.index_mapping_to_emissons = {}
 
     def send_error_email(self, error_message):
         """
@@ -90,7 +96,6 @@ class Climatiq:
             "Quantity",
         ]
         # mapping the indexes to the emission from raw response
-        self.index_mapping_to_emissons = {}
         for index, emission_data in enumerate(data_to_process):
             row_type = emission_data["Emission"].get("rowType")
             emission = emission_data["Emission"]
@@ -235,8 +240,10 @@ class Climatiq:
         """
         Returns the response from the climatiq api.
         """
+        start_time = time.time()
         CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
         payload = self.payload_preparation_for_climatiq_api()
+        print(json.dumps(payload))
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
         logger.info("Requesting Climatiq API")
         # print(payload, ' is payload for Climatiq')
@@ -255,7 +262,6 @@ class Climatiq:
                 headers=headers,
             )
             response_data = response.json()
-            print('&&&&SD&&SD', response_data)
             if response.status_code == 400:
                 self.log_error_climatiq_api(response_data=response_data)
             else:
@@ -263,7 +269,8 @@ class Climatiq:
                     response_data=response_data, payload=payload
                 )
                 cleaned_response_data = self.clean_response_data(
-                    response_data=response_data
+                    batch_raw_response=self.raw_response.data[i : i + batch_size],
+                    response_data=response_data,
                 )
                 all_response_data.extend(cleaned_response_data)
 
@@ -271,70 +278,166 @@ class Climatiq:
         self.update_row_type_in_raw_response(all_response_data)
         # print(all_response_data, ' is the response from climatiq')
         log_data = process_dynamic_response(all_response_data)
-
+        climatiq_logger.info(
+            f"Request to Climatiq API took {time.time() - start_time} seconds"
+        )
 
         log_data = [
-        {
-            "EventType": "Collect",
-            "TimeGenerated": time_now,
-            "EventDetails": "Emissions",
-            "Action": "Calculated",
-            "Status": "Success",
-            "UserEmail": self.user.email,
-            "UserRole": self.user.custom_role.name,
-            "Logs": log_data,
-            "Organization": org,
-            "IPAddress": "192.168.1.1",
-        },
+            {
+                "EventType": "Collect",
+                "TimeGenerated": time_now,
+                "EventDetails": "Emissions",
+                "Action": "Calculated",
+                "Status": "Success",
+                "UserEmail": self.user.email,
+                "UserRole": self.user.custom_role.name,
+                "Logs": log_data,
+                "Organization": org,
+                "IPAddress": "192.168.1.1",
+            },
         ]
         # orgs = user_instance.orgs
         uploader.upload_logs(log_data)
+        climatiq_logger.info(f"Time took to upload logs: {time.time() - start_time}")
         return all_response_data
 
     def update_row_type_in_raw_response(self, response_data):
         """
         Updates rowType to 'calculated' in raw_response.data for successfully calculated emissions.
+        Tracks the number of comparisons and matches for each index.
         """
-        for emission_data in response_data:
-            for idx, object_emission in self.index_mapping_to_emissons.items():
-                # Check for equality across specified fields to identify a matching item
-                emission = object_emission.get("Emission", {})
-                if (
-                    emission.get("Category") == emission_data.get("Category")
-                    and emission.get("Subcategory") == emission_data.get("SubCategory")
-                    and emission.get("Activity") == emission_data.get("Activity")
-                    and emission.get("activity_id")
-                    == emission_data.get("emission_factor").get("activity_id")
-                    and emission.get("Quantity") == emission_data.get("Quantity")
-                    and emission.get("Unit") == emission_data.get("Unit")
-                    and emission.get("Unit2") == emission_data.get("Unit2")
-                    and emission.get("Quantity2") == emission_data.get("Quantity2")
-                ):
-                    # Update rowType to 'calculated' and break out of the loop once matched
-                    # emission["rowType"] = "calculated"
-                    self.raw_response.data[idx]["Emission"]["rowType"] = "calculated"
-                    if object_emission.get("id"):
-                        ctd = ClientTaskDashboard.objects.get(
-                            id=object_emission.get("id")
-                        )
-                        ctd.roles = 4
-                        ctd.task_status = "completed"
-                        ctd.save()
-                    del self.index_mapping_to_emissons[idx]
-                    break  # Stop after finding the first match for efficiency
+        start_time = time.time()
+        # Define the fields to compare
+        fields_to_compare = [
+            ("Category", "Category"),
+            ("Subcategory", "SubCategory"),
+            ("Activity", "Activity"),
+            ("activity_id", "emission_factor.activity_id"),
+            ("Quantity", "Quantity"),
+            ("Unit", "Unit"),
+            ("Unit2", "Unit2"),
+            ("Quantity2", "Quantity2"),
+        ]
 
+        # Initialize a dictionary to track comparison counts
+        comparison_results = {}
+
+        # Helper function to normalize values for comparison
+        def normalize(value):
+            if value is None:
+                return ""
+            if isinstance(value, (int, float)):
+                return str(value)
+            if isinstance(value, str):
+                return value.strip()
+            return str(value)
+
+        climatiq_logger.info(
+            f"Length of response_data: {len(response_data)}, Length of self.index_mapping_to_emissons: {len(self.index_mapping_to_emissons)}"
+        )
+        for emission_data in response_data:
+            for idx, object_emission in list(self.index_mapping_to_emissons.items()):
+                emission = object_emission.get("Emission", {})
+
+                # Initialize counts for this index if not present
+                if idx not in comparison_results:
+                    comparison_results[idx] = {
+                        "total_comparisons": 0,
+                        "matches": 0,
+                        "mismatches": 0,
+                    }
+
+                # Count the comparison
+                comparison_results[idx]["total_comparisons"] += 1
+
+                matches = True
+
+                for field1, field2 in fields_to_compare:
+                    value1 = normalize(emission.get(field1))
+                    value2 = normalize(self._get_nested_value(emission_data, field2))
+
+                    # Treat empty strings and None as equivalent
+                    if (
+                        value1 == ""
+                        and value2 is None
+                        or value2 == ""
+                        and value1 is None
+                    ):
+                        continue
+
+                    # Compare values
+                    if value1 != value2:
+                        matches = False
+
+                if matches:
+                    # Update rowType to 'calculated'
+                    self.raw_response.data[idx]["Emission"]["rowType"] = "calculated"
+
+                    # Update ClientTaskDashboard if 'id' is present
+                    if object_emission.get("id"):
+                        try:
+                            ctd = ClientTaskDashboard.objects.get(
+                                id=object_emission.get("id")
+                            )
+                            ctd.roles = 4
+                            ctd.task_status = "completed"
+                            ctd.save()
+                        except Exception as e:
+                            climatiq_logger.error(
+                                f"Failed to update ClientTaskDashboard for ID {object_emission.get('id')}: {e}"
+                            )
+
+                    # Remove the processed item
+                    del self.index_mapping_to_emissons[idx]
+
+                    # Increment match count
+                    comparison_results[idx]["matches"] += 1
+
+                else:
+                    # Increment mismatch count and log details
+                    comparison_results[idx]["mismatches"] += 1
+
+        # Update the database with the modified raw_response
         RawResponse.objects.filter(id=self.raw_response.id).update(
             data=self.raw_response.data
         )
-        # Save the modified raw_response
-        # self.raw_response.save()
+        end_time = time.time()
 
-    def clean_response_data(self, response_data):
+        # Log the summary
+        climatiq_logger.info(
+            f"Time took to compare: {round((end_time - start_time), 4)} seconds"
+        )
+
+        # Return the dictionary with comparison stats
+        return comparison_results
+
+    def _get_nested_value(self, data, key):
+        """
+        Helper method to get nested dictionary values using dot notation.
+        Handles missing keys gracefully.
+        """
+        keys = key.split(".")
+        value = data
+        try:
+            for k in keys:
+                if isinstance(value, dict) and k in value:
+                    value = value[k]
+                else:
+                    return None
+            return value
+        except Exception as e:
+            climatiq_logger.error(
+                f"Failed to access nested key '{key}' in data: {data}. Error: {e}"
+            )
+            return None
+
+    def clean_response_data(self, batch_raw_response, response_data):
         """
         Cleans the response data from the climatiq api.
+        TODO: Create a separate method for adding data.
         """
         cleaned_response_data = []
-        self.refined_raw_resp = self.neglect_missing_row(self.raw_response.data)
+        self.refined_raw_resp = self.neglect_missing_row(batch_raw_response)
         for index, emission_data in enumerate(response_data["results"]):
             if "error" not in emission_data.keys():
                 emission_data["Category"] = self.refined_raw_resp[index]["Emission"][
@@ -405,8 +508,9 @@ class Climatiq:
             return round(value, decimal_point)
 
     def create_emission_analysis(self, response_data):
+        emission_analyse_bulk_list = []
         for index, emission in enumerate(response_data):
-            emission_analyse, _ = EmissionAnalysis.objects.update_or_create(
+            emission_analyse = EmissionAnalysis(
                 raw_response=self.raw_response,
                 index=index,
                 year=self.raw_response.year,
@@ -414,44 +518,42 @@ class Climatiq:
                 scope=(
                     "-".join(self.raw_response.path.slug.split("-")[-2:])
                 ).capitalize(),
-                defaults={
-                    "emission_id": emission["emission_factor"]["id"],
-                    "activity_id": emission["emission_factor"]["activity_id"],
-                    "co2e_total": self.round_decimal_or_nulls(
-                        emission["co2e"], 20
-                    ),  # * This can also be None
-                    "co2": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["co2"], 20
-                    ),
-                    "n2o": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["n2o"], 20
-                    ),
-                    "co2e_other": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["co2e_other"], 20
-                    ),  # * This can also be None
-                    "ch4": self.round_decimal_or_nulls(
-                        emission["constituent_gases"]["ch4"], 20
-                    ),
-                    "calculation_method": emission["co2e_calculation_method"],
-                    "category": emission["Category"],
-                    "subcategory": emission["SubCategory"],
-                    "activity": f"{emission['Activity'].replace('(', '').replace(')', '')} - {emission['emission_factor']['region']} - {emission['emission_factor']['year']} - {emission['emission_factor']['source_lca_activity']}",
-                    "region": emission["emission_factor"]["region"],
-                    "name": emission["emission_factor"]["name"],
-                    "unit": emission["activity_data"]["activity_unit"],
-                    "consumption": self.round_decimal_or_nulls(
-                        emission["activity_data"]["activity_value"]
-                    ),
-                    "unit1": emission.get("Unit"),
-                    "unit2": emission.get("Unit2"),
-                    "quantity": self.round_decimal_or_nulls(emission.get("Quantity")),
-                    "quantity2": self.round_decimal_or_nulls(emission.get("Quantity2")),
-                    "type_of": emission["Activity"].split("-")[-1].strip(),
-                    "unique_id": emission.get("unique_id"),
-                },
+                emission_id=emission["emission_factor"]["id"],
+                activity_id=emission["emission_factor"]["activity_id"],
+                co2e_total=self.round_decimal_or_nulls(
+                    emission["co2e"], 20
+                ),  # * This can also be None
+                co2=self.round_decimal_or_nulls(
+                    emission["constituent_gases"]["co2"], 20
+                ),
+                n2o=self.round_decimal_or_nulls(
+                    emission["constituent_gases"]["n2o"], 20
+                ),
+                co2e_other=self.round_decimal_or_nulls(
+                    emission["constituent_gases"]["co2e_other"], 20
+                ),  # * This can also be None
+                ch4=self.round_decimal_or_nulls(
+                    emission["constituent_gases"]["ch4"], 20
+                ),
+                calculation_method=emission["co2e_calculation_method"],
+                category=emission["Category"],
+                subcategory=emission["SubCategory"],
+                activity=f"{emission['Activity'].replace('(', '').replace(')', '')} - {emission['emission_factor']['region']} - {emission['emission_factor']['year']} - {emission['emission_factor']['source_lca_activity']}",
+                region=emission["emission_factor"]["region"],
+                name=emission["emission_factor"]["name"],
+                unit=emission["activity_data"]["activity_unit"],
+                consumption=self.round_decimal_or_nulls(
+                    emission["activity_data"]["activity_value"]
+                ),
+                unit1=emission.get("Unit"),
+                unit2=emission.get("Unit2"),
+                quantity=self.round_decimal_or_nulls(emission.get("Quantity")),
+                quantity2=self.round_decimal_or_nulls(emission.get("Quantity2")),
+                type_of=emission["Activity"].split("-")[-1].strip(),
+                unique_id=emission.get("unique_id"),
             )
-            emission_analyse.save()
-            # ? What should be filtering factor for update_or_create? Emissions?
+            emission_analyse_bulk_list.append(emission_analyse)
+        EmissionAnalysis.objects.bulk_create(emission_analyse_bulk_list)
 
     def modify_raw_response_with_uuid_and_scope(self):
         """
@@ -541,7 +643,7 @@ class Climatiq:
         )
         # Update or create the data point
         try:
-            datapoint, created = DataPoint.objects.update_or_create(
+            datapoint = DataPoint.objects.create(
                 path=path_new,
                 raw_response=self.raw_response,
                 response_type=ARRAY_OF_OBJECTS,
@@ -553,15 +655,9 @@ class Climatiq:
                 user_id=self.user.id,
                 client_id=self.user.client.id,
                 metric_name=datametric.name,
-                defaults={
-                    "json_holder": response_data,
-                },
+                json_holder=response_data,
             )
-            if created:
-                datapoint.save()
-            else:
-                print(datapoint.id, datapoint.metric_name, " is the saved datapoint")
-                print("datapoint updated")
+            datapoint.save()
             self.create_emission_analysis(response_data=response_data)
         except Exception as e:
             print(f"An error occurred while creating or updating the data point: {e}")
