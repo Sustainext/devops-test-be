@@ -120,6 +120,16 @@ class ScreenTwelve(AbstractModel, HistoricalModelMixin):
         null=True,
         help_text="Statement about company's biogenic CO2 emissions 305 3c",
     )
+    consolidation = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Statement about company's consolidation",
+    )
+    base_year = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Statement about company's base year",
+    )
 
     class Meta:
         verbose_name = "Screen Twelve"
