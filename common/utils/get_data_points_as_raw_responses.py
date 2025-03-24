@@ -1,13 +1,18 @@
 from collections import defaultdict
+from common.utils.data_point_cache import get_data_point_cache
+from datametric.models import DataPoint
 
 
 def collect_data_by_raw_response_and_index(data_points):
     # Create a dictionary where the key is raw_response and the value is another dictionary
     # which maps index to a dictionary of data_metric and value pairs
     raw_response_index_map = defaultdict(dict)
+    data_points_ids = [dp.id for dp in data_points.only("id")]
 
     # Iterate over the list of data points
-    for dp in data_points:
+    for dp in data_points_ids:
+        # Get the data point from cache if it exists
+        dp = get_data_point_cache(dp.id) or DataPoint.objects.get(id=dp)
         raw_response = dp.raw_response.id
         index = dp.index
         data_metric = dp.data_metric.name
