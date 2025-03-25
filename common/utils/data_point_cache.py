@@ -1,5 +1,8 @@
 from django.core.cache import cache
 from datametric.models import DataPoint
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def set_data_point_cache(data_point):

@@ -379,6 +379,7 @@ if DEVELOPMENT_MODE:
     ] + MIDDLEWARE
     STATIC_URL = "/static/"
     STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+    CELERY_TASK_ALWAYS_EAGER = os.getenv("CELERY_TASK_ALWAYS_EAGER", False) == "True"
 
 sentry_sdk.init(
     dsn=SENTRY_KEY,
