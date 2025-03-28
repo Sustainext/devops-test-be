@@ -64,7 +64,7 @@ from .utils import (
     client_request_data_modelviewset,
 )
 from django.db.models import Sum, Q
-
+from django.db import transaction
 # Email notification
 # from django.core.mail import send_mail
 # from django.conf import settings
@@ -383,15 +383,16 @@ class CreateOrganization(generics.CreateAPIView):
     serializer_class = OrganizationSerializer
 
     def perform_create(self, serializer):
-        organization = serializer.save(client=self.request.client)
+        with transaction.atomic():
+            organization = serializer.save(client=self.request.user.client)
 
-        # Link the organization to the user using the ManyToMany field on the user model.
-        self.request.user.orgs.add(organization)
+            # Link the organization to the user using the ManyToMany field on the user model.
+            self.request.user.orgs.add(organization)
 
-        # Link the organization with the Userorg instance.
-        user_org, created = Userorg.objects.get_or_create(user=self.request.user)
-        user_org.organization.add(organization)
-        user_org.save()
+            # Link the organization with the Userorg instance.
+            user_org, created = Userorg.objects.get_or_create(user=self.request.user)
+            user_org.organization.add(organization)
+            user_org.save()
 
 class CorporateViewset(viewsets.ModelViewSet):
     """Endpoints for Corporate"""
@@ -416,9 +417,6 @@ class CorporateViewset(viewsets.ModelViewSet):
         return super().perform_destroy(instance)
 
     def update(self, request, *args, **kwargs):
-        """Adding a temporary fix for the error on the TID-1080 Where they are not able to create an corporate as the front end is
-        sending the framework as "GRI". Now when front end sends the framework as "GRI" it will search for "GRI: With reference to" and add it
-        TODO: This needs to be fixed in the future. NEED TO MAKE IT DYNAMIC"""
         instance = self.get_object()
         check_same_client(request.client, instance)
         data = client_request_data_modelviewset(request.data, request.client)
@@ -463,10 +461,11 @@ class CreateCorporate(generics.CreateAPIView):
     serializer_class = CorporateentityOnlySerializer
 
     def perform_create(self, serializer):
-        organization = serializer.save(client=self.request.client)
+        with transaction.atomic():
+            organization = serializer.save(client=self.request.client)
 
-        # Link the corporate to the user using the ManyToMany field on the user model.
-        self.request.user.corps.add(organization)
+            # Link the corporate to the user using the ManyToMany field on the user model.
+            self.request.user.corps.add(organization)
 
 
 class LocationViewset(viewsets.ModelViewSet):
