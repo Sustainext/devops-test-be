@@ -2,11 +2,12 @@ from django.db import models
 from common.models.AbstractModel import AbstractModel
 from sustainapp.models import Organization, Corporateentity
 from django.contrib.auth import get_user_model
+from common.models.HistoricalModel import HistoricalModelMixin
 
 User = get_user_model()
 
 
-class Scenerio(AbstractModel):
+class Scenerio(AbstractModel, HistoricalModelMixin):
     """
     Model for storing scenario data.
     """

@@ -1,9 +1,10 @@
 from django.db import models
 from common.models.AbstractModel import AbstractModel
 from .OptimizeScenario import Scenerio
+from common.models.HistoricalModel import HistoricalModelMixin
 
 
-class BusinessMetric(AbstractModel):
+class BusinessMetric(AbstractModel, HistoricalModelMixin):
     """
     Model for storing business metrics data.
     """
