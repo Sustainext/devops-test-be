@@ -176,13 +176,16 @@ class OrganizationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         user = self.context["request"].user
         data = super().to_representation(instance)
-        data["corporatenetityorg"] = CorporateentitySerializer(
-            instance.corporatenetityorg.filter(
-                id__in=user.corps.all()
-            ).prefetch_related("location"),
-            many=True,
-            context={"request": self.context["request"]},
-        ).data
+        # Only add corporate entity details for non-POST requests (e.g. GET, PUT, etc.)
+        req = self.context.get("request")
+        if req and req.method != "POST":
+            data["corporatenetityorg"] = CorporateentitySerializer(
+                instance.corporatenetityorg.filter(
+                    id__in=user.corps.all()
+                ).prefetch_related("location"),
+                many=True,
+                context={"request": self.context["request"]},
+            ).data
         return data
 
 
