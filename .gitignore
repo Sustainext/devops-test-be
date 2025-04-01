@@ -140,3 +140,5 @@ JustATestfile.txt
 custom.log.*
 pyrightconfig.json
 token_cache.json
+pyproject.toml
+uv.lock
