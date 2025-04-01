@@ -151,10 +151,6 @@ class User_client(AbstractModel):
 
 
 class Organization(models.Model):
-    # TODO : Remove the redundant and unnecessary fields
-    # type_corporate_entity, type_of_corporate_entity
-    # employeecount, no_of_employees
-    # subindustry, sub_industry
     client = models.ForeignKey(
         Client,
         on_delete=models.CASCADE,
@@ -162,25 +158,25 @@ class Organization(models.Model):
         default=Client.get_default_client,
     )
     name = models.CharField(max_length=256, db_index=True)
-    type_corporate_entity = models.CharField(max_length=256, null=True, blank=True)
+    type_corporate_entity = models.CharField(max_length=256)
     owner = models.CharField(max_length=256, null=True, blank=True)
-    location_of_headquarters = models.CharField(max_length=256, null=True, blank=True)
-    phone = models.CharField(max_length=256, null=True, blank=True)
+    location_of_headquarters = models.CharField(max_length=256)
+    phone = models.CharField(max_length=256)
     mobile = models.CharField(max_length=256, null=True, blank=True)
-    website = models.CharField(max_length=256, null=True, blank=True)
+    website = models.CharField(max_length=256)
     fax = models.CharField(max_length=256, null=True, blank=True)
-    employeecount = models.CharField(max_length=256, null=True, blank=True)
-    sector = models.CharField(max_length=256, null=True, blank=True)
-    revenue = models.CharField(max_length=256, null=True, blank=True)
-    subindustry = models.CharField(max_length=256, null=True, blank=True)
-    address = models.CharField(max_length=256, null=True, blank=True)
-    countryoperation = models.CharField(max_length=256, null=True, blank=True)
-    state = models.CharField(max_length=256, null=True, blank=True)
-    city = models.CharField(max_length=256, null=True, blank=True)
+    employeecount = models.CharField(max_length=256)
+    revenue = models.CharField(max_length=256)
+    sector = models.CharField(max_length=256)
+    subindustry = models.CharField(max_length=256)
+    address = models.CharField(max_length=256)
+    country = models.CharField(max_length=256)
+    state = models.CharField(max_length=256)
+    city = models.CharField(max_length=256)
     date_format = models.CharField(max_length=256, null=True, blank=True)
-    currency = models.CharField(max_length=256, null=True, blank=True)
+    currency = models.CharField(max_length=256)
     timezone = models.CharField(max_length=256, null=True, blank=True)
-    language = models.CharField(max_length=256, null=True, blank=True)
+    # language = models.CharField(max_length=256, null=True, blank=True)
     from_date = models.CharField(max_length=256, null=True, blank=True)
     to_date = models.CharField(max_length=256, null=True, blank=True)
     sdg = models.ManyToManyField(Sdg, related_name="organisationdetailsdg", blank=True)
@@ -188,7 +184,9 @@ class Organization(models.Model):
         Rating, related_name="organisationdetailrating", blank=True
     )
     certification = models.ManyToManyField(
-        Certification, related_name="organisationdetailcertification", blank=True
+        Certification,
+        related_name="organisationdetailcertification",
+        blank=True,
     )
     target = models.ManyToManyField(
         Target, related_name="organisationdetailtarget", blank=True
@@ -199,22 +197,19 @@ class Organization(models.Model):
     regulation = models.ManyToManyField(
         Regulation, related_name="organisationdetailregulation", blank=True
     )
-    active = models.BooleanField(default=False)
-    no_of_employees = models.CharField(max_length=256, null=True, blank=True)
-    amount = models.CharField(max_length=256, null=True, blank=True)
-    ownership_and_legal_form = models.CharField(max_length=256, null=True, blank=True)
-    group = models.CharField(max_length=256, null=True, blank=True)
-    type_of_corporate_entity = models.CharField(max_length=256, null=True, blank=True)
-    location_of_headquarters = models.CharField(max_length=256, null=True, blank=True)
-    sub_industry = models.CharField(max_length=256, null=True, blank=True)
-    type_of_business_activities = models.CharField(
-        max_length=256, null=True, blank=True
-    )
-    type_of_product = models.CharField(max_length=256, null=True, blank=True)
-    type_of_services = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Save the instance first
+
+        if not self.framework.exists():  # Check if frameworks are assigned
+            default_framework, _ = Framework.objects.get_or_create(
+                name="GRI: With reference to",
+                defaults={"Image": "images/framework/GRI.png"},
+            )
+            self.framework.add(default_framework)
 
     class Meta:
         constraints = [
@@ -324,59 +319,47 @@ class Corporateentity(models.Model):
         default=Client.get_default_client,
     )
     name = models.CharField(max_length=256, db_index=True)
-    corporatetype = models.CharField(max_length=256, null=True, blank=True)
-    ownershipnature = models.CharField(max_length=256, null=True, blank=True)
-    location_headquarters = models.CharField(max_length=256, null=True, blank=True)
-    phone = models.CharField(max_length=256, null=True, blank=True)
+    corporatetype = models.CharField(max_length=256)
+    ownershipnature = models.CharField(
+        max_length=256, null=True, blank=True
+    ) 
+    location_headquarters = models.CharField(max_length=256)
+    phone = models.CharField(max_length=256)
     mobile = models.CharField(max_length=256, null=True, blank=True)
-    website = models.CharField(max_length=256, null=True, blank=True)
+    website = models.CharField(max_length=256)
     fax = models.CharField(max_length=256, null=True, blank=True)
-    employeecount = models.CharField(max_length=256, null=True, blank=True)
-    revenue = models.CharField(max_length=256, null=True, blank=True)
-    sector = models.CharField(max_length=256, null=True, blank=True)
-    subindustry = models.CharField(max_length=256, null=True, blank=True)
-    address = models.CharField(max_length=1000, null=True, blank=True)
-    Country = models.CharField(max_length=256, null=True, blank=True)
-    state = models.CharField(max_length=256, null=True, blank=True)
-    city = models.CharField(max_length=256, null=True, blank=True)
-    zipcode = models.CharField(max_length=256, null=True, blank=True)
+    employeecount = models.CharField(max_length=256)
+    revenue = models.CharField(max_length=256)
+    sector = models.CharField(max_length=256)
+    subindustry = models.CharField(max_length=256)
+    address = models.CharField(max_length=1000)
+    country = models.CharField(max_length=256)
+    state = models.CharField(max_length=256)
+    city = models.CharField(max_length=256)
     date_format = models.CharField(max_length=1000, null=True, blank=True)
-    currency = models.CharField(max_length=256, null=True, blank=True)
+    currency = models.CharField(max_length=256)
     timezone = models.CharField(max_length=256, null=True, blank=True)
-    language = models.CharField(max_length=256, null=True, blank=True)
     from_date = models.DateField(null=True, blank=True)
     to_date = models.DateField(null=True, blank=True)
-    framework = models.ForeignKey(
-        Framework,
-        on_delete=models.CASCADE,
-        related_name="corporatenetityframework",
-        null=True,
+    framework = models.ManyToManyField(
+        Framework, related_name="corporatenetityframework", blank=True
+    )
+    rating = models.ManyToManyField(Rating, related_name="corporaterating", blank=True)
+    certification = models.ManyToManyField(
+        Certification,
+        related_name="corporatecertification",
         blank=True,
+    )
+    target = models.ManyToManyField(Target, related_name="corporatetarget", blank=True)
+    regulation = models.ManyToManyField(
+        Regulation, related_name="corporateregulation", blank=True
     )
     organization = models.ForeignKey(
-        Organization,
-        on_delete=models.CASCADE,
-        related_name="corporatenetityorg",
-        null=True,
-        blank=True,
-    )
-    legalform = models.CharField(max_length=256, null=True, blank=True)
-    ownership = models.CharField(max_length=256, null=True, blank=True)
-    group = models.CharField(max_length=256, null=True, blank=True)
-    location_of_headquarters = models.CharField(max_length=256, null=True, blank=True)
-    amount = models.CharField(max_length=256, null=True, blank=True)
-    type_of_business_activities = models.CharField(
-        max_length=1000, null=True, blank=True
-    )
-    type_of_product = models.CharField(max_length=1000, null=True, blank=True)
-    type_of_services = models.CharField(max_length=1000, null=True, blank=True)
-    type_of_business_relationship = models.CharField(
-        max_length=1000, null=True, blank=True
+        Organization, on_delete=models.CASCADE, related_name="corporatenetityorg"
     )
 
     def __str__(self):
         return self.name
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -401,6 +384,13 @@ class Corporateentity(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
+        if not self.framework.exists():  # Check if frameworks are assigned
+            default_framework, _ = Framework.objects.get_or_create(
+                name="GRI: With reference to",
+                defaults={"Image": "images/framework/GRI.png"},
+            )
+            self.framework.add(default_framework)
+
 
 class Location(models.Model):
     is_headquarters_choices = (
@@ -414,21 +404,25 @@ class Location(models.Model):
         default=Client.get_default_client,
     )
     name = models.CharField(max_length=256, db_index=True)
-    phone = models.CharField(max_length=256, null=True, blank=True)
+    phone = models.CharField(max_length=256)
     mobile = models.CharField(max_length=256, null=True, blank=True)
-    website = models.CharField(max_length=256, null=True, blank=True)
+    website = models.CharField(max_length=256)
     fax = models.CharField(max_length=256, null=True, blank=True)
-    employeecount = models.CharField(max_length=256, null=True, blank=True)
-    revenue = models.CharField(max_length=256, null=True, blank=True)
-    sector = models.CharField(max_length=256, null=True, blank=True)
-    sub_industry = models.CharField(max_length=256, null=True, blank=True)
-    streetaddress = models.CharField(max_length=256, null=True, blank=True)
+    employeecount = models.CharField(max_length=256)
+    revenue = models.CharField(max_length=256)
+    sector = models.CharField(max_length=256)
+    sub_industry = models.CharField(max_length=256)
+    streetaddress = models.CharField(max_length=256)
     country = models.CharField(max_length=256)
     state = models.CharField(max_length=256)
-    city = models.CharField(max_length=256, null=True, blank=True)
-    zipcode = models.CharField(max_length=256, null=True, blank=True)
+    city = models.CharField(max_length=256)
+    zipcode = models.CharField(max_length=256)
+    latitude = models.FloatField(validators=[validate_latitude], null=True, blank=True)
+    longitude = models.FloatField(
+        validators=[validate_longitude], null=True, blank=True
+    )
     dateformat = models.CharField(max_length=256, null=True, blank=True)
-    currency = models.CharField(max_length=256, null=True, blank=True)
+    currency = models.CharField(max_length=256)
     timezone = models.CharField(max_length=256, null=True, blank=True)
     language = models.CharField(max_length=256, null=True, blank=True)
     corporateentity = models.ForeignKey(
@@ -437,18 +431,6 @@ class Location(models.Model):
         related_name="location",
         null=True,
         blank=True,
-    )
-    typelocation = models.CharField(max_length=256, null=True, blank=True)
-    location_type = models.CharField(max_length=256, null=True, blank=True)
-    area = models.CharField(max_length=256, null=True, blank=True)
-    type_of_business_activities = models.CharField(
-        max_length=256, null=True, blank=True
-    )
-    type_of_product = models.CharField(max_length=256, null=True, blank=True)
-    type_of_services = models.CharField(max_length=256, null=True, blank=True)
-    latitude = models.FloatField(validators=[validate_latitude], null=True, blank=True)
-    longitude = models.FloatField(
-        validators=[validate_longitude], null=True, blank=True
     )
     from_date = models.DateField(null=True, blank=True)
     to_date = models.DateField(null=True, blank=True)

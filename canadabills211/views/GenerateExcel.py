@@ -21,7 +21,6 @@ from canadabills211.Serializers.CanadaBillS211Serializer import (
 
 
 class GenerateExcel(APIView):
-
     def validate_identifying_info(self, data):
         # Mandatory fields for Identifying Information
         mandatory_fields = [
@@ -481,7 +480,6 @@ class GenerateExcel(APIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
             # Validate data (if object exists)
             ii_valid = True
             ar_valid = True
@@ -504,25 +502,33 @@ class GenerateExcel(APIView):
                     ar_serializer.is_valid(raise_exception=True)
                     ar_data = ar_serializer.validated_data
 
-            # Return error if any existing data is invalid
-            if ii_exist and not ii_valid and ar_exist and not ar_valid:
-                return Response(
-                    {
-                        "message": "Please fill the mandatory details for Identifying Information and Annual Report"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
+            message = None
+
+            if ii_exist and ar_exist:
+                if not ii_valid and not ar_valid:
+                    message = "Please fill the mandatory details for Identifying Information and Annual Report"
+                elif not ii_valid:
+                    message = (
+                        "Please fill the mandatory details for Identifying Information"
+                    )
+                elif not ar_valid:
+                    message = "Please fill the mandatory details for Annual Report"
+            elif ii_exist and not ar_exist:
+                message = (
+                    "Please fill the mandatory details for Annual Report"
+                    if ii_valid
+                    else "Please fill the mandatory details for Identifying Information and Annual Report"
                 )
-            elif ii_exist and not ii_valid:
-                return Response(
-                    {
-                        "message": "Please fill the mandatory details for Identifying Information"
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
+            elif not ii_exist and ar_exist:
+                message = (
+                    "Please fill the mandatory details for Identifying Information"
+                    if ar_valid
+                    else "Please fill the mandatory details for Identifying Information and Annual Report"
                 )
-            elif ar_exist and not ar_valid:
+
+            if message:
                 return Response(
-                    {"message": "Please fill the mandatory details for Annual Report"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"message": message}, status=status.HTTP_400_BAD_REQUEST
                 )
 
             # Load the template and fill in the sheets

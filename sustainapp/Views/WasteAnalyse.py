@@ -455,10 +455,7 @@ class GetWasteAnalysis(APIView):
                 waste_key = f"{waste_type}-{site}"
 
                 if waste_category == "Hazardous":
-                    if (
-                        disposal_method
-                        == "Inceneration (with energy recovery) for reuse"
-                    ):
+                    if disposal_method == "Inceneration (with energy recovery)":
                         hazardous_waste_directed_to_data[waste_key][
                             "inceneration_with_energy_quantity"
                         ] += total_waste
@@ -488,10 +485,7 @@ class GetWasteAnalysis(APIView):
                     )
                     hazardous_waste_directed_to_data[waste_key]["site"] = site
                 else:
-                    if (
-                        disposal_method
-                        == "Inceneration (with energy recovery) for reuse"
-                    ):
+                    if disposal_method == "Inceneration (with energy recovery)":
                         non_hazardous_waste_directed_to_data[waste_key][
                             "inceneration_with_energy_quantity"
                         ] += total_waste
@@ -675,13 +669,19 @@ class GetWasteAnalysis(APIView):
             unit = data["Unit"]
             material = data["Material"]
             volume = float(data["VolumeofSpill"])
-            if unit in data_by_material:
-                data_by_material[unit]["volume_of_spills"] += volume
+            impact = data["Impact"] if data.get("SpillSignificant") == "Yes" else "N/A"
+            key = (material, unit)
+            if key in data_by_material:
+                data_by_material[key]["volume_of_spills"] += volume
+                data_by_material[key]["impact"] = list(
+                    set(data_by_material[key]["impact"] + [impact])
+                )
             else:
-                data_by_material[unit] = {
+                data_by_material[key] = {
                     "material": material,
                     "volume_of_spills": volume,
                     "unit": unit,
+                    "impact": [impact],
                 }
         result = list(data_by_material.values())
         return result
@@ -694,8 +694,8 @@ class GetWasteAnalysis(APIView):
             unit = data["Unit"]
             volume = float(data["VolumeofSpill"])
             key = (location, unit)
-            if location and unit in data_by_location:
-                data_by_location[location]["volume_of_spills"] += volume
+            if key in data_by_location:
+                data_by_location[key]["volume_of_spills"] += volume
             else:
                 data_by_location[key] = {
                     "location": location,

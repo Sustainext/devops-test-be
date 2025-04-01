@@ -75,10 +75,9 @@ class OrganizationAdmin(ClientFilterAdminMixin, admin.ModelAdmin):
         "name",
         "client",
         "owner",
-        "countryoperation",
+        "country",
         "employeecount",
         "website",
-        "active",
     ]
     list_filter = ("client",)
 

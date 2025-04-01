@@ -72,8 +72,8 @@ class IdentifyingInformation(AbstractModel):
         help_text="4.2 Describe the changes made to the original report, including by listing the questions or sections that were revised (1,500 character limit)",
     )
     # screen 3
-    business_number_5 = models.BigIntegerField(
-        blank=True, null=True, help_text="5. Business Number(s)"
+    business_number_5 = models.CharField(
+        max_length=16, blank=True, null=True, help_text="5. Business Number(s)"
     )
     is_joint_report_6 = models.CharField(
         max_length=16, blank=False, null=True, help_text="6. Is this a joint report?"
