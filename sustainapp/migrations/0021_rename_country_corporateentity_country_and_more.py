@@ -11,17 +11,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RenameField(
-            model_name='corporateentity',
-            old_name='Country',
-            new_name='country',
+            model_name="corporateentity",
+            old_name="Country",
+            new_name="country",
         ),
         migrations.RenameField(
-            model_name='organization',
-            old_name='countryoperation',
-            new_name='country',
+            model_name="organization",
+            old_name="countryoperation",
+            new_name="country",
         ),
-        migrations.RemoveField(
-            model_name='location',
-            name='location_type',
-        ),
+        # migrations.RemoveField(
+        #     model_name="location",
+        #     name="location_type",
+        # ),
     ]
