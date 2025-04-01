@@ -412,6 +412,7 @@ class Location(models.Model):
     revenue = models.PositiveBigIntegerField(default=0)
     sector = models.CharField(max_length=256)
     sub_industry = models.CharField(max_length=256)
+    location_type = models.CharField(max_length=256, null=True, blank=True)
     streetaddress = models.CharField(max_length=256)
     country = models.CharField(max_length=256)
     state = models.CharField(max_length=256)
