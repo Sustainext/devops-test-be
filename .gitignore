@@ -130,6 +130,7 @@ dmypy.json
 
 .azure
 .vscode
+.zed
 
 # preferences app
 /preferences/
