@@ -105,9 +105,9 @@ urlpatterns = [
     path("api/auth/", include("authentication.urls")),
     path("admin/", admin.site.urls),
     path("client_admin/", client_admin_site.urls),
-    path("organization", views.organizationonly, name="organization"),
+    path("organization", views.CreateOrganization.as_view(), name="organization"),
     path(
-        "corporate", views.corporateonly, name="corporateony"
+        "corporate", views.CreateCorporate.as_view(), name="corporateony"
     ),  # * Used for POST Call Only
     path("structure/", views.StructureList.as_view(), name="structure"),
     path("locationonlyview", views.locationonlyview, name="locationviewonly"),
@@ -136,6 +136,7 @@ urlpatterns = [
     path("materiality_dashboard/", include("materiality_dashboard.urls")),
     path("esg_report/", include("esg_report.urls")),
     path("canadabills211/", include("canadabills211.urls")),
+    path("optimize/", include("apps.optimize.urls")),
     path("refresh_token/", TokenRefreshView.as_view(), name="refresh_token"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEVELOPMENT_MODE:

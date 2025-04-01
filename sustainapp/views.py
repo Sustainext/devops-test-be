@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db.models import F
 from rest_framework import viewsets
-from rest_framework.generics import ListAPIView
+from rest_framework import generics
 from django.http import JsonResponse
 from rest_framework.response import Response
 from decimal import *
@@ -29,7 +29,6 @@ from sustainapp.models import (
     Regulation,
 )
 from rest_framework.permissions import IsAuthenticated
-
 # from django.contrib.auth import get_user_model
 # User = get_user_model()
 
@@ -65,7 +64,7 @@ from .utils import (
     client_request_data_modelviewset,
 )
 from django.db.models import Sum, Q
-
+from django.db import transaction
 # Email notification
 # from django.core.mail import send_mail
 # from django.conf import settings
@@ -316,7 +315,7 @@ def UserOrgDetails(request):
         )
 
 
-class StructureList(ListAPIView):
+class StructureList(generics.ListAPIView):
     """API for getting Organization structure"""
 
     serializer_class = OrganizationSerializer
@@ -377,82 +376,23 @@ class OrganizationViewset(viewsets.ModelViewSet):
         serializer.save()
 
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def organizationonly(request):
-    """Adding a temporary fix for creating an organization (TID-908). The frontend sends the framework as GRI, Now we manually map it
-    to "GRI: With Reference to" when they send GRI.
-    TODO: THIS NEEDS TO BE CHANGED IN THE FUTURE AND MADE DYNAMIC"""
-    try:
-        log_call_start()
-        logging.info(f"request.data- {request.data}")
+class CreateOrganization(generics.CreateAPIView):
+    """Create Organization"""
 
-        request_data = client_request_data(request.data, request.client)
+    queryset = Organization.objects.all()
+    serializer_class = OrganizationSerializer
 
-        # Input Validation
-        validation_org_input(request_data)
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            organization = serializer.save(client=self.request.user.client)
 
-        temp_framework = request_data.get("framework")
-        if temp_framework:
-            if temp_framework == "GRI":
-                temp_framework = "GRI: With reference to"
-            else:
-                return Response(
-                    {"error": "Please select/pass a valid GRI name"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            frameworks = Framework.objects.filter(name=temp_framework)
-    except Exception as e:
-        return Response({"error": e}, status=status.HTTP_404_NOT_FOUND)
+            # Link the organization to the user using the ManyToMany field on the user model.
+            self.request.user.orgs.add(organization)
 
-    input_data = copy.deepcopy(request_data)
-    input_data.pop("framework", None)
-    input_data.pop("username", None)
-    sdg = input_data.pop("sdg", None)
-    rating = input_data.pop("rating", None)
-    certification = input_data.pop("certification", None)
-    target = input_data.pop("target", None)
-    regulation = input_data.pop("regulation", None)
-    try:
-        organization_data = Organization.objects.create(**input_data)
-        organization_data.framework.set(frameworks) if temp_framework else None
-        organization_data.sdg.set(Sdg.objects.filter(name=sdg)) if sdg else None
-        (
-            organization_data.rating.set(Rating.objects.filter(name=rating))
-            if rating
-            else None
-        )
-        (
-            organization_data.certification.set(
-                Certification.objects.filter(name=certification)
-            )
-            if certification
-            else None
-        )
-        (
-            organization_data.target.set(Target.objects.filter(name=target))
-            if target
-            else None
-        )
-        (
-            organization_data.regulation.set(Regulation.objects.filter(name=regulation))
-            if regulation
-            else None
-        )
-        # Link the organization to the user who created it
-        request.user.orgs.add(organization_data)
-        user_org, created = Userorg.objects.get_or_create(user=request.user)
-        user_org.organization.add(
-            organization_data
-        )  # Add the org to the ManyToMany field
-        user_org.save()
-        organization_data.save()
-        logging.info(f"organization_data- {organization_data}")
-        org_data = OrganizationOnlySerializer(organization_data).data
-        return Response(org_data, status=status.HTTP_201_CREATED)
-    except Exception as e:
-        return JsonResponse({"message": e.args})
-
+            # Link the organization with the Userorg instance.
+            user_org, created = Userorg.objects.get_or_create(user=self.request.user)
+            user_org.organization.add(organization)
+            user_org.save()
 
 class CorporateViewset(viewsets.ModelViewSet):
     """Endpoints for Corporate"""
@@ -477,9 +417,6 @@ class CorporateViewset(viewsets.ModelViewSet):
         return super().perform_destroy(instance)
 
     def update(self, request, *args, **kwargs):
-        """Adding a temporary fix for the error on the TID-1080 Where they are not able to create an corporate as the front end is
-        sending the framework as "GRI". Now when front end sends the framework as "GRI" it will search for "GRI: With reference to" and add it
-        TODO: This needs to be fixed in the future. NEED TO MAKE IT DYNAMIC"""
         instance = self.get_object()
         check_same_client(request.client, instance)
         data = client_request_data_modelviewset(request.data, request.client)
@@ -487,14 +424,6 @@ class CorporateViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(
             instance, data=data, partial=kwargs.get("partial", False)
         )
-
-        temp_framework = request.data.get("framework")
-        try:
-            framework = Framework.objects.get(name=temp_framework)
-        except Exception as e:
-            framework = Framework.objects.get(name="GRI: With reference to")
-            request.data["framework"] = framework.pk
-
         if serializer.is_valid(raise_exception=True):
             self.perform_update(serializer)
             return Response(serializer.data)
@@ -525,40 +454,18 @@ class CorporateViewset(viewsets.ModelViewSet):
             )
 
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def corporateonly(request):
-    """Adding a temporary fix for the error on the TID-1080 Where they are not able to create an corporate as the front end is
-    sending the framework as "GRI". Now when front end sends the framework as "GRI" it will search for "GRI: With reference to" and add it
-    TODO: This needs to be fixed in the future. NEED TO MAKE IT DYNAMIC"""
-    try:
-        log_call_start()
-        logging.info(f"Request data:,{request.data}")
-        request_data = client_request_data(request.data, request.client)
+class CreateCorporate(generics.CreateAPIView):
+    """Create Corporate"""
 
-        framework = Framework.objects.get(name=request.data["framework"])
-        temp_framework = request.data["framework"]
-        try:
-            framework = Framework.objects.get(name=temp_framework)
-        except Framework.DoesNotExist:
-            framework = Framework.objects.get(name="GRI: With reference to")
+    queryset = Corporateentity.objects.all()
+    serializer_class = CorporateentityOnlySerializer
 
-        organization_data = Organization.objects.get(name=request.data["organization"])
-        request_data.pop("framework", None)
-        request_data.pop("organization", None)
-        corporate = Corporateentity.objects.create(
-            **request_data,
-            framework=framework,
-            organization=organization_data,
-        )
-        request.user.corps.add(corporate)
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            organization = serializer.save(client=self.request.client)
 
-        logging.info(f"request.data- {organization_data}")
-
-        logging.info(f"corporate- {corporate}")
-        return Response("Corporate Data created")
-    except Exception as e:
-        return Response({"message": e.args}, status=status.HTTP_400_BAD_REQUEST)
+            # Link the corporate to the user using the ManyToMany field on the user model.
+            self.request.user.corps.add(organization)
 
 
 class LocationViewset(viewsets.ModelViewSet):
@@ -607,9 +514,9 @@ def locationonlyview(request):
     logging.info(f"Received request data - {request.data}")
     request_data = client_request_data(request.data.copy(), request.client)
     try:
-        corporate_name = request_data.pop("corporateentity")
+        corporate_id = request_data.pop("corporateentity")
         corporate_data = Corporateentity.objects.filter(client=request.client).get(
-            name=corporate_name
+            id=corporate_id
         )
         request_data.pop("corporateentity", None)
         location_instance = Location.objects.create(
@@ -618,7 +525,9 @@ def locationonlyview(request):
         )
         request.user.locs.add(location_instance)
         location_instance.save()
-        return Response("Location data created")
+
+        serializer = LocationSerializer(location_instance)
+        return Response(serializer.data)
 
     except Corporateentity.DoesNotExist:
         return Response(

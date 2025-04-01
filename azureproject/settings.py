@@ -55,6 +55,7 @@ PROJECT_APPS = [
     "esg_report.apps.EsgReportConfig",
     "canadabills211.apps.Canadabills211Config",
     "apps.supplier_assessment.apps.SupplierAssessmentConfig",
+    "apps.optimize.apps.OptimizeConfig",
 ]
 
 THIRD_PARTY = [
