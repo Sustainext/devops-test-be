@@ -11,6 +11,7 @@ class ScreenEleven(AbstractModel, HistoricalModelMixin):
     company_economic_performance_statement = models.JSONField(null=True, blank=True)
     financial_assistance_from_government = models.JSONField(null=True, blank=True)
     introduction_to_economic_value_creation = models.JSONField(null=True, blank=True)
+    infrastructure_investement = models.JSONField(null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.report} - Screen Eleven"

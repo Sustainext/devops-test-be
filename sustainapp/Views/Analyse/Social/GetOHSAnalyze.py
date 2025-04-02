@@ -17,6 +17,7 @@ from common.utils.value_types import safe_percentage, safe_divide
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
 )
+import calendar
 
 
 class OHSAnalysisView(APIView):
@@ -186,6 +187,14 @@ class GetIllnessAnalysisView(APIView):
     permission_classes = [IsAuthenticated]
     INJURY_RATE_DICT = {100: 2_00_000, 500: 10_00_000}
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.slugs = {
+            0: "gri-social-ohs-403-9a-number_of_injuries_emp",
+            1: "gri-social-ohs-403-9b-number_of_injuries_workers",
+        }
+        self.warning_message = None
+
     def set_data_points(self):
         self.data_points = (
             DataPoint.objects.filter(
@@ -199,7 +208,7 @@ class GetIllnessAnalysisView(APIView):
                 )
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
-        )
+        ).filter(path__slug__in=list(self.slugs.values()))
 
     def get_work_related_ill_health(self, number_of_hours, slug):
         local_data_points = self.data_points.filter(path__slug=slug)
@@ -244,7 +253,7 @@ class GetIllnessAnalysisView(APIView):
 
     def are_all_required_months_present_inside_data_points(self):
         # * Get all the months data inside the data points
-        months_data = self.data_points.values_list("month", flat=True).distinct()
+        months_data = list(self.data_points.values_list("month", flat=True).distinct())
         # * Get all the months between start and end dates
         months_between_start_and_end = [
             i for i in range(self.start.month, self.end.month + 1)
@@ -252,6 +261,9 @@ class GetIllnessAnalysisView(APIView):
         # * Check if all the months between start and end dates are present in the data points
         if set(months_between_start_and_end) == set(months_data):
             return True
+        #* Get months names where data is not present
+        missing_months = set(months_between_start_and_end) - set(months_data)
+        self.warning_message = f"Only partial data available {', '.join([calendar.month_name[month] for month in missing_months])}"
         return False
 
     def get(self, request, format=None):
@@ -282,31 +294,36 @@ class GetIllnessAnalysisView(APIView):
         normal_response = {
             "rate_of_injuries_for_all_employees_100_injury_rate": self.get_work_related_ill_health(
                 number_of_hours_for_100_injury_rate,
-                slug="gri-social-ohs-403-9a-number_of_injuries_emp",
+                slug=self.slugs[0],
             ),
             "rate_of_injuries_for_not_included_in_company_employees_100_injury_rate": self.get_work_related_ill_health(
                 number_of_hours_for_100_injury_rate,
-                slug="gri-social-ohs-403-9b-number_of_injuries_workers",
+                slug=self.slugs[1],
             ),
             "rate_of_injuries_for_all_employees_500_injury_rate": self.get_work_related_ill_health(
                 number_of_hours_for_500_injury_rate,
-                slug="gri-social-ohs-403-9a-number_of_injuries_emp",
+                slug=self.slugs[0],
             ),
             "rate_of_injuries_for_not_included_in_company_employees_500_injury_rate": self.get_work_related_ill_health(
                 number_of_hours_for_500_injury_rate,
-                slug="gri-social-ohs-403-9b-number_of_injuries_workers",
+                slug=self.slugs[1],
             ),
         }
 
         if not show_warning:
             return Response(
-                normal_response,
+                {
+                    "message": "Data retrieved successfully",
+                    "data": normal_response,
+                    "status": status.HTTP_200_OK,
+                },
+
                 status=status.HTTP_200_OK,
             )
         else:
             return Response(
                 {
-                    "warning": "Only partial data available",
+                    "message": self.warning_message,
                     "data": normal_response,
                     "status": status.HTTP_206_PARTIAL_CONTENT,
                 },

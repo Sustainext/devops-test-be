@@ -131,7 +131,7 @@ class DiversityAndInclusionAnalyse(APIView):
                         total_minority_and_vulnerable,
                     )
                 )
-            response_data.append(response_dict)
+            response_data.append(calculation_dict)
         return response_data
 
     def get_salary_ration(self, slug):  # 405-2
