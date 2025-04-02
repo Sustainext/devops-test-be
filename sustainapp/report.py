@@ -465,7 +465,7 @@ def generate_pdf_data(pk):
     except Report.MultipleObjectsReturned:
         raise Exception("Multiple reports exist")
 
-    country_code = report.organization.countryoperation
+    country_code = report.organization.country
 
     if not country_code:
         country_name = "Unknown"

@@ -130,6 +130,7 @@ dmypy.json
 
 .azure
 .vscode
+.zed
 
 # preferences app
 /preferences/
@@ -140,3 +141,5 @@ JustATestfile.txt
 custom.log.*
 pyrightconfig.json
 token_cache.json
+pyproject.toml
+uv.lock

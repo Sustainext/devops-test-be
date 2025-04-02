@@ -110,7 +110,7 @@ urlpatterns = [
         "corporate", views.CreateCorporate.as_view(), name="corporateony"
     ),  # * Used for POST Call Only
     path("structure/", views.StructureList.as_view(), name="structure"),
-    path("locationonlyview", views.locationonlyview, name="locationviewonly"),
+    path("locationonlyview", views.CreateLocation.as_view(), name="locationviewonly"),
     path("corporategetonly", views.corporategetonly, name="corporategetonly"),
     path("orggetonly", views.orggetonly, name="orggetonly"),
     path("", include(router.urls)),
