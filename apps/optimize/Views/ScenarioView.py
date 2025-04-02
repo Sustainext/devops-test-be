@@ -1,12 +1,13 @@
 from ..models.OptimizeScenario import Scenerio
 from ..Serializers.ScenarioScerializer import ScenerioSerializer
 from rest_framework import viewsets
-from ..Paginations.ScenarioPagination import ScenerioPaginatio
+from ..Paginations.ScenarioPagination import ScenerioPagination
+from ..models.BusinessMetric import BusinessMetric
 
 
-class ScenerioView(viewsets.ModelViewSet):
+class ScenarioView(viewsets.ModelViewSet):
     serializer_class = ScenerioSerializer
-    pagination_class = ScenerioPaginatio
+    pagination_class = ScenerioPagination
 
     def get_queryset(self):
         user_orgs = self.request.user.orgs.values_list("id", flat=True)
@@ -16,7 +17,10 @@ class ScenerioView(viewsets.ModelViewSet):
         return final_queryset
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user, updated_by=self.request.user)
+        scenario = serializer.save(
+            created_by=self.request.user, updated_by=self.request.user
+        )
+        BusinessMetric.objects.create(scenario=scenario)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
