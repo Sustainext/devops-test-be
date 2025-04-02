@@ -462,7 +462,7 @@ class CreateCorporate(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         with transaction.atomic():
-            corporate = serializer.save(client=self.request.client)
+            corporate = serializer.save(client=self.request.user.client)
 
             # Link the corporate to the user using the ManyToMany field on the user model.
             self.request.user.corps.add(corporate)
@@ -513,7 +513,7 @@ class CreateLocation(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         with transaction.atomic():
-            location = serializer.save(client=self.request.client)
+            location = serializer.save(client=self.request.user.client)
 
             self.request.user.locs.add(location)
 
