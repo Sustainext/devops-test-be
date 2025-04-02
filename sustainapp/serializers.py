@@ -135,12 +135,7 @@ class LocationOrgstructureSerializer(serializers.ModelSerializer):
             "timezone",
             "language",
             "corporateentity",
-            "typelocation",
             "location_type",
-            "area",
-            "type_of_business_activities",
-            "type_of_product",
-            "type_of_services",
             "longitude",
             "latitude",
             "from_date",
@@ -176,13 +171,16 @@ class OrganizationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         user = self.context["request"].user
         data = super().to_representation(instance)
-        data["corporatenetityorg"] = CorporateentitySerializer(
-            instance.corporatenetityorg.filter(
-                id__in=user.corps.all()
-            ).prefetch_related("location"),
-            many=True,
-            context={"request": self.context["request"]},
-        ).data
+        # Only add corporate entity details for non-POST requests (e.g. GET, PUT, etc.)
+        req = self.context.get("request")
+        if req and req.method != "POST":
+            data["corporatenetityorg"] = CorporateentitySerializer(
+                instance.corporatenetityorg.filter(
+                    id__in=user.corps.all()
+                ).prefetch_related("location"),
+                many=True,
+                context={"request": self.context["request"]},
+            ).data
         return data
 
 
@@ -335,9 +333,7 @@ class CustomRegistrationSerializer(serializers.Serializer):
 
 class ReportSerializer(serializers.ModelSerializer):
     organization_name = serializers.ReadOnlyField(source="organization.name")
-    organization_country = serializers.ReadOnlyField(
-        source="organization.countryoperation"
-    )
+    organization_country = serializers.ReadOnlyField(source="organization.country")
     status = serializers.CharField(required=False)
     client = serializers.CharField(required=False)
     user = serializers.CharField(required=False)
@@ -350,9 +346,7 @@ class ReportSerializer(serializers.ModelSerializer):
 
 class ReportRetrieveSerializer(serializers.ModelSerializer):
     organization_name = serializers.ReadOnlyField(source="organization.name")
-    organization_country = serializers.ReadOnlyField(
-        source="organization.countryoperation"
-    )
+    organization_country = serializers.ReadOnlyField(source="organization.country")
     corporate_name = serializers.ReadOnlyField(source="corporate.name")
     created_at = serializers.SerializerMethodField()
     updated_at = serializers.SerializerMethodField()

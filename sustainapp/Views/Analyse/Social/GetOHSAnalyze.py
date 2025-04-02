@@ -17,6 +17,7 @@ from common.utils.value_types import safe_percentage, safe_divide
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
 )
+import calendar
 
 
 class OHSAnalysisView(APIView):
@@ -192,6 +193,7 @@ class GetIllnessAnalysisView(APIView):
             0: "gri-social-ohs-403-9a-number_of_injuries_emp",
             1: "gri-social-ohs-403-9b-number_of_injuries_workers",
         }
+        self.warning_message = None
 
     def set_data_points(self):
         self.data_points = (
@@ -259,6 +261,9 @@ class GetIllnessAnalysisView(APIView):
         # * Check if all the months between start and end dates are present in the data points
         if set(months_between_start_and_end) == set(months_data):
             return True
+        #* Get months names where data is not present
+        missing_months = set(months_between_start_and_end) - set(months_data)
+        self.warning_message = f"Only partial data available {', '.join([calendar.month_name[month] for month in missing_months])}"
         return False
 
     def get(self, request, format=None):
@@ -307,13 +312,18 @@ class GetIllnessAnalysisView(APIView):
 
         if not show_warning:
             return Response(
-                normal_response,
+                {
+                    "message": "Data retrieved successfully",
+                    "data": normal_response,
+                    "status": status.HTTP_200_OK,
+                },
+
                 status=status.HTTP_200_OK,
             )
         else:
             return Response(
                 {
-                    "warning": "Only partial data available",
+                    "message": self.warning_message,
                     "data": normal_response,
                     "status": status.HTTP_206_PARTIAL_CONTENT,
                 },
