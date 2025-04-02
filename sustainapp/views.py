@@ -462,10 +462,10 @@ class CreateCorporate(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         with transaction.atomic():
-            organization = serializer.save(client=self.request.client)
+            corporate = serializer.save(client=self.request.client)
 
             # Link the corporate to the user using the ManyToMany field on the user model.
-            self.request.user.corps.add(organization)
+            self.request.user.corps.add(corporate)
 
 
 class LocationViewset(viewsets.ModelViewSet):
@@ -507,40 +507,16 @@ class LocationViewset(viewsets.ModelViewSet):
         return super().perform_destroy(instance)
 
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def locationonlyview(request):
-    log_call_start()
-    logging.info(f"Received request data - {request.data}")
-    request_data = client_request_data(request.data.copy(), request.client)
-    try:
-        corporate_id = request_data.pop("corporateentity")
-        corporate_data = Corporateentity.objects.filter(client=request.client).get(
-            id=corporate_id
-        )
-        request_data.pop("corporateentity", None)
-        location_instance = Location.objects.create(
-            **request_data,
-            corporateentity=corporate_data,
-        )
-        request.user.locs.add(location_instance)
-        location_instance.save()
+class CreateLocation(generics.CreateAPIView):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
 
-        serializer = LocationSerializer(location_instance)
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            location = serializer.save(client=self.request.client)
 
-    except Corporateentity.DoesNotExist:
-        return Response(
-            {"error": "Corporateentity not found for the given client"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    except Client.DoesNotExist:
-        return Response(
-            {"error": "Client not found"}, status=status.HTTP_400_BAD_REQUEST
-        )
-    except Exception as e:
-        logging.error("Error in locationonlyview: %s", e, exc_info=True)
-        return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            self.request.user.locs.add(location)
+
 
 
 @api_view(["GET"])
