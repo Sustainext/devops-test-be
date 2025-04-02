@@ -12,11 +12,11 @@ def collect_data_by_raw_response_and_index(data_points):
     # Iterate over the list of data points
     for dp in data_points_ids:
         # Get the data point from cache if it exists
-        dp = get_data_point_cache(dp.id) or DataPoint.objects.get(id=dp)
-        raw_response = dp.raw_response.id
-        index = dp.index
-        data_metric = dp.data_metric.name
-        value = dp.value
+        data_point_dictionary = get_data_point_cache(dp.id)
+        raw_response = data_point_dictionary["raw_response_id"]
+        index = data_point_dictionary["index"]
+        data_metric = data_point_dictionary["data_metric_name"]
+        value = data_point_dictionary["value"]
 
         # Directly store the data_metric and value for the combination of raw_response and index
         raw_response_index_map[(raw_response, index)][data_metric] = value
