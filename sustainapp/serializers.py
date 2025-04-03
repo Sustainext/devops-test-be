@@ -149,6 +149,9 @@ class LocationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, data):
+        """
+        Checks if any other location with the same name (case-insensitive) is associated with the location's corporate.
+        """
         request = self.context.get("request")
 
         if "corporateentity" in request.data:
@@ -170,7 +173,7 @@ class LocationSerializer(serializers.ModelSerializer):
         if qs.exists():
             raise serializers.ValidationError(
                 {
-                    "message": "A Location with this name already exists for the selected corporate."
+                    "message": "A Location with this name already exists for the selected Corporate."
                 }
             )
         return data
@@ -196,6 +199,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, data):
+        """
+        Checks if any other organization with the same name (case-insensitive) is associated with the organization's client.
+        """
         client = self.context["request"].user.client
         name = data.get("name")
         # Check case-insensitively if an organization with the same name exists for the client.
@@ -204,7 +210,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             qs = qs.exclude(pk=self.instance.pk)
         if qs.exists():
             raise serializers.ValidationError(
-                {"message": "An organization with this name already exists"}
+                {"message": "An Organization with this name already exists"}
             )
         return data
 
@@ -230,6 +236,9 @@ class CorporateentityOnlySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, data):
+        """
+        Checks if any other corporate with the same name (case-insensitive) exists for the corporates's organization.
+        """
         request = self.context.get("request")
 
         # Get the organization from the request data if available,
@@ -254,7 +263,7 @@ class CorporateentityOnlySerializer(serializers.ModelSerializer):
         if qs.exists():
             raise serializers.ValidationError(
                 {
-                    "message": "A Corporateentity with this name already exists for the selected organization."
+                    "message": "A Corporate with this name already exists for the selected Organization."
                 }
             )
         return data
