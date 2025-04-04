@@ -64,7 +64,7 @@ from .utils import (
     client_request_data_modelviewset,
 )
 from django.db.models import Sum, Q
-
+from django.db import transaction
 # Email notification
 # from django.core.mail import send_mail
 # from django.conf import settings
@@ -339,7 +339,7 @@ class OrganizationViewset(viewsets.ModelViewSet):
     """Endpoints for Organizations"""
 
     queryset = Organization.objects.all()
-    serializer_class = OrganizationOnlySerializer
+    serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
 
     def destroy(self, request, *args, **kwargs):
@@ -383,15 +383,16 @@ class CreateOrganization(generics.CreateAPIView):
     serializer_class = OrganizationSerializer
 
     def perform_create(self, serializer):
-        organization = serializer.save(client=self.request.client)
+        with transaction.atomic():
+            organization = serializer.save(client=self.request.user.client)
 
-        # Link the organization to the user using the ManyToMany field on the user model.
-        self.request.user.orgs.add(organization)
+            # Link the organization to the user using the ManyToMany field on the user model.
+            self.request.user.orgs.add(organization)
 
-        # Link the organization with the Userorg instance.
-        user_org, created = Userorg.objects.get_or_create(user=self.request.user)
-        user_org.organization.add(organization)
-        user_org.save()
+            # Link the organization with the Userorg instance.
+            user_org, created = Userorg.objects.get_or_create(user=self.request.user)
+            user_org.organization.add(organization)
+            user_org.save()
 
 class CorporateViewset(viewsets.ModelViewSet):
     """Endpoints for Corporate"""
@@ -416,9 +417,6 @@ class CorporateViewset(viewsets.ModelViewSet):
         return super().perform_destroy(instance)
 
     def update(self, request, *args, **kwargs):
-        """Adding a temporary fix for the error on the TID-1080 Where they are not able to create an corporate as the front end is
-        sending the framework as "GRI". Now when front end sends the framework as "GRI" it will search for "GRI: With reference to" and add it
-        TODO: This needs to be fixed in the future. NEED TO MAKE IT DYNAMIC"""
         instance = self.get_object()
         check_same_client(request.client, instance)
         data = client_request_data_modelviewset(request.data, request.client)
@@ -463,10 +461,11 @@ class CreateCorporate(generics.CreateAPIView):
     serializer_class = CorporateentityOnlySerializer
 
     def perform_create(self, serializer):
-        organization = serializer.save(client=self.request.client)
+        with transaction.atomic():
+            corporate = serializer.save(client=self.request.user.client)
 
-        # Link the corporate to the user using the ManyToMany field on the user model.
-        self.request.user.corps.add(organization)
+            # Link the corporate to the user using the ManyToMany field on the user model.
+            self.request.user.corps.add(corporate)
 
 
 class LocationViewset(viewsets.ModelViewSet):
@@ -508,40 +507,16 @@ class LocationViewset(viewsets.ModelViewSet):
         return super().perform_destroy(instance)
 
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def locationonlyview(request):
-    log_call_start()
-    logging.info(f"Received request data - {request.data}")
-    request_data = client_request_data(request.data.copy(), request.client)
-    try:
-        corporate_id = request_data.pop("corporateentity")
-        corporate_data = Corporateentity.objects.filter(client=request.client).get(
-            id=corporate_id
-        )
-        request_data.pop("corporateentity", None)
-        location_instance = Location.objects.create(
-            **request_data,
-            corporateentity=corporate_data,
-        )
-        request.user.locs.add(location_instance)
-        location_instance.save()
+class CreateLocation(generics.CreateAPIView):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
 
-        serializer = LocationSerializer(location_instance)
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            location = serializer.save(client=self.request.user.client)
 
-    except Corporateentity.DoesNotExist:
-        return Response(
-            {"error": "Corporateentity not found for the given client"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    except Client.DoesNotExist:
-        return Response(
-            {"error": "Client not found"}, status=status.HTTP_400_BAD_REQUEST
-        )
-    except Exception as e:
-        logging.error("Error in locationonlyview: %s", e, exc_info=True)
-        return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            self.request.user.locs.add(location)
+
 
 
 @api_view(["GET"])

@@ -135,12 +135,7 @@ class LocationOrgstructureSerializer(serializers.ModelSerializer):
             "timezone",
             "language",
             "corporateentity",
-            "typelocation",
             "location_type",
-            "area",
-            "type_of_business_activities",
-            "type_of_product",
-            "type_of_services",
             "longitude",
             "latitude",
             "from_date",
@@ -152,6 +147,36 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = "__all__"
+
+    def validate(self, data):
+        """
+        Checks if any other location with the same name (case-insensitive) is associated with the location's corporate.
+        """
+        request = self.context.get("request")
+
+        if "corporateentity" in request.data:
+            corp = request.data["corporateentity"]
+        elif self.instance:
+            corp = self.instance.corporateentity
+        else:
+            raise serializers.ValidationError(
+                {"corporateentity": "This field is required."}
+            )
+
+        name = data.get("name")
+
+        # Exclude the current instance in case of updates.
+        qs = Location.objects.filter(corporateentity=corp, name__iexact=name)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise serializers.ValidationError(
+                {
+                    "message": "A Location with this name already exists for the selected Corporate."
+                }
+            )
+        return data
 
 
 class CorporateentitySerializer(serializers.ModelSerializer):
@@ -173,16 +198,35 @@ class OrganizationSerializer(serializers.ModelSerializer):
         model = Organization
         fields = "__all__"
 
+    def validate(self, data):
+        """
+        Checks if any other organization with the same name (case-insensitive) is associated with the organization's client.
+        """
+        client = self.context["request"].user.client
+        name = data.get("name")
+        # Check case-insensitively if an organization with the same name exists for the client.
+        qs = Organization.objects.filter(client=client, name__iexact=name)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError(
+                {"message": "An Organization with this name already exists"}
+            )
+        return data
+
     def to_representation(self, instance):
         user = self.context["request"].user
         data = super().to_representation(instance)
-        data["corporatenetityorg"] = CorporateentitySerializer(
-            instance.corporatenetityorg.filter(
-                id__in=user.corps.all()
-            ).prefetch_related("location"),
-            many=True,
-            context={"request": self.context["request"]},
-        ).data
+        # Only add corporate entity details for non-POST requests (e.g. GET, PUT, etc.)
+        req = self.context.get("request")
+        if req and req.method != "POST":
+            data["corporatenetityorg"] = CorporateentitySerializer(
+                instance.corporatenetityorg.filter(
+                    id__in=user.corps.all()
+                ).prefetch_related("location"),
+                many=True,
+                context={"request": self.context["request"]},
+            ).data
         return data
 
 
@@ -190,6 +234,39 @@ class CorporateentityOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Corporateentity
         fields = "__all__"
+
+    def validate(self, data):
+        """
+        Checks if any other corporate with the same name (case-insensitive) exists for the corporates's organization.
+        """
+        request = self.context.get("request")
+
+        # Get the organization from the request data if available,
+        # otherwise fall back to the organization's instance (for update)
+        if "organization" in request.data:
+            org = request.data["organization"]
+        elif self.instance:
+            org = self.instance.organization
+        else:
+            raise serializers.ValidationError(
+                {"organization": "This field is required."}
+            )
+
+        name = data.get("name")
+
+        # Exclude the current instance in case of updates.
+        qs = Corporateentity.objects.filter(organization=org, name__iexact=name)
+
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise serializers.ValidationError(
+                {
+                    "message": "A Corporate with this name already exists for the selected Organization."
+                }
+            )
+        return data
 
 
 class OrganizationOnlySerializer(serializers.ModelSerializer):
@@ -335,9 +412,7 @@ class CustomRegistrationSerializer(serializers.Serializer):
 
 class ReportSerializer(serializers.ModelSerializer):
     organization_name = serializers.ReadOnlyField(source="organization.name")
-    organization_country = serializers.ReadOnlyField(
-        source="organization.countryoperation"
-    )
+    organization_country = serializers.ReadOnlyField(source="organization.country")
     status = serializers.CharField(required=False)
     client = serializers.CharField(required=False)
     user = serializers.CharField(required=False)
@@ -350,9 +425,7 @@ class ReportSerializer(serializers.ModelSerializer):
 
 class ReportRetrieveSerializer(serializers.ModelSerializer):
     organization_name = serializers.ReadOnlyField(source="organization.name")
-    organization_country = serializers.ReadOnlyField(
-        source="organization.countryoperation"
-    )
+    organization_country = serializers.ReadOnlyField(source="organization.country")
     corporate_name = serializers.ReadOnlyField(source="corporate.name")
     created_at = serializers.SerializerMethodField()
     updated_at = serializers.SerializerMethodField()

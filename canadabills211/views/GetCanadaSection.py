@@ -11,7 +11,7 @@ class GetCanadaSection(APIView):
     """
 
     def validate_org(self, request):
-        orgs = request.user.orgs.all().filter(countryoperation="CA")
+        orgs = request.user.orgs.all().filter(country="CA")
         enable_section = False
         org_list = list(orgs.values("id", "name"))
 
@@ -38,7 +38,7 @@ class CorporateListCanadaData(APIView):
         corp_list = []
         corps = Corporateentity.objects.filter(organization_id=org_id)
         for corp in corps:
-            if corp.Country == "CA":
+            if corp.country == "CA":
                 corp_list.append({"id": corp.id, "name": corp.name})
             else:
                 continue
