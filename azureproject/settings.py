@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOST").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOST","").split(",")
 
 
 # Application definition
@@ -128,7 +128,7 @@ DATABASES = {
         "HOST": os.environ.get("DBHOST"),
         "USER": os.environ.get("DBUSER"),
         "PASSWORD": os.environ.get("DBPASS"),
-        "PORT": int(os.environ.get("DBPORT")),
+        "PORT": int(os.environ.get("DBPORT",5432)),
         "TEST": {"NAME": "test_database"},
     }
 }
@@ -229,7 +229,7 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 CLIMATIQ_BASE_URL = os.environ.get("CLIMATIQ_BASE_URL")
-ADMIN_MAIL = os.environ.get("ADMIN_MAIL").split(",")
+ADMIN_MAIL = os.environ.get("ADMIN_MAIL","").split(",")
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

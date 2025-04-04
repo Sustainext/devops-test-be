@@ -17,6 +17,7 @@ from common.utils.value_types import safe_percentage, safe_divide
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
 )
+import datetime
 import calendar
 
 
@@ -214,10 +215,10 @@ class GetIllnessAnalysisView(APIView):
         local_data_points = self.data_points.filter(path__slug=slug)
         data = collect_data_by_raw_response_and_index(local_data_points)
         total = {
-            "fatalities": 0,
-            "numberofhoursworked": 0,
-            "recordable": 0,
-            "highconsequence": 0,
+            "fatalities": Decimal(0),
+            "numberofhoursworked": Decimal(0),
+            "recordable": Decimal(0),
+            "highconsequence": Decimal(0),
         }
         for i in data:
             total["fatalities"] += Decimal(i.get("fatalities", 0))
@@ -250,20 +251,66 @@ class GetIllnessAnalysisView(APIView):
             + 1
         )
         return months_difference
+    def get_months_years_optimized(self):
+        """
+        Generates a set of unique (month, year) tuples by iterating month-by-month.
+
+        Returns:
+        A set containing tuples of (month, year) integers for each unique
+        month/year combination within the range (inclusive).
+        Returns an empty set if end_date is before start_date.
+        """
+        start_date = self.start
+        end_date = self.end
+        if end_date < start_date:
+            return set()
+
+        year_months = set()
+
+        # Start with a marker date at the beginning of the start_date's month
+        # This simplifies the loop logic.
+        current_marker_date = datetime.date(start_date.year, start_date.month, 1)
+
+        while current_marker_date <= end_date:
+        # Add the current marker's month and year
+            year_months.add((current_marker_date.year, current_marker_date.month))
+
+            # Calculate the first day of the *next* month
+            current_year = current_marker_date.year
+            current_month = current_marker_date.month
+
+            if current_month == 12:
+                next_month = 1
+                next_year = current_year + 1
+            else:
+                next_month = current_month + 1
+                next_year = current_year
+
+            # Check if the next year is valid before creating the date
+            if next_year > datetime.MAXYEAR:
+                break # Stop if we exceed the maximum representable year
+
+            # Move the marker to the first day of the next month
+            current_marker_date = datetime.date(next_year, next_month, 1)
+
+        return year_months
 
     def are_all_required_months_present_inside_data_points(self):
         # * Get all the months data inside the data points
+        months_date = set([(i["year"],i["month"]) for i in self.data_points.values("month", "year")])
         months_data = list(self.data_points.values_list("month", flat=True).distinct())
+
         # * Get all the months between start and end dates
-        months_between_start_and_end = [
-            i for i in range(self.start.month, self.end.month + 1)
-        ]
+        months_between_start_and_end = self.get_months_years_optimized()
         # * Check if all the months between start and end dates are present in the data points
+        difference_in_dates = set(months_between_start_and_end) - set(months_data)
         if set(months_between_start_and_end) == set(months_data):
             return True
-        #* Get months names where data is not present
-        missing_months = set(months_between_start_and_end) - set(months_data)
-        self.warning_message = f"Only partial data available {', '.join([calendar.month_name[month] for month in missing_months])}"
+
+        minimum_date = min(difference_in_dates)
+        maximum_date = max(difference_in_dates)
+
+        self.warning_message = f"The data is available only for the period {calendar.month_name[minimum_date[1]]} {minimum_date[0]} to {calendar.month_name[maximum_date[1]]} {maximum_date[0]}"
         return False
 
     def get(self, request, format=None):
