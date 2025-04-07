@@ -19,6 +19,7 @@ from common.utils.get_data_points_as_raw_responses import (
 )
 import datetime
 import calendar
+from typing import Optional, Dict, Any, cast
 
 
 class OHSAnalysisView(APIView):
@@ -185,6 +186,8 @@ class OHSAnalysisView(APIView):
 
 
 class GetIllnessAnalysisView(APIView):
+    start: datetime.date
+    end: datetime.date
     permission_classes = [IsAuthenticated]
     INJURY_RATE_DICT = {100: 2_00_000, 500: 10_00_000}
 
@@ -195,6 +198,7 @@ class GetIllnessAnalysisView(APIView):
             1: "gri-social-ohs-403-9b-number_of_injuries_workers",
         }
         self.warning_message = None
+
 
     def set_data_points(self):
         self.data_points = (
@@ -297,8 +301,7 @@ class GetIllnessAnalysisView(APIView):
 
     def are_all_required_months_present_inside_data_points(self):
         # * Get all the months data inside the data points
-        months_date = set([(i["year"],i["month"]) for i in self.data_points.values("month", "year")])
-        months_data = list(self.data_points.values_list("month", flat=True).distinct())
+        months_data = set([(i["year"],i["month"]) for i in self.data_points.values("month", "year")])
 
         # * Get all the months between start and end dates
         months_between_start_and_end = self.get_months_years_optimized()
@@ -307,22 +310,22 @@ class GetIllnessAnalysisView(APIView):
         if set(months_between_start_and_end) == set(months_data):
             return True
 
-        minimum_date = min(difference_in_dates)
-        maximum_date = max(difference_in_dates)
-
+        minimum_date = min(months_data)
+        maximum_date = max(months_data)
         self.warning_message = f"The data is available only for the period {calendar.month_name[minimum_date[1]]} {minimum_date[0]} to {calendar.month_name[maximum_date[1]]} {maximum_date[0]}"
         return False
 
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        self.start = serializer.validated_data["start"]
-        self.end = serializer.validated_data["end"]
-        self.corporate = serializer.validated_data.get(
-            "corporate"
-        )  # * This is optional
-        self.organisation = serializer.validated_data.get("organisation")
-        self.location = serializer.validated_data.get("location")  # * This is optional
+        data: Dict[str,Any] = cast(Dict[str, Any], serializer.validated_data)
+        self.start = data["start"]
+        self.end = data["end"]
+        self.corporate = data.get("corporate")  # * This is optional
+        self.organisation = data.get("organisation")
+        self.location = data.get("location")  # * This is optional
+
+
         show_warning = False
         self.set_data_points()
         if self.are_all_required_months_present_inside_data_points():
