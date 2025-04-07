@@ -339,7 +339,7 @@ class OrganizationViewset(viewsets.ModelViewSet):
     """Endpoints for Organizations"""
 
     queryset = Organization.objects.all()
-    serializer_class = OrganizationOnlySerializer
+    serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
 
     def destroy(self, request, *args, **kwargs):

@@ -148,6 +148,36 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = "__all__"
 
+    def validate(self, data):
+        """
+        Checks if any other location with the same name (case-insensitive) is associated with the location's corporate.
+        """
+        request = self.context.get("request")
+
+        if "corporateentity" in request.data:
+            corp = request.data["corporateentity"]
+        elif self.instance:
+            corp = self.instance.corporateentity
+        else:
+            raise serializers.ValidationError(
+                {"corporateentity": "This field is required."}
+            )
+
+        name = data.get("name")
+
+        # Exclude the current instance in case of updates.
+        qs = Location.objects.filter(corporateentity=corp, name__iexact=name)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise serializers.ValidationError(
+                {
+                    "message": "A Location with this name already exists for the selected Corporate."
+                }
+            )
+        return data
+
 
 class CorporateentitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -167,6 +197,22 @@ class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = "__all__"
+
+    def validate(self, data):
+        """
+        Checks if any other organization with the same name (case-insensitive) is associated with the organization's client.
+        """
+        client = self.context["request"].user.client
+        name = data.get("name")
+        # Check case-insensitively if an organization with the same name exists for the client.
+        qs = Organization.objects.filter(client=client, name__iexact=name)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError(
+                {"message": "An Organization with this name already exists"}
+            )
+        return data
 
     def to_representation(self, instance):
         user = self.context["request"].user
@@ -188,6 +234,39 @@ class CorporateentityOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Corporateentity
         fields = "__all__"
+
+    def validate(self, data):
+        """
+        Checks if any other corporate with the same name (case-insensitive) exists for the corporates's organization.
+        """
+        request = self.context.get("request")
+
+        # Get the organization from the request data if available,
+        # otherwise fall back to the organization's instance (for update)
+        if "organization" in request.data:
+            org = request.data["organization"]
+        elif self.instance:
+            org = self.instance.organization
+        else:
+            raise serializers.ValidationError(
+                {"organization": "This field is required."}
+            )
+
+        name = data.get("name")
+
+        # Exclude the current instance in case of updates.
+        qs = Corporateentity.objects.filter(organization=org, name__iexact=name)
+
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise serializers.ValidationError(
+                {
+                    "message": "A Corporate with this name already exists for the selected Organization."
+                }
+            )
+        return data
 
 
 class OrganizationOnlySerializer(serializers.ModelSerializer):
