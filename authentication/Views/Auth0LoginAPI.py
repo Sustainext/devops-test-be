@@ -10,6 +10,8 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
 from datetime import datetime, timedelta
+import logging
+error_logger = logging.getLogger('custom_logger')
 
 class Auth0LoginView(APIView):
     """Login view for Auth0 users"""
@@ -127,4 +129,5 @@ class Auth0LoginView(APIView):
             return response
 
         except ValueError as e:
+            error_logger.error(f"Error occurred during login: {e}", exc_info=True)
             return Response({"error": str(e)}, status=400)
