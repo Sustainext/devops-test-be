@@ -23,6 +23,17 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO New_
 GRANT CREATE ON SCHEMA public TO New_User_be;
 ```
 
+```Celery development Mode Start command
+celery -A project_name worker --loglevel=info --pool=threads --concurrency=4
+
+if need 1 worker use
+celery -A project_name worker --loglevel=info --pool=solo
+
+Need debugging?
+use
+celery -A project_name worker --loglevel=debug --pool=solo
+
+```
 
 ## Libraries required
 
