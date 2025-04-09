@@ -12,9 +12,17 @@ class Scenerio(AbstractModel, HistoricalModelMixin):
     Model for storing scenario data.
     """
 
+    scenario_by_choices = (
+        ("corporate", "corporate"),
+        ("organization", "organization"),
+    )
+
     name = models.CharField(max_length=255)
     base_year = models.IntegerField()
     target_year = models.IntegerField()
+    scenario_by = models.CharField(
+        max_length=255, choices=scenario_by_choices, default="organization"
+    )
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, name="organization"
     )
