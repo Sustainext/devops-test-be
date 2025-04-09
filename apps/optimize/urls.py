@@ -3,6 +3,7 @@ from rest_framework import routers
 from .Views.ScenarioView import ScenarioView
 from .Views.BusinessMetricView import BusinessMetricView
 from .Views.FetchAllEmissionData import FetchEmissionData
+from .Views.EmissionDataExistsView import EmissionDataExistsView
 
 router = routers.DefaultRouter()
 router.register(r"scenario", ScenarioView, basename="scenario")
@@ -17,5 +18,10 @@ urlpatterns = [
         "<int:scenario_id>/emissiondata/",
         FetchEmissionData.as_view(),
         name="emission-data",
+    ),
+    path(
+        "<int:scenario_id>/emissiondataexists/",
+        EmissionDataExistsView.as_view(),
+        name="emission-data-exists",
     ),
 ]

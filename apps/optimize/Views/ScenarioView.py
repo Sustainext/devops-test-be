@@ -17,6 +17,7 @@ class ScenarioView(viewsets.ModelViewSet):
         return final_queryset
 
     def perform_create(self, serializer):
+        # add validation here if scenario by corporate then corporate is required
         scenario = serializer.save(
             created_by=self.request.user, updated_by=self.request.user
         )
