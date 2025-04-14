@@ -2,19 +2,20 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from datametric.models import EmissionAnalysis
 from sustainapp.models import Location
+from ..Serializers.EmissionDataExistsSerializer import EmissionDataRequestSerializer
+from rest_framework import status
 
 
 class EmissionDataExistsView(APIView):
-    def get(self, request):
-        organization = request.GET.get("organization")
-        corporate = request.GET.get("corporate")
-        year = request.GET.get("year")
+    def post(self, request):
+        serializer = EmissionDataRequestSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        if not year:
-            return Response("Year is required.")
-
-        if not any([organization, corporate]):
-            return Response("At least one of organization, corporate is required.")
+        data = serializer.validated_data
+        organization = data.get("organization")
+        corporate = data.get("corporate")
+        year = data["year"]
 
         if organization and not corporate:
             locations = Location.objects.filter(
@@ -38,5 +39,4 @@ class EmissionDataExistsView(APIView):
 
             return Response({"exists": emission_data})
 
-        else:
-            return Response({"exists": False})
+        return Response({"exists": False})
