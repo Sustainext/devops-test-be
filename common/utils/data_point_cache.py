@@ -12,7 +12,7 @@ def set_data_point_cache(data_point):
         "index": data_point.index,
         "data_metric_name": data_point.data_metric.name,
         "value": data_point.value,
-        "location_name": data_point.locale.name
+        "location_name": data_point.locale.name if data_point.locale else None
     }
     logger.info(data_point_dictionary)
     cache.set(f"data_point_{data_point.id}", data_point_dictionary, timeout=None)

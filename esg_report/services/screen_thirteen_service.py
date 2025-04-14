@@ -1,13 +1,13 @@
 from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
-    collect_data_by_raw_response_and_index,
     collect_data_and_differentiate_by_location,
     forward_request_with_jwt,
     calling_analyse_view_with_params,
     calling_analyse_view_with_params_for_same_year,
     get_management_materiality_topics,
 )
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
 from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
     TrainingAnalyzeAPI,

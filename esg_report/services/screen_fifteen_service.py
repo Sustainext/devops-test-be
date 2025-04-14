@@ -1,11 +1,11 @@
 from esg_report.utils import (
     get_data_points_as_per_report,
     collect_data_and_differentiate_by_location,
-    collect_data_by_raw_response_and_index,
     get_raw_responses_as_per_report,
     calling_analyse_view_with_params,
     get_management_materiality_topics,
 )
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 from esg_report.Serializer.ScreenFifteenSerializer import ScreenFifteenSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from esg_report.models.ScreenFifteen import ScreenFifteenModel

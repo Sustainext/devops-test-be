@@ -4,7 +4,6 @@ from collections import defaultdict
 from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
-    collect_data_by_raw_response_and_index,
     collect_data_and_differentiate_by_location,
     get_data_by_raw_response_and_index,
     forward_request_with_jwt,
@@ -12,6 +11,7 @@ from esg_report.utils import (
     get_management_materiality_topics,
     calling_analyse_view_with_params,
 )
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
     get_top_emission_by_scope,
@@ -91,7 +91,7 @@ class ScreenTwelveService:
         self.raw_responses = get_raw_responses_as_per_report(self.report)
 
     def set_data_points(self):
-        self.data_points = get_data_points_as_per_report(self.report)
+        self.data_points = get_data_points_as_per_report(self.report).filter(path__slug__in=list(self.slugs.values()))
 
     def get_energy_analyse(self):
         data = forward_request_with_jwt(
