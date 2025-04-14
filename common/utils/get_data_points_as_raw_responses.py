@@ -10,9 +10,9 @@ def collect_data_by_raw_response_and_index(data_points):
     data_points_ids = [dp.id for dp in data_points.only("id")]
 
     # Iterate over the list of data points
-    for dp in data_points_ids:
+    for id in data_points_ids:
         # Get the data point from cache if it exists
-        data_point_dictionary = get_data_point_cache(dp.id)
+        data_point_dictionary = get_data_point_cache(id)
         raw_response = data_point_dictionary["raw_response_id"]
         index = data_point_dictionary["index"]
         data_metric = data_point_dictionary["data_metric_name"]

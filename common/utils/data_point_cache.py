@@ -34,4 +34,5 @@ def delete_data_point_cache(data_point_id):
 
 def delete_multiple_data_point_cache(data_point_ids):
     for data_point_id in data_point_ids:
+        logger.info(f"Deleting data point cache for id: {data_point_id}")
         delete_data_point_cache(data_point_id)
