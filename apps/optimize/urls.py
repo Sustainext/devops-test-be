@@ -20,7 +20,7 @@ urlpatterns = [
         name="emission-data",
     ),
     path(
-        "<int:scenario_id>/emissiondataexists/",
+        "emissiondataexists/",
         EmissionDataExistsView.as_view(),
         name="emission-data-exists",
     ),
