@@ -3,11 +3,18 @@ from ..Serializers.ScenarioScerializer import ScenerioSerializer
 from rest_framework import viewsets
 from ..Paginations.ScenarioPagination import ScenerioPagination
 from ..models.BusinessMetric import BusinessMetric
+from ..filters import ScenarioFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter, SearchFilter
 
 
 class ScenarioView(viewsets.ModelViewSet):
     serializer_class = ScenerioSerializer
     pagination_class = ScenerioPagination
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_class = ScenarioFilter
+    ordering_fields = ["name"]
+    search_fields = ["name"]
 
     def get_queryset(self):
         user_orgs = self.request.user.orgs.values_list("id", flat=True)
