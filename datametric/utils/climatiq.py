@@ -499,7 +499,7 @@ class Climatiq:
                 self.send_error_email(error_message)
 
     def round_decimal_or_nulls(self, value, decimal_point=20):
-        if not bool(value):
+        if not bool(value) and isinstance(value, (int, float)):
             return None
         elif isinstance(value, str):
             return round(decimal.Decimal(value), decimal_point)
