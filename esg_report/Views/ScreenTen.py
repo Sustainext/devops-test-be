@@ -91,7 +91,7 @@ class ScreenTenAPIView(APIView):
     def get_414_2b_collect(self):
         local_data_points = self.data_points.filter(
             path__slug=self.slugs[14]
-        ).select_related("data_metric")
+        )
         return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_414_1a_collect(self):
