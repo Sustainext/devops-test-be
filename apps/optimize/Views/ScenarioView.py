@@ -9,6 +9,12 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 
 
 class ScenarioView(viewsets.ModelViewSet):
+    """This class defines the view for the Scenerio model.
+    It uses the ScenerioSerializer for serialization and deserialization,
+    and the ScenerioPagination for pagination.
+    It also uses DjangoFilterBackend, OrderingFilter, and SearchFilter for filtering and ordering.
+    """
+
     serializer_class = ScenerioSerializer
     pagination_class = ScenerioPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
