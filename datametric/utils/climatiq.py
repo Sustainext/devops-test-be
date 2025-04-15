@@ -520,9 +520,7 @@ class Climatiq:
                 ).capitalize(),
                 emission_id=emission["emission_factor"]["id"],
                 activity_id=emission["emission_factor"]["activity_id"],
-                co2e_total=self.round_decimal_or_nulls(
-                    emission["co2e"], 20
-                ),  # * This can also be None
+                co2e_total=emission["co2e"],  # * This can also be None
                 co2=self.round_decimal_or_nulls(
                     emission["constituent_gases"]["co2"], 20
                 ),
