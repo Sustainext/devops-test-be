@@ -224,6 +224,7 @@ class ScreenThirteenService:
                 }
             )
         self.set_data_points()
+        self.mass_calling_data_points()
         self.set_raw_responses()
         response_data["organisation_id"] = self.report.organization.id
         response_data["corporate_id"] = (
