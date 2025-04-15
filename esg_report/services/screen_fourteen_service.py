@@ -2,8 +2,6 @@ from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     get_maximum_months_year,
-    collect_data_by_raw_response_and_index,
-    collect_data_and_differentiate_by_location,
     forward_request_with_jwt,
     get_management_materiality_topics,
 )
@@ -12,6 +10,7 @@ from sustainapp.Utilities.community_engagement_analysis import (
     get_community_engagement_analysis,
 )
 from esg_report.Serializer.ScreenFourteenSerializer import ScreenFourteenSerializer
+from common.utils.get_data_points_as_raw_responses import collect_data_and_differentiate_by_location
 from sustainapp.models import Report
 from esg_report.models.ScreenFourteen import ScreenFourteen
 

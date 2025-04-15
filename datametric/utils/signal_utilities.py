@@ -1,7 +1,11 @@
 from datametric.utils.climatiq import Climatiq
 from datametric.models import DataMetric, RawResponse, DataPoint
 from logging import getLogger
-from django.core.cache import cache
+from common.utils.data_point_cache import (
+    set_data_point_cache,
+    delete_multiple_data_point_cache,
+)
+
 
 logger = getLogger("django")
 
@@ -69,6 +73,7 @@ def create_or_update_data_points(
 
         # Save the updated or created data point
         data_point.save()
+        set_data_point_cache(data_point)
 
     except Exception as e:
         # pass
@@ -115,3 +120,10 @@ def process_raw_response_data(
             f"Data metric : {data_metric.name}, Data Metric Type: {data_metric.response_type}, Value: {value}"
         )
         create_or_update_data_points(data_metric, value, index, raw_response)
+
+
+def delete_data_points_by_raw_response(raw_response: RawResponse):
+    data_points = DataPoint.objects.filter(raw_response=raw_response)
+    data_point_ids = data_points.values_list("id", flat=True)
+    delete_multiple_data_point_cache(data_point_ids)
+    data_points.delete()
