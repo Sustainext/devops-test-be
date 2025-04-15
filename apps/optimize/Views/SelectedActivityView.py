@@ -7,6 +7,12 @@ from django.shortcuts import get_object_or_404
 
 
 class SelectedActivityView(APIView):
+    """This class defines the view for the SelectedActivity model.
+    It uses the SelectedActivitySerializer for serialization and deserialization.
+    It allows retrieving and creating selected activities for a given scenario.
+    It also allows deleting selected activities for a given scenario.
+    """
+
     def get(self, request, scenario_id):
         selected_activities = SelectedActivity.objects.filter(scenario_id=scenario_id)
         serializer = SelectedActivitySerializer(selected_activities, many=True)
