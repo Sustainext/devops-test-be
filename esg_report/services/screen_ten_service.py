@@ -9,8 +9,8 @@ from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     get_maximum_months_year,
-    collect_data_by_raw_response_and_index,
 )
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 from sustainapp.Utilities.supplier_environment_analyse import new_suppliers
 from sustainapp.Utilities.supplier_social_assessment_analyse import (
     get_social_data,

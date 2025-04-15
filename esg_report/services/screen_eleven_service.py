@@ -4,7 +4,6 @@ from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     get_maximum_months_year,
-    collect_data_and_differentiate_by_location,
     forward_request_with_jwt,
     get_management_materiality_topics,
 )
