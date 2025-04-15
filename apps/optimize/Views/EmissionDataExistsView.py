@@ -1,39 +1,42 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datametric.models import EmissionAnalysis
-from ..models import Scenerio
 from sustainapp.models import Location
+from ..Serializers.EmissionDataExistsSerializer import EmissionDataRequestSerializer
+from rest_framework import status
 
 
 class EmissionDataExistsView(APIView):
-    def get_scenario_data(self, scenario_id):
-        # Fetch scenario data from the database
-        scenario_data = Scenerio.objects.get(id=scenario_id)
-        return scenario_data
+    def post(self, request):
+        serializer = EmissionDataRequestSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, scenario_id):
-        scenario = self.get_scenario_data(scenario_id)
-        if scenario.scenario_by == "organization":
+        data = serializer.validated_data
+        organization = data.get("organization")
+        corporate = data.get("corporate")
+        year = data["year"]
+
+        if organization and not corporate:
             locations = Location.objects.filter(
-                corporateentity__organization=scenario.organization
+                corporateentity__organization_id=organization
             ).values_list("id", flat=True)
 
             emission_data = EmissionAnalysis.objects.filter(
-                year=scenario.base_year,
+                year=year,
                 raw_response__locale__in=locations,
             ).exists()
 
             return Response({"exists": emission_data})
 
-        elif scenario.scenario_by == "corporate":
-            locations = Location.objects.filter(corporateentity=scenario.corporate)
+        elif corporate:
+            locations = Location.objects.filter(corporateentity_id=corporate)
 
             emission_data = EmissionAnalysis.objects.filter(
-                year=scenario.base_year,
+                year=year,
                 raw_response__locale__in=locations,
             ).exists()
 
             return Response({"exists": emission_data})
 
-        else:
-            return Response({"exists": False})
+        return Response({"exists": False})
