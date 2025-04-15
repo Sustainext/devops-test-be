@@ -254,5 +254,5 @@ class ScreenTenService:
     def get_414_2b_collect(data_points):
         points = data_points.filter(
             path__slug=ScreenTenService.slugs[14]
-        ).select_related("data_metric")
+        )
         return collect_data_by_raw_response_and_index(points)

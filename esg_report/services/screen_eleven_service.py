@@ -305,16 +305,8 @@ class ScreenElevenService:
         local_data_points = self.data_points.filter(path__slug=self.slugs[16]).order_by(
             "-year"
         )
-        response_data = {}
-        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[16])
-        for data_metric in local_data_metrics:
-            try:
-                response_data[data_metric.name] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[data_metric.name] = None
-        return response_data
+        return collect_data_by_raw_response_and_index(local_data_points)
+
 
     def get_3_3cde(self):
         return None
@@ -323,16 +315,8 @@ class ScreenElevenService:
         local_data_points = self.data_points.filter(path__slug=self.slugs[17]).order_by(
             "-year"
         )
-        response_data = {}
-        local_data_metrics = DataMetric.objects.filter(path__slug=self.slugs[17])
-        for data_metric in local_data_metrics:
-            try:
-                response_data[data_metric.name] = local_data_points.get(
-                    data_metric=data_metric
-                ).value
-            except DataPoint.DoesNotExist:
-                response_data[data_metric.name] = None
-        return response_data
+        return collect_data_by_raw_response_and_index(local_data_points)
+
 
     def get_205_3a(self):
         local_data_points = self.data_points.filter(path__slug=self.slugs[18]).order_by(
