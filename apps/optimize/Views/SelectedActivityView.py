@@ -14,7 +14,8 @@ class SelectedActivityView(APIView):
     """
 
     def get(self, request, scenario_id):
-        selected_activities = SelectedActivity.objects.filter(scenario_id=scenario_id)
+        scenario = get_object_or_404(Scenerio, id=scenario_id)
+        selected_activities = SelectedActivity.objects.filter(scenario=scenario)
         serializer = SelectedActivitySerializer(selected_activities, many=True)
         return Response(serializer.data)
 
