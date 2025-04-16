@@ -10,9 +10,9 @@ from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     get_maximum_months_year,
-    collect_data_by_raw_response_and_index,
     get_management_materiality_topics,
 )
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 from esg_report.Serializer.ScreenTenSerializer import ScreenTenSerializer
 from sustainapp.models import Report
 from sustainapp.Utilities.supplier_environment_analyse import (
@@ -91,7 +91,7 @@ class ScreenTenAPIView(APIView):
     def get_414_2b_collect(self):
         local_data_points = self.data_points.filter(
             path__slug=self.slugs[14]
-        ).select_related("data_metric")
+        )
         return collect_data_by_raw_response_and_index(local_data_points)
 
     def get_414_1a_collect(self):

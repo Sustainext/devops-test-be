@@ -4,13 +4,15 @@ from collections import defaultdict
 from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
-    collect_data_by_raw_response_and_index,
-    collect_data_and_differentiate_by_location,
-    get_data_by_raw_response_and_index,
+    get_data_by_data_point_dictionary,
     forward_request_with_jwt,
     get_emission_analysis_as_per_report,
     get_management_materiality_topics,
     calling_analyse_view_with_params,
+)
+from common.utils.get_data_points_as_raw_responses import (
+    collect_data_by_raw_response_and_index,
+    collect_data_and_differentiate_by_location
 )
 from datametric.utils.analyse import set_locations_data
 from sustainapp.Utilities.emission_analyse import (
@@ -86,12 +88,19 @@ class ScreenTwelveService:
             51: "gri-environment-packaging-material-management-of-material-topic",
             # TODO : 12.2.1
         }
+        self.inverse_slugs = {v: k for k, v in self.slugs.items()}
+        self.data_points_dictionary = defaultdict(list)
 
     def set_raw_responses(self):
         self.raw_responses = get_raw_responses_as_per_report(self.report)
 
     def set_data_points(self):
-        self.data_points = get_data_points_as_per_report(self.report)
+        self.data_points = get_data_points_as_per_report(self.report).filter(path__slug__in=list(self.slugs.values())).prefetch_related("path").only("path", "id")
+
+    #* Create a method that creates a data point dictionary based on the slug
+    def mass_calling_data_points(self):
+        for data_point in self.data_points:
+            self.data_points_dictionary[data_point.path.slug].append(data_point.id)
 
     def get_energy_analyse(self):
         data = forward_request_with_jwt(
@@ -159,28 +168,16 @@ class ScreenTwelveService:
         return data
 
     def get_301_3a_3b(self):
-        local_data_points = self.data_points.filter(path__slug=self.slugs[6]).order_by(
-            "index"
-        )
-        return collect_data_by_raw_response_and_index(data_points=local_data_points)
+        return collect_data_by_raw_response_and_index(data_points=self.data_points_dictionary[self.slugs[6]])
 
     def get_301_2a(self):
-        local_data_points = self.data_points.filter(path__slug=self.slugs[5]).order_by(
-            "index"
-        )
-        return collect_data_by_raw_response_and_index(data_points=local_data_points)
+        return collect_data_by_raw_response_and_index(data_points=self.data_points_dictionary[self.slugs[5]])
 
     def get_301_1a_renewable_materials(self):
-        local_data_points = self.data_points.filter(path__slug=self.slugs[4]).order_by(
-            "index"
-        )
-        return collect_data_by_raw_response_and_index(data_points=local_data_points)
+        return collect_data_by_raw_response_and_index(data_points=self.data_points_dictionary[self.slugs[4]])
 
     def get_301_1a_non_renewable_materials(self):
-        local_data_points = self.data_points.filter(path__slug=self.slugs[3]).order_by(
-            "index"
-        )
-        return collect_data_by_raw_response_and_index(data_points=local_data_points)
+        return collect_data_by_raw_response_and_index(data_points=self.data_points_dictionary[self.slugs[3]])
 
     def get_301_123_collect(self):
         emission_analysis_objects = get_emission_analysis_as_per_report(
@@ -257,24 +254,12 @@ class ScreenTwelveService:
         return response_data
 
     def get_emission_collect(self):
-        base_year_data_points = self.data_points.filter(
-            path__slug=self.slugs[45]
-        ).order_by("index")
-        emission_intensity_data_points = self.data_points.filter(
-            path__slug=self.slugs[42]
-        ).order_by("index")
-        emission_reduction_data_points = self.data_points.filter(
-            path__slug=self.slugs[41]
-        ).order_by("index")
-        consolidation_approach_for_emission_data_points = self.data_points.filter(
-            path__slug=self.slugs[46]
-        ).order_by("index")
-        consolidation_assumption_considered_data_points = self.data_points.filter(
-            path__slug=self.slugs[47]
-        ).order_by("index")
-        standard_methodology_used_data_points = self.data_points.filter(
-            path__slug=self.slugs[48]
-        ).order_by("index")
+        base_year_data_points = self.data_points_dictionary[self.slugs[45]]
+        emission_intensity_data_points = self.data_points_dictionary[self.slugs[42]]
+        emission_reduction_data_points = self.data_points_dictionary[self.slugs[41]]
+        consolidation_approach_for_emission_data_points = self.data_points_dictionary[self.slugs[46]]
+        consolidation_assumption_considered_data_points = self.data_points_dictionary[self.slugs[47]]
+        standard_methodology_used_data_points = self.data_points_dictionary[self.slugs[48]]
         data = {}
         data["base_year"] = collect_data_by_raw_response_and_index(
             data_points=base_year_data_points
@@ -301,12 +286,8 @@ class ScreenTwelveService:
         return data
 
     def air_quality_collect(self):
-        air_quality_standard_methodology_data_points = self.data_points.filter(
-            path__slug=self.slugs[43]
-        ).order_by("index")
-        ods_standard_methodology_data_points = self.data_points.filter(
-            path__slug=self.slugs[44]
-        ).order_by("index")
+        air_quality_standard_methodology_data_points = self.data_points_dictionary[self.slugs[43]]
+        ods_standard_methodology_data_points = self.data_points_dictionary[self.slugs[44]]
         data = {}
         data["air_quality_standard_methodology"] = (
             collect_data_by_raw_response_and_index(
@@ -355,6 +336,7 @@ class ScreenTwelveService:
 
         self.set_raw_responses()
         self.set_data_points()
+        self.mass_calling_data_points()
         response_data["3_3cde"] = self.get_3_3cde()
         response_data["305_123_collect"] = self.get_301_123_collect()
         response_data["305_123_analyse"] = self.get_301_123_analyse()
@@ -394,101 +376,69 @@ class ScreenTwelveService:
         )
         response_data.update(
             {
-                "306_5e": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[29]
+                "306_5e": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[29]
                 ),
-                "306_5a_5b_5c_5d_5e": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[28]
+                "306_5a_5b_5c_5d_5e": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[28]
                 ),
-                "306_2": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[27]
+                "306_2": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[27]
                 ),
-                "306_3b": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[26]
+                "306_3b": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[26]
                 ),
-                "306_3a_3b": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[25]
+                "306_3a_3b": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[25]
                 ),
-                "306_1ab": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[24]
+                "306_1ab": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[24]
                 ),
-                "302_5c": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[23]
+                "302_5c": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[23]
                 ),
-                "302_5b": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[22]
+                "302_5b": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[22]
                 ),
-                "302_5a_5b": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[21]
+                "302_5a_5b": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[21]
                 ),
-                "302_4d": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[20]
+                "302_4d": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[20]
                 ),
-                "302_4c": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[19]
+                "302_4c": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[19]
                 ),
-                "302_4a_4b": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[18]
+                "302_4a_4b": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[18]
                 ),
-                "302_3a_3b_3c_3d": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[17]
+                "302_3a_3b_3c_3d": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[17]
                 ),
-                "302_2c": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[16]
+                "302_2c": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[16]
                 ),
-                "302_2b": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[15]
+                "302_2b": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[15]
                 ),
-                "302_2a": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[14]
+                "302_2a": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[14]
                 ),
-                "302_1g": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[13]
+                "302_1g": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[13]
                 ),
-                "302_1f": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[12]
+                "302_1f": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[12]
                 ),
-                "302_1d": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[11]
+                "302_1d": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[11]
                 ),
-                "302_1": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[10]
+                "302_1": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[10]
                 ),
-                "302_1c_1e": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[9]
+                "302_1c_1e": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[9]
                 ),
-                "302_1a_1b": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[8]
+                "302_1a_1b": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[8]
                 ),
-                "303_3a_3b_3c_3d": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[7]
+                "303_3a_3b_3c_3d": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[7]
                 ),
-                "306_4b_4c": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[30]
+                "306_4b_4c": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[30]
                 ),
-                "306_4e": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[31]
+                "306_4e": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[31]
                 ),
                 "306_3": None,  # TODO: Add logic over here when clarified in figma.
-                "303-1b-1c-1d": get_data_by_raw_response_and_index(
-                    data_points=self.data_points, slug=self.slugs[32]
+                "303-1b-1c-1d": get_data_by_data_point_dictionary(data_points_dictionary=self.data_points_dictionary, slug=self.slugs[32]
                 ),
                 "material_analyse": self.get_301_analyse(),
                 "water_analyse": self.get_water_analyse(),
                 "energy_analyse": self.get_energy_analyse(),
                 "waste_analyse": self.get_waste_analyse(),
                 "303-2a-profile_receiving_waterbody": collect_data_and_differentiate_by_location(
-                    data_points=self.data_points.filter(path__slug=self.slugs[33])
-                ),
-                "303-2a-management_water_discharge": collect_data_and_differentiate_by_location(
-                    data_points=self.data_points.filter(path__slug=self.slugs[34])
-                ),
-                "303_4d_substances_of_concern": collect_data_by_raw_response_and_index(
-                    data_points=self.data_points.filter(path__slug=self.slugs[39])
-                ),
+                    data_points=self.data_points_dictionary[self.slugs[33]]),
+                "303-2a-management_water_discharge": collect_data_and_differentiate_by_location(data_points=self.data_points_dictionary[self.slugs[34]]),
+                "303_4d_substances_of_concern": collect_data_by_raw_response_and_index(data_points=self.data_points_dictionary[self.slugs[39]]),
                 "303_3d_4e_sma": collect_data_and_differentiate_by_location(
-                    data_points=self.data_points.filter(path__slug=self.slugs[40])
-                ),
+                    data_points=self.data_points_dictionary[self.slugs[40]])
             }
         )
         return response_data
