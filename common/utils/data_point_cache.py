@@ -6,6 +6,9 @@ logger = logging.getLogger('celery_logger')
 
 
 def set_data_point_cache(data_point):
+    """
+    Sets the cache for a given data point.
+    """
     data_point_dictionary = {
         "id": data_point.id,
         "raw_response_id": data_point.raw_response.id,
@@ -19,6 +22,10 @@ def set_data_point_cache(data_point):
 
 
 def get_data_point_cache(data_point_id):
+    """
+    Retrieves the cache for a given data point.
+    If the cache is not found, it will be set.
+    """
     if cache.get(f"data_point_{data_point_id}") is None:
         try:
             data_point = DataPoint.objects.get(id=data_point_id)
@@ -29,10 +36,16 @@ def get_data_point_cache(data_point_id):
 
 
 def delete_data_point_cache(data_point_id):
+    """
+    Deletes the cache for a given data point.
+    """
     cache.delete(f"data_point_{data_point_id}")
 
 
 def delete_multiple_data_point_cache(data_point_ids):
+    """
+    Deletes the cache for multiple data points.
+    """
     for data_point_id in data_point_ids:
         logger.info(f"Deleting data point cache for id: {data_point_id}")
         delete_data_point_cache(data_point_id)
