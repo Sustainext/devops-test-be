@@ -8,11 +8,9 @@ class ScenarioFilter(django_filters.FilterSet):
     """
 
     name = django_filters.CharFilter(field_name="name", lookup_expr="icontains")
-    corporate_name = django_filters.CharFilter(
-        field_name="corporate__name", lookup_expr="icontains"
-    )
-    organization_name = django_filters.CharFilter(
-        field_name="organization__name", lookup_expr="icontains"
+    corporate = django_filters.BaseInFilter(field_name="corporate", lookup_expr="in")
+    organization = django_filters.BaseInFilter(
+        field_name="organization", lookup_expr="in"
     )
     base_year = django_filters.BaseInFilter(field_name="base_year", lookup_expr="in")
     target_year = django_filters.BaseInFilter(
@@ -25,6 +23,6 @@ class ScenarioFilter(django_filters.FilterSet):
             "name",
             "base_year",
             "target_year",
-            "corporate_name",
-            "organization_name",
+            "corporate",
+            "organization",
         ]
