@@ -381,6 +381,7 @@ if DEVELOPMENT_MODE:
     STATIC_URL = "/static/"
     STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
     CELERY_TASK_ALWAYS_EAGER = os.getenv("CELERY_TASK_ALWAYS_EAGER", False) == "True"
+    CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", False) == "True"
 
 sentry_sdk.init(
     dsn=SENTRY_KEY,
