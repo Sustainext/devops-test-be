@@ -3,6 +3,7 @@ from django.db.models import prefetch_related_objects
 from datametric.models import DataPoint, EmissionAnalysis, RawResponse
 from datametric.utils.process_json_utility import process_json
 from analysis.utils.analysis_data_maker import create_analysis_data
+from datametric.utils.signal_utilities import delete_data_points_by_raw_response
 import logging
 
 logger = logging.getLogger("celery_logger")
@@ -21,7 +22,8 @@ def process_raw_response_task(instance_id):
         prefetch_related_objects([instance], "path", "user", "client")
 
         # Delete old DataPoints & EmissionAnalysis
-        DataPoint.objects.filter(raw_response=instance).delete()
+        delete_data_points_by_raw_response(instance)
+
         EmissionAnalysis.objects.filter(raw_response=instance).delete()
 
         # Process JSON and create analysis data

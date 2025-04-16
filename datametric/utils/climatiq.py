@@ -243,7 +243,6 @@ class Climatiq:
         start_time = time.time()
         CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
         payload = self.payload_preparation_for_climatiq_api()
-        print(json.dumps(payload))
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
         logger.info("Requesting Climatiq API")
         # print(payload, ' is payload for Climatiq')
@@ -500,7 +499,7 @@ class Climatiq:
                 self.send_error_email(error_message)
 
     def round_decimal_or_nulls(self, value, decimal_point=20):
-        if not bool(value):
+        if not bool(value) and not isinstance(value, (int, float)):
             return None
         elif isinstance(value, str):
             return round(decimal.Decimal(value), decimal_point)
@@ -520,9 +519,7 @@ class Climatiq:
                 ).capitalize(),
                 emission_id=emission["emission_factor"]["id"],
                 activity_id=emission["emission_factor"]["activity_id"],
-                co2e_total=self.round_decimal_or_nulls(
-                    emission["co2e"], 20
-                ),  # * This can also be None
+                co2e_total=emission["co2e"],  # * This can also be None
                 co2=self.round_decimal_or_nulls(
                     emission["constituent_gases"]["co2"], 20
                 ),

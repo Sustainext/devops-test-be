@@ -34,7 +34,7 @@ def validate_id_token(id_token):
         kid = unverified_header.get('kid')
         if not kid:
             raise ValueError("Token header missing 'kid' field")
-    except jwt.JWTError as e:
+    except jwt.PyJWTError as e:
         raise ValueError(f"Error decoding token header: {str(e)}")
 
     # Get the public key corresponding to the 'kid'

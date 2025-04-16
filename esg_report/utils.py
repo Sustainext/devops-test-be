@@ -18,6 +18,7 @@ from esg_report.models.ReportAssessment import ReportAssessment
 from materiality_dashboard.models import (
     AssessmentDisclosureSelection,
 )
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 
 logger = logging.getLogger("error.log")
 
@@ -139,24 +140,6 @@ def get_materiality_assessment(report):
         return None
 
 
-def collect_data_by_raw_response_and_index(data_points):
-    # Create a dictionary where the key is raw_response and the value is another dictionary
-    # which maps index to a dictionary of data_metric and value pairs
-    raw_response_index_map = defaultdict(dict)
-
-    # Iterate over the list of data points
-    for dp in data_points:
-        raw_response = dp.raw_response.id
-        index = dp.index
-        data_metric = dp.data_metric.name
-        value = dp.value
-
-        # Directly store the data_metric and value for the combination of raw_response and index
-        raw_response_index_map[(raw_response, index)][data_metric] = value
-
-    # Convert the defaultdict values into a list of dictionaries (the collected data)
-    return list(raw_response_index_map.values())
-
 
 def collect_data_and_differentiate_by_location(data_points):
     # Dictionary to store data grouped by raw_response and index (ignoring location for grouping)
@@ -196,6 +179,9 @@ def get_data_by_raw_response_and_index(data_points, slug):
         path__slug=slug,
     )
     return collect_data_and_differentiate_by_location(data_points)
+
+def get_data_by_data_point_dictionary(data_points_dictionary, slug):
+    return collect_data_by_raw_response_and_index(data_points_dictionary[slug])
 
 
 def forward_request_with_jwt(view_class, original_request, url, query_params):

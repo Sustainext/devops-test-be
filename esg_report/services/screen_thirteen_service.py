@@ -1,13 +1,12 @@
 from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
-    collect_data_by_raw_response_and_index,
-    collect_data_and_differentiate_by_location,
     forward_request_with_jwt,
     calling_analyse_view_with_params,
     calling_analyse_view_with_params_for_same_year,
     get_management_materiality_topics,
 )
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index, collect_data_and_differentiate_by_location
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
 from sustainapp.Views.Analyse.Social.TrainingAnalyzeAPI import (
     TrainingAnalyzeAPI,
@@ -16,6 +15,7 @@ from sustainapp.Views.Analyse.Social.GetOHSAnalyze import OHSAnalysisView
 from esg_report.Serializer.ScreenThirteenSerializer import ScreenThirteenSerializer
 from sustainapp.models import Report
 from esg_report.models.ScreenThirteen import ScreenThirteen
+from collections import defaultdict
 
 
 class ScreenThirteenService:
@@ -116,6 +116,8 @@ class ScreenThirteenService:
             91: "gri_collect_non_discrimination_management_material_topic",  # 13.8.1
             92: "gri-social-ohs-403-2b-hazard_reporting-new",
         }
+
+        self.data_points_dictionary = defaultdict(list)
         # TODO: Add new points for 13.6.7
 
     def get_403_2a_process_for_hazard(self):
@@ -191,7 +193,12 @@ class ScreenThirteenService:
         return data
 
     def set_data_points(self):
-        self.data_points = get_data_points_as_per_report(self.report)
+        self.data_points = get_data_points_as_per_report(self.report).filter(path__slug__in=list(self.slugs.values())).prefetch_related("path").only("path", "id")
+
+    #* Create a method that creates a data point dictionary based on the slug
+    def mass_calling_data_points(self):
+        for data_point in self.data_points:
+            self.data_points_dictionary[data_point.path.slug].append(data_point.id)
 
     def set_raw_responses(self):
         self.raw_responses = get_raw_responses_as_per_report(self.report)
@@ -217,6 +224,7 @@ class ScreenThirteenService:
                 }
             )
         self.set_data_points()
+        self.mass_calling_data_points()
         self.set_raw_responses()
         response_data["organisation_id"] = self.report.organization.id
         response_data["corporate_id"] = (
@@ -224,76 +232,76 @@ class ScreenThirteenService:
         )
         response_data["2_7_a_b_permanent_employee"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[0])
+                data_points=self.data_points_dictionary[self.slugs[0]])
             )
-        )
+
         response_data["2_7_a_b_temporary_employee"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[1])
+                data_points=self.data_points_dictionary[self.slugs[1]])
             )
-        )
+
         response_data["2_7_c_methodologies"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[3])
-        )
+            data_points=self.data_points_dictionary[self.slugs[3]])
+
         response_data["2_7_c_data"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[4])
-        )
+            data_points=self.data_points_dictionary[self.slugs[4]])
+
         response_data["2_7_d_contextual"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[5])
-        )
+            data_points=self.data_points_dictionary[self.slugs[5]])
+
         response_data["2_7_e_fluctuations"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[6])
-        )
+            data_points=self.data_points_dictionary[self.slugs[6]])
+
         response_data["401_social_analyse"] = self.get_401_ab_social()
         response_data["401_3a_3b_3c_3d_parental_leave"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[7])
+                data_points=self.data_points_dictionary[self.slugs[7]])
             )
-        )
+
         response_data["404_social_analyse"] = self.get_404_social()
         response_data["409-1b"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[8])
-        )
+            data_points=self.data_points_dictionary[self.slugs[8]])
+
         response_data["409-1a_operations_forced_labor"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[9])
+                data_points=self.data_points_dictionary[self.slugs[9]])
             )
-        )
+
         response_data["409-1a_suppliers_forced_labor"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[10])
+                data_points=self.data_points_dictionary[self.slugs[10]])
             )
-        )
+
         response_data["408-1a-1b-operations_risk_child_labour"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[11])
+                data_points=self.data_points_dictionary[self.slugs[11]])
             )
-        )
+
         response_data["408-1a-1b-operations_young_worker_exposed"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[12])
+                data_points=self.data_points_dictionary[self.slugs[12]])
             )
-        )
+
         response_data["408-1a-1b-supplier_risk_child_labor"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[13])
+                data_points=self.data_points_dictionary[self.slugs[13]])
             )
-        )
+
         response_data["408-1a-1b-supplier_young_worker_exposed"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[14])
+                data_points=self.data_points_dictionary[self.slugs[14]])
             )
-        )
+
         response_data["405-1a-number_of_individuals"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[15])
+                data_points=self.data_points_dictionary[self.slugs[15]])
             )
-        )
+
         response_data["405-1b-number_of_individuals"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[16])
+                data_points=self.data_points_dictionary[self.slugs[16]])
             )
-        )
+
         response_data[
             "405-2a-number_of_individuals"
         ] = (  # TODO: Data Point is not coming properly
@@ -308,146 +316,146 @@ class ScreenThirteenService:
         )
         response_data["404-1a-number_of_hours"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[19])
+                data_points=self.data_points_dictionary[self.slugs[19]])
             )
-        )
+
         response_data["410-1a-security_personnel"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[20])
+                data_points=self.data_points_dictionary[self.slugs[20]])
             )
-        )
+
         response_data["403-1a-ohs_management_system"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[21])
+                data_points=self.data_points_dictionary[self.slugs[21]])
             )
-        )
+
         response_data["403-1b-scope_of_workers"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[22])
+                data_points=self.data_points_dictionary[self.slugs[22]])
             )
-        )
+
 
         response_data["403-3a-ohs_functions"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[23])
+                data_points=self.data_points_dictionary[self.slugs[23]])
             )
-        )
+
         response_data["403-4a-ohs_system_1"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[24])
+                data_points=self.data_points_dictionary[self.slugs[24]])
             )
-        )
+
         response_data["403-4a-ohs_system_2"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[25])
+                data_points=self.data_points_dictionary[self.slugs[25]])
             )
-        )
+
         response_data["403-4b"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[26])
-        )
+            data_points=self.data_points_dictionary[self.slugs[26]])
+
 
         response_data["403-6a-access_non_occupational"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[27])
+                data_points=self.data_points_dictionary[self.slugs[27]])
             )
-        )
+
         response_data["403-6a-scope_of_access"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[28])
+                data_points=self.data_points_dictionary[self.slugs[28]])
             )
-        )
+
         response_data["403-6a-voluntary_health"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[29])
+                data_points=self.data_points_dictionary[self.slugs[29]])
             )
-        )
+
         response_data["403-6a-health_risk"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[30])
+                data_points=self.data_points_dictionary[self.slugs[30]])
             )
-        )
+
 
         response_data["403-6b-workers_access"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[31])
+                data_points=self.data_points_dictionary[self.slugs[31]])
             )
-        )
+
         response_data["403-7a-negative_occupational"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[32])
+                data_points=self.data_points_dictionary[self.slugs[32]])
             )
-        )
+
         response_data["403-7a-hazards_risks"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[33])
+                data_points=self.data_points_dictionary[self.slugs[33]])
             )
-        )
+
         response_data["403-2a-process_for_hazard"] = (
             self.get_403_2a()
         )  # TODO: Redo it with data points after data metrics get fixed.
         response_data["403-2a-quality_assurance"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[35])
+                data_points=self.data_points_dictionary[self.slugs[35]])
             )
-        )
+
 
         response_data["403-2c-worker_right"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[36])
+                data_points=self.data_points_dictionary[self.slugs[36]])
             )
-        )
+
         response_data["403-2d"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[37])
-        )
+            data_points=self.data_points_dictionary[self.slugs[37]])
+
 
         response_data["get_403_analyse"] = self.get_403()
         response_data["403_9a"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[38])
-        )
+            data_points=self.data_points_dictionary[self.slugs[38]])
+
         response_data["403_9b"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[39])
-        )
+            data_points=self.data_points_dictionary[self.slugs[39]])
+
         response_data["403_9c_9d"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[40])
-        )
+            data_points=self.data_points_dictionary[self.slugs[40]])
+
         response_data["403_9e"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[41])
-        )
+            data_points=self.data_points_dictionary[self.slugs[41]])
+
         response_data["403_9f"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[42])
-        )
+            data_points=self.data_points_dictionary[self.slugs[42]])
+
         response_data["403_9g"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[43])
-        )
+            data_points=self.data_points_dictionary[self.slugs[43]])
+
         response_data["403-10c"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[43])
-        )
+            data_points=self.data_points_dictionary[self.slugs[43]])
+
         response_data["403-10d"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[45])
-        )
+            data_points=self.data_points_dictionary[self.slugs[45]])
+
         response_data["403-10e"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[46])
-        )
+            data_points=self.data_points_dictionary[self.slugs[46]])
+
         response_data["403-5a"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[47])
-        )
+            data_points=self.data_points_dictionary[self.slugs[47]])
+
         response_data["403-8b"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[48])
-        )
+            data_points=self.data_points_dictionary[self.slugs[48]])
+
         response_data["403-8c"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[49])
-        )
+            data_points=self.data_points_dictionary[self.slugs[49]])
+
         response_data["402-1a_collective_bargainging_agreements"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[50])
+                data_points=self.data_points_dictionary[self.slugs[50]])
             )
-        )
+
         response_data["407-1a-operations"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[51])
-        )
+            data_points=self.data_points_dictionary[self.slugs[51]])
+
         response_data["407-1a-suppliers"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[52])
-        )
+            data_points=self.data_points_dictionary[self.slugs[52]])
+
         response_data["2_30_a"] = calling_analyse_view_with_params(
             view_url="get_general_collective_bargaining_analysis",
             report=self.report,
@@ -471,90 +479,90 @@ class ScreenThirteenService:
             )
         )
         response_data["406_1a"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[53])
-        )
+            data_points=self.data_points_dictionary[self.slugs[53]])
+
         response_data["406_1b"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[54])
-        )
+            data_points=self.data_points_dictionary[self.slugs[54]])
+
         response_data["407_1b"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[55])
-        )
+            data_points=self.data_points_dictionary[self.slugs[55]])
+
         response_data["411_1a"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[56])
-        )
+            data_points=self.data_points_dictionary[self.slugs[56]])
+
         response_data["411_1b"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[57])
-        )
+            data_points=self.data_points_dictionary[self.slugs[57]])
+
         response_data["408-1c-measures_taken"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[58])
+                data_points=self.data_points_dictionary[self.slugs[58]])
             )
-        )
+
         response_data["401-1a"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[59])
-        )
+            data_points=self.data_points_dictionary[self.slugs[59]])
+
         response_data["401-1a-new_emp_hire-temp_emp"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[60])
+                data_points=self.data_points_dictionary[self.slugs[60]])
             )
-        )
+
         response_data["401-1a-new_emp_hire-nonguaranteed"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[61])
+                data_points=self.data_points_dictionary[self.slugs[61]])
             )
-        )
+
         response_data["401-1a-new_emp_hire-fulltime"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[62])
+                data_points=self.data_points_dictionary[self.slugs[62]])
             )
-        )
+
         response_data["401-1a-new_emp_hire-parttime"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[63])
+                data_points=self.data_points_dictionary[self.slugs[63]])
             )
-        )
+
         response_data["401-1a-emp_turnover-permanent_emp"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[64])
+                data_points=self.data_points_dictionary[self.slugs[64]])
             )
-        )
+
         response_data["401-1a-emp_turnover-temp_emp"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[65])
+                data_points=self.data_points_dictionary[self.slugs[65]])
             )
-        )
+
         response_data["401-1a-emp_turnover-nonguaranteed"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[66])
+                data_points=self.data_points_dictionary[self.slugs[66]])
             )
-        )
+
         response_data["401-1a-emp_turnover-fulltime"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[67])
+                data_points=self.data_points_dictionary[self.slugs[67]])
             )
-        )
+
         response_data["401-1a-emp_turnover-parttime"] = (
             collect_data_by_raw_response_and_index(
-                data_points=self.data_points.filter(path__slug=self.slugs[68])
+                data_points=self.data_points_dictionary[self.slugs[68]])
             )
-        )
+
         response_data["401-2a-benefits_provided"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[69])
+                data_points=self.data_points_dictionary[self.slugs[69]])
             )
-        )
+
         response_data["401-2b-significant_loc"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[70])
+                data_points=self.data_points_dictionary[self.slugs[70]])
             )
-        )
+
         response_data["202_1b"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[71])
-        )
+            data_points=self.data_points_dictionary[self.slugs[71]])
+
         response_data["202_1c"] = self.get_202_1c()
         response_data["202_1d"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[73])
-        )
+            data_points=self.data_points_dictionary[self.slugs[73]])
+
         response_data["202_1a_analyse"] = (
             calling_analyse_view_with_params_for_same_year(
                 view_url="get_economic_market_presence",
@@ -588,9 +596,9 @@ class ScreenThirteenService:
 
         response_data["410-1b-training_requirements"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[74])
+                data_points=self.data_points_dictionary[self.slugs[74]])
             )
-        )
+
         response_data["404_1a_analyse"] = (
             calling_analyse_view_with_params_for_same_year(
                 view_url="get_training_social_analysis",
@@ -599,13 +607,13 @@ class ScreenThirteenService:
             )
         )
         response_data["404_2a_2b_collect"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[75])
-        )
+            data_points=self.data_points_dictionary[self.slugs[75]])
+
         response_data["405-2b-significant_locations"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[76])
+                data_points=self.data_points_dictionary[self.slugs[76]])
             )
-        )
+
         response_data["405-2a_analyse"] = (
             calling_analyse_view_with_params_for_same_year(
                 view_url="get_diversity_inclusion_analysis",
@@ -614,11 +622,11 @@ class ScreenThirteenService:
             )
         )
         response_data["2_30_a"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[77])
-        )
+            data_points=self.data_points_dictionary[self.slugs[77]])
+
         response_data["2_30_b"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[78])
-        )
+            data_points=self.data_points_dictionary[self.slugs[78]])
+
         response_data["2_30_a_analyse"] = (
             calling_analyse_view_with_params_for_same_year(
                 view_url="get_general_collective_bargaining_analysis",
@@ -641,22 +649,22 @@ class ScreenThirteenService:
             )
         )
         response_data["2_8_a"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[79])
-        )
+            data_points=self.data_points_dictionary[self.slugs[79]])
+
         response_data["2_8_b"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[80])
-        )
+            data_points=self.data_points_dictionary[self.slugs[80]])
+
         response_data["2_8_c"] = collect_data_by_raw_response_and_index(
-            data_points=self.data_points.filter(path__slug=self.slugs[81])
-        )
+            data_points=self.data_points_dictionary[self.slugs[81]])
+
         response_data["403-8a"] = collect_data_and_differentiate_by_location(
-            data_points=self.data_points.filter(path__slug=self.slugs[82])
-        )
+            data_points=self.data_points_dictionary[self.slugs[82]])
+
         response_data["402_1a_minimum_number_of_weeks"] = (
             collect_data_and_differentiate_by_location(
-                data_points=self.data_points.filter(path__slug=self.slugs[83])
+                data_points=self.data_points_dictionary[self.slugs[83]])
             )
-        )
+
         response_data["3-3cde_13-1-1"] = get_management_materiality_topics(
             self.report, self.slugs[85]
         )
