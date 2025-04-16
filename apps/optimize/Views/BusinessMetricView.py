@@ -4,6 +4,8 @@ from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework import status
 from ..models import BusinessMetric
 from ..Serializers.BusinessMetricSerializer import BusinessMetricSerializer
+from django.shortcuts import get_object_or_404
+from ..models.OptimizeScenario import Scenerio
 
 
 class BusinessMetricView(APIView):
@@ -11,8 +13,9 @@ class BusinessMetricView(APIView):
 
     def get(self, request, scenario_id):
         try:
-            metrics = BusinessMetric.objects.filter(scenario_id=scenario_id)
-            serializer = self.serializer_class(metrics, many=True)
+            scenario = get_object_or_404(Scenerio, id=scenario_id)
+            metric = get_object_or_404(BusinessMetric, scenario=scenario)
+            serializer = self.serializer_class(metric)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             raise ValidationError(str(e))
@@ -21,9 +24,7 @@ class BusinessMetricView(APIView):
         try:
             metric = BusinessMetric.objects.get(scenario_id=scenario_id)
         except BusinessMetric.DoesNotExist:
-            raise NotFound(
-                "BusinessMetric not found with the given scenario_id and id."
-            )
+            raise NotFound("BusinessMetric not found with the given scenario_id")
         except Exception as e:
             raise ValidationError(str(e))
 
