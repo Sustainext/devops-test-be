@@ -482,6 +482,7 @@ class FetchEmissionData(APIView):
                 "activity_name": "",
                 "activity_id": "",
                 "region": "",
+                "co2e_total": Decimal("0.0"),
             }
         )
 
@@ -517,6 +518,7 @@ class FetchEmissionData(APIView):
             response[key]["quantity2"] += (
                 converted_quantity2 if converted_quantity2 else 0
             )
+            response[key]["co2e_total"] += data.co2e_total if data.co2e_total else 0
 
             # Store the most recent values of other fields (if they are consistent across entries)
             response[key]["scope"] = data.scope
