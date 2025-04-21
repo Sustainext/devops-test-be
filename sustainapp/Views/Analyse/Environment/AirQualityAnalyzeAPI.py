@@ -61,7 +61,6 @@ class AirQualityAnalyzeAPIView(APIView):
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .order_by("locale")
-            .select_related("locale", "path")
         )
 
     def set_data_points_for_location_table(self, request):
@@ -77,7 +76,6 @@ class AirQualityAnalyzeAPIView(APIView):
             )
             .filter(filter_by_start_end_dates(start_date=self.start, end_date=self.end))
             .order_by("locale")
-            .select_related("locale", "path")
         )
 
     def air_emission_by_pollution(self):

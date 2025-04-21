@@ -39,7 +39,6 @@ def get_top_emission_by_scope(locations, user, start, end, path_slug):
             locale__in=locations,
             client_id=user.client.id,
         )
-        .select_related("raw_response")
         .filter(filter_by_start_end_dates(start_date=start, end_date=end))
     )
 

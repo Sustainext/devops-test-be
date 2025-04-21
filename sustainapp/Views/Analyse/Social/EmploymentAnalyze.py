@@ -637,13 +637,11 @@ class EmploymentAnalyzeView(APIView):
         ne_ng_50_qs = dp_employ_non_guaranteed_qs.filter(
             metric_name="yearsold50"
         ).aggregate(Sum("number_holder"))
-
         total_ng = (
             get_value(ne_male_ng_qs["number_holder__sum"])
             + get_value(ne_female_ng_qs["number_holder__sum"])
             + get_value(ne_nb_ng_qs["number_holder__sum"])
         )
-
         ne_ng_male_percent = safe_divide_percentage(
             get_value(ne_male_ng_qs["number_holder__sum"]), total_ng
         )
@@ -1731,10 +1729,10 @@ class EmploymentAnalyzeView(APIView):
             "new_employee_non_guaranteed_30_percent"
         ]
         new_employee_non_guaranteed["yearsold50"] = new_employee_reponse_table[
-            "new_employee_non_guaranteed_30-50_percent"
+            "new_employee_non_guaranteed_50_percent"
         ]
         new_employee_non_guaranteed["yearsold30to50"] = new_employee_reponse_table[
-            "new_employee_temporary_30-50_percent"
+            "new_employee_non_guaranteed_30-50_percent"
         ]
         new_employee_non_guaranteed["total"] = new_employee_reponse_table[
             "new_employee_non_guaranteed_total"
