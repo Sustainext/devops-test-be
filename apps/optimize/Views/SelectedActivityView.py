@@ -1,8 +1,10 @@
-from ..models.SelectedAvtivityModel import SelectedActivity
-from ..Serializers.SelectedActivitySerializer import SelectedActivitySerializer
+from apps.optimize.models.SelectedAvtivityModel import SelectedActivity
+from apps.optimize.Serializers.SelectedActivitySerializer import (
+    SelectedActivitySerializer,
+)
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from ..models.OptimizeScenario import Scenerio
+from apps.optimize.models.OptimizeScenario import Scenerio
 from django.shortcuts import get_object_or_404
 
 

@@ -1,4 +1,4 @@
-from ..models.BusinessMetric import BusinessMetric
+from apps.optimize.models.BusinessMetric import BusinessMetric
 from rest_framework import serializers
 
 

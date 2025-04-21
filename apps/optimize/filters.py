@@ -1,5 +1,5 @@
 import django_filters
-from .models.OptimizeScenario import Scenerio
+from apps.optimize.models.OptimizeScenario import Scenerio
 
 
 class ScenarioFilter(django_filters.FilterSet):

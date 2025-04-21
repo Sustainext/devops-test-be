@@ -1,11 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datametric.models import EmissionAnalysis
-from ..models import Scenerio
+from apps.optimize.models import Scenerio
 from sustainapp.models import Location
 from decimal import Decimal
 from collections import defaultdict
-from ..Paginations.FetchEmissionDataPagination import EmissionDataPagination
+from apps.optimize.Paginations.FetchEmissionDataPagination import EmissionDataPagination
 
 
 class FetchEmissionData(APIView):
