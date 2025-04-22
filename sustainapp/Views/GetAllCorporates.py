@@ -9,6 +9,10 @@ from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
 class AllCorporateList(APIView):
+    """
+    If only organizatin is selected : Get all the corporates where the user is linked apart from the selected organization's corporates.
+    If both organization and corporate are selected : Get all the corporates where the user is linked apart from the selected corporate.
+    """
     def get(self, request):
         # Retrieve the 'organization_id' from query parameters
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
