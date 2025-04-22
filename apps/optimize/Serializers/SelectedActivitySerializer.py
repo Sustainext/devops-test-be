@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models.SelectedAvtivityModel import SelectedActivity
+from apps.optimize.models.SelectedAvtivityModel import SelectedActivity
 
 
 class SelectedActivitySerializer(serializers.ModelSerializer):

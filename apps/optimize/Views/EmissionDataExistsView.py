@@ -2,7 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from datametric.models import EmissionAnalysis
 from sustainapp.models import Location
-from ..Serializers.EmissionDataExistsSerializer import EmissionDataRequestSerializer
+from apps.optimize.Serializers.EmissionDataExistsSerializer import (
+    EmissionDataRequestSerializer,
+)
 from rest_framework import status
 
 

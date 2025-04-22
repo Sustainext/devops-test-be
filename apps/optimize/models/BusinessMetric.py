@@ -1,6 +1,6 @@
 from django.db import models
 from common.models.AbstractModel import AbstractModel
-from .OptimizeScenario import Scenerio
+from apps.optimize.models.OptimizeScenario import Scenerio
 from common.models.HistoricalModel import HistoricalModelMixin
 
 

@@ -1,5 +1,6 @@
 import django_filters
-from .models.OptimizeScenario import Scenerio
+from apps.optimize.models.OptimizeScenario import Scenerio
+from datametric.models import EmissionAnalysis
 
 
 class ScenarioFilter(django_filters.FilterSet):
@@ -26,3 +27,33 @@ class ScenarioFilter(django_filters.FilterSet):
             "corporate",
             "organization",
         ]
+
+
+class EmissionDataFilter(django_filters.FilterSet):
+    """This class defines the filter criteria for the EmissionAnalysis model.
+    It allows filtering by category and subcategory.
+    """
+
+    scope = django_filters.CharFilter(method="filter_by_scope", lookup_expr="iexact")
+    category = django_filters.CharFilter(
+        method="filter_by_category", lookup_expr="iexact"
+    )
+    subcategory = django_filters.CharFilter(
+        method="filter_by_subcategory", lookup_expr="iexact"
+    )
+
+    def filter_by_scope(self, queryset, name, value):
+        scopes = value.split(",")
+        return queryset.filter(scope__in=scopes)
+
+    def filter_by_category(self, queryset, name, value):
+        categories = value.split(",")
+        return queryset.filter(category__in=categories)
+
+    def filter_by_subcategory(self, queryset, name, value):
+        subcategories = value.split(",")
+        return queryset.filter(subcategory__in=subcategories)
+
+    class Meta:
+        model = EmissionAnalysis
+        fields = ["category", "subcategory"]
