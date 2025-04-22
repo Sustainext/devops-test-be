@@ -5,7 +5,6 @@ from django.conf import settings
 from django.apps import apps
 from sustainapp.Serializers.TaskdashboardRetriveSerializer import CustomUserSerializer
 
-
 # Extracting the ExtendedUser Model
 User = apps.get_model(settings.AUTH_USER_MODEL)
 

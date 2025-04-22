@@ -388,11 +388,21 @@ def process_corporate_data(
     activity_data = {}
 
     # Get all Raw Responses based on location and year.
-    raw_responses = RawResponse.objects.filter(
-        path__slug__icontains="gri-environment-emissions-301-a-scope-",
-        locale__in=location_names,
-        client_id=client_id,
-    ).filter(filter_by_start_end_dates(start_date=start_date, end_date=end_date))
+    if corporate_type == "Investment":
+        raw_responses = RawResponse.objects.filter(
+            path__slug__in=[
+                "gri-environment-emissions-301-a-scope-1",
+                "gri-environment-emissions-301-a-scope-2",
+            ],
+            locale__in=location_names,
+            client_id=client_id,
+        ).filter(filter_by_start_end_dates(start_date=start_date, end_date=end_date))
+    else:
+        raw_responses = RawResponse.objects.filter(
+            path__slug__icontains="gri-environment-emissions-301-a-scope-",
+            locale__in=location_names,
+            client_id=client_id,
+        ).filter(filter_by_start_end_dates(start_date=start_date, end_date=end_date))
 
     data_points = DataPoint.objects.filter(
         raw_response__in=raw_responses, json_holder__isnull=False

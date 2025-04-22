@@ -5,8 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from sustainapp.Serializers.CheckAnalysisViewSerializer import (
     CheckAnalysisViewSerializer,
 )
-from datametric.utils.analyse import filter_by_start_end_dates, get_raw_response_filters
-from datametric.models import RawResponse
+from datametric.utils.analyse import filter_by_start_end_dates
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
+from datametric.models import DataPoint, RawResponse
 from collections import Counter
 
 
@@ -27,26 +28,25 @@ class SocialNonDiscrimationAnalysis(APIView):
             .filter(path__slug__in=self.slugs)
             .filter(filter_by_start_end_dates(self.start, self.end))
             .filter(
-                get_raw_response_filters(
-                    organisation=self.organisation,
-                    corporate=self.corporate,
-                    location=self.location,
+                    locale=self.location,
                 )
-            )
             .prefetch_related("path")
             .order_by("-year", "-month")
             .only("data")
         )
 
+    def set_data_points(self):
+        self.data_points = (
+            DataPoint.objects.filter(client_id=self.request.user.client.id)
+            .filter(path__slug__in=self.slugs)
+            .filter(filter_by_start_end_dates(self.start, self.end))
+            .filter(locale=self.location)
+        )
     def get_incidents_of_discrimination(self):
         """
         This function is used to get the incidents of discrimination.
         """
-        data = [
-            item
-            for raw_response in self.raw_responses.filter(path__slug=self.slugs[0])
-            for item in raw_response.data
-        ]
+        data = collect_data_by_raw_response_and_index(self.data_points)
 
         incidents_counter = Counter()
         for item in data:
@@ -73,7 +73,7 @@ class SocialNonDiscrimationAnalysis(APIView):
         self.organisation = serializer.validated_data.get("organisation")
         self.corporate = serializer.validated_data.get("corporate")
         self.location = serializer.validated_data.get("location")
-        self.set_raw_responses()
+        self.set_data_points()
         return Response(
             data={
                 "incidents_of_discrimination": self.get_incidents_of_discrimination()
