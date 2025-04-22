@@ -6,10 +6,17 @@ from sustainapp.models import Location
 from decimal import Decimal
 from collections import defaultdict
 from apps.optimize.Paginations.FetchEmissionDataPagination import EmissionDataPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from apps.optimize.filters import EmissionDataFilter
 
 
 class FetchEmissionData(APIView):
     pagination_class = EmissionDataPagination
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = EmissionDataFilter
+    ordering_fields = ["activity", "region"]
+    ordering = ["activity"]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -463,9 +470,21 @@ class FetchEmissionData(APIView):
         else:
             return Response({"message": "Invalid scenario_by value"}, status=400)
 
-        emission_data = EmissionAnalysis.objects.filter(
+        queryset = EmissionAnalysis.objects.filter(
             year=scenario_data.base_year, raw_response__locale__in=locations
         ).order_by("activity")
+
+        # Apply filters manually using filterset
+        filterset = EmissionDataFilter(request.GET, queryset=queryset)
+        if filterset.is_valid():
+            emission_data = filterset.qs
+        else:
+            return Response(filterset.errors, status=400)
+
+        # Apply ordering manually
+        ordering = request.GET.getlist("ordering")  # ?ordering=activity,-region
+        if ordering:
+            emission_data = emission_data.order_by(*ordering)
 
         # Initialize the defaultdict to accumulate data
         response = defaultdict(
