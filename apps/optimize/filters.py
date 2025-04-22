@@ -30,12 +30,21 @@ class ScenarioFilter(django_filters.FilterSet):
 
 
 class EmissionDataFilter(django_filters.FilterSet):
+    """This class defines the filter criteria for the EmissionAnalysis model.
+    It allows filtering by category and subcategory.
+    """
+
+    scope = django_filters.CharFilter(method="filter_by_scope", lookup_expr="iexact")
     category = django_filters.CharFilter(
         method="filter_by_category", lookup_expr="iexact"
     )
     subcategory = django_filters.CharFilter(
         method="filter_by_subcategory", lookup_expr="iexact"
     )
+
+    def filter_by_scope(self, queryset, name, value):
+        scopes = value.split(",")
+        return queryset.filter(scope__in=scopes)
 
     def filter_by_category(self, queryset, name, value):
         categories = value.split(",")
