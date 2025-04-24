@@ -9,6 +9,7 @@ class SelectedActivity(AbstractModel, HistoricalModelMixin):
     Model for storing selected activities.
     """
 
+    uuid = models.CharField(max_length=255)
     scenario = models.ForeignKey(Scenerio, on_delete=models.CASCADE)
     scope = models.CharField(max_length=255)
     category = models.CharField(max_length=255)

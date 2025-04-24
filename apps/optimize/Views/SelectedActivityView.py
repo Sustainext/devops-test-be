@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from apps.optimize.models.OptimizeScenario import Scenerio
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 
 
 class SelectedActivityView(APIView):
@@ -23,10 +24,6 @@ class SelectedActivityView(APIView):
 
     def post(self, request, scenario_id):
         scenario = get_object_or_404(Scenerio, id=scenario_id)
-        selected_activities = SelectedActivity.objects.filter(scenario=scenario)
-
-        if selected_activities:
-            selected_activities.delete()
 
         data = request.data
 
@@ -41,12 +38,14 @@ class SelectedActivityView(APIView):
 
         serializer = SelectedActivitySerializer(data=data, many=True)
         if serializer.is_valid():
-            # Inject actual scenario instance before model instantiation
-            activity_objects = [
-                SelectedActivity(**{**item, "scenario": scenario})
-                for item in serializer.validated_data
-            ]
-            SelectedActivity.objects.bulk_create(activity_objects)
+            with transaction.atomic():
+                SelectedActivity.objects.filter(scenario=scenario).delete()
+                # Inject actual scenario instance before model instantiation
+                activity_objects = [
+                    SelectedActivity(**{**item, "scenario": scenario})
+                    for item in serializer.validated_data
+                ]
+                SelectedActivity.objects.bulk_create(activity_objects)
 
             response_serializer = SelectedActivitySerializer(
                 activity_objects, many=True
