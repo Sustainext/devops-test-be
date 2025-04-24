@@ -23,6 +23,11 @@ class SelectedActivityView(APIView):
 
     def post(self, request, scenario_id):
         scenario = get_object_or_404(Scenerio, id=scenario_id)
+        selected_activities = SelectedActivity.objects.filter(scenario=scenario)
+
+        if selected_activities:
+            selected_activities.delete()
+
         data = request.data
 
         if not isinstance(data, list):
@@ -49,40 +54,3 @@ class SelectedActivityView(APIView):
             return Response(response_serializer.data, status=201)
 
         return Response(serializer.errors, status=400)
-
-    def patch(self, request, scenario_id):
-        scenario = get_object_or_404(Scenerio, id=scenario_id)
-        selected_activity = get_object_or_404(
-            SelectedActivity, id=request.data.get("id"), scenario=scenario
-        )
-        serializer = SelectedActivitySerializer(
-            selected_activity, data=request.data, partial=True
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-
-    def delete(self, request, scenario_id):
-        scenario = get_object_or_404(Scenerio, id=scenario_id)
-        data = request.data
-
-        if not isinstance(data, list):
-            return Response(
-                {"detail": "Expected a list of objects with 'id' for deletion."},
-                status=400,
-            )
-
-        ids_to_delete = [item.get("id") for item in data if item.get("id") is not None]
-
-        if not ids_to_delete:
-            return Response(
-                {"detail": "No valid 'id' found in request data."}, status=400
-            )
-
-        # Delete only those that belong to this scenario
-        deleted_count, _ = SelectedActivity.objects.filter(
-            id__in=ids_to_delete, scenario=scenario
-        ).delete()
-
-        return Response({"deleted": deleted_count}, status=204)
