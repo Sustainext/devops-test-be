@@ -1,6 +1,7 @@
 import django_filters
 from apps.optimize.models.OptimizeScenario import Scenerio
 from datametric.models import EmissionAnalysis
+from django.db.models import Q
 
 
 class ScenarioFilter(django_filters.FilterSet):
@@ -41,6 +42,7 @@ class EmissionDataFilter(django_filters.FilterSet):
     subcategory = django_filters.CharFilter(
         method="filter_by_subcategory", lookup_expr="iexact"
     )
+    search = django_filters.CharFilter(method="filter_search")
 
     def filter_by_scope(self, queryset, name, value):
         scopes = value.split(",")
@@ -53,6 +55,14 @@ class EmissionDataFilter(django_filters.FilterSet):
     def filter_by_subcategory(self, queryset, name, value):
         subcategories = value.split(",")
         return queryset.filter(subcategory__in=subcategories)
+
+    def filter_search(self, queryset, name, value):
+        return queryset.filter(
+            Q(scope__icontains=value)
+            | Q(category__icontains=value)
+            | Q(subcategory__icontains=value)
+            | Q(activity__icontains=value)
+        )
 
     class Meta:
         model = EmissionAnalysis
