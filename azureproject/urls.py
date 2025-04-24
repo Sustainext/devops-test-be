@@ -102,6 +102,7 @@ router.register(
 
 urlpatterns = [
     path("sustainapp/", include("sustainapp.urls")),
+    path('geo_data/', include('geo_data.urls')),
     path("api/auth/", include("authentication.urls")),
     path("admin/", admin.site.urls),
     path("client_admin/", client_admin_site.urls),
