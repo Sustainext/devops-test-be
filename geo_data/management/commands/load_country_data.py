@@ -20,7 +20,7 @@ class Command(BaseCommand):
                     sortname=country['sortname'],
                     country_name=country['country_name'],
                     slug=country['slug'],
-                    status=country['status']
+                    # status=country['status']
                 )
 
         self.stdout.write(self.style.SUCCESS('Successfully loaded country data'))

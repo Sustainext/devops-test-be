@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
-from .models import Country, State, City
-from .serializers import CountrySerializer, StateSerializer, CitySerializer,CityCreateSerializer
+from geo_data.models import Country, State, City
+from geo_data.serializers import CountrySerializer, StateSerializer, CitySerializer,CityCreateSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status

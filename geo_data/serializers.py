@@ -5,19 +5,17 @@ from .models import Country, State, City
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
-        fields = ['id', 'sortname', 'country_name', 'slug', 'status']
+        fields = '__all__'
 
 class StateSerializer(serializers.ModelSerializer):
     class Meta:
         model = State
-        fields = ['id', 'state_name', 'country']
+        fields = '__all__'
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
-        fields = ['id', 'city_name', 'state']
-
-
+        fields = '__all__'
 
 class CityCreateSerializer(serializers.ModelSerializer):
     class Meta:
