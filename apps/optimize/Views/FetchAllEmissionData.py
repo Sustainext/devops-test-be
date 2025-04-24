@@ -9,6 +9,7 @@ from apps.optimize.Paginations.FetchEmissionDataPagination import EmissionDataPa
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from apps.optimize.filters import EmissionDataFilter
+import uuid
 
 
 class FetchEmissionData(APIView):
@@ -489,6 +490,7 @@ class FetchEmissionData(APIView):
         # Initialize the defaultdict to accumulate data
         response = defaultdict(
             lambda: {
+                "uuid": "",
                 "scope": "",
                 "category": "",
                 "sub_category": "",
@@ -529,6 +531,7 @@ class FetchEmissionData(APIView):
                 converted_unit1,
                 converted_unit2,
             )
+            key_string = "|".join(str(k) for k in key)
 
             # Accumulate the quantities for each group
             response[key]["quantity"] += (
@@ -540,6 +543,7 @@ class FetchEmissionData(APIView):
             response[key]["co2e_total"] += data.co2e_total if data.co2e_total else 0
 
             # Store the most recent values of other fields (if they are consistent across entries)
+            response[key]["uuid"] = uuid.uuid5(uuid.NAMESPACE_DNS, key_string)
             response[key]["scope"] = data.scope
             response[key]["category"] = data.category
             response[key]["sub_category"] = data.subcategory

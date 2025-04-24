@@ -35,23 +35,24 @@ class CalculateClimatiqResult(APIView):
             )
         return response.json()
 
-    def intensity(self, base_year_consumption, business_metric_abs_value):
-        """Function to calculate the intensity based on the selected activities and business metrics"""
-        """Intensity = base_year_consumption/business_metric_abs_value"""
-        return
-
     def get_adjusted_quantity(
         self,
         base_quantity,
         base_value,
         percentage_change_map,
         activity_percentage_change,
+        base_quantity2=None,
     ):
         """
-        Recalculates adjusted quantity based on metric changes and activity changes over years.
+        Recalculates adjusted quantity and optional second quantity based on metric and activity change.
         """
         yearly_data = []
         intensity = base_quantity / base_value
+
+        if base_quantity2 is not None:
+            intensity2 = base_quantity2 / base_value
+        else:
+            intensity2 = None
 
         for year, pct_change in percentage_change_map.items():
             adjusted_base = base_value * (
@@ -62,16 +63,27 @@ class CalculateClimatiqResult(APIView):
                 activity_percentage_change.get(year, 0)
             ) / Decimal(100)
 
+            if intensity2 is not None:
+                adjusted_quantity2 = adjusted_base * intensity2
+                adjusted_quantity2 *= Decimal(1) + Decimal(
+                    activity_percentage_change.get(year, 0)
+                ) / Decimal(100)
+            else:
+                adjusted_quantity2 = None
+
             yearly_data.append(
                 {
                     "year": year,
                     "adjusted_quantity": adjusted_quantity,
+                    "adjusted_quantity2": adjusted_quantity2,
                     "adjusted_base": adjusted_base,
                     "intensity": intensity,
                 }
             )
 
             intensity = adjusted_quantity / adjusted_base
+            if intensity2 is not None:
+                intensity2 = adjusted_quantity2 / adjusted_base
             base_value = adjusted_base
 
         return yearly_data
@@ -163,14 +175,17 @@ class CalculateClimatiqResult(APIView):
                 base_value=base_value,
                 percentage_change_map=percentage_change_map,
                 activity_percentage_change=activity.percentage_change,
+                base_quantity2=Decimal(activity.quantity2)
+                if activity.quantity2
+                else None,
             )
 
             for data in yearly_data:
                 v1 = float(round(data["adjusted_quantity"], 4))
                 u1 = activity.unit
                 v2 = (
-                    float(round(Decimal(activity.quantity2), 4))
-                    if hasattr(activity, "quantity2") and activity.quantity2
+                    float(round(data["adjusted_quantity2"], 4))
+                    if data["adjusted_quantity2"]
                     else None
                 )
                 u2 = (
