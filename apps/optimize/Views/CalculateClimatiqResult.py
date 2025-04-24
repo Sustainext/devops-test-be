@@ -17,74 +17,6 @@ class CalculateClimatiqResult(APIView):
     It takes the selected activities and calculates the result using the Climatiq API.
     """
 
-    def construct_emission_req(
-        self, activity_id, unit_type, value1, unit1, value2=None, unit2=None
-    ):
-        emission_req = {
-            "emission_factor": {"activity_id": activity_id, "data_version": "^16"},
-            "parameters": {},
-        }
-
-        unit_type = unit_type.lower()
-
-        param_structures = {
-            "area": {"area": value1, "area_unit": unit1},
-            "areaovertime": {
-                "area": value1,
-                "area_unit": unit1,
-                "time": value2,
-                "time_unit": unit2,
-            },
-            "containeroverdistance": {
-                "twenty_foot_equivalent": value2,
-                "distance": value1,
-                "distance_unit": unit2,
-            },
-            "data": {"data": value1, "data_unit": unit1},
-            "dataovertime": {
-                "data": value1,
-                "data_unit": unit1,
-                "time": value2,
-                "time_unit": unit2,
-            },
-            "distance": {"distance": value1, "distance_unit": unit1},
-            "distanceovertime": {
-                "distance": value1,
-                "distance_unit": unit1,
-                "time": value2,
-                "time_unit": unit2,
-            },
-            "energy": {"energy": value1, "energy_unit": unit1},
-            "money": {"money": value1, "money_unit": unit1},
-            "number": {"number": int(value1)},
-            "numberovertime": {"number": value1, "time": value2, "time_unit": unit2},
-            "passengeroverdistance": {
-                "passengers": int(value1),
-                "distance": value2,
-                "distance_unit": unit2,
-            },
-            "time": {"time": value1, "time_unit": unit1},
-            "volume": {"volume": value1, "volume_unit": unit1},
-            "weight": {"weight": value1, "weight_unit": unit1},
-            "weightoverdistance": {
-                "weight": value1,
-                "weight_unit": unit1,
-                "distance": value2,
-                "distance_unit": unit2,
-            },
-            "weightovertime": {
-                "weight": value1,
-                "weight_unit": unit1,
-                "time": value2,
-                "time_unit": unit2,
-            },
-        }
-
-        if unit_type in param_structures:
-            emission_req["parameters"] = param_structures[unit_type]
-
-        return emission_req
-
     def calculate_result(self, payload):
         """
         This method calculates the result of Climatiq API.
@@ -103,90 +35,232 @@ class CalculateClimatiqResult(APIView):
             )
         return response.json()
 
-    def intensity(self, base_year_consumption, business_metric_abs_value):
-        """Function to calculate the intensity based on the selected activities and business metrics"""
-        """Intensity = base_year_consumption/business_metric_abs_value"""
-        return
-
-    def get(self, request, scenario_id):
+    def get_adjusted_quantity(
+        self,
+        base_quantity,
+        base_value,
+        percentage_change_map,
+        activity_percentage_change,
+        base_quantity2=None,
+    ):
         """
-        This method handles the GET request for calculating the result of Climatiq API.
-        It takes the selected activities and calculates the result using the Climatiq API.
+        Recalculates adjusted quantity and optional second quantity based on metric and activity change.
         """
-        scenario = get_object_or_404(Scenerio, id=scenario_id)
-        selected_activities = SelectedActivity.objects.filter(scenario=scenario)
-        business_metrics = BusinessMetric.objects.get(scenario=scenario)
-        if business_metrics.fte:
-            fte_data = business_metrics.fte_data
-            fte_abs_value = Decimal(fte_data["abs_value"])
-            fte_percentage_change = fte_data["percentage_change"]
-            print(fte_percentage_change)
-        else:
-            fte_abs_value = None
+        yearly_data = []
+        intensity = base_quantity / base_value
 
-        if business_metrics.area:
-            area_data = business_metrics.area_data
-            area_abs_value = Decimal(area_data["abs_value"])
+        if base_quantity2 is not None:
+            intensity2 = base_quantity2 / base_value
         else:
-            area_abs_value = None
+            intensity2 = None
 
-        if business_metrics.revenue:
-            revenue_data = business_metrics.revenue_data
-            revenue_abs_value = Decimal(revenue_data["abs_value"])
-        else:
-            revenue_abs_value = None
+        for year, pct_change in percentage_change_map.items():
+            adjusted_base = base_value * (
+                Decimal(1) + Decimal(pct_change) / Decimal(100)
+            )
+            adjusted_quantity = adjusted_base * intensity
+            adjusted_quantity *= Decimal(1) + Decimal(
+                activity_percentage_change.get(year, 0)
+            ) / Decimal(100)
 
-        if business_metrics.production_volume:
-            production_volume_data = business_metrics.production_volume_data
-            production_volume_abs_value = Decimal(production_volume_data["abs_value"])
-        else:
-            production_volume_abs_value = None
+            if intensity2 is not None:
+                adjusted_quantity2 = adjusted_base * intensity2
+                adjusted_quantity2 *= Decimal(1) + Decimal(
+                    activity_percentage_change.get(year, 0)
+                ) / Decimal(100)
+            else:
+                adjusted_quantity2 = None
 
-        print(
-            fte_abs_value,
-            area_abs_value,
-            revenue_abs_value,
-            production_volume_abs_value,
-        )
-        climatiq_payload = []
+            yearly_data.append(
+                {
+                    "year": year,
+                    "adjusted_quantity": adjusted_quantity,
+                    "adjusted_quantity2": adjusted_quantity2,
+                    "adjusted_base": adjusted_base,
+                    "intensity": intensity,
+                }
+            )
+
+            intensity = adjusted_quantity / adjusted_base
+            if intensity2 is not None:
+                intensity2 = adjusted_quantity2 / adjusted_base
+            base_value = adjusted_base
+
+        return yearly_data
+
+    def generate_payload(
+        self, selected_activities, base_value, percentage_change_map, metric_name
+    ):
+        """Generate Climatiq payload using dynamic param structure based on unit_type."""
+        payload = []
+
+        param_structures = {
+            "area": lambda v1, u1, v2=None, u2=None: {"area": v1, "area_unit": u1},
+            "areaovertime": lambda v1, u1, v2, u2: {
+                "area": v1,
+                "area_unit": u1,
+                "time": v2,
+                "time_unit": u2,
+            },
+            "containeroverdistance": lambda v1, u1, v2, u2: {
+                "distance": v1,
+                "distance_unit": u2,
+                "twenty_foot_equivalent": int(v2),
+            },
+            "data": lambda v1, u1, v2=None, u2=None: {"data": v1, "data_unit": u1},
+            "dataovertime": lambda v1, u1, v2, u2: {
+                "data": v1,
+                "data_unit": u1,
+                "time": v2,
+                "time_unit": u2,
+            },
+            "distance": lambda v1, u1, v2=None, u2=None: {
+                "distance": v1,
+                "distance_unit": u1,
+            },
+            "distanceovertime": lambda v1, u1, v2, u2: {
+                "distance": v1,
+                "distance_unit": u1,
+                "time": v2,
+                "time_unit": u2,
+            },
+            "energy": lambda v1, u1, v2=None, u2=None: {
+                "energy": v1,
+                "energy_unit": u1,
+            },
+            "money": lambda v1, u1, v2=None, u2=None: {"money": v1, "money_unit": u1},
+            "number": lambda v1, u1=None, v2=None, u2=None: {"number": int(v1)},
+            "numberovertime": lambda v1, u1, v2, u2: {
+                "number": v1,
+                "time": v2,
+                "time_unit": u2,
+            },
+            "passengeroverdistance": lambda v1, u1, v2, u2: {
+                "passengers": int(v1),
+                "distance": v2,
+                "distance_unit": u2,
+            },
+            "time": lambda v1, u1, v2=None, u2=None: {"time": v1, "time_unit": u1},
+            "volume": lambda v1, u1, v2=None, u2=None: {
+                "volume": v1,
+                "volume_unit": u1,
+            },
+            "weight": lambda v1, u1, v2=None, u2=None: {
+                "weight": v1,
+                "weight_unit": u1,
+            },
+            "weightoverdistance": lambda v1, u1, v2, u2: {
+                "weight": v1,
+                "weight_unit": u1,
+                "distance": v2,
+                "distance_unit": u2,
+            },
+            "weightovertime": lambda v1, u1, v2, u2: {
+                "weight": v1,
+                "weight_unit": u1,
+                "time": v2,
+                "time_unit": u2,
+            },
+        }
+
         for activity in selected_activities:
-            intensity = activity.quantity / fte_abs_value
-            print(intensity)
+            unit_type_key = activity.unit_type.lower()
+            generate_params = param_structures.get(unit_type_key)
 
-            for year, percentage in fte_percentage_change.items():
-                adjusted_fte_abs = fte_abs_value * (
-                    Decimal(1) + Decimal(percentage) / Decimal(100)
+            if not generate_params:
+                raise ValueError(f"Unsupported unit_type: {activity.unit_type}")
+
+            yearly_data = self.get_adjusted_quantity(
+                base_quantity=Decimal(activity.quantity),
+                base_value=base_value,
+                percentage_change_map=percentage_change_map,
+                activity_percentage_change=activity.percentage_change,
+                base_quantity2=Decimal(activity.quantity2)
+                if activity.quantity2
+                else None,
+            )
+
+            for data in yearly_data:
+                v1 = float(round(data["adjusted_quantity"], 4))
+                u1 = activity.unit
+                v2 = (
+                    float(round(data["adjusted_quantity2"], 4))
+                    if data["adjusted_quantity2"]
+                    else None
                 )
-                adjusted_quantity = adjusted_fte_abs * intensity
-                print(f"Quantity before percentage_change: {adjusted_quantity}")
-                adjusted_quantity = adjusted_quantity * (
-                    Decimal(1)
-                    + Decimal(activity.percentage_change[year]) / Decimal(100)
-                )
-                print(
-                    f"intensity:{intensity},{adjusted_fte_abs},{adjusted_quantity},{year},{activity.percentage_change[year]}"
+                u2 = (
+                    activity.unit2
+                    if hasattr(activity, "unit2") and activity.unit2
+                    else None
                 )
 
-                climatiq_payload.append(
+                parameters = generate_params(v1, u1, v2, u2)
+
+                payload.append(
                     {
+                        "metric": metric_name,
+                        "year": data["year"],
                         "emission_factor": {
                             "activity_id": activity.activity_id,
                             "data_version": f"^{os.getenv('CLIMATIQ_DATA_VERSION')}",
                         },
-                        "parameters": {
-                            "energy": float(round(adjusted_quantity, 4)),
-                            "energy_unit": activity.unit,
-                        },
+                        "parameters": parameters,
                     }
                 )
-                intensity = adjusted_quantity / adjusted_fte_abs
-                fte_abs_value = adjusted_fte_abs
-        # climatiq_result = self.calculate_result(climatiq_payload)
+
+        return payload
+
+    def get(self, request, scenario_id):
+        scenario = get_object_or_404(Scenerio, id=scenario_id)
+        selected_activities = SelectedActivity.objects.filter(scenario=scenario)
+        business_metrics = BusinessMetric.objects.get(scenario=scenario)
+
+        full_payload = []
+
+        # FTE metric
+        if business_metrics.fte and business_metrics.fte_data:
+            fte_abs = Decimal(business_metrics.fte_data["abs_value"])
+            fte_pct_change = business_metrics.fte_data.get("percentage_change", {})
+            full_payload += self.generate_payload(
+                selected_activities, fte_abs, fte_pct_change, "fte"
+            )
+
+        # Area metric
+        if business_metrics.area and business_metrics.area_data:
+            area_abs = Decimal(business_metrics.area_data["abs_value"])
+            area_pct_change = business_metrics.area_data.get("percentage_change", {})
+            full_payload += self.generate_payload(
+                selected_activities, area_abs, area_pct_change, "area"
+            )
+
+        # Revenue metric
+        if business_metrics.revenue and business_metrics.revenue_data:
+            revenue_abs = Decimal(business_metrics.revenue_data["abs_value"])
+            revenue_pct_change = business_metrics.revenue_data.get(
+                "percentage_change", {}
+            )
+            full_payload += self.generate_payload(
+                selected_activities, revenue_abs, revenue_pct_change, "revenue"
+            )
+
+        # Production volume metric
+        if (
+            business_metrics.production_volume
+            and business_metrics.production_volume_data
+        ):
+            prod_abs = Decimal(business_metrics.production_volume_data["abs_value"])
+            prod_pct_change = business_metrics.production_volume_data.get(
+                "percentage_change", {}
+            )
+            full_payload += self.generate_payload(
+                selected_activities, prod_abs, prod_pct_change, "production_volume"
+            )
 
         result = {
             "selected_activities": selected_activities.values(),
             "business_metrics": model_to_dict(business_metrics),
-            "climatiq_payload": climatiq_payload,
-            # "climatiq_result": climatiq_result,
+            "climatiq_payload": full_payload,
+            "climatiq_result": self.calculate_result(full_payload),
         }
+
         return Response(result)
