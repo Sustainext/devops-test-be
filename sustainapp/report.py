@@ -495,6 +495,8 @@ def generate_pdf_data(pk):
     total_contribution_combined = 0
     combined_scopes = {}
 
+    investment_corporates_data = {}
+    investment_corporates_co2e = 0
     # Iterate over each corporate in data_dict
     for corporate_name, corporate_data in data_dict.items():
         # Extract data for each corporate
@@ -503,7 +505,6 @@ def generate_pdf_data(pk):
         sources = corporate_data.get("source", [])
 
         # Calculate total combined CO2e and total contribution for each corporate
-
         total_co2e_corporate = sum(float(scope["total_co2e"]) for scope in scopes)
         total_co2e_combined += total_co2e_corporate
 
@@ -512,6 +513,8 @@ def generate_pdf_data(pk):
             float(scope["contribution_scope"]) for scope in scopes
         )
         total_contribution_combined += total_contribution_corporate
+        if corporate_data["corporate_type"] == "Investment":
+            investment_corporates_data[corporate_name] = total_co2e_corporate
 
         # Calculate combined percentage for each scope within the corporate
         for scope in scopes:
@@ -552,12 +555,17 @@ def generate_pdf_data(pk):
         # Organize the data
         organized_data = {
             "corporate_name": corporate_name,
+            "corporate_type": corporate_data["corporate_type"],
             "scopes": scopes,
             "locations": locations,
             "sources": sources,
         }
-
         organized_data_list.append(organized_data)
+
+    if investment_corporates_data:
+        for corporate_name, co2e_value in investment_corporates_data.items():
+            investment_corporates_co2e += co2e_value
+
     if organized_data_list:
         highest_contribution_value = 0
         highest_source_name = None
@@ -582,6 +590,12 @@ def generate_pdf_data(pk):
                     ]
     else:
         highest_source_name = None
+
+    scope3_without_investment = 0
+    if investment_corporates_co2e:
+        scope3_without_investment = (
+            combined_scopes["Scope-3"]["total_co2e"] - investment_corporates_co2e
+        )
 
     # Extract total_co2e and scope_name from combined_scopes# extracted_data = [{'scope_name': scope['scope_name'], 'total_co2e': scope['total_co2e']} for scope in combined_scopes.values()]
     donut_chart_data = extract_donut_chart_data(combined_scopes)
@@ -635,6 +649,7 @@ def generate_pdf_data(pk):
         "donut_chart_html": donut_chart_html,
         "source_donut_chart_html": source_donut_chart_html,
         "location_donut_chart_html": location_donut_chart_html,
+        "scope3_without_investment": scope3_without_investment,
     }
 
     return context
