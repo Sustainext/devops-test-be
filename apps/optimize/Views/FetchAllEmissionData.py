@@ -1,15 +1,23 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datametric.models import EmissionAnalysis
-from ..models import Scenerio
+from apps.optimize.models import Scenerio
 from sustainapp.models import Location
 from decimal import Decimal
 from collections import defaultdict
-from ..Paginations.FetchEmissionDataPagination import EmissionDataPagination
+from apps.optimize.Paginations.FetchEmissionDataPagination import EmissionDataPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from apps.optimize.filters import EmissionDataFilter
+import uuid
 
 
 class FetchEmissionData(APIView):
     pagination_class = EmissionDataPagination
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = EmissionDataFilter
+    ordering_fields = ["activity", "region"]
+    ordering = ["activity"]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -463,13 +471,26 @@ class FetchEmissionData(APIView):
         else:
             return Response({"message": "Invalid scenario_by value"}, status=400)
 
-        emission_data = EmissionAnalysis.objects.filter(
+        queryset = EmissionAnalysis.objects.filter(
             year=scenario_data.base_year, raw_response__locale__in=locations
         ).order_by("activity")
+
+        # Apply filters manually using filterset
+        filterset = EmissionDataFilter(request.GET, queryset=queryset)
+        if filterset.is_valid():
+            emission_data = filterset.qs
+        else:
+            return Response(filterset.errors, status=400)
+
+        # Apply ordering manually
+        ordering = request.GET.getlist("ordering")  # ?ordering=activity,-region
+        if ordering:
+            emission_data = emission_data.order_by(*ordering)
 
         # Initialize the defaultdict to accumulate data
         response = defaultdict(
             lambda: {
+                "uuid": "",
                 "scope": "",
                 "category": "",
                 "sub_category": "",
@@ -510,6 +531,7 @@ class FetchEmissionData(APIView):
                 converted_unit1,
                 converted_unit2,
             )
+            key_string = "|".join(str(k) for k in key)
 
             # Accumulate the quantities for each group
             response[key]["quantity"] += (
@@ -521,6 +543,7 @@ class FetchEmissionData(APIView):
             response[key]["co2e_total"] += data.co2e_total if data.co2e_total else 0
 
             # Store the most recent values of other fields (if they are consistent across entries)
+            response[key]["uuid"] = uuid.uuid5(uuid.NAMESPACE_DNS, key_string)
             response[key]["scope"] = data.scope
             response[key]["category"] = data.category
             response[key]["sub_category"] = data.subcategory

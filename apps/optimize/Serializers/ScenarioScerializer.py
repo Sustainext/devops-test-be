@@ -1,4 +1,4 @@
-from ..models.OptimizeScenario import Scenerio
+from apps.optimize.models.OptimizeScenario import Scenerio
 from rest_framework import serializers
 
 
