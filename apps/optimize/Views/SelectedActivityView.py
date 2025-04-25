@@ -53,3 +53,16 @@ class SelectedActivityView(APIView):
             return Response(response_serializer.data, status=201)
 
         return Response(serializer.errors, status=400)
+
+    def patch(self, request, scenario_id):
+        scenario = get_object_or_404(Scenerio, id=scenario_id)
+        selected_activity = get_object_or_404(
+            SelectedActivity, id=request.data.get("id"), scenario=scenario
+        )
+        serializer = SelectedActivitySerializer(
+            selected_activity, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
