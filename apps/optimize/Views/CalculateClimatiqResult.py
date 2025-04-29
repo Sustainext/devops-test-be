@@ -264,11 +264,47 @@ class CalculateClimatiqResult(APIView):
                 selected_activities, prod_abs, prod_pct_change, "production_volume"
             )
 
+        climatiq_result = self.calculate_result(full_payload)
+
+        activity_map = {
+            activity.activity_id: activity for activity in selected_activities
+        }
+
+        # Loop through the payload and results together
+        for payload, result in zip(full_payload, climatiq_result["results"]):
+            metric = payload["metric"]  # e.g., "fte"
+            year = payload["year"]  # e.g., "2025"
+            activity_id = payload["emission_factor"]["activity_id"]  # activity_id
+
+            # Get the matching activity
+            activity = activity_map.get(activity_id)
+            if not activity:
+                continue  # if activity not found, skip
+
+            # Initialize calculated_results if not present
+            if not activity.calculated_results:
+                activity.calculated_results = {}
+
+            # Initialize year inside calculated_results
+            if year not in activity.calculated_results:
+                activity.calculated_results[year] = {}
+
+            # Initialize business_metric inside that year
+            if "business_metric" not in activity.calculated_results[year]:
+                activity.calculated_results[year]["business_metric"] = {}
+
+            # Save the metric result
+            activity.calculated_results[year]["business_metric"][metric] = result
+
+        SelectedActivity.objects.bulk_update(
+            selected_activities, ["calculated_results"]
+        )
+
         result = {
             "selected_activities": selected_activities.values(),
             "business_metrics": model_to_dict(business_metrics),
             "climatiq_payload": full_payload,
-            # "climatiq_result": self.calculate_result(full_payload),
+            "climatiq_result": climatiq_result,
         }
 
         return Response(result)

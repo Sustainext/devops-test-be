@@ -32,3 +32,4 @@ class SelectedActivity(AbstractModel, HistoricalModelMixin):
         max_digits=64,
         decimal_places=4,
     )
+    region = models.CharField(max_length=255)
