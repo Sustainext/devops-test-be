@@ -11,6 +11,7 @@ from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.EmissionTask import EmissionTask
 from sustainapp.Views.AssignedEmissionTask import AssignedEmissionTask
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
+# from sustainapp.Views.Analyse.Social.EmploymentAnalyze1 import EmploymentAnalyzeView1
 from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
     CommunicationTrainingAnalyzeView,
 )
@@ -167,6 +168,7 @@ urlpatterns = [
         EmploymentAnalyzeView.as_view(),
         name="get_employment_analyze",
     ),
+
     path(
         "get_forced_labor_analysis/",
         ForcedLaborAnalyzeView.as_view(),
