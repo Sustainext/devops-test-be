@@ -11,7 +11,6 @@ from sustainapp.Views.EnergyAnalyse import EnergyAnalyzeView
 from sustainapp.Views.EmissionTask import EmissionTask
 from sustainapp.Views.AssignedEmissionTask import AssignedEmissionTask
 from sustainapp.Views.Analyse.Social.EmploymentAnalyze import EmploymentAnalyzeView
-# from sustainapp.Views.Analyse.Social.EmploymentAnalyze1 import EmploymentAnalyzeView1
 from sustainapp.Views.Analyse.Economic.CommunicationTraining import (
     CommunicationTrainingAnalyzeView,
 )
