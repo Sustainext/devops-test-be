@@ -18,7 +18,8 @@ class IdentifyingInformation(AbstractModel):
     # user id
     user = models.ForeignKey(
         CustomUser,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
+        null=True,
         related_name="Idnetifying_Information_User",
     )
     organization = models.ForeignKey(
@@ -148,7 +149,7 @@ class AnnualReport(AbstractModel):
         default=Client.get_default_client,
     )
     user = models.ForeignKey(
-        CustomUser, on_delete=models.DO_NOTHING, related_name="Annaul_report"
+        CustomUser, on_delete=models.SET_NULL, related_name="Annaul_report", null=True
     )
     organization = models.ForeignKey(
         Organization,

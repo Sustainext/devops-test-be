@@ -375,7 +375,7 @@
 
 
 
-        {% if report_by == 'Organization' %}
+    {% if report_by == 'Organization' %}
         <div class="section-introduction"></div>
         <h6 class="loop-table">EXECUTIVE SUMMARY</h6>
         <p class="loop-table">This report details the Greenhouse Gas Emissions (GHG) accounting for the organization
@@ -397,32 +397,40 @@
             {% for scope in combined_scopes %}
             <tr>
                 <td>{{ scope.scope_name }}</td>
-                <td>{{ scope.total_co2e|floatformat:2 }}</td>
+                <td>
+                    {% if scope.scope_name == "Scope-3" %}
+                        {{ scope3_without_investment|floatformat:2 }}
+                    {% else %}
+                        {{ scope.total_co2e|floatformat:2 }}
+                    {% endif %}
+            </td>
                 <td>{{ scope.combined_percentage|floatformat:2 }}%</td>
             </tr>
             {% endfor %}
         </table>
         <!-- <h3>Table 1: GHG emissions by scope</h3> -->
         {% for company_data in data %}
+            {% if company_data.corporate_type != "Investment" %}
 
-        <!-- <h2>{{ company_data.corporate_name }}</h2> -->
-        <h3>Table 1.{{ forloop.counter }}: GHG emissions by scope for Corporate {{ company_data.corporate_name }} </h3>
-        <table>
-            <tr class="table-header">
-                <th>SCOPE</th>
-                <th>EMISSIONS (tCO2e)</th>
-                <th>% OF TOTAL</th>
-            </tr>
-            {% for scope in company_data.scopes %}
-            <tr>
-                <td>{{ scope.scope_name }}</td>
-                <td>{{ scope.total_co2e|floatformat:2 }}</td>
-                <td>{{ scope.contribution_scope|floatformat:2 }}%</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-    {% endfor %}
+                <!-- <h2>{{ company_data.corporate_name }}</h2> -->
+                <h3>Table 1.{{ forloop.counter }}: GHG emissions by scope for Corporate {{ company_data.corporate_name }} </h3>
+                <table>
+                    <tr class="table-header">
+                        <th>SCOPE</th>
+                        <th>EMISSIONS (tCO2e)</th>
+                        <th>% OF TOTAL</th>
+                    </tr>
+                    {% for scope in company_data.scopes %}
+                    <tr>
+                        <td>{{ scope.scope_name }}</td>
+                        <td>{{ scope.total_co2e|floatformat:2 }}</td>
+                        <td>{{ scope.contribution_scope|floatformat:2 }}%</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+        {% endfor %}
     {% else %}
     <div class="section-introduction"></div>
     <h6 class="loop-table">EXECUTIVE SUMMARY</h6>
@@ -435,8 +443,8 @@
         largest source of emissions was {{highest_source_name}}.</p>
     <div class="section">
         <!-- <h3>Table 1: GHG emissions by scope</h3> -->
-        {% for company_data in data %}
-
+    {% for company_data in data %}
+        {% if company_data.corporate_type != "Investment" %}
         <!-- <h2>{{ company_data.corporate_name }}</h2> -->
         <h3>Table 1: GHG emissions by scope for Corporate {{ company_data.corporate_name }} </h3>
         <table>
@@ -454,6 +462,7 @@
             {% endfor %}
         </table>
     </div>
+    {% endif %}
     {% endfor %}
     </div>
     {% endif %}

@@ -9,6 +9,7 @@ class SelectedActivity(AbstractModel, HistoricalModelMixin):
     Model for storing selected activities.
     """
 
+    uuid = models.CharField(max_length=255)
     scenario = models.ForeignKey(Scenerio, on_delete=models.CASCADE)
     scope = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
@@ -20,10 +21,15 @@ class SelectedActivity(AbstractModel, HistoricalModelMixin):
     unit = models.CharField(max_length=255)
     unit_type = models.CharField(max_length=255)
     quantity2 = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True
+        max_digits=32, decimal_places=4, null=True, blank=True
     )
     unit2 = models.CharField(max_length=255, null=True, blank=True)
     activity_change = models.BooleanField(default=False)
     percentage_change = models.JSONField(default=dict, null=True, blank=True)
     changes_in_activity = models.JSONField(default=dict, null=True, blank=True)
     calculated_results = models.JSONField(default=dict, null=True, blank=True)
+    co2e_total = models.DecimalField(
+        max_digits=64,
+        decimal_places=4,
+    )
+    region = models.CharField(max_length=255)
