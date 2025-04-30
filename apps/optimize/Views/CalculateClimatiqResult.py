@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from apps.optimize.models.OptimizeScenario import Scenerio
 from decimal import Decimal
 from django.forms.models import model_to_dict
+from apps.optimize.models.CalculatedResult import CalculatedResult
+from apps.optimize.Service.emission_data_service import EmissionDataService
 
 
 class CalculateClimatiqResult(APIView):
@@ -224,6 +226,7 @@ class CalculateClimatiqResult(APIView):
         business_metrics = BusinessMetric.objects.get(scenario=scenario)
 
         full_payload = []
+        true_metrics = []
 
         # FTE metric
         if business_metrics.fte and business_metrics.fte_data:
@@ -232,6 +235,7 @@ class CalculateClimatiqResult(APIView):
             full_payload += self.generate_payload(
                 selected_activities, fte_abs, fte_pct_change, "fte"
             )
+            true_metrics.append("fte")
 
         # Area metric
         if business_metrics.area and business_metrics.area_data:
@@ -240,6 +244,7 @@ class CalculateClimatiqResult(APIView):
             full_payload += self.generate_payload(
                 selected_activities, area_abs, area_pct_change, "area"
             )
+            true_metrics.append("area")
 
         # Revenue metric
         if business_metrics.revenue and business_metrics.revenue_data:
@@ -250,6 +255,7 @@ class CalculateClimatiqResult(APIView):
             full_payload += self.generate_payload(
                 selected_activities, revenue_abs, revenue_pct_change, "revenue"
             )
+            true_metrics.append("revenue")
 
         # Production volume metric
         if (
@@ -263,42 +269,57 @@ class CalculateClimatiqResult(APIView):
             full_payload += self.generate_payload(
                 selected_activities, prod_abs, prod_pct_change, "production_volume"
             )
+            true_metrics.append("production_volume")
 
         climatiq_result = self.calculate_result(full_payload)
+
+        emission_data = EmissionDataService().get_emission_data(request, scenario_id)
 
         activity_map = {
             activity.activity_id: activity for activity in selected_activities
         }
 
-        # Loop through the payload and results together
+        bulk_results = []
+
         for payload, result in zip(full_payload, climatiq_result["results"]):
-            metric = payload["metric"]  # e.g., "fte"
-            year = payload["year"]  # e.g., "2025"
-            activity_id = payload["emission_factor"]["activity_id"]  # activity_id
-
-            # Get the matching activity
+            year = payload["year"]
+            activity_id = payload["emission_factor"]["activity_id"]
+            metric = payload["metric"]
             activity = activity_map.get(activity_id)
+
             if not activity:
-                continue  # if activity not found, skip
+                continue
 
-            # Initialize calculated_results if not present
-            if not activity.calculated_results:
-                activity.calculated_results = {}
+            bulk_results.append(
+                CalculatedResult(
+                    scenario=scenario,
+                    year=year,
+                    activity_id=activity_id,
+                    activity_name=activity.activity_name,
+                    metric=metric,
+                    result=result,
+                )
+            )
 
-            # Initialize year inside calculated_results
-            if year not in activity.calculated_results:
-                activity.calculated_results[year] = {}
+        CalculatedResult.objects.filter(scenario=scenario).delete()
+        for data in emission_data:
+            activity_id = data.get("activity_id")
+            activity_name = data.get("activity_name")
+            result = {"co2e": float(data["co2e_total"])}
+            year = scenario.base_year
 
-            # Initialize business_metric inside that year
-            if "business_metric" not in activity.calculated_results[year]:
-                activity.calculated_results[year]["business_metric"] = {}
-
-            # Save the metric result
-            activity.calculated_results[year]["business_metric"][metric] = result
-
-        SelectedActivity.objects.bulk_update(
-            selected_activities, ["calculated_results"]
-        )
+            for metric in true_metrics:
+                bulk_results.append(
+                    CalculatedResult(
+                        scenario=scenario,
+                        year=year,
+                        activity_id=activity_id,
+                        activity_name=activity_name,
+                        metric=metric,
+                        result=result,
+                    )
+                )
+        CalculatedResult.objects.bulk_create(bulk_results)
 
         result = {
             "selected_activities": selected_activities.values(),

@@ -56,13 +56,41 @@ class SelectedActivityView(APIView):
 
     def patch(self, request, scenario_id):
         scenario = get_object_or_404(Scenerio, id=scenario_id)
-        selected_activity = get_object_or_404(
-            SelectedActivity, id=request.data.get("id"), scenario=scenario
-        )
-        serializer = SelectedActivitySerializer(
-            selected_activity, data=request.data, partial=True
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        data_list = request.data
+
+        if not isinstance(data_list, list):
+            return Response({"detail": "Expected a list of updates."}, status=400)
+
+        updated_activities = []
+        errors = []
+
+        for item in data_list:
+            activity_id = item.get("id")
+            if not activity_id:
+                errors.append({"detail": "Missing 'id' in one of the items."})
+                continue
+
+            try:
+                selected_activity = SelectedActivity.objects.get(
+                    id=activity_id, scenario=scenario
+                )
+            except SelectedActivity.DoesNotExist:
+                errors.append(
+                    {"id": activity_id, "detail": "SelectedActivity not found."}
+                )
+                continue
+
+            serializer = SelectedActivitySerializer(
+                selected_activity, data=item, partial=True
+            )
+            if serializer.is_valid():
+                serializer.save()
+                updated_activities.append(serializer.data)
+            else:
+                errors.append({"id": activity_id, "errors": serializer.errors})
+
+        response_data = {"updated": updated_activities}
+        if errors:
+            response_data["errors"] = errors
+
+        return Response(response_data, status=200 if not errors else 207)

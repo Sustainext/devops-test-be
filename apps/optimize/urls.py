@@ -6,6 +6,7 @@ from apps.optimize.Views.FetchAllEmissionData import FetchEmissionData
 from apps.optimize.Views.EmissionDataExistsView import EmissionDataExistsView
 from apps.optimize.Views.SelectedActivityView import SelectedActivityView
 from apps.optimize.Views.CalculateClimatiqResult import CalculateClimatiqResult
+from apps.optimize.Views.GetGraphData import GetGraphData
 
 router = routers.DefaultRouter()
 router.register(r"scenario", ScenarioView, basename="scenario")
@@ -35,5 +36,10 @@ urlpatterns = [
         "<int:scenario_id>/calculateclimatiqresult/",
         CalculateClimatiqResult.as_view(),
         name="calculate-climatiq-result",
+    ),
+    path(
+        "<int:scenario_id>/getgraphdata/",
+        GetGraphData.as_view(),
+        name="get-graph-data",
     ),
 ]
