@@ -9,11 +9,22 @@ from datametric.models import DataPoint
 from datametric.utils.analyse import safe_divide_percentage, get_raw_response_filters,filter_by_start_end_dates
 from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 from sustainapp.models import Organization, Corporateentity, Location
-import math 
+import math
+
 
 logger = logging.getLogger("emp_nvn")
 
 def format_float(val):
+    """
+    Safely formats a given value to a string with two decimal places.
+
+    Args:
+        val (Any): The input value to be converted to float and formatted.
+
+    Returns:
+        str: The formatted float as a string with two decimal places. 
+            Returns "0.00" if the input is not a valid number (e.g., None, str, etc.).
+    """
     try:
         return f"{float(val):.2f}"
     except (ValueError, TypeError):
@@ -122,6 +133,31 @@ class EmploymentAnalyzeView(APIView):
 
 
     def get_new_employee_hires(self, dps):
+        """
+        Computes the percentage distribution of new employee hires by gender and age group 
+        for different employment types (permanent, temporary, non-guaranteed, full-time, part-time).
+
+        For each employee type:
+            - Calculates the total number of new hires.
+            - Calculates the percentage breakdown of male, female, and non-binary employees.
+            - Calculates the percentage breakdown by age groups: under 30, 30–50, and over 50.
+
+        Args:
+            dps (QuerySet): Filtered DataPoint records containing hiring data.
+
+        Returns:
+            List[Dict]: A list of dictionaries for each employee type, each containing:
+                - type_of_employee (str)
+                - percentage_of_male_employee (str)
+                - percentage_of_female_employee (str)
+                - percentage_of_non_binary_employee (str)
+                - yearsold30 (str)
+                - yearsold50 (str)
+                - yearsold30to50 (str)
+                - total (float)
+
+            The list ends with an aggregated "Total" row showing the sum of all individual totals.
+        """
        
         result = []
         labels = ["Permanent employee", "Temporary employee", "Non guaranteed employee",
