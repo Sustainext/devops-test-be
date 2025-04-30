@@ -167,6 +167,7 @@ urlpatterns = [
         EmploymentAnalyzeView.as_view(),
         name="get_employment_analyze",
     ),
+
     path(
         "get_forced_labor_analysis/",
         ForcedLaborAnalyzeView.as_view(),
