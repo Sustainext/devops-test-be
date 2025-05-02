@@ -8,6 +8,7 @@ class UserProfileDetailSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='user.last_name')
     designation = serializers.CharField(source='user.job_title')
     department = serializers.CharField(source='user.department')
+    job_description = serializers.CharField(source='user.job_description')
     phone = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     profile_pic = serializers.ImageField(source='profile_picture', required=False, allow_null=True)
     custom_role = serializers.CharField(source='user.custom_role.name', read_only=True)
@@ -22,6 +23,7 @@ class UserProfileDetailSerializer(serializers.ModelSerializer):
             'last_name',
             'designation',
             'department',
+            "job_description",
             'phone',
             'profile_pic',
             'custom_role',
@@ -40,6 +42,8 @@ class UserProfileDetailSerializer(serializers.ModelSerializer):
             user.job_title = user_data['job_title']
         if 'department' in user_data:
             user.department = user_data['department']
+        if 'job_description' in user_data:
+            user.job_description = user_data['job_description']
 
         user.save()
 
