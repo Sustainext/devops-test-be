@@ -34,24 +34,28 @@ class UserProfileDetailSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop('user', {})
         user = instance.user
 
-        if 'first_name' in user_data:
-            user.first_name = user_data['first_name']
-        if 'last_name' in user_data:
-            user.last_name = user_data['last_name']
-        if 'job_title' in user_data:
-            user.job_title = user_data['job_title']
-        if 'department' in user_data:
-            user.department = user_data['department']
-        if 'job_description' in user_data:
-            user.job_description = user_data['job_description']
+        # Update user fields with dictionary unpacking
+        user_fields = {
+            'first_name': user_data.get('first_name', user.first_name),
+            'last_name': user_data.get('last_name', user.last_name),
+            'job_title': user_data.get('job_title', user.job_title),
+            'department': user_data.get('department', user.department),
+            'job_description': user_data.get('job_description', user.job_description),
+        }
+
+        for field, value in user_fields.items():
+            setattr(user, field, value)
 
         user.save()
 
         # Update UserProfile fields
-        if 'phone' in validated_data:
-            instance.phone = validated_data['phone']
-        if 'profile_picture' in validated_data:
-            instance.profile_picture = validated_data['profile_picture']
+        profile_fields = {
+            'phone': validated_data.get('phone', instance.phone),
+            'profile_picture': validated_data.get('profile_picture', instance.profile_picture)
+        }
+
+        for field, value in profile_fields.items():
+            setattr(instance, field, value)
 
         instance.save()
 
