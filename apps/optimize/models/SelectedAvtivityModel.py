@@ -27,7 +27,6 @@ class SelectedActivity(AbstractModel, HistoricalModelMixin):
     activity_change = models.BooleanField(default=False)
     percentage_change = models.JSONField(default=dict, null=True, blank=True)
     changes_in_activity = models.JSONField(default=dict, null=True, blank=True)
-    calculated_results = models.JSONField(default=dict, null=True, blank=True)
     co2e_total = models.DecimalField(
         max_digits=64,
         decimal_places=4,

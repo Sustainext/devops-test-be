@@ -12,7 +12,6 @@ from dj_rest_auth.views import UserDetailsView
 from django.urls import path, include
 from authentication.Views.CustomLoginAPI import CustomLoginView
 from rest_framework import routers
-from authentication.Views.UserProfile import UserProfileViewSet
 from authentication.Views.ChangePassword import ChangePasswordAPIView
 from authentication.Views.AzurePowerBIToken import PowerBiToken
 from authentication.Views.CustomLogoutAPI import CustomLogoutView
@@ -30,12 +29,12 @@ from authentication.views import (
     get_locs_by_corps,
 )
 from authentication.Views.GetUserRoles import GetUserRoles
+from authentication.Views.UserProfileDetail import UserProfileDetailView
 
 from .Views.CustomPasswordResetViewAPI import CustomPasswordResetConfirmView
 from .Views.VerifyEmail import verify_email
 
 router = routers.DefaultRouter()
-router.register(r"user_profile", UserProfileViewSet, basename="UserProfile")
 router.register(r"manage_user", ManageUserViewSet, basename="ManageUser")
 
 urlpatterns = [
@@ -93,5 +92,6 @@ urlpatterns = [
     path("get_locs_by_corps/", get_locs_by_corps, name="get_locs_by_corps"),
     path("verify_email/<str:token>/", verify_email, name="verify_email"),
     path("get_user_roles/", GetUserRoles.as_view(), name="get_user_roles"),
+    path("user_profile/", UserProfileDetailView.as_view(), name="user_profile"),
     path("", include(router.urls)),
 ]

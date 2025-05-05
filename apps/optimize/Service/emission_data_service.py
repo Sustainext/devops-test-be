@@ -1,24 +1,13 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from datametric.models import EmissionAnalysis
 from apps.optimize.models import Scenerio
 from sustainapp.models import Location
 from decimal import Decimal
 from collections import defaultdict
-from apps.optimize.Paginations.FetchEmissionDataPagination import EmissionDataPagination
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
 from apps.optimize.filters import EmissionDataFilter
 import uuid
 
 
-class FetchEmissionData(APIView):
-    pagination_class = EmissionDataPagination
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_class = EmissionDataFilter
-    ordering_fields = ["activity", "region"]
-    ordering = ["activity"]
-
+class EmissionDataService:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.unit_types = [
@@ -456,7 +445,7 @@ class FetchEmissionData(APIView):
 
         return value1, unit1, value2, unit2
 
-    def get(self, request, scenario_id):
+    def get_emission_data(self, request, scenario_id):
         scenario_data = self.get_scenario_data(scenario_id)
 
         locations = None
@@ -469,7 +458,7 @@ class FetchEmissionData(APIView):
                 corporateentity=scenario_data.corporate
             ).values_list("id", flat=True)
         else:
-            return Response({"message": "Invalid scenario_by value"}, status=400)
+            return {"message": "Invalid scenario_by value"}
 
         queryset = EmissionAnalysis.objects.filter(
             year=scenario_data.base_year, raw_response__locale__in=locations
@@ -480,7 +469,7 @@ class FetchEmissionData(APIView):
         if filterset.is_valid():
             emission_data = filterset.qs
         else:
-            return Response(filterset.errors, status=400)
+            return filterset.errors
 
         # Apply ordering manually
         ordering = request.GET.getlist(
@@ -558,7 +547,4 @@ class FetchEmissionData(APIView):
             response[key]["region"] = data.region
 
         response_data = list(response.values())
-        paginator = self.pagination_class()
-        paginated_data = paginator.paginate_queryset(response_data, request, view=self)
-        # Convert the defaultdict to a list of dictionaries to return as response
-        return paginator.get_paginated_response(paginated_data)
+        return response_data
