@@ -11,7 +11,6 @@ from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_re
 from sustainapp.models import Organization, Corporateentity, Location
 import math
 
-
 logger = logging.getLogger("emp_nvn")
 
 def format_float(val):
@@ -29,6 +28,12 @@ def format_float(val):
         return f"{float(val):.2f}"
     except (ValueError, TypeError):
         return "0.00"
+
+def safe_int(value):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return 0
 
 
 class EmploymentAnalyzeView(APIView):
@@ -79,6 +84,9 @@ class EmploymentAnalyzeView(APIView):
             corporate = Corporateentity.objects.filter(id=corp_id).first() if corp_id else None
             location = Location.objects.filter(id=loc_id).first() if loc_id else None
 
+            if not organization:
+                return Response({"error": f"Organisation with id {org_id} not found."}, status=status.HTTP_404_NOT_FOUND)
+
             context_filters = get_raw_response_filters(
                 organisation=organization,
                 corporate=corporate,
@@ -108,6 +116,10 @@ class EmploymentAnalyzeView(APIView):
             parental_filters = Q(client_id=client_id) & Q(path__slug__in=self.employee_parental_leave_path_slugs) & context_filters & date_filters
             parental_leave_dps = DataPoint.objects.filter(parental_filters)
 
+            # Diversity of the Board
+            diversity_filters = Q(client_id=client_id) & Q(path__slug=self.diversity_slug) & context_filters & date_filters
+            diversity_dps = DataPoint.objects.filter(diversity_filters)
+
             logger.info("Filters applied. Fetching employment data.")
 
             return Response({
@@ -118,7 +130,7 @@ class EmploymentAnalyzeView(APIView):
                     "benefits": self.get_benefits(benefits_dps),
                     "parental_leave": self.get_parental_leave(parental_leave_dps),
                     "return_to_work_rate_and_retention_rate_of_employee": self.get_return_to_work_and_retention_rate(parental_leave_dps),
-                    "number_of_employee_per_employee_category": self.get_diversity_of_the_board(self.diversity_slug),
+                    "number_of_employee_per_employee_category": self.get_diversity_of_the_board(diversity_dps),
                 }
             }, status=status.HTTP_200_OK)
 
@@ -183,10 +195,10 @@ class EmploymentAnalyzeView(APIView):
     def get_employment_turnover(self, dps):
         result = []
         labels = [
-            "Permanent employee", 
-            "Temporary employee", 
+            "Permanent employee",
+            "Temporary employee",
             "Non Guaranteed employee",
-            "Full time employee", 
+            "Full time employee",
             "Part time employee"
         ]
 
@@ -196,76 +208,49 @@ class EmploymentAnalyzeView(APIView):
             if not subset.exists():
                 continue
 
-            # Pre-load all subset values into a dictionary to avoid multiple DB hits
-            subset_map = {(dp.index, dp.metric_name): dp.number_holder for dp in subset}
+            # Sum age group turnover across all months
+            male_under_30 = subset.filter(index=0, metric_name="yearsold30").aggregate(sum=Sum("number_holder"))['sum'] or 0
+            male_30_50 = subset.filter(index=0, metric_name="yearsold30to50").aggregate(sum=Sum("number_holder"))['sum'] or 0
+            male_over_50 = subset.filter(index=0, metric_name="yearsold50").aggregate(sum=Sum("number_holder"))['sum'] or 0
 
-            # Calculate beginning and end employees
+            female_under_30 = subset.filter(index=1, metric_name="yearsold30").aggregate(sum=Sum("number_holder"))['sum'] or 0
+            female_30_50 = subset.filter(index=1, metric_name="yearsold30to50").aggregate(sum=Sum("number_holder"))['sum'] or 0
+            female_over_50 = subset.filter(index=1, metric_name="yearsold50").aggregate(sum=Sum("number_holder"))['sum'] or 0
+
+            other_under_30 = subset.filter(index=2, metric_name="yearsold30").aggregate(sum=Sum("number_holder"))['sum'] or 0
+            other_30_50 = subset.filter(index=2, metric_name="yearsold30to50").aggregate(sum=Sum("number_holder"))['sum'] or 0
+            other_over_50 = subset.filter(index=2, metric_name="yearsold50").aggregate(sum=Sum("number_holder"))['sum'] or 0
+
+            # Calculate beginning and end totals
             beginning_total = subset.filter(metric_name="beginning").aggregate(sum=Sum("number_holder"))['sum'] or 0
             end_total = subset.filter(metric_name="end").aggregate(sum=Sum("number_holder"))['sum'] or 0
+
+            # If missing, fallback to January
+            if beginning_total == 0:
+                jan_beginning = dps.filter(path__slug=slug, month=1, metric_name="beginning").aggregate(sum=Sum("number_holder"))['sum'] or 0
+                beginning_total = jan_beginning
+            if end_total == 0:
+                jan_end = dps.filter(path__slug=slug, month=1, metric_name="end").aggregate(sum=Sum("number_holder"))['sum'] or 0
+                end_total = jan_end
 
             avg_headcount = (beginning_total + end_total) / 2 if (beginning_total + end_total) > 0 else 0
             avg_headcount = math.floor(avg_headcount)
             if avg_headcount == 0:
                 continue
 
-            # Male, Female, Non-Binary left employees
-            male_left_total = (
-                subset_map.get((0, "yearsold30"), 0) +
-                subset_map.get((0, "yearsold30to50"), 0) +
-                subset_map.get((0, "yearsold50"), 0)
-            )
-
-            female_left_total = (
-                subset_map.get((1, "yearsold30"), 0) +
-                subset_map.get((1, "yearsold30to50"), 0) +
-                subset_map.get((1, "yearsold50"), 0)
-            )
-
-            non_binary_left_total = (
-                subset_map.get((2, "yearsold30"), 0) +
-                subset_map.get((2, "yearsold30to50"), 0) +
-                subset_map.get((2, "yearsold50"), 0)
-            )
-
-            # Age group turnover
-            yearsold30 = (
-                subset_map.get((0, "yearsold30"), 0) +
-                subset_map.get((1, "yearsold30"), 0) +
-                subset_map.get((2, "yearsold30"), 0)
-            )
-
-            yearsold30to50 = (
-                subset_map.get((0, "yearsold30to50"), 0) +
-                subset_map.get((1, "yearsold30to50"), 0) +
-                subset_map.get((2, "yearsold30to50"), 0)
-            )
-
-            yearsold50 = (
-                subset_map.get((0, "yearsold50"), 0) +
-                subset_map.get((1, "yearsold50"), 0) +
-                subset_map.get((2, "yearsold50"), 0)
-            )
-
             result.append({
                 "type_of_employee": label,
-                "percentage_of_male_employee": format_float(safe_divide_percentage(male_left_total, avg_headcount)),
-                "percentage_of_female_employee": format_float(safe_divide_percentage(female_left_total, avg_headcount)),
-                "percentage_of_non_binary_employee": format_float(safe_divide_percentage(non_binary_left_total, avg_headcount)),
-                "yearsold30": format_float(safe_divide_percentage(yearsold30, avg_headcount)),
-                "yearsold30to50": format_float(safe_divide_percentage(yearsold30to50, avg_headcount)),
-                "yearsold50": format_float(safe_divide_percentage(yearsold50, avg_headcount)),
+                "percentage_of_male_employee": format_float(safe_divide_percentage(male_under_30 + male_30_50 + male_over_50, avg_headcount)),
+                "percentage_of_female_employee": format_float(safe_divide_percentage(female_under_30 + female_30_50 + female_over_50, avg_headcount)),
+                "percentage_of_non_binary_employee": format_float(safe_divide_percentage(other_under_30 + other_30_50 + other_over_50, avg_headcount)),
+                "yearsold30": format_float(safe_divide_percentage(male_under_30 + female_under_30 + other_under_30, avg_headcount)),
+                "yearsold30to50": format_float(safe_divide_percentage(male_30_50 + female_30_50 + other_30_50, avg_headcount)),
+                "yearsold50": format_float(safe_divide_percentage(male_over_50 + female_over_50 + other_over_50, avg_headcount)),
                 "total": float(avg_headcount)
             })
 
-        result.append({
-            "type_of_employee": "Total",
-            "total": sum(x['total'] for x in result)
-        })
-
+        result.append({"type_of_employee": "Total", "total": sum(x['total'] for x in result)})
         return result
-
-
-
 
 
     def get_benefits(self, dps):
@@ -275,57 +260,77 @@ class EmploymentAnalyzeView(APIView):
             "benefits_temporary_employees": collect_data_by_raw_response_and_index(dps.filter(path__slug__endswith="_tab_3")),
         }
 
+    
+
     def get_parental_leave(self, dps):
         items = collect_data_by_raw_response_and_index(dps)
-        # Manual index -> label mapping
         index_to_category = {
             0: "Parental Leave Entitlement",
             1: "Taking Parental Leave",
             2: "Returning to work Post leave",
             3: "Retained 12th month after leave"
         }
-        
+
         result = []
         for i, itm in enumerate(items):
+            male = safe_int(itm.get('male', 0))
+            female = safe_int(itm.get('female', 0))
             result.append({
                 "employee_category": index_to_category.get(i, "Unknown"),
-                "male": int(itm.get('male', 0)),
-                "female": int(itm.get('female', 0)),
-                "total": int(itm.get('male', 0)) + int(itm.get('female', 0))
+                "male": male,
+                "female": female,
+                "total": male + female
             })
         return result
-    
+
+
     def get_return_to_work_and_retention_rate(self, dps):
         result = []
-        # collect raw response first
         items = collect_data_by_raw_response_and_index(dps)
-        # Safely convert values to integers
-        taking_male = int(items[1].get("male", 0))  # Index 1 is 'Taking Parental Leave'
-        taking_female = int(items[1].get("female", 0))
 
-        return_post_male = int(items[2].get("male", 0))  # Index 2 is 'Returning to work Post leave'
-        return_post_female = int(items[2].get("female", 0))
-        retained_male = int(items[3].get("male", 0))  # Index 3 is 'Retained 12th month after leave'
-        retained_female = int(items[3].get("female", 0))
-        # Return to work rate
+        # Check list length to avoid index errors
+        if len(items) < 4:
+            logger.warning("Not enough parental leave data points; expected at least 4, got %d", len(items))
+            result.append({
+                "employee_category": "Return to work rate",
+                "male": "0.00",
+                "female": "0.00"
+            })
+            result.append({
+                "employee_category": "Retention rate",
+                "male": "0.00",
+                "female": "0.00"
+            })
+            return result
+
+
+        taking_male = safe_int(items[1].get("male"))
+        taking_female = safe_int(items[1].get("female"))
+        return_post_male = safe_int(items[2].get("male"))
+        return_post_female = safe_int(items[2].get("female"))
+        retained_male = safe_int(items[3].get("male"))
+        retained_female = safe_int(items[3].get("female"))
+        
+
+        # Calculations
         return_to_work = {
             "employee_category": "Return to work rate",
             "male": format_float(safe_divide_percentage(return_post_male, taking_male)),
             "female": format_float(safe_divide_percentage(return_post_female, taking_female)),
         }
-        result.append(return_to_work)
-        # Retention rate
         retention = {
             "employee_category": "Retention rate",
             "male": format_float(safe_divide_percentage(retained_male, return_post_male)),
             "female": format_float(safe_divide_percentage(retained_female, return_post_female)),
         }
+
+        # Append results
+        result.append(return_to_work)
         result.append(retention)
         return result
 
 
-    def get_diversity_of_the_board(self, slug):
-        dps = DataPoint.objects.filter(path__slug=slug)
+    def get_diversity_of_the_board(self, dps):
         items = collect_data_by_raw_response_and_index(dps)
         return [
             {
