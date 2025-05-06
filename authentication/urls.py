@@ -30,6 +30,7 @@ from authentication.views import (
 )
 from authentication.Views.GetUserRoles import GetUserRoles
 from authentication.Views.UserProfileDetail import UserProfileDetailView
+from authentication.Views.VerifyPassword import VerifyPasswordAPIView
 
 from .Views.CustomPasswordResetViewAPI import CustomPasswordResetConfirmView
 from .Views.VerifyEmail import verify_email
@@ -93,5 +94,6 @@ urlpatterns = [
     path("verify_email/<str:token>/", verify_email, name="verify_email"),
     path("get_user_roles/", GetUserRoles.as_view(), name="get_user_roles"),
     path("user_profile/", UserProfileDetailView.as_view(), name="user_profile"),
+    path("verify-password/", VerifyPasswordAPIView.as_view(), name="verify_password"),
     path("", include(router.urls)),
 ]
