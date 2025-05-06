@@ -216,6 +216,7 @@ class CalculateClimatiqResult(APIView):
                         "scope": activity.scope,
                         "category": activity.category,
                         "sub_category": activity.sub_category,
+                        "unit_type": unit_type_key,
                         "year": data["year"],
                         "emission_factor": {
                             "activity_id": activity_id,
