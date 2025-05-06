@@ -7,10 +7,11 @@ import os
 import json
 from django.shortcuts import get_object_or_404
 from apps.optimize.models.OptimizeScenario import Scenerio
-from decimal import Decimal
-from django.forms.models import model_to_dict
+from decimal import Decimal, InvalidOperation
 from apps.optimize.models.CalculatedResult import CalculatedResult
 from apps.optimize.Service.emission_data_service import EmissionDataService
+from django.db import transaction
+# from django.forms.models import model_to_dict  #Keeping it here untill testing is completed
 
 
 class CalculateClimatiqResult(APIView):
@@ -49,7 +50,10 @@ class CalculateClimatiqResult(APIView):
         Recalculates adjusted quantity and optional second quantity based on metric and activity change.
         """
         yearly_data = []
-        intensity = base_quantity / base_value
+        try:
+            intensity = Decimal(base_quantity) / Decimal(base_value)
+        except (InvalidOperation, ZeroDivisionError):
+            intensity = Decimal(0)
 
         if base_quantity2 is not None:
             intensity2 = base_quantity2 / base_value
@@ -83,7 +87,7 @@ class CalculateClimatiqResult(APIView):
                 }
             )
 
-            intensity = adjusted_quantity / adjusted_base
+            intensity = (adjusted_quantity / adjusted_base) if adjusted_base else 0
             if intensity2 is not None:
                 intensity2 = adjusted_quantity2 / adjusted_base
             base_value = adjusted_base
@@ -209,6 +213,9 @@ class CalculateClimatiqResult(APIView):
                 payload.append(
                     {
                         "metric": metric_name,
+                        "scope": activity.scope,
+                        "category": activity.category,
+                        "sub_category": activity.sub_category,
                         "year": data["year"],
                         "emission_factor": {
                             "activity_id": activity_id,
@@ -283,6 +290,9 @@ class CalculateClimatiqResult(APIView):
 
         for payload, result in zip(full_payload, climatiq_result["results"]):
             year = payload["year"]
+            scope = payload["scope"]
+            category = payload["category"]
+            sub_category = payload["sub_category"]
             activity_id = payload["emission_factor"]["activity_id"]
             metric = payload["metric"]
             activity = activity_map.get(activity_id)
@@ -294,6 +304,9 @@ class CalculateClimatiqResult(APIView):
                 CalculatedResult(
                     scenario=scenario,
                     year=year,
+                    scope=scope,
+                    category=category,
+                    sub_category=sub_category,
                     activity_id=activity_id,
                     activity_name=activity.activity_name,
                     metric=metric,
@@ -301,8 +314,10 @@ class CalculateClimatiqResult(APIView):
                 )
             )
 
-        CalculatedResult.objects.filter(scenario=scenario).delete()
         for data in emission_data:
+            scope = data.get("scope")
+            category = data.get("category")
+            sub_category = data.get("sub_category")
             activity_id = data.get("activity_id")
             activity_name = data.get("activity_name")
             result = {"co2e": float(data["co2e_total"])}
@@ -313,18 +328,26 @@ class CalculateClimatiqResult(APIView):
                     CalculatedResult(
                         scenario=scenario,
                         year=year,
+                        scope=scope,
+                        category=category,
+                        sub_category=sub_category,
                         activity_id=activity_id,
                         activity_name=activity_name,
                         metric=metric,
                         result=result,
                     )
                 )
-        CalculatedResult.objects.bulk_create(bulk_results)
+        try:
+            with transaction.atomic():
+                CalculatedResult.objects.filter(scenario=scenario).delete()
+                CalculatedResult.objects.bulk_create(bulk_results)
+        except Exception as e:
+            print(e)
 
         result = {
-            "selected_activities": selected_activities.values(),
-            "business_metrics": model_to_dict(business_metrics),
-            "climatiq_payload": full_payload,
+            # "selected_activities": selected_activities.values(),  #Keeping it here untill testing is completed
+            # "business_metrics": model_to_dict(business_metrics),  #Keeping it here untill testing is completed
+            "climatiq_payload": full_payload,  # Keeping it here untill testing is completed
             "climatiq_result": climatiq_result,
         }
 
