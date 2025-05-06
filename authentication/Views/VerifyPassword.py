@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
+from django.core.cache import cache
 from authentication.serializers.VerifyPasswordSerializer import VerifyPasswordSerializer
 
 class VerifyPasswordAPIView(APIView):
@@ -29,9 +30,12 @@ class VerifyPasswordAPIView(APIView):
 
         password = serializer.validated_data["password"]
         user = request.user
+        #* Cache User Password for faster verification
+        if cache.get(f"password_{user.id}") is None:
+            cache.set(f"password_{user.id}", user.password, timeout=30)
 
         # Check if the password is correct
-        if user.check_password(password):
+        if check_password(password, cache.get(f"password_{user.id}")):
             return Response({"valid": True}, status=status.HTTP_200_OK)
         else:
             return Response(
