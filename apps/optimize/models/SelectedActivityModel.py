@@ -29,6 +29,6 @@ class SelectedActivity(AbstractModel, HistoricalModelMixin):
     changes_in_activity = models.JSONField(default=dict, null=True, blank=True)
     co2e_total = models.DecimalField(
         max_digits=64,
-        decimal_places=4,
+        decimal_places=8,
     )
     region = models.CharField(max_length=255)

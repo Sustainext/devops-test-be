@@ -10,6 +10,7 @@ class CalculatedResult(AbstractModel, HistoricalModelMixin):
     scenario = models.ForeignKey(
         Scenerio, on_delete=models.CASCADE, related_name="calculated_results"
     )
+    uuid = models.CharField(max_length=255)
     year = models.PositiveIntegerField()
     scope = models.CharField(max_length=100)
     category = models.CharField(max_length=100)

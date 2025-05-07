@@ -1,4 +1,4 @@
-from apps.optimize.models.SelectedAvtivityModel import SelectedActivity
+from apps.optimize.models.SelectedActivityModel import SelectedActivity
 from apps.optimize.Serializers.SelectedActivitySerializer import (
     SelectedActivitySerializer,
 )
@@ -60,28 +60,26 @@ class SelectedActivityView(APIView):
 
         serializer = SelectedActivitySerializer(data=data, many=True)
         if serializer.is_valid():
-            incoming_activity_ids = {
-                item["activity_id"] for item in serializer.validated_data
-            }
+            incoming_uuids = {item["uuid"] for item in serializer.validated_data}
 
             with transaction.atomic():
                 # Get existing records
                 existing_qs = SelectedActivity.objects.filter(scenario=scenario)
-                existing_map = {obj.activity_id: obj for obj in existing_qs}
-                existing_activity_ids = set(existing_map.keys())
+                existing_map = {obj.uuid: obj for obj in existing_qs}
+                existing_uuids = set(existing_map.keys())
 
                 # Find differences
-                to_delete_ids = existing_activity_ids - incoming_activity_ids
+                to_delete_ids = existing_uuids - incoming_uuids
                 to_create_data = [
                     item
                     for item in serializer.validated_data
-                    if item["activity_id"] not in existing_activity_ids
+                    if item["uuid"] not in existing_uuids
                 ]
 
                 # Delete only removed activities
                 if to_delete_ids:
                     SelectedActivity.objects.filter(
-                        scenario=scenario, activity_id__in=to_delete_ids
+                        scenario=scenario, uuid__in=to_delete_ids
                     ).delete()
 
                 # Create new ones
