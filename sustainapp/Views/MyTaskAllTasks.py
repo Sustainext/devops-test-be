@@ -16,11 +16,8 @@ from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 from rest_framework.pagination import PageNumberPagination
 from django.core.exceptions import PermissionDenied
-from django.core.cache import cache
 from django.utils.timezone import now
-import hashlib
 from common.Permissions.IsAdmin import IsAdmin
-from sustainapp.celery_tasks.store_cache import store_cache
 
 
 class CustomPageNumberPagination(PageNumberPagination):
@@ -126,13 +123,6 @@ class UserTaskDashboardView(ListAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        cache_key = self.generate_cache_key(request)
-
-        # Fetch cache synchronously
-        cached_response = cache.get(cache_key)
-        if cached_response:
-            return Response(cached_response)
-
         queryset = self.get_queryset()
         category = request.query_params.get("activetab", None)
 
@@ -181,18 +171,4 @@ class UserTaskDashboardView(ListAPIView):
             serializer = TaskDashboardCustomSerializer(queryset, many=True)
             response_data = serializer.data
 
-        # Store cache asynchronously using Celery
-        store_cache.delay(
-            cache_key, response_data, timeout=300
-        )  # 300 seconds (5 minutes)
-
         return Response(response_data, status=status.HTTP_200_OK)
-
-    def generate_cache_key(self, request):
-        user_id = request.user.id
-        query_params = tuple(
-            sorted(request.query_params.items())
-        )  # Faster tuple sorting
-
-        query_hash = hashlib.md5(str(query_params).encode()).hexdigest()
-        return f"user_{user_id}_task_dashboard_{query_hash}"

@@ -11,6 +11,9 @@ class CalculatedResult(AbstractModel, HistoricalModelMixin):
         Scenerio, on_delete=models.CASCADE, related_name="calculated_results"
     )
     year = models.PositiveIntegerField()
+    scope = models.CharField(max_length=100)
+    category = models.CharField(max_length=100)
+    sub_category = models.CharField(max_length=100)
     activity_name = models.CharField(max_length=255)
     activity_id = models.CharField(max_length=255)
     metric = models.CharField(max_length=100)
