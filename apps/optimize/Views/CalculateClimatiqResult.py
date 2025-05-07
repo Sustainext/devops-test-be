@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from apps.optimize.models.SelectedAvtivityModel import SelectedActivity
+from apps.optimize.models.SelectedActivityModel import SelectedActivity
 from apps.optimize.models.BusinessMetric import BusinessMetric
 import requests
 import os
@@ -56,7 +56,7 @@ class CalculateClimatiqResult(APIView):
             intensity = Decimal(0)
 
         if base_quantity2 is not None:
-            intensity2 = base_quantity2 / base_value
+            intensity2 = base_quantity2 / base_value if base_value != 0 else 0
         else:
             intensity2 = None
 
@@ -89,7 +89,7 @@ class CalculateClimatiqResult(APIView):
 
             intensity = (adjusted_quantity / adjusted_base) if adjusted_base else 0
             if intensity2 is not None:
-                intensity2 = adjusted_quantity2 / adjusted_base
+                intensity2 = adjusted_quantity2 / adjusted_base if adjusted_base else 0
             base_value = adjusted_base
 
         return yearly_data
@@ -200,12 +200,12 @@ class CalculateClimatiqResult(APIView):
                 v2 = (
                     float(round(data["adjusted_quantity2"], 4))
                     if data["adjusted_quantity2"]
-                    else None
+                    else 0
                 )
                 u2 = (
                     activity.unit2
                     if hasattr(activity, "unit2") and activity.unit2
-                    else None
+                    else 0
                 )
 
                 parameters = generate_params(v1, u1, v2, u2)
@@ -217,6 +217,8 @@ class CalculateClimatiqResult(APIView):
                         "category": activity.category,
                         "sub_category": activity.sub_category,
                         "unit_type": unit_type_key,
+                        "activity_name": activity.activity_name,
+                        "uuid": str(activity.uuid),
                         "year": data["year"],
                         "emission_factor": {
                             "activity_id": activity_id,
@@ -283,39 +285,36 @@ class CalculateClimatiqResult(APIView):
 
         emission_data = EmissionDataService().get_emission_data(request, scenario_id)
 
-        activity_map = {
-            activity.activity_id: activity for activity in selected_activities
-        }
-
         bulk_results = []
 
         for payload, result in zip(full_payload, climatiq_result["results"]):
+            uuid = payload["uuid"]
             year = payload["year"]
             scope = payload["scope"]
             category = payload["category"]
             sub_category = payload["sub_category"]
-            activity_id = payload["emission_factor"]["activity_id"]
             metric = payload["metric"]
-            activity = activity_map.get(activity_id)
+            activity_id = payload["emission_factor"]["activity_id"]
 
-            if not activity:
-                continue
+            activity_name = payload["activity_name"]
 
             bulk_results.append(
                 CalculatedResult(
                     scenario=scenario,
+                    uuid=uuid,
                     year=year,
                     scope=scope,
                     category=category,
                     sub_category=sub_category,
                     activity_id=activity_id,
-                    activity_name=activity.activity_name,
+                    activity_name=activity_name,
                     metric=metric,
                     result=result,
                 )
             )
 
         for data in emission_data:
+            uuid = str(data.get("uuid"))
             scope = data.get("scope")
             category = data.get("category")
             sub_category = data.get("sub_category")
@@ -328,6 +327,7 @@ class CalculateClimatiqResult(APIView):
                 bulk_results.append(
                     CalculatedResult(
                         scenario=scenario,
+                        uuid=uuid,
                         year=year,
                         scope=scope,
                         category=category,
