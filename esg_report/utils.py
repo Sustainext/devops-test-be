@@ -264,7 +264,7 @@ def calling_analyse_view_with_params(view_url, request, report):
         response = view_instance(internal_request)
 
         # Step 6: Check the response status and return data
-        if response.status_code == 200:
+        if response.status_code in [200,206]:
             return response.data
         else:
             return {
