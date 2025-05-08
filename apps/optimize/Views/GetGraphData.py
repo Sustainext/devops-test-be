@@ -15,37 +15,57 @@ class GetGraphData(GenericAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = CalculatedResultFilter
 
-    def get_year_map_data(self, results, business_metric):
+    def get_year_map_data(self, results, business_metric, selected_activities):
         year_map = defaultdict(list)
+
+        activity_map = {str(act.uuid): act for act in selected_activities}
 
         for res in results:
             year = str(res.year)
             metric = res.metric
             weightage_key = f"{metric}_weightage"
             weightage = getattr(business_metric, weightage_key, 0)
-            value = round(
-                res.result.get("co2e", 0) / 1000, 4
-            )  # Converting co2e to tonnes
-            value = value * weightage
+            value = round(res.result.get("co2e", 0) / 1000, 4) * weightage  # Tonnes
 
-            existing = next(
-                (r for r in year_map[year] if r["uuid"] == str(res.uuid)), None
-            )
+            uuid_str = str(res.uuid)
+            selected_activity = activity_map.get(uuid_str)
+            decarbonization = False
 
+            if selected_activity:
+                pc = selected_activity.percentage_change or {}
+                ca = selected_activity.changes_in_activity or {}
+                year_str = str(year)
+
+                if year_str in pc and pc[year_str]:
+                    decarbonization = True
+                elif (
+                    year_str in ca
+                    and isinstance(ca[year_str], dict)
+                    and ca[year_str].get("activity_id")
+                    and res.activity_id != ca[year_str]["activity_id"]
+                ):
+                    decarbonization = True
+
+            existing = next((r for r in year_map[year] if r["uuid"] == uuid_str), None)
             if existing:
                 existing[metric] = value
+                existing["decarbonization"] = (
+                    existing["decarbonization"] or decarbonization
+                )
             else:
                 year_map[year].append(
                     {
-                        "uuid": str(res.uuid),
+                        "uuid": uuid_str,
                         "scope": res.scope,
                         "category": res.category,
                         "sub_category": res.sub_category,
                         "activity_name": res.activity_name,
                         "activity_id": res.activity_id,
                         metric: value,
+                        "decarbonization": decarbonization,
                     }
                 )
+
         return year_map
 
     def add_total_dict(self, year_data, results):
@@ -88,7 +108,7 @@ class GetGraphData(GenericAPIView):
                 "year", "metric"
             )
         )
-        year_map = self.get_year_map_data(results, business_metric)
+        year_map = self.get_year_map_data(results, business_metric, selected_activities)
         totals = self.add_total_dict(year_map, results)
         base_year_unselected_data = self.get_base_year_unselected_data(
             year_map, selected_activities, scenario.base_year
