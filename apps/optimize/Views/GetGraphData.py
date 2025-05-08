@@ -2,14 +2,19 @@ from apps.optimize.models.CalculatedResult import CalculatedResult
 from apps.optimize.models.OptimizeScenario import Scenerio
 from apps.optimize.models.SelectedActivityModel import SelectedActivity
 from apps.optimize.models.BusinessMetric import BusinessMetric
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from collections import defaultdict
 import copy
+from rest_framework.generics import GenericAPIView
+from django_filters.rest_framework import DjangoFilterBackend
+from apps.optimize.filters import CalculatedResultFilter
 
 
-class GetGraphData(APIView):
+class GetGraphData(GenericAPIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CalculatedResultFilter
+
     def get_year_map_data(self, results, business_metric):
         year_map = defaultdict(list)
 
@@ -78,8 +83,10 @@ class GetGraphData(APIView):
         scenario = get_object_or_404(Scenerio, id=scenario_id)
         selected_activities = SelectedActivity.objects.filter(scenario=scenario)
         business_metric = get_object_or_404(BusinessMetric, scenario=scenario)
-        results = CalculatedResult.objects.filter(scenario=scenario).order_by(
-            "year", "metric"
+        results = self.filter_queryset(
+            CalculatedResult.objects.filter(scenario=scenario).order_by(
+                "year", "metric"
+            )
         )
         year_map = self.get_year_map_data(results, business_metric)
         totals = self.add_total_dict(year_map, results)
@@ -110,8 +117,6 @@ class GetGraphData(APIView):
             },
             "totals": totals,
             "yearly_data": year_map,
-            "base_year_excluding_selected": base_year_unselected_data,
-            "excluded_totals": excluded_totals.values(),
         }
 
         return Response(response_data)
