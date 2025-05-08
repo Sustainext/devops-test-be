@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.canada_bill_s211.v2.models.SubmissionInformation import SubmissionInformation
 from apps.canada_bill_s211.v2.serializers.SubmissionInformationSerializer import SubmissionInformationSerializer
 from apps.canada_bill_s211.v2.serializers.CheckYearOrganisationCorporateSerializer import CheckYearOrganizationCorporateSerializer
+from sustainapp.models import Organization
 import logging
 
 logger = logging.getLogger("error") # Or a more specific logger if you prefer
@@ -21,15 +22,29 @@ class SubmissionInformationView(APIView):
             return Response(query_param_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         validated_query_params = query_param_serializer.validated_data
+        organization = validated_query_params.get("organization")
+        corporate = validated_query_params.get("corporate")
+
+        # Check if user has access to the organization
+        if not request.user.orgs.filter(id=organization.id).exists():
+            return Response(
+                {"organization": ["You do not have access to this organization."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if user has access to the corporate (if provided)
+        if corporate is not None and not request.user.corps.filter(id=corporate.id).exists():
+            return Response(
+                {"corporate": ["You do not have access to this corporate."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             submission_info = SubmissionInformation.objects.get(
-                organization=validated_query_params["organization"],
-                corporate=validated_query_params.get("corporate"),
+                organization=organization,
+                corporate=corporate,
                 year=validated_query_params["year"],
                 screen=screen_id,
-                organization__in=request.user.orgs.all(),
-                corporate__in=request.user.corps.all(), # Assuming similar permission logic
                 organization__client=request.user.client
             )
         except SubmissionInformation.DoesNotExist:
@@ -46,33 +61,44 @@ class SubmissionInformationView(APIView):
         if not data_check_serializer.is_valid():
             return Response(data_check_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        validated_data_for_check = data_check_serializer.validated_data
+        validated_data = data_check_serializer.validated_data
+
+        organization = validated_data.get("organization")
+        corporate = validated_data.get("corporate")
+
+        # Check if user has access to the organization
+        if not request.user.orgs.filter(id=organization.id).exists():
+            return Response(
+                {"organization": ["You do not have access to this organization."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if user has access to the corporate (if provided)
+        if corporate is not None and not request.user.corps.filter(id=corporate.id).exists():
+            return Response(
+                {"corporate": ["You do not have access to this corporate."]},\n                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
-            submission_info = SubmissionInformation.objects.filter(
-                organization__in=request.user.orgs.all(),
-                corporate__in=request.user.corps.all()
-            ).get(
-                organization=validated_data_for_check["organization"],
-                corporate=validated_data_for_check.get("corporate"),
-                year=validated_data_for_check["year"],
+            # Note: Removed .filter(organization__in=..., corporate__in=...) as checks are done above
+            submission_info = SubmissionInformation.objects.get(
+                organization=organization,
+                corporate=corporate,
+                year=validated_data["year"],
                 screen=screen_id,
                 organization__client=request.user.client
             )
 
             # Update existing instance
-            serializer = SubmissionInformationSerializer(instance=submission_info, data=request.data)
+            # data = request.data.copy()
+            # data["screen"] = screen_id # screen_id is already part of the URL, no need to add to data
+            serializer = SubmissionInformationSerializer(instance=submission_info, data=request.data, partial=True) # partial=True added as discussed earlier
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except SubmissionInformation.DoesNotExist:
             # Create new instance
-            # Note: The SubmissionInformation model provided doesn't have the same unique_together constraint
-            # as ReportingForEntities (['organization', 'corporate', 'year', 'screen']).
-            # If it should, add it to the SubmissionInformation model's Meta class.
-            # The current logic will simply create if not found.
-
             create_data = request.data.copy()
             create_data["screen"] = screen_id
             serializer = SubmissionInformationSerializer(data=create_data)
