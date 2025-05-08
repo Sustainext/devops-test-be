@@ -91,9 +91,9 @@ class SubmissionInformationView(APIView):
             )
 
             # Update existing instance
-            # data = request.data.copy()
-            # data["screen"] = screen_id # screen_id is already part of the URL, no need to add to data
-            serializer = SubmissionInformationSerializer(instance=submission_info, data=request.data, partial=True) # partial=True added as discussed earlier
+            data = request.data.copy()
+            data["screen"] = screen_id # screen_id is already part of the URL, no need to add to data
+            serializer = SubmissionInformationSerializer(instance=submission_info, data=data, partial=True) # partial=True added as discussed earlier
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -106,6 +106,3 @@ class SubmissionInformationView(APIView):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            logger.error(f"Error in SubmissionInformationView PUT: {e}", exc_info=True)
-            return Response({"error": "An unexpected error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
