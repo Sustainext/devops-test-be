@@ -51,7 +51,7 @@ class ReportingForEntitiesView(APIView):
         except ReportingForEntities.DoesNotExist:
             return Response(
                 {"message": "Reporting data not found"},
-                status=status.HTTP_200_OK
+                status=status.HTTP_404_NOT_FOUND
             )
         response_serializer = ReportingForEntitiesSerializer(report_entity)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
