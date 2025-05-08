@@ -34,13 +34,15 @@ class GetGraphData(GenericAPIView):
             if selected_activity:
                 pc = selected_activity.percentage_change or {}
                 ca = selected_activity.changes_in_activity or {}
+                year_str = str(year)
 
-                if str(year) in pc and pc[str(year)]:
+                if year_str in pc and pc[year_str]:
                     decarbonization = True
                 elif (
-                    str(year) in ca
-                    and ca[str(year)]
-                    and res.activity_id != ca[str(year)].get("activity_id")
+                    year_str in ca
+                    and isinstance(ca[year_str], dict)
+                    and ca[year_str].get("activity_id")
+                    and res.activity_id != ca[year_str]["activity_id"]
                 ):
                     decarbonization = True
 
