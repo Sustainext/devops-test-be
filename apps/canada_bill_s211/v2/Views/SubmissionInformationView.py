@@ -50,7 +50,7 @@ class SubmissionInformationView(APIView):
         except SubmissionInformation.DoesNotExist:
             return Response(
                 {"message": "Submission Information not found"},
-                status=status.HTTP_200_OK
+                status=status.HTTP_404_NOT_FOUND
             )
 
         response_serializer = SubmissionInformationSerializer(submission_info)
