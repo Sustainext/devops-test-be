@@ -57,6 +57,8 @@ PROJECT_APPS = [
     "apps.supplier_assessment.apps.SupplierAssessmentConfig",
     "apps.optimize.apps.OptimizeConfig",
     "geo_data.apps.GeoDataConfig",
+    "apps.canada_bill_s211.apps.CanadaBillS211Config",
+    "apps.canada_bill_s211.v2.apps.V2Config"
 ]
 
 THIRD_PARTY = [
