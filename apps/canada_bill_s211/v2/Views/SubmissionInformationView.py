@@ -76,7 +76,8 @@ class SubmissionInformationView(APIView):
         # Check if user has access to the corporate (if provided)
         if corporate is not None and not request.user.corps.filter(id=corporate.id).exists():
             return Response(
-                {"corporate": ["You do not have access to this corporate."]},\n                status=status.HTTP_400_BAD_REQUEST
+                {"corporate": ["You do not have access to this corporate."]},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         try:
