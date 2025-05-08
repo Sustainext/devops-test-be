@@ -49,8 +49,8 @@ class SubmissionInformationView(APIView):
             )
         except SubmissionInformation.DoesNotExist:
             return Response(
-                {"error": "Submission Information not found or access denied for the specified criteria."},
-                status=status.HTTP_404_NOT_FOUND
+                {"message": "Submission Information not found"},
+                status=status.HTTP_200_OK
             )
 
         response_serializer = SubmissionInformationSerializer(submission_info)
@@ -105,4 +105,4 @@ class SubmissionInformationView(APIView):
             serializer = SubmissionInformationSerializer(data=create_data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
