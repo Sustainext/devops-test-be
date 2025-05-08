@@ -50,8 +50,8 @@ class ReportingForEntitiesView(APIView):
 
         except ReportingForEntities.DoesNotExist:
             return Response(
-                {"error": "Reporting data not found or access denied for the specified criteria."},
-                status=status.HTTP_404_NOT_FOUND
+                {"message": "Reporting data not found"},
+                status=status.HTTP_200_OK
             )
         response_serializer = ReportingForEntitiesSerializer(report_entity)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
@@ -102,4 +102,4 @@ class ReportingForEntitiesView(APIView):
             serializer = ReportingForEntitiesSerializer(data=data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
