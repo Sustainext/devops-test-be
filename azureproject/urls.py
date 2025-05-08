@@ -138,6 +138,7 @@ urlpatterns = [
     path("esg_report/", include("esg_report.urls")),
     path("canadabills211/", include("canadabills211.urls")),
     path("optimize/", include("apps.optimize.urls")),
+    path("canada_bill_s211/", include("apps.canada_bill_s211.urls")),
     path("refresh_token/", TokenRefreshView.as_view(), name="refresh_token"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEVELOPMENT_MODE:
