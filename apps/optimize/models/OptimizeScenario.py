@@ -33,6 +33,7 @@ class Scenerio(AbstractModel, HistoricalModelMixin):
         null=True,
         blank=True,
     )
+    description = models.TextField(max_length=512, null=True, blank=True)
     created_by = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="created_by_scenerio"
     )
