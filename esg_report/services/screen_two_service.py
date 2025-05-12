@@ -29,6 +29,8 @@ class ScreenTwoService:
         slugs = {
             "org_details": "gri-general-org_details_2-1a-1b-1c-1d",
             "entities": "gri-general-entities-list_of_entities-2-2-a",
+            "entities_audited": "gri-general-entities-audited-2-2-b",  # 2-2-b
+            "entities_multiple": "gri-general-entities-multiple-2-2-c",  # 2-2-c
             "sectors": "gri-general-business_details-organisation-2-6a",
             "value_chain": "gri-general-business_details-value-2-6b",
             "relevant_business": "gri-general-business_details-other-2-6c",
@@ -90,6 +92,15 @@ class ScreenTwoService:
         response_data["2-2-a"] = self._fetch_raw_response_data(
             raw_responses, slugs["entities"], key="Q1", list_response=True
         )
+
+        response_data["2-2-b"] = self._fetch_raw_response_data(
+            raw_responses, slugs["entities_audited"], key="Q1", list_response=True
+        )
+
+        response_data["2-2-c"] = self._fetch_raw_response_data(
+            raw_responses, slugs["entities_multiple"], key="Q1", list_response=True
+        )
+
         response_data["2-6-a"] = self._fetch_raw_response_data(
             raw_responses, slugs["sectors"]
         )

@@ -36,18 +36,30 @@ class ScreenSixAPIView(APIView):
             "gri-general-stakeholder_engagement-2-29b-stakeholder",
         ]
         raw_responses = get_raw_responses_as_per_report(report)
+
+       
         if raw_responses.filter(path__slug=slugs[0]).exists():
-            response_data.update(
-                raw_responses.filter(path__slug=slugs[0]).first().data[0]
-            )
+            try:
+                data_entries = raw_responses.filter(path__slug=slugs[0]).first().data
+                response_data["Organisationengages"] = [
+                    entry.get("Organisationengages", "") for entry in data_entries
+                ]
+                response_data["Stakeholdersidentified"] = [
+                    entry.get("Stakeholdersidentified", "") for entry in data_entries
+                ]
+                response_data["Stakeholderengagement"] = [
+                    entry.get("Stakeholderengagement", "") for entry in data_entries
+                ]
+            except Exception:
+                response_data["Organisationengages"] = []
+                response_data["Stakeholdersidentified"] = []
+                response_data["Stakeholderengagement"] = []
         else:
-            response_data.update(
-                {
-                    "Organisationengages": None,
-                    "Stakeholdersidentified": None,
-                    "Stakeholderengagement": None,
-                }
-            )
+            response_data["Organisationengages"] = []
+            response_data["Stakeholdersidentified"] = []
+            response_data["Stakeholderengagement"] = []
+
+
         response_data["approach_to_stakeholder_engagement"] = [
             i
             for i in raw_responses.filter(path__slug=slugs[1]).values_list(

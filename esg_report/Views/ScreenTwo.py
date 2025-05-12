@@ -44,6 +44,8 @@ class ScreenTwo(APIView):
         slugs = {
             "org_details": "gri-general-org_details_2-1a-1b-1c-1d",
             "entities": "gri-general-entities-list_of_entities-2-2-a",
+            "entities_audited": "gri-general-entities-audited-2-2-b",  # 2-2-b
+            "entities_multiple": "gri-general-entities-multiple-2-2-c",  # 2-2-c
             "sectors": "gri-general-business_details-organisation-2-6a",
             "value_chain": "gri-general-business_details-value-2-6b",
             "relevant_business": "gri-general-business_details-other-2-6c",
@@ -118,6 +120,31 @@ class ScreenTwo(APIView):
             response_data["2-6-d"] = raw_response_change_information.data[0]["Q1"]
         else:
             response_data["2-6-d"] = None
+
+        # ================================================
+        # 2-2-b: Entities audited
+        raw_response_entities_audited = get_latest_raw_response(
+            raw_responses, slugs["entities_audited"]
+        )
+        if raw_response_entities_audited:
+            response_data["2-2-b"] = [
+                entry["Q1"] for entry in raw_response_entities_audited.data
+            ]
+        else:
+            response_data["2-2-b"] = None
+
+        # 2-2-c: Entities with multiple roles
+        raw_response_entities_multiple = get_latest_raw_response(
+            raw_responses, slugs["entities_multiple"]
+        )
+        if raw_response_entities_multiple:
+            response_data["2-2-c"] = [
+                entry["Q1"] for entry in raw_response_entities_multiple.data
+            ]
+        else:
+            response_data["2-2-c"] = None
+
+
         return Response(response_data, status=status.HTTP_200_OK)
 
     def put(self, request, report_id, format=None):

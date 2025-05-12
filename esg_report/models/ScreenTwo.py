@@ -11,7 +11,6 @@ class AboutTheCompanyAndOperations(AbstractModel, HistoricalModelMixin):
         related_name="about_the_company_and_operations",
     )
     about_the_company = models.JSONField(null=True, blank=True)
-
     business_relations = models.JSONField(null=True, blank=True)
     entities_included = models.JSONField(null=True, blank=True)
     supply_chain_description = models.JSONField(null=True, blank=True)
