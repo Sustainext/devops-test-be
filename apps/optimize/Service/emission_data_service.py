@@ -215,9 +215,9 @@ class EmissionDataService:
                 "t": Decimal("1000"),
             },
             "imperial": {
-                "base_unit": "ton (US short ton)",
+                "base_unit": "ton",
                 "lb": Decimal("0.0005"),
-                "ton (US short ton)": Decimal("1"),
+                "ton": Decimal("1"),
             },
         }
 
@@ -230,11 +230,9 @@ class EmissionDataService:
                     "t": Decimal("1000"),
                 },
                 "imperial": {
-                    "base_unit": "ton (US short ton)",
+                    "base_unit": "ton",
                     "lb": Decimal("0.0005"),
-                    "ton": Decimal(
-                        "1"
-                    ),  # Assuming "ton" here means "ton (US short ton)"
+                    "ton": Decimal("1"),
                 },
             },
             "distance_unit": {
@@ -261,7 +259,7 @@ class EmissionDataService:
                     "t": Decimal("1000"),
                 },
                 "imperial": {
-                    "base_unit": "ton (US short ton)",
+                    "base_unit": "ton",
                     "lb": Decimal("0.0005"),
                     "ton": Decimal("1"),
                 },
@@ -526,12 +524,14 @@ class EmissionDataService:
 
             # Accumulate the quantities for each group
             response[key]["quantity"] += (
-                converted_quantity1 if converted_quantity1 else 0
+                round(converted_quantity1, 3) if converted_quantity1 else 0
             )
             response[key]["quantity2"] += (
-                converted_quantity2 if converted_quantity2 else 0
+                round(converted_quantity2, 3) if converted_quantity2 else 0
             )
-            response[key]["co2e_total"] += data.co2e_total if data.co2e_total else 0
+            response[key]["co2e_total"] += (
+                round(data.co2e_total, 3) if data.co2e_total else 0
+            )
 
             # Store the most recent values of other fields (if they are consistent across entries)
             response[key]["uuid"] = uuid.uuid5(uuid.NAMESPACE_DNS, key_string)
