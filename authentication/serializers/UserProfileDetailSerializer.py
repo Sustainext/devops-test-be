@@ -8,7 +8,7 @@ class UserProfileDetailSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='user.last_name')
     designation = serializers.CharField(source='user.job_title')
     department = serializers.CharField(source='user.department')
-    job_description = serializers.CharField(source='user.job_description')
+    job_description = serializers.CharField(source='user.job_description', allow_null=True, required=False)
     phone = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     profile_pic = serializers.ImageField(source='profile_picture', required=False, allow_null=True)
     custom_role = serializers.CharField(source='user.custom_role.name', read_only=True)
