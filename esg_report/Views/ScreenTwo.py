@@ -121,30 +121,32 @@ class ScreenTwo(APIView):
         else:
             response_data["2-6-d"] = None
 
-        # ================================================
-        # 2-2-b: Entities audited
+        # ================================================    
+        # 2-2-b: Audited, consolidated financial statements (Yes/No + Explanation)
         raw_response_entities_audited = get_latest_raw_response(
             raw_responses, slugs["entities_audited"]
         )
-        if raw_response_entities_audited:
-            response_data["2-2-b"] = [
-                entry["Q1"] for entry in raw_response_entities_audited.data
-            ]
+        if raw_response_entities_audited and raw_response_entities_audited.data:
+            data = raw_response_entities_audited.data[0]
+            response_data["2-2-b"] = {
+                "answer": data.get("Q1", None),
+                "explanation": data.get("Q2", None),
+            }
         else:
-            response_data["2-2-b"] = None
+            response_data["2-2-b"] = {"answer": None, "explanation": None}
 
-        # 2-2-c: Entities with multiple roles
+        # 2-2-c: Multiple entities (Yes/No + Explanation)
         raw_response_entities_multiple = get_latest_raw_response(
             raw_responses, slugs["entities_multiple"]
         )
-        if raw_response_entities_multiple:
-            response_data["2-2-c"] = [
-                entry["Q1"] for entry in raw_response_entities_multiple.data
-            ]
+        if raw_response_entities_multiple and raw_response_entities_multiple.data:
+            data = raw_response_entities_multiple.data[0]
+            response_data["2-2-c"] = {
+                "answer": data.get("Q1", None),
+                "explanation": data.get("Q2", None),
+            }
         else:
-            response_data["2-2-c"] = None
-
-
+            response_data["2-2-c"] = {"answer": None, "explanation": None}
         return Response(response_data, status=status.HTTP_200_OK)
 
     def put(self, request, report_id, format=None):
