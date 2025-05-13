@@ -53,6 +53,9 @@ class ScreenTenAPIView(APIView):
             13: "gri-social-supplier_screened-414-1a-number_of_new_suppliers",
             14: "gri-social-impacts_and_actions-414-2b-number_of_suppliers",
             15: "gri_collect_supplier_environmental_assessment_management_material_topic",
+            16: "gri-supplier_environmental_assessment-negative_environmental-308-2a",
+            17: "gri-supplier_environmental_assessment-negative_environmental-308-2b",
+            18: "gri-supplier_environmental_assessment-negative_environmental-308-2c",
         }
 
     def put(self, request, report_id: int) -> Response:
@@ -140,6 +143,25 @@ class ScreenTenAPIView(APIView):
         for dp in local_data_points:
             response_data[dp.data_metric.name] = dp.value
         return response_data
+    
+
+
+    def get_308_2abc_collect(self):
+        """
+        Collects values for 308-2-a, 308-2-b, and 308-2-c from data points.
+        """
+        response_data = {}
+
+        for key, slug in [("308-2-a", self.slugs[16]), ("308-2-b", self.slugs[17]), ("308-2-c", self.slugs[18])]:
+            data_points = self.data_points.filter(path__slug=slug).select_related("data_metric")
+            for dp in data_points:
+                if key not in response_data:
+                    response_data[key] = {}
+                response_data[key][dp.data_metric.name] = dp.value
+
+        return response_data
+
+
 
     def get_308_2de_analyse(self):
         year = get_maximum_months_year(self.report)
@@ -329,9 +351,11 @@ class ScreenTenAPIView(APIView):
             ] = None
 
         response_data.update(self.get_204_1abc())
-        response_data["308-2-a"] = None
-        response_data["308-2-b"] = None
-        response_data["308-2-c"] = None
+        # response_data["308-2-a"] = None
+        # response_data["308-2-b"] = None
+        # response_data["308-2-c"] = None
+        response_data["308_2abc_collect"] = self.get_308_2abc_collect()
+
         response_data.update(self.get_404_2abc())
         response_data.update(self.get_308_2de_analyse())
         response_data["308_2e_collect"] = self.get_308_2e_collect()

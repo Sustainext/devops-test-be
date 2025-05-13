@@ -35,6 +35,8 @@ class AboutTheReportService:
         # Define slugs for required data
         slugs = [
             "gri-general-report_details-reporting_period-2-3-a",
+            "gri-general-report_details-reporting_period-2-3-b",  
+            "gri-general-report_details-publication-2-3-c",       
             "gri-general-report_details-point-2-3-d",
             "gri-general-restatements-2-4-a",
             "gri-general-assurance-policy-2-5-a",
@@ -49,45 +51,43 @@ class AboutTheReportService:
         response_data["2-3-a"] = (
             raw_responses.filter(path__slug=slugs[0]).order_by("year").first().data[0]
             if raw_responses.filter(path__slug=slugs[0]).order_by("year").first()
-            is not None
             else None
         )
-        response_data["2-3d"] = (
+        response_data["2-3-b"] = (
             raw_responses.filter(path__slug=slugs[1]).order_by("year").first().data[0]
             if raw_responses.filter(path__slug=slugs[1]).order_by("year").first()
-            is not None
+            else None
+        )
+        response_data["2-3-c"] = (
+            raw_responses.filter(path__slug=slugs[2]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[2]).order_by("year").first()
+            else None
+        )
+        response_data["2-3-d"] = (
+            raw_responses.filter(path__slug=slugs[3]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[3]).order_by("year").first()
             else None
         )
         response_data["2-4-a"] = (
-            raw_responses.filter(path__slug=slugs[2]).order_by("year").first().data[0]
-            if raw_responses.filter(path__slug=slugs[2]).order_by("year").first()
-            is not None
+            raw_responses.filter(path__slug=slugs[4]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[4]).order_by("year").first()
             else None
         )
         response_data["2-5-a"] = {
             "assurance_policy": (
-                raw_responses.filter(path__slug=slugs[3])
-                .order_by("year")
-                .first()
-                .data[0]
-                if raw_responses.filter(path__slug=slugs[3]).order_by("year").first()
-                is not None
+                raw_responses.filter(path__slug=slugs[5]).order_by("year").first().data[0]
+                if raw_responses.filter(path__slug=slugs[5]).order_by("year").first()
                 else None
             ),
             "assurance_highest": (
-                raw_responses.filter(path__slug=slugs[4])
-                .order_by("year")
-                .first()
-                .data[0]
-                if raw_responses.filter(path__slug=slugs[4]).order_by("year").first()
-                is not None
+                raw_responses.filter(path__slug=slugs[6]).order_by("year").first().data[0]
+                if raw_responses.filter(path__slug=slugs[6]).order_by("year").first()
                 else None
             ),
         }
         response_data["2-5-b"] = (
-            raw_responses.filter(path__slug=slugs[5]).order_by("year").first().data[0]
-            if raw_responses.filter(path__slug=slugs[5]).order_by("year").first()
-            is not None
+            raw_responses.filter(path__slug=slugs[7]).order_by("year").first().data[0]
+            if raw_responses.filter(path__slug=slugs[7]).order_by("year").first()
             else None
         )
 
