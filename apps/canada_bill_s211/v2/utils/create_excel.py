@@ -10,6 +10,7 @@ from openpyxl.styles import Alignment
 from openpyxl.styles import Border, Side
 from openpyxl.cell.text import InlineFont
 from openpyxl.cell.rich_text import TextBlock, CellRichText
+from apps.canada_bill_s211.v2.constants import REPORTING_FOR_ENTITIES_RADIO_BUTTON
 import logging
 import io
 
@@ -77,6 +78,8 @@ class CanadaBillReport:
         return self.not_available
 
     def create_and_merge_rows(self, sheet:Worksheet, row_insert_number: int, insert_data:list)-> int:
+        if not insert_data:
+            insert_data = [self.not_available]
         target_column = 2
         numbers_of_rows_to_insert = len(insert_data)
         # Get question cell
@@ -163,13 +166,39 @@ class CanadaBillReport:
         Then based on the screen we fill the data.
         """
         part_two_data = self.get_part_two_data()
-
-
-
-
-
-
-
+        part_two_sheet = self.excel_file["Part 2"]
+        part_two_sheet.cell(row=3,column=3).value = part_two_data.get("screen1_q1",self.not_available)
+        current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=4, insert_data=part_two_data.get("screen1_q2",[self.not_available]))
+        current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=current_row, insert_data=part_two_data.get("screen2_q1",[self.not_available]))
+        part_two_sheet.cell(row=current_row, column=3).value = part_two_data.get("screen2_q2",self.not_available)
+        current_row+=1
+        part_two_sheet.cell(row=current_row, column=3).value = part_two_data.get("screen3_q1",self.not_available)
+        current_row+=1
+        current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=current_row, insert_data=part_two_data.get("screen3_q2",[self.not_available]))
+        part_two_sheet.cell(row=current_row, column=3).value = REPORTING_FOR_ENTITIES_RADIO_BUTTON[4].get((part_two_data.get("screen4_q1",self.not_available)),self.not_available)
+        part_two_sheet.cell(row=current_row, column=3).alignment = Alignment(wrap_text=True)
+        current_row+=1
+        current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=current_row, insert_data=part_two_data.get("screen4_q2",[self.not_available]))
+        current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=current_row, insert_data=self.add_in_list_if_not_null(original_list=self.modify_recursive_list_data(data=part_two_data.get("screen5_q1"),ignore_keys="other"),probable_null_item=part_two_data.get("screen5_q2",[self.not_available])))
+        part_two_sheet.cell(row=current_row, column=3).value = part_two_data.get("screen5_q3",self.not_available)
+        current_row+=1
+        part_two_sheet.cell(row=current_row, column=3).value = REPORTING_FOR_ENTITIES_RADIO_BUTTON[6].get((part_two_data.get("screen6_q1",self.not_available)),self.not_available)
+        part_two_sheet.cell(row=current_row, column=3).alignment = Alignment(wrap_text=True)
+        current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=current_row, insert_data=part_two_data.get("screen6_q2",[self.not_available]))
+        part_two_sheet.cell(row=current_row, column=3).value = REPORTING_FOR_ENTITIES_RADIO_BUTTON[7][0].get((part_two_data.get("screen7_q1",self.not_available)),self.not_available)
+        part_two_sheet.cell(row=current_row, column=3).alignment = Alignment(wrap_text=True)
+        current_row+=1
+        part_two_sheet.cell(row=current_row, column=3).value = REPORTING_FOR_ENTITIES_RADIO_BUTTON[7][1].get((part_two_data.get("screen7_q2",self.not_available)),self.not_available)
+        part_two_sheet.cell(row=current_row, column=3).alignment = Alignment(wrap_text=True)
+        current_row+=1
+        part_two_sheet.cell(row=current_row, column=3).value = REPORTING_FOR_ENTITIES_RADIO_BUTTON[7][2].get((part_two_data.get("screen7_q3",self.not_available)),self.not_available)
+        part_two_sheet.cell(row=current_row, column=3).alignment = Alignment(wrap_text=True)
+        current_row+=1
+        part_two_sheet.cell(row=current_row, column=3).value = part_two_data.get("screen8_q1",self.not_available)
+        current_row+=1
+        current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=current_row, insert_data=part_two_data.get("screen8_q2",[self.not_available]))
+        part_two_sheet.cell(row=current_row, column=3).value = part_two_data.get("screen8_q3",self.not_available)
+        
 
     def html_to_plain_text(self,html_string):
         """
@@ -215,6 +244,7 @@ class CanadaBillReport:
         Modifies the Excel sheet and returns its content as bytes.
         """
         self.modify_part_one()
+        self.modify_part_two()
         # Example of how you might use insert_rows_in_sheet:
         # self.insert_rows_in_sheet(sheet_name="Part 1", start_row=12, num_rows_to_insert=5) # Adjust start_row as needed
 

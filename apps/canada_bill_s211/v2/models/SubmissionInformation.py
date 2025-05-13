@@ -4,8 +4,6 @@ from common.models.HistoricalModel import HistoricalModelMixin
 from apps.canada_bill_s211.v2.models.CanadaBasicModel import CanadaBasicModel
 
 class SubmissionInformation(AbstractModel, HistoricalModelMixin, CanadaBasicModel):
-    screen = models.IntegerField()
-    data = models.JSONField()
 
     def __str__(self) -> str:
         return f"Submission Information for Screen {self.screen}"
