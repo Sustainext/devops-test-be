@@ -93,13 +93,19 @@ class ScreenTwoService:
             raw_responses, slugs["entities"], key="Q1", list_response=True
         )
 
-        response_data["2-2-b"] = self._fetch_raw_response_data(
-            raw_responses, slugs["entities_audited"], key="Q1", list_response=True
-        )
+        
+        raw_2_2_b = self._fetch_raw_response_data(raw_responses, slugs["entities_audited"])
+        response_data["2-2-b"] = {
+            "answer": raw_2_2_b[0].get("Q1") if raw_2_2_b else None,
+            "explanation": raw_2_2_b[0].get("Q2") if raw_2_2_b else None,
+        }
 
-        response_data["2-2-c"] = self._fetch_raw_response_data(
-            raw_responses, slugs["entities_multiple"], key="Q1", list_response=True
-        )
+        raw_2_2_c = self._fetch_raw_response_data(raw_responses, slugs["entities_multiple"])
+        response_data["2-2-c"] = {
+            "answer": raw_2_2_c[0].get("Q1") if raw_2_2_c else None,
+            "explanation": raw_2_2_c[0].get("Q2") if raw_2_2_c else None,
+        }
+
 
         response_data["2-6-a"] = self._fetch_raw_response_data(
             raw_responses, slugs["sectors"]

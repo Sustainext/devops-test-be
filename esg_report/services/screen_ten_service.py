@@ -9,6 +9,7 @@ from esg_report.utils import (
     get_raw_responses_as_per_report,
     get_data_points_as_per_report,
     get_maximum_months_year,
+    get_management_materiality_topics
 )
 from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 from sustainapp.Utilities.supplier_environment_analyse import new_suppliers
@@ -37,6 +38,10 @@ class ScreenTenService:
         12: "gri-supplier_environmental_assessment-negative_environmental-308-2e",
         13: "gri-social-supplier_screened-414-1a-number_of_new_suppliers",
         14: "gri-social-impacts_and_actions-414-2b-number_of_suppliers",
+        15: "gri-supplier_environmental_assessment-negative_environmental-308-2a",  
+        16: "gri-supplier_environmental_assessment-negative_environmental-308-2b", 
+        17: "gri-supplier_environmental_assessment-negative_environmental-308-2c",  
+        18: "gri_collect_supplier_environmental_assessment_management_material_topic",
     }
 
     @staticmethod
@@ -76,6 +81,8 @@ class ScreenTenService:
         response_data["308-2e-collect"] = ScreenTenService.get_308_2e_collect(
             data_points
         )
+        response_data["308-2abc-collect"] = ScreenTenService.get_308_2abc_collect(data_points)
+
         response_data["414-1a-collect"] = ScreenTenService.get_414_1a_collect(
             data_points
         )
@@ -83,6 +90,10 @@ class ScreenTenService:
         response_data["414-2b-collect"] = ScreenTenService.get_414_2b_collect(
             data_points
         )
+        response_data["3_c_d_e_in_material_topics"] = get_management_materiality_topics(
+            report, ScreenTenService.slugs[18]
+        )
+
 
         return response_data
 
@@ -218,6 +229,27 @@ class ScreenTenService:
             path__slug=ScreenTenService.slugs[12]
         ).select_related("data_metric")
         return {dp.data_metric.name: dp.value for dp in points}
+
+    @staticmethod
+    def get_308_2abc_collect(data_points):
+        response_data = {}
+
+        for key, slug_key in [
+            ("308-2-a", 15),
+            ("308-2-b", 16),
+            ("308-2-c", 17),
+        ]:
+            points = data_points.filter(
+                path__slug=ScreenTenService.slugs[slug_key]
+            ).select_related("data_metric")
+
+            for dp in points:
+                if key not in response_data:
+                    response_data[key] = {}
+                response_data[key][dp.data_metric.name] = dp.value
+
+        return response_data
+
 
     @staticmethod
     def get_414_1a_collect(data_points):
