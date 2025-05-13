@@ -184,6 +184,7 @@ class CanadaBillReport:
         current_row+=1
         part_two_sheet.cell(row=current_row, column=3).value = REPORTING_FOR_ENTITIES_RADIO_BUTTON[6].get((part_two_data.get("screen6_q1",self.not_available)),self.not_available)
         part_two_sheet.cell(row=current_row, column=3).alignment = Alignment(wrap_text=True)
+        current_row+=1
         current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=current_row, insert_data=part_two_data.get("screen6_q2",[self.not_available]))
         part_two_sheet.cell(row=current_row, column=3).value = REPORTING_FOR_ENTITIES_RADIO_BUTTON[7][0].get((part_two_data.get("screen7_q1",self.not_available)),self.not_available)
         part_two_sheet.cell(row=current_row, column=3).alignment = Alignment(wrap_text=True)
