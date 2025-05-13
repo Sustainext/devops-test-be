@@ -351,9 +351,6 @@ class ScreenTenAPIView(APIView):
             ] = None
 
         response_data.update(self.get_204_1abc())
-        # response_data["308-2-a"] = None
-        # response_data["308-2-b"] = None
-        # response_data["308-2-c"] = None
         response_data["308_2abc_collect"] = self.get_308_2abc_collect()
 
         response_data.update(self.get_404_2abc())
