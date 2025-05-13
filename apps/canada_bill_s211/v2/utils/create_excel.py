@@ -17,6 +17,15 @@ logger = logging.getLogger("django")
 CustomUser = get_user_model()
 
 class CanadaBillReport:
+    """
+    This service file gets the data from the models on the basis of
+    organization
+    corporate
+    year
+    
+    and then downloads the excel sheet from azure data storage
+    after that edits the downloaded excel sheet as per requirements.
+    """
     def __init__(self, user ,organization, corporate, year:int):
         self.excel_file_url = default_storage.open("canada_bill_s211/BillS211Template.xlsx")
         self.excel_file = openpyxl.load_workbook(self.excel_file_url)
@@ -148,7 +157,7 @@ class CanadaBillReport:
 
     def modify_part_two(self):
         """
-        Modifies the Part 1 sheet.
+        Modifies the Part 2 sheet.
         Gets all the data from the ReportingForEntities Model based on the user,
         organization, corporate entity, and year.
         Then based on the screen we fill the data.
