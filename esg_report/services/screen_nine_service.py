@@ -365,8 +365,6 @@ class ScreenNineService:
                 "the_categories_of_stakeholders_including_at_risk_or_vulnerable_groups_that_the_organization_gives_particular_attention_to_in_the_commitment": raw_response_data[
                     1
                 ]["Disclosed"],
-                # "other1": raw_response_data[2]["Disclosed"],
-                # "other2": raw_response_data[3]["Disclosed"],
             }
             return data
 

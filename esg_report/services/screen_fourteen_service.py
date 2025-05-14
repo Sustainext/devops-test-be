@@ -77,17 +77,11 @@ class ScreenFourteenService:
         return response_data
     
     def get_411_1a_incidents(self):
-        raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[2])
-            .order_by("-year")
-            .first()
-        )
-        return raw_response.data[0] if raw_response else None
-
+        points = self.data_points.filter(path__slug=self.slugs[2]).select_related("data_metric")
+        return {dp.data_metric.name: dp.value for dp in points}
+    
     def get_411_1b_status(self):
-        raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[3])
-            .order_by("-year")
-            .first()
-        )
-        return raw_response.data[0] if raw_response else None
+        points = self.data_points.filter(path__slug=self.slugs[3]).select_related("data_metric")
+        return {dp.data_metric.name: dp.value for dp in points}
+
+
