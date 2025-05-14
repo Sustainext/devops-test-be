@@ -20,7 +20,6 @@ class GetReport(APIView):
             organization=organization,
             corporate=corporate,
             year=year)
-        return Response(report_generator.get_part_two_data())
         excel_data = report_generator.generate_excel_report_data()
 
         response = HttpResponse(

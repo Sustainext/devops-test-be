@@ -12,7 +12,8 @@ class CanadaBasicModel(models.Model):
     organization = models.ForeignKey("sustainapp.Organization", on_delete=models.CASCADE)
     corporate = models.ForeignKey("sustainapp.Corporateentity", on_delete=models.CASCADE, null=True, blank=True)
     year = models.IntegerField(validators=[MaxValueValidator(2100), MinValueValidator(2000)])
+    data = models.JSONField(null=True, blank=True)
     status = models.CharField(max_length=20, default="incomplete", choices=[('completed', 'Completed'), ('incomplete', 'Incomplete'), ('in_progress', 'In Progress')])
-
+    screen = models.IntegerField()
     class Meta:
         abstract = True
