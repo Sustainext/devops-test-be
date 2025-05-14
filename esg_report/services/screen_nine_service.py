@@ -85,6 +85,9 @@ class ScreenNineService:
             59: "gri-governance-compensation_ratio-2-21-a-annual",
             60: "gri-governance-compensation_ratio-2-21-b-percentage",
             61: "gri_collect_economic_governance_management_material_topic",
+            62: "gri-governance-remuneration-2-19-b-policies",
+            63: "gri-economic-public_legal_cases-205-3d",
+
         }
 
     def get_screen_nine_data(self):
@@ -125,6 +128,7 @@ class ScreenNineService:
         response_data["2_18_b"] = self.get_2_18_b()
         response_data["2_18_c"] = self.get_2_18_c()
         response_data["2_19_a"] = self.get_2_19_a()
+        response_data["2_19_b"] = self.get_2_19_b()
         response_data["2_21_a"] = self.get_2_21_a()
         response_data["2_21_a_analyse_governance"] = (
             self.get_2_21_a_analyse_governance()
@@ -163,11 +167,7 @@ class ScreenNineService:
         response_data["2_202_1c"] = self.get_2_202_1c()
         response_data["2_202_1b"] = self.get_2_202_1b()
         response_data["2_202_1a"] = self.get_2_202_1a()
-        response_data["2_23_f"] = self.get_2_23_f()
-        response_data["2_23_e"] = self.get_2_23_e()
-        response_data["2_23_d"] = self.get_2_23_d()
-        response_data["2_23_c"] = self.get_2_23_c()
-        response_data["2_23_b"] = self.get_2_23_b()
+        response_data["205_3d"] = self.get_205_3d()
         return response_data
 
     def set_raw_responses(self):
@@ -341,7 +341,7 @@ class ScreenNineService:
                 "please_provide_links_to_the_policy_commitments": raw_response_data[0][
                     "Q2"
                 ],
-                "please_provide_links_to_the_policy_commitments": raw_response_data[0][
+                "policy commitments are not publicly available": raw_response_data[0][
                     "Q3"
                 ],
             }
@@ -356,6 +356,7 @@ class ScreenNineService:
         raw_response_data = raw_response.data if raw_response is not None else None
         if not raw_response_data:
             return raw_response_data
+        
         else:
             data = {
                 "the_internationally_recognized_human_rights_that_the_commitment_covers": raw_response_data[
@@ -364,8 +365,8 @@ class ScreenNineService:
                 "the_categories_of_stakeholders_including_at_risk_or_vulnerable_groups_that_the_organization_gives_particular_attention_to_in_the_commitment": raw_response_data[
                     1
                 ]["Disclosed"],
-                "other1": raw_response_data[2]["Disclosed"],
-                "other2": raw_response_data[3]["Disclosed"],
+                # "other1": raw_response_data[2]["Disclosed"],
+                # "other2": raw_response_data[3]["Disclosed"],
             }
             return data
 
@@ -658,6 +659,16 @@ class ScreenNineService:
         data["remuneration_policy_clawbacks"] = raw_response_data["Q4"]
         data["remuneration_policy_retirement_benefits"] = raw_response_data["Q5"]
         return data
+    
+    def get_2_19_b(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[62])
+            .order_by("-year")
+            .first()
+        )
+        raw_response_data = raw_response.data[0] if raw_response is not None else None
+        return raw_response_data
+
 
     def get_2_21_a(self):
         # TODO: Sum of annual total compensation ratio
@@ -937,3 +948,11 @@ class ScreenNineService:
             return local_data
         else:
             return local_data[0]["Q1"]
+
+    def get_205_3d(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[63])
+            .order_by("-year")
+            .first()
+        )
+        return raw_response.data[0] if raw_response is not None else None

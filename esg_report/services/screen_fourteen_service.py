@@ -22,6 +22,8 @@ class ScreenFourteenService:
         self.slugs = {
             0: "gri-social-impact_on_community-407-1a-operations",
             1: "gri_collect_human_rights_management_material_topic",
+            2: "gri-social-indigenous_people-411-1a-incidents",
+            3: "gri-social-indigenous_people-411-1b-status",
         }
 
     def set_data_points(self):
@@ -59,6 +61,8 @@ class ScreenFourteenService:
             self.data_points.filter(path__slug=self.slugs[0])
         )
         response_data["413_1a_analyse"] = self.get_413_1a()
+        response_data["411_1a_incidents"] = self.get_411_1a_incidents()
+        response_data["411_1b_status"] = self.get_411_1b_status()
         response_data["3_c_d_e_in_material_topics"] = (
             # None  # TODO: Complete when materiality assessment screen is ready.
             get_management_materiality_topics(self.report, self.slugs[1])
@@ -71,3 +75,19 @@ class ScreenFourteenService:
             key.replace("-", "_"): value for key, value in response_data.items()
         }
         return response_data
+    
+    def get_411_1a_incidents(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[2])
+            .order_by("-year")
+            .first()
+        )
+        return raw_response.data[0] if raw_response else None
+
+    def get_411_1b_status(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[3])
+            .order_by("-year")
+            .first()
+        )
+        return raw_response.data[0] if raw_response else None
