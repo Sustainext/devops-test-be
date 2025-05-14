@@ -13,7 +13,7 @@ from esg_report.Serializer.ScreenFourteenSerializer import ScreenFourteenSeriali
 from common.utils.get_data_points_as_raw_responses import collect_data_and_differentiate_by_location
 from sustainapp.models import Report
 from esg_report.models.ScreenFourteen import ScreenFourteen
-
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 
 class ScreenFourteenService:
     def __init__(self, report_id, request):
@@ -77,11 +77,12 @@ class ScreenFourteenService:
         return response_data
     
     def get_411_1a_incidents(self):
-        points = self.data_points.filter(path__slug=self.slugs[2]).select_related("data_metric")
-        return {dp.data_metric.name: dp.value for dp in points}
-    
-    def get_411_1b_status(self):
-        points = self.data_points.filter(path__slug=self.slugs[3]).select_related("data_metric")
-        return {dp.data_metric.name: dp.value for dp in points}
+        return collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[2])
+        )
 
+    def get_411_1b_status(self):
+        return collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[3])
+        )
 
