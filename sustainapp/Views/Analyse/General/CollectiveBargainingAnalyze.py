@@ -70,16 +70,7 @@ class CollectiveBargainingAnalyzeView(APIView):
                                 "number_of_employees_collective_bargaining": temp_req_data_2[
                                     "Q1"
                                 ],
-                                "percentage": round(
-                                    (
-                                        safe_percentage(
-                                            temp_req_data_2["Q1"], temp_req_data_2["Q2"]
-                                        )
-                                        if temp_req_data_2["Q2"] != 0
-                                        else 0
-                                    ),
-                                    2,
-                                ),
+                                "percentage": safe_percentage(temp_req_data_2["Q1"], temp_req_data_2["Q2"]) if temp_req_data_2["Q2"] != 0 else 0
                             }
                         )
             return res
@@ -101,45 +92,37 @@ class CollectiveBargainingAnalyzeView(APIView):
         Then we'll not show data for the organization"""
         serialized_data = CheckOrgCoprDateSerializer(data=request.query_params)
         serialized_data.is_valid(raise_exception=True)
-        try:
-            self.org = serialized_data.validated_data["organisation"]
-            self.corp = serialized_data.validated_data.get("corporate", None)
-            self.from_date = serialized_data.validated_data["start"]
-            self.to_date = serialized_data.validated_data["end"]
-
-            if self.from_date.year == self.to_date.year:
-                self.year = self.from_date.year
-            else:
-                logger.error(
-                    "General/Collective Bargaining error: Start and End year should be same."
-                )
-                return Response(
-                    {"error": "Start and End year should be same."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            self.client_id = request.user.client.id
-
-            filter_by = {}
-
-            filter_by["organization__id"] = self.org.id
-
-            if self.corp is not None:
-                filter_by["corporate__id"] = self.corp.id
-            else:
-                filter_by["corporate__id"] = None
-
-            collective_bargaining_percent = self.process_collective_bargaining(
-                "gri-general-collective_bargaining-2-30-a-percentage", filter_by
-            )
-
-            return Response(
-                {"collective_bargaining": collective_bargaining_percent},
-                status=status.HTTP_200_OK,
-            )
-
-        except Exception as e:
+        self.org = serialized_data.validated_data["organisation"]
+        self.corp = serialized_data.validated_data.get("corporate", None)
+        self.from_date = serialized_data.validated_data["start"]
+        self.to_date = serialized_data.validated_data["end"]
+        if self.from_date.year == self.to_date.year:
+            self.year = self.from_date.year
+        else:
             logger.error(
-                f"An error occured while analyzing General/Collective Bargaining: {e}"
+                "General/Collective Bargaining error: Start and End year should be same."
             )
-            return Response({"error": f"{e}"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Start and End year should be same."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        self.client_id = request.user.client.id
+
+        filter_by = {}
+
+        filter_by["organization__id"] = self.org.id
+
+        if self.corp is not None:
+            filter_by["corporate__id"] = self.corp.id
+        else:
+            filter_by["corporate__id"] = None
+
+        collective_bargaining_percent = self.process_collective_bargaining(
+            "gri-general-collective_bargaining-2-30-a-percentage", filter_by
+        )
+
+        return Response(
+            {"collective_bargaining": collective_bargaining_percent},
+            status=status.HTTP_200_OK,
+        )
