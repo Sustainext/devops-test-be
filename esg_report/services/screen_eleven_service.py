@@ -62,6 +62,10 @@ class ScreenElevenService:
             36: "gri_collect_tax_management_material_topic",  # 11.4.1
             37: "gri_collect_anti_corruption_management_material_topic",  # 11.5.1
             38: "gri_collect_lobbying_political_influence_management_material_topic",  # 11.6.1
+            39: "gri-economic-direct_economic_value-data-201-1a",
+            40: "gri-economic-financial_assistance-201-4c-government",
+            41: "gri-economic-financial_implications-201-2a-calculate",
+
         }
 
     def set_data_points(self):
@@ -524,6 +528,11 @@ class ScreenElevenService:
         response_data["3-3cde_11-6-1"] = get_management_materiality_topics(
             self.report, self.slugs[38]
         )
+
+        response_data["201_1a_data"] = self.get_201_1a_data()
+        response_data["201_4c_government"] = self.get_201_4c_government()
+        response_data["201_2a_calculate"] = self.get_201_2a_calculate()
+
         return response_data
 
     def get_report_response(self):
@@ -533,3 +542,19 @@ class ScreenElevenService:
             key.replace("-", "_"): value for key, value in response_data.items()
         }
         return response_data
+    
+
+    def get_201_1a_data(self):
+        return collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[39])
+        )
+
+    def get_201_4c_government(self):
+        return collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[40])
+        )
+
+    def get_201_2a_calculate(self):
+        return collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[41])
+        )
