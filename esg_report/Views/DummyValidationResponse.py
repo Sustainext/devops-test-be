@@ -391,15 +391,7 @@ dummy_response_data = {
             "field": "energy_consumption_outside_organization",
             "isSkipped": False,
         },
-        {
-            "page": "screen_twelve",
-            "label": "12.4.4 Energy Intensity",
-            "subLabel": "Add statement about tracking the Energy Intensity",
-            "type": "textarea",
-            "content": "",
-            "field": "energy_intensity_tracking",
-            "isSkipped": False,
-        },
+    
         {
             "page": "screen_twelve",
             "label": "12.4.5 Reduction in Energy consumption",
