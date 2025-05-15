@@ -38,6 +38,12 @@ class ScreenFifteenModel(AbstractModel, HistoricalModelMixin):
         null=True,
         blank=True,
     )
+    customers =models.JSONField(
+        verbose_name="Customers",
+        help_text="Add statement about customers",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return "Company Report"

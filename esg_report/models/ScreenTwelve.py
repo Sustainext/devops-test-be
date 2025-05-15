@@ -87,9 +87,7 @@ class ScreenTwelve(AbstractModel, HistoricalModelMixin):
         null=True,
         help_text="Statement about company's energy consumption outside of the organization",
     )
-    energy_intensity_tracking = models.JSONField(
-        blank=True, null=True, help_text="Statement about tracking the Energy Intensity"
-    )
+ 
     energy_consumption_reduction_commitment = models.JSONField(
         blank=True,
         null=True,

@@ -391,15 +391,7 @@ dummy_response_data = {
             "field": "energy_consumption_outside_organization",
             "isSkipped": False,
         },
-        {
-            "page": "screen_twelve",
-            "label": "12.4.4 Energy Intensity",
-            "subLabel": "Add statement about tracking the Energy Intensity",
-            "type": "textarea",
-            "content": "",
-            "field": "energy_intensity_tracking",
-            "isSkipped": False,
-        },
+    
         {
             "page": "screen_twelve",
             "label": "12.4.5 Reduction in Energy consumption",
@@ -683,6 +675,17 @@ dummy_response_data = {
             "field": "csr_policies",
             "isSkipped": False,
         },
+        {
+            "page":"screen_fourteen",
+            "label":"14.1.2 Incidents of Violation of Rights of Indigenous People",
+            "subLabel":"Add statement about company’s policy on violation of rights of indigenous people",
+            "type":"textarea",
+            "content":"",
+            "field":"violation_rights",
+            "isSkipped":False
+        },
+
+
     ],
     "screen_fifteen": [
         {
@@ -721,5 +724,14 @@ dummy_response_data = {
             "field": "conclusion",
             "isSkipped": False,
         },
+        {
+        "page": "screen_fifteen",
+        "label": "Customers",
+        "subLabel": "Add statement about customers",
+        "type": "textarea",
+        "content": "",
+        "field": "customers",
+        "isSkipped": False,
+      },
     ],
 }
