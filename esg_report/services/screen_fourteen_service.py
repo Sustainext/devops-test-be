@@ -67,6 +67,7 @@ class ScreenFourteenService:
             # None  # TODO: Complete when materiality assessment screen is ready.
             get_management_materiality_topics(self.report, self.slugs[1])
         )
+        
         return response_data
 
     def get_report_response(self):

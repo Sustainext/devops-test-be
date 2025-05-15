@@ -683,6 +683,17 @@ dummy_response_data = {
             "field": "csr_policies",
             "isSkipped": False,
         },
+        {
+            "page":"screen_fourteen",
+            "label":"14.1.2 Incidents of Violation of Rights of Indigenous People",
+            "subLabel":"Add statement about company’s policy on violation of rights of indigenous people",
+            "type":"textarea",
+            "content":"",
+            "field":"violation_rights",
+            "isSkipped":False
+        },
+
+
     ],
     "screen_fifteen": [
         {
@@ -721,5 +732,14 @@ dummy_response_data = {
             "field": "conclusion",
             "isSkipped": False,
         },
+        {
+        "page": "screen_fifteen",
+        "label": "Customers",
+        "subLabel": "Add statement about customers",
+        "type": "textarea",
+        "content": "",
+        "field": "customers",
+        "isSkipped": False,
+      },
     ],
 }
