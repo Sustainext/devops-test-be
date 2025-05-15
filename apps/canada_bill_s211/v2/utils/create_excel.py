@@ -23,7 +23,7 @@ class CanadaBillReport:
     organization
     corporate
     year
-    
+
     and then downloads the excel sheet from azure data storage
     after that edits the downloaded excel sheet as per requirements.
     """
@@ -135,7 +135,7 @@ class CanadaBillReport:
         """
         #* Get data from the model
         part_one_data = self.get_part_one_data()
-        part_one_sheet = self.excel_file["Part 1"]
+        part_one_sheet = self.excel_file["Submission Information"]
         part_one_sheet.cell(row=3, column=3).value = part_one_data.get("screen1_q1",self.not_available)
         part_one_sheet.cell(row=4, column=3).value = part_one_data.get("screen1_q2",self.not_available)
         part_one_sheet.cell(row=5, column=3).value = part_one_data.get("screen1_q3",self.not_available)
@@ -166,7 +166,7 @@ class CanadaBillReport:
         Then based on the screen we fill the data.
         """
         part_two_data = self.get_part_two_data()
-        part_two_sheet = self.excel_file["Part 2"]
+        part_two_sheet = self.excel_file["Reporting For Entities"]
         part_two_sheet.cell(row=3,column=3).value = part_two_data.get("screen1_q1",self.not_available)
         current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=4, insert_data=part_two_data.get("screen1_q2",[self.not_available]))
         current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=current_row, insert_data=part_two_data.get("screen2_q1",[self.not_available]))
@@ -199,7 +199,7 @@ class CanadaBillReport:
         current_row+=1
         current_row = self.create_and_merge_rows(sheet=part_two_sheet, row_insert_number=current_row, insert_data=part_two_data.get("screen8_q2",[self.not_available]))
         part_two_sheet.cell(row=current_row, column=3).value = part_two_data.get("screen8_q3",self.not_available)
-        
+
 
     def html_to_plain_text(self,html_string):
         """
