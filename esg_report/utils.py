@@ -20,7 +20,7 @@ from materiality_dashboard.models import (
 )
 from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 
-logger = logging.getLogger("error.log")
+logger = logging.getLogger("file")
 
 
 def get_latest_raw_response(raw_responses, slug):
