@@ -250,6 +250,65 @@ def get_analysis_data_by_source(self, data_points):
 
     return structured_data
 
+def process_emission_by_scope(data_points, ownership_ratio=None):
+    emission_by_scope = defaultdict(
+        lambda: {
+            "scope_name": "",
+            "total_co2e": 0,
+            "co2e_unit": "",
+            "unit_type": "",
+            "unit1": "",
+            "unit2": "",
+            "activity_data": {"activity_unit": "", "activity_value": 0},
+            "entries": [],
+        }
+    )
+
+    total_co2e = 0
+
+    for data in data_points:
+        path_name = data.raw_response.path.name
+        scope_name = "-".join(path_name.split("-")[-2:])
+        for r in data.raw_response.data:
+            unit1 = r["Emission"].get("Unit", "")
+            unit2 = r["Emission"].get("Unit2", "")
+            unit_type = r["Emission"].get("unit_type", "")
+
+        co2e_sum = sum([i.get("co2e", 0) for i in data.json_holder])
+        if ownership_ratio:
+            co2e_sum = (co2e_sum * ownership_ratio) / 100
+        co2e_sum = co2e_sum / 1000 if co2e_sum > 0 else 0
+        total_co2e += co2e_sum
+
+        co2e_unit = ""
+        activity_unit = ""
+        activity_value = 0
+        activity_data = {}
+        if data.json_holder:
+            first_entry = data.json_holder[0]
+            co2e_unit = first_entry.get("co2e_unit", "")
+            activity_data = first_entry.get("activity_data", {})
+            activity_unit = activity_data.get("activity_unit", "")
+            activity_value = sum(
+                [
+                    i.get("activity_data", {}).get("activity_value", 0)
+                    for i in data.json_holder
+                ]
+            )
+
+        scope_data = emission_by_scope[scope_name]
+        scope_data["scope_name"] = scope_name
+        scope_data["total_co2e"] += round(co2e_sum, 2)
+        scope_data["co2e_unit"] = co2e_unit
+        scope_data["unit1"] = unit1
+        scope_data["unit2"] = unit2
+        scope_data["unit_type"] = unit_type
+        scope_data["activity_data"]["activity_unit"] = activity_unit
+        scope_data["activity_data"]["activity_value"] += activity_value
+        scope_data["entries"].extend(data.json_holder)
+
+    return emission_by_scope, total_co2e
+
 
 def get_analysis_data(
     self,
@@ -343,6 +402,9 @@ def get_analysis_data(
             "source": corporate_data["sources"],
         }
 
+        if corporate_data.get("ownership_ratio", None):
+            corporate_entry["ownership_ratio"] = corporate_data["ownership_ratio"]
+
         restructured_data[corporate_name] = corporate_entry
 
     try:
@@ -412,23 +474,13 @@ def process_corporate_data(
         return
 
     if corporate_type == "Investment":
-        emission_by_scope = defaultdict(
-            lambda: {
-                "scope_name": "Scope-3",  # Aggregate under Scope-3
-                "total_co2e": 0,
-                "co2e_unit": "",
-                "unit_type": "",
-                "unit1": "",
-                "unit2": "",
-                "activity_data": {"activity_unit": "", "activity_value": 0},
-                "entries": [],
-            }
-        )
+
+        emission_by_scope, _ = process_emission_by_scope(data_points, ownership_ratio)
         emission_by_source = defaultdict(
             lambda: {
                 "scope_name": "Scope-3",
                 "source_name": corporate_name,
-                "category_name": "Investment",
+                "category_name": "Investments",
                 "activity_name": "On other Corporates",
                 "source": "Other",
                 "year": 2024,
@@ -440,6 +492,7 @@ def process_corporate_data(
             }
         )
         total_co2e = 0
+        emission_by_scope["Scope-3"]["scope_name"] = "Scope-3"
         for data in data_points:
             # Sum up the CO2e from all scopes
             scope_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
@@ -461,6 +514,7 @@ def process_corporate_data(
                 )
 
             # Aggregate everything under Scope-3
+
             emission_by_scope["Scope-3"]["total_co2e"] += scope_co2e
             emission_by_scope["Scope-3"]["co2e_unit"] = co2e_unit
             emission_by_scope["Scope-3"]["activity_data"]["activity_unit"] = (
@@ -489,6 +543,7 @@ def process_corporate_data(
             "scopes": structured_emission_data,  # Convert defaultdict to regular dict
             "locations": [],
             "sources": list(emission_by_source.values()),
+            "ownership_ratio": ownership_ratio if ownership_ratio else None,
         }
     else:
         # Regular corporate processing (as you have already implemented)
@@ -496,65 +551,7 @@ def process_corporate_data(
         emission_by_location = get_analysis_data_by_location(
             self, data_points, locations
         )
-        emission_by_scope = defaultdict(
-            lambda: {
-                "scope_name": "",
-                "total_co2e": 0,
-                "co2e_unit": "",
-                "unit_type": "",
-                "unit1": "",
-                "unit2": "",
-                "activity_data": {"activity_unit": "", "activity_value": 0},
-                "entries": [],
-            }
-        )
-
-        for data in data_points:
-            path_name = data.raw_response.path.name
-            scope_name = "-".join(path_name.split("-")[-2:])
-            for r in data.raw_response.data:
-                unit1 = r["Emission"]["Unit"] if "Unit" in r["Emission"] else ""
-                unit2 = r["Emission"]["Unit2"] if "Unit2" in r["Emission"] else ""
-                unit_type = (
-                    r["Emission"]["unit_type"] if "unit_type" in r["Emission"] else ""
-                )
-
-            total_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
-            total_co2e = total_co2e / 1000 if total_co2e > 0 else 0
-
-            if data.json_holder:
-                first_entry = data.json_holder[0]
-                co2e_unit = first_entry.get("co2e_unit", "")
-                activity_data = first_entry.get("activity_data", {})
-                activity_unit = activity_data.get("activity_unit", "")
-                activity_value = sum(
-                    [
-                        i.get("activity_data", {}).get("activity_value", 0)
-                        for i in data.json_holder
-                    ]
-                )
-
-            emission_by_scope[scope_name]["scope_name"] = scope_name
-            emission_by_scope[scope_name]["total_co2e"] += round(total_co2e, 2)
-            emission_by_scope[scope_name]["co2e_unit"] = co2e_unit
-            try:
-                emission_by_scope[scope_name]["unit1"] = unit1
-                emission_by_scope[scope_name]["unit2"] = unit2
-                emission_by_scope[scope_name]["unit_type"] = unit_type
-            except UnboundLocalError as e:
-                emission_by_scope[scope_name]["unit1"] = ""
-                emission_by_scope[scope_name]["unit2"] = ""
-                emission_by_scope[scope_name]["unit_type"] = ""
-
-            emission_by_scope[scope_name]["activity_data"]["activity_unit"] = (
-                activity_unit
-            )
-            emission_by_scope[scope_name]["activity_data"]["activity_value"] += (
-                activity_value
-            )
-            emission_by_scope[scope_name]["entries"].extend(data.json_holder)
-
-        total_emissions = sum([v["total_co2e"] for v in emission_by_scope.values()])
+        emission_by_scope, total_emissions = process_emission_by_scope(data_points)
         scopes = calculate_contributions(self, emission_by_scope, total_emissions)
 
         analysis_data_by_corporate[corporate_name] = {
@@ -707,6 +704,10 @@ class AnalysisData2APIView(APIView):
                     "locations": locations,
                     "sources": sources,
                 }
+
+                if "ownership_ratio" in corporate_data:
+                    ownership_ratio = corporate_data.get("ownership_ratio", None)
+                    organized_data["ownership_ratio"] = ownership_ratio
 
                 organized_data_list.append(organized_data)
 
