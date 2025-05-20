@@ -280,6 +280,10 @@ def process_emission_by_scope(data_points, ownership_ratio=None):
         co2e_sum = co2e_sum / 1000 if co2e_sum > 0 else 0
         total_co2e += co2e_sum
 
+        co2e_unit = ""
+        activity_unit = ""
+        activity_value = 0
+        activity_data = {}
         if data.json_holder:
             first_entry = data.json_holder[0]
             co2e_unit = first_entry.get("co2e_unit", "")
@@ -488,6 +492,7 @@ def process_corporate_data(
             }
         )
         total_co2e = 0
+        emission_by_scope["Scope-3"]["scope_name"] = "Scope-3"
         for data in data_points:
             # Sum up the CO2e from all scopes
             scope_co2e = sum([i.get("co2e", 0) for i in data.json_holder])
@@ -509,6 +514,7 @@ def process_corporate_data(
                 )
 
             # Aggregate everything under Scope-3
+
             emission_by_scope["Scope-3"]["total_co2e"] += scope_co2e
             emission_by_scope["Scope-3"]["co2e_unit"] = co2e_unit
             emission_by_scope["Scope-3"]["activity_data"]["activity_unit"] = (
