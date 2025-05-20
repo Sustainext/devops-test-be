@@ -13,7 +13,7 @@ from esg_report.Serializer.ScreenFourteenSerializer import ScreenFourteenSeriali
 from common.utils.get_data_points_as_raw_responses import collect_data_and_differentiate_by_location
 from sustainapp.models import Report
 from esg_report.models.ScreenFourteen import ScreenFourteen
-
+from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
 
 class ScreenFourteenService:
     def __init__(self, report_id, request):
@@ -22,6 +22,8 @@ class ScreenFourteenService:
         self.slugs = {
             0: "gri-social-impact_on_community-407-1a-operations",
             1: "gri_collect_human_rights_management_material_topic",
+            2: "gri-social-indigenous_people-411-1a-incidents",
+            3: "gri-social-indigenous_people-411-1b-status",
         }
 
     def set_data_points(self):
@@ -59,10 +61,13 @@ class ScreenFourteenService:
             self.data_points.filter(path__slug=self.slugs[0])
         )
         response_data["413_1a_analyse"] = self.get_413_1a()
+        response_data["411_1a_incidents"] = self.get_411_1a_incidents()
+        response_data["411_1b_status"] = self.get_411_1b_status()
         response_data["3_c_d_e_in_material_topics"] = (
             # None  # TODO: Complete when materiality assessment screen is ready.
             get_management_materiality_topics(self.report, self.slugs[1])
         )
+        
         return response_data
 
     def get_report_response(self):
@@ -71,3 +76,14 @@ class ScreenFourteenService:
             key.replace("-", "_"): value for key, value in response_data.items()
         }
         return response_data
+    
+    def get_411_1a_incidents(self):
+        return collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[2])
+        )
+
+    def get_411_1b_status(self):
+        return collect_data_by_raw_response_and_index(
+            self.data_points.filter(path__slug=self.slugs[3])
+        )
+

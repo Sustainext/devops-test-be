@@ -32,6 +32,13 @@ class ScreenFourteen(AbstractModel, HistoricalModelMixin):
         blank=True,
     )
 
+    violation_rights=models.JSONField(
+        verbose_name="Incidents of Violation of Rights of Indigenous People",
+        help_text="Add statement about company’s policy on violation of rights of indigenous people",
+        null=True,
+        blank=True,
+    )
+
     def __str__(self):
         return f"Screen Fourteen for Report ID: {self.report.id}"
 
