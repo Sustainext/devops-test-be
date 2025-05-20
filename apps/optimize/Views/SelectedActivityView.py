@@ -107,6 +107,7 @@ class SelectedActivityView(APIView):
 
         updated_activities = []
         errors = []
+        no_changes = []
 
         for item in data_list:
             activity_id = item.get("id")
@@ -124,6 +125,21 @@ class SelectedActivityView(APIView):
                 )
                 continue
 
+            # Check if there are actual changes by comparing with current data
+            current_data = SelectedActivitySerializer(selected_activity).data
+            has_changes = False
+
+            # Compare each field in the update with current data
+            for key, value in item.items():
+                if key != "id" and key in current_data and current_data[key] != value:
+                    has_changes = True
+                    break
+
+            if not has_changes:
+                # No changes detected, skip saving
+                no_changes.append({"id": activity_id, "detail": "No changes detected"})
+                continue
+
             serializer = SelectedActivitySerializer(
                 selected_activity, data=item, partial=True
             )
@@ -134,6 +150,8 @@ class SelectedActivityView(APIView):
                 errors.append({"id": activity_id, "errors": serializer.errors})
 
         response_data = {"updated": updated_activities}
+        if no_changes:
+            response_data["no_changes"] = no_changes
         if errors:
             response_data["errors"] = errors
 

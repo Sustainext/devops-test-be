@@ -5,6 +5,7 @@ from apps.optimize.models.CalculatedResult import CalculatedResult
 from apps.optimize.models.BusinessMetric import BusinessMetric
 from apps.optimize.filters import CalculatedResultFilter
 from django.shortcuts import get_object_or_404
+from common.utils.value_types import format_decimal_places
 
 
 class ScenarioGraphService:
@@ -29,7 +30,8 @@ class ScenarioGraphService:
             metric = res.metric
             weightage_key = f"{metric}_weightage"
             weightage = getattr(self.business_metric, weightage_key, 0)
-            value = round(res.result.get("co2e", 0) / 1000, 4) * weightage  # Tonnes
+            co2e = round(res.result.get("co2e", 0) / 1000, 4)
+            value = co2e * weightage  # Tonnes
 
             uuid_str = str(res.uuid)
             selected_activity = activity_map.get(uuid_str)
@@ -51,11 +53,13 @@ class ScenarioGraphService:
                     decarbonization = True
 
             existing = next((r for r in year_map[year] if r["uuid"] == uuid_str), None)
+            value = round(value, 3)
             if existing:
                 existing[metric] = value
                 existing["decarbonization"] = (
                     existing["decarbonization"] or decarbonization
                 )
+                existing["co2e"] += co2e
             else:
                 year_map[year].append(
                     {
@@ -65,6 +69,7 @@ class ScenarioGraphService:
                         "sub_category": res.sub_category,
                         "activity_name": res.activity_name,
                         "activity_id": res.activity_id,
+                        "co2e": co2e,
                         metric: value,
                         "decarbonization": decarbonization,
                     }
@@ -97,6 +102,12 @@ class ScenarioGraphService:
         ]
         return {str(self.scenario.base_year): filtered}
 
+    def round_of_totals_response(self, totals):
+        for year, metrics_dict in totals.items():
+            for metric, value in metrics_dict.items():
+                metrics_dict[metric] = format_decimal_places(value)
+        return totals
+
     def single_scenario_response(self, results):
         year_map = self.get_year_map_data(results)
         totals = self.add_total_dict(year_map, results)
@@ -111,6 +122,8 @@ class ScenarioGraphService:
                 continue
             for metric, value in excluded_values.items():
                 metrics_dict[metric] += value
+
+        totals = self.round_of_totals_response(totals)
 
         return {
             "metadata": {
@@ -143,6 +156,8 @@ class ScenarioGraphService:
                 continue
             for metric, value in excluded_values.items():
                 metric_dict[metric] += value
+
+        totals = self.round_of_totals_response(totals)
 
         return {
             "metadata": {
