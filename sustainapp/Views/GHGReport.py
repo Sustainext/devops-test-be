@@ -470,18 +470,6 @@ def process_corporate_data(
         return
 
     if corporate_type == "Investment":
-        # emission_by_scope = defaultdict(
-        #     lambda: {
-        #         "scope_name": "Scope-3",  # Aggregate under Scope-3
-        #         "total_co2e": 0,
-        #         "co2e_unit": "",
-        #         "unit_type": "",
-        #         "unit1": "",
-        #         "unit2": "",
-        #         "activity_data": {"activity_unit": "", "activity_value": 0},
-        #         "entries": [],
-        #     }
-        # )
 
         emission_by_scope, _ = process_emission_by_scope(data_points, ownership_ratio)
         emission_by_source = defaultdict(
