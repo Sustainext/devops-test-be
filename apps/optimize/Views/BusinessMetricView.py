@@ -30,7 +30,18 @@ class BusinessMetricView(APIView):
 
         serializer = self.serializer_class(metric, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            # Check if the data has actually changed
+            has_changed = False
+            for field_name, new_value in serializer.validated_data.items():
+                current_value = getattr(metric, field_name)
+                if current_value != new_value:
+                    has_changed = True
+                    break
+
+            # Only save if there are actual changes
+            if has_changed:
+                serializer.save()
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
