@@ -152,10 +152,9 @@ class CanadaBillReport:
         current_row+=1
         current_row = self.create_and_merge_rows(sheet=part_one_sheet, row_insert_number=current_row, insert_data=self.add_in_list_if_not_null(original_list=part_one_data.get("screen4_q2", [self.not_available]), probable_null_item=part_one_data.get("screen4_q3_other")))
         current_row = self.create_and_merge_rows(sheet=part_one_sheet, row_insert_number=current_row, insert_data=self.modify_recursive_list_data(part_one_data.get("screen5_q1")))
-        current_row = self.create_and_merge_rows(sheet=part_one_sheet, row_insert_number=current_row, insert_data=self.modify_recursive_list_data(data=part_one_data.get("screen6_q1"),ignore_keys=["other"]))
-        part_one_sheet.cell(row=current_row, column=3).value = part_one_data.get("screen6_q2", self.not_available)
-        current_row+=1
+        current_row = self.create_and_merge_rows(sheet=part_one_sheet, row_insert_number=current_row, insert_data=self.add_in_list_if_not_null(original_list=self.modify_recursive_list_data(data=part_one_data.get("screen6_q1"),ignore_keys=["other"]), probable_null_item=part_one_data.get("screen6_q2")))
         part_one_sheet.cell(row=current_row, column=3).value = part_one_data.get("screen7_q1", self.not_available)
+        current_row+=1
         part_one_sheet.cell(row=current_row, column=3).value = part_one_data.get("screen7_q2", self.not_available)
         part_one_sheet.column_dimensions['C'].width = 60
 
