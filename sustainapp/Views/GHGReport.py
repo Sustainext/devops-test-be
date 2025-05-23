@@ -616,7 +616,8 @@ class GHGReportView(generics.CreateAPIView):
                         "data":esg_report_validation_string
                     },
                     "status":status.HTTP_400_BAD_REQUEST
-                }
+                },
+                status=status.HTTP_400_BAD_REQUEST
             )
         if new_report.report_type=="canada_bill_s211_v2":
             if is_canada_bill_s211_v2_completed(
@@ -634,7 +635,8 @@ class GHGReportView(generics.CreateAPIView):
                             "data":"Canada Bill S211 v2 is not completed."
                         },
                         "status":status.HTTP_400_BAD_REQUEST
-                    }
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
                 )
         start_date = serializer.validated_data.get("start_date")
         end_date = serializer.validated_data.get("end_date")
