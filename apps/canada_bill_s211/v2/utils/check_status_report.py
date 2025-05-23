@@ -65,4 +65,4 @@ def is_canada_bill_s211_v2_completed(user, organization: Organization, corporate
     reporting_for_entities_response, submission_information_response = get_status_report_data(filters)
     if all([i["status"] == "completed" for i in reporting_for_entities_response + submission_information_response]):
         return True
-    raise DrfValidationError("Canada Bill S211 v2 is not completed.")
+    return False

@@ -602,14 +602,40 @@ class GHGReportView(generics.CreateAPIView):
             user_id=user_id,
             last_updated_by=request.user,
         )
-        create_validation_method_for_report_creation(report=new_report)
-        is_canada_bill_s211_v2_completed(
-            user=request.user,
-            organization=serializer.validated_data.get("organization"),
-            corporate=serializer.validated_data.get("corporate"),
-            year=serializer.validated_data["end_date"].year
-        ) if new_report.report_type == "canada_bill_s211_v2" else None
         report_id = new_report.id
+        success_response = Response(
+            {"message": f"Report created successfully ID:{report_id}"},
+            status=status.HTTP_200_OK,
+        )
+        esg_report_validation_string = create_validation_method_for_report_creation(report=new_report)
+        if esg_report_validation_string is not None:
+            return Response(
+                data={
+                    "message":{
+                        "report_type":"esg_report",
+                        "data":esg_report_validation_string
+                    },
+                    "status":status.HTTP_400_BAD_REQUEST
+                }
+            )
+        if new_report.report_type=="canada_bill_s211_v2":
+            if is_canada_bill_s211_v2_completed(
+                user=request.user,
+                organization=serializer.validated_data.get("organization"),
+                corporate=serializer.validated_data.get("corporate"),
+                year=serializer.validated_data["end_date"].year
+            ):
+                return success_response
+            else:
+                return Response(
+                    data={
+                        "message":{
+                            "report_type":"canada_bill_s211_v2",
+                            "data":"Canada Bill S211 v2 is not completed."
+                        },
+                        "status":status.HTTP_400_BAD_REQUEST
+                    }
+                )
         start_date = serializer.validated_data.get("start_date")
         end_date = serializer.validated_data.get("end_date")
         corporate_id = serializer.validated_data.get("corporate")
@@ -681,10 +707,7 @@ class GHGReportView(generics.CreateAPIView):
                 },
                 status=analysis_data.status_code,
             )
-        return Response(
-            {"message": f"Report created successfully ID:{report_id}"},
-            status=status.HTTP_200_OK,
-        )
+        return success_response
 
 
 class AnalysisData2APIView(APIView):

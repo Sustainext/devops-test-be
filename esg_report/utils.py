@@ -336,11 +336,7 @@ def create_validation_method_for_report_creation(report: Report):
         for disclosure, path_slug in subindicators:
             if not data_points.filter(path__slug=path_slug).exists():
                 report.delete()
-                raise DRFValidationError(
-                    {
-                        "detail": f"Data for disclosure {disclosure} does not exist for the report."
-                    }
-                )
+                return f"Data for disclosure {disclosure} does not exist for the report."
 
 
 def calling_analyse_view_with_params_for_same_year(view_url, request, report):
