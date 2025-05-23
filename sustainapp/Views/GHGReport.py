@@ -37,6 +37,7 @@ from esg_report.utils import create_validation_method_for_report_creation
 from azure.storage.blob import BlobClient
 from datetime import datetime
 from esg_report.models.ReportAssessment import ReportAssessment
+from apps.canada_bill_s211.v2.utils.check_status_report import is_canada_bill_s211_v2_completed
 
 
 logger = logging.getLogger()
@@ -602,6 +603,12 @@ class GHGReportView(generics.CreateAPIView):
             last_updated_by=request.user,
         )
         create_validation_method_for_report_creation(report=new_report)
+        is_canada_bill_s211_v2_completed(
+            user=request.user,
+            organization=serializer.validated_data.get("organization"),
+            corporate=serializer.validated_data.get("corporate"),
+            year=serializer.validated_data["end_date"].year
+        ) if new_report.report_type == "canada_bill_s211_v2" else None
         report_id = new_report.id
         start_date = serializer.validated_data.get("start_date")
         end_date = serializer.validated_data.get("end_date")
