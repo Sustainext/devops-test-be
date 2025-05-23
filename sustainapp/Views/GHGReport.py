@@ -620,14 +620,12 @@ class GHGReportView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         if new_report.report_type=="canada_bill_s211_v2":
-            if is_canada_bill_s211_v2_completed(
+            if not is_canada_bill_s211_v2_completed(
                 user=request.user,
                 organization=serializer.validated_data.get("organization"),
                 corporate=serializer.validated_data.get("corporate"),
                 year=serializer.validated_data["end_date"].year
             ):
-                return success_response
-            else:
                 new_report.delete()
                 return Response(
                     data={
