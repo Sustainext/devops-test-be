@@ -23,20 +23,24 @@ class CalculateClimatiqResult(APIView):
     def calculate_result(self, payload):
         """
         This method calculates the result of Climatiq API.
-        It takes the payload and calculates the result using the Climatiq API.
+        It sends the payload in batches and returns the combined result.
         """
         CLIMATIQ_AUTH_TOKEN: str | None = os.getenv("CLIMATIQ_AUTH_TOKEN")
         headers = {"Authorization": f"Bearer {CLIMATIQ_AUTH_TOKEN}"}
         batch_size = 100
+        all_results = []
+
         for i in range(0, len(payload), batch_size):
             batch_payload = payload[i : i + batch_size]
-            response = requests.request(
-                "POST",
+            response = requests.post(
                 url="https://api.climatiq.io/data/v1/estimate/batch",
                 data=json.dumps(batch_payload, default=str),
                 headers=headers,
             )
-        return response.json()
+            batch_results = response.json().get("results", [])
+            all_results.extend(batch_results)
+
+        return {"results": all_results}
 
     def get_adjusted_quantity(
         self,
@@ -344,6 +348,7 @@ class CalculateClimatiqResult(APIView):
                 CalculatedResult.objects.bulk_create(bulk_results)
         except Exception as e:
             print(e)
+            # TODO: add loggin here later
 
         result = {
             # "selected_activities": selected_activities.values(),  #Keeping it here untill testing is completed
