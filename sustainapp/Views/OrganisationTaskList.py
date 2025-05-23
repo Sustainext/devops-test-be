@@ -203,10 +203,8 @@ class OrganisationTaskDashboardView(viewsets.ModelViewSet):
             cache_key_assigned_to = f"original_assigned_to_{task.pk}"
             cache.set(cache_key_task_status, previous_status, timeout=60)
             cache.set(cache_key_assigned_to, previous_assigned_to, timeout=60)
-            if (
-                task.task_status != previous_status
-                and task.task_status == "reject"
-                and task.task_status == "in_progress"
+            if task.task_status != previous_status and (
+                task.task_status == "reject" or task.task_status == "in_progress"
             ):
                 task_status_changed.send(
                     sender=task.__class__, instance=task, comments=comments
