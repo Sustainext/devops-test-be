@@ -8,7 +8,6 @@ def get_community_engagement_analysis(raw_responses, slugs):
     local_data = [
         raw_response.data for raw_response in raw_responses.filter(path__slug=slugs[0])
     ]
-    print(slugs[0])
     response_data = {
         "Social impact assessments": 0,
         "Environmental impact assessments": 0,
@@ -43,9 +42,9 @@ def get_community_engagement_analysis(raw_responses, slugs):
         response_data["Local community consultation committees"] += int(
             each_month_data[5]["operations"]
         )
-        response_data[
-            "Works councils, occupational health and safety committees"
-        ] += int(each_month_data[6]["operations"])
+        response_data["Works councils, occupational health and safety committees"] += (
+            int(each_month_data[6]["operations"])
+        )
         response_data["Community grievance processes"] += int(
             each_month_data[7]["operations"]
         )
