@@ -628,6 +628,7 @@ class GHGReportView(generics.CreateAPIView):
             ):
                 return success_response
             else:
+                new_report.delete()
                 return Response(
                     data={
                         "message":{
