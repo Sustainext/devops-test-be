@@ -705,6 +705,7 @@ class GHGReportView(generics.CreateAPIView):
                     "message": analysis_data.data["message"],
                     "report_type": serializer.validated_data["report_type"],
                     "created_at": format_created_at(serializer.data.get("created_at")),
+                    "name": serializer.data.get("name")
                 },
                 status=analysis_data.status_code,
             )
