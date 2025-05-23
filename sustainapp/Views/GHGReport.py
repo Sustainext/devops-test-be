@@ -592,12 +592,12 @@ class GHGReportView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        status = 1
+        report_status = 1
         client_id = request.user.client.id
         user_id = request.user.id
 
         new_report = serializer.save(
-            status=status,
+            status=report_status,
             client_id=client_id,
             user_id=user_id,
             last_updated_by=request.user,
