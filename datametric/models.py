@@ -216,33 +216,3 @@ class EmissionAnalysis(AbstractModel):
 
     def __str__(self) -> str:
         return self.name + str(self.id)
-
-
-class EmissionFactor(models.Model):
-    factor_id = models.CharField(max_length=100, unique=True)  # Climatiq's 'id'
-    activity_id = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    category = models.CharField(max_length=255)
-    sector = models.CharField(max_length=255)
-    source = models.CharField(max_length=255)
-    source_link = models.URLField(null=True, blank=True)
-    source_dataset = models.CharField(max_length=255)
-    uncertainty = models.FloatField(null=True, blank=True)
-    year = models.IntegerField()
-    year_released = models.IntegerField()
-    region = models.CharField(max_length=50)
-    region_name = models.CharField(max_length=255)
-    description = models.TextField()
-    unit_type = models.CharField(max_length=50)
-    unit = models.CharField(max_length=50)
-    source_lca_activity = models.CharField(max_length=255, null=True, blank=True)
-    data_quality_flags = models.JSONField(default=list)
-    access_type = models.CharField(max_length=50)
-    supported_calculation_methods = models.JSONField(default=list)
-    factor = models.FloatField()
-    factor_calculation_method = models.CharField(max_length=50)
-    factor_calculation_origin = models.CharField(max_length=50)
-    constituent_gases = models.JSONField()
-    data_version = models.JSONField()
-    data_version_information = models.JSONField()
-    possible_filters = models.JSONField(null=True, blank=True)
