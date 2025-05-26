@@ -92,6 +92,9 @@ from sustainapp.Views.MygoalOrganizationView import MyGoalOrganizationView
 from sustainapp.Views.Analyse.Environment.AirQualityAnalyzeAPI import (
     AirQualityAnalyzeAPIView,
 )
+from sustainapp.Views.ExcelTemplate.EmissionExcelTemplate import (
+    ExcelTemplateDownloadView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -167,7 +170,6 @@ urlpatterns = [
         EmploymentAnalyzeView.as_view(),
         name="get_employment_analyze",
     ),
-
     path(
         "get_forced_labor_analysis/",
         ForcedLaborAnalyzeView.as_view(),
@@ -279,5 +281,10 @@ urlpatterns = [
         "get_air_quality_analyze/",
         AirQualityAnalyzeAPIView.as_view(),
         name="air_quality_analyze",
+    ),
+    path(
+        "download-emission-excel-template/",
+        ExcelTemplateDownloadView.as_view(),
+        name="download_excel_template",
     ),
 ]

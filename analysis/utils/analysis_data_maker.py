@@ -85,6 +85,9 @@ from analysis.utils.Economic.MarketPresenceAnalyze import (
 from analysis.utils.Economic.OperationsAssesedAnalyze import (
     create_data_for_economic_operations_assesed,
 )
+from analysis.utils.Environment.ghg_intensity_data_maker import (
+    create_data_for_ghg_intensity_analysis,
+)
 from django.forms.models import model_to_dict
 import logging
 
@@ -132,6 +135,7 @@ def create_analysis_data(raw_response: RawResponse):
         create_data_for_economic_total_body_members_region(raw_response=raw_response)
         create_data_for_economic_standard_wages(raw_response=raw_response)
         create_data_for_economic_operations_assesed(raw_response=raw_response)
+        create_data_for_ghg_intensity_analysis(raw_response=raw_response)
     except Exception as e:
         model_to_dict(raw_response)
         logger.error(e, exc_info=True)

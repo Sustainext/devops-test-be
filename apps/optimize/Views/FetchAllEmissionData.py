@@ -321,7 +321,6 @@ class FetchEmissionData(APIView):
         return value1, unit1, value2, unit2
 
     def convert_unit(self, unit_type, value1, unit1, value2, unit2):
-        # print("Value1:", value1, "Unit1:", unit1, "Value2:", value2, "Unit2:", unit2)
         value1 = Decimal(value1) if value1 is not None else Decimal("0")
         value2 = Decimal(value2) if value2 is not None else Decimal("0")
 
