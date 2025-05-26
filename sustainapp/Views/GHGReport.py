@@ -37,6 +37,7 @@ from esg_report.utils import create_validation_method_for_report_creation
 from azure.storage.blob import BlobClient
 from datetime import datetime
 from esg_report.models.ReportAssessment import ReportAssessment
+from apps.canada_bill_s211.v2.utils.check_status_report import is_canada_bill_s211_v2_completed
 
 
 logger = logging.getLogger()
@@ -591,18 +592,51 @@ class GHGReportView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        status = 1
+        report_status = 1
         client_id = request.user.client.id
         user_id = request.user.id
 
         new_report = serializer.save(
-            status=status,
+            status=report_status,
             client_id=client_id,
             user_id=user_id,
             last_updated_by=request.user,
         )
-        create_validation_method_for_report_creation(report=new_report)
         report_id = new_report.id
+        success_response = Response(
+            {"message": f"Report created successfully ID:{report_id}"},
+            status=status.HTTP_200_OK,
+        )
+        esg_report_validation_string = create_validation_method_for_report_creation(report=new_report)
+        if esg_report_validation_string is not None:
+            return Response(
+                data={
+                    "message":{
+                        "report_type":"esg_report",
+                        "data":esg_report_validation_string
+                    },
+                    "status":status.HTTP_400_BAD_REQUEST
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if new_report.report_type=="canada_bill_s211_v2":
+            if not is_canada_bill_s211_v2_completed(
+                user=request.user,
+                organization=serializer.validated_data.get("organization"),
+                corporate=serializer.validated_data.get("corporate"),
+                year=serializer.validated_data["end_date"].year
+            ):
+                new_report.delete()
+                return Response(
+                    data={
+                        "message":{
+                            "report_type":"canada_bill_s211_v2",
+                            "data":"Canada Bill S211 v2 is not completed."
+                        },
+                        "status":status.HTTP_400_BAD_REQUEST
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         start_date = serializer.validated_data.get("start_date")
         end_date = serializer.validated_data.get("end_date")
         corporate_id = serializer.validated_data.get("corporate")
@@ -671,13 +705,11 @@ class GHGReportView(generics.CreateAPIView):
                     "message": analysis_data.data["message"],
                     "report_type": serializer.validated_data["report_type"],
                     "created_at": format_created_at(serializer.data.get("created_at")),
+                    "name": serializer.data.get("name")
                 },
                 status=analysis_data.status_code,
             )
-        return Response(
-            {"message": f"Report created successfully ID:{report_id}"},
-            status=status.HTTP_200_OK,
-        )
+        return success_response
 
 
 class AnalysisData2APIView(APIView):

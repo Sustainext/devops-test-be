@@ -22,6 +22,8 @@ uploader = AzureLogUploader()
 logger = logging.getLogger("django")
 climatiq_logger = logging.getLogger("climatiq_logger")
 
+calculate_emission_by_emissionfactor = os.getenv("CLIMATIQ_CALCULATION_BY_ID", "True")
+data_version = os.getenv("CLIMATIQ_DATA_VERSION", "^16")
 
 def process_dynamic_response(response):
     output = []
@@ -149,9 +151,13 @@ class Climatiq:
                                 ('Unit2', 'km'),
                                 ('Unit', 'passengers')]))])]
                 """
+
                 payload.append(
                     self.construct_emission_req(
                         activity_id=emission_data["Emission"]["activity_id"],
+                        id=emission_data["Emission"]["act_id"]
+                        if emission_data["Emission"].get("act_id")
+                        else None,
                         unit_type=emission_data["Emission"]["unit_type"],
                         value1=float(emission_data["Emission"]["Quantity"]),
                         unit1=emission_data["Emission"]["Unit"],
@@ -169,12 +175,21 @@ class Climatiq:
             return []
 
     def construct_emission_req(
-        self, activity_id, unit_type, value1, unit1, value2=None, unit2=None
+        self, activity_id, id, unit_type, value1, unit1, value2=None, unit2=None
     ):
+
         emission_req = {
-            "emission_factor": {"activity_id": activity_id, "data_version": "^16"},
+            "emission_factor": {},
             "parameters": {},
         }
+
+        if calculate_emission_by_emissionfactor == "True":
+            emission_req["emission_factor"] = {"id": id}
+        else:
+            emission_req["emission_factor"] = {
+                "activity_id": activity_id,
+                "data_version": data_version,
+            }
 
         unit_type = unit_type.lower()
 
