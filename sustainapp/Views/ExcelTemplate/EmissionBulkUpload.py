@@ -549,18 +549,18 @@ class ExcelTemplateUploadView(APIView):
         excel_file = request.FILES.get("file")
         if not excel_file:
             return Response(
-                {"detail": "No file uploaded."}, status=status.HTTP_400_BAD_REQUEST
+                {"message": "No file uploaded."}, status=status.HTTP_400_BAD_REQUEST
             )
 
         if not excel_file.name.endswith(".xlsx"):
             return Response(
-                {"detail": "Only .xlsx files are allowed."},
+                {"message": "Only .xlsx files are allowed."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if excel_file.size > self.max_file_size:
             return Response(
-                {"detail": "File size exceeds 5MB limit."},
+                {"message": "File size exceeds 5MB limit."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -568,13 +568,13 @@ class ExcelTemplateUploadView(APIView):
             wb = openpyxl.load_workbook(excel_file, data_only=True)
         except Exception as e:
             return Response(
-                {"detail": f"Invalid Excel file: {str(e)}"},
+                {"message": f"Invalid Excel file: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if "Template" not in wb.sheetnames:
             return Response(
-                {"detail": "Missing 'Template' sheet."},
+                {"message": "Missing 'Template' sheet."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -583,7 +583,7 @@ class ExcelTemplateUploadView(APIView):
 
         if header_row != self.expected_headers:
             return Response(
-                {"detail": "Template headers do not match expected format."},
+                {"message": "Template headers do not match expected format."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -595,14 +595,14 @@ class ExcelTemplateUploadView(APIView):
             set_bulk_upload_flag(False)
 
         if invalid_rows:
-            # error_file = self._create_error_excel(invalid_rows)
+            error_file = self._create_error_excel(invalid_rows)
             return Response(
                 {
                     "message": "Some rows are invalid.",
                     "invalid_count": len(invalid_rows),
                     "valid_count": len(valid_rows),
                     "errors": invalid_rows[:5],  # Preview
-                    "error_file_base64": "error_file",
+                    "error_file_base64": error_file,
                 },
                 status=status.HTTP_200_OK,
             )

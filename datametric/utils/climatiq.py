@@ -25,6 +25,7 @@ climatiq_logger = logging.getLogger("climatiq_logger")
 calculate_emission_by_emissionfactor = os.getenv("CLIMATIQ_CALCULATION_BY_ID", "True")
 data_version = os.getenv("CLIMATIQ_DATA_VERSION", "^16")
 
+
 def process_dynamic_response(response):
     output = []
 
@@ -177,7 +178,6 @@ class Climatiq:
     def construct_emission_req(
         self, activity_id, id, unit_type, value1, unit1, value2=None, unit2=None
     ):
-
         emission_req = {
             "emission_factor": {},
             "parameters": {},
@@ -655,7 +655,7 @@ class Climatiq:
         )
         # Update or create the data point
         try:
-            datapoint = DataPoint.objects.create(
+            datapoint, _ = DataPoint.objects.update_or_create(
                 path=path_new,
                 raw_response=self.raw_response,
                 response_type=ARRAY_OF_OBJECTS,
@@ -667,7 +667,9 @@ class Climatiq:
                 user_id=self.user.id,
                 client_id=self.user.client.id,
                 metric_name=datametric.name,
-                json_holder=response_data,
+                defaults={
+                    "json_holder": response_data,
+                },
             )
             datapoint.save()
             self.create_emission_analysis(response_data=response_data)
