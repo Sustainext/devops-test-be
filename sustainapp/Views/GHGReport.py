@@ -608,6 +608,7 @@ class GHGReportView(generics.CreateAPIView):
             status=status.HTTP_200_OK,
         )
         esg_report_validation_string = create_validation_method_for_report_creation(report=new_report)
+
         if esg_report_validation_string is not None:
             return Response(
                 data={
@@ -619,6 +620,7 @@ class GHGReportView(generics.CreateAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
         if new_report.report_type=="canada_bill_s211_v2":
             if not is_canada_bill_s211_v2_completed(
                 user=request.user,
@@ -637,6 +639,7 @@ class GHGReportView(generics.CreateAPIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        
         start_date = serializer.validated_data.get("start_date")
         end_date = serializer.validated_data.get("end_date")
         corporate_id = serializer.validated_data.get("corporate")
@@ -683,6 +686,22 @@ class GHGReportView(generics.CreateAPIView):
             common_name = organization.name
         else:
             common_name = corporate_id.name
+
+        if report_type == "GRI Report: With Reference to":
+            return Response({
+                "id": serializer.data.get("id"),
+                "start_date": serializer.data.get("start_date"),
+                "end_date": serializer.data.get("end_date"),
+                "country_name": serializer.data.get("organization_country"),
+                "organization_name": organization.name,
+                "report_by": report_by,
+                "message": f"Report created successfully ID:{report_id}",
+                "report_type": serializer.validated_data["report_type"],
+                "created_at": format_created_at(serializer.data.get("created_at")),
+                "name": serializer.data.get("name")
+            }, status=status.HTTP_200_OK)
+
+
 
         if report_type == "GRI Report: In accordance With" and assessment_id:
             ReportAssessment.objects.create(
