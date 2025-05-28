@@ -12,7 +12,20 @@ from esg_report.utils import (
 )
 from esg_report.models.ScreenFifteen import ScreenFifteenModel
 
-class Select_Materials_Topic(APIView):
+class SelectMaterialsTopic(APIView):
+     
+    """
+    API View to retrieve material topics and their associated ESG data for a given report.
+
+    This endpoint returns structured responses for environment, social, and governance topics
+    associated with a report. It also includes a conclusion if available.
+
+    Methods:
+        get(request, report_id): Retrieves the materiality assessment topics and fetches
+                                 the corresponding responses using predefined slugs.
+                                 Also includes the 'conclusion' field from ScreenFifteenModel.
+    """
+     
     permission_classes = [IsAuthenticated]
     
 

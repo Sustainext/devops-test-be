@@ -19,7 +19,7 @@ from esg_report.Views.ScreenFifteen import ScreenFifteenAPIView
 from esg_report.Views.ContentIndex import GetContentIndex, StatementOfUseAPI
 from esg_report.Views.ContentIndexExcelAPI import ContentIndexExcelAPI
 from esg_report.Views.FieldValidation import FieldValidationView
-from esg_report.Views.MaterialTopic import Select_Materials_Topic
+from esg_report.Views.MaterialTopic import SelectMaterialsTopic
 router = DefaultRouter()
 
 urlpatterns = [
@@ -96,7 +96,7 @@ urlpatterns = [
     ),
     path(
         "select_materials_topic/<int:report_id>/",
-        Select_Materials_Topic.as_view(),
+        SelectMaterialsTopic.as_view(),
         name="select_materials_topic",
     ),
     
