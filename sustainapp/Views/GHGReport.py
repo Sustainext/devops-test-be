@@ -687,7 +687,7 @@ class GHGReportView(generics.CreateAPIView):
         else:
             common_name = corporate_id.name
 
-        if report_type == "GRI Report: With Reference to" and report_by == "Organization":
+        if report_type == "GRI Report: With Reference to":
             return Response({
                 "id": serializer.data.get("id"),
                 "start_date": serializer.data.get("start_date"),
