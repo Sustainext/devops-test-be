@@ -56,6 +56,8 @@ class EmissionTask(APIView):
                             "Subcategory": task["subcategory"],
                             "Activity": task["activity"],
                             "activity_id": task["activity_id"],
+                            "act_id": task["act_id"],
+                            "factor": task["factor"],
                             "unit_type": task["unit_type"],
                             "Unit": task["unit1"],
                             "Quantity": (
