@@ -1039,6 +1039,13 @@ class ClientTaskDashboard(AbstractModel):
     month = models.CharField(max_length=1024, null=True, blank=True)
     year = models.PositiveIntegerField(null=True, blank=True)
     activity_id = models.CharField(max_length=2048, null=True, blank=True)
+    act_id = models.CharField(
+        max_length=2048,
+        null=True,
+        blank=True,
+        help_text="This stores the unique emission factor ID",
+    )
+    factor = models.DecimalField(max_digits=10, decimal_places=5, null=True, blank=True)
     value1 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     value2 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     unit1 = models.CharField(max_length=1024, null=True, blank=True)
