@@ -21,6 +21,7 @@ class ScreenNineService:
     def __init__(self, report_id: int) -> None:
         self.report_id = report_id
         self.report = Report.objects.get(id=report_id)
+        self.data_points = get_data_points_as_per_report(report=self.report)
 
         self.slugs = {
             0: "gri-governance-structure-2-9-a-governance_structure",
@@ -517,17 +518,9 @@ class ScreenNineService:
         return data
     
     def get_2_12_c(self):
-        raw_response = (
-            self.raw_responses.filter(path__slug=self.slugs[64])
-            .order_by("-year")
-            .first()
-        )
-        try:
-            data = raw_response.data[0] if raw_response is not None else None
-        except IndexError:
-            data = None
-        return data
-    
+        data_point = self.data_points.filter(path__slug=self.slugs[64]).order_by("-year").first()
+        return data_point.value if data_point else None
+
 
     def get_2_12_b(self):
         raw_response = (
