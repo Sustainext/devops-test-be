@@ -30,3 +30,4 @@ from .Economic.CommunicationAndTraining import (
 )
 from .Economic.OperationsAssesed import EcoOperationsAssesed
 from .Economic.MarketPresence import EcoStandardWages
+from .Environment.GHGIntensity import GHGIntensity
