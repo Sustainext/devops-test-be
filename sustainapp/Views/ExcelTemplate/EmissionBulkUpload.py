@@ -1,19 +1,49 @@
-# views.py
-
-from django.http import HttpResponse
-from openpyxl import Workbook
-from openpyxl.worksheet.datavalidation import DataValidation
-from openpyxl.utils import quote_sheetname, get_column_letter
-from openpyxl.workbook.defined_name import DefinedName
-import io
-import re
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from openpyxl.styles import PatternFill, Font, Border, Side
+from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+import openpyxl
+from openpyxl import Workbook
+from io import BytesIO
+import base64
+from django.db import transaction
+from datametric.models import RawResponse, Path
+from sustainapp.models import Location
+from datametric.utils.signal_utilities import set_bulk_upload_flag
 
 
-class ExcelTemplateDownloadView(APIView):
+class ExcelTemplateUploadView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser]
+
+    expected_headers = [
+        "Location",
+        "Month",
+        "Year",
+        "Scope",
+        "Category",
+        "Subcategory",
+        "Activity",
+        "Quantity 1",
+        "Unit 1",
+        "Quantity 2",
+        "Unit 2",
+    ]
+
+    required_fields = {
+        "Location",
+        "Month",
+        "Year",
+        "Scope",
+        "Category",
+        "Subcategory",
+        "Quantity 1",
+    }
+
+    max_file_size = 5 * 1024 * 1024  # 5 MB
+
+    VALID_SCOPES = {"Scope 1", "Scope 2", "Scope 3"}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -219,6 +249,7 @@ class ExcelTemplateDownloadView(APIView):
                 },
             ],
         }
+
         self.units = [
             "m2",
             "km2",
@@ -304,6 +335,7 @@ class ExcelTemplateDownloadView(APIView):
         ]
 
         self.units2 = ["ms", "s", "m", "h", "day", "year", "m", "km", "ft", "mi", "nmi"]
+
         self.months = [
             "Jan",
             "Feb",
@@ -331,266 +363,272 @@ class ExcelTemplateDownloadView(APIView):
                 self.category_to_subcategories[cat_name] = cat["SubCategory"]
             self.scope_to_categories[scope] = cat_names
 
-    def header_body_styling(self, ws, header_row=1, body_start_row=2, body_end_row=100):
+    def validate_data(self, worksheet):
+        valid_rows = []
+        invalid_rows = []
+        valid_locations = self.request.user.locs.all()
+
+        for idx, row in enumerate(
+            worksheet.iter_rows(
+                min_row=2, max_col=len(self.expected_headers), values_only=True
+            ),
+            start=2,
+        ):
+            if not any(row):
+                continue
+
+            row_dict = dict(zip(self.expected_headers, row))
+            missing = [
+                field for field in self.required_fields if not row_dict.get(field)
+            ]
+            dropdown_errors = []
+
+            # Dropdown validations
+            location = row_dict.get("Location")
+            scope = row_dict.get("Scope")
+            month = row_dict.get("Month")
+            year = str(row_dict.get("Year")) if row_dict.get("Year") else None
+            category = row_dict.get("Category")
+            subcategory = row_dict.get("Subcategory")
+            unit1 = row_dict.get("Unit 1")
+            unit2 = row_dict.get("Unit 2")
+
+            if location and location not in [loc.name for loc in valid_locations]:
+                dropdown_errors.append(f"Invalid Location: {location}")
+
+            if scope and scope not in self.VALID_SCOPES:
+                dropdown_errors.append(f"Invalid Scope: {scope}")
+
+            if month and month not in self.months:
+                dropdown_errors.append(f"Invalid Month: {month}")
+
+            if year and year not in {str(y) for y in range(2018, 2031)}:
+                dropdown_errors.append(f"Invalid Year: {year}")
+
+            if scope in self.scope_to_categories:
+                if category and category not in self.scope_to_categories[scope]:
+                    dropdown_errors.append(
+                        f"Category '{category}' not allowed under Scope '{scope}'"
+                    )
+            else:
+                if category:
+                    dropdown_errors.append(
+                        f"Invalid Scope '{scope}' for Category check"
+                    )
+
+            if category in self.category_to_subcategories:
+                if (
+                    subcategory
+                    and subcategory not in self.category_to_subcategories[category]
+                ):
+                    dropdown_errors.append(
+                        f"Subcategory '{subcategory}' not allowed under Category '{category}'"
+                    )
+            else:
+                if subcategory:
+                    dropdown_errors.append(
+                        f"Invalid Category '{category}' for Subcategory check"
+                    )
+
+            # Optional: Validate units
+            if unit1 and unit1 not in self.units:
+                dropdown_errors.append(f"Invalid Unit 1: {unit1}")
+
+            if unit2 and unit2 not in self.units2:
+                dropdown_errors.append(f"Invalid Unit 2: {unit2}")
+
+            if missing or dropdown_errors:
+                row_dict["Error"] = ""
+                if missing:
+                    row_dict["Error"] += f"Missing: {', '.join(missing)}. "
+                if dropdown_errors:
+                    row_dict["Error"] += f"Invalid: {', '.join(dropdown_errors)}"
+                row_dict["Row"] = idx
+                invalid_rows.append(row_dict)
+            else:
+                valid_rows.append(row_dict)
+
+        return valid_rows, invalid_rows
+
+    def save_valid_rows_to_raw_response(self, request, valid_rows):
         """
-        Style the Excel sheet with:
-        - Frozen header row
-        - Auto filter
-        - Blue header with white text
-        - Light green body
-        - Borders to simulate gridlines
+        Save valid rows to RawResponse grouped by (scope, location, year, month).
+        Always append rows without checking for duplicates.
         """
-        # Freeze header
-        ws.freeze_panes = f"A{body_start_row}"
 
-        # Auto filter
-        max_col_letter = get_column_letter(ws.max_column)
-        ws.auto_filter.ref = f"A{header_row}:{max_col_letter}{header_row}"
+        SCOPE_TO_PATH = {
+            "Scope 1": "gri-environment-emissions-301-a-scope-1",
+            "Scope 2": "gri-environment-emissions-301-a-scope-2",
+            "Scope 3": "gri-environment-emissions-301-a-scope-3",
+        }
 
-        # Styles
-        header_fill = PatternFill(
-            start_color="4F81BD", end_color="4F81BD", fill_type="solid"
-        )
-        header_font = Font(color="FFFFFF", bold=True)
-        body_fill = PatternFill(
-            start_color="DFF0D8", end_color="DFF0D8", fill_type="solid"
-        )
-        thin_border = Border(
-            left=Side(style="thin", color="000000"),
-            right=Side(style="thin", color="000000"),
-            top=Side(style="thin", color="000000"),
-            bottom=Side(style="thin", color="000000"),
-        )
+        month_mapping = {
+            "Jan": 1,
+            "Feb": 2,
+            "Mar": 3,
+            "Apr": 4,
+            "May": 5,
+            "Jun": 6,
+            "Jul": 7,
+            "Aug": 8,
+            "Sep": 9,
+            "Oct": 10,
+            "Nov": 11,
+            "Dec": 12,
+        }
 
-        # Apply header styles
-        for col in range(1, ws.max_column + 1):
-            cell = ws.cell(row=header_row, column=col)
-            cell.fill = header_fill
-            cell.font = header_font
-            cell.border = thin_border
+        grouped_data = {}
+        for row in valid_rows:
+            scope = row["Scope"]
+            location = row["Location"]
+            year = row["Year"]
+            month = row["Month"]
+            key = (scope, location, year, month)
+            grouped_data.setdefault(key, []).append(row)
 
-        # Apply body styles
-        for row in range(body_start_row, body_end_row + 1):
-            for col in range(1, ws.max_column + 1):
-                cell = ws.cell(row=row, column=col)
-                cell.fill = body_fill
-                cell.border = thin_border
+        with transaction.atomic():
+            for (scope, location, year, month), rows in grouped_data.items():
+                path_slug = SCOPE_TO_PATH.get(scope)
+                if not path_slug:
+                    continue
 
-    def auto_adjust_column_widths(self, ws, sample_rows=10):
-        """
-        Auto-adjust column widths based on max length of content
-        in headers and first few data rows.
-        """
-        for col in ws.columns:
-            max_length = 0
-            column = col[0].column_letter  # Get column letter (e.g. 'A', 'B', etc.)
-            for cell in col[:sample_rows]:  # Check only the first few rows
                 try:
-                    if cell.value:
-                        max_length = max(max_length, len(str(cell.value)))
-                except Exception:
-                    pass
-            adjusted_width = max_length + 2  # Add padding
-            ws.column_dimensions[column].width = adjusted_width
+                    path = Path.objects.get(slug=path_slug)
+                except Path.DoesNotExist:
+                    continue
 
-    def sanitize(self, name):
-        # Replace non-alphanumeric characters with underscore
-        name = re.sub(r"[^A-Za-z0-9_]", "_", name)
-        # Ensure it starts with a letter
-        if not name[0].isalpha():
-            name = "N_" + name
-        return name
+                try:
+                    locale_obj = Location.objects.get(name=location)
+                except Location.DoesNotExist:
+                    continue  # skip invalid location
 
-    def add_dropdown(self, worksheet, col_letter, options, start_row=2, end_row=100):
-        dv = DataValidation(
-            type="list", formula1='"{}"'.format(",".join(options)), allow_blank=True
+                raw_response, _ = RawResponse.objects.get_or_create(
+                    path=path,
+                    client=request.user.client,
+                    locale=locale_obj,
+                    year=year,
+                    month=month_mapping.get(month, 0),
+                    user=request.user,
+                    defaults={"data": []},
+                )
+
+                existing_data = (
+                    raw_response.data if isinstance(raw_response.data, list) else []
+                )
+
+                for row in rows:
+                    emission = {
+                        "assigned_to": "",
+                        "Category": row["Category"],
+                        "Subcategory": row["Subcategory"],
+                        "Activity": row["Activity"],
+                        "activity_id": "",
+                        "unit_type": "",
+                        "Unit": row.get("Unit 1", ""),
+                        "Quantity": row.get("Quantity 1", ""),
+                        "Unit2": row.get("Unit 2", ""),
+                        "Quantity2": row.get("Quantity 2", ""),
+                        "file": {
+                            "name": "",
+                            "url": "",
+                            "type": "",
+                            "size": "",
+                            "uploadDateTime": "",
+                            "uploadedBy": "",
+                        },
+                        "rowType": "bulk_upload",
+                        "scope": scope.lower().replace(" ", "_"),
+                    }
+
+                    existing_data.append({"Emission": emission, "id": None})
+
+                raw_response.data = existing_data
+                raw_response.save()
+
+    def post(self, request, *args, **kwargs):
+        excel_file = request.FILES.get("file")
+        if not excel_file:
+            return Response(
+                {"message": "No file uploaded."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not excel_file.name.endswith(".xlsx"):
+            return Response(
+                {"message": "Only .xlsx files are allowed."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if excel_file.size > self.max_file_size:
+            return Response(
+                {"message": "File size exceeds 5MB limit."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            wb = openpyxl.load_workbook(excel_file, data_only=True)
+        except Exception as e:
+            return Response(
+                {"message": f"Invalid Excel file: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if "Template" not in wb.sheetnames:
+            return Response(
+                {"message": "Missing 'Template' sheet."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        ws = wb["Template"]
+        header_row = [cell.value for cell in ws[1]]
+
+        if header_row != self.expected_headers:
+            return Response(
+                {"message": "Template headers do not match expected format."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        valid_rows, invalid_rows = self.validate_data(ws)
+        set_bulk_upload_flag(True)
+        try:
+            self.save_valid_rows_to_raw_response(request, valid_rows)
+        finally:
+            set_bulk_upload_flag(False)
+
+        if invalid_rows:
+            error_file = self._create_error_excel(invalid_rows)
+            return Response(
+                {
+                    "message": "Some rows are invalid.",
+                    "invalid_count": len(invalid_rows),
+                    "valid_count": len(valid_rows),
+                    "errors": invalid_rows[:5],  # Preview
+                    "error_file_base64": error_file,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            {
+                "message": "File uploaded and validated successfully.",
+                "valid_count": len(valid_rows),
+            },
+            status=status.HTTP_200_OK,
         )
-        dv.error = "Select from dropdown"
-        dv.errorTitle = "Invalid Entry"
-        worksheet.add_data_validation(dv)
-        dv.add(f"{col_letter}{start_row}:{col_letter}{end_row}")
 
-    def get(self, request, *args, **kwargs):
+    def _create_error_excel(self, error_rows):
         wb = Workbook()
         ws = wb.active
-        ws.title = "Template"
+        ws.title = "Invalid Rows"
 
         # Headers
-        headers = [
-            "Location",
-            "Month",
-            "Year",
-            "Scope",
-            "Category",
-            "Subcategory",
-            "Activity",
-            "Quantity 1",
-            "Unit 1",
-            "Quantity 2",
-            "Unit 2",
-        ]
+        headers = self.expected_headers + ["Error", "Row"]
         ws.append(headers)
-        self.header_body_styling(ws)
-        self.auto_adjust_column_widths(ws)
-        dv_numeric = DataValidation(
-            type="decimal",
-            operator="greaterThanOrEqual",
-            formula1="0",
-            allow_blank=True,
-        )
-        dv_numeric.showErrorMessage = True
-        dv_numeric.error = "Only numeric values allowed"
-        dv_numeric.errorTitle = "Invalid Entry"
-        ws.add_data_validation(dv_numeric)
-        dv_numeric.add("H2:H100")
-        dv_numeric.add("J2:J100")
 
-        # Hidden sheet for dropdown source data
-        dropdown_ws = wb.create_sheet("DropdownData")
-        dropdown_ws.sheet_state = "hidden"
+        for row in error_rows:
+            row_data = [row.get(h) for h in headers]
+            ws.append(row_data)
 
-        # Add dropdowns for Location
-        locations = list(request.user.locs.all().values_list("name", flat=True))
-
-        # Add locations to hidden sheet (column A)
-        location_col_idx = 52  # AZ
-        loc_col_letter = get_column_letter(location_col_idx)
-        for i, loc in enumerate(locations, start=2):
-            dropdown_ws.cell(
-                row=i, column=location_col_idx
-            ).value = loc  # Column AZ (52) to avoid overlaps
-
-        loc_range_end = 1 + len(locations)
-
-        # Define named range for locations
-        wb.defined_names.add(
-            DefinedName(
-                name="LocationList",
-                attr_text=f"{quote_sheetname('DropdownData')}!${loc_col_letter}$2:${loc_col_letter}${loc_range_end}",
-            )
-        )
-        # Location List on Column A
-        for row in range(2, 101):
-            formula_loc = "=LocationList"
-            dv_loc = DataValidation(type="list", formula1=formula_loc, allow_blank=True)
-            ws.add_data_validation(dv_loc)
-            dv_loc.add(f"A{row}")  # Location column
-
-        # Scope list in first column
-        for i, scope in enumerate(self.scope_to_categories.keys(), start=2):
-            dropdown_ws.cell(row=i, column=1).value = scope
-
-        # Named ranges: scope -> category
-        for col, (scope, categories) in enumerate(
-            self.scope_to_categories.items(), start=2
-        ):
-            sanitized_scope = self.sanitize(scope)
-            dropdown_ws.cell(row=1, column=col).value = sanitized_scope
-            for row, cat in enumerate(categories, start=2):
-                dropdown_ws.cell(row=row, column=col).value = cat
-            col_letter = get_column_letter(col)
-            end_row = 1 + len(categories)
-            wb.defined_names.add(
-                DefinedName(
-                    name=sanitized_scope,
-                    attr_text=f"{quote_sheetname('DropdownData')}!${col_letter}$2:${col_letter}${end_row}",
-                )
-            )
-
-        # Named ranges: category -> subcategory
-        for col, (cat, subcats) in enumerate(
-            self.category_to_subcategories.items(), start=10
-        ):
-            sanitized_cat = self.sanitize(cat)
-            dropdown_ws.cell(row=1, column=col).value = sanitized_cat
-            for row, sub in enumerate(subcats, start=2):
-                dropdown_ws.cell(row=row, column=col).value = sub
-            col_letter = get_column_letter(col)
-            end_row = 1 + len(subcats)
-            wb.defined_names.add(
-                DefinedName(
-                    name=sanitized_cat,
-                    attr_text=f"{quote_sheetname('DropdownData')}!${col_letter}$2:${col_letter}${end_row}",
-                )
-            )
-        # Units (column 47 = AU), Units2 (column 48 = AV)
-        units_col_idx = 47  # AU
-        units2_col_idx = 48  # AV
-        units_col_letter = get_column_letter(units_col_idx)
-        units2_col_letter = get_column_letter(units2_col_idx)
-
-        # Write unit values to hidden sheet
-        for i, unit in enumerate(self.units, start=2):
-            dropdown_ws.cell(row=i, column=units_col_idx).value = unit
-
-        for i, unit in enumerate(self.units2, start=2):
-            dropdown_ws.cell(row=i, column=units2_col_idx).value = unit
-
-        # Define named ranges for Excel
-        wb.defined_names.add(
-            DefinedName(
-                name="UnitList",
-                attr_text=f"{quote_sheetname('DropdownData')}!${units_col_letter}$2:${units_col_letter}${1 + len(self.units)}",
-            )
-        )
-        wb.defined_names.add(
-            DefinedName(
-                name="Unit2List",
-                attr_text=f"{quote_sheetname('DropdownData')}!${units2_col_letter}$2:${units2_col_letter}${1 + len(self.units2)}",
-            )
-        )
-
-        for row in range(2, 101):
-            dv_unit = DataValidation(
-                type="list", formula1="=UnitList", allow_blank=True
-            )
-            ws.add_data_validation(dv_unit)
-            dv_unit.add(f"I{row}")
-
-            dv_unit2 = DataValidation(
-                type="list", formula1="=Unit2List", allow_blank=True
-            )
-            ws.add_data_validation(dv_unit2)
-            dv_unit2.add(f"K{row}")
-
-        # Static dropdowns for Month and Year
-
-        years = [str(y) for y in range(2018, 2031)]
-
-        self.add_dropdown(ws, "B", self.months)
-        self.add_dropdown(ws, "C", years)
-        self.add_dropdown(ws, "D", list(self.scope_to_categories.keys()))
-
-        for row in range(2, 101):
-            # Category depends on Scope
-            formula_cat = (
-                f'=INDIRECT(SUBSTITUTE(SUBSTITUTE(D{row}, " ", "_"), "&", "_"))'
-            )
-            dv_cat = DataValidation(type="list", formula1=formula_cat, allow_blank=True)
-            ws.add_data_validation(dv_cat)
-            dv_cat.add(f"E{row}")
-
-            # Subcategory depends on Category
-            formula_subcat = (
-                f'=INDIRECT(SUBSTITUTE(SUBSTITUTE(E{row}, " ", "_"), "&", "_"))'
-            )
-            dv_subcat = DataValidation(
-                type="list", formula1=formula_subcat, allow_blank=True
-            )
-            ws.add_data_validation(dv_subcat)
-            dv_subcat.add(f"F{row}")
-
-            # Field validation for quantity and quantity2
-            ws.cell(row=row, column=8).number_format = "0.0000"
-            ws.cell(row=row, column=10).number_format = "0.0000"
-
-        # Save and respond
-        buffer = io.BytesIO()
-        wb.save(buffer)
-        buffer.seek(0)
-        response = HttpResponse(
-            buffer,
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
-        response["Content-Disposition"] = "attachment; filename=template.xlsx"
-        return response
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        return base64.b64encode(output.read()).decode("utf-8")

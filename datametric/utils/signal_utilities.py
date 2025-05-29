@@ -5,7 +5,7 @@ from common.utils.data_point_cache import (
     set_data_point_cache,
     delete_multiple_data_point_cache,
 )
-
+import threading
 
 logger = getLogger("django")
 
@@ -123,7 +123,20 @@ def process_raw_response_data(
 
 
 def delete_data_points_by_raw_response(raw_response: RawResponse):
-    data_points = DataPoint.objects.filter(raw_response=raw_response)
+    data_points = DataPoint.objects.filter(raw_response=raw_response).exclude(
+        path__slug="gri-collect-emissions-scope-combined"
+    )
     data_point_ids = data_points.values_list("id", flat=True)
     delete_multiple_data_point_cache(data_point_ids)
     data_points.delete()
+
+
+_local = threading.local()
+
+
+def set_bulk_upload_flag(value: bool):
+    _local.bulk_upload_active = value
+
+
+def is_bulk_upload_active():
+    return getattr(_local, "bulk_upload_active", False)

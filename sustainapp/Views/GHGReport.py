@@ -14,15 +14,12 @@ from django.views.generic import View
 from sustainapp.serializers import (
     ReportSerializer,
     AnalysisDataResponseSerializer,
-    ReportUpdateSerializer,
     ReportRetrieveSerializer,
 )
-from rest_framework.permissions import AllowAny
 from datametric.models import RawResponse, DataPoint
 from rest_framework.views import APIView
 from collections import defaultdict
 from django.conf import settings
-import os
 from django.core.files.base import ContentFile
 import logging
 from django.template.loader import get_template
@@ -31,7 +28,6 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 import time
 from sustainapp.report import generate_pdf_data
-from django.core.files.storage import default_storage
 from datametric.utils.analyse import filter_by_start_end_dates
 from esg_report.utils import create_validation_method_for_report_creation
 from azure.storage.blob import BlobClient
@@ -41,6 +37,7 @@ from apps.canada_bill_s211.v2.utils.check_status_report import (
     is_canada_bill_s211_v2_completed,
 )
 from common.utils.value_types import format_decimal_places, safe_percentage
+
 logger = logging.getLogger()
 
 
@@ -252,6 +249,7 @@ def get_analysis_data_by_source(self, data_points):
 
     return structured_data
 
+
 def process_emission_by_scope(data_points, ownership_ratio=None):
     emission_by_scope = defaultdict(
         lambda: {
@@ -313,6 +311,7 @@ def process_emission_by_scope(data_points, ownership_ratio=None):
         scope_data["entries"].extend(data.json_holder)
 
     return emission_by_scope, total_co2e
+
 
 def calculate_contributions_for_source(processed_data):
     """
@@ -507,7 +506,6 @@ def process_corporate_data(
         return
 
     if corporate_type == "Investment":
-
         emission_by_scope, _ = process_emission_by_scope(data_points, ownership_ratio)
         emission_by_source = defaultdict(
             lambda: {
@@ -647,39 +645,41 @@ class GHGReportView(generics.CreateAPIView):
             {"message": f"Report created successfully ID:{report_id}"},
             status=status.HTTP_200_OK,
         )
-        esg_report_validation_string = create_validation_method_for_report_creation(report=new_report)
+        esg_report_validation_string = create_validation_method_for_report_creation(
+            report=new_report
+        )
 
         if esg_report_validation_string is not None:
             return Response(
                 data={
-                    "message":{
-                        "report_type":"esg_report",
-                        "data":esg_report_validation_string
+                    "message": {
+                        "report_type": "esg_report",
+                        "data": esg_report_validation_string,
                     },
-                    "status":status.HTTP_400_BAD_REQUEST
+                    "status": status.HTTP_400_BAD_REQUEST,
                 },
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        
-        if new_report.report_type=="canada_bill_s211_v2":
+
+        if new_report.report_type == "canada_bill_s211_v2":
             if not is_canada_bill_s211_v2_completed(
                 user=request.user,
                 organization=serializer.validated_data.get("organization"),
                 corporate=serializer.validated_data.get("corporate"),
-                year=serializer.validated_data["end_date"].year
+                year=serializer.validated_data["end_date"].year,
             ):
                 new_report.delete()
                 return Response(
                     data={
-                        "message":{
-                            "report_type":"canada_bill_s211_v2",
-                            "data":"Canada Bill S211 v2 is not completed."
+                        "message": {
+                            "report_type": "canada_bill_s211_v2",
+                            "data": "Canada Bill S211 v2 is not completed.",
                         },
-                        "status":status.HTTP_400_BAD_REQUEST
+                        "status": status.HTTP_400_BAD_REQUEST,
                     },
-                    status=status.HTTP_400_BAD_REQUEST
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-        
+
         start_date = serializer.validated_data.get("start_date")
         end_date = serializer.validated_data.get("end_date")
         corporate_id = serializer.validated_data.get("corporate")
@@ -728,22 +728,46 @@ class GHGReportView(generics.CreateAPIView):
             common_name = corporate_id.name
 
         if report_type == "GRI Report: With Reference to":
-            return Response({
-                "id": serializer.data.get("id"),
-                "start_date": serializer.data.get("start_date"),
-                "end_date": serializer.data.get("end_date"),
-                "country_name": serializer.data.get("organization_country"),
-                "organization_name": organization.name,
-                "report_by": report_by,
-                "message": f"Report created successfully ID:{report_id}",
-                "report_type": serializer.validated_data["report_type"],
-                "created_at": format_created_at(serializer.data.get("created_at")),
-                "name": serializer.data.get("name")
-            }, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "id": serializer.data.get("id"),
+                    "start_date": serializer.data.get("start_date"),
+                    "end_date": serializer.data.get("end_date"),
+                    "country_name": serializer.data.get("organization_country"),
+                    "organization_name": organization.name,
+                    "report_by": report_by,
+                    "message": f"Report created successfully ID:{report_id}",
+                    "report_type": serializer.validated_data["report_type"],
+                    "created_at": format_created_at(serializer.data.get("created_at")),
+                    "name": serializer.data.get("name"),
+                },
+                status=status.HTTP_200_OK,
+            )
 
+        if (
+            report_type == "GRI Report: In accordance With"
+            or report_type == "GRI Report: With Reference to"
+        ) and assessment_id:
+            return Response(
+                {
+                    "id": serializer.data.get("id"),
+                    "start_date": serializer.data.get("start_date"),
+                    "end_date": serializer.data.get("end_date"),
+                    "country_name": serializer.data.get("organization_country"),
+                    "organization_name": organization.name,
+                    "report_by": report_by,
+                    "message": f"Report created successfully ID:{report_id}",
+                    "report_type": serializer.validated_data["report_type"],
+                    "created_at": format_created_at(serializer.data.get("created_at")),
+                    "name": serializer.data.get("name"),
+                },
+                status=status.HTTP_200_OK,
+            )
 
-
-        if report_type == "GRI Report: In accordance With" and assessment_id:
+        if (
+            report_type == "GRI Report: In accordance With"
+            or report_type == "GRI Report: With Reference to"
+        ) and assessment_id:
             ReportAssessment.objects.create(
                 report_id=report_id,
                 materiality_assessment_id=assessment_id,
@@ -764,7 +788,7 @@ class GHGReportView(generics.CreateAPIView):
                     "message": analysis_data.data["message"],
                     "report_type": serializer.validated_data["report_type"],
                     "created_at": format_created_at(serializer.data.get("created_at")),
-                    "name": serializer.data.get("name")
+                    "name": serializer.data.get("name"),
                 },
                 status=analysis_data.status_code,
             )
