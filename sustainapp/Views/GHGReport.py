@@ -338,11 +338,6 @@ def calculate_contributions_for_source(processed_data):
             source["contribution_source"] = float(
                 format_decimal_places(contribution_source)
             )
-            # (
-            #     round(contribution_source, 2)
-            #     if contribution_source >= 1
-            #     else round(contribution_source, 3)
-            # )
 
 
 def get_analysis_data(
@@ -556,9 +551,6 @@ def process_corporate_data(
             emission_by_scope["Scope-3"]["total_co2e"] += float(
                 format_decimal_places(scope_co2e)
             )
-            # (
-            #     round(scope_co2e, 2) if scope_co2e >= 1 else round(scope_co2e, 3)
-            # )
             emission_by_scope["Scope-3"]["co2e_unit"] = co2e_unit
             emission_by_scope["Scope-3"]["activity_data"]["activity_unit"] = (
                 activity_unit
@@ -576,22 +568,12 @@ def process_corporate_data(
 
         # Calculate contribution for the source
         for source, values in emission_by_source.items():
-            # emission_by_source[source]["total_co2e"] = (
-            #     round(emission_by_source[source]["total_co2e"], 2)
-            #     if emission_by_source[source]["total_co2e"] >= 1
-            #     else round(emission_by_source[source]["total_co2e"], 3)
-            # )
             emission_by_source[source]["total_co2e"] = float(
                 format_decimal_places(emission_by_source[source]["total_co2e"])
             )
             contribution_source = (
                 (values["total_co2e"] / total_co2e) * 100 if total_co2e else 0
             )
-            # emission_by_source[source]["contribution"] = (
-            #     round(contribution_source, 2)
-            #     if contribution_source >= 1
-            #     else round(contribution_source, 3)
-            # )
             emission_by_source[source]["contribution"] = float(
                 format_decimal_places(contribution_source)
             )
