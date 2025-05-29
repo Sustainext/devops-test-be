@@ -37,9 +37,9 @@ from esg_report.utils import create_validation_method_for_report_creation
 from azure.storage.blob import BlobClient
 from datetime import datetime
 from esg_report.models.ReportAssessment import ReportAssessment
-from apps.canada_bill_s211.v2.utils.check_status_report import is_canada_bill_s211_v2_completed
-
-
+from apps.canada_bill_s211.v2.utils.check_status_report import (
+    is_canada_bill_s211_v2_completed,
+)
 logger = logging.getLogger()
 
 
@@ -299,7 +299,9 @@ def process_emission_by_scope(data_points, ownership_ratio=None):
 
         scope_data = emission_by_scope[scope_name]
         scope_data["scope_name"] = scope_name
-        scope_data["total_co2e"] += round(co2e_sum, 2)
+        scope_data["total_co2e"] += (
+            round(co2e_sum, 2) if co2e_sum >= 1 else round(co2e_sum, 3)
+        )
         scope_data["co2e_unit"] = co2e_unit
         scope_data["unit1"] = unit1
         scope_data["unit2"] = unit2
@@ -309,6 +311,33 @@ def process_emission_by_scope(data_points, ownership_ratio=None):
         scope_data["entries"].extend(data.json_holder)
 
     return emission_by_scope, total_co2e
+
+def calculate_contributions_for_source(processed_data):
+    """
+    Calculates the contribution of each scource to the total emissions.
+
+    Args:
+        processed_data (dict): A dictionary where the keys are corporate names and the values are dictionaries containing scope data.
+
+    Returns:
+        None: The function modifies the input dictionary in place.
+    """
+    total_emissions = 0
+    for corporate_name, corporate_data in processed_data.items():
+        for source in corporate_data["sources"]:
+            total_emissions += source["total_co2e"]
+
+    for corporate_name, corporate_data in processed_data.items():
+        for source in corporate_data["sources"]:
+            if total_emissions > 0:
+                contribution_source = (source["total_co2e"] / total_emissions) * 100
+            else:
+                contribution_source = 0
+            source["contribution_source"] = (
+                round(contribution_source, 2)
+                if contribution_source >= 1
+                else round(contribution_source, 3)
+            )
 
 
 def get_analysis_data(
@@ -388,6 +417,9 @@ def get_analysis_data(
             {"message": "No data available for the given corporate IDs."},
             status=status.HTTP_404_NOT_FOUND,
         )
+    if report_type in ["GHG Report - Investments", "GHG Accounting Report"]:
+        # The contrubution_source to be calculated based on the total emissions of all corporates
+        calculate_contributions_for_source(analysis_data_by_corporate)
 
     # Restructure data for the final response
     restructured_data = {}
@@ -516,7 +548,9 @@ def process_corporate_data(
 
             # Aggregate everything under Scope-3
 
-            emission_by_scope["Scope-3"]["total_co2e"] += scope_co2e
+            emission_by_scope["Scope-3"]["total_co2e"] += (
+                round(scope_co2e, 2) if scope_co2e >= 1 else round(scope_co2e, 3)
+            )
             emission_by_scope["Scope-3"]["co2e_unit"] = co2e_unit
             emission_by_scope["Scope-3"]["activity_data"]["activity_unit"] = (
                 activity_unit
@@ -524,20 +558,32 @@ def process_corporate_data(
             emission_by_scope["Scope-3"]["activity_data"]["activity_value"] += (
                 activity_value
             )
+            emission_by_scope["Scope-3"]["year"] = "-"
 
             # Aggregate the CO2e values by source
             emission_by_source["investment_source"]["total_co2e"] += scope_co2e
-
+            print(
+                f"emission_by_source: {emission_by_source['investment_source']['total_co2e']}"
+            )
         structured_emission_data = calculate_contributions(
             self, emission_by_scope, total_co2e
         )
 
         # Calculate contribution for the source
         for source, values in emission_by_source.items():
+            emission_by_source[source]["total_co2e"] = (
+                round(emission_by_source[source]["total_co2e"], 2)
+                if emission_by_source[source]["total_co2e"] >= 1
+                else round(emission_by_source[source]["total_co2e"], 3)
+            )
             contribution_source = (
                 (values["total_co2e"] / total_co2e) * 100 if total_co2e else 0
             )
-            emission_by_source[source]["contribution"] = round(contribution_source, 2)
+            emission_by_source[source]["contribution"] = (
+                round(contribution_source, 2)
+                if contribution_source >= 1
+                else round(contribution_source, 3)
+            )
 
         analysis_data_by_corporate[corporate_name] = {
             "corporate_type": corporate_type,
