@@ -11,6 +11,8 @@ from esg_report.utils import (
     get_management_materiality_topics,
 )
 from esg_report.models.ScreenFifteen import ScreenFifteenModel
+from esg_report.Serializer.ScreenFifteenSerializer import ScreenFifteenSerializer
+from django.core.exceptions import ObjectDoesNotExist
 
 class SelectMaterialsTopic(APIView):
      
@@ -40,6 +42,7 @@ class SelectMaterialsTopic(APIView):
             client=report.client,
             organization=report.organization,
             corporate=report.corporate,
+            approach=report.report_type,
             start_date__gte=report.start_date,
             end_date__lte=report.end_date
         ).first()
@@ -98,24 +101,77 @@ class SelectMaterialsTopic(APIView):
                 "Economic Governance": "gri_collect_economic_governance_management_material_topic",
                 "Climate Risks and Opportunities": "gri_collect_risks_and_opportunities_management_material_topic"
             }
-            def normalize_topic(topic):
-                    return topic.strip().replace("  ", "_").replace("& ", "_").replace(" &", "_").replace(" ", "_")
+          
             # Helper method to collect data based on category
             def collect_responses(topic_list, category_key):
                 for topic in topic_list:
-                    original_topic=topic
+                    # original_topic=topic
                     slug = material_topic_mapping.get(topic, "")
-                    normalized_topic = normalize_topic(original_topic)
-
                     if slug:
                         data = get_management_materiality_topics(report, slug)
-                        response_data[category_key].append({normalized_topic: data if data else None})
+                        if data:
+                            for record in data:
+                                record["topic_name"] = topic
+                                response_data[category_key].append(record)
+                        else:
+                            response_data[category_key].append({
+                                "GRI33cd": None,
+                                "GRI33e": None,
+                                "org_or_corp": None,
+                                "topic_name": topic
+                            })
                     else:
-                        # Even if slug is not mapped, include null to maintain consistency
-                        response_data[category_key].append({normalized_topic: None})
+                        response_data[category_key].append({
+                            "GRI33cd": None,
+                            "GRI33e": None,
+                            "org_or_corp": None,
+                            "topic_name": topic
+                        })
+
+                   
 
             collect_responses(serializer.data.get("environment_topics", []), "environment_topic_responses")
             collect_responses(serializer.data.get("social_topics", []), "social_topic_responses")
             collect_responses(serializer.data.get("governance_topics", []), "governance_topic_responses")
+
+        return Response(response_data, status=status.HTTP_200_OK)
+    
+    def put(self, request, report_id, format=None):
+        """
+        Update only the 'conclusion' field in ScreenFifteenModel for the given report.
+        Returns only the updated 'conclusion' in the response.
+        """
+        try:
+            report = Report.objects.get(id=report_id)
+        except Report.DoesNotExist:
+            return Response({"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            screen_fifteen = report.screen_fifteen
+            serializer = ScreenFifteenSerializer(
+                screen_fifteen,
+                data={"conclusion": request.data.get("conclusion")},
+                partial=True,
+                context={"request": request}
+            )
+        except ObjectDoesNotExist:
+            serializer = ScreenFifteenSerializer(
+                data={"conclusion": request.data.get("conclusion")},
+                context={"request": request}
+            )
+
+        serializer.is_valid(raise_exception=True)
+        instance = serializer.save(report=report)
+
+        report.last_updated_by = request.user
+        report.save()
+
+        response_data = {
+            "id": instance.id,
+            "report": instance.report.id,
+            "created_at": instance.created_at,
+            "updated_at": instance.updated_at,
+            "conclusion": instance.conclusion
+        }
 
         return Response(response_data, status=status.HTTP_200_OK)
