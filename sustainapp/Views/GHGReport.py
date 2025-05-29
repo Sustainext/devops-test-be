@@ -726,6 +726,14 @@ class GHGReportView(generics.CreateAPIView):
             common_name = organization.name
         else:
             common_name = corporate_id.name
+        if (
+            report_type
+            in ["GRI Report: In accordance With", "GRI Report: With Reference to"]
+        ) and assessment_id:
+            ReportAssessment.objects.create(
+                report_id=report_id,
+                materiality_assessment_id=assessment_id,
+            )
 
         if report_type == "GRI Report: With Reference to":
             return Response(
@@ -763,15 +771,6 @@ class GHGReportView(generics.CreateAPIView):
                 },
                 status=status.HTTP_200_OK,
             )
-
-        if (
-            report_type == "GRI Report: In accordance With"
-            or report_type == "GRI Report: With Reference to"
-        ) and assessment_id:
-            ReportAssessment.objects.create(
-                report_id=report_id,
-                materiality_assessment_id=assessment_id,
-            ).save()
 
         if isinstance(analysis_data, Response):
             status_check = analysis_data.status_code
