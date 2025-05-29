@@ -40,6 +40,7 @@ from esg_report.models.ReportAssessment import ReportAssessment
 from apps.canada_bill_s211.v2.utils.check_status_report import (
     is_canada_bill_s211_v2_completed,
 )
+from common.utils.value_types import format_decimal_places, safe_percentage
 logger = logging.getLogger()
 
 
@@ -299,9 +300,10 @@ def process_emission_by_scope(data_points, ownership_ratio=None):
 
         scope_data = emission_by_scope[scope_name]
         scope_data["scope_name"] = scope_name
-        scope_data["total_co2e"] += (
-            round(co2e_sum, 2) if co2e_sum >= 1 else round(co2e_sum, 3)
-        )
+        scope_data["total_co2e"] += float(format_decimal_places(co2e_sum))
+        # (
+        #     round(co2e_sum, 2) if co2e_sum >= 1 else round(co2e_sum, 3)
+        # )
         scope_data["co2e_unit"] = co2e_unit
         scope_data["unit1"] = unit1
         scope_data["unit2"] = unit2
@@ -333,11 +335,14 @@ def calculate_contributions_for_source(processed_data):
                 contribution_source = (source["total_co2e"] / total_emissions) * 100
             else:
                 contribution_source = 0
-            source["contribution_source"] = (
-                round(contribution_source, 2)
-                if contribution_source >= 1
-                else round(contribution_source, 3)
+            source["contribution_source"] = float(
+                format_decimal_places(contribution_source)
             )
+            # (
+            #     round(contribution_source, 2)
+            #     if contribution_source >= 1
+            #     else round(contribution_source, 3)
+            # )
 
 
 def get_analysis_data(
@@ -548,9 +553,12 @@ def process_corporate_data(
 
             # Aggregate everything under Scope-3
 
-            emission_by_scope["Scope-3"]["total_co2e"] += (
-                round(scope_co2e, 2) if scope_co2e >= 1 else round(scope_co2e, 3)
+            emission_by_scope["Scope-3"]["total_co2e"] += float(
+                format_decimal_places(scope_co2e)
             )
+            # (
+            #     round(scope_co2e, 2) if scope_co2e >= 1 else round(scope_co2e, 3)
+            # )
             emission_by_scope["Scope-3"]["co2e_unit"] = co2e_unit
             emission_by_scope["Scope-3"]["activity_data"]["activity_unit"] = (
                 activity_unit
@@ -562,28 +570,32 @@ def process_corporate_data(
 
             # Aggregate the CO2e values by source
             emission_by_source["investment_source"]["total_co2e"] += scope_co2e
-            print(
-                f"emission_by_source: {emission_by_source['investment_source']['total_co2e']}"
-            )
         structured_emission_data = calculate_contributions(
             self, emission_by_scope, total_co2e
         )
 
         # Calculate contribution for the source
         for source, values in emission_by_source.items():
-            emission_by_source[source]["total_co2e"] = (
-                round(emission_by_source[source]["total_co2e"], 2)
-                if emission_by_source[source]["total_co2e"] >= 1
-                else round(emission_by_source[source]["total_co2e"], 3)
+            # emission_by_source[source]["total_co2e"] = (
+            #     round(emission_by_source[source]["total_co2e"], 2)
+            #     if emission_by_source[source]["total_co2e"] >= 1
+            #     else round(emission_by_source[source]["total_co2e"], 3)
+            # )
+            emission_by_source[source]["total_co2e"] = float(
+                format_decimal_places(emission_by_source[source]["total_co2e"])
             )
             contribution_source = (
                 (values["total_co2e"] / total_co2e) * 100 if total_co2e else 0
             )
-            emission_by_source[source]["contribution"] = (
-                round(contribution_source, 2)
-                if contribution_source >= 1
-                else round(contribution_source, 3)
+            # emission_by_source[source]["contribution"] = (
+            #     round(contribution_source, 2)
+            #     if contribution_source >= 1
+            #     else round(contribution_source, 3)
+            # )
+            emission_by_source[source]["contribution"] = float(
+                format_decimal_places(contribution_source)
             )
+            print("EHEHEH!!")
 
         analysis_data_by_corporate[corporate_name] = {
             "corporate_type": corporate_type,
