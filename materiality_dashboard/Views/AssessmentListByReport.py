@@ -4,6 +4,7 @@ from materiality_dashboard.Serializers.MaterialityAssessmentSerializer import (
 )
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
 
 
 class GetAssessmentListForReport(APIView):
@@ -13,6 +14,13 @@ class GetAssessmentListForReport(APIView):
         organization_id = request.query_params.get("organization_id")
         corporate_id = request.query_params.get("corporate_id")
         report_by = request.query_params.get("report_by")
+        approach = request.query_params.get("approach")
+
+        if not all([start_date, end_date, organization_id, report_by, approach]):
+            return Response(
+                {"message": "Please provide start_date, end_date, organization_id"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         try:
             if report_by == "Organization":
                 materiality_assessments = MaterialityAssessment.objects.filter(
@@ -21,7 +29,7 @@ class GetAssessmentListForReport(APIView):
                     end_date__lte=end_date,
                     organization_id=organization_id,
                     corporate_id__isnull=True,
-                    approach__icontains="accordance",
+                    approach__icontains=approach,
                 )
             else:
                 if corporate_id:
@@ -31,7 +39,7 @@ class GetAssessmentListForReport(APIView):
                         end_date__lte=end_date,
                         organization_id=organization_id,
                         corporate_id=corporate_id,
-                        approach__icontains="accordance",
+                        approach__icontains=approach,
                     )
                 elif report_by == "Corporate" and corporate_id is None:
                     return Response({"message": "corporate_id is required"}, status=200)
