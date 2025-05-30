@@ -11,6 +11,7 @@ class GetReportData(APIView):
     def get(self, request):
         serializer = GetBillS211ReportSerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
-        service = BillS211ScreenDataService(report=serializer.validated_data["bill_s211_report"])
-        data = service.get_introduction_page_data()
+        screen = serializer.validated_data["screen"]
+        service = BillS211ScreenDataService(report=serializer.validated_data["report"], screen=screen)
+        data = service.get_all_data()
         return Response(data, status=status.HTTP_200_OK)
