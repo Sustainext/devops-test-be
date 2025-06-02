@@ -1,0 +1,93 @@
+{% load static %}
+<html>
+
+<head>
+    <style>
+        @page first {
+            size: A4;
+            margin: 0;
+        }
+
+        /* Set A4 page size */
+        @page {
+            size: A4;
+            margin: 8mm;
+
+            /* Set the margins for all pages */
+            @bottom-right {
+                content: counter(page);
+                /* Add page numbering */
+                font-size: 10px;
+                color: #27272a;
+                margin-bottom: 3mm;
+                padding: 5px;
+                margin-right: 10px;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            color: #333;
+            padding: 10px 15px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #118dc5;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #045fb0;
+        }
+
+        p {
+            font-size: 11px;
+            margin: 15px 0;
+            color: #495059;
+            line-height: 1.5;
+        }
+
+        ul>li {
+            font-size: 11px;
+            color: #000;
+            line-height: 1.5;
+            list-style-type: none;
+        }
+
+        ol>li {
+            font-size: 11px;
+            color: #000;
+            line-height: 1.5;
+        }
+
+        .page-break {
+            page-break-before: always;
+            page-break-after: avoid;
+        }
+    </style>
+</head>
+
+<body>
+    {% include "ScreenWisePDFData/table_of_content.html" %}
+    <div class="page-break"></div>
+    {% include "ScreenWisePDFData/screen1.html" %}
+    {% include "ScreenWisePDFData/screen2.html" %}
+    {% include "ScreenWisePDFData/screen3.html" %}
+    {% include "ScreenWisePDFData/screen4.html" %}
+    {% include "ScreenWisePDFData/screen5.html" %}
+    {% include "ScreenWisePDFData/screen6.html" %}
+    {% include "ScreenWisePDFData/screen7.html" %}
+    {% include "ScreenWisePDFData/screen8.html" %}
+    {% include "ScreenWisePDFData/screen9.html" %}
+    {% include "ScreenWisePDFData/screen10.html" %}
+    {% include "ScreenWisePDFData/screen11.html" %}
+
+</body>
+
+</html>
