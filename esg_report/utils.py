@@ -403,63 +403,118 @@ def get_which_general_disclosure_is_empty(report: Report):
                 empty_sub_indicators.append(sub_indicator_and_path)
     return empty_sub_indicators
 
-
-def generate_disclosure_status(report: Report):
+def generate_disclosure_status(report: Report, topic_mapping: dict, heading: str, is_material=False):
     data_points = get_data_points_as_per_report(report=report)
-    special_slugs = [""]
-    result = []
-    for section_title, data in GENERAL_DISCLOSURES_AND_PATHS.items():
-        indicator = data["indicator"]
-        subindicators = data["subindicators"]
-        content_index_name = data["content_index_name"]
-        # Collect all slugs from subindicators
-        slugs = []
-        for title, slug in subindicators:
-            slugs.append(slug)
 
-        # Check if any slug has data
-        # * Check data point is not having value = ""
-        is_filled = all(
-            data_points.filter(path__slug=slug).exclude(value="").exists()
-            for slug in slugs
-        )
+    if is_material:
+        # Nested output for material topics
+        grouped_output = {}
 
-        # Set page_number and gri_sector_no to None as per your requirements
-        page_number = None
-        gri_sector_no = None
+        for _, data in topic_mapping.items():
+            indicator = data["indicator"]
+            subindicators = data["subindicators"]
+            content_index_name = data["content_index_name"]
+            heading2 = data.get("sub_header1", "Unknown Category")
+            heading3 = data.get("sub_header2", "Unknown GRI")
 
-        # Use the section title as the title
-        title = content_index_name
-        try:
-            content_index_reason = ContentIndexRequirementOmissionReason.objects.get(
-                report=report, indicator=indicator
+            slugs = [slug for _, slug in subindicators]
+
+            is_filled = all(
+                data_points.filter(path__slug=slug).exclude(value="").exists()
+                for slug in slugs
             )
-            reason = content_index_reason.reason
-            explanation = content_index_reason.explanation
-            is_filled = content_index_reason.is_filled
-        except ContentIndexRequirementOmissionReason.DoesNotExist:
-            content_index_reason = None
-            reason = None
-            explanation = None
-            is_filled = is_filled
-        # Append the dictionary to the result list
-        result.append(
-            {
+
+            try:
+                omission_reason = ContentIndexRequirementOmissionReason.objects.get(
+                    report=report, indicator=indicator
+                )
+                reason = omission_reason.reason
+                explanation = omission_reason.explanation
+                is_filled = omission_reason.is_filled
+            except ContentIndexRequirementOmissionReason.DoesNotExist:
+                reason = None
+                explanation = None
+
+            item_data = {
                 "key": indicator,
-                "title": title,
-                "page_number": page_number,
-                "gri_sector_no": gri_sector_no,
+                "title": content_index_name,
+                "page_number": None,
+                "gri_sector_no": None,
                 "is_filled": is_filled,
                 "omission": [
                     {
-                        "req_omitted": (f"{indicator}" if not is_filled else None),
+                        "req_omitted": indicator if not is_filled else None,
                         "reason": reason,
-                        "explanation": explanation,
+                        "explanation": explanation
                     }
-                ],
+                ]
             }
-        )
-    return result
+
+            grouped_output.setdefault(heading2, {}).setdefault(heading3, []).append(item_data)
+
+        formatted_sections = []
+        for heading2, heading3_dict in grouped_output.items():
+            heading3_sections = []
+            for heading3, items in heading3_dict.items():
+                heading3_sections.append({
+                    "heading3": heading3,
+                    "items": items
+                })
+            formatted_sections.append({
+                "heading2": heading2,
+                "sections": heading3_sections
+            })
+
+        return {
+            "heading1": heading,
+            "sections": formatted_sections
+        }
+
+    else:
+        # Flat output for general disclosures
+        result = []
+
+        for _, data in topic_mapping.items():
+            indicator = data["indicator"]
+            subindicators = data["subindicators"]
+            content_index_name = data["content_index_name"]
+            slugs = [slug for _, slug in subindicators]
+
+            is_filled = all(
+                data_points.filter(path__slug=slug).exclude(value="").exists()
+                for slug in slugs
+            )
+
+            try:
+                omission_reason = ContentIndexRequirementOmissionReason.objects.get(
+                    report=report, indicator=indicator
+                )
+                reason = omission_reason.reason
+                explanation = omission_reason.explanation
+                is_filled = omission_reason.is_filled
+            except ContentIndexRequirementOmissionReason.DoesNotExist:
+                reason = None
+                explanation = None
+
+            result.append({
+                "key": indicator,
+                "title": content_index_name,
+                "page_number": None,
+                "gri_sector_no": None,
+                "is_filled": is_filled,
+                "omission": [
+                    {
+                        "req_omitted": indicator if not is_filled else None,
+                        "reason": reason,
+                        "explanation": explanation
+                    }
+                ]
+            })
+
+        return {
+            "heading1": heading,
+            "items": result
+        }
 
 
 def management_materiality_topics_common_code(dps, org_or_corp_name):

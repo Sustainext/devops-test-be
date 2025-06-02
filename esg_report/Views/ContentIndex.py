@@ -21,21 +21,23 @@ from esg_report.Serializer.ContentIndexDataValidationSerializer import (
 from datametric.models import Path
 from sustainapp.models import Report
 from esg_report.utils import generate_disclosure_status
-
-
+from common.enums.GeneralTopicDisclosuresAndPaths import GENERAL_DISCLOSURES_AND_PATHS
+from common.enums.ManagementMatearilTopicsAndPaths import MATERIAL_TOPICS_AND_PATHS
 class GetContentIndex(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, report_id: int, format=None):
         try:
-            self.report = Report.objects.get(id=report_id)
+            report = Report.objects.get(id=report_id)
         except Report.DoesNotExist:
-            return Response(
-                {"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-        return Response(
-            generate_disclosure_status(self.report), status=status.HTTP_200_OK
-        )
+            return Response({"error": "Report not found"}, status=404)
+
+        output = [
+            generate_disclosure_status(report, GENERAL_DISCLOSURES_AND_PATHS, "General Disclosures", is_material=False),
+            generate_disclosure_status(report, MATERIAL_TOPICS_AND_PATHS, "Material Topics", is_material=True),
+        ]
+        return Response(output, status=200)
+    
 
     def put(self, request, report_id: int, format=None):
         try:
