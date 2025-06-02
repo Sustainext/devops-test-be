@@ -12,6 +12,3 @@ class CheckYearOrganizationCorporateSerializer(serializers.Serializer):
         queryset=Organization.objects.all(),
         required=True,
     )
-    # Meta class is not used by serializers.Serializer for field listing
-    # class Meta:
-    #     fields = ["year", "organization", "corporate"]
