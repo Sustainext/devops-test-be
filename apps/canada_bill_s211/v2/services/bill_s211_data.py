@@ -1,6 +1,5 @@
 from apps.canada_bill_s211.v2.models.SubmissionInformation import SubmissionInformation
 from apps.canada_bill_s211.v2.models.ReportingForEntities import ReportingForEntities
-from apps.canada_bill_s211.v2.models.BillS211Report import BillS211Report
 from sustainapp.models import Report
 from apps.canada_bill_s211.v2.serializers.SubmissionInformationSerializer import (
     SubmissionInformationSerializer,
@@ -8,7 +7,6 @@ from apps.canada_bill_s211.v2.serializers.SubmissionInformationSerializer import
 from apps.canada_bill_s211.v2.serializers.ReportingForEntitiesSerializer import (
     ReportingForEntitiesSerializer,
 )
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import ValidationError
 import logging
 
@@ -16,6 +14,10 @@ logger = logging.getLogger("django")
 
 
 class BillS211ScreenDataService:
+    """
+    Service file that gets data based on report and screen data.
+    """
+
     def __init__(self, report: Report, screen: int):
         self.report = report
         self.organization = self.report.organization
@@ -91,17 +93,10 @@ class BillS211ScreenDataService:
             12: [],  # Legend page
         }
 
-    def get_report_data(self):
-        try:
-            self.canada_report = BillS211Report.objects.get(
-                report=self.report, screen=self.screen
-            )
-            report_data = self.canada_report.data
-        except ObjectDoesNotExist:
-            report_data = None
-        return report_data
-
     def get_all_data(self):
+        """
+        Gets all the data from the database.
+        """
         submission_information = SubmissionInformation.objects.filter(
             organization=self.organization,
             corporate=self.corporate,
@@ -136,12 +131,15 @@ class BillS211ScreenDataService:
         return data
 
     def get_screen_wise_data(self):
+        """
+        Gets screen wise data.
+        """
         data = self.get_all_data()
         response = {}
-        for i in self.page_to_json_mapping[self.screen]:
-            try:
+        try:
+            for i in self.page_to_json_mapping[self.screen]:
                 response[i] = data.get(i, self.not_available)
-            except KeyError as e:
-                logger.error(e)
-                raise ValidationError("Page Number not defined in report.")
+        except KeyError as e:
+            logger.error(e)
+            raise ValidationError("Page Number not defined in report.")
         return response
