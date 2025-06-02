@@ -7,6 +7,7 @@ from apps.canada_bill_s211.v2.serializers.SubmissionInformationSerializer import
 from apps.canada_bill_s211.v2.serializers.ReportingForEntitiesSerializer import (
     ReportingForEntitiesSerializer,
 )
+from apps.canada_bill_s211.v2.models.BillS211Report import BillS211Report
 from rest_framework.exceptions import ValidationError
 import logging
 
@@ -142,4 +143,14 @@ class BillS211ScreenDataService:
         except KeyError as e:
             logger.error(e)
             raise ValidationError("Page Number not defined in report.")
+        # * Add report data.
+        data.update({"report_data": self.get_report_data()})
         return response
+
+    def get_report_data(self):
+        try:
+            return BillS211Report.objects.get(
+                report=self.report, screen=self.screen
+            ).data
+        except BillS211Report.DoesNotExist:
+            return {}
