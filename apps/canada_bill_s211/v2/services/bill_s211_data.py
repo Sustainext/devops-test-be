@@ -37,7 +37,12 @@ class BillS211ScreenDataService:
         )
         self.not_available = "NA"
         self.page_to_json_mapping = {
-            1: ["part_1.screen1_q2"],  # P1-Q2
+            1: [
+                "part_1.screen1_q2",
+                "part_1.screen1_to_q4",
+                "part_1.screen1_form_q4",
+                "part_1.screen1_q3",
+            ],  # P1-Q2
             2: [
                 "part_1.screen1_q2",  # P1-Q2 (company name)
                 "part_1.screen1_to_q4",  # P1-Q4 (calendar date input 1)
@@ -144,7 +149,7 @@ class BillS211ScreenDataService:
             logger.error(e)
             raise ValidationError("Page Number not defined in report.")
         # * Add report data.
-        data.update({"report_data": self.get_report_data()})
+        response.update({"report_data": self.get_report_data()})
         return response
 
     def get_report_data(self):
