@@ -517,6 +517,114 @@ def generate_disclosure_status(report: Report, topic_mapping: dict, heading: str
         }
 
 
+def generate_disclosure_status_reference(report: Report, topic_mapping: dict, heading: str, is_material=False, filter_filled=False):
+    """
+    Generate a structured list of disclosure items for a given report, filtered by filled status.
+
+    This function processes GRI indicators and their associated paths to determine which disclosures 
+    are fully completed (i.e., all required data points are filled). It filters out any disclosures 
+    that are incomplete and excludes omission information from the result.
+
+    Args:
+        report (Report): The report instance for which disclosures are being evaluated.
+        topic_mapping (dict): A mapping of disclosure metadata, including indicator codes, 
+                              subindicators (slugs), and content titles.
+        heading (str): The top-level heading label (e.g., "General Disclosures" or "Material Topics").
+        is_material (bool, optional): Flag indicating whether the data pertains to material topics 
+                                      (grouped under subheadings) or general disclosures. Default is False.
+
+    Returns:
+        list: A list of dictionaries, each containing:
+              - 'heading1': the disclosure section title
+              - 'items': a list of disclosure entries with fields:
+                  - 'key': indicator code (e.g., "2-1")
+                  - 'title': disclosure title
+                  - 'page_number': always None
+                  - 'gri_sector_no': always None
+                  - 'is_filled': True
+              
+              Only disclosures where all required subindicators are filled are included.
+              The 'omission' field is excluded from the output.
+    """
+    data_points = get_data_points_as_per_report(report=report)
+
+    if is_material:
+        grouped_result = {}
+
+        for _, data in topic_mapping.items():
+            indicator = data["indicator"]
+            subindicators = data["subindicators"]
+            content_index_name = data["content_index_name"]
+            heading1 = data.get("sub_header2", heading) 
+
+            slugs = [slug for _, slug in subindicators]
+
+           
+
+            is_filled = all(
+                data_points.filter(path__slug=slug).exclude(value="").exists()
+                for slug in slugs
+            )
+
+            if  not is_filled:
+                continue
+
+            item = {
+                "key": indicator,
+                "title": content_index_name,
+                "page_number": None,
+                "gri_sector_no": None,
+                "is_filled": is_filled,
+            }
+
+            grouped_result.setdefault(heading1, []).append(item)
+
+        # Format the final list
+        output = []
+        for heading1, items in grouped_result.items():
+            
+            output.append({
+                "heading1": heading1,
+                "items": items
+            })
+
+        return output
+
+    else:
+        # General disclosures – flat single heading
+        result = []
+
+        for _, data in topic_mapping.items():
+            indicator = data["indicator"]
+            subindicators = data["subindicators"]
+            content_index_name = data["content_index_name"]
+            slugs = [slug for _, slug in subindicators]
+
+            is_filled = all(
+                data_points.filter(path__slug=slug).exclude(value="").exists()
+                for slug in slugs
+            )
+
+           
+            if not is_filled:
+                continue
+
+            result.append({
+                "key": indicator,
+                "title": content_index_name,
+                "page_number": None,
+                "gri_sector_no": None,
+                "is_filled": is_filled,
+                
+            })
+    
+        return [{
+            "heading1": heading,
+            "items": result
+        }]
+
+
+
 def management_materiality_topics_common_code(dps, org_or_corp_name):
     necessary = {"GRI33cd": "", "GRI33e": ""}
     indexed_data = {}
