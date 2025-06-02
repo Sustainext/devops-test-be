@@ -352,8 +352,6 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # * Media Files Settings
 MEDIA_ROOT = BASE_DIR / "mediafiles"
-DEFAULT_FILE_STORAGE = "azureproject.azure_storage.AzureMediaStorage"
-STATICFILES_STORAGE = "azureproject.azure_storage.AzureStaticStorage"
 AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 STATIC_LOCATION = "static"
 MEDIA_LOCATION = "media"
@@ -365,14 +363,12 @@ MEDIA_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
 # Define STORAGES dictionary
 STORAGES = {
     "default": {
-        "BACKEND": DEFAULT_FILE_STORAGE,
-        "OPTIONS": {
-        },
+        "BACKEND": "azureproject.azure_storage.AzureMediaStorage",
+        "OPTIONS": {},
     },
     "staticfiles": {
-        "BACKEND": STATICFILES_STORAGE,
-        "OPTIONS": {
-        },
+        "BACKEND": "azureproject.azure_storage.AzureStaticStorage",
+        "OPTIONS": {},
     },
 }
 
@@ -396,7 +392,6 @@ if DEVELOPMENT_MODE:
         "silk.middleware.SilkyMiddleware",
     ] + MIDDLEWARE
     STATIC_URL = "/static/"
-    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage" # For other parts of Django
 
     STORAGES["staticfiles"]["BACKEND"] = "django.contrib.staticfiles.storage.StaticFilesStorage"
     STORAGES["staticfiles"]["OPTIONS"]["base_url"] = "/static/"
