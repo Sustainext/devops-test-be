@@ -217,9 +217,15 @@ class GenerateExcel(APIView):
             ans_7_1 = ""
         ws["B13"] = ans_7_1
 
+        """
+        isChecked : Canadian business presence
+        isCheckednew : Listed on Canada Stock exchange
+        isCheckeddone : Meets size-related thresholds
+        """
+
         categorizations = ii_data.get("categorizations_8", {})
-        ws["B15"] = "True" if categorizations.get("isChecked") else "False"
-        ws["B16"] = "True" if categorizations.get("isCheckednew") else "False"
+        ws["B15"] = "True" if categorizations.get("isCheckednew") else "False"
+        ws["B16"] = "True" if categorizations.get("isChecked") else "False"
         ws["B17"] = "True" if categorizations.get("businessInCanada") else "False"
         ws["B18"] = "True" if categorizations.get("doesBusinessInCanada") else "False"
         ws["B19"] = "True" if categorizations.get("hasAssetsInCanada") else "False"

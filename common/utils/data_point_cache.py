@@ -2,7 +2,7 @@ from django.core.cache import cache
 from datametric.models import DataPoint
 import logging
 
-logger = logging.getLogger('celery_logger')
+logger = logging.getLogger("celery_logger")
 
 
 def set_data_point_cache(data_point):
@@ -15,7 +15,7 @@ def set_data_point_cache(data_point):
         "index": data_point.index,
         "data_metric_name": data_point.data_metric.name,
         "value": data_point.value,
-        "location_name": data_point.locale.name if data_point.locale else None
+        "location_name": data_point.locale.name if data_point.locale else None,
     }
     logger.info(data_point_dictionary)
     cache.set(f"data_point_{data_point.id}", data_point_dictionary, timeout=None)
@@ -45,6 +45,7 @@ def delete_data_point_cache(data_point_id):
 def delete_multiple_data_point_cache(data_point_ids):
     """
     Deletes the cache for multiple data points.
+    Expects List of data point ids
     """
     for data_point_id in data_point_ids:
         logger.info(f"Deleting data point cache for id: {data_point_id}")

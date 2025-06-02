@@ -87,6 +87,7 @@ class ScreenNineService:
             61: "gri_collect_economic_governance_management_material_topic",
             62: "gri-governance-remuneration-2-19-b-policies",
             63: "gri-economic-public_legal_cases-205-3d",
+            64: "gri-governance-management_of_impact-2-12-c-effectiveness",
 
         }
 
@@ -118,6 +119,7 @@ class ScreenNineService:
         response_data["202_2d"] = self.get_202_2d()
         response_data["2_12_a"] = self.get_2_12_a()
         response_data["2_12_b"] = self.get_2_12_b()
+        response_data["2_12_c"] = self.get_2_12_c()
         response_data["2_17_a"] = self.get_2_17_a()
         response_data["2_14_a_and_b"] = self.get_2_14_a_and_b()
         response_data["2_13_a"] = self.get_2_13_a()
@@ -513,6 +515,19 @@ class ScreenNineService:
         except IndexError:
             data = None
         return data
+    
+    def get_2_12_c(self):
+        raw_response = (
+            self.raw_responses.filter(path__slug=self.slugs[64])
+            .order_by("-year")
+            .first()
+        )
+        try:
+            data = raw_response.data[0] if raw_response is not None else None
+        except IndexError:
+            data = None
+        return data
+    
 
     def get_2_12_b(self):
         raw_response = (

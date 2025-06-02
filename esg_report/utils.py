@@ -325,7 +325,7 @@ def create_validation_method_for_report_creation(report: Report):
             "Report Details",
             "Restatement",
             "Assurance",
-        ]
+        ]   
         subindicators = []
         for topic in general_material_topics:
             if topic in GENERAL_DISCLOSURES_AND_PATHS:
