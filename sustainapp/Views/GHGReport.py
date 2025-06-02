@@ -36,7 +36,7 @@ from esg_report.models.ReportAssessment import ReportAssessment
 from apps.canada_bill_s211.v2.utils.check_status_report import (
     is_canada_bill_s211_v2_completed,
 )
-from common.utils.value_types import format_decimal_places, safe_percentage
+from common.utils.value_types import format_decimal_places
 
 logger = logging.getLogger()
 
@@ -648,7 +648,6 @@ class GHGReportView(generics.CreateAPIView):
         esg_report_validation_string = create_validation_method_for_report_creation(
             report=new_report
         )
-
         if esg_report_validation_string is not None:
             return Response(
                 data={
@@ -660,7 +659,6 @@ class GHGReportView(generics.CreateAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         if new_report.report_type == "canada_bill_s211_v2":
             if not is_canada_bill_s211_v2_completed(
                 user=request.user,
@@ -689,37 +687,53 @@ class GHGReportView(generics.CreateAPIView):
         investment_corporates = serializer.validated_data.get("investment_corporates")
         assessment_id = request.data.get("assessment_id")
         organization_id = organization.id
+        if new_report.report_type != "canada_bill_s211_v2":
+            if corporate_id and organization_id:
+                # If multiple corporate names are provided, pass the list of names
+                analysis_data = get_analysis_data(
+                    self,
+                    corporate_id,
+                    start_date,
+                    end_date,
+                    report_id,
+                    client_id,
+                    report_by,
+                    report_type,
+                    investment_corporates,
+                )
 
-        if corporate_id and organization_id:
-            # If multiple corporate names are provided, pass the list of names
-            analysis_data = get_analysis_data(
-                self,
-                corporate_id,
-                start_date,
-                end_date,
-                report_id,
-                client_id,
-                report_by,
-                report_type,
-                investment_corporates,
-            )
-
-        elif organization_id and corporate_id == None:
-            corporate_ids = Corporateentity.objects.filter(
-                organization_id=organization_id
-            ).values_list("id", flat=True)
-            corporate_ids_list = list(corporate_ids)
-            # If a single corporate ID is provided, pass it to the function
-            analysis_data = get_analysis_data(
-                self,
-                corporate_ids_list,
-                start_date,
-                end_date,
-                report_id,
-                client_id,
-                report_by,
-                report_type,
-                investment_corporates,
+            elif organization_id and corporate_id == None:
+                corporate_ids = Corporateentity.objects.filter(
+                    organization_id=organization_id
+                ).values_list("id", flat=True)
+                corporate_ids_list = list(corporate_ids)
+                # If a single corporate ID is provided, pass it to the function
+                analysis_data = get_analysis_data(
+                    self,
+                    corporate_ids_list,
+                    start_date,
+                    end_date,
+                    report_id,
+                    client_id,
+                    report_by,
+                    report_type,
+                    investment_corporates,
+                )
+        else:
+            return Response(
+                {
+                    "id": new_report.id,
+                    "start_date": new_report.start_date,
+                    "end_date": new_report.end_date,
+                    "country_name": serializer.data.get("organization_country"),
+                    "organization_name": new_report.organization.name,
+                    "report_by": new_report.report_by,
+                    "message": "None",
+                    "report_type": new_report.report_type,
+                    "created_at": format_created_at(serializer.data.get("created_at")),
+                    "name": serializer.data.get("name"),
+                },
+                status=status.HTTP_200_OK,
             )
 
         if report_by == "Organization":

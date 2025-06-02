@@ -351,10 +351,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # * Media Files Settings
-MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
-DEFAULT_FILE_STORAGE = "azureproject.azure_storage.AzureMediaStorage"
-STATICFILES_STORAGE = "azureproject.azure_storage.AzureStaticStorage"
 AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 STATIC_LOCATION = "static"
 MEDIA_LOCATION = "media"
@@ -362,6 +359,18 @@ AZURE_ACCOUNT_NAME = os.getenv("AZURE_STORAGE_ACCOUNT_NAME", None)
 AZURE_CUSTOM_DOMAIN = f"{AZURE_ACCOUNT_NAME}.blob.core.windows.net"
 STATIC_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
 MEDIA_URL = f"https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
+
+# Define STORAGES dictionary
+STORAGES = {
+    "default": {
+        "BACKEND": "azureproject.azure_storage.AzureMediaStorage",
+        "OPTIONS": {},
+    },
+    "staticfiles": {
+        "BACKEND": "azureproject.azure_storage.AzureStaticStorage",
+        "OPTIONS": {},
+    },
+}
 
 
 AUTH_USER_MODEL = "authentication.CustomUser"
@@ -383,7 +392,9 @@ if DEVELOPMENT_MODE:
         "silk.middleware.SilkyMiddleware",
     ] + MIDDLEWARE
     STATIC_URL = "/static/"
-    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+    STORAGES["staticfiles"]["BACKEND"] = "django.contrib.staticfiles.storage.StaticFilesStorage"
+    STORAGES["staticfiles"]["OPTIONS"]["base_url"] = "/static/"
     CELERY_TASK_ALWAYS_EAGER = os.getenv("CELERY_TASK_ALWAYS_EAGER", False) == "True"
     CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", False) == "True"
 
