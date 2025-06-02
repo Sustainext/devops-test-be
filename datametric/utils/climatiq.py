@@ -15,6 +15,9 @@ from datetime import datetime
 from azurelogs.time_utils import get_current_time_ist
 from azurelogs.azure_log_uploader import AzureLogUploader
 import time
+from common.utils.data_point_cache import (
+    delete_data_point_cache,
+)
 
 
 uploader = AzureLogUploader()
@@ -24,6 +27,7 @@ climatiq_logger = logging.getLogger("climatiq_logger")
 
 calculate_emission_by_emissionfactor = os.getenv("CLIMATIQ_CALCULATION_BY_ID", "True")
 data_version = os.getenv("CLIMATIQ_DATA_VERSION", "^16")
+
 
 def process_dynamic_response(response):
     output = []
@@ -177,7 +181,6 @@ class Climatiq:
     def construct_emission_req(
         self, activity_id, id, unit_type, value1, unit1, value2=None, unit2=None
     ):
-
         emission_req = {
             "emission_factor": {},
             "parameters": {},
@@ -188,7 +191,7 @@ class Climatiq:
         else:
             emission_req["emission_factor"] = {
                 "activity_id": activity_id,
-                "data_version": data_version,
+                "data_version": f"^{data_version}",
             }
 
         unit_type = unit_type.lower()
@@ -653,9 +656,9 @@ class Climatiq:
         logger.info(
             f"{datametric.name}{datametric.path.slug} -is the newly created datametric"
         )
-        # Update or create the data point
+        # Update or create the data point add this because we dont want to delete calculated datapoint instead we need to update it with new data
         try:
-            datapoint = DataPoint.objects.create(
+            datapoint, _ = DataPoint.objects.update_or_create(
                 path=path_new,
                 raw_response=self.raw_response,
                 response_type=ARRAY_OF_OBJECTS,
@@ -667,8 +670,14 @@ class Climatiq:
                 user_id=self.user.id,
                 client_id=self.user.client.id,
                 metric_name=datametric.name,
-                json_holder=response_data,
+                defaults={
+                    "json_holder": response_data,
+                },
             )
+
+            delete_data_point_cache(
+                datapoint.id
+            )  # Deleting cache for this datapoint before its updated
             datapoint.save()
             self.create_emission_analysis(response_data=response_data)
         except Exception as e:
