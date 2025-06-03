@@ -98,7 +98,7 @@ class ContentIndexReferenceExcelAPI(APIView):
 
     def get(self, request, report_id):
         try:
-            report = Report.objects.get(id=report_id, user=request.user)
+            report = Report.objects.get(id=report_id,  user=self.request.user)
         except Report.DoesNotExist:
             return HttpResponse("Report not found", status=404)
 

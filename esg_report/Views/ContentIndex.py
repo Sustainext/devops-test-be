@@ -80,6 +80,18 @@ class GetContentIndex(APIView):
 class GetContentIndexReferenec(APIView):
     """
     Retrieve and return a filtered list of filled GRI disclosures for a given report.
+    This endpoint combines both General Disclosures and Material Topics, but only includes 
+    disclosure items where all required data points are filled. It also removes omission 
+    details from the response and flattens the nested structure into a single grouped list.
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+        report_id (int): The primary key of the report instance.
+        format (str, optional): Optional format specifier.
+    Returns:
+        Response: A JSON-formatted response containing a list with a single element (list), 
+                where each element is a grouped dictionary with:
+                - 'heading1': section title (e.g., "General Disclosures", or a GRI subheading)
+                - 'items': list of filled disclosures for that section
     Only includes disclosures where all required data points are filled.
     """
     permission_classes = [IsAuthenticated]
