@@ -1,23 +1,31 @@
 from rest_framework import serializers
 
 
-# Nested serializer for the 'omission' field
 class OmissionSerializer(serializers.Serializer):
-    req_omitted = serializers.CharField(allow_null=True)
-    reason = serializers.CharField(required=False,allow_null=True)
+    req_omitted = serializers.CharField(required=False, allow_null=True)
+    reason = serializers.CharField(required=False, allow_null=True)
     explanation = serializers.CharField(required=False, allow_null=True)
 
-
-# Main serializer for each dictionary in the list
-class DataItemSerializer(serializers.Serializer):
+class ContentIndexItemSerializer(serializers.Serializer):
     key = serializers.CharField()
-    title = serializers.CharField()
-    page_number = serializers.IntegerField(allow_null=True)
-    gri_sector_no = serializers.IntegerField(allow_null=True)
+    title = serializers.CharField(required=False, allow_null=True)
+    page_number = serializers.IntegerField(required=False, allow_null=True)
+    gri_sector_no = serializers.CharField(required=False, allow_null=True)
     is_filled = serializers.BooleanField()
-    omission = OmissionSerializer(many=True)
+    omission = serializers.ListField(child=OmissionSerializer(), required=False, allow_empty=True)
 
+class Heading3SectionSerializer(serializers.Serializer):
+    heading3 = serializers.CharField()
+    items = serializers.ListField(child=ContentIndexItemSerializer())
 
-# Serializer for the list itself
-class DataListSerializer(serializers.Serializer):
-    items = serializers.ListSerializer(child=DataItemSerializer())
+class Heading2SectionSerializer(serializers.Serializer):
+    heading2 = serializers.CharField()
+    sections = serializers.ListField(child=Heading3SectionSerializer())
+
+class DisclosureSectionSerializer(serializers.Serializer):
+    heading1 = serializers.CharField()
+    items = serializers.ListField(child=ContentIndexItemSerializer(), required=False)
+    sections = serializers.ListField(child=Heading2SectionSerializer(), required=False)
+
+class ContentIndexUpdateSerializer(serializers.Serializer):
+    sections = serializers.ListField(child=DisclosureSectionSerializer())
