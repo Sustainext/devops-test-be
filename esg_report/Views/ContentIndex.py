@@ -44,7 +44,7 @@ class GetContentIndex(APIView):
         try:
             report = Report.objects.get(id=report_id)
         except Report.DoesNotExist:
-            return Response({"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Report not found"}, status=404)
 
         serializer = ContentIndexUpdateSerializer(data={"sections": request.data})
         serializer.is_valid(raise_exception=True)
@@ -60,27 +60,32 @@ class GetContentIndex(APIView):
                         all_items.extend(heading3["items"])
 
         for item in all_items:
-            key = item["key"]
             omission_data = item.get("omission", [{}])[0]
             reason = omission_data.get("reason")
             explanation = omission_data.get("explanation")
 
-            # Determine is_filled
-            is_filled = bool(reason and explanation)
+            # Determine is_filled based on provided value
+            is_filled = item.get("is_filled", False)
 
-            # Save to DB (req_omitted not stored, only used for logic)
+            # Apply condition:
+            # If is_filled is True → req_omitted = None
+            # If is_filled is False → req_omitted = item["key"]
+            omission_data["req_omitted"] = None if is_filled else item["key"]
+
+            # Save to DB
             ContentIndexRequirementOmissionReason.objects.update_or_create(
                 report=report,
-                indicator=key,
+                indicator=item["key"],
                 defaults={
                     "reason": reason,
                     "explanation": explanation,
-                    "is_filled": is_filled,
+                    "is_filled": is_filled ,
                 },
             )
 
         return Response({"message": "Content Index updated successfully."}, status=status.HTTP_200_OK)
-
+   
+    
 
 class GetContentIndexReferenec(APIView):
     """
