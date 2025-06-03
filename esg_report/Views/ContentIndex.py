@@ -79,7 +79,7 @@ class GetContentIndex(APIView):
                 defaults={
                     "reason": reason,
                     "explanation": explanation,
-                    "is_filled": is_filled,
+                    "is_filled": is_filled ,
                 },
             )
 
