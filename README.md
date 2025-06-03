@@ -33,6 +33,9 @@ Need debugging?
 use
 celery -A project_name worker --loglevel=debug --pool=solo
 
+Always run below command after full setup of celery/django
+celery -A azureproject inspect active      (If you get duplicate node error then please check celery db used on env, it should be unique)
+
 ```
 
 ## Libraries required

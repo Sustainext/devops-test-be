@@ -47,27 +47,21 @@ class BillS211ScreenDataService:
                 "part_1_screen1_q2",  # P1-Q2 (company name)
                 "part_1_screen1_to_q4",  # P1-Q4 (calendar date input 1)
                 "part_1_screen1_form_q4",  # P1-Q4 (calendar date input 2)
+                "part_1_screen7_q2",  # P1-Q11 (headquarters location - screen7_q1 is Canada)
+                "part_1_screen5_q1",  # P1-Q9 (dropdown options - listed on stock exchange)
+                "part_1_screen6_q1",
             ],
             3: [
                 "part_1_screen1_q2",  # P1-Q2 (company name)
-                "part_1_screen7_q1",  # P1-Q11 (headquarters location - screen7_q1 is Canada)
-                "part_1_screen5_q1",  # P1-Q9 (dropdown options - listed on stock exchange)
-                "part_1_screen1_to_q4",  # P1-Q4 (calendar date)
-                "part_1_screen1_form_q4",  # P1-Q4 (calendar date)
                 "part_2_screen1_q2",  # P2-Q2 (business activities)
             ],
             4: [
                 "part_1_screen1_q2",  # P1-Q2 (company name)
-                "part_2_screen1_q2",  # P2-Q2 (business activities)
             ],
             5: [
                 "part_1_screen1_q2",  # P1-Q2 (company name)
                 "part_2_screen3_q1",  # P2-Q5 (policies question)
                 "part_2_screen3_q2",  # P2-Q5_1 (due diligence processes)
-                "part_2_screen4_q1",  # P2-Q6 (risks identification)
-                "part_2_screen4_q2",  # P2-Q6_1 (risk aspects)
-                "part_2_screen5_q1",  # P2-Q7 (sector/industry risks)
-                "part_2_screen5_q3",  # P2-Q8 (additional risk info)
             ],
             6: [
                 "part_1_screen1_q2",  # P1-Q2 (company name)
@@ -80,23 +74,31 @@ class BillS211ScreenDataService:
             7: [
                 "part_2_screen2_q1",  # P2-Q3 (steps taken)
                 "part_2_screen2_q2",  # P2-Q4 (additional steps info)
-                "part_2_screen6_q1",  # P2-Q9 (remediation measures)
-                "part_2_screen6_q2",  # P2-Q9_1 (remediation details)
             ],
             8: [
                 "part_1_screen1_q2",  # P1-Q2 (company name)
                 "part_2_screen2_q2",  # P2-Q4 (additional steps info)
+                "part_2_screen6_q1",  # P2-Q9 (remediation measures)
+                "part_2_screen6_q2",  # P2-Q9_1 (remediation details)
                 "part_2_screen7_q2",  # P2-Q11 (training provided)
                 "part_2_screen7_q3",  # P2-Q11_1 (training scope/mandatory)
             ],
             9: [
                 "part_1_screen1_q2",  # P1-Q2 (company name)
+            ],
+            10: [
+                "part_1_screen1_q2",  # P1-Q2 (company name)
+                "part_2_screen7_q2"  # P2-Q11 (training provided)
+                "part_2_screen7_q3",  # P2-Q11_1 (training scope/mandatory)
+            ],
+            11: [
+                "part_1_screen1_q2",  # P1-Q2 (company name)
                 "part_2_screen8_q1",  # P2-Q12 (effectiveness assessment)
                 "part_2_screen8_q2",  # P2-Q12_1 (effectiveness measures)
             ],
-            10: ["part_1_screen1_q2"],  # P1-Q2 (company name)
-            11: ["part_1_screen1_q2"],  # P1-Q2 (company name)
-            12: [],  # Legend page
+            12: [
+                "part_1_screen1_q2",  # P1-Q2 (company name)
+            ],  # Legend page
         }
 
     def get_all_data(self):

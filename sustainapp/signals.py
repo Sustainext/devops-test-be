@@ -9,7 +9,12 @@ from django.core.cache import cache
 from sustainapp.models import ClientTaskDashboard, MyGoalOrganization
 from django.contrib.auth.models import update_last_login
 import hashlib
-from authentication.models import LoginCounter, UserProfile, CustomUser
+from authentication.models import (
+    LoginCounter,
+    UserProfile,
+    CustomUser,
+    UserEmailVerification,
+)
 import logging
 from authentication.Views.VerifyEmail import generate_verification_token
 import os
@@ -17,6 +22,7 @@ from sustainapp.celery_tasks.send_mail import async_send_email
 from django.forms.models import model_to_dict
 from django.db.models.signals import m2m_changed
 from sustainapp.Cache_delete.Location_cache_delete import clear_user_location_cache
+from django.utils import timezone
 
 user_log = logging.getLogger("user_logger")
 celery_logger = logging.getLogger("celery_logger")
@@ -54,6 +60,9 @@ def send_welcome_email(sender, instance, created, **kwargs):
         # recipient_list = ['utsav.pipersaniya@sustainext.ai']    #<-- For testing
 
         async_send_email.delay(subject, template_name, recipient_list, context)
+        UserEmailVerification.objects.create(
+            user=instance, token=token, sent_at=timezone.now()
+        )
         celery_logger.info(f"Email sent to {instance.email} for account activation.")
         LoginCounter.objects.create(user=instance).save()
         if not user_profile_exists:
