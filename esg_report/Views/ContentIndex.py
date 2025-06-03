@@ -44,7 +44,7 @@ class GetContentIndex(APIView):
         try:
             report = Report.objects.get(id=report_id)
         except Report.DoesNotExist:
-            return Response({"error": "Report not found"}, status=404)
+            return Response({"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = ContentIndexUpdateSerializer(data={"sections": request.data})
         serializer.is_valid(raise_exception=True)
@@ -52,30 +52,35 @@ class GetContentIndex(APIView):
         all_items = []
 
         for section in serializer.validated_data["sections"]:
-            # General Disclosures: flat
             if section.get("items"):
                 all_items.extend(section["items"])
-            # Material Topics: nested
             if section.get("sections"):
                 for heading2 in section["sections"]:
                     for heading3 in heading2["sections"]:
                         all_items.extend(heading3["items"])
 
         for item in all_items:
+            key = item["key"]
             omission_data = item.get("omission", [{}])[0]
+            reason = omission_data.get("reason")
+            explanation = omission_data.get("explanation")
+
+            # Determine is_filled
+            is_filled = bool(reason and explanation)
+
+            # Save to DB (req_omitted not stored, only used for logic)
             ContentIndexRequirementOmissionReason.objects.update_or_create(
                 report=report,
-                indicator=item["key"],
+                indicator=key,
                 defaults={
-                    "reason": omission_data.get("reason"),
-                    "explanation": omission_data.get("explanation"),
-                    "is_filled": item.get("is_filled", False),
+                    "reason": reason,
+                    "explanation": explanation,
+                    "is_filled": is_filled,
                 },
             )
 
         return Response({"message": "Content Index updated successfully."}, status=status.HTTP_200_OK)
 
-  
 
 class GetContentIndexReferenec(APIView):
     """
