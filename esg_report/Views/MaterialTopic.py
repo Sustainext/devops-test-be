@@ -105,7 +105,6 @@ class SelectMaterialsTopic(APIView):
             # Helper method to collect data based on category
             def collect_responses(topic_list, category_key):
                 for topic in topic_list:
-                    # original_topic=topic
                     slug = material_topic_mapping.get(topic, "")
                     if slug:
                         data = get_management_materiality_topics(report, slug)

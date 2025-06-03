@@ -16,7 +16,7 @@ from esg_report.Views.ScreenThirteen import ScreenThirteenView
 from esg_report.Views.ScreenFourteen import ScreenFourteenAPIView
 from esg_report.Views.EsgReportPDF import ESGReportPDFView
 from esg_report.Views.ScreenFifteen import ScreenFifteenAPIView
-from esg_report.Views.ContentIndex import GetContentIndex, StatementOfUseAPI
+from esg_report.Views.ContentIndex import GetContentIndex, StatementOfUseAPI,GetContentIndexReferenec
 from esg_report.Views.ContentIndexExcelAPI import ContentIndexExcelAPI
 from esg_report.Views.FieldValidation import FieldValidationView
 from esg_report.Views.MaterialTopic import SelectMaterialsTopic
@@ -110,6 +110,12 @@ urlpatterns = [
         GetContentIndex.as_view(),
         name="content_index",
     ),
+    path(
+        "content_index_referenec/<int:report_id>/",
+        GetContentIndexReferenec.as_view(),
+        name="content_index_referenec",
+    ),
+    
     path(
         "statement_of_use/<int:report_id>/",
         StatementOfUseAPI.as_view(),
