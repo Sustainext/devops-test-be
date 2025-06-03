@@ -97,9 +97,6 @@ class ContentIndexReferenceExcelAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, report_id):
-        import pandas as pd
-        import io
-
         try:
             report = Report.objects.get(id=report_id, user=request.user)
         except Report.DoesNotExist:
