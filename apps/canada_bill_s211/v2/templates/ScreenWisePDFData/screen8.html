@@ -1,12 +1,12 @@
-<h2 id="income">8. Remediation of Loss of Income</h2>
+{% load custom_filters %}
+<h2 id="remediation">7. Remediation Measures</h2>
 
-<p>Where efforts to eliminate forced or child labour impact vulnerable individuals and families, ABC has implemented support initiatives such as:</p>
+<p>Measures taken by the entity to remediate any identified forced labour or child labour in its activities and supply chains include:</p>
 
 <ul>
-  <li>
-    <strong>Transition programs to alternative employment:</strong> ABC has developed transition programs to help affected workers move into alternative, sustainable employment, providing training and
-    job placement services to ensure a smooth and secure shift to new roles.
-  </li>
-  <li>Financial support programs for affected communities</li>
-  <li>Collaboration with NGOs for worker reintegration</li>
+  {% for data in screen_8.part_2_screen6_q2 %}
+  <li>{{ data}}</li>
+  {% endfor %}
 </ul>
+
+<p>{{screen_8.report_data.remediation_measures|remove_br|safe}}</p>

@@ -1,23 +1,16 @@
-<h2 id="remediation">7. Remediation Measures</h2>
+<h2 id="steps">6. Steps taken to prevent and reduce risks of forced labour and child labour</h2>
 
-<p>Measures taken by the entity to remediate any identified forced labour or child labour in its activities and supply chains include:</p>
+<p>
+  Steps taken by the entity in the previous financial year to prevent and reduce the risk that forced labour or child labour is used at any step of the production of goods in Canada or elsewhere by
+  the entity or of goods imported into Canada by the entity include:
+</p>
 
 <ul>
-  <li>Actions to support victims of forced labour or child labour and/or their families, such as workforce reintegration and psychosocial support</li>
-  <li>Compensation for victims of forced labour or child labour and/or their families</li>
-  <li>Actions to prevent forced labour or child labour and associated harms from reoccurring</li>
-  <li>Grievance mechanisms</li>
-  <li>Formal apologies</li>
+  {% for data in screen_7.part_2_screen2_q1 %}
+  <li>{{ data }}</li>
+  {% endfor %}
 </ul>
 
-<p>
-  ABC has taken several remediation measures to address forced and child labour in its supply chains. These include providing support and compensation to affected workers and their families, offering
-  workforce reintegration and psychosocial assistance.
-</p>
+<p>{{screen_7.part_2_screen2_q2}}</p>
 
-<p>
-  The company has strengthened its auditing processes and implemented a robust grievance mechanism for reporting violations. Additionally, ABC has taken steps to prevent future occurrences by
-  enhancing supplier training and enforcing a strict Supplier Code of Conduct.
-</p>
-
-<p>Formal apologies have been issued where necessary, demonstrating ABC’s commitment to ethical labour practices.</p>
+<p>{{screen_7.report_data.reduce_forced_child_labour}}</p>
