@@ -1,16 +1,11 @@
-<h2 id="approval">Approval and Attestation</h2>
+<h2 id="effectiveness">10. Assessing Effectiveness</h2>
 
-<p>I attest that the information in this report is true, accurate, and complete in all material respects for the purposes of the Act, for the reporting year stated above.</p>
+<p>To measure its effectiveness in preventing forced and child labour, ABC takes the following steps:</p>
 
-<p>I have the authority to bind ABC.</p>
+<ul>
+  {% for data in screen_11.part_2_screen8_q2 %}
+  <li>{{ data }}</li>
+  {% endfor %}
+</ul>
 
-<p><strong>Signature:</strong> [Upload Signature]</p>
-
-<p>This report was approved by ABC’s Board of Directors on <strong>May 15, 2025</strong>, and is signed by:</p>
-
-<p>
-  [Name]<br />
-  [Title/Designation]<br />
-  ABC<br />
-  [Date]
-</p>
+<p>{{screen_11.report_data.assessing_effectiveness|default:"No data available"}}</p>

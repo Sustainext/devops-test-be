@@ -1,33 +1,25 @@
-<h2 id="steps">6. Steps taken to prevent and reduce risks of forced labour and child labour</h2>
+<h2 id="risks">5. Risks of Forced Labour and Child Labour</h2>
 
-<p>
-  Steps taken by the entity in the previous financial year to prevent and reduce the risk that forced labour or child labour is used at any step of the production of goods in Canada or elsewhere by
-  the entity or of goods imported into Canada by the entity include:
-</p>
+<p>{{screen_6.report_data.risks_forced_child_labour|safe}}</p>
 
+<p>The entity has identified forced labour or child labour risks related to the following aspects of its activities and supply chains:</p>
 <ul>
-  <li>Conducting an internal assessment of risks of forced labour and/or child labour in the organization's activities and supply chains</li>
-  <li>Contracting an external assessment of risks of forced labour and/or child labour in the organization's activities and supply chains</li>
-  <li>Developing and implementing an action plan for addressing forced labour and/or child labour</li>
-  <li>Gathering information on worker recruitment and maintaining internal controls to ensure that all workers are recruited voluntarily</li>
+  {% for data in screen_6.part_2_screen4_q2 %}
+  <li>{{ data }}</li>
+  {% endfor %}
 </ul>
 
-<p>
-  In 2024, ABC made significant progress in reducing the risks of forced and child labour across its operations and supply chains. The company conducted both internal and external assessments,
-  identifying high-risk regions such as China, Vietnam, and Bangladesh, particularly in the electronics and garment sectors.
-</p>
-
-<p>
-  ABC partnered with Fair Labour Consulting Inc. for an independent audit, uncovering non-compliance in certain facilities. Immediate corrective actions were taken, including mandatory supplier
-  training and enhanced monitoring.
-</p>
-
-<p>
-  A comprehensive action plan was developed, including unannounced audits, an updated Supplier Code of Conduct, and a worker grievance mechanism. ABC also strengthened recruitment practices by
-  ensuring all workers are voluntarily recruited through accredited agencies with no fees involved.
-</p>
-
-<p>
-  These efforts aim to eliminate forced and child labour in ABC's supply chain, ensuring compliance with ethical labour standards, especially in higher-risk regions. ABC remains committed to
-  strengthening its due diligence and holding all stakeholders accountable.
-</p>
+<p>The entity has identified forced labour or child labour risks in its activities and supply chains related to the following sector(s) and industry(ies):</p>
+<ul>
+  {% for industry, subcategories in screen_6.part_2_screen5_q1.items %}
+  <li>
+    {{ industry }} {% if subcategories %}
+    <ul>
+      {% for sub in subcategories %}
+      <li>{{ sub }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
