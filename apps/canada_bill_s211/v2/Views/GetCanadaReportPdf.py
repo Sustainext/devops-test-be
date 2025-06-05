@@ -10,21 +10,17 @@ from django.core.exceptions import ValidationError
 
 class GetCanadaReportPdf(View):
     def get(self, request, *args, **kwargs):
-        # Get the report ID from the URL
         report_id = kwargs.get("report_id")
-        # Fetch the report data from the database
         report = get_object_or_404(Report, id=report_id)
         all_screen_data = {}
-        for screen_number in range(1, 13):  # Screens 1 to 12 (12 is legend page)
+        for screen_number in range(1, 13):
             try:
                 service = BillS211ScreenDataService(report, screen=screen_number)
                 screen_data = service.get_screen_wise_data()
                 all_screen_data[f"screen_{screen_number}"] = screen_data
             except ValidationError as e:
-                # Handle invalid screen gracefully
                 all_screen_data[f"screen_{screen_number}"] = {"error": str(e)}
 
-        # Render the HTML template with the report data
         context = {
             "report": report,
             "screen_1": all_screen_data.get("screen_1", {}),
