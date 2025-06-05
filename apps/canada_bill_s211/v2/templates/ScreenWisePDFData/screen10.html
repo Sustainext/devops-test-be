@@ -1,6 +1,6 @@
 <h2 id="training">9. Training on Forced Labour and Child Labour</h2>
 
-<p>{{screen_10.part_1_screen1_q2}} provides training on forced labour and/or child labour to its employees.</p>
+<p>{{screen_10.part_1_screen1_q2|default:"No data available"}} provides training on forced labour and/or child labour to its employees.</p>
 
 <p>Training details include:</p>
 
@@ -13,4 +13,4 @@
     {% endif %}
 </ul>
 <p> Additional Information provided: </p>
-<p> {{screen_10.report_data.training_forced_child_labour|safe}} </p>
+<p> {{screen_10.report_data.training_forced_child_labour|safe|default:"No data available"}} </p>

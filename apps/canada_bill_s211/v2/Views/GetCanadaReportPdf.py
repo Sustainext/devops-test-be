@@ -5,15 +5,16 @@ from django.views import View
 from sustainapp.models import Report
 from apps.canada_bill_s211.v2.services.bill_s211_data import BillS211ScreenDataService
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError
 
 
 class GetCanadaReportPdf(View):
     def get(self, request, *args, **kwargs):
         report_id = kwargs.get("report_id")
         report = get_object_or_404(Report, id=report_id)
+        screen_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         all_screen_data = {}
-        for screen_number in range(1, 13):
+        for screen_number in screen_list:
             try:
                 service = BillS211ScreenDataService(report, screen=screen_number)
                 screen_data = service.get_screen_wise_data()
