@@ -301,10 +301,7 @@ class ESGReportPDFView(View):
 
         if content_index_only:
             # Generate content index data only
-            # content_index_data = [
-            #     generate_disclosure_status(report=results["report"], topic_mapping=GENERAL_DISCLOSURES_AND_PATHS, heading="General Disclosures", is_material=False),
-            #     generate_disclosure_status(report=results["report"], topic_mapping=MATERIAL_TOPICS_AND_PATHS, heading="Material Topics", is_material=True),
-            # ]
+          
             if results["report"].report_type == "GRI Report: In accordance With":
                 content_index_data = {
                     "report_type": results["report"].report_type,
