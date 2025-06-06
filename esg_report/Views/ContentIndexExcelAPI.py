@@ -14,115 +14,138 @@ class ContentIndexExcelAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, report_id):
-        df = pd.read_excel(
-            io.BytesIO(
-                initial_bytes=default_storage.open(
-                    "esg_report/ContentIndex.xlsx"
-                ).read()
-            )
-        )
-
         try:
             report = Report.objects.get(id=report_id, user=self.request.user)
         except Report.DoesNotExist:
             return HttpResponse("Report not found", status=404)
 
-        # Statement in cell (0,2)
-        statement_of_user_data = (
-            f"{report.organization.name} has reported in accordance with the GRI Standards "
-            f"for the period {report.start_date.strftime('%Y-%m-%d')} to {report.end_date.strftime('%Y-%m-%d')}"
-        )
-        df.iloc[0, 2] = statement_of_user_data
-        df.iloc[2, 2] = "Not Applicable"
-
-        # Get full disclosure data
-        disclosure_blocks = [
-            generate_disclosure_status(report, GENERAL_DISCLOSURES_AND_PATHS, "General Disclosures", is_material=False),
-            generate_disclosure_status(report, MATERIAL_TOPICS_AND_PATHS, "Material Topics", is_material=True),
-        ]
-
-        disclosure_column_index = 1
-        location_column_index = 2
-        omission_requirement_index = 3
-        omission_reason_index = 4
-        omission_explanation_index = 5
-        last_row_value = df.iloc[-1, 0]
-
-        # Remove the last row to append cleanly
-        df = df.drop(df.index[-1])
-
-        # Flatten disclosure sections
-        flattened_disclosures = []
-        for block in disclosure_blocks:
-            if "items" in block:
-                flattened_disclosures.extend(block["items"])
-            elif "sections" in block:
-                for section in block["sections"]:
-                    for sub_section in section["sections"]:
-                        flattened_disclosures.extend(sub_section["items"])
-
-        # Append each disclosure as a new row in the DataFrame
-        for data in flattened_disclosures:
-            new_row = {
-                df.columns[disclosure_column_index]: data["title"],
-                df.columns[location_column_index]: data.get("page_number"),
-                df.columns[omission_requirement_index]: data["omission"][0].get("req_omitted"),
-                df.columns[omission_reason_index]: data["omission"][0].get("reason"),
-                df.columns[omission_explanation_index]: data["omission"][0].get("explanation"),
-            }
-            df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-
-        # Restore last row if needed
-        df.iloc[7, 0] = last_row_value
-
-        # Clean unnamed column headers
-        df.columns = ["" if "Unnamed" in str(col) else col for col in df.columns]
-
-        # Export Excel
-        disposition = "attachment" if "download" in request.GET else "inline"
-        response = HttpResponse(content_type="application/vnd.ms-excel")
-        response["Content-Disposition"] = (
-            f'{disposition}; filename="{report.name}-Content Index.xlsx"'
-        )
         buffer = io.BytesIO()
-
         with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
-            df.to_excel(writer, index=False, sheet_name="Sheet1")
+            workbook = writer.book
+            worksheet = workbook.add_worksheet("GRI content index")
+            writer.sheets["GRI content index"] = worksheet
 
+            # === Styles ===
+            title_fmt = workbook.add_format({'bold': True, 'font_size': 16, 'align': 'center'})
+            blue_bold_white = workbook.add_format({'bold': True, 'bg_color': '#4472C4', 'color': 'white'})
+            cell_fmt = workbook.add_format({'border': 1})
+            header_fmt = workbook.add_format({'bold': True, 'bg_color': '#4472C4', 'color': 'white', 'border': 1, 'align': 'center', 'valign': 'vcenter'})
+            section_fmt = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9', 'border': 1})
+            group_fmt = workbook.add_format({'bold': True, 'bg_color': '#BDD7EE', 'border': 1, 'valign': 'vcenter'})
+            omit_fmt = workbook.add_format({'border': 1, 'bg_color': '#FFD966'})
+            gray_info_fmt = workbook.add_format({'italic': True, 'font_color': '#7F7F7F', 'border': 1})
+            text_fmt = workbook.add_format({'border': 1})
+
+            # === Column Widths ===
+            worksheet.set_column("A:A", 28)
+            worksheet.set_column("B:B", 45)
+            worksheet.set_column("C:C", 20)
+            worksheet.set_column("D:D", 20)
+            worksheet.set_column("E:E", 20)
+            worksheet.set_column("F:F", 35)
+            worksheet.set_column("G:G", 25)
+
+            # === Top Title ===
+            worksheet.merge_range('A1:G1', "GRI content index", title_fmt)
+
+            # === Top Info ===
+            top_info = [
+                ("Statement of use", f"{report.organization.name} has reported in accordance with the GRI Standards for the period {report.start_date} to {report.end_date}"),
+                ("GRI 1 used", "GRI 1: Foundation 2021"),
+                ("Applicable GRI Sector Standard(s)", "Titles of the applicable GRI Sector Standards"),
+            ]
+            for i, (label, value) in enumerate(top_info, start=2):
+                worksheet.write(f"A{i}", label, blue_bold_white)
+                worksheet.write(f"B{i}", value, cell_fmt)
+
+            # === Table Headers with multi-row layout ===
+            worksheet.merge_range("A6:A7", "GRI STANDARD/\nOTHER SOURCE", header_fmt)
+            worksheet.merge_range("B6:B7", "DISCLOSURE", header_fmt)
+            worksheet.merge_range("C6:C7", "LOCATION", header_fmt)
+            worksheet.merge_range("D6:F6", "OMISSION", header_fmt)
+            worksheet.write("D7", "REQUIREMENT(S)\nOMITTED", header_fmt)
+            worksheet.write("E7", "REASON", header_fmt)
+            worksheet.write("F7", "EXPLANATION", header_fmt)
+            worksheet.merge_range("G6:G7", "GRI SECTOR\nSTANDARD REF. NO.", header_fmt)
+
+            row = 7
+
+            # === Get Disclosure Data ===
+            disclosure_blocks = [
+                generate_disclosure_status(report, GENERAL_DISCLOSURES_AND_PATHS, "General disclosures", is_material=False),
+                generate_disclosure_status(report, MATERIAL_TOPICS_AND_PATHS, "Material topics", is_material=True),
+            ]
+
+            for block in disclosure_blocks:
+                worksheet.merge_range(row, 0, row, 6, block["heading1"], section_fmt)
+                row += 1
+
+                if "items" in block:
+                    items = block["items"]
+                    if items:
+                        worksheet.merge_range(row, 0, row + len(items) - 1, 0, "GRI 2: General Disclosures 2021", group_fmt)
+                    for item in items:
+                        row = self._write_disclosure_row(worksheet, row, item, "", text_fmt, omit_fmt)
+
+                elif "sections" in block:
+                    for heading2 in block["sections"]:
+                        if heading2["heading2"] != block["heading1"]:
+                            worksheet.merge_range(row, 0, row, 6, heading2["heading2"], section_fmt)
+                            row += 1
+
+                        for heading3 in heading2["sections"]:
+                            items = heading3["items"]
+                            if not items:
+                                continue
+
+                            if len(items) == 1:
+                                worksheet.write(row, 0, heading3["heading3"], group_fmt)
+                                row = self._write_disclosure_row(worksheet, row, items[0], "", text_fmt, omit_fmt)
+                            else:
+                                start_row = row
+                                for item in items:
+                                    row = self._write_disclosure_row(worksheet, row, item, "", text_fmt, omit_fmt)
+                                worksheet.merge_range(start_row, 0, row - 1, 0, heading3["heading3"], group_fmt)
+
+                       
+            worksheet.merge_range(row, 1, row, 6, "End of Content Index", gray_info_fmt)
+
+        response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response["Content-Disposition"] = f'attachment; filename=\"{report.name}-Content Index.xlsx\"'
         response.write(buffer.getvalue())
         return response
-  
+
+    def _write_disclosure_row(self, sheet, row, item, group_title, text_fmt, omit_fmt):
+        omission = (item.get("omission") or [{}])[0]
+
+        if group_title:
+            sheet.write(row, 0, group_title, text_fmt)
+        sheet.write(row, 1, item.get("title", ""), text_fmt)
+        sheet.write(row, 2, item.get("page_number", ""), text_fmt)
+
+        for idx, key in enumerate(["req_omitted", "reason", "explanation"]):
+            val = omission.get(key)
+            fmt = omit_fmt if val else text_fmt
+            sheet.write(row, 3 + idx, val or "", fmt)
+
+        sheet.write(row, 6, item.get("gri_sector_no", ""), text_fmt)
+        return row + 1
+
 
 class ContentIndexReferenceExcelAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, report_id):
         try:
-            report = Report.objects.get(id=report_id,  user=self.request.user)
+            report = Report.objects.get(id=report_id, user=self.request.user)
         except Report.DoesNotExist:
             return HttpResponse("Report not found", status=404)
 
-        # Load Excel template
-        try:
-            df = pd.read_excel(
-                io.BytesIO(
-                    default_storage.open("esg_report/ContentIndex.xlsx").read()
-                )
-            )
-        except Exception as e:
-            return HttpResponse(f"Template error: {str(e)}", status=500)
+        # Define column headers
+        headers = ["GRI STANDARD", "DISCLOSURE", "LOCATION"]
+        df = pd.DataFrame(columns=headers)
 
-        # Safe header write
-        statement = (
-            f"{report.organization.name} has reported in reference to the GRI Standards "
-            f"for the period {report.start_date.strftime('%Y-%m-%d')} to {report.end_date.strftime('%Y-%m-%d')}"
-        )
-        if df.shape[0] > 0 and df.shape[1] > 2:
-            df.iloc[0, 2] = statement
-        if df.shape[0] > 2 and df.shape[1] > 2:
-            df.iloc[2, 2] = "Reference Only"
-
-        # Fetch only filled disclosures using same logic as API
+        # Generate filled disclosure sections
         disclosure_sections = [
             *generate_disclosure_status_reference(
                 report, GENERAL_DISCLOSURES_AND_PATHS, "General Disclosures", is_material=False, filter_filled=True
@@ -132,46 +155,82 @@ class ContentIndexReferenceExcelAPI(APIView):
             ),
         ]
 
-        # Drop last row before appending to prevent template footer issues
-        df = df.drop(df.index[-1]) if df.shape[0] > 0 else df
-
-        # Column mapping
-        disclosure_col = 1
-        location_col = 2
-        omission_req_col = 3
-        omission_reason_col = 4
-        omission_explanation_col = 5
-
+        # Append disclosure rows
         for section in disclosure_sections:
-            heading = section.get("heading1")
+            heading_display = section.get("heading1", "")  # General Disclosures, Material Topics, etc.
+            first = True
             for item in section.get("items", []):
-                title = item["title"]
-                location = item.get("page_number")
-                omission = item.get("omission", [{}])[0]  # Get omission details
-
-                new_row = {
-                    df.columns[disclosure_col]: f"{title}",
-                    df.columns[location_col]: location,
-                    df.columns[omission_req_col]: omission.get("req_omitted"),
-                    df.columns[omission_reason_col]: omission.get("reason"),
-                    df.columns[omission_explanation_col]: omission.get("explanation"),
+                disclosure_title = item.get("title")
+                location_value = item.get("page_number") or ""
+                row = {
+                    "GRI STANDARD": heading_display if first else "",
+                    "DISCLOSURE": disclosure_title,
+                    "LOCATION": location_value
                 }
-                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+                df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+                first = False
 
-        # Reapply footer
-        footer = ["End of Content Index"]
-        df = pd.concat([df, pd.DataFrame([[*footer]])], ignore_index=True)
-
-        # Clean column headers
-        df.columns = ["" if "Unnamed" in str(col) else col for col in df.columns]
-
-        # Generate Excel response
+        # Prepare Excel writer
         buffer = io.BytesIO()
         with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
-            df.to_excel(writer, index=False, sheet_name="Sheet1")
+            workbook = writer.book
+            worksheet_name = "Sheet1"
+            df.to_excel(writer, index=False, sheet_name=worksheet_name, startrow=5)
+
+            worksheet = writer.sheets[worksheet_name]
+
+            # Formats
+            bold_format = workbook.add_format({'bold': True})
+            title_format = workbook.add_format({'bold': True, 'font_size': 16, 'align': 'center'})
+            merge_format = workbook.add_format({'align': 'left', 'valign': 'vcenter'})
+            end_format = workbook.add_format({'bold': True, 'align': 'left'})
+            label_format = workbook.add_format({
+                'bold': True,
+                'bg_color': "#7FABC6",  # light grey background
+                'valign': 'vcenter'
+            })
+            # Write top rows with formatting
+            worksheet.merge_range("A1:C1", "GRI content index", title_format)
+            worksheet.write("A2", "Statement of use", label_format)
+            worksheet.merge_range("B2:C2", f"{report.organization.name} has reported the information cited in this GRI content index "
+                                           f"for the period {report.start_date.strftime('%Y-%m-%d')} to {report.end_date.strftime('%Y-%m-%d')} "
+                                           f"with reference to the GRI Standards.", merge_format)
+            worksheet.write("A3", "GRI 1 used", label_format)
+            worksheet.write("B3", "GRI 1: Foundation 2021")
+
+           
+            # Bold column headers manually
+            # Create header style with background color
+            header_format = workbook.add_format({
+                'bold': True,
+                'align': 'center',
+                'valign': 'vcenter',
+                'bg_color': "#9AC8ED",  # Light blue
+                'border': 1
+            })
+
+            # Apply to column headers (Row 6, index=5)
+            for col_num, value in enumerate(headers):
+                worksheet.write(5, col_num, value, header_format)
+
+
+            # Autofit columns
+            worksheet.set_column("A:A", 40)
+            worksheet.set_column("B:B", 65)
+            worksheet.set_column("C:C", 30)
+
+            # Write "End of Content Index" at the end in DISCLOSURE column
+            end_row = df.shape[0] + 6  # since we start at row=5
+            worksheet.write(f'B{end_row + 1}', "End of Content Index", end_format)
+
+        buffer.seek(0)
 
         disposition = "attachment" if "download" in request.GET else "inline"
-        response = HttpResponse(buffer.getvalue(), content_type="application/vnd.ms-excel")
-        response["Content-Disposition"] = f'{disposition}; filename="{report.name}-Content Index Reference.xlsx"'
-
+        response = HttpResponse(
+            buffer.read(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = f'{disposition}; filename="{report.name}-ContentIndex-Reference.xlsx"'
         return response
+
+
