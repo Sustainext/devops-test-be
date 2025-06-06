@@ -88,7 +88,7 @@ class BillS211ScreenDataService:
             ],
             10: [
                 "part_1_screen1_q2",  # P1-Q2 (company name)
-                "part_2_screen7_q2"  # P2-Q11 (training provided)
+                "part_2_screen7_q2",  # P2-Q11 (training provided)
                 "part_2_screen7_q3",  # P2-Q11_1 (training scope/mandatory)
             ],
             11: [

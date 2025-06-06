@@ -1,15 +1,7 @@
-<h2 id="supply">3. Supply Chains</h2>
-
-<p>ABC maintains a supply chain network that includes direct and indirect suppliers providing goods, services, and logistics support.</p>
-
-<p>The supply chain spans across 10 countries and includes:</p>
-<ul>
-  <li><strong>Suppliers:</strong> IT components, consumer electronics parts, finished appliances, sourced from China, Vietnam, and Mexico</li>
-  <li><strong>Service Providers:</strong> Logistics, warehousing, and IT services from Canada, the United States, and Singapore</li>
-  <li><strong>Third-Party Distributors/Retailers:</strong> Partnerships for sales and distribution with major retailers in North America, Europe, and Asia</li>
-</ul>
+<h2 id="business">2. Business Activities</h2>
 
 <p>
-  In 2024, ABC worked with approximately 250 suppliers in Canada and globally. It continues to enhance supply chain visibility and ensure compliance with sustainability, ethical sourcing, and human
-  rights commitments.
+  {{ screen_3.part_1_screen1_q2|default:"No data available" }} is engaged in {% for data in screen_3.part_2_screen1_q2|default:"No data available" %} {% if forloop.last and not forloop.first %} and {{
+  data }} {% elif not forloop.last %}{{ data }} {% else %} {{data }}, {% endif %} {% endfor %}
 </p>
+<p>{{ screen_3.report_data.business_activities|default:"No data available"|safe }}</p>
