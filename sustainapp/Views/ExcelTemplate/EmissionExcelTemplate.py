@@ -412,6 +412,7 @@ class ExcelTemplateDownloadView(APIView):
 
     def get(self, request, *args, **kwargs):
         wb = Workbook()
+        wb.properties.creator = "Sustainext"
         ws = wb.active
         ws.title = "Template"
 

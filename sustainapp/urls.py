@@ -98,6 +98,9 @@ from sustainapp.Views.ExcelTemplate.EmissionExcelTemplate import (
 from sustainapp.Views.ExcelTemplate.EmissionBulkUpload import (
     ExcelTemplateUploadView,
 )
+from sustainapp.Views.ExcelTemplate.EmissionBulkUploadConfirmView import (
+    ExcelTemplateConfirmView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -293,6 +296,11 @@ urlpatterns = [
     path(
         "bulk-upload-emission-data/",
         ExcelTemplateUploadView.as_view(),
+        name="bulk-upload-emission-data",
+    ),
+    path(
+        "bulk-upload-confirm/",
+        ExcelTemplateConfirmView.as_view(),
         name="bulk-upload-emission-data",
     ),
 ]
