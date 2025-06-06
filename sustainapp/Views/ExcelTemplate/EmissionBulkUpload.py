@@ -10,7 +10,8 @@ import base64
 from django.db import transaction
 from datametric.models import RawResponse, Path
 from sustainapp.models import Location
-from datametric.utils.signal_utilities import set_bulk_upload_flag
+import uuid
+from django.core.cache import cache
 
 
 class ExcelTemplateUploadView(APIView):
@@ -363,10 +364,10 @@ class ExcelTemplateUploadView(APIView):
                 self.category_to_subcategories[cat_name] = cat["SubCategory"]
             self.scope_to_categories[scope] = cat_names
 
-    def validate_data(self, worksheet):
+    def validate_data(self, worksheet, request):
         valid_rows = []
         invalid_rows = []
-        valid_locations = self.request.user.locs.all()
+        valid_locations = request.user.locs.all()
 
         for idx, row in enumerate(
             worksheet.iter_rows(
@@ -565,7 +566,8 @@ class ExcelTemplateUploadView(APIView):
             )
 
         try:
-            wb = openpyxl.load_workbook(excel_file, data_only=True)
+            file_content = excel_file.read()
+            wb = openpyxl.load_workbook(BytesIO(file_content), data_only=True)
         except Exception as e:
             return Response(
                 {"message": f"Invalid Excel file: {str(e)}"},
@@ -580,37 +582,42 @@ class ExcelTemplateUploadView(APIView):
 
         ws = wb["Template"]
         header_row = [cell.value for cell in ws[1]]
-
         if header_row != self.expected_headers:
             return Response(
                 {"message": "Template headers do not match expected format."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        valid_rows, invalid_rows = self.validate_data(ws)
-        set_bulk_upload_flag(True)
-        try:
-            self.save_valid_rows_to_raw_response(request, valid_rows)
-        finally:
-            set_bulk_upload_flag(False)
+        valid_rows, invalid_rows = self.validate_data(ws, request)
+        error_file = self._create_error_excel(invalid_rows) if invalid_rows else None
+        row_status = None
+        if len(invalid_rows) > 0:
+            row_status = 400
+        else:
+            row_status = 200
 
-        if invalid_rows:
-            error_file = self._create_error_excel(invalid_rows)
-            return Response(
-                {
-                    "message": "Some rows are invalid.",
-                    "invalid_count": len(invalid_rows),
-                    "valid_count": len(valid_rows),
-                    "errors": invalid_rows[:5],  # Preview
-                    "error_file_base64": error_file,
-                },
-                status=status.HTTP_200_OK,
-            )
+        # Store file and validation results in Redis
+        temp_id = str(uuid.uuid4())
+        cache_key = f"excel_upload:{temp_id}"
+        cache.set(
+            cache_key,
+            {
+                "file_content": file_content,
+                "user_id": request.user.id,
+            },
+            timeout=3600,
+        )  # expires in 1 hour
 
         return Response(
             {
-                "message": "File uploaded and validated successfully.",
+                "message": "Validation complete. Use confirm API to proceed.",
                 "valid_count": len(valid_rows),
+                "invalid_count": len(invalid_rows),
+                "valid_preview": valid_rows[:5],
+                "invalid_preview": invalid_rows[:5],
+                "temp_id": temp_id,
+                "error_file_base64": error_file,
+                "row_status": row_status,
             },
             status=status.HTTP_200_OK,
         )

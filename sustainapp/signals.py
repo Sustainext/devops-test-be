@@ -63,7 +63,7 @@ def send_welcome_email(sender, instance, created, **kwargs):
         UserEmailVerification.objects.create(
             user=instance, token=token, sent_at=timezone.now()
         )
-        celery_logger.info(f"Email sent to {instance.email} for account activation.")
+        celery_logger.info(f"Email sent to {instance.email} for welcome email.")
         LoginCounter.objects.create(user=instance).save()
         if not user_profile_exists:
             UserProfile.objects.create(user=instance).save()
