@@ -301,10 +301,52 @@ class ESGReportPDFView(View):
 
         if content_index_only:
             # Generate content index data only
-            content_index_data = [
-                generate_disclosure_status(report=results["report"], topic_mapping=GENERAL_DISCLOSURES_AND_PATHS, heading="General Disclosures", is_material=False),
-                generate_disclosure_status(report=results["report"], topic_mapping=MATERIAL_TOPICS_AND_PATHS, heading="Material Topics", is_material=True),
-            ]
+            # content_index_data = [
+            #     generate_disclosure_status(report=results["report"], topic_mapping=GENERAL_DISCLOSURES_AND_PATHS, heading="General Disclosures", is_material=False),
+            #     generate_disclosure_status(report=results["report"], topic_mapping=MATERIAL_TOPICS_AND_PATHS, heading="Material Topics", is_material=True),
+            # ]
+            if results["report"].report_type == "GRI Report: In accordance With":
+                content_index_data = {
+                    "report_type": results["report"].report_type,
+                    "sections":[
+                                    generate_disclosure_status(
+                                        report=results["report"],
+                                        topic_mapping=GENERAL_DISCLOSURES_AND_PATHS,
+                                        heading="General Disclosures",
+                                        is_material=False,
+                                    ),
+                                    generate_disclosure_status(
+                                        report=results["report"],
+                                        topic_mapping=MATERIAL_TOPICS_AND_PATHS,
+                                        heading="Material Topics",
+                                        is_material=True,
+                                    ),
+                                ]
+                            }
+                
+            elif results["report"].report_type == "GRI Report: With Reference to":
+                content_index_data = {
+                    "report_type": results["report"].report_type,
+                    "sections":[
+                                generate_disclosure_status_reference(
+                                    results["report"],
+                                    GENERAL_DISCLOSURES_AND_PATHS,
+                                    "General Disclosures",
+                                    is_material=False,
+                                    filter_filled=True,
+                                ),
+                                generate_disclosure_status_reference(
+                                    results["report"],
+                                    MATERIAL_TOPICS_AND_PATHS,
+                                    "Material Topics",
+                                    is_material=True,
+                                    filter_filled=True,
+                                ),
+                            ]
+                }
+                
+            else:
+                content_index_data = []
            
             # statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
 
