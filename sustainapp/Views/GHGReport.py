@@ -300,10 +300,7 @@ def process_emission_by_scope(data_points, ownership_ratio=None):
 
         scope_data = emission_by_scope[scope_name]
         scope_data["scope_name"] = scope_name
-        scope_data["total_co2e"] += float(format_decimal_places(co2e_sum))
-        # (
-        #     round(co2e_sum, 2) if co2e_sum >= 1 else round(co2e_sum, 3)
-        # )
+        scope_data["total_co2e"] += co2e_sum
         scope_data["co2e_unit"] = co2e_unit
         scope_data["unit1"] = unit1
         scope_data["unit2"] = unit2
@@ -311,6 +308,9 @@ def process_emission_by_scope(data_points, ownership_ratio=None):
         scope_data["activity_data"]["activity_unit"] = activity_unit
         scope_data["activity_data"]["activity_value"] += activity_value
         scope_data["entries"].extend(data.json_holder)
+
+    for data in emission_by_scope.values():
+        data["total_co2e"] = float(format_decimal_places(data["total_co2e"]))
 
     return emission_by_scope, total_co2e
 
@@ -577,7 +577,6 @@ def process_corporate_data(
             emission_by_source[source]["contribution"] = float(
                 format_decimal_places(contribution_source)
             )
-            print("EHEHEH!!")
 
         analysis_data_by_corporate[corporate_name] = {
             "corporate_type": corporate_type,
