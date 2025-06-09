@@ -444,7 +444,15 @@ class UserExtendedAdmin(ClientFilterAdminMixin, UserAdmin):
 
 
 class ReportAdmin(admin.ModelAdmin):
-    pass
+    list_display = [
+        "id",
+        "name",
+        "report_by",
+        "report_type",
+        "organization",
+        "corporate",
+    ]
+    list_filter = ("report_type", "organization", "corporate")
 
 
 class AnalysisReportDataAdmin(admin.ModelAdmin):
