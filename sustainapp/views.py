@@ -247,7 +247,7 @@ def UserOrgDetails(request):
         )
     try:
         user_detail = list(
-            CustomUser.objects.filter(client_id=request.client.id, username=username)
+            CustomUser.objects.filter(client_id=request.user.client.id, username=username)
             .annotate(client_name=F("client__name"))
             .values(
                 "id",
@@ -283,7 +283,7 @@ def UserOrgDetails(request):
             raise ValidationError("User is not mapped with any organisation")
         # TODO: Show all details of all the organisations mapped to the user
         org_data = list(
-            Organization.objects.filter(client_id=request.client)
+            Organization.objects.filter(client=request.user.client)
             .filter(id__in=user_organisations)
             .values(
                 "id",

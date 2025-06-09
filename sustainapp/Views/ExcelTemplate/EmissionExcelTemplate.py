@@ -3,13 +3,13 @@
 from django.http import HttpResponse
 from openpyxl import Workbook
 from openpyxl.worksheet.datavalidation import DataValidation
-from openpyxl.styles import NamedStyle
 from openpyxl.utils import quote_sheetname, get_column_letter
 from openpyxl.workbook.defined_name import DefinedName
 import io
 import re
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from openpyxl.styles import PatternFill, Font, Border, Side
 
 
 class ExcelTemplateDownloadView(APIView):
@@ -304,6 +304,20 @@ class ExcelTemplateDownloadView(APIView):
         ]
 
         self.units2 = ["ms", "s", "m", "h", "day", "year", "m", "km", "ft", "mi", "nmi"]
+        self.months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ]
 
         # Build flattened mappings
         self.scope_to_categories = {}
@@ -316,6 +330,68 @@ class ExcelTemplateDownloadView(APIView):
                 cat_names.append(cat_name)
                 self.category_to_subcategories[cat_name] = cat["SubCategory"]
             self.scope_to_categories[scope] = cat_names
+
+    def header_body_styling(self, ws, header_row=1, body_start_row=2, body_end_row=100):
+        """
+        Style the Excel sheet with:
+        - Frozen header row
+        - Auto filter
+        - Blue header with white text
+        - Light green body
+        - Borders to simulate gridlines
+        """
+        # Freeze header
+        ws.freeze_panes = f"A{body_start_row}"
+
+        # Auto filter
+        max_col_letter = get_column_letter(ws.max_column)
+        ws.auto_filter.ref = f"A{header_row}:{max_col_letter}{header_row}"
+
+        # Styles
+        header_fill = PatternFill(
+            start_color="4F81BD", end_color="4F81BD", fill_type="solid"
+        )
+        header_font = Font(color="FFFFFF", bold=True)
+        body_fill = PatternFill(
+            start_color="DFF0D8", end_color="DFF0D8", fill_type="solid"
+        )
+        thin_border = Border(
+            left=Side(style="thin", color="000000"),
+            right=Side(style="thin", color="000000"),
+            top=Side(style="thin", color="000000"),
+            bottom=Side(style="thin", color="000000"),
+        )
+
+        # Apply header styles
+        for col in range(1, ws.max_column + 1):
+            cell = ws.cell(row=header_row, column=col)
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.border = thin_border
+
+        # Apply body styles
+        for row in range(body_start_row, body_end_row + 1):
+            for col in range(1, ws.max_column + 1):
+                cell = ws.cell(row=row, column=col)
+                cell.fill = body_fill
+                cell.border = thin_border
+
+    def auto_adjust_column_widths(self, ws, sample_rows=10):
+        """
+        Auto-adjust column widths based on max length of content
+        in headers and first few data rows.
+        """
+        for col in ws.columns:
+            max_length = 0
+            column = col[0].column_letter  # Get column letter (e.g. 'A', 'B', etc.)
+            for cell in col[:sample_rows]:  # Check only the first few rows
+                try:
+                    if cell.value:
+                        max_length = max(max_length, len(str(cell.value)))
+                except Exception:
+                    pass
+            adjusted_width = max_length + 2  # Add padding
+            ws.column_dimensions[column].width = adjusted_width
 
     def sanitize(self, name):
         # Replace non-alphanumeric characters with underscore
@@ -336,6 +412,7 @@ class ExcelTemplateDownloadView(APIView):
 
     def get(self, request, *args, **kwargs):
         wb = Workbook()
+        wb.properties.creator = "Sustainext"
         ws = wb.active
         ws.title = "Template"
 
@@ -348,15 +425,14 @@ class ExcelTemplateDownloadView(APIView):
             "Category",
             "Subcategory",
             "Activity",
-            "Quantity",
-            "Unit",
+            "Quantity 1",
+            "Unit 1",
             "Quantity 2",
             "Unit 2",
-            "Username",
-            "Due Date",
         ]
         ws.append(headers)
-
+        self.header_body_styling(ws)
+        self.auto_adjust_column_widths(ws)
         dv_numeric = DataValidation(
             type="decimal",
             operator="greaterThanOrEqual",
@@ -479,45 +555,31 @@ class ExcelTemplateDownloadView(APIView):
             dv_unit2.add(f"K{row}")
 
         # Static dropdowns for Month and Year
-        months = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-        ]
+
         years = [str(y) for y in range(2018, 2031)]
 
-        self.add_dropdown(ws, "B", months)
+        self.add_dropdown(ws, "B", self.months)
         self.add_dropdown(ws, "C", years)
         self.add_dropdown(ws, "D", list(self.scope_to_categories.keys()))
 
-        date_style = NamedStyle(name="date_style", number_format="DD/MM/YYYY")
-
         for row in range(2, 101):
             # Category depends on Scope
-            formula_cat = f'=INDIRECT(SUBSTITUTE(D{row}, " ", "_"))'
+            formula_cat = (
+                f'=INDIRECT(SUBSTITUTE(SUBSTITUTE(D{row}, " ", "_"), "&", "_"))'
+            )
             dv_cat = DataValidation(type="list", formula1=formula_cat, allow_blank=True)
             ws.add_data_validation(dv_cat)
             dv_cat.add(f"E{row}")
 
             # Subcategory depends on Category
-            formula_subcat = f'=INDIRECT(SUBSTITUTE(E{row}, " ", "_"))'
+            formula_subcat = (
+                f'=INDIRECT(SUBSTITUTE(SUBSTITUTE(E{row}, " ", "_"), "&", "_"))'
+            )
             dv_subcat = DataValidation(
                 type="list", formula1=formula_subcat, allow_blank=True
             )
             ws.add_data_validation(dv_subcat)
             dv_subcat.add(f"F{row}")
-
-            # Due Date formatting
-            ws.cell(row=row, column=13).style = date_style
 
             # Field validation for quantity and quantity2
             ws.cell(row=row, column=8).number_format = "0.0000"

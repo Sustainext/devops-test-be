@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from authentication.models import (
     UserProfile,
     LoginCounter,
@@ -7,11 +7,20 @@ from authentication.models import (
     CustomUser,
     Client,
     UserSafeLock,
+    UserEmailVerification,
 )
 from authentication.AdminSite.ClientAdmin import client_admin_site
 from django.contrib.auth.admin import UserAdmin
 from authentication.AdminForm.CustomUserCreationForm import CustomUserCreationForm
 from authentication.forms import CustomAdminPasswordChangeForm
+
+from django.urls import path
+from django.utils.html import format_html
+from django.shortcuts import redirect
+from django.utils import timezone
+from authentication.Views.VerifyEmail import generate_verification_token
+from sustainapp.celery_tasks.send_mail import async_send_email
+import os
 
 
 # Register your models here.
@@ -162,6 +171,74 @@ class UserSafeLockAdmin(admin.ModelAdmin):
         "last_failed_at",
         "locked_at",
     ]
+
+
+@admin.register(UserEmailVerification)
+class UserEmailVerificationAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "status",
+        "sent_at",
+        "resend_count",
+        "last_resend_at",
+        "resend_button",
+    )
+
+    def resend_button(self, obj):
+        if obj.status != "verified" and obj.is_token_expired():
+            return format_html(
+                '<a class="button" href="{}">Resend</a>', f"resend/{obj.pk}/"
+            )
+        return "-"
+
+    resend_button.short_description = "Resend Email"
+    resend_button.allow_tags = True
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "resend/<int:pk>/",
+                self.admin_site.admin_view(self.resend_email_view),
+                name="resend-verification-email",
+            ),
+        ]
+        return custom_urls + urls
+
+    def resend_email_view(self, request, pk):
+        record = self.get_object(request, pk)
+        user = record.user
+        new_token = generate_verification_token(user)
+        verification_url = (
+            f"{os.environ.get('BACKEND_URL')}api/auth/verify_email/{new_token}/"
+        )
+
+        subject = "Verify your Sustainext account"
+        template_name = "sustainapp/resend_verification_email.html"
+        context = {
+            "username": user.username,
+            "verification_url": verification_url,
+        }
+
+        try:
+            async_send_email.delay(subject, template_name, [user.email], context)
+            record.token = new_token
+            record.sent_at = timezone.now()
+            record.last_resend_at = timezone.now()
+            record.resend_count += 1
+            record.status = "pending"
+            record.last_error = None
+            record.save()
+            self.message_user(request, f"Verification email resent to {user.email}")
+        except Exception as e:
+            record.last_error = str(e)
+            record.status = "failed"
+            record.save()
+            self.message_user(
+                request, f"Failed to resend email: {str(e)}", level=messages.ERROR
+            )
+
+        return redirect("/admin/authentication/useremailverification/")
 
 
 admin.site.register(UserProfile, UserProfileAdmin)

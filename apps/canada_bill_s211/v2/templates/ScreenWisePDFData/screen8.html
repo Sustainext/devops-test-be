@@ -1,0 +1,12 @@
+{% load custom_filters_canada %}
+<h2 id="remediation">7. Remediation Measures</h2>
+
+<p>Measures taken by the entity to remediate any identified forced labour or child labour in its activities and supply chains include:</p>
+
+<ul>
+  {% for data in screen_8.part_2_screen6_q2 %}
+  <li>{{ data}}</li>
+  {% endfor %}
+</ul>
+
+<p>{{screen_8.report_data.remediation_measures|remove_br|safe|default:"No data available"}}</p>

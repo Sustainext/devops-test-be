@@ -1,0 +1,25 @@
+<h2 id="risks">5. Risks of Forced Labour and Child Labour</h2>
+
+<p>{{screen_6.report_data.risks_forced_child_labour|safe}}</p>
+
+<p>The entity has identified forced labour or child labour risks related to the following aspects of its activities and supply chains:</p>
+<ul>
+  {% for data in screen_6.part_2_screen4_q2 %}
+  <li>{{ data }}</li>
+  {% endfor %}
+</ul>
+
+<p>The entity has identified forced labour or child labour risks in its activities and supply chains related to the following sector(s) and industry(ies):</p>
+<ul>
+  {% for industry, subcategories in screen_6.part_2_screen5_q1.items %}
+  <li>
+    {{ industry }} {% if subcategories %}
+    <ul>
+      {% for sub in subcategories %}
+      <li>{{ sub }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>

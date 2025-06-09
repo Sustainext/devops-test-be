@@ -1,0 +1,16 @@
+<h2 id="steps">6. Steps taken to prevent and reduce risks of forced labour and child labour</h2>
+
+<p>
+  Steps taken by the entity in the previous financial year to prevent and reduce the risk that forced labour or child labour is used at any step of the production of goods in Canada or elsewhere by
+  the entity or of goods imported into Canada by the entity include:
+</p>
+
+<ul>
+  {% for data in screen_7.part_2_screen2_q1 %}
+  <li>{{ data }}</li>
+  {% endfor %}
+</ul>
+
+<p>{{screen_7.part_2_screen2_q2|default:"No data available"}}</p>
+
+<p>{{screen_7.report_data.reduce_forced_child_labour|default:"No data available"}}</p>

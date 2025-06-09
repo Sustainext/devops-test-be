@@ -6,7 +6,7 @@ from django.http import HttpResponse # Added import
 from apps.canada_bill_s211.v2.serializers.CheckYearOrganisationCorporateSerializer import CheckYearOrganizationCorporateSerializer
 from apps.canada_bill_s211.v2.utils.create_excel import CanadaBillReport
 
-class GetReport(APIView):
+class GetExcelReport(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

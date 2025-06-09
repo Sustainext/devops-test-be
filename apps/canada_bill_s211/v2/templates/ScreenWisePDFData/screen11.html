@@ -1,0 +1,11 @@
+<h2 id="effectiveness">10. Assessing Effectiveness</h2>
+
+<p>To measure its effectiveness in preventing forced and child labour, ABC takes the following steps:</p>
+
+<ul>
+  {% for data in screen_11.part_2_screen8_q2 %}
+  <li>{{ data }}</li>
+  {% endfor %}
+</ul>
+
+<p>{{screen_11.report_data.assessing_effectiveness|default:"No data available"}}</p>

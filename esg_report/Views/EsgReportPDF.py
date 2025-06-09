@@ -23,10 +23,10 @@ from esg_report.services.screen_fifteen_service import ScreenFifteenService
 # from esg_report.services.content_index_service import StatementOfUseService
 from django.forms import model_to_dict
 from threading import Thread
-from esg_report.utils import generate_disclosure_status
-import logging
+from common.enums.GeneralTopicDisclosuresAndPaths import GENERAL_DISCLOSURES_AND_PATHS
+from common.enums.ManagementMatearilTopicsAndPaths import MATERIAL_TOPICS_AND_PATHS
+from esg_report.utils import generate_disclosure_status,generate_disclosure_status_reference
 
-logger = logging.getLogger("user_logger")
 
 
 def convert_keys(obj):
@@ -150,7 +150,6 @@ class ESGReportPDFView(View):
             about_the_company = service.get_screen_two_data(pk, request)
 
             results["about_the_company"] = convert_keys(about_the_company)
-            logger.info(results["about_the_company"])
 
         def get_mission_vision_values():
             mission_vision_values = (
@@ -302,7 +301,50 @@ class ESGReportPDFView(View):
 
         if content_index_only:
             # Generate content index data only
-            content_index_data = generate_disclosure_status(report=results["report"])
+          
+            if results["report"].report_type == "GRI Report: In accordance With":
+                content_index_data = {
+                    "report_type": results["report"].report_type,
+                    "sections":[
+                                    generate_disclosure_status(
+                                        report=results["report"],
+                                        topic_mapping=GENERAL_DISCLOSURES_AND_PATHS,
+                                        heading="General Disclosures",
+                                        is_material=False,
+                                    ),
+                                    generate_disclosure_status(
+                                        report=results["report"],
+                                        topic_mapping=MATERIAL_TOPICS_AND_PATHS,
+                                        heading="Material Topics",
+                                        is_material=True,
+                                    ),
+                                ]
+                            }
+                
+            elif results["report"].report_type == "GRI Report: With Reference to":
+                content_index_data = {
+                    "report_type": results["report"].report_type,
+                    "sections":[
+                                generate_disclosure_status_reference(
+                                    results["report"],
+                                    GENERAL_DISCLOSURES_AND_PATHS,
+                                    "General Disclosures",
+                                    is_material=False,
+                                    filter_filled=True,
+                                ),
+                                generate_disclosure_status_reference(
+                                    results["report"],
+                                    MATERIAL_TOPICS_AND_PATHS,
+                                    "Material Topics",
+                                    is_material=True,
+                                    filter_filled=True,
+                                ),
+                            ]
+                }
+                
+            else:
+                content_index_data = []
+           
             # statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
 
             # Prepare context for content index only
@@ -343,8 +385,51 @@ class ESGReportPDFView(View):
                 return HttpResponse(
                     "Unexpected error occurred while generating the PDF.", status=500
                 )
+            
+        if results["report"].report_type == "GRI Report: In accordance With":
+            content_index_data = {
+                "report_type": results["report"].report_type,
+                "sections":[
+                                generate_disclosure_status(
+                                    report=results["report"],
+                                    topic_mapping=GENERAL_DISCLOSURES_AND_PATHS,
+                                    heading="General Disclosures",
+                                    is_material=False,
+                                ),
+                                generate_disclosure_status(
+                                    report=results["report"],
+                                    topic_mapping=MATERIAL_TOPICS_AND_PATHS,
+                                    heading="Material Topics",
+                                    is_material=True,
+                                ),
+                            ]
+                        }
+            
+        elif results["report"].report_type == "GRI Report: With Reference to":
+            content_index_data = {
+                 "report_type": results["report"].report_type,
+                  "sections":[
+                            generate_disclosure_status_reference(
+                                results["report"],
+                                GENERAL_DISCLOSURES_AND_PATHS,
+                                "General Disclosures",
+                                is_material=False,
+                                filter_filled=True,
+                            ),
+                            generate_disclosure_status_reference(
+                                results["report"],
+                                MATERIAL_TOPICS_AND_PATHS,
+                                "Material Topics",
+                                is_material=True,
+                                filter_filled=True,
+                            ),
+                        ]
+            }
+            
+        else:
+            content_index_data = []
+        
 
-        content_index_data = generate_disclosure_status(report=results["report"])
         # statement_of_use = StatementOfUseService.get_statement_of_use(report_id=pk)
         materiality_table_data = self.preprocess_esg_data(
             results["materiality"]["8_1_1"]
@@ -415,7 +500,6 @@ class ESGReportPDFView(View):
             "content_index_data": content_index_data,
             "pk": pk,  # Pass the report ID to the template
         }
-        logger.info(context)
         template_path = "esg_report.html"
         try:
             # Get the template and render HTML

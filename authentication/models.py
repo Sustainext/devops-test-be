@@ -11,7 +11,7 @@ from uuid import uuid4
 from django.utils.text import slugify
 from django.db import connection
 from django.conf import settings
-
+from django.utils import timezone
 # Create your models here.
 
 
@@ -120,7 +120,7 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(_("phone number"), max_length=20, blank=True)
     job_title = models.CharField(_("job title"), max_length=100, blank=True)
     department = models.CharField(_("department"), max_length=100, blank=True)
-    job_description = models.TextField(_("job description"), blank=True,null=True)
+    job_description = models.TextField(_("job description"), blank=True, null=True)
     work_email = models.CharField(_("work_email"), max_length=200, blank=True)
     collect = models.BooleanField(default=True)
     analyse = models.BooleanField(default=True)
@@ -176,7 +176,7 @@ class LoginCounter(AbstractModel):
 
 class UserSafeLock(AbstractModel):
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="safelock"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="safelock"
     )
     is_locked = models.BooleanField(default=False)
     failed_login_attempts = models.IntegerField(default=0)
@@ -185,3 +185,27 @@ class UserSafeLock(AbstractModel):
 
     def __str__(self):
         return f"SafeLock for {self.user.username}"
+
+
+class UserEmailVerification(AbstractModel):
+    STATUS_CHOICES = (
+        ("pending", "Pending"),
+        ("verified", "Verified"),
+        ("expired", "Expired"),
+        ("failed", "Failed"),
+    )
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255)
+    sent_at = models.DateTimeField(default=timezone.now)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    resend_count = models.PositiveIntegerField(default=0)
+    last_resend_at = models.DateTimeField(null=True, blank=True)
+    last_error = models.TextField(blank=True, null=True)
+
+    def is_token_expired(self):
+        return (timezone.now() - self.sent_at).total_seconds() > 259200  # 72 hrs
+
+    def mark_verified(self):
+        self.status = "verified"
+        self.save()

@@ -30,6 +30,7 @@ class CanadaBillReport:
     def __init__(self, user ,organization, corporate, year:int):
         self.excel_file_url = default_storage.open("canada_bill_s211/BillS211Template.xlsx")
         self.excel_file = openpyxl.load_workbook(self.excel_file_url)
+        
         self.user = user
         self.organization: Organization = organization
         self.corporate: Corporateentity | None = corporate
@@ -248,6 +249,9 @@ class CanadaBillReport:
         """
         self.modify_part_one()
         self.modify_part_two()
+        # Set ownership/author to Sustainext
+        self.excel_file.properties.creator = "Sustainext"
+        self.excel_file.properties.lastModifiedBy = "Sustainext"
         # Example of how you might use insert_rows_in_sheet:
         # self.insert_rows_in_sheet(sheet_name="Part 1", start_row=12, num_rows_to_insert=5) # Adjust start_row as needed
 

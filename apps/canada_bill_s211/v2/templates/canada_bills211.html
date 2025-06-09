@@ -1,0 +1,96 @@
+{% load static %}
+<html>
+
+<head>
+    <style>
+        @page first {
+            size: A4;
+            margin: 0;
+        }
+
+        /* Set A4 page size */
+        @page {
+            size: A4;
+            margin: 8mm;
+
+            /* Set the margins for all pages */
+            @bottom-right {
+                content: counter(page);
+                /* Add page numbering */
+                font-size: 10px;
+                color: #27272a;
+                margin-bottom: 3mm;
+                padding: 5px;
+                margin-right: 10px;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            color: #333;
+            padding: 10px 15px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #118dc5;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #045fb0;
+        }
+
+        p {
+            font-size: 11px;
+            margin: 15px 0;
+            color: #495059;
+            line-height: 1.5;
+        }
+
+        ul>li {
+            font-size: 11px;
+            color: #000;
+            line-height: 1.5;
+            list-style-type: disc;
+        }
+
+        ol>li {
+            font-size: 11px;
+            color: #000;
+            line-height: 1.5;
+        }
+
+        .page-break {
+            page-break-before: always;
+            page-break-after: avoid;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/front_page.html" %}</div>
+    <div class="page-break"></div>
+    <div style="margin: 10px; padding: 10px;">{% include "ScreenWisePDFData/table_of_content.html" %}</div>
+    <div class="page-break"></div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen1.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen2.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen3.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen4.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen5.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen6.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen7.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen8.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen9.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen10.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen11.html" %}</div>
+    <div style="margin-bottom: 10px; padding: 5px;">{% include "ScreenWisePDFData/screen12.html" %}</div>
+
+</body>
+
+</html>

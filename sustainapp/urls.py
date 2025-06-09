@@ -95,6 +95,12 @@ from sustainapp.Views.Analyse.Environment.AirQualityAnalyzeAPI import (
 from sustainapp.Views.ExcelTemplate.EmissionExcelTemplate import (
     ExcelTemplateDownloadView,
 )
+from sustainapp.Views.ExcelTemplate.EmissionBulkUpload import (
+    ExcelTemplateUploadView,
+)
+from sustainapp.Views.ExcelTemplate.EmissionBulkUploadConfirmView import (
+    ExcelTemplateConfirmView,
+)
 
 router = routers.DefaultRouter()
 router.register("zoho_info", ZohoInfoViewset, basename="ZohoInfoViewset")
@@ -286,5 +292,15 @@ urlpatterns = [
         "download-emission-excel-template/",
         ExcelTemplateDownloadView.as_view(),
         name="download_excel_template",
+    ),
+    path(
+        "bulk-upload-emission-data/",
+        ExcelTemplateUploadView.as_view(),
+        name="bulk-upload-emission-data",
+    ),
+    path(
+        "bulk-upload-confirm/",
+        ExcelTemplateConfirmView.as_view(),
+        name="bulk-upload-emission-data",
     ),
 ]
