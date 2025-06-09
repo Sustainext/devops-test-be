@@ -1,3 +1,4 @@
+<a href="#training"></a>
 <h2 id="training">9. Training on Forced Labour and Child Labour</h2>
 
 <p>{{screen_10.part_1_screen1_q2|default:"No data available"}} provides training on forced labour and/or child labour to its employees.</p>
@@ -6,8 +7,12 @@
 
 <ul>
   <li>Scope (is the training mandatory?):
-    {% if screen_10.part_2_screen7_q2 == 'Yes' %}
+    {% if screen_10.part_2_screen7_q3 == 'Yes' %}
     Yes, the training is mandatory for all employees.</li>
+    {% elif screen_10.part_2_screen7_q3 == "Yesone" %}
+    Yes, the training is mandatory for employees making contracting or purchasing decisions.</li>
+    {% elif screen_10.part_2_screen7_q3 == "Yestwo" %}
+    Yes, the training is mandatory for some employees.</li>
     {% else %}
     No, the training is not mandatory for all employees.</li>
     {% endif %}

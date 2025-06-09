@@ -1,3 +1,11 @@
+<a href="#policies"></a>
 <h2 id="policies">4. Policies and Due Diligence Processes</h2>
 
 <p>{{ screen_5.report_data.policies_diligence_processes|default:"No data available"|safe }}</p>
+
+<p>Due diligence processes include:</p>
+<ul>
+  {% for data in screen_5.part_2_screen3_q2%}
+  <li>{{ data }}</li>
+  {% endfor %}
+</ul>
