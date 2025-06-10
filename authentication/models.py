@@ -203,8 +203,22 @@ class UserEmailVerification(AbstractModel):
     last_resend_at = models.DateTimeField(null=True, blank=True)
     last_error = models.TextField(blank=True, null=True)
 
-    def is_token_expired(self):
-        return (timezone.now() - self.sent_at).total_seconds() > 259200  # 72 hrs
+    def check_and_mark_token_expired(self, save=True):
+        """
+        Checks if the token is expired and optionally updates the status.
+
+        Args:
+            save (bool): Whether to save the model if expired. Default is True.
+
+        Returns:
+            bool: True if token is expired, False otherwise.
+        """
+        expired = (timezone.now() - self.sent_at).total_seconds() > 259200  # 72 hrs
+        if expired and self.status not in ["expired", "failed"]:
+            self.status = "expired"
+            if save:
+                self.save(update_fields=["status"])
+        return expired
 
     def mark_verified(self):
         self.status = "verified"

@@ -32,7 +32,7 @@ def verify_email(request, token):
 
     ver_record = UserEmailVerification.objects.get(user=user)
     if ver_record:
-        if ver_record.token != token or ver_record.is_token_expired():
+        if ver_record.token != token or ver_record.check_and_mark_token_expired():
             return redirect(f"{settings.EMAIL_REDIRECT}/token-expired")
         ver_record.mark_verified()
 
