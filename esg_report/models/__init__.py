@@ -17,3 +17,4 @@ from .ScreenFifteen import ScreenFifteenModel
 from .StatementOfUse import StatementOfUseModel
 from .ContentIndexRequirementOmissionReason import ContentIndexRequirementOmissionReason
 from .ReportAssessment import ReportAssessment
+from .ESGCustomReport import EsgCustomReport
