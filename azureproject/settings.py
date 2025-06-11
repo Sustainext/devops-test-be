@@ -59,6 +59,7 @@ PROJECT_APPS = [
     "geo_data.apps.GeoDataConfig",
     "apps.canada_bill_s211.apps.CanadaBillS211Config",
     "apps.canada_bill_s211.v2.apps.V2Config",
+    "apps.tcfd_framework.apps.TcfdFrameworkConfig",
 ]
 
 THIRD_PARTY = [
