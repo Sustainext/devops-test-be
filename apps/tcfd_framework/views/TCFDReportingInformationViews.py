@@ -11,6 +11,11 @@ from rest_framework.exceptions import ValidationError as RestFrameworkValidation
 
 
 class TCFDReportingInformationView(APIView):
+    """
+    Handles the retrieval and updating of TCFD Reporting Information for a given client, organization, and corporate.
+    This view allows authenticated users to retrieve existing TCFD Reporting Information or create/update it.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -69,6 +74,10 @@ class TCFDReportingInformationView(APIView):
 
 
 class TCFDReportingInformationCompletionView(APIView):
+    """
+    Checks whether the TCFD Reporting Information for a given organization and corporate is complete or not.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):

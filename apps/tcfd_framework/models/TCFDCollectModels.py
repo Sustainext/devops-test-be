@@ -43,19 +43,23 @@ class RecommendedDisclosures(AbstractModel, HistoricalModelMixin):
         ordering = ["order"]
         verbose_name_plural = "Recommended Disclosures"
 
+
 class DataCollectionScreen(AbstractModel, HistoricalModelMixin):
     """
     Model to represent the data collection screen for TCFD Collect Section.
     """
 
     name = models.CharField(
-        max_length=255, unique=True, help_text="Name of the data collection screen."
+        max_length=255, help_text="Name of the data collection screen."
     )
     recommended_disclosure = models.ForeignKey(
         RecommendedDisclosures,
         on_delete=models.CASCADE,
         related_name="data_collection_screens",
         help_text="Recommended disclosure to which this screen belongs.",
+    )
+    order = models.PositiveIntegerField(
+        help_text="Order of the data collection screen in the list."
     )
 
     def __str__(self):
