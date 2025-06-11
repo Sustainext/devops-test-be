@@ -53,11 +53,13 @@ class ExcelTemplateConfirmView(APIView):
             message["body"] = (
                 "Rows from the template has been partially imported into the emissions table"
             )
+            message["gradient"] = "linear-gradient(to right, #F98845, #6ADF23)"
         elif valid_rows and len(invalid_rows) == 0:
             message["header"] = "Import Successful"
             message["body"] = (
                 "Rows from the template has been imported into the emissions table"
             )
+            message["gradient"] = "linear-gradient(to right, #00AEEF, #6ADF23)"
         else:
             message["header"] = "No rows has been imported"
             message["body"] = (
