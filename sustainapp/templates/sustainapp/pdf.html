@@ -398,12 +398,8 @@
             <tr>
                 <td>{{ scope.scope_name }}</td>
                 <td>
-                    {% if scope.scope_name == "Scope-3" %}
-                        {{ scope3_without_investment|floatformat:2 }}
-                    {% else %}
-                        {{ scope.total_co2e|floatformat:2 }}
-                    {% endif %}
-            </td>
+                    {{ scope.total_co2e|floatformat:2 }}
+                </td>
                 <td>{{ scope.combined_percentage|floatformat:2 }}%</td>
             </tr>
             {% endfor %}
@@ -443,27 +439,47 @@
         largest source of emissions was {{highest_source_name}}.</p>
     <div class="section">
         <!-- <h3>Table 1: GHG emissions by scope</h3> -->
-    {% for company_data in data %}
-        {% if company_data.corporate_type != "Investment" %}
-        <!-- <h2>{{ company_data.corporate_name }}</h2> -->
-        <h3>Table 1: GHG emissions by scope for Corporate {{ company_data.corporate_name }} </h3>
+         
+        {% if has_investment_corporates %}
+        
         <table>
             <tr class="table-header">
                 <th>SCOPE</th>
-                <th>EMISSIONS (tCO2e)</th>
+                <th>TOTAL EMISSIONS (tCO2e)</th>
                 <th>% OF TOTAL</th>
             </tr>
-            {% for scope in company_data.scopes %}
+            {% for scope in combined_scopes %}
             <tr>
                 <td>{{ scope.scope_name }}</td>
-                <td>{{ scope.total_co2e }}</td>
-                <td>{{ scope.contribution_scope }}%</td>
+                <td>
+                    {{ scope.total_co2e|floatformat:2 }}
+                </td>
+                <td>{{ scope.combined_percentage|floatformat:2 }}%</td>
             </tr>
             {% endfor %}
         </table>
-    </div>
-    {% endif %}
-    {% endfor %}
+        {% else %}
+            {% for company_data in data %}
+                <!-- <h2>{{ company_data.corporate_name }}</h2> -->
+                <h3>Table 1: GHG emissions by scope for Corporate {{ company_data.corporate_name }} </h3>
+                <table>
+                    <tr class="table-header">
+                        <th>SCOPE</th>
+                        <th>EMISSIONS (tCO2e)</th>
+                        <th>% OF TOTAL</th>
+                    </tr>
+                    {% for scope in company_data.scopes %}
+                    <tr>
+                        <td>{{ scope.scope_name }}</td>
+                        <td>{{ scope.total_co2e }}</td>
+                        <td>{{ scope.contribution_scope }}%</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% endfor %}
+        
+        {% endif %}
     </div>
     {% endif %}
 
@@ -694,12 +710,14 @@
             </tr>
             {% for report in data %}
             {% for source in report.sources%}
-            <tr>
-                <td>{{source.category_name|safe}} - {{source.activity_name|split_string:"-"|first}} </td>
-                <td>{{source.co2e_unit }}CO<sub>2</sub>e / {{source.activity_data.activity_unit}}</td>
-                <td>{{source.source }}</td>
-                <td>{{source.year }}</td>
-            </tr>
+                {% if source.category_name != "Investments" %}
+                    <tr>
+                        <td>{{source.category_name|safe}} - {{source.activity_name|split_string:"-"|first}} </td>
+                        <td>{{source.co2e_unit }}CO<sub>2</sub>e / {{source.activity_data.activity_unit}}</td>
+                        <td>{{source.source }}</td>
+                        <td>{{source.year }}</td>
+                    </tr>
+                {% endif %}
             {% endfor %}
             {% endfor %}
             <!-- Add more rows as needed -->
@@ -834,7 +852,13 @@
             {% for source in report.sources %}
             {% if source.scope_name == "Scope-3" %}
             <tr>
-                <td style="width: 50%;">{{ source.source_name }}-{{ source.category_name }} </td>
+                <td style="width: 50%;">
+                    {% if source.category_name == "Investments" %}
+                      {{ source.category_name }}-{{ source.source_name }}
+                    {% else %}
+                      {{ source.source_name }}-{{ source.category_name }}
+                    {% endif %}
+                </td>
                 <td>{{ source.activity_data.activity_value }} {{ source.activity_data.activity_unit }}</td>
                 <td>{{ source.total_co2e|floatformat:2 }}</td>
             </tr>
@@ -855,6 +879,43 @@
             {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
             {%endif%}</p>
     </div>
+
+    <!-- Investment Corporate Section -->
+    <!-- Only render this entire block if has_investment_corporates is True. -->
+    {% if has_investment_corporates %}
+        <div class="section">
+            <h4 class="keep-with-next">Details of investments</h4>
+            {% for corp_name, emissions in investment_corporates_scope12.items %}
+            <p class="keep-with-next"><strong>Entity name:</strong> {{ corp_name }}</p>
+
+            {# Only render Ownership ratio if you actually included it in your defaultdict. #}
+            {% if emissions.ownership_ratio %}
+                <p class="keep-with-next">
+                <strong>Ownership ratio:</strong> {{ emissions.ownership_ratio }}%
+                </p>
+            {% endif %}
+
+            <h3>Table {{ forloop.counter }}: Scope 1 &amp; Scope 2</h3>
+            <table>
+                <tr class="table-header">
+                    <th>SCOPE</th>
+                    <th>EMISSIONS (tCO2e)</th>
+                </tr>
+                
+                <tr>
+                    <td style="width: 50%;">Scope-1</td>
+                    <td>{{ emissions.scope1|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 50%;">Scope-2</td>
+                    <td>{{ emissions.scope2|floatformat:2 }}</td>
+                </tr>
+                
+            </table>
+            {% endfor %}
+        </div>
+    {% endif %}
+  
     <div class="section">
 
         <h5 class="keep-with-next">Reducing uncertainties</h5>
@@ -930,6 +991,15 @@
             </div>
 
         </div>
+
+        {% if has_investment_corporates %}
+        <div class="section section-introduction">
+          <h3 class="margin-bottom keep-with-next">Emissions by Investments</h3>
+          <div class="graph-align keep-with-next">
+            {{ donut_chart_data_investment|safe }}
+          </div>
+        </div>
+      {% endif %}
 </body>
 
 </html>

@@ -605,8 +605,8 @@ class ExcelTemplateUploadView(APIView):
                 "file_content": file_content,
                 "user_id": request.user.id,
             },
-            timeout=3600,
-        )  # expires in 1 hour
+            timeout=900,
+        )  # expires in 15mins
 
         return Response(
             {

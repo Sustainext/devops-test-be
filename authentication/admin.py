@@ -21,6 +21,10 @@ from django.utils import timezone
 from authentication.Views.VerifyEmail import generate_verification_token
 from sustainapp.celery_tasks.send_mail import async_send_email
 import os
+import hashlib
+import random
+import string
+from django.conf import settings
 
 
 # Register your models here.
@@ -177,15 +181,18 @@ class UserSafeLockAdmin(admin.ModelAdmin):
 class UserEmailVerificationAdmin(admin.ModelAdmin):
     list_display = (
         "user",
-        "status",
+        "activation_status",
         "sent_at",
         "resend_count",
         "last_resend_at",
         "resend_button",
     )
 
+    def activation_status(self, obj):
+        return obj.status
+
     def resend_button(self, obj):
-        if obj.status != "verified" and obj.is_token_expired():
+        if obj.status != "verified" and obj.check_and_mark_token_expired():
             return format_html(
                 '<a class="button" href="{}">Resend</a>', f"resend/{obj.pk}/"
             )
@@ -213,10 +220,23 @@ class UserEmailVerificationAdmin(admin.ModelAdmin):
             f"{os.environ.get('BACKEND_URL')}api/auth/verify_email/{new_token}/"
         )
 
-        subject = "Verify your Sustainext account"
-        template_name = "sustainapp/resend_verification_email.html"
+        # Hased password and set it to user's password
+        password = "".join(random.choices(string.ascii_letters + string.digits, k=12))
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+        user._skip_password_change_signal = True
+        user.set_password(hashed_password)
+        user.old_password = hashed_password
+        user.first_login.needs_password_change = True
+        user.first_login.save()
+        user.save()
+
+        subject = "Welcome to Sustainext! Activate your account"
+        template_name = "sustainapp/email_notify_test.html"
         context = {
             "username": user.username,
+            "first_name": user.first_name.capitalize(),
+            "password": password,
+            "EMAIL_REDIRECT": settings.EMAIL_REDIRECT,
             "verification_url": verification_url,
         }
 

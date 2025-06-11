@@ -92,6 +92,10 @@ def update_last_login(sender, user, request, **kwargs):
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def check_password_change(sender, instance, created, **kwargs):
+    # Skip if this is a create or flagged to bypass
+    if getattr(instance, "_skip_password_change_signal", False):
+        instance.old_password = instance.password
+        return
     if not created and instance.old_password:
         if instance.old_password != instance.password:
             instance.safelock.failed_login_attempts = 0

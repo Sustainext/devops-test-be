@@ -1,7 +1,8 @@
+<a href="#business"></a>
 <h2 id="business">2. Business Activities</h2>
 
 <p>
-  {{ screen_3.part_1_screen1_q2|default:"No data available" }} is engaged in {% for data in screen_3.part_2_screen1_q2|default:"No data available" %} {% if forloop.last and not forloop.first %} and {{
-  data }} {% elif not forloop.last %}{{ data }} {% else %} {{data }}, {% endif %} {% endfor %}
+  {{ screen_3.part_1_screen1_q2|default:"No data available" }} is engaged in {% for data in screen_3.part_2_screen1_q2|default:"No data available" %} {% if forloop.last and not forloop.first %} and 
+  {{ data }} {% elif not forloop.last %}{{ data }} {% else %} {{data }}, {% endif %} {% endfor %}
 </p>
 <p>{{ screen_3.report_data.business_activities|default:"No data available"|safe }}</p>

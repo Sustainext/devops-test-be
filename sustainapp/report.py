@@ -10,6 +10,8 @@ from django.conf import settings
 import os
 from django.templatetags.static import static
 from django.core.files.storage import default_storage
+from collections import defaultdict
+import re
 
 logger = logging.getLogger()
 
@@ -27,14 +29,18 @@ def extract_donut_chart_data(combined_scopes):
     ]
 
 
-def generate_and_cache_donut_chart(data):
+def generate_and_cache_donut_chart(data, investment_corporates=False):
     start_time = time.time()
     try:
         # Use the Agg backend
         matplotlib.use("Agg")
 
-        donut_labels = [entry["scope_name"] for entry in data]
-        donut_data = [entry["total_co2e"] for entry in data]
+        if not investment_corporates:
+            donut_labels = [entry["scope_name"] for entry in data]
+            donut_data = [entry["total_co2e"] for entry in data]
+        else:
+            donut_labels = [entry["corporate_name"] for entry in data]
+            donut_data = [entry["total_co2e"] for entry in data]
 
         # Auto-generating colors according to data length
         colors = generate_colors(len(data))
@@ -103,7 +109,6 @@ def generate_and_cache_donut_chart(data):
 
 
 def word_generate_and_cache_donut_chart(data):
-
     # Use the Agg backend
     matplotlib.use("Agg")
 
@@ -139,6 +144,11 @@ def word_generate_and_cache_donut_chart(data):
 def extract_source_data(organized_data_list):
     try:
         source_data = []
+        investments_corporates_source_data = {
+            "category_name": "",
+            "activity_name": "",
+            "total_co2e": 0.0,
+        }
         for entry in organized_data_list:
             sources = entry.get("sources", [])
             for source in sources:
@@ -147,7 +157,20 @@ def extract_source_data(organized_data_list):
                     "activity_name": source.get("activity_name", "Unknown Source"),
                     "total_co2e": float(source.get("total_co2e", 0.0)),
                 }
-                source_data.append(source_entry)
+                if entry.get("corporate_type") != "Investment":
+                    source_data.append(source_entry)
+                else:
+                    # For investment corporates, we need to sum the total_co2e
+                    investments_corporates_source_data["category_name"] = source_entry[
+                        "category_name"
+                    ]
+                    investments_corporates_source_data["activity_name"] = source_entry[
+                        "activity_name"
+                    ]
+                    investments_corporates_source_data["total_co2e"] += source_entry[
+                        "total_co2e"
+                    ]
+        source_data.append(investments_corporates_source_data)
         return source_data
     except Exception as e:
         # Handle the exception gracefully
@@ -458,6 +481,9 @@ def word_generate_and_cache_donut_chart_location(data):
 
 
 def generate_pdf_data(pk):
+    """
+    For GHG with Investment, Scope 3 is the sum of scope 1 and scope 2. Scope 1 and 2 were only added for showing the information of invested corporates in a new table.
+    """
     try:
         report = Report.objects.get(id=pk)
     except Report.DoesNotExist:
@@ -496,7 +522,11 @@ def generate_pdf_data(pk):
     combined_scopes = {}
 
     investment_corporates_data = {}
-    investment_corporates_co2e = 0
+    has_investment_corporates = False
+    investment_corporates_graph_data = []
+    investment_corporates_scope12 = defaultdict(dict)
+    investment_corporates_co2e = 0  # HOPIN THIS AIN'T NEEDED
+
     # Iterate over each corporate in data_dict
     for corporate_name, corporate_data in data_dict.items():
         # Extract data for each corporate
@@ -505,19 +535,64 @@ def generate_pdf_data(pk):
         sources = corporate_data.get("source", [])
 
         # Calculate total combined CO2e and total contribution for each corporate
-        total_co2e_corporate = sum(float(scope["total_co2e"]) for scope in scopes)
-        total_co2e_combined += total_co2e_corporate
+        if corporate_data.get("corporate_type") == "Investment":
+            has_investment_corporates = True
+            # Invested corporates only consider Scope 3
+            total_co2e_corporate = sum(
+                float(scope["total_co2e"])
+                for scope in scopes
+                if scope["scope_name"] == "Scope-3"
+            )
 
-        # Calculate total contribution for all corporates
-        total_contribution_corporate = sum(
-            float(scope["contribution_scope"]) for scope in scopes
-        )
+            total_contribution_corporate = sum(
+                float(scope["contribution_scope"])
+                for scope in scopes
+                if scope["scope_name"] == "Scope-3"
+            )
+        else:
+            total_co2e_corporate = sum(float(scope["total_co2e"]) for scope in scopes)
+
+            # Calculate total contribution for all corporates
+            total_contribution_corporate = sum(
+                float(scope["contribution_scope"]) for scope in scopes
+            )
+
+        total_co2e_combined += total_co2e_corporate
         total_contribution_combined += total_contribution_corporate
-        if corporate_data["corporate_type"] == "Investment":
-            investment_corporates_data[corporate_name] = total_co2e_corporate
+
+        if corporate_data["corporate_type"] == "Investment":  # TIS AIN'T NEEDED
+            investment_corporates_data[corporate_name] = (
+                total_co2e_corporate  # TIS AIN'T NEEDED
+            )
 
         # Calculate combined percentage for each scope within the corporate
         for scope in scopes:
+            if (
+                corporate_data.get("corporate_type") == "Investment"
+                and scope["scope_name"] != "Scope-3"
+            ):
+                # Saving to show the investment table information
+                investment_corporates_scope12[corporate_name][scope["scope_name"]] = (
+                    float(scope["total_co2e"])
+                )
+                investment_corporates_scope12[corporate_name]["ownership_ratio"] = (
+                    corporate_data["ownership_ratio"]
+                )
+                continue
+
+            elif (
+                corporate_data.get("corporate_type") == "Investment"
+                and scope["scope_name"] == "Scope-3"
+            ):
+                # Investment corporate CO2e is from just Scope 3,
+                # where scope 3 = (Scope 1 + Scope 2) * ownership_ratio
+                # Saving to investment_corporates_graph_data to show the invested corporates in graph
+                investment_corporates_graph_data.append(
+                    {
+                        "corporate_name": corporate_name,
+                        "total_co2e": float(scope["total_co2e"]),
+                    }
+                )
             scope_name = scope["scope_name"]
             # if scope_name == 1:  # Check if the scope is 1
             #     total_co2e_scope1 += float(scope['total_co2e'])
@@ -550,13 +625,17 @@ def generate_pdf_data(pk):
                 else 0
             )
             # Convert the combined scopes back to a list if necessary
-            combined_scopes_list = list(combined_scopes.values())
-
+            # combined_scopes_list = list(combined_scopes.values())
+            combined_scopes_list = sorted(
+                combined_scopes.values(),
+                key=lambda scope: int(re.search(r"\d+", scope["scope_name"]).group()),
+            )
         # Organize the data
+        scopes_sorted = sorted(scopes, key=lambda s: int(s["scope_name"].split("-")[1]))
         organized_data = {
             "corporate_name": corporate_name,
             "corporate_type": corporate_data["corporate_type"],
-            "scopes": scopes,
+            "scopes": scopes_sorted,
             "locations": locations,
             "sources": sources,
         }
@@ -585,23 +664,29 @@ def generate_pdf_data(pk):
                     highest_contribution_value = float(
                         highest_contribution_source_for_corporate["contribution_source"]
                     )
-                    highest_source_name = highest_contribution_source_for_corporate[
-                        "source_name"
-                    ]
+                    highest_source_name = (
+                        "Investments"
+                        if item["corporate_type"] == "Investment"
+                        else highest_contribution_source_for_corporate["source_name"]
+                    )
     else:
         highest_source_name = None
 
-    scope3_without_investment = 0
-    if investment_corporates_co2e:
-        scope3_without_investment = (
-            combined_scopes["Scope-3"]["total_co2e"] - investment_corporates_co2e
-        )
 
     # Extract total_co2e and scope_name from combined_scopes# extracted_data = [{'scope_name': scope['scope_name'], 'total_co2e': scope['total_co2e']} for scope in combined_scopes.values()]
     donut_chart_data = extract_donut_chart_data(combined_scopes)
 
     # Call the function to generate donut chart HTML
     donut_chart_html = generate_and_cache_donut_chart(donut_chart_data)
+
+    if has_investment_corporates:
+        donut_chart_data_investment = (
+            generate_and_cache_donut_chart(
+                investment_corporates_graph_data, investment_corporates=True
+            )
+            if has_investment_corporates
+            else None
+        )
 
     # report_list_view, extract source data
     source_data = extract_source_data(organized_data_list)
@@ -621,6 +706,13 @@ def generate_pdf_data(pk):
     else:
         organization_name = report.corporate.name
 
+    updated_investment_corporates_scope12 = defaultdict(dict)
+    for corporate_name, scopes in investment_corporates_scope12.items():
+        for k, v in scopes.items():
+            new_scope = (
+                "scope1" if k == "Scope-1" else "scope2" if k == "Scope-2" else k
+            )
+            updated_investment_corporates_scope12[corporate_name][new_scope] = v
     context = {
         "object_list": report,
         "org_logo": report.org_logo if report.org_logo else None,
@@ -649,7 +741,12 @@ def generate_pdf_data(pk):
         "donut_chart_html": donut_chart_html,
         "source_donut_chart_html": source_donut_chart_html,
         "location_donut_chart_html": location_donut_chart_html,
-        "scope3_without_investment": scope3_without_investment,
+        "has_investment_corporates": has_investment_corporates,
     }
 
+    if has_investment_corporates:
+        context["investment_corporates_scope12"] = dict(
+            updated_investment_corporates_scope12
+        )
+        context["donut_chart_data_investment"] = (donut_chart_data_investment,)
     return context

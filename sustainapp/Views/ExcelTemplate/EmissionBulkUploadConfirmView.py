@@ -45,7 +45,24 @@ class ExcelTemplateConfirmView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        valid_rows, _ = ExcelTemplateUploadView().validate_data(ws, request)
+        valid_rows, invalid_rows = ExcelTemplateUploadView().validate_data(ws, request)
+
+        message = {}
+        if len(invalid_rows) > 0:
+            message["header"] = "Rows has been partially imported"
+            message["body"] = (
+                "Rows from the template has been partially imported into the emissions table"
+            )
+        elif valid_rows and len(invalid_rows) == 0:
+            message["header"] = "Import Successful"
+            message["body"] = (
+                "Rows from the template has been imported into the emissions table"
+            )
+        else:
+            message["header"] = "No rows has been imported"
+            message["body"] = (
+                "No rows from the template has been imported into the emissions table"
+            )
 
         set_bulk_upload_flag(True)
         try:
@@ -60,7 +77,7 @@ class ExcelTemplateConfirmView(APIView):
 
         return Response(
             {
-                "message": "Data imported successfully.",
+                "message": message,
                 "valid_count": len(valid_rows),
             },
             status=status.HTTP_200_OK,
