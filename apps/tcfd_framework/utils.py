@@ -30,6 +30,8 @@ for elem in core_elements_data:
     obj, _ = CoreElements.objects.get_or_create(
         name=elem["name"], defaults={"description": elem["description"]}
     )
+    obj.save()
+    # Store the object in a dictionary for later use
     core_element_objs[elem["name"]] = obj
 
 # 2. Recommended Disclosures and Data Collection Screens
@@ -43,6 +45,7 @@ disclosures_data = [
             "Structure",
             "Board’s oversight of climate related risks and opportunities",
         ],
+        "screen_tag": "GOV-A",
     },
     {
         "core": "Governance",
@@ -52,6 +55,7 @@ disclosures_data = [
             "Structure",
             "Management’s role in assessing and managing climate related risks and opportunities",
         ],
+        "screen_tag": "GOV-B",
     },
     # Strategy
     {
@@ -59,18 +63,21 @@ disclosures_data = [
         "order": 0,
         "description": "Describe the climate-related risks and opportunities the organization has identified over the short, medium, and long term.",
         "screens": ["Climate related Risks", "Climate related Opportunities"],
+        "screen_tag": "STG-A",
     },
     {
         "core": "Strategy",
         "order": 1,
         "description": "Describe the impact of climate-related risks and opportunities on the organization’s businesses, strategy, and financial planning.",
         "screens": ["Impact of Climate Related Issues on Business"],
+        "screen_tag": "STG-B",
     },
     {
         "core": "Strategy",
         "order": 2,
         "description": "Describe the resilience of the organization’s strategy, taking into consideration different climate-related scenarios, including a 2°C or lower scenario.",
         "screens": ["Resilience of the Organisation’s Strategy"],
+        "screen_tag": "STG-C",
     },
     # Risk Management
     {
@@ -78,18 +85,21 @@ disclosures_data = [
         "order": 0,
         "description": "Describe the organization’s processes for identifying and assessing climate-related risks.",
         "screens": ["Risk Identification & Assessment"],
+        "screen_tag": "RM-A",
     },
     {
         "core": "Risk Management",
         "order": 1,
         "description": "Describe the organization’s processes for managing climate-related risks.",
         "screens": ["Climate Risk Management"],
+        "screen_tag": "RM-B",
     },
     {
         "core": "Risk Management",
         "order": 2,
         "description": "Describe how processes for identifying, assessing, and managing climate-related risks are integrated into the organization’s overall risk management.",
         "screens": ["Climate Risk Integration"],
+        "screen_tag": "RM-C",
     },
     # Metrics & Targets
     {
@@ -97,18 +107,21 @@ disclosures_data = [
         "order": 0,
         "description": "Disclose the metrics used by the organization to assess climate-related risks and opportunities in line with its strategy and risk management process.",
         "screens": ["Climate Related Metrics"],
+        "screen_tag": "M&T-A",
     },
     {
         "core": "Metrics & Targets",
         "order": 1,
         "description": "Disclose Scope 1, Scope 2, and, if appropriate, Scope 3 greenhouse gas (GHG) emissions, and the related risks.",
         "screens": ["GHG Emissions", "GHG Emission Intensity"],
+        "screen_tag": "M&T-B",
     },
     {
         "core": "Metrics & Targets",
         "order": 2,
         "description": "Describe the targets used by the organization to manage climate-related risks and opportunities and performance against targets.",
         "screens": ["Climate Related Targets"],
+        "screen_tag": "M&T-C",
     },
 ]
 
@@ -119,7 +132,7 @@ for disclosure in disclosures_data:
         core_element=core_element,
         defaults={
             "order": disclosure["order"],
-            "screen_tag": None,
+            "screen_tag": disclosure["screen_tag"],
         },
     )
     rec_disc.save()
