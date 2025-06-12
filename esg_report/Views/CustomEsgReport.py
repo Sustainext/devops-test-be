@@ -21,6 +21,7 @@ class CustomEsgReportView(APIView):
             serializer = CustomEsgReportSerializer(custom_report)
             data = serializer.data
             data["skip_first_page"] = skip_first_page
+
             return Response(
                 {"data": data},
                 status=status.HTTP_200_OK,
