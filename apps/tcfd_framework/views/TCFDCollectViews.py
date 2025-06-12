@@ -110,9 +110,8 @@ class GetOrUpdateSelectedDisclosures(APIView):
         corporate = serializer.validated_data.get("corporate", None)
         selected_disclosures = SelectedDisclosures.objects.filter(
             organization=organization,
+            corporate=corporate
         )
-        if corporate:
-            selected_disclosures = selected_disclosures.filter(corporate=corporate)
         recommended_disclosures = RecommendedDisclosures.objects.filter(
             id__in=selected_disclosures.values_list(
                 "recommended_disclosure_id", flat=True
