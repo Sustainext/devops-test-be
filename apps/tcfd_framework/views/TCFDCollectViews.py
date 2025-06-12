@@ -16,7 +16,9 @@ from apps.tcfd_framework.serializers.TCFDReportingInformationSerializer import (
 )
 
 from collections import defaultdict
+from django.core.cache import cache
 from apps.tcfd_framework.utils import get_tcfd_disclosures_response
+from common.utils.sanitise_cache import sanitize_cache_key_part
 
 
 class GetTCFDDisclosures(APIView):
@@ -26,22 +28,6 @@ class GetTCFDDisclosures(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.order_mapping = {
-            0: "a",
-            1: "b",
-            2: "c",
-            3: "d",
-            4: "e",
-            5: "f",
-            6: "g",
-            7: "h",
-            8: "i",
-            9: "j",
-            10: "k",
-        }
-
     def get(self, request, *args, **kwargs):
         # * Get Selected Disclosures
         basic_serializer = TCFDReportingInformationBasicSerializer(
@@ -50,23 +36,31 @@ class GetTCFDDisclosures(APIView):
         basic_serializer.is_valid(raise_exception=True)
         organization = basic_serializer.validated_data["organization"]
         corporate = basic_serializer.validated_data.get("corporate", None)
-        selected_disclosures = SelectedDisclosures.objects.filter(
-            organization=organization, corporate=corporate
-        ).prefetch_related("recommended_disclosure")
-        selected_disclosures_recommended_disclosure_ids = (
-            selected_disclosures.values_list("recommended_disclosure__id", flat=True)
-        )
+        cache_key = f"tcfd_disclosures_{sanitize_cache_key_part(organization)}_{sanitize_cache_key_part(corporate)}"
+        cached_data = cache.get(cache_key)
+        if cached_data is None:
+            selected_disclosures = SelectedDisclosures.objects.filter(
+                organization=organization, corporate=corporate
+            ).prefetch_related("recommended_disclosure")
+            selected_disclosures_recommended_disclosure_ids = (
+                selected_disclosures.values_list(
+                    "recommended_disclosure__id", flat=True
+                )
+            )
 
-        # * Get all important data
-        disclosures = RecommendedDisclosures.objects.select_related("core_element")
-
+            # * Get all important data
+            disclosures = RecommendedDisclosures.objects.select_related("core_element")
+            response_data = get_tcfd_disclosures_response(
+                disclosures_queryset=disclosures,
+                selected_disclosures_ids=selected_disclosures_recommended_disclosure_ids,
+            )
+            cache.set(cache_key, response_data, timeout=86400)
+        else:
+            response_data = cached_data
         return Response(
             data={
                 "message": "Core elements and recommended disclosures fetched successfully.",
-                "data": get_tcfd_disclosures_response(
-                    disclosures_queryset=disclosures,
-                    selected_disclosures_ids=selected_disclosures_recommended_disclosure_ids,
-                ),
+                "data": response_data,
                 "status": status.HTTP_200_OK,
             },
             status=status.HTTP_200_OK,
@@ -92,6 +86,9 @@ class GetOrUpdateSelectedDisclosures(APIView):
             corporate=corporate,
         )
         selected_disclosures.delete()
+        cache_key = f"tcfd_disclosures_{sanitize_cache_key_part(organization)}_{sanitize_cache_key_part(corporate)}"
+        cache.delete(cache_key)
+
         selected_disclosures = SelectedDisclosures.objects.bulk_create(
             [
                 SelectedDisclosures(
@@ -102,6 +99,15 @@ class GetOrUpdateSelectedDisclosures(APIView):
                 for rd in recommended_disclosures
             ]
         )
+        response_data = get_tcfd_disclosures_response(
+            disclosures_queryset=RecommendedDisclosures.objects.filter(
+                id__in=SelectedDisclosures.objects.filter(
+                    organization=organization,
+                    corporate=corporate,
+                ).values_list("recommended_disclosure_id", flat=True)
+            ).select_related("core_element")
+        )
+        cache.set(cache_key, response_data, timeout=86400)
 
         return Response(
             data={
@@ -110,14 +116,7 @@ class GetOrUpdateSelectedDisclosures(APIView):
                     "body": "TCFD Disclosures has been selected and saved successfully.",
                     "gradient": "linear-gradient(to right, #00AEEF, #6ADF23)",
                 },
-                "data": get_tcfd_disclosures_response(
-                    disclosures_queryset=RecommendedDisclosures.objects.filter(
-                        id__in=SelectedDisclosures.objects.filter(
-                            organization=organization,
-                            corporate=corporate,
-                        ).values_list("recommended_disclosure_id", flat=True)
-                    ).select_related("core_element")
-                ),
+                "data": response_data,
                 "status": status.HTTP_200_OK,
             },
             status=status.HTTP_200_OK,
