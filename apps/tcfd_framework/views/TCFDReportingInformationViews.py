@@ -69,7 +69,18 @@ class TCFDReportingInformationView(APIView):
 
         if serializer.is_valid():
             serializer.save(client=client)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "message": {
+                        "header": "TCFD reporting Information Updated",
+                        "body": "Data for the TCFD reporting Information has been added and saved successfully.",
+                        "gradient": "linear-gradient(to right, #00AEEF, #6ADF23)",
+                    },
+                    "data": serializer.data,
+                    "status": status.HTTP_200_OK,
+                },
+                status=status.HTTP_200_OK,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -100,15 +111,16 @@ class TCFDReportingInformationCompletionView(APIView):
                 corporate=corporate,
             )
             try:
-                reporting_info.clean()  # Will raise ValidationError if not complete
-                return Response({"completed": True}, status=status.HTTP_200_OK)
+                return Response(
+                    {"status": reporting_info.status}, status=status.HTTP_200_OK
+                )
             except RestFrameworkValidationError as e:
                 return Response(
-                    {"completed": False, "errors": e.detail},
+                    {"status": False, "errors": e.detail},
                     status=status.HTTP_200_OK,
                 )
         except TCFDReportingInformation.DoesNotExist:
             return Response(
-                {"completed": False, "errors": {"detail": "Not found."}},
+                {"status": False, "errors": {"detail": "Not found."}},
                 status=status.HTTP_404_NOT_FOUND,
             )

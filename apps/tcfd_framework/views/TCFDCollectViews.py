@@ -89,7 +89,11 @@ class GetOrUpdateSelectedDisclosures(APIView):
 
         return Response(
             data={
-                "message": "Selected disclosures updated successfully.",
+                "message": {
+                    "header": "TCFD Disclosure Selection Updated",
+                    "body": "TCFD Disclosures has been selected and saved successfully.",
+                    "gradient": "linear-gradient(to right, #00AEEF, #6ADF23)",
+                },
                 "data": get_tcfd_disclosures_response(
                     disclosures_queryset=RecommendedDisclosures.objects.filter(
                         id__in=SelectedDisclosures.objects.filter(
@@ -109,8 +113,7 @@ class GetOrUpdateSelectedDisclosures(APIView):
         organization = serializer.validated_data["organization"]
         corporate = serializer.validated_data.get("corporate", None)
         selected_disclosures = SelectedDisclosures.objects.filter(
-            organization=organization,
-            corporate=corporate
+            organization=organization, corporate=corporate
         )
         recommended_disclosures = RecommendedDisclosures.objects.filter(
             id__in=selected_disclosures.values_list(
