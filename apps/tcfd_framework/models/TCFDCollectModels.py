@@ -83,7 +83,7 @@ class SelectedDisclosures(AbstractModel, HistoricalModelMixin):
         help_text="Recommended disclosure that has been selected.",
     )
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    corporate_entity = models.ForeignKey(
+    corporate = models.ForeignKey(
         Corporateentity, on_delete=models.CASCADE, null=True, blank=True
     )
 
