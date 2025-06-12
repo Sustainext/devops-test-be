@@ -12,7 +12,9 @@ class GetCanadaReportPdf(View):
     def get(self, request, *args, **kwargs):
         report_id = kwargs.get("report_id")
         report = get_object_or_404(Report, id=report_id)
-        screen_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+
+        # Step 1: Load screen data
+        screen_list = list(range(1, 13))
         all_screen_data = {}
         for screen_number in screen_list:
             try:
@@ -22,30 +24,65 @@ class GetCanadaReportPdf(View):
             except ValidationError as e:
                 all_screen_data[f"screen_{screen_number}"] = {"error": str(e)}
 
+        # Step 2: Create base context with dummy TOC (for anchor detection)
+        toc_items = [
+            ("About the Report", "about"),
+            ("1. Organization Structure", "org-structure"),
+            ("2. Business Activities", "business"),
+            ("3. Supply Chains", "supply"),
+            ("4. Policies and Due Diligence Processes", "policies"),
+            ("5. Risks of Forced Labour and Child Labour", "risks"),
+            (
+                "6. Steps taken to prevent and reduce risks of forced labour and child labour",
+                "steps",
+            ),
+            ("7. Remediation Measures", "remediation"),
+            ("8. Remediation of Loss of Income", "income"),
+            ("9. Training on Forced Labour and Child Labour", "training"),
+            ("10. Assessing Effectiveness", "effectiveness"),
+            ("Approval and Attestation", "approval"),
+        ]
+        dummy_toc_rows = [
+            {"title": title, "anchor": anchor, "page": ""}
+            for title, anchor in toc_items
+        ]
+
         context = {
             "report": report,
-            "screen_1": all_screen_data.get("screen_1", {}),
-            "screen_2": all_screen_data.get("screen_2", {}),
-            "screen_3": all_screen_data.get("screen_3", {}),
-            "screen_4": all_screen_data.get("screen_4", {}),
-            "screen_5": all_screen_data.get("screen_5", {}),
-            "screen_6": all_screen_data.get("screen_6", {}),
-            "screen_7": all_screen_data.get("screen_7", {}),
-            "screen_8": all_screen_data.get("screen_8", {}),
-            "screen_9": all_screen_data.get("screen_9", {}),
-            "screen_10": all_screen_data.get("screen_10", {}),
-            "screen_11": all_screen_data.get("screen_11", {}),
-            "screen_12": all_screen_data.get("screen_12", {}),
+            "toc_rows": dummy_toc_rows,
+            **{
+                f"screen_{i}": all_screen_data.get(f"screen_{i}", {})
+                for i in screen_list
+            },
         }
+
+        # Step 3: First render with dummy TOC to collect anchor positions
         template = get_template("canada_bills211.html")
         html_content = template.render(context, request)
-        # Configure the response to return a PDF file
+        doc = HTML(string=html_content).render()
+
+        # Step 4: Collect anchor pages
+        anchor_pages = {}
+        for page_num, page in enumerate(doc.pages, start=1):
+            for link in page.links:
+                if isinstance(link, tuple) and len(link) > 1:
+                    target = link[1]
+                    if target:
+                        anchor_pages[target] = page_num
+
+        # Step 5: Create final TOC rows with real page numbers
+        toc_rows = [
+            {"title": title, "anchor": anchor, "page": anchor_pages.get(anchor, "")}
+            for title, anchor in toc_items
+        ]
+
+        # Step 6: Inject final TOC into context and render final PDF
+        context["toc_rows"] = toc_rows
+        final_html_content = template.render(context, request)
+
         response = HttpResponse(content_type="application/pdf")
         disposition = "attachment" if "download" in request.GET else "inline"
-        pdf_filename = "sample.pdf"
-        response["Content-Disposition"] = f'{disposition}; filename="{pdf_filename}"'
-
-        # Generate the PDF with WeasyPrint
-        HTML(string=html_content).write_pdf(response)
+        response["Content-Disposition"] = f'{disposition}; filename="canada-report.pdf"'
+        HTML(string=final_html_content).write_pdf(response)
 
         return response

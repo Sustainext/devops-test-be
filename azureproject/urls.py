@@ -102,7 +102,7 @@ router.register(
 
 urlpatterns = [
     path("sustainapp/", include("sustainapp.urls")),
-    path('geo_data/', include('geo_data.urls')),
+    path("geo_data/", include("geo_data.urls")),
     path("api/auth/", include("authentication.urls")),
     path("admin/", admin.site.urls),
     path("client_admin/", client_admin_site.urls),
@@ -139,6 +139,7 @@ urlpatterns = [
     path("canadabills211/", include("canadabills211.urls")),
     path("optimize/", include("apps.optimize.urls")),
     path("canada_bill_s211/", include("apps.canada_bill_s211.urls")),
+    path("tcfd_framework/", include("apps.tcfd_framework.urls")),
     path("refresh_token/", TokenRefreshView.as_view(), name="refresh_token"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEVELOPMENT_MODE:

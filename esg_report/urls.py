@@ -16,10 +16,19 @@ from esg_report.Views.ScreenThirteen import ScreenThirteenView
 from esg_report.Views.ScreenFourteen import ScreenFourteenAPIView
 from esg_report.Views.EsgReportPDF import ESGReportPDFView
 from esg_report.Views.ScreenFifteen import ScreenFifteenAPIView
-from esg_report.Views.ContentIndex import GetContentIndex, StatementOfUseAPI,GetContentIndexReferenec
-from esg_report.Views.ContentIndexExcelAPI import ContentIndexExcelAPI,ContentIndexReferenceExcelAPI
+from esg_report.Views.ContentIndex import (
+    GetContentIndex,
+    StatementOfUseAPI,
+    GetContentIndexReferenec,
+)
+from esg_report.Views.ContentIndexExcelAPI import (
+    ContentIndexExcelAPI,
+    ContentIndexReferenceExcelAPI,
+)
 from esg_report.Views.FieldValidation import FieldValidationView
 from esg_report.Views.MaterialTopic import SelectMaterialsTopic
+from esg_report.Views.CustomEsgReport import CustomEsgReportView
+
 router = DefaultRouter()
 
 urlpatterns = [
@@ -99,7 +108,6 @@ urlpatterns = [
         SelectMaterialsTopic.as_view(),
         name="select_materials_topic",
     ),
-    
     path(
         "esg_report_pdf/<int:pk>/",
         ESGReportPDFView.as_view(),
@@ -115,7 +123,6 @@ urlpatterns = [
         GetContentIndexReferenec.as_view(),
         name="content_index_referenec",
     ),
-    
     path(
         "statement_of_use/<int:report_id>/",
         StatementOfUseAPI.as_view(),
@@ -125,7 +132,7 @@ urlpatterns = [
         "get_field_validation/<int:report_id>/",
         FieldValidationView.as_view(),
         name="get_field_validation",
-    ),    
+    ),
     path(
         "content_index_excel/<int:report_id>/",
         ContentIndexExcelAPI.as_view(),
@@ -136,6 +143,10 @@ urlpatterns = [
         ContentIndexReferenceExcelAPI.as_view(),
         name="content_index_reference_excel",
     ),
-
+    path(
+        "custom_esg_report/<int:report_id>/",
+        CustomEsgReportView.as_view(),
+        name="custom_esg_report",
+    ),
 ]
 urlpatterns += router.urls

@@ -37,6 +37,7 @@ from apps.canada_bill_s211.v2.utils.check_status_report import (
     is_canada_bill_s211_v2_completed,
 )
 from common.utils.value_types import format_decimal_places
+from esg_report.Utils.CustomReportValidator import CustomEsgReportValidator
 
 logger = logging.getLogger()
 
@@ -763,6 +764,14 @@ class GHGReportView(generics.CreateAPIView):
                     "name": serializer.data.get("name"),
                 },
                 status=status.HTTP_200_OK,
+            )
+
+        if report_type == "Custom ESG Report":
+            validator = CustomEsgReportValidator()
+            validator.create_custom_report(
+                report_id,
+                request.data.get("include_management_material_topics"),
+                request.data.get("include_content_index"),
             )
 
         if (

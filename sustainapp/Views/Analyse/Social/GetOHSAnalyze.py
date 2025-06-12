@@ -19,7 +19,7 @@ from common.utils.get_data_points_as_raw_responses import (
 )
 import datetime
 import calendar
-from typing import Optional, Dict, Any, cast
+from typing import Dict, Any, cast
 
 
 class OHSAnalysisView(APIView):
@@ -199,7 +199,6 @@ class GetIllnessAnalysisView(APIView):
         }
         self.warning_message = None
 
-
     def set_data_points(self):
         self.data_points = (
             DataPoint.objects.filter(
@@ -255,6 +254,7 @@ class GetIllnessAnalysisView(APIView):
             + 1
         )
         return months_difference
+
     def get_months_years_optimized(self):
         """
         Generates a set of unique (month, year) tuples by iterating month-by-month.
@@ -276,7 +276,7 @@ class GetIllnessAnalysisView(APIView):
         current_marker_date = datetime.date(start_date.year, start_date.month, 1)
 
         while current_marker_date <= end_date:
-        # Add the current marker's month and year
+            # Add the current marker's month and year
             year_months.add((current_marker_date.year, current_marker_date.month))
 
             # Calculate the first day of the *next* month
@@ -292,7 +292,7 @@ class GetIllnessAnalysisView(APIView):
 
             # Check if the next year is valid before creating the date
             if next_year > datetime.MAXYEAR:
-                break # Stop if we exceed the maximum representable year
+                break  # Stop if we exceed the maximum representable year
 
             # Move the marker to the first day of the next month
             current_marker_date = datetime.date(next_year, next_month, 1)
@@ -301,7 +301,9 @@ class GetIllnessAnalysisView(APIView):
 
     def are_all_required_months_present_inside_data_points(self):
         # * Get all the months data inside the data points
-        months_data = set([(i["year"],i["month"]) for i in self.data_points.values("month", "year")])
+        months_data = set(
+            [(i["year"], i["month"]) for i in self.data_points.values("month", "year")]
+        )
 
         # * Get all the months between start and end dates
         months_between_start_and_end = self.get_months_years_optimized()
@@ -318,13 +320,12 @@ class GetIllnessAnalysisView(APIView):
     def get(self, request, format=None):
         serializer = CheckAnalysisViewSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        data: Dict[str,Any] = cast(Dict[str, Any], serializer.validated_data)
+        data: Dict[str, Any] = cast(Dict[str, Any], serializer.validated_data)
         self.start = data["start"]
         self.end = data["end"]
         self.corporate = data.get("corporate")  # * This is optional
         self.organisation = data.get("organisation")
         self.location = data.get("location")  # * This is optional
-
 
         show_warning = False
         self.set_data_points()
@@ -367,7 +368,6 @@ class GetIllnessAnalysisView(APIView):
                     "data": normal_response,
                     "status": status.HTTP_200_OK,
                 },
-
                 status=status.HTTP_200_OK,
             )
         else:
