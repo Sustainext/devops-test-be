@@ -569,11 +569,11 @@ def process_corporate_data(
             emission_by_source[source]["total_co2e"] = float(
                 format_decimal_places(emission_by_source[source]["total_co2e"])
             )
-            contribution_source = (
+            contribution = (
                 (values["total_co2e"] / total_co2e) * 100 if total_co2e else 0
             )
             emission_by_source[source]["contribution"] = float(
-                format_decimal_places(contribution_source)
+                format_decimal_places(contribution)
             )
 
         analysis_data_by_corporate[corporate_name] = {
