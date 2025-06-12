@@ -1,6 +1,7 @@
 from django.db import models
 from common.models.AbstractModel import AbstractModel
 from common.models.HistoricalModel import HistoricalModelMixin
+from sustainapp.models import Organization, Corporateentity
 
 
 class CoreElements(AbstractModel, HistoricalModelMixin):
@@ -68,3 +69,23 @@ class DataCollectionScreen(AbstractModel, HistoricalModelMixin):
     class Meta:
         ordering = ["order"]
         verbose_name_plural = "Data Collection Screens"
+
+
+class SelectedDisclosures(AbstractModel, HistoricalModelMixin):
+    """
+    Model to get selected recommended disclosures as per organization and corporate entity.
+    """
+
+    recommended_disclosure = models.ForeignKey(
+        RecommendedDisclosures,
+        on_delete=models.CASCADE,
+        related_name="selected_disclosures",
+        help_text="Recommended disclosure that has been selected.",
+    )
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    corporate_entity = models.ForeignKey(
+        Corporateentity, on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    def __str__(self):
+        return f"{self.recommended_disclosure.description[:50]} - {self.data_collection_screen.name}"

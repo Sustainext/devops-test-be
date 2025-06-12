@@ -4,6 +4,7 @@ from apps.tcfd_framework.views.TCFDReportingInformationViews import (
     TCFDReportingInformationView,
     TCFDReportingInformationCompletionView,
 )
+from apps.tcfd_framework.views.TCFDCollectViews import GetTCFDDisclosures
 
 urlpatterns = [
     # * GET or PUT API for TCFD Reporting Information
@@ -17,5 +18,11 @@ urlpatterns = [
         "tcfd-reporting-information-completion/",
         TCFDReportingInformationCompletionView.as_view(),
         name="tcfd_reporting_information_completion",
+    ),
+    # * GET API for TCFD Collect Section Disclosures
+    path(
+        "tcfd-collect-disclosures/",
+        GetTCFDDisclosures.as_view(),
+        name="tcfd_collect_disclosures",
     ),
 ]
