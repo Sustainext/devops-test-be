@@ -1,29 +1,25 @@
-from apps.tcfd_framework.models.TCFDCollectModels import (
-    CoreElements,
-    DataCollectionScreen,
-    RecommendedDisclosures,
-)
 from collections import defaultdict
 
 
-def get_tcfd_disclosures_response(disclosures_queryset, order_mapping=None):
+def get_tcfd_disclosures_response(
+    disclosures_queryset, selected_disclosures_ids: None | list = None
+):
     """
     Utility to format RecommendedDisclosures queryset into the required response structure.
     """
-    if order_mapping is None:
-        order_mapping = {
-            0: "a",
-            1: "b",
-            2: "c",
-            3: "d",
-            4: "e",
-            5: "f",
-            6: "g",
-            7: "h",
-            8: "i",
-            9: "j",
-            10: "k",
-        }
+    order_mapping = {
+        0: "a",
+        1: "b",
+        2: "c",
+        3: "d",
+        4: "e",
+        5: "f",
+        6: "g",
+        7: "h",
+        8: "i",
+        9: "j",
+        10: "k",
+    }
 
     disclosures = disclosures_queryset.values(
         "core_element__id",
@@ -45,6 +41,10 @@ def get_tcfd_disclosures_response(disclosures_queryset, order_mapping=None):
                 "description": f"{order_mapping.get(d['order'], '')}) {d['description']}",
                 "screen_tag": d["screen_tag"],
                 "id": d["id"],
+                "selected": (
+                    selected_disclosures_ids is not None
+                    and d["id"] in selected_disclosures_ids
+                ),
             }
         )
 
