@@ -76,7 +76,6 @@ class TCFDReportingInformationView(APIView):
                         "body": "Data for the TCFD reporting Information has been added and saved successfully.",
                         "gradient": "linear-gradient(to right, #00AEEF, #6ADF23)",
                     },
-                    "data": serializer.data,
                     "status": status.HTTP_200_OK,
                 },
                 status=status.HTTP_200_OK,
