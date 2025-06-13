@@ -11,6 +11,7 @@ import os
 from django.templatetags.static import static
 from django.core.files.storage import default_storage
 from collections import defaultdict
+from common.utils.value_types import format_decimal_places
 import re
 
 logger = logging.getLogger()
@@ -37,10 +38,14 @@ def generate_and_cache_donut_chart(data, investment_corporates=False):
 
         if not investment_corporates:
             donut_labels = [entry["scope_name"] for entry in data]
-            donut_data = [entry["total_co2e"] for entry in data]
+            donut_data = [
+                float(format_decimal_places(entry["total_co2e"])) for entry in data
+            ]
         else:
             donut_labels = [entry["corporate_name"] for entry in data]
-            donut_data = [entry["total_co2e"] for entry in data]
+            donut_data = [
+                float(format_decimal_places(entry["total_co2e"])) for entry in data
+            ]
 
         # Auto-generating colors according to data length
         colors = generate_colors(len(data))
@@ -343,7 +348,9 @@ def extract_location_data(organized_data_list):
             for location in locations:
                 location_entry = {
                     "location_name": location.get("location_name", "Unknown location"),
-                    "total_co2e": float(location.get("total_co2e", 0.0)),
+                    "total_co2e": float(
+                        format_decimal_places(location.get("total_co2e", 0.0))
+                    ),
                 }
                 location_data.append(location_entry)
         return location_data
