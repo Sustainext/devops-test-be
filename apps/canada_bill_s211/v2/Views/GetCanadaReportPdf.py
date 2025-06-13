@@ -10,6 +10,7 @@ from rest_framework.exceptions import ValidationError
 
 class GetCanadaReportPdf(View):
     def generate_entity_description_from_p1q9(self, data):
+        """This logic has been copied from frontend code and its not optimized code, need to rework on this one later"""
         if not isinstance(data, dict):
             return ""
 
