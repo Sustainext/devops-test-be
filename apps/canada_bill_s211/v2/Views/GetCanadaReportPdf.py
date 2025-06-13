@@ -9,6 +9,48 @@ from rest_framework.exceptions import ValidationError
 
 
 class GetCanadaReportPdf(View):
+    def generate_entity_description_from_p1q9(self, data):
+        if not isinstance(data, dict):
+            return ""
+
+        stock_key_normalized = "listed on a stock exchange in canada"
+
+        # Find the actual key in case of casing differences
+        actual_stock_key = next(
+            (key for key in data if key.lower() == stock_key_normalized), None
+        )
+
+        # Determine if the stock key is selected (represented by an empty list)
+        is_stock_selected = actual_stock_key and not data.get(actual_stock_key)
+
+        # Collect selected values from all other keys
+        selected_items = [
+            item
+            for key, values in data.items()
+            if key != actual_stock_key and isinstance(values, list)
+            for item in values
+        ]
+
+        # Add stock key at the beginning if selected
+        if is_stock_selected:
+            selected_items.insert(0, f"is {actual_stock_key.lower()}")
+
+        # No selections made
+        if not selected_items:
+            return ""
+
+        # One item
+        if len(selected_items) == 1:
+            return f"The entity {selected_items[0].lower()}."
+
+        # Two items
+        if len(selected_items) == 2:
+            return f"The entity {selected_items[0].lower()} and {selected_items[1].lower()}."
+
+        # Three or more items
+        *rest, last = map(str.lower, selected_items)
+        return f"The entity {', '.join(rest)}, and {last}."
+
     def get(self, request, *args, **kwargs):
         report_id = kwargs.get("report_id")
         report = get_object_or_404(Report, id=report_id)
@@ -54,6 +96,9 @@ class GetCanadaReportPdf(View):
                 f"screen_{i}": all_screen_data.get(f"screen_{i}", {})
                 for i in screen_list
             },
+            "screen_2_sentence_1": self.generate_entity_description_from_p1q9(
+                all_screen_data.get("screen_2", {}).get("part_1_screen5_q1", {})
+            ),
         }
 
         # Step 3: First render with dummy TOC to collect anchor positions
