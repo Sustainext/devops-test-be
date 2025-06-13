@@ -2,6 +2,7 @@ from django.db import models
 from common.models.AbstractModel import AbstractModel
 from common.models.HistoricalModel import HistoricalModelMixin
 
+
 class Sector(AbstractModel, HistoricalModelMixin):
     name = models.CharField(max_length=255)
 
@@ -31,6 +32,9 @@ class TCFDReportingInformation(AbstractModel, HistoricalModelMixin):
     )
     from_date = models.DateField()
     to_date = models.DateField()
+    status = models.BooleanField(
+        default=False, help_text="Indicates if the reporting information is complete"
+    )
 
     def __str__(self):
         return f"{self.organization} ({self.get_sector_type_display()}) {self.from_date} - {self.to_date}"

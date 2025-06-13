@@ -3,11 +3,11 @@ from django.core.management import call_command
 from sustainapp.models import Framework, Sdg, Certification, Regulation, Rating, Target
 from analysis.models.Social.Gender import Gender
 from authentication.models import CustomRole, CustomPermission
- 
- 
+
+
 class Command(BaseCommand):
     # help = 'Loads initial data into the database'
- 
+
     def handle(self, *args, **kwargs):
         models_to_check = [
             Certification,
@@ -20,13 +20,13 @@ class Command(BaseCommand):
             CustomRole,
             CustomPermission,
         ]
- 
+
         for model in models_to_check:
             if model.objects.exists():
                 self.stdout.write(
                     self.style.SUCCESS(f"Data already exists for model {model}")
                 )
- 
+
         self.update_or_create_certifications()
         self.update_or_create_frameworks()
         self.update_or_create_ratings()
@@ -37,9 +37,9 @@ class Command(BaseCommand):
         self.update_or_create_custom_permissions()
         self.update_or_create_custom_role()
         self.load_fixtures()
- 
+
         self.stdout.write(self.style.SUCCESS("Data Updated successfully"))
- 
+
     def update_or_create_certifications(self):
         certifications = [
             {"id": 1, "name": "BCORP", "Image": "images/certifications/BCorp.png"},
@@ -82,7 +82,7 @@ class Command(BaseCommand):
         ]
         for cert in certifications:
             Certification.objects.update_or_create(id=cert["id"], defaults=cert)
- 
+
     def update_or_create_frameworks(self):
         frameworks = [
             {
@@ -118,7 +118,7 @@ class Command(BaseCommand):
         ]
         for framework in frameworks:
             Framework.objects.update_or_create(id=framework["id"], defaults=framework)
- 
+
     def update_or_create_ratings(self):
         ratings = [
             {"id": 1, "name": "DJSI", "Image": "images/rating/DJSI.png"},
@@ -141,7 +141,7 @@ class Command(BaseCommand):
         ]
         for rating in ratings:
             Rating.objects.update_or_create(id=rating["id"], defaults=rating)
- 
+
     def update_or_create_regulations(self):
         regulations = [
             {"id": 1, "name": "SB-253", "Image": "images/regulation/SB-253.png"},
@@ -158,7 +158,7 @@ class Command(BaseCommand):
             Regulation.objects.update_or_create(
                 id=regulation["id"], defaults=regulation
             )
- 
+
     def update_or_create_sdgs(self):
         sdgs = [
             {
@@ -283,7 +283,7 @@ class Command(BaseCommand):
         ]
         for sdg in sdgs:
             Sdg.objects.update_or_create(id=sdg["id"], defaults=sdg)
- 
+
     def update_or_create_targets(self):
         targets = [
             {"id": 1, "name": "SBTi", "Image": "images/targets/SBTi.png"},
@@ -291,7 +291,7 @@ class Command(BaseCommand):
         ]
         for target in targets:
             Target.objects.update_or_create(id=target["id"], defaults=target)
- 
+
     def update_or_create_genders(self):
         genders = [
             {"id": 1, "gender": "male"},
@@ -300,7 +300,7 @@ class Command(BaseCommand):
         ]
         for gender in genders:
             Gender.objects.update_or_create(id=gender["id"], defaults=gender)
- 
+
     def update_or_create_custom_permissions(self):
         permissions = [
             {"id": 1, "name": "Manage Collect", "slug": "manage_collect"},
@@ -313,7 +313,7 @@ class Command(BaseCommand):
             CustomPermission.objects.update_or_create(
                 id=permission["id"], defaults=permission
             )
- 
+
     def update_or_create_custom_role(self):
         roles = [
             {"id": 1, "name": "ClientAdmin", "view_permissions": [1, 2, 3, 4, 5]},
@@ -326,11 +326,11 @@ class Command(BaseCommand):
             role, created = CustomRole.objects.update_or_create(
                 id=r["id"], defaults={"name": r["name"]}
             )
- 
+
             # Update the ManyToMany field
             if "view_permissions" in r:
                 role.view_permissions.set(r["view_permissions"])
- 
+
     def load_fixtures(self):
         fixture_paths = [
             "datametric/fixtures/paths.json",
@@ -339,8 +339,11 @@ class Command(BaseCommand):
             "materiality_dashboard/fixtures/material_topic.json",
             "materiality_dashboard/fixtures/disclosure.json",
             "materiality_dashboard/fixtures/stakeholder.json",
+            "apps/tcfd_framework/fixtures/core_elements.json",
+            "apps/tcfd_framework/fixtures/recommended_disclosures.json",
+            "apps/tcfd_framework/fixtures/data_collection_screen.json",
         ]
- 
+
         for fixture in fixture_paths:
             try:
                 self.stdout.write(self.style.SUCCESS(f"Loading fixture: {fixture}"))
@@ -349,4 +352,3 @@ class Command(BaseCommand):
                 self.stderr.write(
                     self.style.ERROR(f"Error loading fixture {fixture}: {e}")
                 )
- 

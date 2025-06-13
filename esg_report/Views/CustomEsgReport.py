@@ -19,8 +19,11 @@ class CustomEsgReportView(APIView):
             custom_report = EsgCustomReport.objects.get(report_id=report_id)
             skip_first_page = self.skip_first_page(custom_report.section)
             serializer = CustomEsgReportSerializer(custom_report)
+            data = serializer.data
+            data["skip_first_page"] = skip_first_page
+
             return Response(
-                {"data": serializer.data, "skip_first_page": skip_first_page},
+                {"data": data},
                 status=status.HTTP_200_OK,
             )
         except EsgCustomReport.DoesNotExist:
