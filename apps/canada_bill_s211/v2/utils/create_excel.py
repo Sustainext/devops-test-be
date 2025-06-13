@@ -423,7 +423,8 @@ class CanadaBillReport:
         )
         for ws in self.excel_file.worksheets:
             ws.protection = openpyxl.worksheet.protection.SheetProtection()
-
+        for ws in self.excel_file.worksheets:
+            ws.sheet_view.showRowColHeaders = True
         # Example of how you might use insert_rows_in_sheet:
         # self.insert_rows_in_sheet(sheet_name="Part 1", start_row=12, num_rows_to_insert=5) # Adjust start_row as needed
 

@@ -130,7 +130,7 @@ class GetLatestSelectedDisclosures(APIView):
                     "organization__framework", flat=True
                 )
             )
-        )
+        ).distinct()
         framework_data = FrameworkSerializer(instance=frameworks, many=True).data
         return Response(
             data={
