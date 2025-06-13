@@ -2,11 +2,14 @@ from django.urls import path
 
 from apps.tcfd_framework.views.TCFDReportingInformationViews import (
     TCFDReportingInformationView,
-    TCFDReportingInformationCompletionView,
+)
+from apps.tcfd_framework.views.TCFDCompletionStatus import (
+    TCFDStatusCompletionView,
 )
 from apps.tcfd_framework.views.TCFDCollectViews import (
     GetTCFDDisclosures,
-    GetOrUpdateSelectedDisclosures,
+    UpdateSelectedDisclosures,
+    GetLatestSelectedDisclosures,
 )
 
 urlpatterns = [
@@ -19,7 +22,7 @@ urlpatterns = [
     # * Checks whether the TCFD Reporting Information is completed or not
     path(
         "tcfd-reporting-information-completion/",
-        TCFDReportingInformationCompletionView.as_view(),
+        TCFDStatusCompletionView.as_view(),
         name="tcfd_reporting_information_completion",
     ),
     # * GET API for TCFD Collect Section Disclosures
@@ -31,7 +34,13 @@ urlpatterns = [
     # * GET or PUT API for Selected Disclosures
     path(
         "selected-disclosures/",
-        GetOrUpdateSelectedDisclosures.as_view(),
+        UpdateSelectedDisclosures.as_view(),
+        name="get_or_update_selected_disclosures",
+    ),
+    # * Get Latest Selected Disclosures API
+    path(
+        "get-latest-selected-disclosures/",
+        GetLatestSelectedDisclosures.as_view(),
         name="get_or_update_selected_disclosures",
     ),
 ]
