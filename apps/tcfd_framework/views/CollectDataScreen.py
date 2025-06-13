@@ -63,6 +63,7 @@ class CollectDataScreen(APIView):
                     "climate_data": climate_dps,
                     "opportunities_data": opportunities_dps,
                 },
+                "status": status.HTTP_200_OK,
             },
             status=status.HTTP_200_OK,
         )
