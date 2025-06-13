@@ -11,6 +11,7 @@ from apps.tcfd_framework.views.TCFDCollectViews import (
     UpdateSelectedDisclosures,
     GetLatestSelectedDisclosures,
 )
+from apps.tcfd_framework.views.CollectDataScreen import CollectDataScreen
 
 urlpatterns = [
     # * GET or PUT API for TCFD Reporting Information
@@ -42,5 +43,11 @@ urlpatterns = [
         "get-latest-selected-disclosures/",
         GetLatestSelectedDisclosures.as_view(),
         name="get_or_update_selected_disclosures",
+    ),
+    # * Get data from different collect section
+    path(
+        "get-climate-related-data/",
+        CollectDataScreen.as_view(),
+        name="get-climate-related-data",
     ),
 ]
