@@ -19,6 +19,7 @@ from apps.tcfd_framework.utils import (
 from sustainapp.models import Framework, Userorg
 from sustainapp.serializers import FrameworkSerializer
 from django.db.models import Q
+from django.core.cache import cache
 import logging
 
 logger = logging.getLogger("django")
@@ -147,19 +148,30 @@ class GetLatestSelectedDisclosures(APIView):
         response_data = get_or_set_tcfd_cache_data(
             organization=organization, corporate=corporate
         )
-        frameworks = Framework.objects.filter(
-            id__in=(
-                Userorg.objects.filter(user=self.request.user).values_list(
-                    "organization__framework", flat=True
+        framework_cache_data = cache.get(
+            key=f"framework__{self.request.user.username}", default=False
+        )
+        if not framework_cache_data:
+            frameworks = Framework.objects.filter(
+                id__in=(
+                    Userorg.objects.filter(user=self.request.user).values_list(
+                        "organization__framework", flat=True
+                    )
                 )
+            ).distinct()
+            framework_data = FrameworkSerializer(instance=frameworks, many=True).data
+            cache.set(
+                key=f"framework__{self.request.user.username}",
+                value=framework_data,
+                timeout=None,
             )
-        ).distinct()
-        framework_data = FrameworkSerializer(instance=frameworks, many=True).data
+            framework_cache_data = framework_data
+
         return Response(
             data={
                 "message": "Only Latest Selected Disclosures fetched.",
                 "data": {
-                    "framework_data": framework_data,
+                    "framework_data": framework_cache_data,
                     "selected_disclosures": self.filter_selected_true(response_data),
                     "tcfd_reporting_information_sector": tcfd_reporting_information.sector,
                 },

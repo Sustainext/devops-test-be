@@ -24,7 +24,8 @@ from sustainapp.serializers import (
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
-from rest_framework.validators import ValidationError
+from rest_framework.exceptions import ValidationError
+from django.core.cache import cache
 
 
 class FrameworkReadOnlyModelViewset(viewsets.ReadOnlyModelViewSet):
@@ -158,7 +159,6 @@ def TypeOfPreference(request):
 
 @api_view(["GET"])
 def OrgPreference(request):
-
     permission_classes = [IsAuthenticated]
     try:
         user = request.user
@@ -279,7 +279,6 @@ MODEL_MAP = {
 
 @api_view(["PUT"])
 def UpdatePreference(request):
-
     permission_classes = [IsAuthenticated]
     try:
         user = request.user
@@ -316,6 +315,9 @@ def UpdatePreference(request):
         try:
             getattr(org, preference).set(objects_to_link)
             org.save()
+            if preference == "framework":
+                ...
+                cache.delete(f"framework__{user.username}")
             return Response(
                 {
                     "message": f"{preference} preferences updated successfully for organization"
