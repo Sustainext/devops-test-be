@@ -10,11 +10,6 @@ class CollectBasicSerializer(serializers.Serializer):
         required=False,
         allow_null=True
     )
-    location = serializers.PrimaryKeyRelatedField(
-        queryset=Location.objects.all(),
-        required=False,
-        allow_null=True
-    )
     year=serializers.IntegerField()
 
     

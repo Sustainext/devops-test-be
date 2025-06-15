@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.tcfd_framework.models.TCFDCollectModels import (
     SelectedDisclosures,
 )
+from apps.tcfd_framework.models.TCFDReportingModels import TCFDReportingInformation
 from apps.tcfd_framework.serializers.RecommendedDisclosuresListSerializer import (
     RecommendedDisclosureIdListSerializer,
 )
@@ -18,6 +19,9 @@ from apps.tcfd_framework.utils import (
 from sustainapp.models import Framework, Userorg
 from sustainapp.serializers import FrameworkSerializer
 from django.db.models import Q
+import logging
+
+logger = logging.getLogger("django")
 
 
 class GetTCFDDisclosures(APIView):
@@ -104,16 +108,35 @@ class GetLatestSelectedDisclosures(APIView):
     def get(self, request, *args, **kwargs):
         user_orgs = self.request.user.orgs.all()
         user_corporates = self.request.user.corps.all()
-
+        filters = Q(organization__in=user_orgs, corporate__in=user_corporates) | Q(
+            organization__in=user_orgs, corporate__isnull=True
+        )
         try:
-            selected_disclosure = SelectedDisclosures.objects.filter(
-                Q(organization__in=user_orgs, corporate__in=user_corporates)
-                | Q(organization__in=user_orgs, corporate__isnull=True)
-            ).latest("updated_at")
+            selected_disclosure = SelectedDisclosures.objects.filter(filters).latest(
+                "updated_at"
+            )
         except SelectedDisclosures.DoesNotExist:
             return Response(
                 {
                     "message": "No disclosures found for TCFD",
+                    "status": status.HTTP_404_NOT_FOUND,
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # * Get TCFDReportingInformation sector
+        try:
+            tcfd_reporting_information = TCFDReportingInformation.objects.filter(
+                filters
+            ).latest("updated_at")
+        except TCFDReportingInformation.DoesNotExist:
+            logger.warning(
+                f"TCFD Reporting Information doesn't exist {selected_disclosure.organization.name}"
+                and {selected_disclosure.corporate}
+            )
+            return Response(
+                {
+                    "message": "No tcfd reporting information found for TCFD",
                     "status": status.HTTP_404_NOT_FOUND,
                 },
                 status=status.HTTP_404_NOT_FOUND,
@@ -138,6 +161,7 @@ class GetLatestSelectedDisclosures(APIView):
                 "data": {
                     "framework_data": framework_data,
                     "selected_disclosures": self.filter_selected_true(response_data),
+                    "tcfd_reporting_information_sector": tcfd_reporting_information.sector,
                 },
                 "status": status.HTTP_200_OK,
             },

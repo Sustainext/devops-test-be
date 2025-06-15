@@ -25,7 +25,6 @@ class CollectDataScreen(APIView):
         serializer.is_valid(raise_exception=True)
         organization = serializer.validated_data["organization"]
         corporate = serializer.validated_data.get("corporate", None)
-        location = serializer.validated_data.get("location", None)
         year = serializer.validated_data["year"]
         climate_filters = {
             "path__slug__in": list(self.climate_slugs.keys()),
@@ -35,8 +34,7 @@ class CollectDataScreen(APIView):
         }
         if corporate:
             climate_filters["corporate"] = corporate
-        if location:
-            climate_filters["location"] = location
+        
 
         climate_dps = DataPoint.objects.filter(**climate_filters).values_list(
             "value", flat=True
@@ -49,8 +47,6 @@ class CollectDataScreen(APIView):
         }
         if corporate:
             opportunities_filters["corporate"] = corporate
-        if location:
-            opportunities_filters["location"] = location
 
         opportunities_dps = DataPoint.objects.filter(
             **opportunities_filters
