@@ -579,7 +579,10 @@ def process_corporate_data(
 
         analysis_data_by_corporate[corporate_name] = {
             "corporate_type": corporate_type,
-            "scopes": structured_emission_data,  # Convert defaultdict to regular dict
+            "scopes": sorted(
+                structured_emission_data,
+                key=lambda x: int(x["scope_name"].split("-")[1]),
+            ),
             "locations": [],
             "sources": list(emission_by_source.values()),
             "ownership_ratio": ownership_ratio if ownership_ratio else None,
@@ -595,7 +598,10 @@ def process_corporate_data(
 
         analysis_data_by_corporate[corporate_name] = {
             "corporate_type": corporate_type,  # Add corporate_type here
-            "scopes": scopes,
+            "scopes": sorted(
+                scopes,
+                key=lambda x: int(x["scope_name"].split("-")[1]),
+            ),
             "locations": emission_by_location,
             "sources": emission_by_source,
         }

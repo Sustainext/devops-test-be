@@ -767,11 +767,7 @@
             {% endfor %}
             <!-- Add more rows as needed -->
         </table>
-        <p>The total Scope 1 emissions from {{organization_name}} were {% for scope in combined_scopes %}
-            {% if scope.scope_name == "Scope-1" %}
-            {{scope.total_co2e|floatformat:2}}
-            {% endif %}
-            {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
+        <p>The total Scope 1 emissions from {{organization_name}} were {{ combined_scopes|get_scope_total:"Scope-1"}} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
             {{start_date|date:"Y" }}
             {% else %}
             {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
@@ -814,11 +810,7 @@
             {% endfor %}
             <!-- Add more rows as needed -->
         </table>
-        <p>The total Scope 2 emissions from {{organization_name}} were {% for scope in combined_scopes %}
-            {% if scope.scope_name == "Scope-2" %}
-            {{scope.total_co2e|floatformat:2}}
-            {% endif %}
-            {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
+        <p>The total Scope 2 emissions from {{organization_name}} were {{ combined_scopes|get_scope_total:"Scope-2"}} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
             {{start_date|date:"Y" }}
             {% else %}
             {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
@@ -868,11 +860,7 @@
 
             <!-- Add more rows as needed -->
         </table>
-        <p>The total Scope 3 emissions from {{organization_name}} were {% for scope in combined_scopes %}
-            {% if scope.scope_name == "Scope-3" %}
-            {{scope.total_co2e|floatformat:2}}
-            {% endif %}
-            {% endfor %} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
+        <p>The total Scope 3 emissions from {{organization_name}} were {{ combined_scopes|get_scope_total:"Scope-3"}} tCO2e for FY {% if start_date|date:"Y" == end_date|date:"Y" %}
             {{start_date|date:"Y" }}
             {% else %}
             {{start_date|date:"Y" }}-{{end_date|date:"Y"}}
@@ -903,11 +891,11 @@
                 
                 <tr>
                     <td style="width: 50%;">Scope-1</td>
-                    <td style="width: 50%;">{{ emissions.scope1|floatformat:2 }}</td>
+                    <td style="width: 50%;">{{ emissions.scope1|default:0.00}}</td>
                 </tr>
                 <tr>
                     <td style="width: 50%;">Scope-2</td>
-                    <td style="width: 50%;">{{ emissions.scope2|floatformat:2 }}</td>
+                    <td style="width: 50%;">{{ emissions.scope2|default:0.00}}</td>
                 </tr>
                 
             </table>
