@@ -15,35 +15,14 @@ from esg_report.models.ScreenFourteen import ScreenFourteen
 from esg_report.models.ScreenFifteen import ScreenFifteenModel
 from esg_report.Views.DummyValidationResponse import dummy_response_data
 from rest_framework.views import APIView
-from django.db.models import Q
 from rest_framework.response import Response
-from functools import reduce
-from operator import or_
 from django.db.models import JSONField
+from django.shortcuts import get_object_or_404
+from sustainapp.models import Report
+from esg_report.models.ESGCustomReport import EsgCustomReport
 
 
 class FieldValidationView(APIView):
-
-    def filter_screen_data(self, model, report_id, json_fields):
-        """Validate the fields in the data."""
-        base_query = Q(report__id=report_id)
-
-        json_field_queries = reduce(
-            or_,
-            [
-                Q(**{f"{field}__content__isnull": True})
-                | Q(**{f"{field}__content": ""})
-                | Q(**{f"{field}__isSkipped": False})
-                for field in json_fields
-            ],
-        )
-
-        final_query = base_query & json_field_queries
-
-        results = model.objects.filter(final_query).distinct()
-
-        return results
-
     def process_screen_results(self, results, json_fields):
         """
         Process and format results for a screen.
@@ -88,6 +67,104 @@ class FieldValidationView(APIView):
             if isinstance(field, JSONField)
         ]
 
+    def get_validated_result_normal_report(self, screens, report, dummy_responses):
+        combined_results = []
+
+        for screen_name, screen_data in screens.items():
+            model = screen_data["model"]
+            json_fields = screen_data["fields"]
+
+            results = model.objects.filter(report=report)
+
+            if results.exists():
+                processed_results = self.process_screen_results(results, json_fields)
+
+                for field in json_fields:
+                    if not model.objects.filter(
+                        report=report, **{f"{field}__isnull": False}
+                    ).exists():
+                        if screen_name in dummy_responses:
+                            dummy_field_data = [
+                                d
+                                for d in dummy_responses[screen_name]
+                                if d["field"] == field
+                            ]
+                            processed_results.extend(dummy_field_data)
+
+                combined_results.extend(processed_results)
+            else:
+                if screen_name in dummy_responses:
+                    combined_results.extend(dummy_responses[screen_name])
+
+        return combined_results
+
+    def extract_enabled_items(self, section_json, sub_section_json):
+        enabled_sections = {s["id"] for s in section_json if s["enabled"]}
+        enabled_subsections = set()
+
+        for sec_id, subs in sub_section_json.items():
+            for sub in subs:
+                if sub["enabled"]:
+                    if sub["field"]:
+                        for f in sub["field"]:
+                            enabled_subsections.add(f)
+                if "children" in sub:
+                    for child in sub["children"]:
+                        if child["enabled"]:
+                            if child["field"]:
+                                for f in child["field"]:
+                                    enabled_subsections.add(f)
+
+        return enabled_sections, enabled_subsections
+
+    def get_enabled_fields_from_dummy(self, enabled_sections, enabled_subsections):
+        enabled_fields = set()
+
+        for screen_fields in dummy_response_data.values():
+            for field_data in screen_fields:
+                field = field_data.get("field", "")
+
+                for sec in enabled_sections:
+                    if sec == field:
+                        enabled_fields.add(field)
+
+                for sub in enabled_subsections:
+                    if sub == field:
+                        enabled_fields.add(field)
+
+        return enabled_fields
+
+    def get_validated_result_custom_report(self, screens, report, dummy_response):
+        custom_config = get_object_or_404(EsgCustomReport, report=report)
+        section_config = custom_config.section
+        sub_section_config = custom_config.sub_section
+
+        enabled_sections, enabled_subsections = self.extract_enabled_items(
+            section_config, sub_section_config
+        )
+        enabled_fields = self.get_enabled_fields_from_dummy(
+            enabled_sections, enabled_subsections
+        )
+        combined_results = []
+
+        for screen_name, screen_data in screens.items():
+            model = screen_data["model"]
+            json_fields = screen_data["fields"]
+
+            results = model.objects.filter(report=report)
+            if results.exists():
+                screen_results = self.process_screen_results(results, json_fields)
+                filtered = [r for r in screen_results if r["field"] in enabled_fields]
+                combined_results.extend(filtered)
+            else:
+                dummy_fields = dummy_response.get(screen_name, [])
+                filtered_dummy = [
+                    f for f in dummy_fields if f["field"] in enabled_fields
+                ]
+                combined_results.extend(filtered_dummy)
+
+        return combined_results
+
     def get(self, request, report_id):
         """Handle GET request to validate fields.
         Checked if the report exists.
@@ -97,11 +174,7 @@ class FieldValidationView(APIView):
         If the model does not have data related to the report, it returns dummy responses.
         """
 
-        # if not Report.objects.filter(id=report_id).exists():
-        #     return Response({"error": "Report not found"}, status=404)
-
-        combined_results = []
-        dummy_responses = dummy_response_data
+        report = get_object_or_404(Report, id=report_id)
 
         screens = {
             "screen_one": {
@@ -166,30 +239,14 @@ class FieldValidationView(APIView):
             },
         }
 
-        for screen_name, screen_data in screens.items():
-            model = screen_data["model"]
-            json_fields = screen_data["fields"]
+        if report.report_type == "Custom ESG Report":
+            data = self.get_validated_result_custom_report(
+                screens, report, dummy_response_data
+            )
+            return Response(data)
+        else:
+            result = self.get_validated_result_normal_report(
+                screens, report, dummy_response_data
+            )
 
-            results = model.objects.filter(report__id=report_id)
-
-            if results.exists():
-                processed_results = self.process_screen_results(results, json_fields)
-
-                for field in json_fields:
-                    if not model.objects.filter(
-                        report__id=report_id, **{f"{field}__isnull": False}
-                    ).exists():
-                        if screen_name in dummy_responses:
-                            dummy_field_data = [
-                                d
-                                for d in dummy_responses[screen_name]
-                                if d["field"] == field
-                            ]
-                            processed_results.extend(dummy_field_data)
-
-                combined_results.extend(processed_results)
-            else:
-                if screen_name in dummy_responses:
-                    combined_results.extend(dummy_responses[screen_name])
-
-        return Response(combined_results)
+        return Response(result)
