@@ -171,8 +171,8 @@ dummy_response_data = {
         },
         {
             "page": "screen_nine",
-            "label": "9.6.2 Reason why policy is not publicly available",
-            "subLabel": "Add statement about company’s sustainability policies",
+            "label": "9.6.1 Embedding Policy Commitment",
+            "subLabel": "Add statement about embedding policy commitment",
             "type": "textarea",
             "content": "",
             "field": "policy_not_public_reason",
