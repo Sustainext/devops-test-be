@@ -342,9 +342,15 @@
         <div>
             <div class="flex">
                 <div class="orgname">
+                    {% if has_investment_corporates %}
+                    <h1 class="report-name">GHG <br> Investments <br>
+                        Report
+                    </h1>
+                    {% else %}
                     <h1 class="report-name">GHG <br> Accounting <br>
                         Report
                     </h1>
+                    {% endif %}
 
                     <h2 class="year">Year:{% if start_date|date:"Y" == end_date|date:"Y" %}
                         {{start_date|date:"Y" }}

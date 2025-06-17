@@ -13,6 +13,7 @@ from django.core.files.storage import default_storage
 from collections import defaultdict
 from common.utils.value_types import format_decimal_places
 import re
+from decimal import Decimal
 
 logger = logging.getLogger()
 
@@ -39,12 +40,12 @@ def generate_and_cache_donut_chart(data, investment_corporates=False):
         if not investment_corporates:
             donut_labels = [entry["scope_name"] for entry in data]
             donut_data = [
-                float(format_decimal_places(entry["total_co2e"])) for entry in data
+                Decimal(format_decimal_places(entry["total_co2e"])) for entry in data
             ]
         else:
             donut_labels = [entry["corporate_name"] for entry in data]
             donut_data = [
-                float(format_decimal_places(entry["total_co2e"])) for entry in data
+                Decimal(format_decimal_places(entry["total_co2e"])) for entry in data
             ]
 
         # Auto-generating colors according to data length
