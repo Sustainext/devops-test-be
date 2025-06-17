@@ -145,9 +145,6 @@ class FieldValidationView(APIView):
         enabled_fields = self.get_enabled_fields_from_dummy(
             enabled_sections, enabled_subsections
         )
-        print(enabled_sections)
-        print(enabled_subsections)
-        print(enabled_fields)
         combined_results = []
 
         for screen_name, screen_data in screens.items():
