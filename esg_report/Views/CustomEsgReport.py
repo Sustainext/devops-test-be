@@ -6,6 +6,13 @@ from esg_report.Serializer.CustomEsgReportSerializer import CustomEsgReportSeria
 
 
 class CustomEsgReportView(APIView):
+    """
+    View for handling custom ESG report requests.
+    Request:
+        - GET: Retrieve custom ESG report data based on the report ID.
+        - Patch: Update an existing custom ESG report.
+    """
+
     def skip_first_page(self, data):
         skip_first_page = False
         for page_data in data:
@@ -39,7 +46,9 @@ class CustomEsgReportView(APIView):
             )
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(
+                    {"message": "Data updated successfully."}, status=status.HTTP_200_OK
+                )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except EsgCustomReport.DoesNotExist:
             return Response(

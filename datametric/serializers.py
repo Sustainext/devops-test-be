@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import FieldGroup, RawResponse
 from sustainapp.models import Organization, Corporateentity, Location
+from datametric.fields import JavaScriptObjectField
+
 
 class FieldGroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,6 +40,7 @@ class UpdateResponseSerializer(serializers.Serializer):
     )
     year = serializers.IntegerField(required=True)
     month = serializers.IntegerField(min_value=1, max_value=12, required=False)
+
     def validate(self, data):
         if not any(
             [data.get("location"), data.get("organisation"), data.get("corporate")]
@@ -78,7 +81,6 @@ class FieldGroupGetSerializer(serializers.Serializer):
         fields = ["path_slug", "year", "month", "organisation", "corporate"]
 
     def validate(self, data):
-
         if not any(
             [data.get("location"), data.get("organisation"), data.get("corporate")]
         ):
@@ -97,7 +99,6 @@ class FieldGroupGetSerializer(serializers.Serializer):
 
 
 class GetClimatiqComputedSerializer(serializers.Serializer):
-
     # TODO: Location should be based on the client.
     location = serializers.PrimaryKeyRelatedField(
         queryset=Location.objects.all(), required=True
@@ -111,8 +112,10 @@ class GetClimatiqComputedSerializer(serializers.Serializer):
 
 class UpdateFieldGroupSerializer(serializers.Serializer):
     path_name = serializers.CharField(required=True)
-    schema = serializers.JSONField(required=False, allow_null=True)
-    ui_schema = serializers.JSONField(required=False, allow_null=True)
+    # Use the new custom field here
+    schema = JavaScriptObjectField(required=False, allow_null=True)
+    ui_schema = JavaScriptObjectField(required=False, allow_null=True)
+    is_new = serializers.BooleanField(required=True, allow_null=False)
 
     def validate(self, data):
         if not any([data.get("schema"), data.get("ui_schema")]):
@@ -120,3 +123,6 @@ class UpdateFieldGroupSerializer(serializers.Serializer):
                 "At least one of 'schema' or 'ui_schema' must be provided."
             )
         return data
+
+    class Meta:
+        fields = ["path_name", "schema", "ui_schema", "is_new"]

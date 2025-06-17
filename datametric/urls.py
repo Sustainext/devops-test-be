@@ -6,6 +6,7 @@ from .views import (
     GetComputedClimatiqValue,
     UpdateFieldGroupView,
 )
+from datametric.View.UpdateOrCreateIndicator import UpdateOrCreateIndicatorView
 
 urlpatterns = [
     path("test/", TestView.as_view(), name="udm-test"),
@@ -23,6 +24,13 @@ urlpatterns = [
         name="get-computed-climatiq-view",
     ),
     path(
-        "update-field-group-with-path/", UpdateFieldGroupView.as_view(), name="update-field-group"
+        "update-field-group-with-path/",
+        UpdateFieldGroupView.as_view(),
+        name="update-field-group",
+    ),
+    path(
+        "update-or-create-indicator/",
+        UpdateOrCreateIndicatorView.as_view(),
+        name="update-or-create-indicator",
     ),
 ]
