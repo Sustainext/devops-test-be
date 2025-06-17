@@ -155,7 +155,6 @@
             table-layout: fixed;
             /* Important to make sure that the table adheres to the set widths */
         }
-
         th,
         td {
             border: 1px solid #ddd;
@@ -904,11 +903,11 @@
                 
                 <tr>
                     <td style="width: 50%;">Scope-1</td>
-                    <td>{{ emissions.scope1|floatformat:2 }}</td>
+                    <td style="width: 50%;">{{ emissions.scope1|floatformat:2 }}</td>
                 </tr>
                 <tr>
                     <td style="width: 50%;">Scope-2</td>
-                    <td>{{ emissions.scope2|floatformat:2 }}</td>
+                    <td style="width: 50%;">{{ emissions.scope2|floatformat:2 }}</td>
                 </tr>
                 
             </table>

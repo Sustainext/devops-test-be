@@ -1,145 +1,125 @@
+from collections import defaultdict
+from django.core.cache import cache
+from common.utils.sanitise_cache import sanitize_cache_key_part
 from apps.tcfd_framework.models.TCFDCollectModels import (
-    CoreElements,
-    DataCollectionScreen,
     RecommendedDisclosures,
+    SelectedDisclosures,
 )
 
 
-# 1. Core Elements
-core_elements_data = [
-    {
-        "name": "Governance",
-        "description": "Disclose the organization’s governance around climate related risks and opportunities.",
-    },
-    {
-        "name": "Strategy",
-        "description": "Disclose the actual and potential impacts of climate-related risks and opportunities on the organization’s businesses, strategy, and financial planning where such information is material.",
-    },
-    {
-        "name": "Risk Management",
-        "description": "Disclose how the organization identifies, assesses, and manages climate-related risks.",
-    },
-    {
-        "name": "Metrics & Targets",
-        "description": "Disclose the metrics and targets used to assess and manage relevant climate-related risks and opportunities where such information is material.",
-    },
-]
+def get_tcfd_disclosures_response(
+    disclosures_queryset, selected_disclosures_ids: None | list = None
+):
+    """
+    Utility to format RecommendedDisclosures queryset into the required response structure.
+    """
+    order_mapping = {
+        0: "a",
+        1: "b",
+        2: "c",
+        3: "d",
+        4: "e",
+        5: "f",
+        6: "g",
+        7: "h",
+        8: "i",
+        9: "j",
+        10: "k",
+    }
 
-core_element_objs = {}
-for elem in core_elements_data:
-    obj, _ = CoreElements.objects.get_or_create(
-        name=elem["name"], defaults={"description": elem["description"]}
+    disclosures = disclosures_queryset.values(
+        "core_element__id",
+        "core_element__name",
+        "core_element__description",
+        "description",
+        "order",
+        "screen_tag",
+        "id",
     )
-    obj.save()
-    # Store the object in a dictionary for later use
-    core_element_objs[elem["name"]] = obj
 
-# 2. Recommended Disclosures and Data Collection Screens
-disclosures_data = [
-    # Governance
-    {
-        "core": "Governance",
-        "order": 0,
-        "description": "Describe the board’s oversight of climate-related risks and opportunities.",
-        "screens": [
-            "Structure",
-            "Board’s oversight of climate related risks and opportunities",
-        ],
-        "screen_tag": "GOV-A",
-    },
-    {
-        "core": "Governance",
-        "order": 1,
-        "description": "Describe management’s role in assessing and managing climate-related risks and opportunities.",
-        "screens": [
-            "Structure",
-            "Management’s role in assessing and managing climate related risks and opportunities",
-        ],
-        "screen_tag": "GOV-B",
-    },
-    # Strategy
-    {
-        "core": "Strategy",
-        "order": 0,
-        "description": "Describe the climate-related risks and opportunities the organization has identified over the short, medium, and long term.",
-        "screens": ["Climate related Risks", "Climate related Opportunities"],
-        "screen_tag": "STG-A",
-    },
-    {
-        "core": "Strategy",
-        "order": 1,
-        "description": "Describe the impact of climate-related risks and opportunities on the organization’s businesses, strategy, and financial planning.",
-        "screens": ["Impact of Climate Related Issues on Business"],
-        "screen_tag": "STG-B",
-    },
-    {
-        "core": "Strategy",
-        "order": 2,
-        "description": "Describe the resilience of the organization’s strategy, taking into consideration different climate-related scenarios, including a 2°C or lower scenario.",
-        "screens": ["Resilience of the Organisation’s Strategy"],
-        "screen_tag": "STG-C",
-    },
-    # Risk Management
-    {
-        "core": "Risk Management",
-        "order": 0,
-        "description": "Describe the organization’s processes for identifying and assessing climate-related risks.",
-        "screens": ["Risk Identification & Assessment"],
-        "screen_tag": "RM-A",
-    },
-    {
-        "core": "Risk Management",
-        "order": 1,
-        "description": "Describe the organization’s processes for managing climate-related risks.",
-        "screens": ["Climate Risk Management"],
-        "screen_tag": "RM-B",
-    },
-    {
-        "core": "Risk Management",
-        "order": 2,
-        "description": "Describe how processes for identifying, assessing, and managing climate-related risks are integrated into the organization’s overall risk management.",
-        "screens": ["Climate Risk Integration"],
-        "screen_tag": "RM-C",
-    },
-    # Metrics & Targets
-    {
-        "core": "Metrics & Targets",
-        "order": 0,
-        "description": "Disclose the metrics used by the organization to assess climate-related risks and opportunities in line with its strategy and risk management process.",
-        "screens": ["Climate Related Metrics"],
-        "screen_tag": "M&T-A",
-    },
-    {
-        "core": "Metrics & Targets",
-        "order": 1,
-        "description": "Disclose Scope 1, Scope 2, and, if appropriate, Scope 3 greenhouse gas (GHG) emissions, and the related risks.",
-        "screens": ["GHG Emissions", "GHG Emission Intensity"],
-        "screen_tag": "M&T-B",
-    },
-    {
-        "core": "Metrics & Targets",
-        "order": 2,
-        "description": "Describe the targets used by the organization to manage climate-related risks and opportunities and performance against targets.",
-        "screens": ["Climate Related Targets"],
-        "screen_tag": "M&T-C",
-    },
-]
-
-for disclosure in disclosures_data:
-    core_element = core_element_objs[disclosure["core"]]
-    rec_disc, _ = RecommendedDisclosures.objects.get_or_create(
-        description=disclosure["description"],
-        core_element=core_element,
-        defaults={
-            "order": disclosure["order"],
-            "screen_tag": disclosure["screen_tag"],
-        },
-    )
-    rec_disc.save()
-    order = 0
-    for screen_name in disclosure["screens"]:
-        data_collection_screen_object, _ = DataCollectionScreen.objects.get_or_create(
-            name=screen_name, recommended_disclosure=rec_disc, order=order
+    core_map = defaultdict(lambda: {"description": "", "disclosures": []})
+    for d in disclosures:
+        core_id = d["core_element__id"]
+        core_map[core_id]["description"] = d["core_element__description"]
+        core_map[core_id].setdefault("name", d["core_element__name"])
+        core_map[core_id]["disclosures"].append(
+            {
+                "description": f"{order_mapping.get(d['order'], '')}) {d['description']}",
+                "screen_tag": d["screen_tag"],
+                "id": d["id"],
+                "selected": (
+                    selected_disclosures_ids is not None
+                    and d["id"] in selected_disclosures_ids
+                ),
+            }
         )
-        data_collection_screen_object.save()
-        order += 1
+
+    response = {
+        core["name"]: {
+            "description": core["description"],
+            "disclosures": core["disclosures"],
+        }
+        for core in core_map.values()
+    }
+    return response
+
+
+def get_or_set_tcfd_cache_data(organization, corporate):
+    cache_key = f"tcfd_disclosures_{sanitize_cache_key_part(organization)}_{sanitize_cache_key_part(corporate)}"
+    cached_data = cache.get(cache_key)
+    if cached_data is None:
+        selected_disclosures = SelectedDisclosures.objects.filter(
+            organization=organization, corporate=corporate
+        ).prefetch_related("recommended_disclosure")
+        selected_disclosures_recommended_disclosure_ids = (
+            selected_disclosures.values_list("recommended_disclosure__id", flat=True)
+        )
+
+        # * Get all important data
+        disclosures = RecommendedDisclosures.objects.all().select_related(
+            "core_element"
+        )
+        response_data = get_tcfd_disclosures_response(
+            disclosures_queryset=disclosures,
+            selected_disclosures_ids=selected_disclosures_recommended_disclosure_ids,
+        )
+        cache.set(cache_key, response_data, timeout=86400)
+    else:
+        response_data = cached_data
+    return response_data
+
+
+def update_selected_disclosures_cache(organization, corporate, recommended_disclosures):
+    """
+    Utility method to update the selected disclosures and cache for given organization and corporate.
+    """
+    cache_key = f"tcfd_disclosures_{sanitize_cache_key_part(organization)}_{sanitize_cache_key_part(corporate)}"
+    cache.delete(cache_key)
+
+    SelectedDisclosures.objects.filter(
+        organization=organization,
+        corporate=corporate,
+    ).delete()
+
+    SelectedDisclosures.objects.bulk_create(
+        [
+            SelectedDisclosures(
+                recommended_disclosure=rd,
+                organization=organization,
+                corporate=corporate,
+            )
+            for rd in recommended_disclosures
+        ]
+    )
+    response_data = get_tcfd_disclosures_response(
+        disclosures_queryset=RecommendedDisclosures.objects.all().select_related(
+            "core_element"
+        ),
+        selected_disclosures_ids=list(
+            SelectedDisclosures.objects.filter(
+                organization=organization, corporate=corporate
+            ).values_list("recommended_disclosure__id", flat=True)
+        ),
+    )
+    cache.set(cache_key, response_data, timeout=86400)
+    return response_data
