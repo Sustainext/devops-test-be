@@ -33,6 +33,7 @@
     "title": "Awards & Alliances",
     "mandatory": false,
     "enabled": false,
+    "field": ["awards_description"],
     "order": 5
   },
   {
@@ -40,6 +41,7 @@
     "title": "Stakeholder Engagement",
     "mandatory": false,
     "enabled": false,
+    "field": ["stakeholder_description"],
     "order": 6
   },
   {
@@ -47,7 +49,7 @@
     "title": "About the Report",
     "mandatory": false,
     "enabled": false,
-    "field": ["description"],
+    "field": ["about_the_report_description"],
     "order": 7
   },
   {
@@ -62,7 +64,7 @@
     "title": "Corporate Governance",
     "mandatory": false,
     "enabled": false,
-    "field": ["statement"],
+    "field": ["governance_statement"],
     "order": 9
   },
   {

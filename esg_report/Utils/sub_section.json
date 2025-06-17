@@ -46,7 +46,7 @@
     {
       "id": "sustainability_roadmap",
       "label": "Sustainability Roadmap",
-      "field": ["description"],
+      "field": ["sustainability_description"],
       "enabled": false
     }
   ],
@@ -54,7 +54,6 @@
     {
       "id": "awards_and_recognition",
       "label": "Awards & Recognition",
-      "field": ["description"],
       "enabled": false
     }
   ],
@@ -62,7 +61,6 @@
     {
       "id": "approach_to_stakeholder_engagement",
       "label": "Approach To Stakeholder Engagement",
-      "field": ["description"],
       "enabled": false
     }
   ],
@@ -96,7 +94,7 @@
     {
       "id": "materiality_assessment",
       "label": "Materiality Assessment",
-      "field": ["statement"],
+      "field": ["materiality_statement"],
       "enabled": false,
       "children": [
         {
