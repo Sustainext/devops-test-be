@@ -174,6 +174,7 @@ class GetLatestSelectedDisclosures(APIView):
                     "framework_data": framework_cache_data,
                     "selected_disclosures": self.filter_selected_true(response_data),
                     "tcfd_reporting_information_sector": tcfd_reporting_information.sector,
+                    "tcfd_reporting_information_sector_type": tcfd_reporting_information.sector_type,
                 },
                 "status": status.HTTP_200_OK,
             },

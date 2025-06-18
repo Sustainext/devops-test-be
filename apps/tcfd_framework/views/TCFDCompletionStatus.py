@@ -42,6 +42,7 @@ class TCFDStatusCompletionView(APIView):
                 {
                     "tcfd_reporting_info_status": reporting_info.status,
                     "tcfd_selected_disclosure_status": selected_disclosure_status,
+                    "tcfd_reporting_info_sector_type": reporting_info.sector_type,
                 },
                 status=status.HTTP_200_OK,
             )
@@ -50,6 +51,7 @@ class TCFDStatusCompletionView(APIView):
                 {
                     "tcfd_reporting_info_status": False,
                     "tcfd_selected_disclosure_status": False,
+                    "tcfd_reporting_info_sector_type": False,
                     "errors": {"detail": "Not found."},
                 },
                 status=status.HTTP_404_NOT_FOUND,
