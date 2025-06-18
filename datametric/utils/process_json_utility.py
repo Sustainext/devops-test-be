@@ -8,11 +8,12 @@ from datametric.utils.PathsForDataPoints import (
 from datametric.utils.CreateDataPoints import CreateDataPointsClass
 from logging import getLogger
 
-logger = getLogger("django.log")
+logger = getLogger("datapoint_logger")
 
 
 def process_json(json_obj, path, raw_response):
     data_metrics = DataMetric.objects.filter(path=path)
+    logger.info(f"Starting process for path: {path}")
 
     # Create DataPoints for RawResponse where it's failing to create DataPoints
     if path.slug in all_type_paths:
