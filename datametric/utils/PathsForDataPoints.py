@@ -61,6 +61,7 @@ type2_paths = {
 
 type3_paths = {
     "gri-governance-structure-2-9-b-committees": "",
+    "gri-economic-country_by_country_reporting-207-4a-please": "",
 }
 
 type4_path = {"gri-general-org_details_2-1a-1b-1c-1d": ""}
