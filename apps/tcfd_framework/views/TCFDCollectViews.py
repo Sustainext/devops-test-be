@@ -15,11 +15,9 @@ from apps.tcfd_framework.serializers.TCFDReportingInformationSerializer import (
 from apps.tcfd_framework.utils import (
     get_or_set_tcfd_cache_data,
     update_selected_disclosures_cache,
+    get_user_framework_data,
 )
-from sustainapp.models import Framework, Userorg
-from sustainapp.serializers import FrameworkSerializer
 from django.db.models import Q
-from django.core.cache import cache
 import logging
 
 logger = logging.getLogger("django")
@@ -93,7 +91,7 @@ class GetLatestSelectedDisclosures(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def filter_selected_true(self, data):
+    def filter_selected_disclosures(self, data):
         filtered_data = {}
         for section, content in data.items():
             filtered_disclosures = [
@@ -107,80 +105,46 @@ class GetLatestSelectedDisclosures(APIView):
         return filtered_data
 
     def get(self, request, *args, **kwargs):
-        user_orgs = self.request.user.orgs.all()
-        user_corporates = self.request.user.corps.all()
-        filters = Q(organization__in=user_orgs, corporate__in=user_corporates) | Q(
-            organization__in=user_orgs, corporate__isnull=True
-        )
-        try:
-            selected_disclosure = SelectedDisclosures.objects.filter(filters).latest(
-                "updated_at"
-            )
-        except SelectedDisclosures.DoesNotExist:
-            return Response(
-                {
-                    "message": "No disclosures found for TCFD",
-                    "status": status.HTTP_404_NOT_FOUND,
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        framework_cache_data = cache.get(
-            key=f"framework__{self.request.user.username}", default=False
-        )
-        if not framework_cache_data:
-            frameworks = Framework.objects.filter(
-                id__in=(
-                    Userorg.objects.filter(user=self.request.user).values_list(
-                        "organization__framework", flat=True
-                    )
-                )
-            ).distinct()
-            framework_data = FrameworkSerializer(instance=frameworks, many=True).data
-            cache.set(
-                key=f"framework__{self.request.user.username}",
-                value=framework_data,
-                timeout=None,
-            )
-            framework_cache_data = framework_data
+        user = request.user
+        filters = Q(
+            organization__in=user.orgs.all(), corporate__in=user.corps.all()
+        ) | Q(organization__in=user.orgs.all(), corporate__isnull=True)
 
-        # * Get TCFDReportingInformation sector
-        try:
-            tcfd_reporting_information = TCFDReportingInformation.objects.filter(
-                filters
-            ).latest("updated_at")
-        except TCFDReportingInformation.DoesNotExist:
-            logger.warning(
-                f"TCFD Reporting Information doesn't exist {selected_disclosure.organization.name}"
-                and {selected_disclosure.corporate}
-            )
-            return Response(
-                data={
-                    "message": "Only Framework data fetched, since disclosures not selected yet.",
-                    "data": {
-                        "framework_data": framework_cache_data,
-                        "selected_disclosures": None,
-                        "tcfd_reporting_information_sector": None,
-                        "tcfd_reporting_information_sector_type": None,
-                    },
-                    "status": status.HTTP_200_OK,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        organization = selected_disclosure.organization
-        corporate = selected_disclosure.corporate
-        response_data = get_or_set_tcfd_cache_data(
-            organization=organization, corporate=corporate
+        selected_disclosure = (
+            SelectedDisclosures.objects.filter(filters).order_by("-updated_at").first()
         )
+        tcfd_info = (
+            TCFDReportingInformation.objects.filter(filters)
+            .order_by("-updated_at")
+            .first()
+        )
+
+        # Framework caching as a helper utility call
+        framework_data = get_user_framework_data(user)
+
+        response_data = None
+        if selected_disclosure:
+            response_data = get_or_set_tcfd_cache_data(
+                organization=selected_disclosure.organization,
+                corporate=selected_disclosure.corporate,
+            )
 
         return Response(
-            data={
+            {
                 "message": "Only Latest Selected Disclosures fetched.",
                 "data": {
-                    "framework_data": framework_cache_data,
-                    "selected_disclosures": self.filter_selected_true(response_data),
-                    "tcfd_reporting_information_sector": tcfd_reporting_information.sector,
-                    "tcfd_reporting_information_sector_type": tcfd_reporting_information.sector_type,
+                    "framework_data": framework_data,
+                    "selected_disclosures": self.filter_selected_disclosures(
+                        response_data
+                    )
+                    if response_data
+                    else None,
+                    "tcfd_reporting_information_sector": getattr(
+                        tcfd_info, "sector", None
+                    ),
+                    "tcfd_reporting_information_sector_type": getattr(
+                        tcfd_info, "sector_type", None
+                    ),
                 },
                 "status": status.HTTP_200_OK,
             },
