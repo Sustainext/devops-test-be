@@ -3,7 +3,7 @@
     {
       "id": "chief_executive_message",
       "label": "Message From CEO",
-      "field": ["message", "ceo_name"],
+      "field": ["ceo_name"],
       "enabled": false
     }
   ],
@@ -38,7 +38,6 @@
     {
       "id": "mission_vision",
       "label": "Mission, Vision, And Values",
-      "field": ["mission"],
       "enabled": false
     }
   ],
@@ -46,7 +45,6 @@
     {
       "id": "sustainability_roadmap",
       "label": "Sustainability Roadmap",
-      "field": ["sustainability_description"],
       "enabled": false
     }
   ],
@@ -94,7 +92,7 @@
     {
       "id": "materiality_assessment",
       "label": "Materiality Assessment",
-      "field": ["materiality_statement"],
+      "field": ["statement"],
       "enabled": false,
       "children": [
         {

@@ -101,7 +101,7 @@ class FieldValidationView(APIView):
 
     def extract_enabled_items_with_precise_order(self, section_json, sub_section_json):
         """
-        Returns a list of (field, order) tuples for only enabled fields,
+        Returns a list of (screen_name, field, order) tuples for only enabled fields,
         keeping hierarchy-based order: section -> subsection -> child.
         """
         field_order_list = []
@@ -110,18 +110,23 @@ class FieldValidationView(APIView):
             section_id = section["id"]
             section_order = section["order"]
             section_enabled = section.get("enabled", False)
+            screen_name = section.get(
+                "screen"
+            )  # Critical: used to scope fields to screens
 
-            # If section is enabled and has fields directly on it
+            if not screen_name:
+                continue  # Can't proceed without screen name
+
+            # Section-level fields
             if section_enabled and "field" in section:
                 for field in section["field"]:
-                    field_order_list.append((field, str(section_order)))
+                    field_order_list.append((screen_name, field, str(section_order)))
 
-            # Now check subsection and children under this section
             if section_id not in sub_section_json:
                 continue
 
             subsections = sub_section_json[section_id]
-            sub_index = 1  # Subsection counter
+            sub_index = 1
 
             for sub in subsections:
                 if not sub.get("enabled"):
@@ -130,19 +135,17 @@ class FieldValidationView(APIView):
                 sub_prefix = f"{section_order}.{sub_index}"
                 sub_added = False
 
-                # Fields directly under the subsection
                 for field in sub.get("field", []):
-                    field_order_list.append((field, sub_prefix))
+                    field_order_list.append((screen_name, field, sub_prefix))
                     sub_added = True
 
-                # Check children under this subsection
                 child_index = 1
                 for child in sub.get("children", []):
                     if not child.get("enabled"):
                         continue
                     for field in child.get("field", []):
                         child_prefix = f"{sub_prefix}.{child_index}"
-                        field_order_list.append((field, child_prefix))
+                        field_order_list.append((screen_name, field, child_prefix))
                         child_index += 1
                         sub_added = True
 
@@ -150,23 +153,6 @@ class FieldValidationView(APIView):
                     sub_index += 1
 
         return field_order_list
-
-    def get_enabled_fields_from_dummy(self, enabled_sections, enabled_subsections):
-        enabled_fields = set()
-
-        for screen_fields in dummy_response_data.values():
-            for field_data in screen_fields:
-                field = field_data.get("field", "")
-
-                for sec in enabled_sections:
-                    if sec == field:
-                        enabled_fields.add(field)
-
-                for sub in enabled_subsections:
-                    if sub == field:
-                        enabled_fields.add(field)
-
-        return enabled_fields
 
     def get_validated_result_custom_report(self, screens, report, dummy_response):
         custom_config = get_object_or_404(EsgCustomReport, report=report)
@@ -176,8 +162,10 @@ class FieldValidationView(APIView):
         ordered_fields_with_order = self.extract_enabled_items_with_precise_order(
             section_config, sub_section_config
         )
-        field_order_map = {field: order for field, order in ordered_fields_with_order}
-
+        field_order_map = {
+            (screen_name, field): order
+            for screen_name, field, order in ordered_fields_with_order
+        }
         combined_results = []
 
         for screen_name, screen_data in screens.items():
@@ -189,15 +177,15 @@ class FieldValidationView(APIView):
                 screen_results = self.process_screen_results(results, json_fields)
                 for result in screen_results:
                     field = result.get("field")
-                    if field in field_order_map:
-                        result["order"] = field_order_map[field]
+                    if (screen_name, field) in field_order_map:
+                        result["order"] = field_order_map[(screen_name, field)]
                         combined_results.append(result)
             else:
                 dummy_fields = dummy_response.get(screen_name, [])
                 for dummy in dummy_fields:
                     field = dummy.get("field")
-                    if field in field_order_map:
-                        dummy["order"] = field_order_map[field]
+                    if (screen_name, field) in field_order_map:
+                        dummy["order"] = field_order_map[(screen_name, field)]
                         combined_results.append(dummy)
 
         sorted_results = sorted(
