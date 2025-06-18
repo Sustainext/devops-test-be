@@ -86,7 +86,7 @@ class FieldValidationView(APIView):
                     ).exists():
                         if screen_name in dummy_responses:
                             dummy_field_data = [
-                                d
+                                {**d, "is_dummy": True}
                                 for d in dummy_responses[screen_name]
                                 if d["field"] == field
                             ]
@@ -95,7 +95,9 @@ class FieldValidationView(APIView):
                 combined_results.extend(processed_results)
             else:
                 if screen_name in dummy_responses:
-                    combined_results.extend(dummy_responses[screen_name])
+                    combined_results.extend(
+                        [{**d, "is_dummy": True} for d in dummy_responses[screen_name]]
+                    )
 
         return combined_results
 
@@ -185,8 +187,9 @@ class FieldValidationView(APIView):
                 for dummy in dummy_fields:
                     field = dummy.get("field")
                     if (screen_name, field) in field_order_map:
-                        dummy["order"] = field_order_map[(screen_name, field)]
-                        combined_results.append(dummy)
+                        dummy_copy = {**dummy, "is_dummy": True}
+                        dummy_copy["order"] = field_order_map[(screen_name, field)]
+                        combined_results.append(dummy_copy)
 
         sorted_results = sorted(
             combined_results, key=lambda r: list(map(int, r["order"].split(".")))
@@ -195,10 +198,11 @@ class FieldValidationView(APIView):
 
     def prefix_label_with_order(self, data):
         for item in data:
-            order = item.get("order")
-            label = item.get("label")
-            if order and label:
-                item["label"] = f"{order}. {label}"
+            if item.get("is_dummy"):  # Only prefix dummy's label
+                order = item.get("order")
+                label = item.get("label")
+                if order and label:
+                    item["label"] = f"{order}. {label}"
         return data
 
     def get(self, request, report_id):
