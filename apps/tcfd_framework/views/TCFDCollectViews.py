@@ -124,30 +124,6 @@ class GetLatestSelectedDisclosures(APIView):
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
-
-        # * Get TCFDReportingInformation sector
-        try:
-            tcfd_reporting_information = TCFDReportingInformation.objects.filter(
-                filters
-            ).latest("updated_at")
-        except TCFDReportingInformation.DoesNotExist:
-            logger.warning(
-                f"TCFD Reporting Information doesn't exist {selected_disclosure.organization.name}"
-                and {selected_disclosure.corporate}
-            )
-            return Response(
-                {
-                    "message": "No tcfd reporting information found for TCFD",
-                    "status": status.HTTP_404_NOT_FOUND,
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        organization = selected_disclosure.organization
-        corporate = selected_disclosure.corporate
-        response_data = get_or_set_tcfd_cache_data(
-            organization=organization, corporate=corporate
-        )
         framework_cache_data = cache.get(
             key=f"framework__{self.request.user.username}", default=False
         )
@@ -166,6 +142,36 @@ class GetLatestSelectedDisclosures(APIView):
                 timeout=None,
             )
             framework_cache_data = framework_data
+
+        # * Get TCFDReportingInformation sector
+        try:
+            tcfd_reporting_information = TCFDReportingInformation.objects.filter(
+                filters
+            ).latest("updated_at")
+        except TCFDReportingInformation.DoesNotExist:
+            logger.warning(
+                f"TCFD Reporting Information doesn't exist {selected_disclosure.organization.name}"
+                and {selected_disclosure.corporate}
+            )
+            return Response(
+                data={
+                    "message": "Only Framework data fetched, since disclosures not selected yet.",
+                    "data": {
+                        "framework_data": framework_cache_data,
+                        "selected_disclosures": None,
+                        "tcfd_reporting_information_sector": None,
+                        "tcfd_reporting_information_sector_type": None,
+                    },
+                    "status": status.HTTP_200_OK,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        organization = selected_disclosure.organization
+        corporate = selected_disclosure.corporate
+        response_data = get_or_set_tcfd_cache_data(
+            organization=organization, corporate=corporate
+        )
 
         return Response(
             data={
