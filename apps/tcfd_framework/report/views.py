@@ -1,0 +1,48 @@
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from apps.tcfd_framework.report.models import TCFDReport
+from apps.tcfd_framework.report.serializers import TCFDReportSerializer
+
+
+class TCFDReportGetView(APIView):
+    permission_classes = [IsAuthenticated]
+    """
+    Retrieve a TCFDReport based on the report ID and screen ID.
+    """
+
+    def get(self, request, report_id, screen_id):
+        report = get_object_or_404(TCFDReport, report_id=report_id, screen=screen_id)
+        serializer = TCFDReportSerializer(report)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TCFDReportUpsertView(APIView):
+    """
+    Create or update a TCFDReport based on report and screen.
+    Uses PUT method for upserting a report instance.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        # Validate input including mandatory report and screen
+        serializer = TCFDReportSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        report = serializer.validated_data.get("report")
+        screen = serializer.validated_data.get("screen")
+
+        # Try to update existing object or create new one
+        obj, created = TCFDReport.objects.update_or_create(
+            report=report, screen=screen, defaults=serializer.validated_data
+        )
+
+        output_serializer = TCFDReportSerializer(obj)
+        return Response(
+            output_serializer.data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )

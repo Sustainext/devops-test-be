@@ -693,7 +693,10 @@ class GHGReportView(generics.CreateAPIView):
         investment_corporates = serializer.validated_data.get("investment_corporates")
         assessment_id = request.data.get("assessment_id")
         organization_id = organization.id
-        if new_report.report_type != "canada_bill_s211_v2":
+        if (
+            new_report.report_type != "canada_bill_s211_v2"
+            and new_report.report_type != "tcfd_framework"
+        ):
             if corporate_id and organization_id:
                 # If multiple corporate names are provided, pass the list of names
                 analysis_data = get_analysis_data(
