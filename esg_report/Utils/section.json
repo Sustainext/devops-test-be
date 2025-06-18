@@ -4,7 +4,9 @@
     "title": "Message From Our Leadership",
     "mandatory": false,
     "enabled": false,
-    "order": 1
+    "field": ["message"],
+    "order": 1,
+    "screen": "screen_one"
   },
   {
     "id": "about_company",
@@ -12,60 +14,70 @@
     "mandatory": false,
     "enabled": false,
     "field": ["about_the_company"],
-    "order": 2
+    "order": 2,
+    "screen": "screen_two"
   },
   {
     "id": "mission_vision",
     "title": "Mission, Vision, Value",
     "mandatory": false,
     "enabled": false,
-    "order": 3
+    "field": ["mission"],
+    "order": 3,
+    "screen": "screen_three"
   },
   {
     "id": "sustainability",
     "title": "Sustainability Roadmap",
     "mandatory": false,
     "enabled": false,
-    "order": 4
+    "field": ["description"],
+    "order": 4,
+    "screen": "screen_four"
   },
   {
     "id": "awards",
     "title": "Awards & Alliances",
     "mandatory": false,
     "enabled": false,
-    "field": ["awards_description"],
-    "order": 5
+    "field": ["description"],
+    "order": 5,
+    "screen": "screen_five"
   },
   {
     "id": "stakeholder",
     "title": "Stakeholder Engagement",
     "mandatory": false,
     "enabled": false,
-    "field": ["stakeholder_description"],
-    "order": 6
+    "field": ["description"],
+    "order": 6,
+    "screen": "screen_six"
   },
   {
     "id": "about_report",
     "title": "About the Report",
     "mandatory": false,
     "enabled": false,
-    "field": ["about_the_report_description"],
-    "order": 7
+    "field": ["description"],
+    "order": 7,
+    "screen": "screen_seven"
   },
   {
     "id": "materiality",
     "title": "Materiality",
     "mandatory": false,
     "enabled": false,
-    "order": 8
+    "order": 8,
+    "screen": "screen_eight"
   },
   {
     "id": "governance",
     "title": "Corporate Governance",
     "mandatory": false,
     "enabled": false,
-    "field": ["governance_statement"],
-    "order": 9
+    "field": ["statement"],
+    "order": 9,
+    "screen": "screen_nine"
   },
   {
     "id": "journey",
@@ -73,7 +85,8 @@
     "mandatory": false,
     "enabled": false,
     "field": ["company_sustainability_statement"],
-    "order": 10
+    "order": 10,
+    "screen": "screen_ten"
   },
   {
     "id": "economic",
@@ -81,7 +94,8 @@
     "mandatory": false,
     "enabled": false,
     "field": ["company_economic_performance_statement"],
-    "order": 11
+    "order": 11,
+    "screen": "screen_eleven"
   },
   {
     "id": "environment",
@@ -89,7 +103,8 @@
     "mandatory": false,
     "enabled": false,
     "field": ["environmental_responsibility_statement"],
-    "order": 12
+    "order": 12,
+    "screen": "screen_twelve"
   },
   {
     "id": "people",
@@ -97,14 +112,16 @@
     "mandatory": false,
     "enabled": false,
     "field": ["employee_policies_statement"],
-    "order": 13
+    "order": 13,
+    "screen": "screen_thirteen"
   },
   {
     "id": "community",
     "title": "Community",
     "mandatory": false,
     "enabled": false,
-    "order": 14
+    "order": 14,
+    "screen": "screen_fourteen"
   },
   {
     "id": "customers",
@@ -112,6 +129,7 @@
     "mandatory": false,
     "enabled": false,
     "field": ["conclusion"],
-    "order": 15
+    "order": 15,
+    "screen": "screen_fifteen"
   }
 ]
