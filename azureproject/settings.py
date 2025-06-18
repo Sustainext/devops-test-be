@@ -283,6 +283,12 @@ LOGGING = {
             "formatter": "detailed",
             "level": "INFO",
         },
+        "datapoint": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "datapoint.log"),
+            "formatter": "detailed",
+            "level": "INFO",
+        },
     },
     "loggers": {
         "": {
@@ -318,6 +324,11 @@ LOGGING = {
         },
         "celery_logger": {
             "handlers": ["celery"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "datapoint_logger": {
+            "handlers": ["datapoint"],
             "level": "INFO",
             "propagate": False,
         },
