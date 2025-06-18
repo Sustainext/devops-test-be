@@ -3,7 +3,7 @@ from apps.tcfd_framework.report.views import TCFDReportGetView, TCFDReportUpsert
 
 urlpatterns = [
     path(
-        "get-tcfd-report-data/<int:report_id>/<int:screen_id>/",
+        "get-tcfd-report-data/<int:report_id>/<str:screen_name>/",
         TCFDReportGetView.as_view(),
         name="get-tcfd-report-data",
     ),

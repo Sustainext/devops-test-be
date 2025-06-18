@@ -11,13 +11,19 @@ from apps.tcfd_framework.report.serializers import TCFDReportSerializer
 class TCFDReportGetView(APIView):
     permission_classes = [IsAuthenticated]
     """
-    Retrieve a TCFDReport based on the report ID and screen ID.
+    Retrieve a TCFDReport based on the report ID and screen Name.
     """
 
-    def get(self, request, report_id, screen_id):
-        report = get_object_or_404(TCFDReport, report_id=report_id, screen=screen_id)
+    def get(self, request, report_id, screen_name):
+        report = get_object_or_404(
+            TCFDReport, report_id=report_id, screen_name=screen_name
+        )
         serializer = TCFDReportSerializer(report)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        report_data = serializer.data
+        return Response(
+            data={"data": {"report_data": report_data, "tcfd_collect_data": {}}},
+            status=status.HTTP_200_OK,
+        )
 
 
 class TCFDReportUpsertView(APIView):
@@ -34,11 +40,11 @@ class TCFDReportUpsertView(APIView):
         serializer.is_valid(raise_exception=True)
 
         report = serializer.validated_data.get("report")
-        screen = serializer.validated_data.get("screen")
+        screen_name = serializer.validated_data.get("screen_name")
 
         # Try to update existing object or create new one
         obj, created = TCFDReport.objects.update_or_create(
-            report=report, screen=screen, defaults=serializer.validated_data
+            report=report, screen_name=screen_name, defaults=serializer.validated_data
         )
 
         output_serializer = TCFDReportSerializer(obj)

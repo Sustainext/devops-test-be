@@ -11,9 +11,7 @@ class TCFDReport(AbstractModel, HistoricalModelMixin):
 
     report = models.ForeignKey("sustainapp.Report", on_delete=models.CASCADE)
     data = models.JSONField(null=True, blank=True)
-    screen = models.IntegerField(
-        validators=[MaxValueValidator(10), MinValueValidator(1)]
-    )
+    screen_name = models.CharField(max_length=255)
 
     def __str__(self):
         return f"tcfd_{self.report.name}"
