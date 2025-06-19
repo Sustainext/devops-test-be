@@ -60,6 +60,7 @@ PROJECT_APPS = [
     "apps.canada_bill_s211.apps.CanadaBillS211Config",
     "apps.canada_bill_s211.v2.apps.V2Config",
     "apps.tcfd_framework.apps.TcfdFrameworkConfig",
+    "apps.tcfd_framework.report.apps.ReportConfig",
 ]
 
 THIRD_PARTY = [

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from apps.tcfd_framework.views.TCFDReportingInformationViews import (
     TCFDReportingInformationView,
@@ -51,6 +51,7 @@ urlpatterns = [
         CollectDataScreen.as_view(),
         name="get-climate-related-data",
     ),
+    path("report/", include("apps.tcfd_framework.report.urls")),
     # * Get TCFD Report PDF
     path(
         "get-tcfd-report-pdf/<int:report_id>/",

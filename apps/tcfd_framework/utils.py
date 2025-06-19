@@ -5,6 +5,8 @@ from apps.tcfd_framework.models.TCFDCollectModels import (
     RecommendedDisclosures,
     SelectedDisclosures,
 )
+from sustainapp.models import Framework, Userorg
+from sustainapp.serializers import FrameworkSerializer
 
 
 def get_tcfd_disclosures_response(
@@ -123,3 +125,17 @@ def update_selected_disclosures_cache(organization, corporate, recommended_discl
     )
     cache.set(cache_key, response_data, timeout=86400)
     return response_data
+
+
+def get_user_framework_data(user):
+    cache_key = f"framework__{user.username}"
+    framework_data = cache.get(cache_key)
+    if not framework_data:
+        frameworks = Framework.objects.filter(
+            id__in=Userorg.objects.filter(user=user).values_list(
+                "organization__framework", flat=True
+            )
+        ).distinct()
+        framework_data = FrameworkSerializer(instance=frameworks, many=True).data
+        cache.set(cache_key, framework_data, timeout=None)
+    return framework_data
