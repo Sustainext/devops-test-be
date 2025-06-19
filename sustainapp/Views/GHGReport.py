@@ -695,7 +695,7 @@ class GHGReportView(generics.CreateAPIView):
         organization_id = organization.id
         if (
             new_report.report_type != "canada_bill_s211_v2"
-            and new_report.report_type != "TCFD"
+            or new_report.report_type != "TCFD"
         ):
             if corporate_id and organization_id:
                 # If multiple corporate names are provided, pass the list of names
