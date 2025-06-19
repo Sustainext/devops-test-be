@@ -58,7 +58,9 @@ class GetTCFDReportData:
             "tcfd_content_index": get_or_set_tcfd_cache_data(
                 organization=self.report.organization, corporate=self.report.corporate
             ),
-            "annexure": [],
+            "annexure": {
+                "size_scope_of_risk": "governance-risk-management-risk-identification-assessment-screen4"
+            },
         }
 
     def get_collect_data(self, topic_slug_mapping: dict, data_points):
