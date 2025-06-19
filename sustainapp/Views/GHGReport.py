@@ -711,7 +711,7 @@ class GHGReportView(generics.CreateAPIView):
                     investment_corporates,
                 )
 
-            elif organization_id and corporate_id == None:
+            elif organization_id and corporate_id is None:
                 corporate_ids = Corporateentity.objects.filter(
                     organization_id=organization_id
                 ).values_list("id", flat=True)
