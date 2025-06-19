@@ -33,48 +33,6 @@ def get_latest_raw_response(raw_responses, slug):
     return raw_responses.filter(path__slug=slug).order_by("-year").first()
 
 
-def get_raw_responses_as_per_report(report: Report):
-    """
-    Get RawResponses as per report.
-
-    Situation in RawResponses.
-    1. If corporate is given, then organization would also be given.
-    2. If corporate is not given, then organization will be given.
-    3. If corporate and organization are not given, then locale will be given.
-    Now Create a filter for each of this.
-    and then combine them.
-    """
-    raw_responses = RawResponse.objects.filter(client=report.client)
-    if report.corporate:
-        raw_responses = raw_responses.filter(
-            Q(corporate=report.corporate) | Q(organization=report.organization)
-        )
-        raw_responses = raw_responses.filter(
-            Q(locale__in=report.corporate.location.all()) | Q(locale=None)
-        )
-    elif report.organization:
-        raw_responses = raw_responses.filter(
-            Q(organization=report.organization)
-            | Q(
-                locale__in=report.organization.corporatenetityorg.all().values_list(
-                    "location", flat=True
-                )
-            )
-        )
-    return raw_responses.filter(year=get_maximum_months_year(report))
-
-
-def get_emission_analysis_as_per_report(report: Report):
-    """
-    Get EmissionAnalysis Objects as per report.
-    """
-    emission_analysis_objects = EmissionAnalysis.objects.filter(
-        raw_response__in=get_raw_responses_as_per_report(report)
-    )
-
-    return emission_analysis_objects
-
-
 def get_materiality_assessment(report):
     """This now uses ReportAssessment Model to fetch linked materiality assessment"""
     try:

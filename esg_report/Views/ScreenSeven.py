@@ -8,7 +8,7 @@ from esg_report.Serializer.AboutTheReportSerializer import (
 )
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
-from esg_report.utils import get_raw_responses_as_per_report
+from common.utils.report_datapoint_utils import get_raw_responses_as_per_report
 
 
 class ScreenSevenAPIView(APIView):

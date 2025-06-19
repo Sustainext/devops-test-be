@@ -5,7 +5,8 @@ from esg_report.Serializer.AboutTheCompanyAndOperationsSerializer import (
     AboutTheCompanyAndOperationsSerializer,
 )
 from rest_framework.exceptions import NotFound
-from esg_report.utils import get_latest_raw_response, get_raw_responses_as_per_report
+from esg_report.utils import get_latest_raw_response
+from common.utils.report_datapoint_utils import get_raw_responses_as_per_report
 from django.shortcuts import get_object_or_404
 
 

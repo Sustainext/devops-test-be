@@ -4,7 +4,8 @@ from esg_report.models.ScreenTwo import AboutTheCompanyAndOperations
 from esg_report.Serializer.AboutTheCompanyAndOperationsSerializer import (
     AboutTheCompanyAndOperationsSerializer,
 )
-from esg_report.utils import get_latest_raw_response, get_raw_responses_as_per_report
+from esg_report.utils import get_latest_raw_response
+from common.utils.report_datapoint_utils import get_raw_responses_as_per_report
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from sustainapp.models import Report
