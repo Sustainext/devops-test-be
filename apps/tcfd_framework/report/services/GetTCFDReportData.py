@@ -1,6 +1,7 @@
-from apps.tcfd_framework.report.models import TCFDReport
-from datametric.models import DataPoint
 from sustainapp.report import Report
+from common.utils.data_point_cache import get_data_point_cache
+from apps.tcfd_framework.utils import get_or_set_tcfd_cache_data
+from common.utils.report_datapoint_utils import get_data_points_as_per_report
 
 
 class GetTCFDReportData:
@@ -10,9 +11,13 @@ class GetTCFDReportData:
 
     def __init__(self, report: Report):
         self.report = report
+        self.start_date = self.report.start_date
+        self.end_date = self.report.end_date
+        self.organization = self.report.organization
+        self.corporate = self.report.corporate
 
-    def add_data(self):
-        screen_wise_mapping = {
+    def get_mapping(self):
+        return {
             "message_ceo": {
                 "company_name": self.report.organization.name,
             },
@@ -46,8 +51,31 @@ class GetTCFDReportData:
                 "metrics_used_to_assess_climate_related_opportunities": "economic-climate-risks-and-opportunities-climate-related-metrics-screen2",
                 "targets_used_to_manage_climate_related_risks_and_opportunities_and_performance_against_targets": "economic-climate-risks-and-opportunities-climate-related-targets",
             },
-            "tcfd_content_index": [],
+            "tcfd_content_index": get_or_set_tcfd_cache_data(
+                organization=self.report.organization, corporate=self.report.corporate
+            ),
             "annexure": [],
         }
 
-    def get_data_as_per_screen(self, screen_name: str):...
+    def get_collect_data(self, topic_slug_mapping: dict, data_points):
+        collect_data = {}
+        for topic_name, slug in topic_slug_mapping.items():
+            data_point_ids = data_points.filter(path__slug=slug).values_list(
+                "id", flat=True
+            )
+            collect_data[topic_name] = [
+                get_data_point_cache(data_point_id=data_point_id)
+                for data_point_id in data_point_ids
+            ]
+        return collect_data
+
+    def get_data_as_per_screen(self, screen_name: str):
+        mapped_data = self.get_mapping()[screen_name]
+        data_points = get_data_points_as_per_report(report=self.report)
+        slug_keys = ["governance", "strategy", "risk_management", "metrics_targets"]
+        if screen_name not in slug_keys:
+            return mapped_data
+        else:
+            return self.get_collect_data(
+                topic_slug_mapping=mapped_data, data_points=data_points
+            )

@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from apps.tcfd_framework.report.models import TCFDReport
 from apps.tcfd_framework.report.serializers import TCFDReportSerializer
+from apps.tcfd_framework.report.services.GetTCFDReportData import GetTCFDReportData
 
 
 class TCFDReportGetView(APIView):
@@ -15,13 +16,21 @@ class TCFDReportGetView(APIView):
     """
 
     def get(self, request, report_id, screen_name):
-        report = get_object_or_404(
+        tcfd_report = get_object_or_404(
             TCFDReport, report_id=report_id, screen_name=screen_name
         )
-        serializer = TCFDReportSerializer(report)
+        serializer = TCFDReportSerializer(tcfd_report)
         report_data = serializer.data
+        collect_data_object = GetTCFDReportData(report=tcfd_report.report)
         return Response(
-            data={"data": {"report_data": report_data, "tcfd_collect_data": {}}},
+            data={
+                "data": {
+                    "report_data": report_data,
+                    "tcfd_collect_data": {
+                        collect_data_object.get_collect_data(screen_name)
+                    },
+                }
+            },
             status=status.HTTP_200_OK,
         )
 

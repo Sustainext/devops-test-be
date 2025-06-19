@@ -2,9 +2,9 @@ from sustainapp.models import Report
 from datametric.models import RawResponse
 from esg_report.utils import (
     get_raw_responses_as_per_report,
-    get_data_points_as_per_report,
     get_management_materiality_topics,
 )
+from common.utils.report_datapoint_utils import get_data_points_as_per_report
 from sustainapp.utils import (
     get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation,
 )
