@@ -12,6 +12,7 @@ from apps.tcfd_framework.views.TCFDCollectViews import (
     GetLatestSelectedDisclosures,
 )
 from apps.tcfd_framework.views.CollectDataScreen import CollectDataScreen
+from apps.tcfd_framework.views.TCFDReportPDF import GetTCFDReportPdf
 
 urlpatterns = [
     # * GET or PUT API for TCFD Reporting Information
@@ -49,5 +50,11 @@ urlpatterns = [
         "get-climate-related-data/",
         CollectDataScreen.as_view(),
         name="get-climate-related-data",
+    ),
+    # * Get TCFD Report PDF
+    path(
+        "get-tcfd-report-pdf/<int:report_id>/",
+        GetTCFDReportPdf.as_view(),
+        name="get-tcfd-report-pdf",
     ),
 ]
