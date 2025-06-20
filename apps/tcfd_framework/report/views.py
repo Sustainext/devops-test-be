@@ -22,7 +22,7 @@ class TCFDReportGetView(APIView):
             serializer = TCFDReportSerializer(tcfd_report)
             report_data = serializer.data["data"]
             screen_name = serializer.data["screen_name"]
-            report_id = serializer.data["report"].id
+            report_id = serializer.data["report"]
         except TCFDReport.DoesNotExist:
             report_data = None
         report = Report.objects.get(id=report_id)
