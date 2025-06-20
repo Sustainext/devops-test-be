@@ -278,14 +278,15 @@ class FieldValidationView(APIView):
                 "fields": self.get_json_fields(ScreenFifteenModel),
             },
         }
+        local_dummy_response = copy.deepcopy(dummy_response_data)
         result = []
         if report.report_type.strip().lower() == "custom esg report":
             result = self.get_validated_result_custom_report(
-                screens, report, copy.deepcopy(dummy_response_data)
+                screens, report, local_dummy_response
             )
         else:
             result = self.get_validated_result_normal_report(
-                screens, report, copy.deepcopy(dummy_response_data)
+                screens, report, local_dummy_response
             )
 
         result = self.prefix_label_with_order(result)
