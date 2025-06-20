@@ -5,7 +5,8 @@ from esg_report.Serializer.StakeholderEngagementSerializer import (
 )
 from sustainapp.models import Report
 from datametric.models import RawResponse
-from esg_report.utils import get_materiality_assessment, get_raw_responses_as_per_report
+from esg_report.utils import get_materiality_assessment
+from common.utils.report_datapoint_utils import get_raw_responses_as_per_report
 
 
 class StakeholderEngagementService:

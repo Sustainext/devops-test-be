@@ -1,9 +1,9 @@
 from sustainapp.models import Report
 from datametric.models import RawResponse
 from esg_report.utils import (
-    get_raw_responses_as_per_report,
     get_management_materiality_topics,
 )
+from common.utils.report_datapoint_utils import get_raw_responses_as_per_report
 from common.utils.report_datapoint_utils import get_data_points_as_per_report
 from sustainapp.utils import (
     get_ratio_of_annual_total_compensation_ratio_of_percentage_increase_in_annual_total_compensation,
@@ -89,7 +89,6 @@ class ScreenNineService:
             62: "gri-governance-remuneration-2-19-b-policies",
             63: "gri-economic-public_legal_cases-205-3d",
             64: "gri-governance-management_of_impact-2-12-c-effectiveness",
-
         }
 
     def get_screen_nine_data(self):
@@ -359,7 +358,7 @@ class ScreenNineService:
         raw_response_data = raw_response.data if raw_response is not None else None
         if not raw_response_data:
             return raw_response_data
-        
+
         else:
             data = {
                 "the_internationally_recognized_human_rights_that_the_commitment_covers": raw_response_data[
@@ -516,11 +515,12 @@ class ScreenNineService:
         except IndexError:
             data = None
         return data
-    
-    def get_2_12_c(self):
-        data_point = self.data_points.filter(path__slug=self.slugs[64]).order_by("-year").first()
-        return data_point.value if data_point else None
 
+    def get_2_12_c(self):
+        data_point = (
+            self.data_points.filter(path__slug=self.slugs[64]).order_by("-year").first()
+        )
+        return data_point.value if data_point else None
 
     def get_2_12_b(self):
         raw_response = (
@@ -665,7 +665,7 @@ class ScreenNineService:
         data["remuneration_policy_clawbacks"] = raw_response_data["Q4"]
         data["remuneration_policy_retirement_benefits"] = raw_response_data["Q5"]
         return data
-    
+
     def get_2_19_b(self):
         raw_response = (
             self.raw_responses.filter(path__slug=self.slugs[62])
@@ -674,7 +674,6 @@ class ScreenNineService:
         )
         raw_response_data = raw_response.data[0] if raw_response is not None else None
         return raw_response_data
-
 
     def get_2_21_a(self):
         # TODO: Sum of annual total compensation ratio

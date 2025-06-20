@@ -695,7 +695,7 @@ class GHGReportView(generics.CreateAPIView):
         organization_id = organization.id
         if (
             new_report.report_type != "canada_bill_s211_v2"
-            and new_report.report_type != "tcfd_framework"
+            and new_report.report_type != "TCFD"
         ):
             if corporate_id and organization_id:
                 # If multiple corporate names are provided, pass the list of names
@@ -711,7 +711,7 @@ class GHGReportView(generics.CreateAPIView):
                     investment_corporates,
                 )
 
-            elif organization_id and corporate_id == None:
+            elif organization_id and corporate_id is None:
                 corporate_ids = Corporateentity.objects.filter(
                     organization_id=organization_id
                 ).values_list("id", flat=True)

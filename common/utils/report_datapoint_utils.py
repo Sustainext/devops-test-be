@@ -1,29 +1,16 @@
-from sustainapp.models import Report, Corporateentity
+from sustainapp.models import Report
 from datametric.models import RawResponse, DataPoint, EmissionAnalysis
-from esg_report.models.ContentIndexRequirementOmissionReason import (
-    ContentIndexRequirementOmissionReason,
-)
-from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.db.models import Q
-from django.core.exceptions import ValidationError
-from rest_framework.test import APIRequestFactory
-from django.urls import reverse, resolve
-from common.enums.GeneralTopicDisclosuresAndPaths import GENERAL_DISCLOSURES_AND_PATHS
-from collections import defaultdict
-import datetime
 import logging
-from django.db.models import Prefetch
-from materiality_dashboard.Views.SDGMapping import SDG
-from esg_report.models.ReportAssessment import ReportAssessment
-from materiality_dashboard.models import (
-    AssessmentDisclosureSelection,
-)
-from common.utils.get_data_points_as_raw_responses import (
-    collect_data_by_raw_response_and_index,
+from datametric.utils.analyse import set_locations_data
+from sustainapp.Utilities.emission_analyse import (
+    get_top_emission_by_scope,
+    calculate_scope_contribution,
+    disclosure_analyze_305_5,
+    ghg_emission_intensity,
 )
 
 logger = logging.getLogger("file")
-
 
 
 def get_maximum_months_year(report: Report):
@@ -87,3 +74,103 @@ def get_data_points_as_per_report(report: Report):
         )
 
     return data_points.filter(year=get_maximum_months_year(report))
+
+
+def get_raw_responses_as_per_report(report: Report):
+    """
+    Get RawResponses as per report.
+
+    Situation in RawResponses.
+    1. If corporate is given, then organization would also be given.
+    2. If corporate is not given, then organization will be given.
+    3. If corporate and organization are not given, then locale will be given.
+    Now Create a filter for each of this.
+    and then combine them.
+    """
+    raw_responses = RawResponse.objects.filter(client=report.client)
+    if report.corporate:
+        raw_responses = raw_responses.filter(
+            Q(corporate=report.corporate) | Q(organization=report.organization)
+        )
+        raw_responses = raw_responses.filter(
+            Q(locale__in=report.corporate.location.all()) | Q(locale=None)
+        )
+    elif report.organization:
+        raw_responses = raw_responses.filter(
+            Q(organization=report.organization)
+            | Q(
+                locale__in=report.organization.corporatenetityorg.all().values_list(
+                    "location", flat=True
+                )
+            )
+        )
+    return raw_responses.filter(year=get_maximum_months_year(report))
+
+
+def get_emission_analysis_as_per_report(report: Report):
+    """
+    Get EmissionAnalysis Objects as per report.
+    """
+    emission_analysis_objects = EmissionAnalysis.objects.filter(
+        raw_response__in=get_raw_responses_as_per_report(report)
+    )
+
+    return emission_analysis_objects
+
+
+def get_emission_analyse_as_per_report(report: Report, data_points):
+    """
+    Common method across the project that gives you emission analyse data.
+    """
+    locations = set_locations_data(
+        organisation=report.organization,
+        corporate=report.corporate,
+        location=None,
+    )
+    (
+        top_emission_by_scope,
+        top_emission_by_source,
+        top_emission_by_location,
+        gases_data,
+    ) = get_top_emission_by_scope(
+        locations=locations,
+        user=report.user,
+        start=report.start_date,
+        end=report.end_date,
+        path_slug={
+            "gri-environment-emissions-301-a-scope-1": "Scope 1",
+            "gri-environment-emissions-301-a-scope-2": "Scope 2",
+            "gri-environment-emissions-301-a-scope-3": "Scope 3",
+        },
+    )
+
+    # * Prepare response data
+    response_data = dict()
+    response_data["all_emission_by_scope"] = calculate_scope_contribution(
+        key_name="scope", scope_total_values=top_emission_by_scope
+    )
+    response_data["all_emission_by_source"] = calculate_scope_contribution(
+        key_name="source", scope_total_values=top_emission_by_source
+    )
+    response_data["all_emission_by_location"] = calculate_scope_contribution(
+        key_name="location", scope_total_values=top_emission_by_location
+    )
+    response_data["top_5_emisson_by_source"] = response_data["all_emission_by_source"][
+        0:5
+    ]
+    response_data["top_5_emisson_by_location"] = response_data[
+        "all_emission_by_location"
+    ][0:5]
+    response_data["disclosure_analyze_305_5"] = disclosure_analyze_305_5(
+        data_points.filter(
+            path__slug="gri-environment-emissions-GHG-emission-reduction-initiatives"
+        )
+    )
+    response_data["ghg_emission_intensity"] = ghg_emission_intensity(
+        data_points.filter(
+            path__slug="gri-environment-emissions-GHG emission-intensity"
+        ),
+        top_emission_by_scope,
+        gases_data,
+    )
+    return response_data

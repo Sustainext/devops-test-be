@@ -1,8 +1,9 @@
 from esg_report.utils import (
-    get_raw_responses_as_per_report,
+
     calling_analyse_view_with_params,
     get_management_materiality_topics,
 )
+from common.utils.report_datapoint_utils import get_raw_responses_as_per_report
 from common.utils.report_datapoint_utils import get_data_points_as_per_report
 from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index,collect_data_and_differentiate_by_location
 from esg_report.Serializer.ScreenFifteenSerializer import ScreenFifteenSerializer

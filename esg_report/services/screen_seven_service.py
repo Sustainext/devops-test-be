@@ -4,7 +4,7 @@ from esg_report.Serializer.AboutTheReportSerializer import (
 )
 from sustainapp.models import Report
 from datametric.models import RawResponse
-from esg_report.utils import get_raw_responses_as_per_report
+from common.utils.report_datapoint_utils import get_raw_responses_as_per_report
 
 
 # TODO: We have to unify this service with report api response.

@@ -1,10 +1,10 @@
 from sustainapp.models import Report
 from datametric.models import RawResponse, DataMetric, DataPoint
 from esg_report.utils import (
-    get_raw_responses_as_per_report,
     forward_request_with_jwt,
     get_management_materiality_topics,
 )
+from common.utils.report_datapoint_utils import get_raw_responses_as_per_report
 from common.utils.report_datapoint_utils import get_data_points_as_per_report
 from common.utils.report_datapoint_utils import get_maximum_months_year
 from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index

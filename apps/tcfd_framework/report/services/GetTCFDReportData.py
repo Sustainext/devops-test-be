@@ -2,6 +2,10 @@ from sustainapp.report import Report
 from common.utils.data_point_cache import get_data_point_cache
 from apps.tcfd_framework.utils import get_or_set_tcfd_cache_data
 from common.utils.report_datapoint_utils import get_data_points_as_per_report
+from common.utils.get_data_points_as_raw_responses import (
+    collect_data_by_raw_response_and_index,
+)
+from common.utils.report_datapoint_utils import get_emission_analyse_as_per_report
 
 
 class GetTCFDReportData:
@@ -54,28 +58,46 @@ class GetTCFDReportData:
             "tcfd_content_index": get_or_set_tcfd_cache_data(
                 organization=self.report.organization, corporate=self.report.corporate
             ),
-            "annexure": [],
+            "annexure": {
+                "size_scope_of_risk": "governance-risk-management-risk-identification-assessment-screen4"
+            },
         }
 
     def get_collect_data(self, topic_slug_mapping: dict, data_points):
         collect_data = {}
         for topic_name, slug in topic_slug_mapping.items():
-            data_point_ids = data_points.filter(path__slug=slug).values_list(
-                "id", flat=True
+            data_point_ids = list(
+                data_points.filter(path__slug=slug).values_list("id", flat=True)
             )
-            collect_data[topic_name] = [
-                get_data_point_cache(data_point_id=data_point_id)
-                for data_point_id in data_point_ids
-            ]
+            collect_data[topic_name] = collect_data_by_raw_response_and_index(
+                data_points=data_point_ids
+            )
         return collect_data
 
     def get_data_as_per_screen(self, screen_name: str):
-        mapped_data = self.get_mapping()[screen_name]
-        data_points = get_data_points_as_per_report(report=self.report)
-        slug_keys = ["governance", "strategy", "risk_management", "metrics_targets"]
-        if screen_name not in slug_keys:
-            return mapped_data
-        else:
-            return self.get_collect_data(
-                topic_slug_mapping=mapped_data, data_points=data_points
-            )
+        try:
+            mapped_data = self.get_mapping()[screen_name]
+            data_points = get_data_points_as_per_report(report=self.report)
+            slug_keys = [
+                "governance",
+                "strategy",
+                "risk_management",
+                "metrics_targets",
+                "annexure",
+            ]
+            if screen_name not in slug_keys:
+                return mapped_data
+            else:
+                mapped_data = self.get_collect_data(
+                    topic_slug_mapping=mapped_data, data_points=data_points
+                )
+                if screen_name == "metrics_targets":
+                    mapped_data["emission_analyse"] = (
+                        get_emission_analyse_as_per_report(
+                            report=self.report, data_points=data_points
+                        )
+                    )
+
+                return mapped_data
+        except KeyError:
+            mapped_data = None
