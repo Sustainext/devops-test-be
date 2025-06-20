@@ -78,7 +78,13 @@ class GetTCFDReportData:
         try:
             mapped_data = self.get_mapping()[screen_name]
             data_points = get_data_points_as_per_report(report=self.report)
-            slug_keys = ["governance", "strategy", "risk_management", "metrics_targets"]
+            slug_keys = [
+                "governance",
+                "strategy",
+                "risk_management",
+                "metrics_targets",
+                "annexure",
+            ]
             if screen_name not in slug_keys:
                 return mapped_data
             else:
