@@ -192,7 +192,8 @@ class FieldValidationView(APIView):
                         combined_results.append(dummy_copy)
 
         sorted_results = sorted(
-            combined_results, key=lambda r: list(map(int, r["order"].split(".")))
+            [r for r in combined_results if r.get("order") is not None],
+            key=lambda r: list(map(int, r["order"].split("."))),
         )
         return sorted_results
 
