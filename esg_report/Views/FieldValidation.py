@@ -156,6 +156,14 @@ class FieldValidationView(APIView):
 
         return field_order_list
 
+    def is_valid_order(self, order):
+        if not order:
+            return False
+        try:
+            return all(part.isdigit() for part in str(order).split("."))
+        except Exception:
+            return False
+
     def get_validated_result_custom_report(self, screens, report, dummy_response):
         custom_config = get_object_or_404(EsgCustomReport, report=report)
         section_config = custom_config.section
@@ -192,7 +200,7 @@ class FieldValidationView(APIView):
                         combined_results.append(dummy_copy)
 
         sorted_results = sorted(
-            [r for r in combined_results if r.get("order") is not None],
+            [r for r in combined_results if self.is_valid_order(r.get("order"))],
             key=lambda r: list(map(int, r["order"].split("."))),
         )
         return sorted_results
