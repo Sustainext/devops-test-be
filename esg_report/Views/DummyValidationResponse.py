@@ -94,7 +94,7 @@ dummy_response_data = {
             "subLabel": "",
             "type": "richTextarea",
             "content": "",
-            "field": "escription",
+            "field": "description",
             "isSkipped": False,
             "order": "5",
         },
