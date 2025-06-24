@@ -316,7 +316,6 @@ def UpdatePreference(request):
             getattr(org, preference).set(objects_to_link)
             org.save()
             if preference == "framework":
-                ...
                 cache.delete(f"framework__{user.username}")
             return Response(
                 {
