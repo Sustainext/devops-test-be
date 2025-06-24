@@ -1,11 +1,15 @@
 from sustainapp.report import Report
 from common.utils.data_point_cache import get_data_point_cache
 from apps.tcfd_framework.utils import get_or_set_tcfd_cache_data
-from common.utils.report_datapoint_utils import get_data_points_as_per_report
+from common.utils.report_datapoint_utils import (
+    get_data_points_as_per_report,
+    get_emission_analysis_as_per_report,
+    get_emission_analyse_as_per_report,
+    get_emission_analysis_data_as_per_report,
+)
 from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
 )
-from common.utils.report_datapoint_utils import get_emission_analyse_as_per_report
 
 
 class GetTCFDReportData:
@@ -54,9 +58,6 @@ class GetTCFDReportData:
                 "metrics_used_to_assess_climate_related_risks_and_opportunities": "economic-climate-risks-and-opportunities-climate-related-metrics",
                 "metrics_used_to_assess_climate_related_opportunities": "economic-climate-risks-and-opportunities-climate-related-metrics-screen2",
                 "targets_used_to_manage_climate_related_risks_and_opportunities_and_performance_against_targets": "economic-climate-risks-and-opportunities-climate-related-targets",
-                "scope_1": "gri-environment-emissions-301-a-scope-1",
-                "scope_2": "gri-environment-emissions-301-a-scope-2",
-                "scope_3": "gri-environment-emissions-301-a-scope-3",
             },
             "tcfd_content_index": get_or_set_tcfd_cache_data(
                 organization=self.report.organization, corporate=self.report.corporate
@@ -99,6 +100,9 @@ class GetTCFDReportData:
                         get_emission_analyse_as_per_report(
                             report=self.report, data_points=data_points
                         )
+                    )
+                    mapped_data.update(
+                        get_emission_analysis_data_as_per_report(report=self.report)
                     )
 
                 return mapped_data

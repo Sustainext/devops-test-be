@@ -9,6 +9,8 @@ from sustainapp.Utilities.emission_analyse import (
     disclosure_analyze_305_5,
     ghg_emission_intensity,
 )
+from collections import defaultdict
+from common.utils.value_types import format_decimal_places
 
 logger = logging.getLogger("file")
 
@@ -116,6 +118,29 @@ def get_emission_analysis_as_per_report(report: Report):
     )
 
     return emission_analysis_objects
+
+
+def get_emission_analysis_data_as_per_report(report: Report):
+    emission_analysis_objects = get_emission_analysis_as_per_report(report=report)
+    slugs_dict = {
+        "Scope-1": "gri-environment-emissions-301-a-scope-1",
+        "Scope-2": "gri-environment-emissions-301-a-scope-2",
+        "Scope-3": "gri-environment-emissions-301-a-scope-3",
+    }
+    slug_data = defaultdict(list)
+    for emission_analyse_object in emission_analysis_objects:
+        slug_data[slugs_dict[emission_analyse_object.scope]].append(
+            {
+                "category": emission_analyse_object.category,
+                "subcategory": emission_analyse_object.subcategory,
+                "activity": emission_analyse_object.activity,
+                "emission": format_decimal_places(
+                    emission_analyse_object.co2e_total / 1000
+                ),
+                "emission_unit": "tCO2e",
+            }
+        )
+    return slug_data
 
 
 def get_emission_analyse_as_per_report(report: Report, data_points):

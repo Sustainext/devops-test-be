@@ -16,7 +16,10 @@ from common.utils.get_data_points_as_raw_responses import (
     collect_data_by_raw_response_and_index,
     collect_data_and_differentiate_by_location,
 )
-from common.utils.report_datapoint_utils import get_emission_analyse_as_per_report
+from common.utils.report_datapoint_utils import (
+    get_emission_analyse_as_per_report,
+    get_emission_analysis_data_as_per_report,
+)
 
 
 from sustainapp.Views.MaterialAnalyse import GetMaterialAnalysis
@@ -215,9 +218,7 @@ class ScreenTwelveService:
         return slug_data
 
     def get_301_123_analyse(self):
-        return get_emission_analyse_as_per_report(
-            report=self.report, data_points=self.data_points
-        )
+        return get_emission_analysis_data_as_per_report(report=self.report)
 
     def get_emission_collect(self):
         base_year_data_points = self.data_points_dictionary[self.slugs[45]]
