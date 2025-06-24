@@ -54,6 +54,9 @@ class GetTCFDReportData:
                 "metrics_used_to_assess_climate_related_risks_and_opportunities": "economic-climate-risks-and-opportunities-climate-related-metrics",
                 "metrics_used_to_assess_climate_related_opportunities": "economic-climate-risks-and-opportunities-climate-related-metrics-screen2",
                 "targets_used_to_manage_climate_related_risks_and_opportunities_and_performance_against_targets": "economic-climate-risks-and-opportunities-climate-related-targets",
+                "scope_1": "gri-environment-emissions-301-a-scope-1",
+                "scope_2": "gri-environment-emissions-301-a-scope-2",
+                "scope_3": "gri-environment-emissions-301-a-scope-3",
             },
             "tcfd_content_index": get_or_set_tcfd_cache_data(
                 organization=self.report.organization, corporate=self.report.corporate
