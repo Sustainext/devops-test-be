@@ -101,8 +101,21 @@ class GetTCFDReportData:
                             report=self.report, data_points=data_points
                         )
                     )
+                    emission_report_data = get_emission_analysis_data_as_per_report(
+                        report=self.report
+                    )
                     mapped_data.update(
-                        get_emission_analysis_data_as_per_report(report=self.report)
+                        {
+                            "scope_1": emission_report_data[
+                                "gri-environment-emissions-301-a-scope-1"
+                            ],
+                            "scope_2": emission_report_data[
+                                "gri-environment-emissions-301-a-scope-2"
+                            ],
+                            "scope_3": emission_report_data[
+                                "gri-environment-emissions-301-a-scope-3"
+                            ],
+                        }
                     )
 
                 return mapped_data
