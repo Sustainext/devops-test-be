@@ -1,9 +1,7 @@
 from sustainapp.report import Report
-from common.utils.data_point_cache import get_data_point_cache
 from apps.tcfd_framework.utils import get_or_set_tcfd_cache_data
 from common.utils.report_datapoint_utils import (
     get_data_points_as_per_report,
-    get_emission_analysis_as_per_report,
     get_emission_analyse_as_per_report,
     get_emission_analysis_data_as_per_report,
 )
@@ -42,7 +40,7 @@ class GetTCFDReportData:
                 "transition_risk": "gri-economic-climate_related_risks-202-2a-transition_risk",
                 "other_risks": "gri-economic-climate_related_risks-202-2a-other_risk",
                 "general_business_impact": "impact-of-climate-related-issues-on-business",
-                "ghg_emissions_reduction_commitments": "gri-governance-management_of_impact-2-12-b-due_diligence",
+                "ghg_emissions_reduction_commitments": "economic-climate-risks-and-opportunities-impact-of-climate-related-issues-on-business-screen2",
                 "strategy_resilience_to_climate_related_risks_and_opportunities": "economic-climate-risks-and-opportunities-resilience-of-the-organisations-strategy",
             },
             "risk_management": {
