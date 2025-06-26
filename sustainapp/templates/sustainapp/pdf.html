@@ -894,16 +894,18 @@
                     <th>SCOPE</th>
                     <th>EMISSIONS (tCO2e)</th>
                 </tr>
-                
+                {% if emissions.scope1 %}
                 <tr>
                     <td style="width: 50%;">Scope-1</td>
                     <td style="width: 50%;">{{ emissions.scope1|default:0.00}}</td>
                 </tr>
+                {% endif %}
+                {% if emissions.scope2 %}
                 <tr>
                     <td style="width: 50%;">Scope-2</td>
                     <td style="width: 50%;">{{ emissions.scope2|default:0.00}}</td>
                 </tr>
-                
+                {% endif %}
             </table>
             {% endfor %}
         </div>
