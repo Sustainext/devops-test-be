@@ -60,6 +60,7 @@ PROJECT_APPS = [
     "apps.canada_bill_s211.apps.CanadaBillS211Config",
     "apps.canada_bill_s211.v2.apps.V2Config",
     "apps.tcfd_framework.apps.TcfdFrameworkConfig",
+    "apps.tcfd_framework.report.apps.ReportConfig",
 ]
 
 THIRD_PARTY = [
@@ -282,6 +283,12 @@ LOGGING = {
             "formatter": "detailed",
             "level": "INFO",
         },
+        "datapoint": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "datapoint.log"),
+            "formatter": "detailed",
+            "level": "INFO",
+        },
     },
     "loggers": {
         "": {
@@ -317,6 +324,11 @@ LOGGING = {
         },
         "celery_logger": {
             "handlers": ["celery"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "datapoint_logger": {
+            "handlers": ["datapoint"],
             "level": "INFO",
             "propagate": False,
         },
@@ -394,7 +406,9 @@ if DEVELOPMENT_MODE:
     ] + MIDDLEWARE
     STATIC_URL = "/static/"
 
-    STORAGES["staticfiles"]["BACKEND"] = "django.contrib.staticfiles.storage.StaticFilesStorage"
+    STORAGES["staticfiles"]["BACKEND"] = (
+        "django.contrib.staticfiles.storage.StaticFilesStorage"
+    )
     STORAGES["staticfiles"]["OPTIONS"]["base_url"] = "/static/"
     CELERY_TASK_ALWAYS_EAGER = os.getenv("CELERY_TASK_ALWAYS_EAGER", False) == "True"
     CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", False) == "True"

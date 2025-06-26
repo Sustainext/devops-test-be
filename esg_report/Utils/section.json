@@ -2,114 +2,149 @@
   {
     "id": "message_ceo",
     "title": "Message From Our Leadership",
+    "subLabel": "Share any message from the leadership team.",
     "mandatory": false,
     "enabled": false,
-    "order": 1
+    "field": ["message"],
+    "order": 1,
+    "screen": "screen_one"
   },
   {
     "id": "about_company",
     "title": "About the Company & Operations",
+    "subLabel": "An overview about the company like who we are, what we do, and how the operations are aligned with the sustainability goals.",
     "mandatory": false,
     "enabled": false,
     "field": ["about_the_company"],
-    "order": 2
+    "order": 2,
+    "screen": "screen_two"
   },
   {
     "id": "mission_vision",
     "title": "Mission, Vision, Value",
+    "subLabel": "Share the core principles that guide  company’s purpose and future aspirations.",
     "mandatory": false,
     "enabled": false,
-    "order": 3
+    "field": ["mission"],
+    "order": 3,
+    "screen": "screen_three"
   },
   {
     "id": "sustainability",
     "title": "Sustainability Roadmap",
+    "subLabel": "Share companies step-by-step guide journey toward sustainability, outlining the goals, milestones, and the progress.",
     "mandatory": false,
     "enabled": false,
-    "order": 4
+    "field": ["description"],
+    "order": 4,
+    "screen": "screen_four"
   },
   {
     "id": "awards",
     "title": "Awards & Alliances",
+    "subLabel": "Showcase  any recognitions or awards earned.",
     "mandatory": false,
     "enabled": false,
-    "order": 5
+    "field": ["description"],
+    "order": 5,
+    "screen": "screen_five"
   },
   {
     "id": "stakeholder",
     "title": "Stakeholder Engagement",
+    "subLabel": "Overview of how company collaborates with key stakeholders.",
     "mandatory": false,
     "enabled": false,
-    "order": 6
+    "field": ["description"],
+    "order": 6,
+    "screen": "screen_six"
   },
   {
     "id": "about_report",
     "title": "About the Report",
+    "subLabel": "A brief explanation of the purpose, scope, and methodology behind this report.",
     "mandatory": false,
     "enabled": false,
     "field": ["description"],
-    "order": 7
+    "order": 7,
+    "screen": "screen_seven"
   },
   {
     "id": "materiality",
     "title": "Materiality",
+    "subLabel": "A brief explanation of the most relevant topics for an organization to report on.",
     "mandatory": false,
     "enabled": false,
-    "order": 8
+    "order": 8,
+    "screen": "screen_eight"
   },
   {
     "id": "governance",
     "title": "Corporate Governance",
+    "subLabel": "A brief explanation on company's system of rules, practices, and processes that direct and manage its operations.",
     "mandatory": false,
     "enabled": false,
     "field": ["statement"],
-    "order": 9
+    "order": 9,
+    "screen": "screen_nine"
   },
   {
     "id": "journey",
     "title": "Sustainability Journey",
+    "subLabel": "A brief explanation of the ongoing path toward sustainability, highlighting key achievements and challenges",
     "mandatory": false,
     "enabled": false,
     "field": ["company_sustainability_statement"],
-    "order": 10
+    "order": 10,
+    "screen": "screen_ten"
   },
   {
     "id": "economic",
     "title": "Economic Performance",
+    "subLabel": "A brief explanation of the organization's economic performance like Economic value generated and distributed (EVG&D), Defined benefit plan obligations, Financial assistance from governments, and Financial implications of climate change.",
     "mandatory": false,
     "enabled": false,
     "field": ["company_economic_performance_statement"],
-    "order": 11
+    "order": 11,
+    "screen": "screen_eleven"
   },
   {
     "id": "environment",
     "title": "Environment",
+    "subLabel": "A brief explanation on the organization's environmental issues, such as emissions, effluents, waste, material use, energy, water, and biodiversity.",
     "mandatory": false,
     "enabled": false,
     "field": ["environmental_responsibility_statement"],
-    "order": 12
+    "order": 12,
+    "screen": "screen_twelve"
   },
   {
     "id": "people",
     "title": "People",
+    "subLabel": "A brief explanation on organizations employees, labour management and other benefits and training for the welfare of the people within the organization and community.",
     "mandatory": false,
     "enabled": false,
     "field": ["employee_policies_statement"],
-    "order": 13
+    "order": 13,
+    "screen": "screen_thirteen"
   },
   {
     "id": "community",
     "title": "Community",
+    "subLabel": "Details on how the organization engages and collaborates with the community to promote sustainability.",
     "mandatory": false,
     "enabled": false,
-    "order": 14
+    "order": 14,
+    "screen": "screen_fourteen"
   },
   {
     "id": "customers",
     "title": "Customers, Products & Services",
+    "subLabel": "A brief explanation of the quality and standard of the companies products and services.",
     "mandatory": false,
     "enabled": false,
     "field": ["conclusion"],
-    "order": 15
+    "order": 15,
+    "screen": "screen_fifteen"
   }
 ]

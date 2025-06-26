@@ -20,6 +20,7 @@ from django.db.models import JSONField
 from django.shortcuts import get_object_or_404
 from sustainapp.models import Report
 from esg_report.models.ESGCustomReport import EsgCustomReport
+import copy
 
 
 class FieldValidationView(APIView):
@@ -85,7 +86,7 @@ class FieldValidationView(APIView):
                     ).exists():
                         if screen_name in dummy_responses:
                             dummy_field_data = [
-                                d
+                                {**d, "is_dummy": True}
                                 for d in dummy_responses[screen_name]
                                 if d["field"] == field
                             ]
@@ -94,76 +95,124 @@ class FieldValidationView(APIView):
                 combined_results.extend(processed_results)
             else:
                 if screen_name in dummy_responses:
-                    combined_results.extend(dummy_responses[screen_name])
+                    combined_results.extend(
+                        [{**d, "is_dummy": True} for d in dummy_responses[screen_name]]
+                    )
 
         return combined_results
 
-    def extract_enabled_items(self, section_json, sub_section_json):
-        enabled_sections = {s["id"] for s in section_json if s["enabled"]}
-        enabled_subsections = set()
+    def extract_enabled_items_with_precise_order(self, section_json, sub_section_json):
+        """
+        Returns a list of (screen_name, field, order) tuples for only enabled fields,
+        keeping hierarchy-based order: section -> subsection -> child.
+        """
+        field_order_list = []
 
-        for sec_id, subs in sub_section_json.items():
-            for sub in subs:
-                if sub["enabled"]:
-                    if sub["field"]:
-                        for f in sub["field"]:
-                            enabled_subsections.add(f)
-                if "children" in sub:
-                    for child in sub["children"]:
-                        if child["enabled"]:
-                            if child["field"]:
-                                for f in child["field"]:
-                                    enabled_subsections.add(f)
+        for section in section_json:
+            section_id = section["id"]
+            section_order = section["order"]
+            section_enabled = section.get("enabled", False)
+            screen_name = section.get(
+                "screen"
+            )  # Critical: used to scope fields to screens
 
-        return enabled_sections, enabled_subsections
+            if not screen_name:
+                continue  # Can't proceed without screen name
 
-    def get_enabled_fields_from_dummy(self, enabled_sections, enabled_subsections):
-        enabled_fields = set()
+            # Section-level fields
+            if section_enabled and "field" in section:
+                for field in section["field"]:
+                    field_order_list.append((screen_name, field, str(section_order)))
 
-        for screen_fields in dummy_response_data.values():
-            for field_data in screen_fields:
-                field = field_data.get("field", "")
+            if section_id not in sub_section_json:
+                continue
 
-                for sec in enabled_sections:
-                    if sec == field:
-                        enabled_fields.add(field)
+            subsections = sub_section_json[section_id]
+            sub_index = 1
 
-                for sub in enabled_subsections:
-                    if sub == field:
-                        enabled_fields.add(field)
+            for sub in subsections:
+                if not sub.get("enabled"):
+                    continue
 
-        return enabled_fields
+                sub_prefix = f"{section_order}.{sub_index}"
+                sub_added = False
+
+                for field in sub.get("field", []):
+                    field_order_list.append((screen_name, field, sub_prefix))
+                    sub_added = True
+
+                child_index = 1
+                for child in sub.get("children", []):
+                    if not child.get("enabled"):
+                        continue
+                    for field in child.get("field", []):
+                        child_prefix = f"{sub_prefix}.{child_index}"
+                        field_order_list.append((screen_name, field, child_prefix))
+                        child_index += 1
+                        sub_added = True
+
+                if sub_added:
+                    sub_index += 1
+
+        return field_order_list
+
+    def is_valid_order(self, order):
+        if not order:
+            return False
+        try:
+            return all(part.isdigit() for part in str(order).split("."))
+        except Exception:
+            return False
 
     def get_validated_result_custom_report(self, screens, report, dummy_response):
         custom_config = get_object_or_404(EsgCustomReport, report=report)
         section_config = custom_config.section
         sub_section_config = custom_config.sub_section
 
-        enabled_sections, enabled_subsections = self.extract_enabled_items(
+        ordered_fields_with_order = self.extract_enabled_items_with_precise_order(
             section_config, sub_section_config
         )
-        enabled_fields = self.get_enabled_fields_from_dummy(
-            enabled_sections, enabled_subsections
-        )
+        field_order_map = {
+            (screen_name, field): order
+            for screen_name, field, order in ordered_fields_with_order
+        }
         combined_results = []
 
         for screen_name, screen_data in screens.items():
             model = screen_data["model"]
             json_fields = screen_data["fields"]
-
             results = model.objects.filter(report=report)
+
             if results.exists():
                 screen_results = self.process_screen_results(results, json_fields)
-                filtered = [r for r in screen_results if r["field"] in enabled_fields]
-                combined_results.extend(filtered)
+                for result in screen_results:
+                    field = result.get("field")
+                    if (screen_name, field) in field_order_map:
+                        result["order"] = field_order_map[(screen_name, field)]
+                        combined_results.append(result)
             else:
                 dummy_fields = dummy_response.get(screen_name, [])
-                filtered_dummy = [
-                    f for f in dummy_fields if f["field"] in enabled_fields
-                ]
-                combined_results.extend(filtered_dummy)
+                for dummy in dummy_fields:
+                    field = dummy.get("field")
+                    if (screen_name, field) in field_order_map:
+                        dummy_copy = {**dummy, "is_dummy": True}
+                        dummy_copy["order"] = field_order_map[(screen_name, field)]
+                        combined_results.append(dummy_copy)
 
-        return combined_results
+        sorted_results = sorted(
+            [r for r in combined_results if self.is_valid_order(r.get("order"))],
+            key=lambda r: list(map(int, r["order"].split("."))),
+        )
+        return sorted_results
+
+    def prefix_label_with_order(self, data):
+        for item in data:
+            if item.get("is_dummy"):  # Only prefix dummy's label
+                order = item.get("order")
+                label = item.get("label")
+                if order and label:
+                    item["label"] = f"{order}. {label}"
+        return data
 
     def get(self, request, report_id):
         """Handle GET request to validate fields.
@@ -238,15 +287,17 @@ class FieldValidationView(APIView):
                 "fields": self.get_json_fields(ScreenFifteenModel),
             },
         }
-
-        if report.report_type == "Custom ESG Report":
-            data = self.get_validated_result_custom_report(
-                screens, report, dummy_response_data
+        local_dummy_response = copy.deepcopy(dummy_response_data)
+        result = []
+        if report.report_type.strip().lower() == "custom esg report":
+            result = self.get_validated_result_custom_report(
+                screens, report, local_dummy_response
             )
-            return Response(data)
         else:
             result = self.get_validated_result_normal_report(
-                screens, report, dummy_response_data
+                screens, report, local_dummy_response
             )
+
+        result = self.prefix_label_with_order(result)
 
         return Response(result)

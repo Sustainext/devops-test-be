@@ -7,7 +7,7 @@ from common.utils.data_point_cache import (
 )
 import threading
 
-logger = getLogger("django")
+logger = getLogger("datapoint_logger")
 
 
 def climatiq_data_creation(raw_response: RawResponse):

@@ -24,27 +24,8 @@ class SelectedActivityView(APIView):
 
     def post(self, request, scenario_id):
         """
-        Handles POST requests to update selected activities for a given scenario.
-
-        This method performs selective create and delete operations based on the difference
-        between the incoming payload and the existing data in the database for the specified scenario.
-
-        Validations and logic:
-        1. If there are no existing selected activities in the database for the scenario,
-        all items in the payload are directly created.
-
-        2. If selected activities already exist for the scenario:
-        - Each incoming activity is checked against existing ones.
-        - If an activity in the payload is not in the database, it is created.
-        - If an activity is already present, it is left unchanged (no duplicate or update).
-        - This avoids unnecessary database writes.
-
-        3. If an activity exists in the database but is not included in the incoming payload,
-        that activity is considered deselected and is deleted from the database.
-
-        Returns:
-            201 Created — with the list of all currently selected activities (existing and newly added).
-            400 Bad Request — if the input data is not a list or fails validation.
+        Handles POST requests to update selected activities for a given scenario,
+        synchronizing the database records to exactly match the incoming payload (by all fields).
         """
         scenario = get_object_or_404(Scenerio, id=scenario_id)
         data = request.data
@@ -54,49 +35,69 @@ class SelectedActivityView(APIView):
                 {"detail": "Expected a list of activity objects."}, status=400
             )
 
-        # Inject scenario ID into each dict for validation
         for item in data:
             item["scenario"] = scenario.id
 
         serializer = SelectedActivitySerializer(data=data, many=True)
-        if serializer.is_valid():
-            incoming_uuids = {item["uuid"] for item in serializer.validated_data}
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
 
-            with transaction.atomic():
-                # Get existing records
-                existing_qs = SelectedActivity.objects.filter(scenario=scenario)
-                existing_map = {obj.uuid: obj for obj in existing_qs}
-                existing_uuids = set(existing_map.keys())
+        validated = serializer.validated_data
 
-                # Find differences
-                to_delete_ids = existing_uuids - incoming_uuids
-                to_create_data = [
-                    item
-                    for item in serializer.validated_data
-                    if item["uuid"] not in existing_uuids
-                ]
+        # Index incoming data by uuid
+        payload_by_uuid = {item["uuid"]: item for item in validated}
+        incoming_uuids = set(payload_by_uuid.keys())
 
-                # Delete only removed activities
-                if to_delete_ids:
-                    SelectedActivity.objects.filter(
-                        scenario=scenario, uuid__in=to_delete_ids
-                    ).delete()
+        with transaction.atomic():
+            # Query existing activities, index by uuid
+            existing_qs = SelectedActivity.objects.filter(scenario=scenario)
+            existing_by_uuid = {obj.uuid: obj for obj in existing_qs}
+            existing_uuids = set(existing_by_uuid.keys())
 
-                # Create new ones
-                activity_objects = [
-                    SelectedActivity(**{**item, "scenario": scenario})
-                    for item in to_create_data
-                ]
-                SelectedActivity.objects.bulk_create(activity_objects)
+            # DELETE: For DB items not in payload, delete
+            to_delete_uuids = existing_uuids - incoming_uuids
+            if to_delete_uuids:
+                SelectedActivity.objects.filter(
+                    scenario=scenario, uuid__in=to_delete_uuids
+                ).delete()
 
-            # Return all currently selected activities (existing + new)
-            current_selected = SelectedActivity.objects.filter(scenario=scenario)
-            response_serializer = SelectedActivitySerializer(
-                current_selected, many=True
-            )
-            return Response(response_serializer.data, status=201)
+            # CREATE & UPDATE
+            create_objs = []
+            update_objs = []
+            for uuid, item in payload_by_uuid.items():
+                if uuid in existing_by_uuid:
+                    obj = existing_by_uuid[uuid]
+                    updated = False
+                    # Compare all serializable fields (except id, scenario, uuid)
+                    for field in item:
+                        if field in ["id", "scenario", "uuid"]:
+                            continue
+                        if getattr(obj, field) != item[field]:
+                            setattr(obj, field, item[field])
+                            updated = True
+                    if updated:
+                        update_objs.append(obj)
+                    # else, nothing to do (identical)
+                else:
+                    # create new row
+                    create_objs.append(
+                        SelectedActivity(**{**item, "scenario": scenario})
+                    )
 
-        return Response(serializer.errors, status=400)
+            # BULK UPDATE CHANGED ROWS
+            if update_objs:
+                SelectedActivity.objects.bulk_update(
+                    update_objs,
+                    [f for f in item if f not in ["id", "scenario", "uuid"]],
+                )
+            # BULK CREATE NEW ROWS
+            if create_objs:
+                SelectedActivity.objects.bulk_create(create_objs)
+
+        # Return all current activities
+        current_selected = SelectedActivity.objects.filter(scenario=scenario)
+        response_serializer = SelectedActivitySerializer(current_selected, many=True)
+        return Response(response_serializer.data, status=201)
 
     def patch(self, request, scenario_id):
         scenario = get_object_or_404(Scenerio, id=scenario_id)

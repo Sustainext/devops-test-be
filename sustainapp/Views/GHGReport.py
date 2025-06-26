@@ -693,7 +693,12 @@ class GHGReportView(generics.CreateAPIView):
         investment_corporates = serializer.validated_data.get("investment_corporates")
         assessment_id = request.data.get("assessment_id")
         organization_id = organization.id
-        if new_report.report_type != "canada_bill_s211_v2":
+
+        if (
+            new_report.report_type != "canada_bill_s211_v2"
+            and new_report.report_type != "TCFD"
+            and new_report.report_type != "Custom ESG Report"
+        ):
             if corporate_id and organization_id:
                 # If multiple corporate names are provided, pass the list of names
                 analysis_data = get_analysis_data(
@@ -708,7 +713,7 @@ class GHGReportView(generics.CreateAPIView):
                     investment_corporates,
                 )
 
-            elif organization_id and corporate_id == None:
+            elif organization_id and corporate_id is None:
                 corporate_ids = Corporateentity.objects.filter(
                     organization_id=organization_id
                 ).values_list("id", flat=True)
@@ -725,6 +730,28 @@ class GHGReportView(generics.CreateAPIView):
                     report_type,
                     investment_corporates,
                 )
+        elif report_type == "Custom ESG Report":
+            validator = CustomEsgReportValidator()
+            validator.create_custom_report(
+                report_id,
+                request.data.get("include_management_material_topics"),
+                request.data.get("include_content_index"),
+            )
+            return Response(
+                {
+                    "id": new_report.id,
+                    "start_date": new_report.start_date,
+                    "end_date": new_report.end_date,
+                    "country_name": serializer.data.get("organization_country"),
+                    "organization_name": new_report.organization.name,
+                    "report_by": new_report.report_by,
+                    "message": "Custom ESG report Created Successfully",
+                    "report_type": new_report.report_type,
+                    "created_at": format_created_at(serializer.data.get("created_at")),
+                    "name": serializer.data.get("name"),
+                },
+                status=status.HTTP_200_OK,
+            )
         else:
             return Response(
                 {
@@ -770,14 +797,6 @@ class GHGReportView(generics.CreateAPIView):
                     "name": serializer.data.get("name"),
                 },
                 status=status.HTTP_200_OK,
-            )
-
-        if report_type == "Custom ESG Report":
-            validator = CustomEsgReportValidator()
-            validator.create_custom_report(
-                report_id,
-                request.data.get("include_management_material_topics"),
-                request.data.get("include_content_index"),
             )
 
         if (

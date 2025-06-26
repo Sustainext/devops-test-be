@@ -1,10 +1,9 @@
 from esg_report.utils import (
-    get_raw_responses_as_per_report,
-    get_data_points_as_per_report,
-    get_maximum_months_year,
     forward_request_with_jwt,
     get_management_materiality_topics,
 )
+from common.utils.report_datapoint_utils import get_raw_responses_as_per_report
+from common.utils.report_datapoint_utils import get_data_points_as_per_report
 from django.core.exceptions import ObjectDoesNotExist
 from sustainapp.Utilities.community_engagement_analysis import (
     get_community_engagement_analysis,

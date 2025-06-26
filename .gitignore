@@ -144,3 +144,4 @@ token_cache.json
 pyproject.toml
 uv.lock
 .envrc
+.continue

@@ -18,7 +18,13 @@ from esg_report.models.ReportAssessment import ReportAssessment
 from materiality_dashboard.models import (
     AssessmentDisclosureSelection,
 )
-from common.utils.get_data_points_as_raw_responses import collect_data_by_raw_response_and_index
+from common.utils.get_data_points_as_raw_responses import (
+    collect_data_by_raw_response_and_index,
+)
+from common.utils.report_datapoint_utils import (
+    get_maximum_months_year,
+    get_data_points_as_per_report,
+)
 
 logger = logging.getLogger("file")
 
@@ -27,118 +33,12 @@ def get_latest_raw_response(raw_responses, slug):
     return raw_responses.filter(path__slug=slug).order_by("-year").first()
 
 
-def get_maximum_months_year(report: Report):
-    """
-    Get the maximum months year from the given report's start and end dates.
-    This function determines the year that has the maximum number of months between the report's start and end dates. If both dates are in the same year, it returns that year. Otherwise, it calculates the number of months in the start and end years and returns the year with the maximum number of months.
-
-    Args:
-        report (Report): The report object containing the start and end dates.
-
-    Returns:
-        int: The year with the maximum number of months between the report's start and end dates.
-    """
-    # Extracting start_date and end_date
-    start_date = report.start_date
-    end_date = report.end_date
-
-    # Getting the years for start_date and end_date
-    start_year = start_date.year
-    end_year = end_date.year
-
-    # If both dates are in the same year
-    if start_year == end_year:
-        return start_year
-
-    # Months in the start year
-    months_start_year = 12 - start_date.month + 1
-
-    # Months in the end year
-    months_end_year = end_date.month
-
-    # Determine which year has the maximum months
-    if months_start_year > months_end_year:
-        return start_year
-    elif months_start_year == months_end_year:
-        return end_date.year
-    else:
-        return end_year
-
-
-def get_raw_responses_as_per_report(report: Report):
-    """
-    Get RawResponses as per report.
-
-    Situation in RawResponses.
-    1. If corporate is given, then organization would also be given.
-    2. If corporate is not given, then organization will be given.
-    3. If corporate and organization are not given, then locale will be given.
-    Now Create a filter for each of this.
-    and then combine them.
-    """
-    raw_responses = RawResponse.objects.filter(client=report.client)
-    if report.corporate:
-        raw_responses = raw_responses.filter(
-            Q(corporate=report.corporate) | Q(organization=report.organization)
-        )
-        raw_responses = raw_responses.filter(
-            Q(locale__in=report.corporate.location.all()) | Q(locale=None)
-        )
-    elif report.organization:
-        raw_responses = raw_responses.filter(
-            Q(organization=report.organization)
-            | Q(
-                locale__in=report.organization.corporatenetityorg.all().values_list(
-                    "location", flat=True
-                )
-            )
-        )
-    return raw_responses.filter(year=get_maximum_months_year(report))
-
-
-def get_data_points_as_per_report(report: Report):
-    """
-    Get DataPoints as per report.
-    """
-    data_points = DataPoint.objects.filter(client_id=report.client.id)
-    if report.corporate:
-        data_points = data_points.filter(
-            Q(corporate=report.corporate)
-            | Q(organization=report.organization)
-            | Q(locale__in=report.corporate.location.all())
-            | Q(locale=None)
-        )
-    elif report.organization:
-        data_points = data_points.filter(
-            Q(organization=report.organization)
-            | Q(
-                locale__in=report.organization.corporatenetityorg.all().values_list(
-                    "location", flat=True
-                )
-            )
-        )
-
-    return data_points.filter(year=get_maximum_months_year(report))
-
-
-def get_emission_analysis_as_per_report(report: Report):
-    """
-    Get EmissionAnalysis Objects as per report.
-    """
-    emission_analysis_objects = EmissionAnalysis.objects.filter(
-        raw_response__in=get_raw_responses_as_per_report(report)
-    )
-
-    return emission_analysis_objects
-
-
 def get_materiality_assessment(report):
     """This now uses ReportAssessment Model to fetch linked materiality assessment"""
     try:
         return ReportAssessment.objects.get(report=report).materiality_assessment
     except ReportAssessment.DoesNotExist:
         return None
-
 
 
 def collect_data_and_differentiate_by_location(data_points):
@@ -179,6 +79,7 @@ def get_data_by_raw_response_and_index(data_points, slug):
         path__slug=slug,
     )
     return collect_data_and_differentiate_by_location(data_points)
+
 
 def get_data_by_data_point_dictionary(data_points_dictionary, slug):
     return collect_data_by_raw_response_and_index(data_points_dictionary[slug])
@@ -264,7 +165,7 @@ def calling_analyse_view_with_params(view_url, request, report):
         response = view_instance(internal_request)
 
         # Step 6: Check the response status and return data
-        if response.status_code in [200,206]:
+        if response.status_code in [200, 206]:
             return response.data
         else:
             return {
@@ -325,7 +226,7 @@ def create_validation_method_for_report_creation(report: Report):
             "Report Details",
             "Restatement",
             "Assurance",
-        ]   
+        ]
         subindicators = []
         for topic in general_material_topics:
             if topic in GENERAL_DISCLOSURES_AND_PATHS:
@@ -336,7 +237,9 @@ def create_validation_method_for_report_creation(report: Report):
         for disclosure, path_slug in subindicators:
             if not data_points.filter(path__slug=path_slug).exists():
                 report.delete()
-                return f"Data for disclosure {disclosure} does not exist for the report."
+                return (
+                    f"Data for disclosure {disclosure} does not exist for the report."
+                )
 
 
 def calling_analyse_view_with_params_for_same_year(view_url, request, report):
@@ -403,7 +306,10 @@ def get_which_general_disclosure_is_empty(report: Report):
                 empty_sub_indicators.append(sub_indicator_and_path)
     return empty_sub_indicators
 
-def generate_disclosure_status(report: Report, topic_mapping: dict, heading: str, is_material=False):
+
+def generate_disclosure_status(
+    report: Report, topic_mapping: dict, heading: str, is_material=False
+):
     data_points = get_data_points_as_per_report(report=report)
 
     if is_material:
@@ -445,30 +351,25 @@ def generate_disclosure_status(report: Report, topic_mapping: dict, heading: str
                     {
                         "req_omitted": indicator if not is_filled else None,
                         "reason": reason,
-                        "explanation": explanation
+                        "explanation": explanation,
                     }
-                ]
+                ],
             }
 
-            grouped_output.setdefault(heading2, {}).setdefault(heading3, []).append(item_data)
+            grouped_output.setdefault(heading2, {}).setdefault(heading3, []).append(
+                item_data
+            )
 
         formatted_sections = []
         for heading2, heading3_dict in grouped_output.items():
             heading3_sections = []
             for heading3, items in heading3_dict.items():
-                heading3_sections.append({
-                    "heading3": heading3,
-                    "items": items
-                })
-            formatted_sections.append({
-                "heading2": heading2,
-                "sections": heading3_sections
-            })
+                heading3_sections.append({"heading3": heading3, "items": items})
+            formatted_sections.append(
+                {"heading2": heading2, "sections": heading3_sections}
+            )
 
-        return {
-            "heading1": heading,
-            "sections": formatted_sections
-        }
+        return {"heading1": heading, "sections": formatted_sections}
 
     else:
         # Flat output for general disclosures
@@ -496,41 +397,46 @@ def generate_disclosure_status(report: Report, topic_mapping: dict, heading: str
                 reason = None
                 explanation = None
 
-            result.append({
-                "key": indicator,
-                "title": content_index_name,
-                "page_number": None,
-                "gri_sector_no": None,
-                "is_filled": is_filled,
-                "omission": [
-                    {
-                        "req_omitted": indicator if not is_filled else None,
-                        "reason": reason,
-                        "explanation": explanation
-                    }
-                ]
-            })
+            result.append(
+                {
+                    "key": indicator,
+                    "title": content_index_name,
+                    "page_number": None,
+                    "gri_sector_no": None,
+                    "is_filled": is_filled,
+                    "omission": [
+                        {
+                            "req_omitted": indicator if not is_filled else None,
+                            "reason": reason,
+                            "explanation": explanation,
+                        }
+                    ],
+                }
+            )
 
-        return {
-            "heading1": heading,
-            "items": result
-        }
+        return {"heading1": heading, "items": result}
 
 
-def generate_disclosure_status_reference(report: Report, topic_mapping: dict, heading: str, is_material=False, filter_filled=False):
+def generate_disclosure_status_reference(
+    report: Report,
+    topic_mapping: dict,
+    heading: str,
+    is_material=False,
+    filter_filled=False,
+):
     """
     Generate a structured list of disclosure items for a given report, filtered by filled status.
 
-    This function processes GRI indicators and their associated paths to determine which disclosures 
-    are fully completed (i.e., all required data points are filled). It filters out any disclosures 
+    This function processes GRI indicators and their associated paths to determine which disclosures
+    are fully completed (i.e., all required data points are filled). It filters out any disclosures
     that are incomplete and excludes omission information from the result.
 
     Args:
         report (Report): The report instance for which disclosures are being evaluated.
-        topic_mapping (dict): A mapping of disclosure metadata, including indicator codes, 
+        topic_mapping (dict): A mapping of disclosure metadata, including indicator codes,
                               subindicators (slugs), and content titles.
         heading (str): The top-level heading label (e.g., "General Disclosures" or "Material Topics").
-        is_material (bool, optional): Flag indicating whether the data pertains to material topics 
+        is_material (bool, optional): Flag indicating whether the data pertains to material topics
                                       (grouped under subheadings) or general disclosures. Default is False.
 
     Returns:
@@ -542,7 +448,7 @@ def generate_disclosure_status_reference(report: Report, topic_mapping: dict, he
                   - 'page_number': always None
                   - 'gri_sector_no': always None
                   - 'is_filled': True
-              
+
               Only disclosures where all required subindicators are filled are included.
               The 'omission' field is excluded from the output.
     """
@@ -555,18 +461,16 @@ def generate_disclosure_status_reference(report: Report, topic_mapping: dict, he
             indicator = data["indicator"]
             subindicators = data["subindicators"]
             content_index_name = data["content_index_name"]
-            heading1 = data.get("sub_header2", heading) 
+            heading1 = data.get("sub_header2", heading)
 
             slugs = [slug for _, slug in subindicators]
-
-           
 
             is_filled = all(
                 data_points.filter(path__slug=slug).exclude(value="").exists()
                 for slug in slugs
             )
 
-            if  not is_filled:
+            if not is_filled:
                 continue
 
             item = {
@@ -582,11 +486,7 @@ def generate_disclosure_status_reference(report: Report, topic_mapping: dict, he
         # Format the final list
         output = []
         for heading1, items in grouped_result.items():
-            
-            output.append({
-                "heading1": heading1,
-                "items": items
-            })
+            output.append({"heading1": heading1, "items": items})
 
         return output
 
@@ -605,24 +505,20 @@ def generate_disclosure_status_reference(report: Report, topic_mapping: dict, he
                 for slug in slugs
             )
 
-           
             if not is_filled:
                 continue
 
-            result.append({
-                "key": indicator,
-                "title": content_index_name,
-                "page_number": None,
-                "gri_sector_no": None,
-                "is_filled": is_filled,
-                
-            })
-    
-        return [{
-            "heading1": heading,
-            "items": result
-        }]
+            result.append(
+                {
+                    "key": indicator,
+                    "title": content_index_name,
+                    "page_number": None,
+                    "gri_sector_no": None,
+                    "is_filled": is_filled,
+                }
+            )
 
+        return [{"heading1": heading, "items": result}]
 
 
 def management_materiality_topics_common_code(dps, org_or_corp_name):
