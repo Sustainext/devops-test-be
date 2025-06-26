@@ -1,58 +1,192 @@
+<a href="#strategy"></a>
 <h2>5. Strategy</h2>
-<p>Auto fill text here</p>
-<h3>5.1. Climate-Related Risks and Opportunities Assessment </h3>
-<p>Auto fill text here</p>
+<p>{{screen_5.report_data.climate_risks_opportunities.content|safe|default:"No data available"}}</p>
+<h3>5.1. Climate-Related Risks and Opportunities Assessment</h3>
+<p>Not Available yet from frontend</p>
+{% comment %} <p>{{screen_5.report_data.impact_on_business.content|safe|default:"No data available"}}</p> {% endcomment %}
 <h4>Physical Risks</h4>
-<p>(Response from 201-2-a, without heading)</p>
-<h4>Transition Risks:</h4>
-<p>(Response from 201-2-a, without heading)</p>
-<h4>Other Risks:</h4>
-<p>(Response from 201-2-a, without heading)</p>
-
-<p>We define our climate-related time horizons to ensure a consistent and forward-looking approach to assessing risks
-    and opportunities. These are categorized as Immediate-term (0–1 year), Short-term (1–3 years), Medium-term (3–5
-    years), and Long-term (5+ years), providing a structured basis for strategic planning. </p>
-
-<h3>5.2. Impact on Business, Strategy, and Financial Planning </h3>
-<p>Auto fill text here</p>
-
-<h4>The following table outlines how climate-related issues have influenced our organization’s strategy, planning, and
-    operations across key business areas.</h4>
 <table>
-    <thead>
-        <th>Climate-related risks/opportunities </th>
-        <th>Business Areas Affected</th>
-        <th>Impact</th>
-    </thead>
+  <thead>
     <tr>
-        <td>Climate-related risks/opportunities</td>
-        <td>Business Areas Affected</td>
-        <td>Impact</td>
+      <th>Risk Category</th>
+      <th>Type of Risk</th>
+      <th>Severity of Risk</th>
+      <th>Potential Impact</th>
+      <th>Likelihood of impact</th>
+      <th>Magnitude of Impact</th>
+      <th>Financial Effect</th>
+      <th>Financial Implications</th>
+      <th>Process Description</th>
+      <th>Management Methods</th>
+      <th>Time Frame</th>
+      <th>Direct or Indirect Impacts</th>
+      <th>Mitigation Strategies Implemented?</th>
+      <th>Mitigation Strategies</th>
     </tr>
+  </thead>
+  <tbody>
+    {% for item in screen_5.physical_risks %}
+    <tr>
+      <td>Physical Risk</td>
+      <td>{{ item.TypeofRisk|default:"N/A" }}</td>
+      <td>{{ item.SeverityofRisk|default:"N/A" }}</td>
+      <td>
+        {% if item.PotentialImpact %} {{ item.PotentialImpact|join:", " }} {% if item.PotentialImpact_others %}, {{ item.PotentialImpact_others }}{% endif %} {% else %} {{item.PotentialImpact_others|default:"N/A" }} {% endif %}
+      </td>
+      <td>{{ item.Likelihoodofimpact|default:"N/A" }}</td>
+      <td>{{ item.MagnitudeofImpact|default:"N/A" }}</td>
+      <td>{{ item.FinancialEffect|default:"N/A" }}</td>
+      <td>
+        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{ item.FinancialImplications_others|default:"N/A" }} {% endif %}
+      </td>
+      <td>{{ item.ProcessDescription|default:"N/A" }}</td>
+      <td>
+        {% if item.ManagementMethods %} {{ item.ManagementMethods|join:", " }} {% if item.ManagementMethods_others %}, {{ item.ManagementMethods_others }}{% endif %} {% else %} {{item.ManagementMethods_others|default:"N/A" }} {% endif %}
+      </td>
+      <td>{{ item.TimeFrame|default:"N/A" }}</td>
+      <td>{{ item.DirectImpacts|default:"N/A" }}</td>
+      <td>{% if item.ImplementedMitigationStrategies == "Yes" %} Yes {% else %} No {% endif %}</td>
+      <td>{{ item.MitigationStrategies|default:"N/A" }} {% if item.MitigationStrategies_others %}, {{ item.MitigationStrategies_others }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
-<p>(Response from “Describe how climate-related risks and opportunities are prioritized in financial planning” question,
-    without heading) </p>
-<p>(Response from “What impacts have climate-related issues had on your financial planning” question, without heading)
+<h4>Transition Risks:</h4>
+<table cellpadding="5" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Risk Category</th>
+      <th>Type of Risk</th>
+      <th>Potential Impact</th>
+      <th>Likelihood of Impact</th>
+      <th>Magnitude of Impact</th>
+      <th>Financial Effect</th>
+      <th>Financial Implications</th>
+      <th>Management Methods</th>
+      <th>Time Frame</th>
+      <th>Direct or Indirect Impacts</th>
+      <th>Implemented Mitigation Strategies</th>
+      <th>Mitigation Strategies</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in screen_5.transition_risk %}
+    <tr>
+      <td>Transition Risk</td>
+      <td>{{ item.TypeofRisk|default:"No data available" }}</td>
+      <td>
+        {% if item.PotentialImpact %} {{ item.PotentialImpact|join:", " }} {% if item.PotentialImpact_others %}, {{ item.PotentialImpact_others }}{% endif %} {% else %} {{ item.PotentialImpact_others|default:"No data available" }} {% endif %}
+      </td>
+      <td>{{ item.Likelihoodofimpact|default:"No data available" }}</td>
+      <td>{{ item.MagnitudeofImpact|default:"No data available" }}</td>
+      <td>{{ item.FinancialEffect|default:"No data available" }}</td>
+      <td>
+        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{ item.FinancialImplications_others|default:"No data available" }} {% endif %}
+      </td>
+      <td>
+        {% if item.ManagementMethods %} {{ item.ManagementMethods|join:", " }} {% if item.ManagementMethods_others %}, {{ item.ManagementMethods_others }}{% endif %} {% else %} {{ item.ManagementMethods_others|default:"No data available" }} {% endif %}
+      </td>
+      <td>{{ item.TimeFrame|default:"No data available" }}</td>
+      <td>{{ item.DirectImpacts|default:"No data available" }}</td>
+      <td>{% if item.ImplementedMitigationStrategies == "Yes" %} Yes {% else %} No {% endif %}</td>
+      <td>{{ item.MitigationStrategies|default:"No data available" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<h4>Other Risks:</h4>
+<table cellpadding="5" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Risk Category</th>
+      <th>Type of Risk</th>
+      <th>Potential Impact</th>
+      <th>Likelihood of Impact</th>
+      <th>Magnitude of Impact</th>
+      <th>Financial Effect</th>
+      <th>Financial Implications</th>
+      <th>Management Methods</th>
+      <th>Time Frame</th>
+      <th>Direct or Indirect Impacts</th>
+      <th>Implemented Mitigation Strategies</th>
+      <th>Mitigation Strategies</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in screen_5.other_risks %}
+    <tr>
+      <td>Other risks</td>
+      <td>{{ item.TypeofRiskoth|default:"No data available" }}</td>
+      <td>{{ item.PotentialImpactoth|default:"No data available" }}</td>
+      <td>{{ item.Likelihoodofimpact|default:"No data available" }}</td>
+      <td>{{ item.MagnitudeofImpact|default:"No data available" }}</td>
+      <td>{{ item.FinancialEffect|default:"No data available" }}</td>
+      <td>
+        {% if item.FinancialImplications %} {{ item.FinancialImplications|join:", " }} {% if item.FinancialImplications_others %}, {{ item.FinancialImplications_others }}{% endif %} {% else %} {{ item.FinancialImplications_others|default:"No data available" }} {% endif %}
+      </td>
+      <td>{{ item.ManagementMethodsoth|default:"No data available" }}</td>
+      <td>{{ item.TimeFrame|default:"No data available" }}</td>
+      <td>{{ item.DirectImpacts|default:"No data available" }}</td>
+      <td>{% if item.ImplementedMitigationStrategies == "Yes" %} Yes {% else %} No {% endif %}</td>
+      <td>{{ item.MitigationStrategiesoth|default:"No data available" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p>
+  We define our climate-related time horizons to ensure a consistent and forward-looking approach to assessing risks and opportunities. These are categorized as Immediate-term (0–1 year), Short-term
+  (1–3 years), Medium-term (3–5 years), and Long-term (5+ years), providing a structured basis for strategic planning.
 </p>
 
+<h3>5.2. Impact on Business, Strategy, and Financial Planning</h3>
+<p>Need to add this later when frontend sends it</P>
+<p>{{screen_5.report_data.impact_on_business.content|safe|default:"No data available"}}</p>
+
+<h4>The following table outlines how climate-related issues have influenced our organization’s strategy, planning, and operations across key business areas.</h4>
+<table>
+  <thead>
+    <th>Climate-related risks/opportunities</th>
+    <th>Business Areas Affected</th>
+    <th>Impact</th>
+  </thead>
+  {% if screen_5.general_business_impact.0.Q1%}
+  {% for item in screen_5.general_business_impact.0.Q1 %}
+  <tr>
+    <td>{{item.label}}</td>
+    <td>{{item.selectedOptions|join:", "}}</td>
+    <td>{{item.impact}}</td>
+  </tr>
+  {% endfor %}
+  {% endif %}
+</table>
+<h4>Financial Planning Prioritization</h4>
+<p>{{screen_5.general_business_impact.0.Q2|default:"No data available."}}</p>
+<h4>Impact on Financial Planning</h4>
+<p>{{screen_5.general_business_impact.0.Q3|default:"No data available."}}</p>
+
 <h4>GHG Emission Reduction Commitments</h4>
-<p>(Note for devs: A tailored version of the ‘GHG Emissions Reduction Commitments’ section’s data is required here. i.e.
-    skip yes/no response)
+<p>{{screen_5.ghg_emissions_reduction_commitments.0.Q2|default:"No data available."}}</p>
 
-    (If yes option is selected, fetch response from “If yes, describe your plans for transitioning to a low-carbon
-    economy.” question, without heading) </p>
-<h3>5.3. Scenario Analysis & Strategic Resilience </h3>
+<h3>5.3. Scenario Analysis & Strategic Resilience</h3>
+
+{% if screen_5.strategy_resilience_to_climate_related_risks_and_opportunities.0.Q1 == "Yes" %}
 <h4>Scenario Analysis</h4>
-<p>(Note for devs: A tailored version of the ‘Climate Scenarios & Financial Impact’ section’s data is required here.
-    i.e. skip yes/no response)
+<p>{{screen_5.strategy_resilience_to_climate_related_risks_and_opportunities.0.Q2|default:"No data available."}}</p>
+{% else %}
+<p>No scenario analysis data available.</p>
+{% endif %}
 
-    (If yes option is selected, fetch response from “If yes, please describe climate related scenario(s) and associated
-    time horizon(s) considered” question, without heading)</p>
 <h4>Strategic Resilience and Evolution of Business Strategy</h4>
-<p>(Response from “Describe how your organization’s strategy is resilient to climate-related risks and opportunities,
-    including in a 2°C or lower scenario.” question, without heading)</p>
-<h4>Financial Impacts</h4>
+<p>{{screen_5.strategy_resilience_to_climate_related_risks_and_opportunities.0.Q3|default:"No data available."}}</p>
 
-<p>Add sector-specific (e.g., financial or non-financial) information relevant to the Strategy disclosures, in line with
-    TCFD sector guidance (if applicable).</p>
-<p>Autofill will come above</p>
+<h4>How Strategy Was Affected by Climate-Related Issues</h4>
+<p>{{screen_5.strategy_resilience_to_climate_related_risks_and_opportunities.0.Q4|default:"No data available."}}</p>
+
+<h4>Expected Strategy Evolution</h4>
+<p>{{screen_5.strategy_resilience_to_climate_related_risks_and_opportunities.0.Q5|default:"No data available."}}</p>
+
+<h4>Financial Impacts</h4>
+<p>{{screen_5.strategy_resilience_to_climate_related_risks_and_opportunities.0.Q6|default:"No data available."}}</p>
+
+<p>{{screen_5.report_data.resilience_of_strategy.content|safe|default:"No data available"}}</p>

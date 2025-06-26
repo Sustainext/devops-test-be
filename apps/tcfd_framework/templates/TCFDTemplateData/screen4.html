@@ -1,15 +1,47 @@
+
+<a href="#governance"></a>
 <h2>4. Governance</h2>
-<p>Auto Fill data here</p>
+<p>{{screen_4.report_data.board_oversight.content|safe|default:"No data available"}}</p>
 
 <h3>4.1. Board’s Oversight of Climate-Related Risks and Opportunities</h3>
-<p>Auto Fill data will come here</p>
+<p>{{screen_4.report_data.description.content|safe|default:"No data available"}}</p>
 
-<h3>4.2. Management’s role in assessing and managing climate related risks and opportunities</h3>
-<p>Auto Fill data will come here</p>
+<h4>Board Committees Informed on Climate Related Issues</h4>
+{% for item in screen_4.committees_of_the_highest_governance_body %}
+  {% for key, pair_list in item.items %}
+    {% for pair in pair_list %}
+      <p>{{ pair.0 }}-{{ pair.1 }}</p>
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
+
+<h4>Oversight of Climate-Related Risks and Opportunities</h4> <span style="font-size:1px;color:white">SCREEN_ANCHOR:GOV-A</span>
+<p>{{screen_4.boards_oversight_of_climate_related_risks_and_opportunities.0.Q1|default:"No data available"}}</p>
+
+<h5>Processes for Informing the Board on Climate-Related Issues</h5>
+<p>{{screen_4.boards_oversight_of_climate_related_risks_and_opportunities.0.Q2|default:"No data available"}}</p>
+
+
+{% if screen_4.boards_oversight_of_climate_related_risks_and_opportunities.0.Q3 == "Yes" %}
+<h5>Incorporation of Climate Considerations in Strategic and Governance Decisions</h5>
+<p>{{screen_4.boards_oversight_of_climate_related_risks_and_opportunities.0.Q4|default:"No data available"}}</p>
+{% endif %}
+
+<h5>Board Monitoring of Progress Against Climate Targets and Goals</h5>
+<p>{{screen_4.boards_oversight_of_climate_related_risks_and_opportunities.0.Q5|default:"No data available"}}</p>
+
+<h3>4.2. Management’s role in assessing and managing climate related risks and opportunities</h3><span style="font-size:1px;color:white">SCREEN_ANCHOR:GOV-B</span>
+<p>{{screen_4.report_data.management_role.content|safe|default:"No data available"}}</p>
 
 <h4>Organization Structure</h4>
-<p>Some data will come here from collect</p>
+<p>{{screen_4.governance_structure.0.Q1|default:"No data available"}}</p>
+
+{% if screen_4.managements_role_in_assessing_and_managing_climate_related_risks_and_opportunities.0.Q1 == "Yes" %}
 <h4>Processes for Informing the Management on Climate-Related Issues</h4>
-<p>Some data will come here from collect</p>
+<p>{{screen_4.managements_role_in_assessing_and_managing_climate_related_risks_and_opportunities.0.Q4|default:"No data available"}}</p>
+{% endif %}
+
+{% if screen_4.managements_role_in_assessing_and_managing_climate_related_risks_and_opportunities.0.Q3 == "Yes" %}
 <h4>Management Monitoring of Climate Related Issues</h4>
-<p>Some data will come here from collect</p>
+<p>{{screen_4.managements_role_in_assessing_and_managing_climate_related_risks_and_opportunities.0.Q5|default:"No data available"}}</p>
+{% endif %}
