@@ -1,0 +1,49 @@
+# CI/CD Pipeline for the BACKEND application
+
+trigger:
+- main  # Trigger only on pushes to this repo's main branch
+
+variables:
+  # --- UPDATE THESE VALUES ---
+  azureServiceConnection: 'Microsoft Azure Sponsorship(0e00a747-e3da-4a5f-b795-6f0237cd94f6)' # Use the SAME service connection name
+  resourceGroup: 'devops-test'                     # Your resource group name
+  acrName: 'devopstest1'                            # Your Azure Container Registry name
+  
+  backendAppName: 'backend-container'                  # The name of your backend Container App
+  backendImageName: 'my-backend-first'                    # The name for the backend image in ACR
+  backendDockerfilePath: 'Dockerfile'               # Path to your Dockerfile (in the root of this repo)
+
+  # --- System Variables (No need to change) ---
+  vmImageName: 'ubuntu-latest'
+  imageTag: '$(Build.BuildId)' # Use the unique pipeline build ID as the image tag
+
+stages:
+- stage: Build_and_Deploy_Backend
+  displayName: 'Build and Deploy Backend'
+  jobs:
+  - job: BuildAndDeploy
+    displayName: 'Build Image and Update Container App'
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: 'Build and Push Backend Image to ACR'
+      inputs:
+        command: 'buildAndPush'
+        repository: $(backendImageName)
+        dockerfile: $(backendDockerfilePath)
+        containerRegistry: $(azureServiceConnection)
+        tags: $(imageTag)
+
+    - task: AzureCLI@2
+      displayName: 'Update Backend Container App'
+      inputs:
+        azureSubscription: $(azureServiceConnection)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "Updating Backend Container App to use image tag: $(imageTag)"
+          az containerapp update \
+            --name $(backendAppName) \
+            --resource-group $(resourceGroup) \
+            --image $(acrName).azurecr.io/$(backendImageName):$(imageTag)
