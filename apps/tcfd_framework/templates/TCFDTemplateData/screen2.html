@@ -1,3 +1,5 @@
+{%load custom_filters_tcfd%}
+<span style="font-size:1px;color:white">SCREEN_ANCHOR:about_report</span>
 <h2>2. About the Report</h2>
 <h3>2.1 Overview of TCFD</h3>
 <p>The Task Force on Climate-related Financial Disclosures (TCFD) was established by the Financial Stability Board (FSB)
@@ -21,4 +23,4 @@
 </p>
 <h3>2.2 Purpose</h3>
 
-<p>Auto Fill data will come here</p>
+<p>{{screen_2.report_data.description.content|remove_br_after_p|safe|default:"No data available"}}</p>

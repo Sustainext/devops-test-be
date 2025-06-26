@@ -1,3 +1,5 @@
+{% load custom_filters_tcfd %}
+<span style="font-size:1px;color:white">SCREEN_ANCHOR:message_ceo</span>
 <h2>1. Message from CEO/MD/Chairman</h2>
-<p>Add message from CEO/MD/Chairman</p>
-<p>Add image here</p>
+<p>{{screen_1.report_data.message_content.content|remove_br_after_p|safe|default:"No data available"}}</p>
+<img src="{{screen_1.report_data.signature_url.content}}" alt="CEO/MD/Chairman's signature" style="max-width: 100px; height: 100px; object-fit: cover; border-radius: 10px; margin: 0 auto;">

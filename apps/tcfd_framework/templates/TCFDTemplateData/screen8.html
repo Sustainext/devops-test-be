@@ -9,10 +9,29 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>1. Governance</td>
-            <td>a) Describe the board’s oversight of climate-related risks and opportunities. </td>
-            <td>2</td>
-        </tr>
+        {% for section, section_data in screen_8.items %}
+            <tr>
+                <td rowspan="{{ section_data.disclosures|length }}">
+                    <strong>{{ section }}:</strong><br>
+                    {{ section_data.description }}
+                </td>
+                <td>
+                    {{ section_data.disclosures.0.description }}
+                </td>
+                <td>
+                    Pg. No. -
+                </td>
+            </tr>
+            {% for disclosure in section_data.disclosures|slice:"1:" %}
+            <tr>
+                <td>
+                    {{ disclosure.description }}
+                </td>
+                <td>
+                    Pg. No. -
+                </td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
     </tbody>
 </table>

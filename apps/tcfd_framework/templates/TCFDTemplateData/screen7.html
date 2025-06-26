@@ -1,10 +1,43 @@
+{%load custom_filters_tcfd %}
+<style>
+    .checkmark {
+        display: inline-block;
+        width: 10px; /* Reduced from 12px to 10px */
+        height: 10px; /* Reduced from 12px to 10px */
+        border: 2px solid #22c55e;
+        border-radius: 2px;
+        background-color: #22c55e;
+        position: relative;
+    }
+    .checkmark::after {
+        content: '';
+        position: absolute;
+        width: 3px; /* Reduced from 4px to 3px */
+        height: 6px; /* Reduced from 8px to 6px */
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        top: -0.5px; /* Adjusted for proper alignment with reduced size */
+        left: 2px; /* Adjusted for proper alignment with reduced size */
+    }
+    .crossmark {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border: 2px solid #9ca3af;
+        border-radius: 2px;
+        background-color: #fff;
+        position: relative;
+    }
+</style>
+<span style="font-size:1px;color:white">SCREEN_ANCHOR:metrics_targets</span>
+<a href="#metrics_targets"></a>
 <h2>7. Metrics & Targets</h2>
-<p>Auto fill text will come here</p>
+<p>{{screen_7.report_data.climate_metrics.content|safe|default:"No data available"}}</p>
 <h3>7.1 Metrics used to assess climate related risks and opportunities </h3>
-<p>Auto fill text will come here</p>
+<p>{{screen_7.report_data.metrics_description.content|remove_br_after_p|safe|default:"No data available"}}</p>
 
-<h4>Metrics used to assess climate related risks </h4>
-<p>(Response from TCFD-M&T-A, “Metrics used to assess climate related risks”, without heading) </p>
+<h4>Metrics used to assess climate related risks</h4>
 <table>
     <thead>
         <tr>
@@ -22,24 +55,25 @@
         </tr>
     </thead>
     <tbody>
+        {% for data in screen_7.metrics_used_to_assess_climate_related_risks_and_opportunities %}
         <tr>
-            <td>Climate Related Risk 1</td>
-            <td>Metric Category 1</td>
-            <td>Key Metric 1</td>
-            <td>Metric Value 1</td>
-            <td>Metric Unit 1</td>
-            <td>Scope 1</td>
-            <td>Historical Metric Reported? 1</td>
-            <td>Historical Period Covered 1</td>
-            <td>Forward-Looking Metric Reported? 1</td>
-            <td>Forward-Looking Time Horizon 1</td>
-            <td>Methodology Used 1</td>
+            <td>{{ data.ClimateRelatedRisk }}</td>
+            <td>{{ data.MetricCategory|join:", " }}</td>
+            <td>{{data.KeyMetric}}</td>
+            <td>{{data.MetricValue}}</td>
+            <td>{{data.MetricUnit}}</td>
+            <td>{{data.Scope|join:", "}}</td>
+            <td>{{data.HistoricalMetric}}</td>
+            <td>{{data.HistoricalPeriodCovered}}</td>
+            <td>{{data.MetricReported}}</td>
+            <td>{{data.TimeHorizon}}</td>
+            <td>{{data.MethodologyUsed}}</td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 
 <h4>Metrics used to assess climate related opportunities </h4>
-<p>(Response from TCFD-M&T-A, “Metrics used to assess climate related opportunities”, without heading)</p>
 <table>
     <thead>
         <tr>
@@ -57,61 +91,40 @@
         </tr>
     </thead>
     <tbody>
+        {% for data in screen_7.metrics_used_to_assess_climate_related_opportunities %}
         <tr>
-            <td>Climate Related Risk 1</td>
-            <td>Metric Category 1</td>
-            <td>Key Metric 1</td>
-            <td>Metric Value 1</td>
-            <td>Metric Unit 1</td>
-            <td>Scope 1</td>
-            <td>Historical Metric Reported? 1</td>
-            <td>Historical Period Covered 1</td>
-            <td>Forward-Looking Metric Reported? 1</td>
-            <td>Forward-Looking Time Horizon 1</td>
-            <td>Methodology Used 1</td>
+            <td>{{ data.ClimateRelatedRisk }}</td>
+            <td>{{ data.MetricCategory|join:", " }}</td>
+            <td>{{data.KeyMetric}}</td>
+            <td>{{data.MetricValue}}</td>
+            <td>{{data.MetricUnit}}</td>
+            <td>{{data.Scope|join:", "}}</td>
+            <td>{{data.HistoricalMetric}}</td>
+            <td>{{data.HistoricalPeriodCovered}}</td>
+            <td>{{data.MetricReported}}</td>
+            <td>{{data.TimeHorizon}}</td>
+            <td>{{data.MethodologyUsed}}</td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 
 <h4>Integration of Climate Related Metrics into Remuneration Policies</h4>
-<p>(Note for devs: A tailored version of the “Metrics used to assess climate related opportunities” section’s data is
-    required here. i.e. skip yes/no response)
-
-    (If ‘Yes’ option is selected for the question “Are climate-related performance metrics incorporated into
-    remuneration policies?”, fetch response from TCFD-M&T-A, “If Yes, please describe how these metrics are integrated
-    into remuneration policies:” without heading)
-    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------.
-
-    (If ‘No’ option is selected skip entire section). </p>
+<p>Information about climate metrics integration into remuneration policies will be displayed here when available.</p>
 
 <h4>Internal Carbon Pricing Mechanisms</h4>
-<p>(Note for devs: A tailored version of the “Metrics used to assess climate related opportunities” section’s data is
-    required here. i.e. skip yes/no response)
-
-    (If ‘Yes’ option is selected for the question “Has your organization implemented an internal carbon pricing
-    mechanism?”, fetch response from TCFD-M&T-A, “If Yes, please provide details” without heading)
-    -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------.
-
-    (If ‘No’ option is selected skip entire section).</p>
+<p>Internal carbon pricing mechanism information will be displayed here when available.</p>
 
 <h4>Revenue from Low-Carbon Products and Services</h4>
-<p>(Note for devs: A tailored version of the “Metrics used to assess climate related opportunities” section’s data is
-    required here. i.e. skip yes/no response)
+<p>Revenue from low-carbon products and services information will be displayed here when available.</p>
 
-    (If ‘Yes’ option is selected for the question “Does your organization generate revenue from products or services
-    designed for a low-carbon economy?”, fetch response from TCFD-M&T-A “If Yes, please provide details” without
-    heading)
-    ---------------------------------------------------------------------------------------------------------------------------------------------------------.
-
-    (If ‘No’ option is selected skip entire section).</p>
-
-<p>Rich text data here</p>
+<p>{{screen_7.report_data.sector_info.content|safe|default:"No data available"}}</p>
 
 <h3>7.2 GHG Emissions</h3>
-<p>Autofill text here</p>
+<p>{{screen_7.report_data.main_content_emissions.content|safe|default:"No data available"}}</p>
 
 <h4>Scope 1 GHG Emissions</h4>
-<p>Autofill text here</p>
+<p>{{screen_7.report_data.scope1_emissions.content|safe|default:"No data available"}}</p>
 <table>
     <thead>
         <tr>
@@ -122,17 +135,19 @@
         </tr>
     </thead>
     <tbody>
+        {% for data in screen_7.scope_1 %}
         <tr>
-            <td>Category 1</td>
-            <td>Sub-Category 1</td>
-            <td>Activity 1</td>
-            <td>Emissions (tCO2e) 1</td>
+            <td>{{ data.category }}</td>
+            <td>{{ data.subcategory}}</td>
+            <td>{{data.activity}}</td>
+            <td>{{data.emission}} {{data.emission_unit}}</td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 
 <h4>Scope 2 GHG Emissions</h4>
-<p>Autofill text here</p>
+<p>{{screen_7.report_data.scope2_emissions.content|safe|default:"No data available"}}</p>
 <table>
     <thead>
         <tr>
@@ -143,17 +158,19 @@
         </tr>
     </thead>
     <tbody>
+        {% for data in screen_7.scope_2 %}
         <tr>
-            <td>Category 1</td>
-            <td>Sub-Category 1</td>
-            <td>Activity 1</td>
-            <td>Emissions (tCO2e) 1</td>
+            <td>{{ data.category }}</td>
+            <td>{{ data.subcategory}}</td>
+            <td>{{data.activity}}</td>
+            <td>{{data.emission}} {{data.emission_unit}}</td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 
 <h4>Scope 3 GHG Emissions</h4>
-<p>Autofill text here</p>
+<p>{{screen_7.report_data.scope3_emissions.content|safe|default:"No data available"}}</p>
 <table>
     <thead>
         <tr>
@@ -164,32 +181,34 @@
         </tr>
     </thead>
     <tbody>
+        {% for data in screen_7.scope_3 %}
         <tr>
-            <td>Category 1</td>
-            <td>Sub-Category 1</td>
-            <td>Activity 1</td>
-            <td>Emissions (tCO2e) 1</td>
+            <td>{{ data.category }}</td>
+            <td>{{ data.subcategory}}</td>
+            <td>{{data.activity}}</td>
+            <td>{{data.emission}} {{data.emission_unit}}</td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 
-<h4>Top Emissions by Scope</h4>
+<h4>GHG Emissions by Scope</h4>
 <table>
     <thead>
         <tr>
-            <th>Source</th>
-            <th>Percentage contribution</th>
-            <th>Total Emissions</th>
-            <th>Unit</th>
+            <th>Scope</th>
+            <th>Emissions (tCO2e)</th>
+            <th>Percentage of Totals</th>
         </tr>
     </thead>
     <tbody>
+        {% for data in screen_7.emission_analyse.all_emission_by_scope %}
         <tr>
-            <td>Source 1</td>
-            <td>Percentage contribution 1</td>
-            <td>Total Emissions 1</td>
-            <td>Unit 1</td>
+            <td>{{data.scope}}</td>
+            <td>{{data.total}} {{data.Units}}</td>
+            <td>{{data.contribution}}</td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 
@@ -198,18 +217,18 @@
     <thead>
         <tr>
             <th>Source</th>
-            <th>Percentage contribution</th>
             <th>Total Emissions</th>
-            <th>Unit</th>
+            <th>Percentage contribution</th>
         </tr>
     </thead>
     <tbody>
+        {% for data in screen_7.emission_analyse.all_emission_by_source %}
         <tr>
-            <td>Source 1</td>
-            <td>Percentage contribution 1</td>
-            <td>Total Emissions 1</td>
-            <td>Unit 1</td>
+            <td>{{data.source}}</td>
+            <td>{{data.total}} {{data.Units}}</td>
+            <td>{{data.contribution}}</td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 
@@ -217,23 +236,24 @@
 <table>
     <thead>
         <tr>
-            <th>Source</th>
-            <th>Percentage contribution</th>
+            <th>Geographic Location</th>
             <th>Total Emissions</th>
-            <th>Unit</th>
+            <th>Percentage contribution</th>
         </tr>
     </thead>
     <tbody>
+        {% for data in screen_7.emission_analyse.all_emission_by_location %}
         <tr>
-            <td>Source 1</td>
-            <td>Percentage contribution 1</td>
-            <td>Total Emissions 1</td>
-            <td>Unit 1</td>
+            <td>{{data.location}}</td>
+            <td>{{data.total}} {{data.Units}}</td>
+            <td>{{data.contribution}}</td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 
 <h4>GHG Emission Intensity</h4>
+<p>{{screen_7.report_data.ghg_intensity.content|safe|default:"No data available"}}</p>
 <table>
     <thead>
         <tr>
@@ -257,32 +277,31 @@
         </tr>
     </thead>
     <tbody>
+        {% for data in screen_7.emission_analyse.ghg_emission_intensity %}
         <tr>
-            <td>Organisation Metric 1</td>
-            <td>Quantity 1</td>
-            <td>Unit 1</td>
-            <td>Type of GHGs 1</td>
-            <td>GHG Emission Intensity 1</td>
-            <td>Unit 1</td>
-            <td>CO<sub>2</sub> 1</td>
-            <td>N<sub>2</sub>O 1</td>
-            <td>CH<sub>4</sub> 1</td>
-            <td>HFCs 1</td>
-            <td>PFCs 1</td>
-            <td>SF<sub>6</sub> 1</td>
-            <td>NF<sub>3</sub> 1</td>
+            <td>{{data.organization_metric}}</td>
+            <td>{{data.quantity}}</td>
+            <td>{{data.unit}}</td>
+            <td>{{data.type_of_ghg|join:", "}}</td>
+            <td>{{data.ghg_emission_intensity}}</td>
+            <td>{{data.ghg_intensity_unit}}</td>
+            <td style="text-align: center;">{%if data.ch4%}<span class="checkmark"></span>{%else%}<span class="crossmark"></span>{%endif%}</td>
+            <td style="text-align: center;">{%if data.n2o%}<span class="checkmark"></span>{%else%}<span class="crossmark"></span>{%endif%}</td>
+            <td style="text-align: center;">{%if data.co2%}<span class="checkmark"></span>{%else%}<span class="crossmark"></span>{%endif%}</td>
+            <td style="text-align: center;">{%if data.HFCs%}<span class="checkmark"></span>{%else%}<span class="crossmark"></span>{%endif%}</td>
+            <td style="text-align: center;">{%if data.PFCs%}<span class="checkmark"></span>{%else%}<span class="crossmark"></span>{%endif%}</td>
+            <td style="text-align: center;">{%if data.SF6%}<span class="checkmark"></span>{%else%}<span class="crossmark"></span>{%endif%}</td>
+            <td style="text-align: center;">{%if data.NF3%}<span class="checkmark"></span>{%else%}<span class="crossmark"></span>{%endif%}</td>
         </tr>
+        {% endfor %}
     </tbody>
 
 </table>
-<p>Auto fill text here</p>
+
 
 <h3>7.3 Targets used to manage climate related risks and opportunities and performance against targets.</h3>
-<p>Auto fill text here</p>
+<p>{{screen_7.report_data.climate_targets.content|safe|default:"No data available"}}</p>
 
-<h4>Targets used to manage climate related risks and opportunities and performance against targets</h4>
-<p>(Response from TCFD-M&T-C, “Targets used to manage climate related risks and opportunities and performance against
-    targets”, without heading) </p>
 <table>
     <thead>
         <tr>
@@ -299,20 +318,21 @@
             <th>Methodology Used</th>
     </thead>
     <tbody>
+        {%for data in screen_7.targets_used_to_manage_climate_related_risks_and_opportunities_and_performance_against_targets%}
         <tr>
-            <td>Key Metric for Climate Related Target 1</td>
-            <td>Target Metric Category 1</td>
-            <td>Target Type 1</td>
-            <td>Metric Unit 1</td>
-            <td>Base Year 1</td>
-            <td>Baseline Value 1</td>
-            <td>Target Time Frame 1</td>
-            <td>Target Value 1</td>
-            <td>Target Goals 1</td>
-            <td>Key Performance Indicators 1</td>
-        </tr>
+            <td>{{data.RelatedTarget}}</td>
+            <td>{{data.MetricCategory|join:", "}}</td>
+            <td>{{data.TargetType}}</td>
+            <td>{{data.MetricUnit}}</td>
+            <td>{{data.BaseYear}}</td>
+            <td>{{data.BaselineValue}}</td>
+            <td>{{data.TargetTimeFrame}}</td>
+            <td>{{data.TargetValue}}</td>
+            <td>{{data.TargetGoals}}</td>
+            <td>{{data.PerformanceIndicators}}</td>
+            <td>{{data.MethodologyUsed}}</td>
+        {%endfor%}
     </tbody>
 </table>
 
-<h4>Add closing remarks here.</h4>
-<p>Autofill will come here</p>
+<p>{{screen_7.report_data.closing_remarks.content|safe|default:"No data available"}}</p>

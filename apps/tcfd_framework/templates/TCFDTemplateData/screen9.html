@@ -1,7 +1,21 @@
+<span style="font-size:1px;color:white">SCREEN_ANCHOR:annexure</span>
 <h2>9. Annexure</h2>
 <h3>Risk Terminology Used</h3>
-<p>(Response “Provide definitions of risk terminology used or references to existing risk classification frameworks
-    used” field group, without heading)
-    -----------------------------------------------------------------------------------------------------.
-
-    Fetch document uploaded for the above-mentioned question. </p>
+<p>{{screen_9.size_scope_of_risk.0.Q1|default:"No data available."}}</p>
+{% if screen_9.size_scope_of_risk.0.Q2 %}
+<p>{{screen_9.size_scope_of_risk.0.Q2.text|default:"No data available."}}</p>
+{% endif %}
+{% if screen_9.size_scope_of_risk.0.Q2 %}
+  <div style="background: #fafbfc; border: 1px solid #eee; padding: 10px; border-radius: 4px;">
+    <div style="color: black;">
+      <strong>Attached File:</strong> {{ screen_9.size_scope_of_risk.0.Q2.fileName }}
+    </div>
+    <div style="margin-top: 4px;">
+      <a href="{{ screen_9.size_scope_of_risk.0.Q2.fileURL }}" 
+         target="_blank" rel="noopener noreferrer"
+         style="color: #1a0dab; text-decoration: underline;">
+        View Document
+      </a>
+    </div>
+  </div>
+{% endif %}
